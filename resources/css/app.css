@@ -1,0 +1,177 @@
+@import 'tailwindcss';
+
+@source '../../resources/views/**/*.blade.php';
+@source '../../resources/js/**/*.{ts,tsx}';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-display: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'Space Grotesk', monospace;
+
+    --color-accent: #d4ff00;
+    --color-accent-hover: #bde600;
+    --color-accent-dim: rgba(212, 255, 0, 0.15);
+    --color-dark-bg: #0a0b0e;
+    --color-dark-surface: #12141a;
+    --color-dark-elevated: #1a1d26;
+    --color-dark-border: rgba(255, 255, 255, 0.08);
+}
+
+:root {
+    --bg-main: #f8f9fc;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f0f2f7;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.16);
+    --text-primary: #0a0c10;
+    --text-secondary: #4a5264;
+    --text-muted: #838d9e;
+    --accent: #b0d600;
+    --accent-glow: rgba(176, 214, 0, 0.25);
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+    --bg-main: #0a0b0e;
+    --bg-surface: #12141a;
+    --bg-surface-elevated: #1a1d26;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --text-primary: #f5f6f9;
+    --text-secondary: #9aa1b2;
+    --text-muted: #5e6578;
+    --accent: #d4ff00;
+    --accent-glow: rgba(212, 255, 0, 0.28);
+    --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(212, 255, 0, 0.3);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Animations */
+@keyframes marquee-left {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0%); }
+}
+
+@keyframes float-subtle {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-marquee-left {
+    animation: marquee-left 32s linear infinite;
+}
+
+.animate-marquee-left-fast {
+    animation: marquee-left 18s linear infinite;
+}
+
+.animate-marquee-right {
+    animation: marquee-right 32s linear infinite;
+}
+
+.animate-float {
+    animation: float-subtle 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.marquee-container:hover .animate-marquee-left,
+.marquee-container:hover .animate-marquee-right,
+.marquee-container:hover .animate-marquee-left-fast {
+    animation-play-state: paused;
+}
+
+/* Subtle noise texture background overlay */
+.bg-grain {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+    background-size: 24px 24px;
+}
+
+html.light .bg-grain {
+    background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+    background: rgba(18, 20, 26, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+}
+
+html.light .glass-panel {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+}
+
+/* Stacking cards pinned sticky effect */
+.sticky-card {
+    position: sticky;
+    top: 6rem;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Magnetic link effects */
+.hover-reveal-image {
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Accessible focus ring */
+*:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

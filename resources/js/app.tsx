@@ -1,0 +1,40 @@
+import '../css/app.css';
+
+import React from 'react';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { createInertiaApp } from '@inertiajs/react';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { AppLayout } from '@/Layouts/AppLayout';
+
+const appName = import.meta.env.VITE_APP_NAME || 'CuttingEdger';
+
+createInertiaApp({
+    title: (title) => (title ? `${title} — ${appName}` : `${appName} — Radical Digital Agency`),
+    resolve: async (name) => {
+        const page = await resolvePageComponent(
+            `./Pages/${name}.tsx`,
+            import.meta.glob('./Pages/**/*.tsx')
+        );
+
+        // Apply persistent AppLayout if not specified otherwise
+        const resolvedPage = (page as any).default;
+        if (resolvedPage.layout === undefined) {
+            resolvedPage.layout = (pageElement: React.ReactNode) => (
+                <AppLayout>{pageElement}</AppLayout>
+            );
+        }
+
+        return page;
+    },
+    setup({ el, App, props }) {
+        if (el.dataset.serverRendered) {
+            hydrateRoot(el, <App {...props} />);
+        } else {
+            createRoot(el).render(<App {...props} />);
+        }
+    },
+    progress: {
+        color: '#d4ff00',
+        showSpinner: false,
+    },
+});
