@@ -2,51 +2,51 @@ import { t as Button } from "../ssr.js";
 import { t as SeoHead } from "./SeoHead-CXtfHcil.js";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Asterisk, Compass, Cpu, Flame, Layers, Minus, Plus, Quote, Sparkles, Star } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Asterisk, Compass, Cpu, Flame, Layers, Minus, Plus, Quote, Star } from "lucide-react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+import { AnimatePresence, motion } from "framer-motion";
 //#region resources/js/Components/Home/SplitHero.tsx
 function SplitHero({ onOpenContact }) {
 	const rotatingWords = [
-		"CATEGORY LEADERS",
-		"FEARLESS BRANDS",
-		"KINETIC PLATFORMS",
-		"RADICAL DIGITAL"
+		"3D MOTION & CGI",
+		"2D GRAPHIC IDENTITY",
+		"SPATIAL EXPERIENCES",
+		"KINETIC PLATFORMS"
 	];
 	const [currentWordIndex, setCurrentWordIndex] = useState(0);
-	const [reducedMotion, setReducedMotion] = useState(false);
 	useEffect(() => {
-		const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-		setReducedMotion(mediaQuery.matches);
-		if (mediaQuery.matches) return;
 		const interval = setInterval(() => {
 			setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
-		}, 2800);
+		}, 3200);
 		return () => clearInterval(interval);
 	}, []);
 	const reelCards = [
 		{
 			title: "Kinetix OS",
-			category: "Creative Engineering",
+			category: "3D Spatial Shaders",
 			year: "2026",
-			color: "from-purple-900/40 via-violet-950/60 to-black",
+			color: "from-purple-950/60 via-[#10121a] to-black",
 			accent: "#d4ff00",
-			tag: "Featured Flagship"
+			tag: "3D Real-Time WebGL",
+			preview: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
 		},
 		{
 			title: "Hyperion Audio",
-			category: "Brand & 3D Spatial",
+			category: "Acoustic 3D Renderings",
 			year: "2025",
-			color: "from-emerald-950/50 via-teal-950/70 to-black",
+			color: "from-emerald-950/60 via-[#10121a] to-black",
 			accent: "#00f5ff",
-			tag: "Award Winner"
+			tag: "CGI Product Modeling",
+			preview: "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=800&q=80"
 		},
 		{
-			title: "Aura Robotics",
-			category: "Hardware Interface",
+			title: "Vortex Capital",
+			category: "2D Vector Identity",
 			year: "2025",
-			color: "from-amber-950/40 via-neutral-950/80 to-black",
+			color: "from-amber-950/60 via-[#10121a] to-black",
 			accent: "#ff9900",
-			tag: "Design System"
+			tag: "Brand Architecture",
+			preview: "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=800&q=80"
 		}
 	];
 	const [activeCardIndex, setActiveCardIndex] = useState(0);
@@ -54,85 +54,148 @@ function SplitHero({ onOpenContact }) {
 		const workSection = document.getElementById("featured-work");
 		if (workSection) workSection.scrollIntoView({ behavior: "smooth" });
 	};
+	const containerVariants = {
+		hidden: { opacity: 0 },
+		visible: {
+			opacity: 1,
+			transition: {
+				staggerChildren: .12,
+				delayChildren: .1
+			}
+		}
+	};
+	const itemVariants = {
+		hidden: {
+			opacity: 0,
+			y: 28
+		},
+		visible: {
+			opacity: 1,
+			y: 0,
+			transition: {
+				duration: .7,
+				ease: [
+					.16,
+					1,
+					.3,
+					1
+				]
+			}
+		}
+	};
 	return /* @__PURE__ */ jsxs("section", {
-		className: "relative min-h-[92vh] pt-32 pb-20 flex flex-col justify-between overflow-hidden",
+		className: "relative min-h-[94vh] pt-32 pb-16 flex flex-col justify-between overflow-hidden bg-[#090a0d]",
 		children: [
-			/* @__PURE__ */ jsx("div", { className: "absolute top-1/4 left-0 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-[140px] pointer-events-none" }),
-			/* @__PURE__ */ jsx("div", { className: "absolute top-1/3 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none" }),
+			/* @__PURE__ */ jsx("div", { className: "absolute top-1/4 left-0 w-[32rem] h-[32rem] bg-[#d4ff00]/10 rounded-full blur-[160px] pointer-events-none" }),
+			/* @__PURE__ */ jsx("div", { className: "absolute top-1/3 right-10 w-[36rem] h-[36rem] bg-indigo-600/10 rounded-full blur-[180px] pointer-events-none" }),
 			/* @__PURE__ */ jsx("div", {
 				className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto",
-				children: /* @__PURE__ */ jsxs("div", {
+				children: /* @__PURE__ */ jsxs(motion.div, {
 					className: "grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center",
+					variants: containerVariants,
+					initial: "hidden",
+					animate: "visible",
 					children: [/* @__PURE__ */ jsxs("div", {
 						className: "lg:col-span-7 space-y-8",
 						children: [
-							/* @__PURE__ */ jsxs("div", {
-								className: "inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-wider uppercase text-neutral-300 backdrop-blur-md",
-								children: [/* @__PURE__ */ jsxs("span", {
-									className: "relative flex h-2 w-2",
-									children: [/* @__PURE__ */ jsx("span", { className: "animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4ff00] opacity-75" }), /* @__PURE__ */ jsx("span", { className: "relative inline-flex rounded-full h-2 w-2 bg-[#d4ff00]" })]
-								}), /* @__PURE__ */ jsx("span", { children: "ACCEPTING SELECT Q3/Q4 COMMISSIONS" })]
+							/* @__PURE__ */ jsx(motion.div, {
+								variants: itemVariants,
+								children: /* @__PURE__ */ jsxs("div", {
+									className: "inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-widest uppercase text-neutral-300 backdrop-blur-md",
+									children: [/* @__PURE__ */ jsxs("span", {
+										className: "relative flex h-2 w-2",
+										children: [/* @__PURE__ */ jsx("span", { className: "animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4ff00] opacity-75" }), /* @__PURE__ */ jsx("span", { className: "relative inline-flex rounded-full h-2 w-2 bg-[#d4ff00]" })]
+									}), /* @__PURE__ */ jsx("span", { children: "2D & 3D CREATIVE STUDIO COMMISSIONS" })]
+								})
 							}),
 							/* @__PURE__ */ jsxs("div", {
-								className: "space-y-2",
-								children: [/* @__PURE__ */ jsxs("h1", {
-									className: "text-4xl sm:text-6xl xl:text-7xl font-display font-extrabold tracking-tight leading-[1.05] text-white",
+								className: "space-y-3",
+								children: [/* @__PURE__ */ jsxs(motion.h1, {
+									variants: itemVariants,
+									className: "text-5xl sm:text-7xl xl:text-8xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold tracking-tight leading-[0.95] text-white",
 									children: [
 										"WE SHAPE ",
 										/* @__PURE__ */ jsx("br", {}),
-										"UNFAIR ADVANTAGE FOR ",
+										"RADICAL GRAPHICS & ",
 										/* @__PURE__ */ jsx("br", {}),
 										/* @__PURE__ */ jsx("span", {
-											className: "relative inline-block overflow-hidden h-[1.15em] align-top text-[#d4ff00]",
-											children: /* @__PURE__ */ jsx("span", {
-												className: "inline-block transition-transform duration-500 ease-out animate-in slide-in-from-bottom-6",
-												children: rotatingWords[currentWordIndex]
-											}, currentWordIndex)
+											className: "relative inline-block overflow-hidden h-[1.12em] align-top text-[#d4ff00]",
+											children: /* @__PURE__ */ jsx(AnimatePresence, {
+												mode: "wait",
+												children: /* @__PURE__ */ jsx(motion.span, {
+													initial: {
+														y: 50,
+														opacity: 0
+													},
+													animate: {
+														y: 0,
+														opacity: 1
+													},
+													exit: {
+														y: -50,
+														opacity: 0
+													},
+													transition: {
+														duration: .45,
+														ease: [
+															.16,
+															1,
+															.3,
+															1
+														]
+													},
+													className: "inline-block whitespace-nowrap",
+													children: rotatingWords[currentWordIndex]
+												}, currentWordIndex)
+											})
 										})
 									]
-								}), /* @__PURE__ */ jsx("p", {
+								}), /* @__PURE__ */ jsx(motion.p, {
+									variants: itemVariants,
 									className: "text-lg sm:text-xl text-neutral-400 max-w-xl font-normal leading-relaxed pt-2",
-									children: "CuttingEdger is a boundary-pushing design & technology agency. We transform audacious founders and global brands into untouchable market forces."
+									children: "CuttingEdger is a creative powerhouse crafting bespoke 2D visual identities, CGI 3D product visualizers, and kinetic web platforms that dominate categories."
 								})]
 							}),
-							/* @__PURE__ */ jsxs("div", {
+							/* @__PURE__ */ jsxs(motion.div, {
+								variants: itemVariants,
 								className: "flex flex-wrap items-center gap-4 pt-2",
 								children: [/* @__PURE__ */ jsx(Button, {
 									variant: "primary",
 									size: "lg",
 									onClick: scrollToWork,
 									withArrow: true,
-									children: "Explore Selected Work"
+									children: "Explore 2D/3D Work"
 								}), /* @__PURE__ */ jsx(Button, {
 									variant: "secondary",
 									size: "lg",
 									onClick: onOpenContact,
-									children: "Initiate Project"
+									children: "Commission Studio"
 								})]
 							}),
-							/* @__PURE__ */ jsxs("div", {
+							/* @__PURE__ */ jsxs(motion.div, {
+								variants: itemVariants,
 								className: "pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg",
 								children: [
 									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
-										className: "block font-display font-extrabold text-2xl text-white",
+										className: "block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-white",
+										children: "350+"
+									}), /* @__PURE__ */ jsx("span", {
+										className: "text-xs font-mono text-neutral-400 uppercase",
+										children: "3D & CGI Renders"
+									})] }),
+									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
+										className: "block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-[#d4ff00]",
 										children: "100%"
 									}), /* @__PURE__ */ jsx("span", {
 										className: "text-xs font-mono text-neutral-400 uppercase",
-										children: "Independent"
+										children: "Bespoke Vector"
 									})] }),
 									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
-										className: "block font-display font-extrabold text-2xl text-[#d4ff00]",
-										children: "14+"
+										className: "block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-white",
+										children: "<12ms"
 									}), /* @__PURE__ */ jsx("span", {
 										className: "text-xs font-mono text-neutral-400 uppercase",
-										children: "Awwwards / FWA"
-									})] }),
-									/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
-										className: "block font-display font-extrabold text-2xl text-white",
-										children: "<0.5s"
-									}), /* @__PURE__ */ jsx("span", {
-										className: "text-xs font-mono text-neutral-400 uppercase",
-										children: "Edge Velocity"
+										children: "Shader Latency"
 									})] })
 								]
 							})
@@ -140,21 +203,32 @@ function SplitHero({ onOpenContact }) {
 					}), /* @__PURE__ */ jsx("div", {
 						className: "lg:col-span-5 relative flex justify-center items-center py-8",
 						children: /* @__PURE__ */ jsx("div", {
-							className: "relative w-full max-w-md h-[430px]",
+							className: "relative w-full max-w-md h-[450px]",
 							children: reelCards.map((card, idx) => {
 								const offset = (idx - activeCardIndex + reelCards.length) % reelCards.length;
-								return /* @__PURE__ */ jsxs("div", {
+								const isTop = offset === 0;
+								return /* @__PURE__ */ jsxs(motion.div, {
 									onClick: () => setActiveCardIndex((prev) => (prev + 1) % reelCards.length),
 									"data-cursor-view": "CLICK TO SHUFFLE",
-									className: `absolute inset-0 rounded-3xl p-7 border border-white/15 bg-gradient-to-b ${card.color} backdrop-blur-xl shadow-2xl transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none`,
-									style: {
-										transform: `translateY(${offset * 18}px) scale(${1 - offset * .06})`,
-										zIndex: reelCards.length - offset,
-										opacity: 1 - offset * .2
+									animate: {
+										y: offset * 20,
+										scale: 1 - offset * .05,
+										opacity: 1 - offset * .22,
+										zIndex: reelCards.length - offset
 									},
+									transition: {
+										type: "spring",
+										stiffness: 260,
+										damping: 24
+									},
+									whileHover: isTop ? {
+										y: -6,
+										scale: 1.02
+									} : {},
+									className: `absolute inset-0 rounded-3xl p-7 border border-white/15 bg-gradient-to-b ${card.color} backdrop-blur-2xl shadow-2xl cursor-pointer flex flex-col justify-between select-none overflow-hidden`,
 									children: [
 										/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center justify-between",
+											className: "flex items-center justify-between relative z-10",
 											children: [/* @__PURE__ */ jsx("span", {
 												className: "font-mono text-[11px] uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/10",
 												children: card.tag
@@ -168,26 +242,30 @@ function SplitHero({ onOpenContact }) {
 											})]
 										}),
 										/* @__PURE__ */ jsxs("div", {
-											className: "my-auto py-8",
+											className: "relative my-auto py-4",
 											children: [
-												/* @__PURE__ */ jsx("div", {
-													className: "w-16 h-16 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center mb-6 shadow-inner",
-													children: /* @__PURE__ */ jsx(Sparkles, { className: "w-8 h-8 text-[#d4ff00]" })
+												/* @__PURE__ */ jsxs("div", {
+													className: "relative rounded-2xl overflow-hidden aspect-[16/10] border border-white/10 mb-4 bg-black/40",
+													children: [/* @__PURE__ */ jsx("img", {
+														src: card.preview,
+														alt: card.title,
+														className: "w-full h-full object-cover"
+													}), /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" })]
 												}),
 												/* @__PURE__ */ jsx("span", {
 													className: "font-mono text-xs uppercase tracking-widest text-[#d4ff00]",
 													children: card.category
 												}),
 												/* @__PURE__ */ jsx("h3", {
-													className: "text-3xl font-display font-black text-white mt-1",
+													className: "text-3xl font-['Antonio',_'Syne',_sans-serif] uppercase font-bold text-white mt-0.5",
 													children: card.title
 												})
 											]
 										}),
 										/* @__PURE__ */ jsxs("div", {
-											className: "pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400",
+											className: "pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400 relative z-10",
 											children: [/* @__PURE__ */ jsxs("span", { children: ["Case Study 0", idx + 1] }), /* @__PURE__ */ jsxs("div", {
-												className: "flex items-center gap-1.5 text-white font-medium group-hover:text-[#d4ff00]",
+												className: "flex items-center gap-1.5 text-white font-medium",
 												children: [/* @__PURE__ */ jsx("span", { children: "Shuffle Next" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 text-[#d4ff00]" })]
 											})]
 										})
@@ -210,7 +288,7 @@ function SplitHero({ onOpenContact }) {
 					type: "button",
 					onClick: scrollToWork,
 					"aria-label": "Scroll down",
-					className: "p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors",
+					className: "p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors cursor-pointer",
 					children: /* @__PURE__ */ jsx(ArrowDown, { className: "w-4 h-4 animate-bounce" })
 				})]
 			})
@@ -313,24 +391,63 @@ function StickyWorkCards({ projects }) {
 		className: "relative py-28 bg-[#0a0b0e]",
 		children: /* @__PURE__ */ jsxs("div", {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-			children: [/* @__PURE__ */ jsxs("div", {
+			children: [/* @__PURE__ */ jsxs(motion.div, {
+				initial: {
+					opacity: 0,
+					y: 30
+				},
+				whileInView: {
+					opacity: 1,
+					y: 0
+				},
+				viewport: { once: true },
+				transition: {
+					duration: .7,
+					ease: [
+						.16,
+						1,
+						.3,
+						1
+					]
+				},
 				className: "flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-white/10 gap-6",
 				children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
 					className: "font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-3",
-					children: "[ 01 // SELECTED COMMISSIONS ]"
+					children: "[ 01 // 2D & 3D SELECTED COMMISSIONS ]"
 				}), /* @__PURE__ */ jsx("h2", {
-					className: "text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight",
+					className: "text-5xl sm:text-7xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight",
 					children: "ENGINEERED FOR IMPACT."
 				})] }), /* @__PURE__ */ jsxs(Link, {
 					href: "/work",
-					className: "group inline-flex items-center gap-2 text-sm font-mono uppercase tracking-wider text-neutral-400 hover:text-[#d4ff00] transition-colors",
+					className: "group inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-neutral-400 hover:text-[#d4ff00] transition-colors",
 					children: [/* @__PURE__ */ jsx("span", { children: "View All Archives (24+)" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" })]
 				})]
 			}), /* @__PURE__ */ jsx("div", {
 				className: "space-y-12 relative pb-12",
 				children: projects.map((project, index) => {
 					const topClass = stickyOffsets[index % stickyOffsets.length];
-					return /* @__PURE__ */ jsx("article", {
+					return /* @__PURE__ */ jsx(motion.article, {
+						initial: {
+							opacity: 0,
+							y: 40
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0
+						},
+						viewport: {
+							once: true,
+							margin: "-60px"
+						},
+						transition: {
+							duration: .6,
+							ease: [
+								.16,
+								1,
+								.3,
+								1
+							]
+						},
 						className: `sticky ${topClass} rounded-3xl p-6 sm:p-10 border border-white/10 bg-[#12141c] shadow-2xl backdrop-blur-2xl transition-all duration-300 group overflow-hidden`,
 						style: { zIndex: index + 10 },
 						children: /* @__PURE__ */ jsxs("div", {
@@ -353,7 +470,7 @@ function StickyWorkCards({ projects }) {
 										})]
 									}),
 									/* @__PURE__ */ jsx("h3", {
-										className: "text-3xl sm:text-5xl font-display font-black text-white leading-tight group-hover:text-[#d4ff00] transition-colors",
+										className: "text-3xl sm:text-5xl font-['Antonio',_'Syne',_sans-serif] uppercase font-bold text-white leading-none group-hover:text-[#d4ff00] transition-colors",
 										children: /* @__PURE__ */ jsx(Link, {
 											href: `/work/${project.slug}`,
 											children: project.title
@@ -366,7 +483,7 @@ function StickyWorkCards({ projects }) {
 									/* @__PURE__ */ jsx("div", {
 										className: "flex flex-wrap gap-2 pt-2",
 										children: project.deliverables?.map((deliv, i) => /* @__PURE__ */ jsx("span", {
-											className: "text-[11px] font-mono text-neutral-400 bg-white/5 px-2.5 py-1 rounded-md border border-white/5",
+											className: "text-[11px] font-mono text-neutral-300 bg-white/5 px-2.5 py-1 rounded-md border border-white/5",
 											children: deliv
 										}, i))
 									}),
@@ -385,12 +502,22 @@ function StickyWorkCards({ projects }) {
 									href: `/work/${project.slug}`,
 									"data-cursor-view": "VIEW",
 									className: "block relative rounded-2xl overflow-hidden aspect-[16/10] bg-neutral-900 border border-white/10 group-hover:border-[#d4ff00]/50 transition-all duration-500",
-									children: [/* @__PURE__ */ jsx("img", {
+									children: [/* @__PURE__ */ jsx(motion.img, {
 										src: project.cover_image,
 										alt: project.title,
 										loading: "lazy",
-										className: "w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
-									}), /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-300" })]
+										whileHover: { scale: 1.05 },
+										transition: {
+											duration: .6,
+											ease: [
+												.16,
+												1,
+												.3,
+												1
+											]
+										},
+										className: "w-full h-full object-cover object-center"
+									}), /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" })]
 								})
 							})]
 						})

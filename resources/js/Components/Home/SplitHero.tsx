@@ -1,56 +1,54 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDown, ArrowUpRight, Sparkles } from 'lucide-react';
 import { Button } from '@/Components/UI/Button';
 
 export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
     const rotatingWords = [
-        'CATEGORY LEADERS',
-        'FEARLESS BRANDS',
+        '3D MOTION & CGI',
+        '2D GRAPHIC IDENTITY',
+        'SPATIAL EXPERIENCES',
         'KINETIC PLATFORMS',
-        'RADICAL DIGITAL',
     ];
 
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
-    const [reducedMotion, setReducedMotion] = useState(false);
 
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-        setReducedMotion(mediaQuery.matches);
-
-        if (mediaQuery.matches) return;
-
         const interval = setInterval(() => {
             setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
-        }, 2800);
+        }, 3200);
 
         return () => clearInterval(interval);
     }, []);
 
-    // Interactive Reel Cards
+    // 3D & 2D Reel Cards
     const reelCards = [
         {
             title: 'Kinetix OS',
-            category: 'Creative Engineering',
+            category: '3D Spatial Shaders',
             year: '2026',
-            color: 'from-purple-900/40 via-violet-950/60 to-black',
+            color: 'from-purple-950/60 via-[#10121a] to-black',
             accent: '#d4ff00',
-            tag: 'Featured Flagship',
+            tag: '3D Real-Time WebGL',
+            preview: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
         },
         {
             title: 'Hyperion Audio',
-            category: 'Brand & 3D Spatial',
+            category: 'Acoustic 3D Renderings',
             year: '2025',
-            color: 'from-emerald-950/50 via-teal-950/70 to-black',
+            color: 'from-emerald-950/60 via-[#10121a] to-black',
             accent: '#00f5ff',
-            tag: 'Award Winner',
+            tag: 'CGI Product Modeling',
+            preview: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=800&q=80',
         },
         {
-            title: 'Aura Robotics',
-            category: 'Hardware Interface',
+            title: 'Vortex Capital',
+            category: '2D Vector Identity',
             year: '2025',
-            color: 'from-amber-950/40 via-neutral-950/80 to-black',
+            color: 'from-amber-950/60 via-[#10121a] to-black',
             accent: '#ff9900',
-            tag: 'Design System',
+            tag: 'Brand Architecture',
+            preview: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=800&q=80',
         },
     ];
 
@@ -63,55 +61,93 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
         }
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.12,
+                delayChildren: 0.1,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 28 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+        },
+    };
+
     return (
-        <section className="relative min-h-[92vh] pt-32 pb-20 flex flex-col justify-between overflow-hidden">
-            {/* Background Kinetic Gradients */}
-            <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-[140px] pointer-events-none" />
-            <div className="absolute top-1/3 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none" />
+        <section className="relative min-h-[94vh] pt-32 pb-16 flex flex-col justify-between overflow-hidden bg-[#090a0d]">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-1/4 left-0 w-[32rem] h-[32rem] bg-[#d4ff00]/10 rounded-full blur-[160px] pointer-events-none" />
+            <div className="absolute top-1/3 right-10 w-[36rem] h-[36rem] bg-indigo-600/10 rounded-full blur-[180px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-                    
-                    {/* Left Column: Kinetic Headline & Action */}
+                <motion.div
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    {/* Left Column: Kinetic Headline & Staggered Typography */}
                     <div className="lg:col-span-7 space-y-8">
                         {/* Eyebrow Status Badge */}
-                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-wider uppercase text-neutral-300 backdrop-blur-md">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4ff00] opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d4ff00]"></span>
-                            </span>
-                            <span>ACCEPTING SELECT Q3/Q4 COMMISSIONS</span>
-                        </div>
-
-                        {/* Kinetic Main H1 */}
-                        <div className="space-y-2">
-                            <h1 className="text-4xl sm:text-6xl xl:text-7xl font-display font-extrabold tracking-tight leading-[1.05] text-white">
-                                WE SHAPE <br />
-                                UNFAIR ADVANTAGE FOR <br />
-                                <span className="relative inline-block overflow-hidden h-[1.15em] align-top text-[#d4ff00]">
-                                    <span
-                                        key={currentWordIndex}
-                                        className="inline-block transition-transform duration-500 ease-out animate-in slide-in-from-bottom-6"
-                                    >
-                                        {rotatingWords[currentWordIndex]}
-                                    </span>
+                        <motion.div variants={itemVariants}>
+                            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono tracking-widest uppercase text-neutral-300 backdrop-blur-md">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4ff00] opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d4ff00]"></span>
                                 </span>
-                            </h1>
+                                <span>2D & 3D CREATIVE STUDIO COMMISSIONS</span>
+                            </div>
+                        </motion.div>
 
-                            <p className="text-lg sm:text-xl text-neutral-400 max-w-xl font-normal leading-relaxed pt-2">
-                                CuttingEdger is a boundary-pushing design & technology agency. We transform audacious founders and global brands into untouchable market forces.
-                            </p>
+                        {/* Kinetic Agntix-Style Tall Condensed H1 */}
+                        <div className="space-y-3">
+                            <motion.h1
+                                variants={itemVariants}
+                                className="text-5xl sm:text-7xl xl:text-8xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold tracking-tight leading-[0.95] text-white"
+                            >
+                                WE SHAPE <br />
+                                RADICAL GRAPHICS & <br />
+                                <span className="relative inline-block overflow-hidden h-[1.12em] align-top text-[#d4ff00]">
+                                    <AnimatePresence mode="wait">
+                                        <motion.span
+                                            key={currentWordIndex}
+                                            initial={{ y: 50, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            exit={{ y: -50, opacity: 0 }}
+                                            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                                            className="inline-block whitespace-nowrap"
+                                        >
+                                            {rotatingWords[currentWordIndex]}
+                                        </motion.span>
+                                    </AnimatePresence>
+                                </span>
+                            </motion.h1>
+
+                            <motion.p
+                                variants={itemVariants}
+                                className="text-lg sm:text-xl text-neutral-400 max-w-xl font-normal leading-relaxed pt-2"
+                            >
+                                CuttingEdger is a creative powerhouse crafting bespoke 2D visual identities, CGI 3D product visualizers, and kinetic web platforms that dominate categories.
+                            </motion.p>
                         </div>
 
                         {/* CTAs */}
-                        <div className="flex flex-wrap items-center gap-4 pt-2">
+                        <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 pt-2">
                             <Button
                                 variant="primary"
                                 size="lg"
                                 onClick={scrollToWork}
                                 withArrow
                             >
-                                Explore Selected Work
+                                Explore 2D/3D Work
                             </Button>
 
                             <Button
@@ -119,48 +155,64 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 size="lg"
                                 onClick={onOpenContact}
                             >
-                                Initiate Project
+                                Commission Studio
                             </Button>
-                        </div>
+                        </motion.div>
 
-                        {/* Quick Trust Highlights */}
-                        <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg">
+                        {/* Quick Metrics */}
+                        <motion.div
+                            variants={itemVariants}
+                            className="pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg"
+                        >
                             <div>
-                                <span className="block font-display font-extrabold text-2xl text-white">100%</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Independent</span>
+                                <span className="block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-white">
+                                    350+
+                                </span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">3D & CGI Renders</span>
                             </div>
                             <div>
-                                <span className="block font-display font-extrabold text-2xl text-[#d4ff00]">14+</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Awwwards / FWA</span>
+                                <span className="block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-[#d4ff00]">
+                                    100%
+                                </span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">Bespoke Vector</span>
                             </div>
                             <div>
-                                <span className="block font-display font-extrabold text-2xl text-white">&lt;0.5s</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Edge Velocity</span>
+                                <span className="block font-['Antonio',_'Syne',_sans-serif] text-3xl font-bold text-white">
+                                    &lt;12ms
+                                </span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">Shader Latency</span>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
 
-                    {/* Right Column: Interactive 3D Work Reel Shuffle */}
+                    {/* Right Column: Interactive 3D Work Reel Shuffle with Framer Motion */}
                     <div className="lg:col-span-5 relative flex justify-center items-center py-8">
-                        <div className="relative w-full max-w-md h-[430px]">
+                        <div className="relative w-full max-w-md h-[450px]">
                             {reelCards.map((card, idx) => {
                                 const offset = (idx - activeCardIndex + reelCards.length) % reelCards.length;
                                 const isTop = offset === 0;
 
                                 return (
-                                    <div
+                                    <motion.div
                                         key={card.title}
                                         onClick={() => setActiveCardIndex((prev) => (prev + 1) % reelCards.length)}
                                         data-cursor-view="CLICK TO SHUFFLE"
-                                        className={`absolute inset-0 rounded-3xl p-7 border border-white/15 bg-gradient-to-b ${card.color} backdrop-blur-xl shadow-2xl transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none`}
-                                        style={{
-                                            transform: `translateY(${offset * 18}px) scale(${1 - offset * 0.06})`,
+                                        animate={{
+                                            y: offset * 20,
+                                            scale: 1 - offset * 0.05,
+                                            opacity: 1 - offset * 0.22,
                                             zIndex: reelCards.length - offset,
-                                            opacity: 1 - offset * 0.2,
                                         }}
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 260,
+                                            damping: 24,
+                                        }}
+                                        whileHover={isTop ? { y: -6, scale: 1.02 } : {}}
+                                        className={`absolute inset-0 rounded-3xl p-7 border border-white/15 bg-gradient-to-b ${card.color} backdrop-blur-2xl shadow-2xl cursor-pointer flex flex-col justify-between select-none overflow-hidden`}
                                     >
                                         {/* Card Top Pill */}
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between relative z-10">
                                             <span className="font-mono text-[11px] uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/10">
                                                 {card.tag}
                                             </span>
@@ -169,34 +221,39 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                             </span>
                                         </div>
 
-                                        {/* Visual Graphic Representation */}
-                                        <div className="my-auto py-8">
-                                            <div className="w-16 h-16 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center mb-6 shadow-inner">
-                                                <Sparkles className="w-8 h-8 text-[#d4ff00]" />
+                                        {/* Visual Thumbnail Preview */}
+                                        <div className="relative my-auto py-4">
+                                            <div className="relative rounded-2xl overflow-hidden aspect-[16/10] border border-white/10 mb-4 bg-black/40">
+                                                <img
+                                                    src={card.preview}
+                                                    alt={card.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                                             </div>
+
                                             <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
                                                 {card.category}
                                             </span>
-                                            <h3 className="text-3xl font-display font-black text-white mt-1">
+                                            <h3 className="text-3xl font-['Antonio',_'Syne',_sans-serif] uppercase font-bold text-white mt-0.5">
                                                 {card.title}
                                             </h3>
                                         </div>
 
                                         {/* Card Bottom Strip */}
-                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
+                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400 relative z-10">
                                             <span>Case Study 0{idx + 1}</span>
-                                            <div className="flex items-center gap-1.5 text-white font-medium group-hover:text-[#d4ff00]">
+                                            <div className="flex items-center gap-1.5 text-white font-medium">
                                                 <span>Shuffle Next</span>
                                                 <ArrowUpRight className="w-4 h-4 text-[#d4ff00]" />
                                             </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 );
                             })}
                         </div>
                     </div>
-
-                </div>
+                </motion.div>
             </div>
 
             {/* Scroll Indicator */}
@@ -209,7 +266,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                     type="button"
                     onClick={scrollToWork}
                     aria-label="Scroll down"
-                    className="p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors"
+                    className="p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors cursor-pointer"
                 >
                     <ArrowDown className="w-4 h-4 animate-bounce" />
                 </button>

@@ -7,10 +7,10 @@
 
         <title inertia>{{ config('app.name', 'CuttingEdger') }}</title>
 
-        <!-- Google Fonts: Syne + Plus Jakarta Sans -->
+        <!-- Google Fonts: Antonio (MangoGrotesque equivalent) + Bebas Neue + Syne + Plus Jakarta Sans + Space Grotesk -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Syne:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
         <!-- Anti-FOUC theme detector -->
         <script>
