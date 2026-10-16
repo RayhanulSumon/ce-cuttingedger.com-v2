@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContactController;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 

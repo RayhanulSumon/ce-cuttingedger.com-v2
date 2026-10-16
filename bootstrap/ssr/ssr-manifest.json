@@ -47,6 +47,9 @@
   "resources/js/Pages/About.tsx": [
     "/build/assets/About-DNo7KDqP.js"
   ],
+  "resources/js/Pages/Admin/Dashboard.tsx": [
+    "/build/assets/Dashboard-CaLjuC1d.js"
+  ],
   "resources/js/Pages/Blog/Index.tsx": [
     "/build/assets/Index-BxwCtltU.js"
   ],

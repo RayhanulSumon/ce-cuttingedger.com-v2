@@ -1,0 +1,31 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
+
+class AdminDashboardControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed();
+    }
+
+    public function test_renders_admin_dashboard_with_studio_kpis_and_inquiries(): void
+    {
+        $response = $this->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Dashboard')
+            ->has('stats')
+            ->has('recentInquiries')
+            ->has('featuredProjects')
+        );
+    }
+}

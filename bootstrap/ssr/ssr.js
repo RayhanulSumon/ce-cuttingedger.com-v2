@@ -850,6 +850,7 @@ createServer((page) => createInertiaApp({
 	resolve: async (name) => {
 		const resolvedPageModule = await resolvePageComponent(`./Pages/${name}.tsx`, /* #__PURE__ */ Object.assign({
 			"./Pages/About.tsx": () => import("./assets/About-DNo7KDqP.js"),
+			"./Pages/Admin/Dashboard.tsx": () => import("./assets/Dashboard-CaLjuC1d.js"),
 			"./Pages/Blog/Index.tsx": () => import("./assets/Index-BxwCtltU.js"),
 			"./Pages/Blog/Show.tsx": () => import("./assets/Show-BuTGy-wQ.js"),
 			"./Pages/Careers/Index.tsx": () => import("./assets/Index-UfhDvLx-.js"),
