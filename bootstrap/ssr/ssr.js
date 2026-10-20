@@ -1,9 +1,10 @@
-import { forwardRef, useEffect, useState } from "react";
-import { Link, createInertiaApp, useForm, usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import { Link, createInertiaApp, router, useForm, usePage } from "@inertiajs/react";
 import createServer from "@inertiajs/react/server";
 import { renderToString } from "react-dom/server";
-import { ArrowUp, ArrowUpRight, Check, Mail, MapPin, Menu, Moon, Phone, Send, Sun, X } from "lucide-react";
-import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+import { ArrowUpRight, ChevronDown, ChevronUp, Mail, MapPin, Menu, Moon, Phone, Send, Sun, X } from "lucide-react";
+import { jsx, jsxs } from "react/jsx-runtime";
+import { motion } from "framer-motion";
 import Lenis from "lenis";
 //#region node_modules/laravel-vite-plugin/inertia-helpers/index.js
 async function resolvePageComponent(path, pages) {
@@ -73,52 +74,14 @@ function ThemeToggle({ className = "" }) {
 	});
 }
 //#endregion
-//#region resources/js/Components/UI/Button.tsx
-var Button = forwardRef(({ variant = "primary", size = "md", withArrow = false, href, isExternal = false, className = "", children, ...props }, ref) => {
-	const baseClasses = `group relative inline-flex items-center justify-center gap-2 rounded-full transition-all duration-300 overflow-hidden select-none cursor-pointer ${{
-		sm: "px-4 py-2 text-xs font-semibold tracking-wider uppercase",
-		md: "px-6 py-3.5 text-xs md:text-sm font-bold tracking-wider uppercase",
-		lg: "px-8 py-4 text-sm md:text-base font-bold tracking-wider uppercase"
-	}[size]} ${{
-		primary: "bg-[#d4ff00] text-black hover:bg-[#c2eb00] hover:shadow-[0_0_25px_rgba(212,255,0,0.35)] font-display active:scale-95",
-		secondary: "bg-white/10 dark:bg-white/5 text-neutral-900 dark:text-white border border-black/10 dark:border-white/10 hover:border-[#d4ff00]/60 hover:text-[#d4ff00] dark:hover:text-[#d4ff00] backdrop-blur-md active:scale-95",
-		outline: "border border-black/20 dark:border-white/20 text-neutral-900 dark:text-white hover:border-[#d4ff00] hover:text-[#d4ff00] bg-transparent active:scale-95",
-		ghost: "text-neutral-700 dark:text-neutral-300 hover:text-[#d4ff00] dark:hover:text-[#d4ff00] bg-transparent"
-	}[variant]} ${className}`;
-	const content = /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsxs("span", {
-		className: "relative z-10 flex items-center gap-2",
-		children: [children, withArrow && /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" })]
-	}) });
-	if (href) {
-		if (isExternal) return /* @__PURE__ */ jsx("a", {
-			href,
-			target: "_blank",
-			rel: "noopener noreferrer",
-			className: baseClasses,
-			children: content
-		});
-		return /* @__PURE__ */ jsx(Link, {
-			href,
-			className: baseClasses,
-			children: content
-		});
-	}
-	return /* @__PURE__ */ jsx("button", {
-		ref,
-		className: baseClasses,
-		...props,
-		children: content
-	});
-});
-Button.displayName = "Button";
-//#endregion
 //#region resources/js/Layouts/Header.tsx
-function Header({ onOpenContact, onOpenMobileMenu, settings }) {
+function Header({ onOpenContact, onOpenMobileMenu }) {
 	const { url } = usePage();
 	const [isScrolled, setIsScrolled] = useState(false);
+	const [openDropdown, setOpenDropdown] = useState(null);
 	useEffect(() => {
 		const handleScroll = () => {
-			if (window.scrollY > 20) setIsScrolled(true);
+			if (window.scrollY > 15) setIsScrolled(true);
 			else setIsScrolled(false);
 		};
 		window.addEventListener("scroll", handleScroll, { passive: true });
@@ -127,28 +90,114 @@ function Header({ onOpenContact, onOpenMobileMenu, settings }) {
 	}, []);
 	const navItems = [
 		{
-			label: "Work",
-			href: "/work"
+			label: "Home",
+			href: "/",
+			children: [
+				{
+					label: "Creative Studio (Dark)",
+					href: "/"
+				},
+				{
+					label: "2D & 3D Interactive Reel",
+					href: "/work"
+				},
+				{
+					label: "Capabilities & Services",
+					href: "/services"
+				}
+			]
+		},
+		{
+			label: "Pages",
+			href: "/about",
+			children: [
+				{
+					label: "About Studio",
+					href: "/about"
+				},
+				{
+					label: "Creative Team",
+					href: "/team"
+				},
+				{
+					label: "Careers & Openings",
+					href: "/careers"
+				},
+				{
+					label: "Pricing Plans",
+					href: "/pricing"
+				},
+				{
+					label: "Studio FAQ",
+					href: "/faq"
+				}
+			]
+		},
+		{
+			label: "Projects",
+			href: "/work",
+			children: [
+				{
+					label: "All Commissions (24+)",
+					href: "/work"
+				},
+				{
+					label: "3D Spatial CGI",
+					href: "/work?category=3d"
+				},
+				{
+					label: "2D Vector Identity",
+					href: "/work?category=2d"
+				},
+				{
+					label: "Kinetic WebGL Systems",
+					href: "/work?category=web"
+				}
+			]
 		},
 		{
 			label: "Services",
-			href: "/services"
-		},
-		{
-			label: "About",
-			href: "/about"
-		},
-		{
-			label: "Team",
-			href: "/team"
+			href: "/services",
+			children: [
+				{
+					label: "All Disciplines",
+					href: "/services"
+				},
+				{
+					label: "Brand Architecture",
+					href: "/services/brand-architecture"
+				},
+				{
+					label: "Kinetic 3D & CGI",
+					href: "/services/kinetic-3d"
+				},
+				{
+					label: "Full-Stack Web Velocity",
+					href: "/services/creative-web"
+				}
+			]
 		},
 		{
 			label: "Blog",
-			href: "/blog"
+			href: "/blog",
+			children: [{
+				label: "Studio Insights",
+				href: "/blog"
+			}, {
+				label: "Design System Notes",
+				href: "/blog"
+			}]
 		},
 		{
 			label: "Contact",
-			href: "/contact"
+			href: "/contact",
+			children: [{
+				label: "Contact Us",
+				href: "/contact"
+			}, {
+				label: "Start a Commission",
+				href: "/contact"
+			}]
 		}
 	];
 	const isActive = (href) => {
@@ -156,7 +205,7 @@ function Header({ onOpenContact, onOpenMobileMenu, settings }) {
 		return url.startsWith(href);
 	};
 	return /* @__PURE__ */ jsx("header", {
-		className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "py-3.5 bg-[#0a0b0e]/85 dark:bg-[#0a0b0e]/90 light:bg-white/85 backdrop-blur-xl border-b border-black/5 dark:border-white/10 shadow-sm" : "py-6 bg-transparent"}`,
+		className: `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "py-3 bg-[#0c0d12]/95 backdrop-blur-xl border-b border-white/10 shadow-lg" : "py-5 bg-[#090a0d]/80 backdrop-blur-md border-b border-white/5"}`,
 		children: /* @__PURE__ */ jsx("div", {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: /* @__PURE__ */ jsxs("div", {
@@ -164,46 +213,68 @@ function Header({ onOpenContact, onOpenMobileMenu, settings }) {
 				children: [
 					/* @__PURE__ */ jsxs(Link, {
 						href: "/",
-						className: "group flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg",
-						children: [
-							/* @__PURE__ */ jsx("span", {
-								className: "font-display font-black text-xl sm:text-2xl tracking-tighter text-neutral-900 dark:text-white transition-colors",
-								children: settings?.brand_name || "CUTTING"
-							}),
-							/* @__PURE__ */ jsx("span", {
-								className: "font-display font-black text-xl sm:text-2xl tracking-tighter text-[#d4ff00]",
+						className: "group flex items-center gap-2.5 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg select-none",
+						children: [/* @__PURE__ */ jsx("div", {
+							className: "w-8 h-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black transition-all duration-300",
+							children: /* @__PURE__ */ jsx("svg", {
+								viewBox: "0 0 24 24",
+								fill: "currentColor",
+								className: "w-4 h-4",
+								children: /* @__PURE__ */ jsx("path", { d: "M12 2L2 22h7l3-6 3 6h7L12 2zm0 6l1.8 3.6h-3.6L12 8z" })
+							})
+						}), /* @__PURE__ */ jsxs("div", {
+							className: "flex items-baseline tracking-tight",
+							children: [/* @__PURE__ */ jsx("span", {
+								className: "font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-white transition-colors",
+								children: "CUTTING"
+							}), /* @__PURE__ */ jsx("span", {
+								className: "font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-[#d4ff00] ml-1",
 								children: "EDGER."
-							}),
-							/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#d4ff00] animate-pulse ml-0.5" })
-						]
+							})]
+						})]
 					}),
 					/* @__PURE__ */ jsx("nav", {
-						className: "hidden lg:flex items-center gap-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full px-4 py-1.5 backdrop-blur-md",
+						className: "hidden lg:flex items-center gap-1",
 						children: navItems.map((item) => {
 							const active = isActive(item.href);
-							return /* @__PURE__ */ jsx(Link, {
-								href: item.href,
-								className: `relative px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-colors rounded-full ${active ? "text-[#d4ff00] bg-black/20 dark:bg-white/10" : "text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-[#d4ff00]"}`,
-								children: item.label
-							}, item.href);
+							const hasChildren = item.children && item.children.length > 0;
+							return /* @__PURE__ */ jsxs("div", {
+								className: "relative",
+								onMouseEnter: () => setOpenDropdown(item.label),
+								onMouseLeave: () => setOpenDropdown(null),
+								children: [/* @__PURE__ */ jsxs(Link, {
+									href: item.href,
+									className: `px-3.5 py-2 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors rounded-lg group ${active ? "text-[#d4ff00]" : "text-neutral-300 hover:text-white"}`,
+									children: [/* @__PURE__ */ jsx("span", { children: item.label }), hasChildren && /* @__PURE__ */ jsx(ChevronDown, { className: "w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-transform group-hover:rotate-180" })]
+								}), hasChildren && openDropdown === item.label && /* @__PURE__ */ jsx("div", {
+									className: "absolute top-full left-0 w-56 pt-2 z-50",
+									children: /* @__PURE__ */ jsx("div", {
+										className: "rounded-2xl p-2 bg-[#12141c] border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1",
+										children: item.children.map((child, idx) => /* @__PURE__ */ jsx(Link, {
+											href: child.href,
+											className: "block px-3 py-2 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-black hover:bg-[#d4ff00] rounded-xl transition-colors",
+											children: child.label
+										}, idx))
+									})
+								})]
+							}, item.label);
 						})
 					}),
 					/* @__PURE__ */ jsxs("div", {
 						className: "flex items-center gap-3",
 						children: [
 							/* @__PURE__ */ jsx(ThemeToggle, {}),
-							/* @__PURE__ */ jsxs(Button, {
-								variant: "primary",
-								size: "sm",
+							/* @__PURE__ */ jsxs("button", {
+								type: "button",
 								onClick: onOpenContact,
-								className: "hidden sm:inline-flex",
-								children: [/* @__PURE__ */ jsx("span", { children: "Let's talk" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })]
+								className: "hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer select-none",
+								children: [/* @__PURE__ */ jsx("span", { children: "Get in Touch" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 text-black stroke-[2.5]" })]
 							}),
 							/* @__PURE__ */ jsx("button", {
 								type: "button",
 								onClick: onOpenMobileMenu,
 								"aria-label": "Open mobile navigation menu",
-								className: "p-2.5 rounded-full border border-black/10 dark:border-white/15 bg-white/5 dark:bg-white/5 text-neutral-800 dark:text-neutral-200 hover:text-[#d4ff00] hover:border-[#d4ff00] lg:hidden transition-colors",
+								className: "p-2.5 rounded-full border border-white/15 bg-white/5 text-neutral-200 hover:text-[#d4ff00] hover:border-[#d4ff00] lg:hidden transition-colors",
 								children: /* @__PURE__ */ jsx(Menu, { className: "w-5 h-5" })
 							})
 						]
@@ -215,207 +286,284 @@ function Header({ onOpenContact, onOpenMobileMenu, settings }) {
 }
 //#endregion
 //#region resources/js/Layouts/Footer.tsx
-function Footer({ settings }) {
-	const { data, setData, post, processing, wasSuccessful, reset } = useForm({ email: "" });
-	const handleNewsletterSubmit = (e) => {
-		e.preventDefault();
-		post("/newsletter", {
-			preserveScroll: true,
-			onSuccess: () => reset()
-		});
-	};
+function Footer({ settings, onOpenContact, compact }) {
+	const { url } = usePage();
+	const isHomePage = url === "/" || url.split("?")[0] === "";
+	const isCompact = compact !== void 0 ? compact : !isHomePage;
+	const letters = Array.from("CONTACT US");
+	const [hoveredIndex, setHoveredIndex] = useState(null);
 	const scrollToTop = () => {
-		window.scrollTo({
+		if (typeof window !== "undefined" && window.lenis) window.lenis.scrollTo(0);
+		else window.scrollTo({
 			top: 0,
 			behavior: "smooth"
 		});
 	};
-	return /* @__PURE__ */ jsxs("footer", {
-		className: "relative bg-[#0a0b0e] text-white border-t border-white/10 pt-20 pb-12 overflow-hidden",
-		children: [/* @__PURE__ */ jsx("div", { className: "absolute bottom-0 right-1/4 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-[140px] pointer-events-none" }), /* @__PURE__ */ jsxs("div", {
-			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10",
-			children: [
-				/* @__PURE__ */ jsxs("div", {
-					className: "pb-16 border-b border-white/10",
-					children: [/* @__PURE__ */ jsx("span", {
-						className: "font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-4",
-						children: "Ready To Transform Your Category?"
-					}), /* @__PURE__ */ jsxs("div", {
-						className: "flex flex-col lg:flex-row lg:items-end justify-between gap-8",
-						children: [/* @__PURE__ */ jsxs("h2", {
-							className: "text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.05] max-w-3xl",
-							children: [
-								"Let’s engineer something",
-								" ",
-								/* @__PURE__ */ jsx("span", {
-									className: "text-[#d4ff00] underline decoration-[#d4ff00]/40 underline-offset-8",
-									children: "unforgettable"
-								}),
-								" ",
-								"together."
-							]
-						}), /* @__PURE__ */ jsxs("a", {
-							href: `mailto:${settings?.contact_email || "hello@cuttingedger.com"}`,
-							className: "group inline-flex items-center gap-3 text-lg sm:text-xl font-mono text-neutral-300 hover:text-[#d4ff00] transition-colors",
-							children: [/* @__PURE__ */ jsx("span", { children: settings?.contact_email || "hello@cuttingedger.com" }), /* @__PURE__ */ jsx("div", {
-								className: "w-10 h-10 rounded-full border border-white/20 group-hover:border-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black flex items-center justify-center transition-all",
-								children: /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-5 h-5" })
-							})]
+	const socials = [
+		{
+			name: "Twitter",
+			url: settings?.social_twitter || "https://twitter.com"
+		},
+		{
+			name: "Instagram",
+			url: settings?.social_instagram || "https://instagram.com"
+		},
+		{
+			name: "Behance",
+			url: "https://behance.net"
+		},
+		{
+			name: "Dribbble",
+			url: settings?.social_dribbble || "https://dribbble.com"
+		},
+		{
+			name: "LinkedIn",
+			url: settings?.social_linkedin || "https://linkedin.com"
+		}
+	];
+	if (isCompact) return /* @__PURE__ */ jsx("footer", {
+		id: "site-footer",
+		className: "relative bg-[#07080a] text-white border-t border-white/10 select-none",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 sm:py-16",
+			children: [/* @__PURE__ */ jsxs("div", {
+				className: "flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-10 border-b border-white/10",
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "space-y-2",
+						children: [/* @__PURE__ */ jsxs(Link, {
+							href: "/",
+							className: "inline-flex items-center gap-2 font-['MangoGrotesque',_'Antonio',_sans-serif] text-3xl sm:text-4xl font-normal tracking-wider text-white uppercase hover:text-[#d4ff00] transition-colors",
+							children: [/* @__PURE__ */ jsx("span", {
+								className: "text-2xl font-black text-[#d4ff00]",
+								children: "▲"
+							}), /* @__PURE__ */ jsx("span", { children: "cuttingedger" })]
+						}), /* @__PURE__ */ jsx("p", {
+							className: "text-xs sm:text-sm text-neutral-400 font-sans max-w-sm",
+							children: "Radical digital agency & creative engineering studio for visionary innovators."
 						})]
-					})]
-				}),
-				/* @__PURE__ */ jsxs("div", {
-					className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 py-16 border-b border-white/10",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-2 space-y-4",
-							children: [
-								/* @__PURE__ */ jsxs(Link, {
-									href: "/",
-									className: "font-display font-extrabold text-2xl tracking-tighter",
-									children: [/* @__PURE__ */ jsx("span", { children: "CUTTING" }), /* @__PURE__ */ jsx("span", {
-										className: "text-[#d4ff00]",
-										children: "EDGER."
-									})]
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "text-neutral-400 text-sm max-w-sm leading-relaxed",
-									children: settings?.tagline || "A next-generation digital agency engineering tactile brand identities, kinetic software interfaces, and radical web experiences."
-								}),
-								/* @__PURE__ */ jsxs("div", {
-									className: "pt-2",
-									children: [/* @__PURE__ */ jsx("span", {
-										className: "font-mono text-xs text-neutral-500 uppercase block mb-2",
-										children: "Headquartered in"
-									}), /* @__PURE__ */ jsx("span", {
-										className: "text-sm text-neutral-300 font-medium",
-										children: settings?.office_address || "San Francisco & London"
-									})]
-								})
-							]
-						}),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "font-mono text-xs uppercase tracking-widest text-neutral-400 mb-4",
-							children: "Index"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-2.5 text-sm",
-							children: [
-								"Work",
-								"Services",
-								"About",
-								"Team",
-								"Careers",
-								"Pricing"
-							].map((item) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(Link, {
-								href: `/${item.toLowerCase()}`,
-								className: "text-neutral-400 hover:text-[#d4ff00] transition-colors",
-								children: item
-							}) }, item))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "font-mono text-xs uppercase tracking-widest text-neutral-400 mb-4",
-							children: "Socials"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-2.5 text-sm",
-							children: [
-								{
-									name: "Twitter / X",
-									url: "https://twitter.com"
-								},
-								{
-									name: "Instagram",
-									url: "https://instagram.com"
-								},
-								{
-									name: "LinkedIn",
-									url: "https://linkedin.com"
-								},
-								{
-									name: "Dribbble",
-									url: "https://dribbble.com"
-								},
-								{
-									name: "GitHub",
-									url: "https://github.com"
-								}
-							].map((s) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs("a", {
-								href: s.url,
-								target: "_blank",
-								rel: "noopener noreferrer",
-								className: "text-neutral-400 hover:text-[#d4ff00] transition-colors inline-flex items-center gap-1",
-								children: [/* @__PURE__ */ jsx("span", { children: s.name }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3 h-3 opacity-60" })]
-							}) }, s.name))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [
-							/* @__PURE__ */ jsx("h4", {
-								className: "font-mono text-xs uppercase tracking-widest text-neutral-400 mb-4",
-								children: "Dispatch"
+					}),
+					/* @__PURE__ */ jsxs("nav", {
+						className: "flex flex-wrap items-center gap-6 sm:gap-8 text-xs sm:text-sm font-mono uppercase tracking-wider text-neutral-300",
+						children: [
+							/* @__PURE__ */ jsx(Link, {
+								href: "/work",
+								className: "hover:text-[#d4ff00] transition-colors",
+								children: "Work"
 							}),
-							/* @__PURE__ */ jsx("p", {
-								className: "text-xs text-neutral-400 mb-3",
-								children: "Quarterly digest on design theory, kinetic web engineering, and product velocity."
+							/* @__PURE__ */ jsx(Link, {
+								href: "/services",
+								className: "hover:text-[#d4ff00] transition-colors",
+								children: "Services"
 							}),
-							/* @__PURE__ */ jsxs("form", {
-								onSubmit: handleNewsletterSubmit,
-								className: "space-y-2",
-								children: [/* @__PURE__ */ jsxs("div", {
-									className: "relative",
-									children: [/* @__PURE__ */ jsx("input", {
-										type: "email",
-										required: true,
-										value: data.email,
-										onChange: (e) => setData("email", e.target.value),
-										placeholder: "your@email.com",
-										className: "w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors pr-10"
-									}), /* @__PURE__ */ jsx("button", {
-										type: "submit",
-										disabled: processing,
-										"aria-label": "Subscribe to newsletter",
-										className: "absolute right-1.5 top-1.5 p-1.5 rounded-lg bg-[#d4ff00] text-black hover:bg-[#c2eb00] transition-colors",
-										children: wasSuccessful ? /* @__PURE__ */ jsx(Check, { className: "w-3.5 h-3.5" }) : /* @__PURE__ */ jsx(Send, { className: "w-3.5 h-3.5" })
-									})]
-								}), wasSuccessful && /* @__PURE__ */ jsx("span", {
-									className: "text-[11px] font-mono text-[#d4ff00] block",
-									children: "Subscribed successfully."
-								})]
+							/* @__PURE__ */ jsx(Link, {
+								href: "/about",
+								className: "hover:text-[#d4ff00] transition-colors",
+								children: "About"
+							}),
+							/* @__PURE__ */ jsx(Link, {
+								href: "/pricing",
+								className: "hover:text-[#d4ff00] transition-colors",
+								children: "Pricing"
+							}),
+							/* @__PURE__ */ jsx(Link, {
+								href: "/contact",
+								className: "hover:text-[#d4ff00] transition-colors",
+								children: "Contact"
 							})
-						] })
-					]
-				}),
-				/* @__PURE__ */ jsxs("div", {
-					className: "pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-neutral-500",
-					children: [/* @__PURE__ */ jsxs("div", {
-						className: "flex items-center gap-6",
+						]
+					}),
+					/* @__PURE__ */ jsx("div", {
+						className: "flex items-center gap-3",
+						children: /* @__PURE__ */ jsx(Link, {
+							href: "/contact",
+							onClick: (e) => {
+								if (onOpenContact) {
+									e.preventDefault();
+									onOpenContact();
+								}
+							},
+							className: "px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] text-xs font-mono uppercase tracking-wider text-white transition-all duration-300 shadow-sm",
+							children: "Start a Project"
+						})
+					})
+				]
+			}), /* @__PURE__ */ jsxs("div", {
+				className: "pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-neutral-400 font-sans",
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "flex items-center gap-6 order-2 sm:order-1",
 						children: [
 							/* @__PURE__ */ jsxs("span", { children: [
-								"© ",
+								"Copyright © ",
 								(/* @__PURE__ */ new Date()).getFullYear(),
-								" CuttingEdger Inc. All rights reserved."
+								" CuttingEdger."
 							] }),
 							/* @__PURE__ */ jsx(Link, {
 								href: "/privacy",
-								className: "hover:text-neutral-300 transition-colors",
-								children: "Privacy Policy"
+								className: "hover:text-white transition-colors",
+								children: "Privacy"
 							}),
 							/* @__PURE__ */ jsx(Link, {
 								href: "/terms",
-								className: "hover:text-neutral-300 transition-colors",
-								children: "Terms of Service"
+								className: "hover:text-white transition-colors",
+								children: "Terms"
 							})
 						]
-					}), /* @__PURE__ */ jsxs("button", {
-						type: "button",
-						onClick: scrollToTop,
-						"aria-label": "Scroll back to top",
-						className: "inline-flex items-center gap-2 text-neutral-400 hover:text-[#d4ff00] transition-colors cursor-pointer",
-						children: [/* @__PURE__ */ jsx("span", { children: "Back to top" }), /* @__PURE__ */ jsx("div", {
-							className: "p-1 rounded-full border border-white/20",
-							children: /* @__PURE__ */ jsx(ArrowUp, { className: "w-3.5 h-3.5" })
-						})]
+					}),
+					/* @__PURE__ */ jsx("div", {
+						className: "flex items-center gap-6 order-1 sm:order-2",
+						children: socials.map((social) => /* @__PURE__ */ jsx("a", {
+							href: social.url,
+							target: "_blank",
+							rel: "noopener noreferrer",
+							className: "relative text-[#f9f4e8]/80 hover:text-white transition-colors font-medium tracking-wide after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] after:bg-[#d4ff00] after:transition-all after:duration-300",
+							children: social.name
+						}, social.name))
+					}),
+					/* @__PURE__ */ jsx("div", {
+						className: "order-3",
+						children: /* @__PURE__ */ jsx("button", {
+							type: "button",
+							onClick: scrollToTop,
+							"aria-label": "Scroll back to top",
+							className: "w-9 h-9 rounded-full bg-white/10 hover:bg-[#d4ff00] hover:text-black text-white flex items-center justify-center transition-all duration-300 cursor-pointer",
+							children: /* @__PURE__ */ jsx(ChevronUp, { className: "w-4 h-4 stroke-[2.5]" })
+						})
+					})
+				]
+			})]
+		})
+	});
+	return /* @__PURE__ */ jsx("footer", {
+		id: "site-footer",
+		className: "relative bg-[#090a0d] px-3 sm:px-5 pb-4 pt-12 sm:pt-16 select-none",
+		children: /* @__PURE__ */ jsxs("div", {
+			className: "relative rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/10 min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between p-6 sm:p-10 lg:p-14 shadow-[0_30px_90px_rgba(0,0,0,0.95)]",
+			style: {
+				backgroundColor: "#080302",
+				backgroundImage: "url('/images/footer-bg.jpg')",
+				backgroundPosition: "center center",
+				backgroundRepeat: "no-repeat",
+				backgroundSize: "cover"
+			},
+			children: [
+				/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40 pointer-events-none" }),
+				/* @__PURE__ */ jsxs("div", {
+					className: "relative z-10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-base font-sans text-[#f9f4e8]",
+					children: [
+						/* @__PURE__ */ jsx("span", {
+							className: "font-normal text-[#f9f4e8]/90 tracking-wide order-2 sm:order-1",
+							children: "Creative Design Agency"
+						}),
+						/* @__PURE__ */ jsxs(Link, {
+							href: "/",
+							className: "order-1 sm:order-2 inline-flex items-center gap-1.5 font-['MangoGrotesque',_'Antonio',_sans-serif] text-3xl sm:text-4xl font-normal tracking-wider text-white uppercase hover:text-[#d4ff00] transition-colors",
+							children: [/* @__PURE__ */ jsx("span", {
+								className: "text-2xl font-black text-[#d4ff00]",
+								children: "▲"
+							}), /* @__PURE__ */ jsx("span", { children: "cuttingedger" })]
+						}),
+						/* @__PURE__ */ jsx("span", {
+							className: "font-normal text-[#f9f4e8]/90 tracking-wide order-3 hidden sm:inline-block",
+							children: settings?.office_address || "Based in London"
+						})
+					]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "relative z-10 w-full px-2 sm:px-4 py-14 sm:py-20 flex flex-col items-center justify-center text-center my-auto",
+					children: [/* @__PURE__ */ jsx("span", {
+						className: "font-['Plus_Jakarta_Sans',_sans-serif] text-xs sm:text-sm uppercase tracking-[0.22em] text-[#f9f4e8]/70 font-medium mb-6 sm:mb-8 select-none",
+						children: "CONTACT US AND LET'S BRING YOUR VISION TO LIFE"
+					}), /* @__PURE__ */ jsx(Link, {
+						href: "/contact",
+						onClick: (e) => {
+							if (onOpenContact) {
+								e.preventDefault();
+								onOpenContact();
+							}
+						},
+						onPointerLeave: () => setHoveredIndex(null),
+						className: "cursor-pointer group flex items-start justify-center select-none w-full max-w-[98%] mx-auto",
+						title: "Click to get in touch",
+						children: /* @__PURE__ */ jsx("div", {
+							className: "flex items-start justify-center flex-nowrap overflow-visible",
+							children: letters.map((char, index) => {
+								if (char === " ") return /* @__PURE__ */ jsx("span", { className: "w-3 sm:w-6 md:w-10 lg:w-14 inline-block pointer-events-none" }, `space-${index}`);
+								const isHovered = hoveredIndex === index;
+								return /* @__PURE__ */ jsx(motion.span, {
+									onPointerEnter: (e) => {
+										e.stopPropagation();
+										setHoveredIndex(index);
+									},
+									onPointerLeave: (e) => {
+										e.stopPropagation();
+										setHoveredIndex((prev) => prev === index ? null : prev);
+									},
+									animate: {
+										scaleY: isHovered ? 1.3 : 1,
+										y: isHovered ? "6.5%" : "0%"
+									},
+									transition: {
+										duration: .2,
+										ease: [
+											.39,
+											.575,
+											.565,
+											1
+										]
+									},
+									style: { transformOrigin: "center center" },
+									className: "inline-block font-['MangoGrotesque',_'Antonio',_sans-serif] font-normal uppercase text-[90px] xs:text-[130px] sm:text-[190px] md:text-[270px] lg:text-[340px] xl:text-[400px] leading-[0.86] text-[#f9f4e8] tracking-[-0.01em] will-change-transform select-none cursor-pointer hover:text-white",
+									children: char
+								}, `char-${index}`);
+							})
+						})
 					})]
+				}),
+				/* @__PURE__ */ jsxs("div", {
+					className: "relative z-10 w-full pt-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs sm:text-sm font-sans text-[#f9f4e8] border-t border-white/10",
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-6",
+							children: [
+								/* @__PURE__ */ jsx("span", { children: "Powered by CuttingEdger" }),
+								/* @__PURE__ */ jsx(Link, {
+									href: "/privacy",
+									className: "text-[#f9f4e8]/60 hover:text-white transition-colors text-xs",
+									children: "Privacy"
+								}),
+								/* @__PURE__ */ jsx(Link, {
+									href: "/terms",
+									className: "text-[#f9f4e8]/60 hover:text-white transition-colors text-xs",
+									children: "Terms"
+								})
+							]
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "flex items-center gap-6 sm:gap-8",
+							children: socials.map((social) => /* @__PURE__ */ jsx("a", {
+								href: social.url,
+								target: "_blank",
+								rel: "noopener noreferrer",
+								className: "relative text-[#f9f4e8] hover:text-white transition-colors font-medium tracking-wide after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] after:bg-[#f9f4e8] after:transition-all after:duration-300",
+								children: social.name
+							}, social.name))
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-4",
+							children: [/* @__PURE__ */ jsxs("span", { children: ["Copyright © ", (/* @__PURE__ */ new Date()).getFullYear()] }), /* @__PURE__ */ jsx("button", {
+								type: "button",
+								onClick: scrollToTop,
+								"aria-label": "Scroll back to top",
+								className: "w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#d4ff00] transition-all duration-300 shadow-xl cursor-pointer shrink-0",
+								children: /* @__PURE__ */ jsx(ChevronUp, { className: "w-5 h-5 stroke-[2.5]" })
+							})]
+						})
+					]
 				})
 			]
-		})]
+		})
 	});
 }
 //#endregion
@@ -719,14 +867,21 @@ function CursorFollower() {
 	const [isClicking, setIsClicking] = useState(false);
 	const [label, setLabel] = useState(null);
 	const [isVisible, setIsVisible] = useState(false);
+	const [isIdle, setIsIdle] = useState(false);
 	useEffect(() => {
 		if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		let idleTimer;
 		const onMouseMove = (e) => {
 			setPosition({
 				x: e.clientX,
 				y: e.clientY
 			});
 			if (!isVisible) setIsVisible(true);
+			setIsIdle(false);
+			clearTimeout(idleTimer);
+			idleTimer = setTimeout(() => {
+				setIsIdle(true);
+			}, 2500);
 			const target = e.target;
 			if (target) {
 				const interactive = target.closest("a, button, [role=\"button\"], input, textarea, .cursor-interactive");
@@ -745,12 +900,16 @@ function CursorFollower() {
 		};
 		const onMouseDown = () => setIsClicking(true);
 		const onMouseUp = () => setIsClicking(false);
-		const onMouseLeave = () => setIsVisible(false);
+		const onMouseLeave = () => {
+			setIsVisible(false);
+			setIsIdle(true);
+		};
 		window.addEventListener("mousemove", onMouseMove);
 		window.addEventListener("mousedown", onMouseDown);
 		window.addEventListener("mouseup", onMouseUp);
 		document.documentElement.addEventListener("mouseleave", onMouseLeave);
 		return () => {
+			clearTimeout(idleTimer);
 			window.removeEventListener("mousemove", onMouseMove);
 			window.removeEventListener("mousedown", onMouseDown);
 			window.removeEventListener("mouseup", onMouseUp);
@@ -760,7 +919,7 @@ function CursorFollower() {
 	if (!isVisible) return null;
 	return /* @__PURE__ */ jsxs("aside", {
 		"aria-hidden": "true",
-		className: "pointer-events-none fixed inset-0 z-[9999] overflow-hidden hidden md:block",
+		className: `pointer-events-none fixed inset-0 z-[9999] overflow-hidden hidden md:block transition-opacity duration-300 ${isIdle ? "opacity-0" : "opacity-100"}`,
 		children: [/* @__PURE__ */ jsx("div", {
 			className: `fixed top-0 left-0 rounded-full flex items-center justify-center font-display text-[10px] font-bold tracking-widest uppercase transition-all duration-150 ease-out ${label ? "w-20 h-20 bg-[#d4ff00] text-black shadow-lg shadow-[#d4ff00]/40 scale-100" : isHovered ? "w-12 h-12 border-2 border-[#d4ff00] bg-[#d4ff00]/10 backdrop-blur-[2px] scale-110" : isClicking ? "w-7 h-7 border border-[#d4ff00] bg-[#d4ff00]/30 scale-90" : "w-8 h-8 border border-white/20 dark:border-white/30"}`,
 			style: { transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)` },
@@ -773,24 +932,25 @@ function CursorFollower() {
 }
 //#endregion
 //#region resources/js/hooks/useSmoothScroll.ts
+var globalLenis = null;
 function useSmoothScroll() {
 	useEffect(() => {
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const lenis = new Lenis({
-			duration: 1.1,
-			easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-			touchMultiplier: 1.5,
-			wheelMultiplier: .9,
-			smoothWheel: true
-		});
-		function raf(time) {
-			lenis.raf(time);
-			requestAnimationFrame(raf);
+		if (!globalLenis) {
+			globalLenis = new Lenis({
+				lerp: .09,
+				wheelMultiplier: 1,
+				touchMultiplier: 1.5,
+				autoRaf: true,
+				autoResize: true
+			});
+			if (typeof window !== "undefined") window.lenis = globalLenis;
 		}
-		const animationFrameId = requestAnimationFrame(raf);
+		const removeNavigateListener = router.on("navigate", () => {
+			globalLenis?.scrollTo(0, { immediate: true });
+		});
 		return () => {
-			cancelAnimationFrame(animationFrameId);
-			lenis.destroy();
+			removeNavigateListener();
 		};
 	}, []);
 }
@@ -825,7 +985,10 @@ function AppLayout({ children }) {
 				className: "flex-1 w-full",
 				children
 			}),
-			/* @__PURE__ */ jsx(Footer, { settings }),
+			/* @__PURE__ */ jsx(Footer, {
+				settings,
+				onOpenContact: () => setIsContactOpen(true)
+			}),
 			/* @__PURE__ */ jsx(SlideOverContact, {
 				isOpen: isContactOpen,
 				onClose: () => setIsContactOpen(false),
@@ -858,13 +1021,13 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-4WLn7vZL.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-BxtF8My5.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-DBDoabi7.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-BJekxxdu.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-Z1e2MY--.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-_1a_ywWU.js"),
 			"./Pages/Privacy.tsx": () => import("./assets/Privacy-DC_n0dd-.js"),
 			"./Pages/Services/Index.tsx": () => import("./assets/Index-DOQSv2UF.js"),
 			"./Pages/Services/Show.tsx": () => import("./assets/Show-Bte9XrKH.js"),
 			"./Pages/Team/Index.tsx": () => import("./assets/Index-BgW5vUpt.js"),
-			"./Pages/Team/Show.tsx": () => import("./assets/Show-DeA1iJSB.js"),
+			"./Pages/Team/Show.tsx": () => import("./assets/Show-ghpFx5_H.js"),
 			"./Pages/Terms.tsx": () => import("./assets/Terms-B6q8Z3MW.js"),
 			"./Pages/Work/Index.tsx": () => import("./assets/Index-ByZ2a6VU.js"),
 			"./Pages/Work/Show.tsx": () => import("./assets/Show-CPf_3Lt7.js")
@@ -876,4 +1039,4 @@ createServer((page) => createInertiaApp({
 	setup: ({ App, props }) => /* @__PURE__ */ jsx(App, { ...props })
 }));
 //#endregion
-export { Button as t };
+export {};

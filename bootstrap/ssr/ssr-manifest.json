@@ -7,36 +7,41 @@
     "/build/assets/SeoHead-CXtfHcil.js"
   ],
   "resources/js/Components/Home/ClientMarquees.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/IntroBand.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
+  ],
+  "resources/js/Components/Home/RecentWorkShowcase.tsx": [
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/ServicesList.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/SplitHero.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/StatsGrid.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/StickyWorkCards.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/TeamPreview.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/Home/TestimonialsSlider.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/UI/Accordion.tsx": [
     "/build/assets/Accordion-Eja8QM_Z.js"
   ],
-  "resources/js/Components/UI/Button.tsx": [],
+  "resources/js/Components/UI/Button.tsx": [
+    "/build/assets/Home-Z1e2MY--.js"
+  ],
   "resources/js/Components/UI/CursorFollower.tsx": [],
   "resources/js/Components/UI/Marquee.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Components/UI/ThemeToggle.tsx": [],
   "resources/js/Layouts/AppLayout.tsx": [],
@@ -72,7 +77,7 @@
     "/build/assets/Faq-DBDoabi7.js"
   ],
   "resources/js/Pages/Home.tsx": [
-    "/build/assets/Home-BJekxxdu.js"
+    "/build/assets/Home-Z1e2MY--.js"
   ],
   "resources/js/Pages/Pricing.tsx": [
     "/build/assets/Pricing-_1a_ywWU.js"
@@ -90,7 +95,7 @@
     "/build/assets/Index-BgW5vUpt.js"
   ],
   "resources/js/Pages/Team/Show.tsx": [
-    "/build/assets/Show-DeA1iJSB.js"
+    "/build/assets/Show-ghpFx5_H.js"
   ],
   "resources/js/Pages/Terms.tsx": [
     "/build/assets/Terms-B6q8Z3MW.js"

@@ -7,6 +7,7 @@ import { ServicesList } from '@/Components/Home/ServicesList';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
+import { RecentWorkShowcase } from '@/Components/Home/RecentWorkShowcase';
 import { TestimonialsSlider } from '@/Components/Home/TestimonialsSlider';
 import { Project, Service, TeamMember, Testimonial, Client } from '@/types/models';
 
@@ -53,7 +54,10 @@ export default function Home({
             {/* 7. Leadership Team */}
             <TeamPreview members={teamMembers} />
 
-            {/* 8. Accessible Testimonials Slider */}
+            {/* 8. Recent Work Kinetic Parallax Showcase (Agntix Design Agency Style) */}
+            <RecentWorkShowcase projects={featuredProjects} />
+
+            {/* 9. Accessible Testimonials Slider */}
             <TestimonialsSlider testimonials={testimonials} />
         </>
     );

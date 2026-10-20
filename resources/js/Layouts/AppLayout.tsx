@@ -56,7 +56,10 @@ export function AppLayout({ children }: AppLayoutProps) {
             </main>
 
             {/* Persistent Footer */}
-            <Footer settings={settings} />
+            <Footer
+                settings={settings}
+                onOpenContact={() => setIsContactOpen(true)}
+            />
 
             {/* Slide-out Contact Drawer */}
             <SlideOverContact

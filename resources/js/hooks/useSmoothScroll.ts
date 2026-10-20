@@ -1,5 +1,13 @@
 import { useEffect } from 'react';
 import Lenis from 'lenis';
+import { router } from '@inertiajs/react';
+
+// Singleton instance to prevent duplicate loops and memory churn on page transitions
+let globalLenis: Lenis | null = null;
+
+export function getLenis(): Lenis | null {
+    return globalLenis;
+}
 
 export function useSmoothScroll() {
     useEffect(() => {
@@ -9,24 +17,29 @@ export function useSmoothScroll() {
             return;
         }
 
-        const lenis = new Lenis({
-            duration: 1.1,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            touchMultiplier: 1.5,
-            wheelMultiplier: 0.9,
-            smoothWheel: true,
-        });
+        // Initialize single global Lenis instance
+        if (!globalLenis) {
+            globalLenis = new Lenis({
+                lerp: 0.09, // Silky organic fluid inertia
+                wheelMultiplier: 1.0, // Natural 1:1 mouse wheel response
+                touchMultiplier: 1.5,
+                autoRaf: true, // Let Lenis manage its synchronized high-precision RAF loop
+                autoResize: true,
+            });
 
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
+            // Expose globally for smooth scrollTo triggers (anchor links, top buttons)
+            if (typeof window !== 'undefined') {
+                (window as any).lenis = globalLenis;
+            }
         }
 
-        const animationFrameId = requestAnimationFrame(raf);
+        // Reset scroll position cleanly on Inertia page transitions
+        const removeNavigateListener = router.on('navigate', () => {
+            globalLenis?.scrollTo(0, { immediate: true });
+        });
 
         return () => {
-            cancelAnimationFrame(animationFrameId);
-            lenis.destroy();
+            removeNavigateListener();
         };
     }, []);
 }
