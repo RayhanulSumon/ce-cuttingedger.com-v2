@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { PricingPlan, Faq } from '@/types/models';
-import { Accordion } from '@/Components/UI/Accordion';
+import { Accordion } from '@/Components/ui/Accordion';
 import { Check, Sparkles, ArrowUpRight } from 'lucide-react';
 
 interface PricingProps {

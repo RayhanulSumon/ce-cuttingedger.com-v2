@@ -4,7 +4,7 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { Service, Project } from '@/types/models';
 import { ArrowUpRight, Check, ArrowRight } from 'lucide-react';
-import { Button } from '@/Components/UI/Button';
+import { Button } from '@/Components/ui/button';
 
 interface ServiceShowProps {
     service: Service;

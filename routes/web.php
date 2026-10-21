@@ -21,7 +21,60 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminCareerOpeningController;
+use App\Http\Controllers\Admin\AdminClientController;
+use App\Http\Controllers\Admin\AdminContactMessageController;
+use App\Http\Controllers\Admin\AdminFaqController;
+use App\Http\Controllers\Admin\AdminPostController;
+use App\Http\Controllers\Admin\AdminPricingPlanController;
+use App\Http\Controllers\Admin\AdminProjectController;
+use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminSubscriberController;
+use App\Http\Controllers\Admin\AdminTeamMemberController;
+use App\Http\Controllers\Admin\AdminTestimonialController;
+use App\Http\Controllers\Admin\AdminUserController;
+
+/*
+|--------------------------------------------------------------------------
+| Admin Authentication Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Protected Operations Portal
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Content & Agency CRUDs
+    Route::resource('projects', AdminProjectController::class)->except(['show', 'create', 'edit']);
+    Route::resource('services', AdminServiceController::class)->except(['show', 'create', 'edit']);
+    Route::resource('team', AdminTeamMemberController::class)->except(['show', 'create', 'edit']);
+    Route::resource('clients', AdminClientController::class)->except(['show', 'create', 'edit']);
+    Route::resource('testimonials', AdminTestimonialController::class)->except(['show', 'create', 'edit']);
+    Route::resource('posts', AdminPostController::class)->except(['show', 'create', 'edit']);
+    Route::resource('careers', AdminCareerOpeningController::class)->except(['show', 'create', 'edit']);
+    Route::resource('pricing', AdminPricingPlanController::class)->except(['show', 'create', 'edit']);
+    Route::resource('faqs', AdminFaqController::class)->except(['show', 'create', 'edit']);
+    Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
+    Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
+
+    // Super Admin Exclusive Endpoints
+    Route::middleware('role:super_admin')->group(function () {
+        Route::resource('users', AdminUserController::class)->except(['show', 'create', 'edit']);
+        Route::post('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    });
+});
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 

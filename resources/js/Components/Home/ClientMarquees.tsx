@@ -1,5 +1,5 @@
 import React from 'react';
-import { Marquee } from '@/Components/UI/Marquee';
+import { Marquee } from '@/Components/ui/Marquee';
 import { Client } from '@/types/models';
 import { Sparkles } from 'lucide-react';
 

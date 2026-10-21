@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { Faq } from '@/types/models';
-import { Accordion } from '@/Components/UI/Accordion';
+import { Accordion } from '@/Components/ui/Accordion';
 import { ArrowUpRight, HelpCircle } from 'lucide-react';
 
 interface FaqPageProps {

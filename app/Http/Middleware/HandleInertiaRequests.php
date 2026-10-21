@@ -51,6 +51,15 @@ class HandleInertiaRequests extends Middleware
                     'dribbble' => 'https://dribbble.com',
                 ],
             ],
+            'auth' => [
+                'user' => fn () => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'status' => $request->user()->status,
+                    'role' => $request->user()->role?->name,
+                ] : null,
+            ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

@@ -18,7 +18,13 @@ class AdminDashboardControllerTest extends TestCase
 
     public function test_renders_admin_dashboard_with_studio_kpis_and_inquiries(): void
     {
-        $response = $this->get('/admin');
+        $role = \App\Models\Role::firstOrCreate(['name' => 'super_admin']);
+        $admin = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@test.com'],
+            ['name' => 'Test Admin', 'password' => 'secret', 'role_id' => $role->id, 'status' => 'active']
+        );
+
+        $response = $this->actingAs($admin)->get('/admin');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page

@@ -1,77 +1,63 @@
-import React, { forwardRef } from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "cn"
+import { Slot } from "radix-ui"
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-    size?: 'sm' | 'md' | 'lg';
-    withArrow?: boolean;
-    href?: string;
-    isExternal?: boolean;
-    children: React.ReactNode;
+const buttonVariants = cva(
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot.Root : "button"
+
+  return (
+    <Comp
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
-    variant = 'primary',
-    size = 'md',
-    withArrow = false,
-    href,
-    isExternal = false,
-    className = '',
-    children,
-    ...props
-}, ref) => {
-    const sizeClasses = {
-        sm: 'px-4 py-2 text-xs font-semibold tracking-wider uppercase',
-        md: 'px-6 py-3.5 text-xs md:text-sm font-bold tracking-wider uppercase',
-        lg: 'px-8 py-4 text-sm md:text-base font-bold tracking-wider uppercase',
-    };
-
-    const variantClasses = {
-        primary: 'bg-[#d4ff00] text-black hover:bg-[#c2eb00] hover:shadow-[0_0_25px_rgba(212,255,0,0.35)] font-display active:scale-95',
-        secondary: 'bg-white/10 dark:bg-white/5 text-neutral-900 dark:text-white border border-black/10 dark:border-white/10 hover:border-[#d4ff00]/60 hover:text-[#d4ff00] dark:hover:text-[#d4ff00] backdrop-blur-md active:scale-95',
-        outline: 'border border-black/20 dark:border-white/20 text-neutral-900 dark:text-white hover:border-[#d4ff00] hover:text-[#d4ff00] bg-transparent active:scale-95',
-        ghost: 'text-neutral-700 dark:text-neutral-300 hover:text-[#d4ff00] dark:hover:text-[#d4ff00] bg-transparent',
-    };
-
-    const baseClasses = `group relative inline-flex items-center justify-center gap-2 rounded-full transition-all duration-300 overflow-hidden select-none cursor-pointer ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
-
-    const content = (
-        <>
-            <span className="relative z-10 flex items-center gap-2">
-                {children}
-                {withArrow && (
-                    <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                )}
-            </span>
-        </>
-    );
-
-    if (href) {
-        if (isExternal) {
-            return (
-                <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={baseClasses}
-                >
-                    {content}
-                </a>
-            );
-        }
-        return (
-            <Link href={href} className={baseClasses}>
-                {content}
-            </Link>
-        );
-    }
-
-    return (
-        <button ref={ref} className={baseClasses} {...props}>
-            {content}
-        </button>
-    );
-});
-
-Button.displayName = 'Button';
+export { Button, buttonVariants }

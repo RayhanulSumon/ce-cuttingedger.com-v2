@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import { X, ArrowUpRight } from 'lucide-react';
-import { ThemeToggle } from '@/Components/UI/ThemeToggle';
+import { ThemeToggle } from '@/Components/ui/ThemeToggle';
 import { SiteSettings } from '@/types/models';
 
 interface MobileMenuProps {

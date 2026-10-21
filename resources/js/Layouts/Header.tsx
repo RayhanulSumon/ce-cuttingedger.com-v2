@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, ArrowUpRight, ChevronDown } from 'lucide-react';
-import { ThemeToggle } from '@/Components/UI/ThemeToggle';
+import { ThemeToggle } from '@/Components/ui/ThemeToggle';
 import { SiteSettings } from '@/types/models';
 
 interface HeaderProps {

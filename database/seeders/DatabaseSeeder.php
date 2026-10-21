@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(RoleAndSuperAdminSeeder::class);
+
         // 1. Categories
         $catEng = Category::create(['name' => 'Creative Engineering', 'slug' => 'creative-engineering', 'type' => 'work']);
         $catBrand = Category::create(['name' => 'Brand Architecture', 'slug' => 'brand-architecture', 'type' => 'work']);

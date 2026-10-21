@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
-import { CursorFollower } from '@/Components/UI/CursorFollower';
+import { CursorFollower } from '@/Components/ui/CursorFollower';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { PageProps } from '@/types';
 

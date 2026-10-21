@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDown, ArrowUpRight, Sparkles } from 'lucide-react';
-import { Button } from '@/Components/UI/Button';
+import { Button } from '@/Components/ui/button';
 
 export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
     const heroRef = useRef<HTMLDivElement>(null);
