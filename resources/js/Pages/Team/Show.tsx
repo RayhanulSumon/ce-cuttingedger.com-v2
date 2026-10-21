@@ -11,23 +11,31 @@ interface TeamShowProps {
 
 export default function Show({ member }: TeamShowProps) {
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data, setData, post, processing, reset } = useForm({
         name: '',
         email: '',
         website: '',
         message: '',
-        team_member: member.name,
     });
+
+    const isBusy = processing || isSubmitting;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/contact', {
+        if (isBusy) return;
+
+        setIsSubmitting(true);
+        post(`/team/${member.slug}/inquiry`, {
             preserveScroll: true,
             onSuccess: () => {
                 setSubmitted(true);
                 reset();
                 setTimeout(() => setSubmitted(false), 5000);
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
             },
         });
     };
@@ -302,10 +310,10 @@ export default function Show({ member }: TeamShowProps) {
 
                                         <button
                                             type="submit"
-                                            disabled={processing}
-                                            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#d4ff00] text-black font-['Antonio',_'Bebas_Neue',_sans-serif] text-base font-bold uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_25px_rgba(212,255,0,0.5)] transition-all cursor-pointer"
+                                            disabled={isBusy}
+                                            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#d4ff00] text-black font-['Antonio',_'Bebas_Neue',_sans-serif] text-base font-bold uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_25px_rgba(212,255,0,0.5)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            {processing ? 'Transmitting...' : 'Send Message'}
+                                            {isBusy ? 'Transmitting...' : 'Send Message'}
                                         </button>
                                     </form>
                                 )}

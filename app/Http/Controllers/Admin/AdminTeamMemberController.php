@@ -31,6 +31,7 @@ class AdminTeamMemberController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:team_members,email'],
             'role' => ['required', 'string', 'max:255'],
             'bio' => ['required', 'string'],
             'avatar' => ['required', 'string'],
@@ -53,6 +54,7 @@ class AdminTeamMemberController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:team_members,email,'.$team->id],
             'role' => ['required', 'string', 'max:255'],
             'bio' => ['required', 'string'],
             'avatar' => ['required', 'string'],

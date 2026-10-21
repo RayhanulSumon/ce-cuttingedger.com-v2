@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('team_members', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
+            $table->string('email')->nullable()->unique();
             $table->string('slug')->unique();
             $table->string('role');
             $table->integer('since_year')->default(2022);

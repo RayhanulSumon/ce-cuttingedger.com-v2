@@ -32,7 +32,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ExternalLink } from "lucide-react";
 import { TeamMember } from "@/types/models";
 
 interface TeamIndexProps {
@@ -46,6 +46,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
 
     const createForm = useForm({
         name: "",
+        email: "",
         role: "",
         bio: "",
         avatar: "/images/team/member-1.jpg",
@@ -56,6 +57,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
 
     const editForm = useForm({
         name: "",
+        email: "",
         role: "",
         bio: "",
         avatar: "",
@@ -78,6 +80,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
         setEditingMember(m);
         editForm.setData({
             name: m.name,
+            email: m.email || "",
             role: m.role,
             bio: m.bio,
             avatar: m.avatar,
@@ -168,6 +171,17 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                            <a
+                                href={`/team/${m.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="gap-2 cursor-pointer"
+                            >
+                                <ExternalLink className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                <span>View Live Single Page</span>
+                            </a>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openEdit(m)} className="gap-2">
                             <Edit className="w-3.5 h-3.5" />
                             <span>Edit Operative</span>
@@ -239,6 +253,20 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                     required
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-mono uppercase text-neutral-400">
+                                Email Address (Private / Internal)
+                            </label>
+                            <Input
+                                type="email"
+                                value={createForm.data.email}
+                                onChange={(e) =>
+                                    createForm.setData("email", e.target.value)
+                                }
+                                placeholder="e.g. operative@cuttingedger.com"
+                            />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -378,6 +406,20 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                     required
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-mono uppercase text-neutral-400">
+                                Email Address (Private / Internal)
+                            </label>
+                            <Input
+                                type="email"
+                                value={editForm.data.email}
+                                onChange={(e) =>
+                                    editForm.setData("email", e.target.value)
+                                }
+                                placeholder="e.g. operative@cuttingedger.com"
+                            />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

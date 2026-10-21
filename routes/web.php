@@ -88,6 +88,9 @@ Route::get('/work/{project:slug}', [WorkController::class, 'show'])->name('work.
 
 Route::get('/team', [TeamController::class, 'index'])->name('team.index');
 Route::get('/team/{member:slug}', [TeamController::class, 'show'])->name('team.show');
+Route::post('/team/{member:slug}/inquiry', [TeamController::class, 'sendInquiry'])
+    ->middleware('throttle:team-inquiry')
+    ->name('team.inquiry');
 
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
 Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('careers.show');
@@ -100,11 +103,11 @@ Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.sho
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])
-    ->middleware('throttle:6,1')
+    ->middleware('throttle:public-contact')
     ->name('contact.store');
 
 Route::post('/newsletter', [NewsletterController::class, 'store'])
-    ->middleware('throttle:6,1')
+    ->middleware('throttle:newsletter')
     ->name('newsletter.store');
 
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');

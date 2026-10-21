@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Phone, MapPin, ArrowUpRight, Send } from 'lucide-react';
 import { useForm } from '@inertiajs/react';
 import { SiteSettings } from '@/types/models';
@@ -10,6 +10,7 @@ interface SlideOverContactProps {
 }
 
 export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContactProps) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { data, setData, post, processing, reset, wasSuccessful } = useForm({
         name: '',
         email: '',
@@ -17,6 +18,8 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
         service_interest: 'General Inquiry',
         honeypot: '',
     });
+
+    const isBusy = processing || isSubmitting;
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -40,9 +43,13 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (isBusy) return;
+
+        setIsSubmitting(true);
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => reset(),
+            onFinish: () => setIsSubmitting(false),
         });
     };
 
@@ -156,10 +163,10 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
 
                         <button
                             type="submit"
-                            disabled={processing}
-                            className="w-full bg-[#d4ff00] text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-[#c2eb00] transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
+                            disabled={isBusy}
+                            className="w-full bg-[#d4ff00] text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-[#c2eb00] transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <span>{processing ? 'Sending...' : 'Transmit Inquiry'}</span>
+                            <span>{isBusy ? 'Sending...' : 'Transmit Inquiry'}</span>
                             <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </button>
                     </form>

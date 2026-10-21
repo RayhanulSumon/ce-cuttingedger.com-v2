@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,6 +37,13 @@ class ContactController extends Controller
             'budget' => ['nullable', 'string', 'max:255'],
             'service_interest' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Deduplication & Double-Click Guard (15s replay lockout)
+        $fingerprint = 'contact_inquiry_'.md5($request->ip().strtolower($validated['email']).substr($validated['message'], 0, 50));
+        if (Cache::has($fingerprint)) {
+            return back()->with('success', 'Your project brief has already been received. We will be in touch shortly!');
+        }
+        Cache::put($fingerprint, true, 15);
 
         ContactMessage::create([
             ...$validated,

@@ -5,6 +5,7 @@ import { PageHero } from '@/Components/Common/PageHero';
 import { Mail, Phone, MapPin, Send, CheckCircle2, ArrowUpRight } from 'lucide-react';
 
 export default function Contact() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { data, setData, post, processing, wasSuccessful, reset } = useForm({
         name: '',
         email: '',
@@ -14,6 +15,8 @@ export default function Contact() {
         message: '',
         honeypot: '',
     });
+
+    const isBusy = processing || isSubmitting;
 
     const budgetTiers = [
         '< $15k',
@@ -32,9 +35,13 @@ export default function Contact() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (isBusy) return;
+
+        setIsSubmitting(true);
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => reset(),
+            onFinish: () => setIsSubmitting(false),
         });
     };
 
@@ -193,10 +200,10 @@ export default function Contact() {
 
                                     <button
                                         type="submit"
-                                        disabled={processing}
-                                        className="w-full bg-[#d4ff00] text-black font-display font-bold py-4 px-6 rounded-xl hover:bg-[#c2eb00] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_25px_rgba(212,255,0,0.25)] disabled:opacity-50"
+                                        disabled={isBusy}
+                                        className="w-full bg-[#d4ff00] text-black font-display font-bold py-4 px-6 rounded-xl hover:bg-[#c2eb00] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_25px_rgba(212,255,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <span>{processing ? 'Transmitting...' : 'Dispatch Project Brief'}</span>
+                                        <span>{isBusy ? 'Transmitting...' : 'Dispatch Project Brief'}</span>
                                         <Send className="w-4 h-4" />
                                     </button>
                                 </form>

@@ -56,6 +56,7 @@ export interface Service {
 export interface TeamMember {
     id: number;
     name: string;
+    email?: string;
     slug: string;
     role: string;
     since_year: number | string;

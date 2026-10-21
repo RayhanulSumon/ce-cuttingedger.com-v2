@@ -185,6 +185,7 @@ class DatabaseSeeder extends Seeder
         // 4. Team Members
         TeamMember::create([
             'name' => 'Elena Rostova',
+            'email' => 'elena@cuttingedger.com',
             'slug' => 'elena-rostova',
             'role' => 'Co-Founder & Executive Creative Director',
             'since_year' => 2019,
@@ -197,6 +198,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Marcus Vance',
+            'email' => 'marcus@cuttingedger.com',
             'slug' => 'marcus-vance',
             'role' => 'Co-Founder & VP of Engineering',
             'since_year' => 2019,
@@ -209,6 +211,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Chloe Zhang',
+            'email' => 'chloe@cuttingedger.com',
             'slug' => 'chloe-zhang',
             'role' => 'Head of Motion & Spatial 3D',
             'since_year' => 2021,
@@ -221,6 +224,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Darius Thorne',
+            'email' => 'darius@cuttingedger.com',
             'slug' => 'darius-thorne',
             'role' => 'Principal Brand Strategist',
             'since_year' => 2022,
@@ -233,6 +237,7 @@ class DatabaseSeeder extends Seeder
 
         TeamMember::create([
             'name' => 'Siddharth Roy',
+            'email' => 'siddharth@cuttingedger.com',
             'slug' => 'siddharth-roy',
             'role' => 'Lead Systems & UI Architect',
             'since_year' => 2023,
