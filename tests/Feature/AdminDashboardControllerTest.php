@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -18,8 +20,8 @@ class AdminDashboardControllerTest extends TestCase
 
     public function test_renders_admin_dashboard_with_studio_kpis_and_inquiries(): void
     {
-        $role = \App\Models\Role::firstOrCreate(['name' => 'super_admin']);
-        $admin = \App\Models\User::firstOrCreate(
+        $role = Role::firstOrCreate(['name' => 'super_admin']);
+        $admin = User::firstOrCreate(
             ['email' => 'admin@test.com'],
             ['name' => 'Test Admin', 'password' => 'secret', 'role_id' => $role->id, 'status' => 'active']
         );
