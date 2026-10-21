@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, ArrowUpRight, Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { SiteSettings } from '@/types/models';
 
 interface FooterProps {
@@ -17,6 +17,20 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
 
     const letters = Array.from('CONTACT US');
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+    // Mini dispatch newsletter form
+    const { data, setData, post, processing, recentlySuccessful, reset } = useForm({
+        email: '',
+    });
+
+    const handleNewsletterSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!data.email) return;
+        post('/newsletter', {
+            preserveScroll: true,
+            onSuccess: () => reset(),
+        });
+    };
 
     const scrollToTop = () => {
         if (typeof window !== 'undefined' && (window as any).lenis) {
@@ -34,83 +48,195 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
         { name: 'LinkedIn', url: settings?.social_linkedin || 'https://linkedin.com' },
     ];
 
+    const serviceLinks = [
+        { label: 'Product & Web Design', href: '/services' },
+        { label: 'Brand Identity Systems', href: '/services' },
+        { label: 'Kinetic 3D & Spatial Web', href: '/services' },
+        { label: 'Full-Stack Engineering', href: '/services' },
+        { label: 'Motion & Interactive Reel', href: '/work' },
+    ];
+
+    const agencyLinks = [
+        { label: 'Work Archive', href: '/work' },
+        { label: 'Our Philosophy', href: '/about' },
+        { label: 'Creative Team', href: '/team' },
+        { label: 'Careers', href: '/careers' },
+        { label: 'Pricing Plans', href: '/pricing' },
+        { label: 'Studio FAQ', href: '/faq' },
+    ];
+
     // =========================================================================
-    // COMPACT FOOTER FOR ALL INNER PAGES (About, Work, Contact, Pricing, etc.)
+    // FULL-WIDTH SLEEK MINIMAL AGENCY FOOTER (Inner Pages: About, Work, Team, etc.)
     // =========================================================================
     if (isCompact) {
         return (
             <footer
                 id="site-footer"
-                className="relative bg-[#07080a] text-white border-t border-white/10 select-none"
+                className="relative bg-[#07080b] text-white border-t border-white/10 select-none overflow-hidden w-full"
             >
-                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 sm:py-16">
-                    {/* Main Compact Row */}
-                    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-10 border-b border-white/10">
-                        {/* Brand */}
-                        <div className="space-y-2">
+                {/* Subtle ambient top glow spanning full width */}
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#d4ff00]/40 to-transparent pointer-events-none" />
+
+                <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 pt-16 sm:pt-20 pb-12">
+                    {/* Top Multi-Column Grid spanning full edge-to-edge container */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
+                        {/* Col 1: Brand & Studio Identity (4 cols) */}
+                        <div className="lg:col-span-4 space-y-6">
                             <Link
                                 href="/"
-                                className="inline-flex items-center gap-2 font-['MangoGrotesque',_'Antonio',_sans-serif] text-3xl sm:text-4xl font-normal tracking-wider text-white uppercase hover:text-[#d4ff00] transition-colors"
+                                className="group inline-flex items-center gap-2.5 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg"
                             >
-                                <span className="text-2xl font-black text-[#d4ff00]">▲</span>
-                                <span>cuttingedger</span>
+                                <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black transition-all duration-300">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                                        <path d="M12 2L2 22h7l3-6 3 6h7L12 2zm0 6l1.8 3.6h-3.6L12 8z" />
+                                    </svg>
+                                </div>
+                                <div className="flex items-baseline tracking-tight">
+                                    <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-white transition-colors">
+                                        CUTTING
+                                    </span>
+                                    <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-[#d4ff00] ml-1">
+                                        EDGER.
+                                    </span>
+                                </div>
                             </Link>
-                            <p className="text-xs sm:text-sm text-neutral-400 font-sans max-w-sm">
-                                Radical digital agency & creative engineering studio for visionary innovators.
+
+                            <p className="text-sm text-neutral-400 font-sans leading-relaxed max-w-md">
+                                Independent digital agency engineering kinetic software interfaces, tactile brand identities, and immersive platforms for visionary leaders.
                             </p>
+
+                            <div className="space-y-2 text-xs text-neutral-400 font-sans">
+                                <div className="flex items-center gap-2 text-neutral-300">
+                                    <MapPin className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                                    <span>{settings?.office_address || '742 Evergreen Terrace, Creative District, SF'}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-neutral-300">
+                                    <Mail className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                                    <a
+                                        href={`mailto:${settings?.contact_email || 'hello@cuttingedger.com'}`}
+                                        className="hover:text-[#d4ff00] transition-colors"
+                                    >
+                                        {settings?.contact_email || 'hello@cuttingedger.com'}
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Navigation Links */}
-                        <nav className="flex flex-wrap items-center gap-6 sm:gap-8 text-xs sm:text-sm font-mono uppercase tracking-wider text-neutral-300">
-                            <Link href="/work" className="hover:text-[#d4ff00] transition-colors">
-                                Work
-                            </Link>
-                            <Link href="/services" className="hover:text-[#d4ff00] transition-colors">
+                        {/* Col 2: Services (2 cols) */}
+                        <div className="lg:col-span-2 space-y-4">
+                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
                                 Services
-                            </Link>
-                            <Link href="/about" className="hover:text-[#d4ff00] transition-colors">
-                                About
-                            </Link>
-                            <Link href="/pricing" className="hover:text-[#d4ff00] transition-colors">
-                                Pricing
-                            </Link>
-                            <Link href="/contact" className="hover:text-[#d4ff00] transition-colors">
-                                Contact
-                            </Link>
-                        </nav>
+                            </h3>
+                            <ul className="space-y-2.5 text-xs text-neutral-400 font-sans">
+                                {serviceLinks.map((item) => (
+                                    <li key={item.label}>
+                                        <Link
+                                            href={item.href}
+                                            className="hover:text-white transition-colors block py-0.5"
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
 
-                        {/* Quick CTA */}
-                        <div className="flex items-center gap-3">
-                            <Link
-                                href="/contact"
-                                onClick={(e) => {
-                                    if (onOpenContact) {
-                                        e.preventDefault();
-                                        onOpenContact();
-                                    }
-                                }}
-                                className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] text-xs font-mono uppercase tracking-wider text-white transition-all duration-300 shadow-sm"
-                            >
-                                Start a Project
-                            </Link>
+                        {/* Col 3: Studio & Pages (2 cols) */}
+                        <div className="lg:col-span-2 space-y-4">
+                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                                Agency
+                            </h3>
+                            <ul className="space-y-2.5 text-xs text-neutral-400 font-sans">
+                                {agencyLinks.map((item) => (
+                                    <li key={item.label}>
+                                        <Link
+                                            href={item.href}
+                                            className="hover:text-white transition-colors block py-0.5"
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Col 4: Dispatch Newsletter & Start a Project CTA (4 cols) */}
+                        <div className="lg:col-span-4 space-y-5">
+                            <div className="space-y-2">
+                                <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                                    The Dispatch
+                                </h3>
+                                <p className="text-xs text-neutral-400 font-sans leading-relaxed max-w-sm">
+                                    Subscribed by 4,000+ designers and founders. Tactical essays on code architecture, brand systems, and kinetic UI.
+                                </p>
+                            </div>
+
+                            <form onSubmit={handleNewsletterSubmit} className="space-y-2.5">
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        placeholder="operative@agency.com"
+                                        required
+                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors pr-24 font-sans"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="absolute right-1.5 px-3 py-1.5 rounded-lg bg-[#d4ff00] text-black text-xs font-mono font-bold uppercase tracking-wider hover:bg-white transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                                    >
+                                        <span>Join</span>
+                                        <Send className="w-3 h-3" />
+                                    </button>
+                                </div>
+                                {recentlySuccessful && (
+                                    <p className="text-[11px] text-[#d4ff00] font-mono flex items-center gap-1.5">
+                                        <CheckCircle2 className="w-3 h-3" />
+                                        <span>Subscribed to CuttingEdger Dispatch.</span>
+                                    </p>
+                                )}
+                            </form>
+
+                            {/* Direct Project CTA */}
+                            <div className="pt-1">
+                                <Link
+                                    href="/contact"
+                                    onClick={(e) => {
+                                        if (onOpenContact) {
+                                            e.preventDefault();
+                                            onOpenContact();
+                                        }
+                                    }}
+                                    className="group inline-flex items-center justify-between w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] transition-all duration-300"
+                                >
+                                    <span className="text-xs font-mono uppercase tracking-wider font-semibold">
+                                        Have a project in mind?
+                                    </span>
+                                    <span className="flex items-center gap-1 text-xs font-mono font-bold uppercase text-[#d4ff00] group-hover:text-black transition-colors">
+                                        Let's Talk
+                                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                    </span>
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Sub Row: Copyright, Socials & Back To Top */}
+                    {/* Bottom Sub-Row: Copyright, Legal, Socials & Back To Top */}
                     <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-neutral-400 font-sans">
                         {/* Copyright & Legal */}
-                        <div className="flex items-center gap-6 order-2 sm:order-1">
-                            <span>Copyright © {new Date().getFullYear()} CuttingEdger.</span>
+                        <div className="flex flex-wrap items-center gap-5 sm:gap-6 order-2 sm:order-1">
+                            <span>Copyright © {new Date().getFullYear()} CuttingEdger Studio.</span>
                             <Link href="/privacy" className="hover:text-white transition-colors">
-                                Privacy
+                                Privacy Policy
                             </Link>
                             <Link href="/terms" className="hover:text-white transition-colors">
-                                Terms
+                                Terms of Service
                             </Link>
                         </div>
 
-                        {/* Socials with hover underline */}
-                        <div className="flex items-center gap-6 order-1 sm:order-2">
+                        {/* Social Links with hover effect */}
+                        <div className="flex flex-wrap items-center gap-5 sm:gap-6 order-1 sm:order-2">
                             {socials.map((social) => (
                                 <a
                                     key={social.name}
