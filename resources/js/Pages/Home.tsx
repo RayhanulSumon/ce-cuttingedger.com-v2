@@ -3,7 +3,6 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { SplitHero } from '@/Components/Home/SplitHero';
 import { IntroBand } from '@/Components/Home/IntroBand';
 import { StickyWorkCards } from '@/Components/Home/StickyWorkCards';
-import { ServicesList } from '@/Components/Home/ServicesList';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
@@ -42,10 +41,7 @@ export default function Home({
             {/* 3. Featured Work Sticky Stacked Cards */}
             <StickyWorkCards projects={featuredProjects} />
 
-            {/* 4. Expandable Services Capabilities */}
-            <ServicesList services={services} />
-
-            {/* 5. Animated Stats Grid */}
+            {/* 4. Animated Stats Grid */}
             <StatsGrid />
 
             {/* 6. Dual Counter-Scrolling Client Marquees */}

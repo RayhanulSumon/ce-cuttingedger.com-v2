@@ -1,6 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import {
+    motion,
+    useScroll,
+    useTransform,
+    useMotionValueEvent,
+    useMotionValue,
+    useSpring,
+} from 'framer-motion';
 import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { Project } from '@/types/models';
 
@@ -13,21 +20,21 @@ interface PortfolioItem {
     year: string | number;
 }
 
-const AGNTIX_WORKS: PortfolioItem[] = [
+const DEFAULT_STUDIO_WORKS: PortfolioItem[] = [
     {
         id: 1,
-        title: 'Electro Hub',
-        slug: 'electro-hub',
+        title: 'Electro Spatial',
+        slug: 'electro-spatial',
         image: '/images/portfolio/portfolio-1.jpg',
-        categories: ['Web Design', 'Web Development'],
-        year: 2025,
+        categories: ['3D Spatial CGI', 'High-End Retouching'],
+        year: 2026,
     },
     {
         id: 2,
         title: 'Creative Vision',
         slug: 'creative-vision',
         image: '/images/portfolio/portfolio-2.jpg',
-        categories: ['Web Design', 'Web Development'],
+        categories: ['Commercial Retouch', 'Color Grading'],
         year: 2025,
     },
     {
@@ -35,7 +42,7 @@ const AGNTIX_WORKS: PortfolioItem[] = [
         title: 'Design Essence',
         slug: 'design-essence',
         image: '/images/portfolio/portfolio-3.jpg',
-        categories: ['Spatial CGI', '3D WebGL'],
+        categories: ['Spatial CGI', 'Product Render'],
         year: 2025,
     },
     {
@@ -43,7 +50,7 @@ const AGNTIX_WORKS: PortfolioItem[] = [
         title: 'Innovative Works',
         slug: 'innovative-works',
         image: '/images/portfolio/portfolio-4.jpg',
-        categories: ['Brand Architecture', 'Motion Design'],
+        categories: ['Brand Architecture', 'Luxury Assets'],
         year: 2026,
     },
 ];
@@ -55,15 +62,30 @@ interface CardViewProps {
 }
 
 function CardView({ item, style, zIndex }: CardViewProps) {
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const mouseX = useMotionValue(-100);
+    const mouseY = useMotionValue(-100);
     const [isHovered, setIsHovered] = useState(false);
+
+    // High performance GPU spring physics (0 React re-renders on mousemove)
+    const springConfig = { damping: 28, stiffness: 350, mass: 0.15 };
+    const cursorX = useSpring(mouseX, springConfig);
+    const cursorY = useSpring(mouseY, springConfig);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setMousePos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        });
+        mouseX.set(e.clientX - rect.left);
+        mouseY.set(e.clientY - rect.top);
+    };
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        mouseX.set(e.clientX - rect.left);
+        mouseY.set(e.clientY - rect.top);
+        setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
     };
 
     return (
@@ -73,8 +95,8 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                 zIndex,
                 transformOrigin: 'top center',
             }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             onMouseMove={handleMouseMove}
             className="absolute inset-0 w-full h-full rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/15 bg-neutral-950 shadow-[0_25px_70px_rgba(0,0,0,0.85)] group select-none will-change-transform"
         >
@@ -86,68 +108,72 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                     loading="lazy"
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                {/* Vignette gradients matching Agntix .des-portfolio-thumb::after */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/40 pointer-events-none" />
+                {/* Vignette gradients */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/50 pointer-events-none" />
             </div>
 
             {/* Clickable Card Link */}
             <Link
                 href={`/work/${item.slug}`}
                 className="absolute inset-0 z-20"
-                aria-label={`View ${item.title} demo`}
+                aria-label={`View ${item.title} case study`}
             />
 
-            {/* Card Top Bar: Frosted Glass Capsule Pills (.des-portfolio-category) */}
-            <div className="relative z-30 p-6 sm:p-10 lg:p-12 flex items-center justify-between pointer-events-none">
+            {/* Card Top Bar: Frosted Glass Capsule Pills */}
+            <div className="relative z-30 p-6 sm:p-8 lg:p-10 flex items-center justify-between pointer-events-none">
                 {/* Left: Categories */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {item.categories.map((cat, cIdx) => (
                         <span
                             key={cIdx}
-                            className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-sans uppercase tracking-wider text-white font-medium shadow-sm group-hover:border-white/40 transition-colors"
+                            className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-sans uppercase tracking-wider text-white font-medium shadow-sm group-hover:border-white/40 transition-colors"
                         >
                             {cat}
                         </span>
                     ))}
                 </div>
 
-                {/* Right: Year Tag (.portfolio-meta) */}
-                <span className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-mono text-white font-semibold shadow-sm">
-                    {item.year}
+                {/* Right: Year Tag */}
+                <span className="px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-mono text-white font-semibold shadow-sm">
+                    [{item.year}]
                 </span>
             </div>
 
-            {/* Card Bottom Bar: Massive Centered Title (.des-portfolio-title) */}
-            <div className="absolute bottom-10 sm:bottom-14 lg:bottom-16 inset-x-0 z-30 text-center px-4 pointer-events-none">
-                <h3 className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-5xl sm:text-7xl md:text-8xl lg:text-[110px] xl:text-[135px] font-bold uppercase text-[#f9f4e8] tracking-tight leading-none group-hover:text-[#d4ff00] transition-colors drop-shadow-[0_15px_30px_rgba(0,0,0,0.95)]">
+            {/* Card Bottom Bar: Massive Centered Title with Safe Height Framing */}
+            <div className="absolute bottom-6 sm:bottom-9 lg:bottom-12 inset-x-0 z-30 text-center px-4 pointer-events-none">
+                <h3 className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-4xl sm:text-6xl md:text-7xl lg:text-[88px] xl:text-[104px] font-bold uppercase text-[#f9f4e8] tracking-tight leading-[1] group-hover:text-[#d4ff00] transition-colors drop-shadow-[0_15px_30px_rgba(0,0,0,0.95)]">
                     {item.title}
                 </h3>
+                <div className="mt-2.5 sm:mt-3 flex items-center justify-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                    <span className="font-mono text-xs uppercase tracking-widest text-white/80 group-hover:text-[#d4ff00] transition-colors">
+                        EXPLORE CASE STUDY
+                    </span>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
             </div>
 
-            {/* Interactive Floating Mouse Follower Cursor Badge ("View Demo") */}
-            {isHovered && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{
-                        opacity: 1,
-                        scale: 1,
-                        x: mousePos.x - 45,
-                        y: mousePos.y - 45,
-                    }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{
-                        type: 'spring',
-                        stiffness: 350,
-                        damping: 25,
-                        mass: 0.2,
-                    }}
-                    className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center justify-center w-[90px] h-[90px] rounded-full bg-[#d4ff00] text-black font-['Antonio',_'Bebas_Neue',_sans-serif] text-sm uppercase font-bold tracking-wider leading-tight text-center shadow-[0_0_30px_rgba(212,255,0,0.6)]"
-                >
-                    <span>
-                        View <br /> Demo
-                    </span>
-                </motion.div>
-            )}
+            {/* Hardware Accelerated Frosted Dark Glass GPU Mouse Follower Pill */}
+            <motion.div
+                style={{
+                    x: cursorX,
+                    y: cursorY,
+                    translateX: '-50%',
+                    translateY: '-50%',
+                }}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{
+                    opacity: isHovered ? 1 : 0,
+                    scale: isHovered ? 1 : 0.7,
+                }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(212,255,0,0.18)] will-change-transform select-none"
+            >
+                <span className="w-2 h-2 rounded-full bg-[#d4ff00] shadow-[0_0_8px_#d4ff00] shrink-0" />
+                <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
+                    Explore Case
+                </span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00]" />
+            </motion.div>
         </motion.article>
     );
 }
@@ -158,6 +184,7 @@ interface StickyWorkCardsProps {
 
 export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     // Track total scroll progress across the 4-card collapsible journey
     const { scrollYProgress } = useScroll({
@@ -165,41 +192,54 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
         offset: ['start start', 'end end'],
     });
 
-    // Direct synchronous binding with Lenis smooth scroll - zero sluggish lag, 100% fluid!
     const progress = scrollYProgress;
 
+    // Active Card Pagination Tracker
+    useMotionValueEvent(progress, 'change', (latest) => {
+        if (latest < 0.25) setActiveIndex(0);
+        else if (latest < 0.52) setActiveIndex(1);
+        else if (latest < 0.80) setActiveIndex(2);
+        else setActiveIndex(3);
+    });
+
+    // Dynamic resolution from real database projects with studio fallback
+    const activeWorks: PortfolioItem[] =
+        projects && projects.length >= 4
+            ? projects.slice(0, 4).map((p, i) => ({
+                  id: p.id,
+                  title: p.title,
+                  slug: p.slug,
+                  image: p.featured_image || p.thumbnail_image || DEFAULT_STUDIO_WORKS[i].image,
+                  categories: p.category ? [p.category.name] : DEFAULT_STUDIO_WORKS[i].categories,
+                  year: p.year || (p.created_at ? new Date(p.created_at).getFullYear() : 2026),
+              }))
+            : DEFAULT_STUDIO_WORKS;
+
     // =========================================================================
-    // EXACT COLLAPSIBLE MECHANISM:
-    // When the next card arrives on top, the previous card:
-    // 1. Reduces scale (1.0 -> 0.85 -> 0.72)
-    // 2. Pulls upward (top up: y: 0 -> -32px -> -58px)
-    // 3. Dims subtly (brightness & opacity decrease)
+    // COLLAPSIBLE SCALE & STACK MECHANISM
     // =========================================================================
 
-    // Card 0 (Electro Hub): Starts active
-    // Card 1 arrives: 0.12 -> 0.36
-    // Card 2 arrives: 0.40 -> 0.64
-    // Card 3 arrives: 0.68 -> 0.92
-    const card0Scale = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64, 0.68, 0.92], [1, 1, 0.86, 0.86, 0.76, 0.76, 0.68]);
-    const card0Y = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64, 0.68, 0.92], [0, 0, -32, -32, -56, -56, -76]);
-    const card0Opacity = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64], [1, 1, 0.6, 0.6, 0.3]);
-    const card0Brightness = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64], ['100%', '100%', '65%', '65%', '40%']);
+    // Card 0: Starts active
+    const card0Scale = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64, 0.68, 0.92], [1, 1, 0.88, 0.88, 0.78, 0.78, 0.70]);
+    const card0Y = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64, 0.68, 0.92], [0, 0, -28, -28, -50, -50, -68]);
+    const card0Opacity = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64], [1, 1, 0.65, 0.65, 0.35]);
+    const card0Brightness = useTransform(progress, [0, 0.12, 0.36, 0.40, 0.64], ['100%', '100%', '70%', '70%', '45%']);
 
-    // Card 1 (Creative Vision): Slides up from 105% to 0% between 0.12 and 0.36
+    // Card 1: Slides up from 105% to 0%
     const card1TranslateY = useTransform(progress, [0, 0.12, 0.36], ['105%', '105%', '0%']);
-    const card1Scale = useTransform(progress, [0.36, 0.40, 0.64, 0.68, 0.92], [1, 1, 0.86, 0.86, 0.76]);
-    const card1Y = useTransform(progress, [0.36, 0.40, 0.64, 0.68, 0.92], [0, 0, -32, -32, -56]);
-    const card1Opacity = useTransform(progress, [0.36, 0.40, 0.64], [1, 1, 0.6]);
-    const card1Brightness = useTransform(progress, [0.36, 0.40, 0.64], ['100%', '100%', '65%']);
+    const card1Scale = useTransform(progress, [0.36, 0.40, 0.64, 0.68, 0.92], [1, 1, 0.88, 0.88, 0.78]);
+    const card1Y = useTransform(progress, [0.36, 0.40, 0.64, 0.68, 0.92], [0, 0, -28, -28, -50]);
+    const card1Opacity = useTransform(progress, [0.36, 0.40, 0.64], [1, 1, 0.65]);
+    const card1Brightness = useTransform(progress, [0.36, 0.40, 0.64], ['100%', '100%', '70%']);
 
-    // Card 2 (Design Essence): Slides up from 105% to 0% between 0.40 and 0.64
+    // Card 2: Slides up from 105% to 0%
     const card2TranslateY = useTransform(progress, [0, 0.40, 0.64], ['105%', '105%', '0%']);
-    const card2Scale = useTransform(progress, [0.64, 0.68, 0.92], [1, 1, 0.86]);
-    const card2Y = useTransform(progress, [0.64, 0.68, 0.92], [0, 0, -32]);
-    const card2Opacity = useTransform(progress, [0.64, 0.68, 0.92], [1, 1, 0.6]);
-    const card2Brightness = useTransform(progress, [0.64, 0.68, 0.92], ['100%', '100%', '65%']);
+    const card2Scale = useTransform(progress, [0.64, 0.68, 0.92], [1, 1, 0.88]);
+    const card2Y = useTransform(progress, [0.64, 0.68, 0.92], [0, 0, -28]);
+    const card2Opacity = useTransform(progress, [0.64, 0.68, 0.92], [1, 1, 0.65]);
+    const card2Brightness = useTransform(progress, [0.64, 0.68, 0.92], ['100%', '100%', '70%']);
 
-    // Card 3 (Innovative Works): Slides up from 105% to 0% between 0.68 and 0.92
+    // Card 3: Slides up from 105% to 0%
     const card3TranslateY = useTransform(progress, [0, 0.68, 0.92], ['105%', '105%', '0%']);
 
     return (
@@ -214,11 +254,19 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>[ 01 // SELECTED COMMISSIONS ]</span>
+                        <div className="flex items-center gap-3">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>[ 01 // SELECTED COMMISSIONS ]</span>
+                            </div>
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-400">
+                                <span className="text-[#d4ff00] font-semibold">0{activeIndex + 1}</span>
+                                <span>/</span>
+                                <span>04</span>
+                            </div>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
+
+                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
                             ENGINEERED FOR IMPACT.
                         </h2>
                     </div>
@@ -227,18 +275,18 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                         href="/work"
                         className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm"
                     >
-                        <span>View All Archives (24+)</span>
+                        <span>View All Archives ({projects?.length || '24+'})</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </Link>
                 </div>
 
                 {/* PINNED COLLAPSIBLE CARDS CONTAINER (.des-portfolio-wrap) */}
                 <div ref={containerRef} className="relative h-[320vh] sm:h-[360vh]">
-                    {/* Sticky Viewport Window */}
-                    <div className="sticky top-16 sm:top-20 lg:top-24 h-[65vh] sm:h-[75vh] lg:h-[82vh] min-h-[480px] max-h-[850px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
-                        {/* Card 0: Electro Hub */}
+                    {/* Sticky Viewport Window: Safe Height to Guarantee Bottom Title Visibility */}
+                    <div className="sticky top-16 sm:top-20 lg:top-24 h-[60vh] sm:h-[68vh] lg:h-[72vh] min-h-[440px] max-h-[720px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
+                        {/* Card 0 */}
                         <CardView
-                            item={AGNTIX_WORKS[0]}
+                            item={activeWorks[0]}
                             zIndex={10}
                             style={{
                                 scale: card0Scale,
@@ -248,7 +296,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             }}
                         />
 
-                        {/* Card 1: Creative Vision (slides up over Card 0, then scales down & pulls up) */}
+                        {/* Card 1 */}
                         <motion.div
                             style={{
                                 y: card1TranslateY,
@@ -257,7 +305,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={AGNTIX_WORKS[1]}
+                                item={activeWorks[1]}
                                 zIndex={20}
                                 style={{
                                     scale: card1Scale,
@@ -268,7 +316,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             />
                         </motion.div>
 
-                        {/* Card 2: Design Essence (slides up over Card 1, then scales down & pulls up) */}
+                        {/* Card 2 */}
                         <motion.div
                             style={{
                                 y: card2TranslateY,
@@ -277,7 +325,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={AGNTIX_WORKS[2]}
+                                item={activeWorks[2]}
                                 zIndex={30}
                                 style={{
                                     scale: card2Scale,
@@ -288,7 +336,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             />
                         </motion.div>
 
-                        {/* Card 3: Innovative Works (slides up over Card 2 to complete the collapse stack) */}
+                        {/* Card 3 */}
                         <motion.div
                             style={{
                                 y: card3TranslateY,
@@ -297,7 +345,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={AGNTIX_WORKS[3]}
+                                item={activeWorks[3]}
                                 zIndex={40}
                                 style={{
                                     scale: 1,
