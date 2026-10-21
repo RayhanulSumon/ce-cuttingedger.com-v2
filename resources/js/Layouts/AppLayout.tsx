@@ -4,7 +4,6 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
-import { CursorFollower } from '@/Components/ui/CursorFollower';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { PageProps } from '@/types';
 
@@ -22,9 +21,6 @@ export function AppLayout({ children }: AppLayoutProps) {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#0a0b0e] text-[#f4f5f8] relative selection:bg-[#d4ff00] selection:text-black">
-            {/* Custom Kinetic Cursor */}
-            <CursorFollower />
-
             {/* Accessibility: Skip Link */}
             <a
                 href="#main-content"

@@ -17,9 +17,9 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.tsx')
         );
 
-        // Apply persistent AppLayout if not specified otherwise
+        // Apply persistent AppLayout if not specified otherwise (skip for Admin pages)
         const resolvedPage = (page as any).default;
-        if (resolvedPage.layout === undefined) {
+        if (resolvedPage.layout === undefined && !name.startsWith('Admin/')) {
             resolvedPage.layout = (pageElement: React.ReactNode) => (
                 <AppLayout>{pageElement}</AppLayout>
             );

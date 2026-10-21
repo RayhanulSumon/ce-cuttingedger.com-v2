@@ -15,6 +15,13 @@ import {
     DialogFooter,
 } from "@/Components/ui/dialog";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import {
     AlertDialog,
     AlertDialogContent,
     AlertDialogHeader,
@@ -318,38 +325,43 @@ export default function UsersIndex({ users = [], roles = [] }: UsersIndexProps) 
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Assigned Role
                                 </label>
-                                <select
-                                    value={createForm.data.role_id}
-                                    onChange={(e) =>
-                                        createForm.setData(
-                                            "role_id",
-                                            Number(e.target.value)
-                                        )
+                                <Select
+                                    value={createForm.data.role_id ? String(createForm.data.role_id) : ""}
+                                    onValueChange={(val) =>
+                                        createForm.setData("role_id", Number(val))
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
                                 >
-                                    {roles.map((r) => (
-                                        <option key={r.id} value={r.id}>
-                                            {formatRoleLabel(r.name)}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {roles.map((r) => (
+                                            <SelectItem key={r.id} value={String(r.id)}>
+                                                {formatRoleLabel(r.name)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Status
                                 </label>
-                                <select
+                                <Select
                                     value={createForm.data.status}
-                                    onChange={(e) =>
-                                        createForm.setData("status", e.target.value)
+                                    onValueChange={(val) =>
+                                        createForm.setData("status", val)
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
                                 >
-                                    <option value="active">Active</option>
-                                    <option value="suspended">Suspended</option>
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="active">Active</SelectItem>
+                                        <SelectItem value="suspended">Suspended</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -450,38 +462,43 @@ export default function UsersIndex({ users = [], roles = [] }: UsersIndexProps) 
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Assigned Role
                                 </label>
-                                <select
-                                    value={editForm.data.role_id}
-                                    onChange={(e) =>
-                                        editForm.setData(
-                                            "role_id",
-                                            Number(e.target.value)
-                                        )
+                                <Select
+                                    value={editForm.data.role_id ? String(editForm.data.role_id) : ""}
+                                    onValueChange={(val) =>
+                                        editForm.setData("role_id", Number(val))
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
                                 >
-                                    {roles.map((r) => (
-                                        <option key={r.id} value={r.id}>
-                                            {formatRoleLabel(r.name)}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {roles.map((r) => (
+                                            <SelectItem key={r.id} value={String(r.id)}>
+                                                {formatRoleLabel(r.name)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Status
                                 </label>
-                                <select
+                                <Select
                                     value={editForm.data.status}
-                                    onChange={(e) =>
-                                        editForm.setData("status", e.target.value)
+                                    onValueChange={(val) =>
+                                        editForm.setData("status", val)
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
                                 >
-                                    <option value="active">Active</option>
-                                    <option value="suspended">Suspended</option>
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="active">Active</SelectItem>
+                                        <SelectItem value="suspended">Suspended</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -496,6 +513,7 @@ export default function UsersIndex({ users = [], roles = [] }: UsersIndexProps) 
                                     editForm.setData("password", e.target.value)
                                 }
                                 placeholder="Leave blank to keep current"
+                                autoComplete="new-password"
                             />
                             {editForm.errors.password && (
                                 <p className="text-xs text-rose-400">

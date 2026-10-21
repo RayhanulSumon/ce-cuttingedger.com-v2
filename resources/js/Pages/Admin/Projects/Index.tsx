@@ -17,6 +17,13 @@ import {
     DialogFooter,
 } from "@/Components/ui/dialog";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import {
     AlertDialog,
     AlertDialogContent,
     AlertDialogHeader,
@@ -283,20 +290,24 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Discipline Category
                                 </label>
-                                <select
-                                    value={createForm.data.category_id}
-                                    onChange={(e) =>
-                                        createForm.setData("category_id", e.target.value)
+                                <Select
+                                    value={createForm.data.category_id || "uncategorized"}
+                                    onValueChange={(val) =>
+                                        createForm.setData("category_id", val === "uncategorized" ? "" : val)
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
                                 >
-                                    <option value="">Uncategorized</option>
-                                    {categories.map((c) => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Uncategorized" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="uncategorized">Uncategorized</SelectItem>
+                                        {categories.map((c) => (
+                                            <SelectItem key={c.id} value={String(c.id)}>
+                                                {c.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">

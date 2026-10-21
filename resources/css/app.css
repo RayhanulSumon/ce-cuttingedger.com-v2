@@ -215,8 +215,9 @@ html.light .glass-panel {
     transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Accessible focus ring */
-*:focus-visible {
+/* Accessible focus ring - scoped so inputs/controls use their refined component ring */
+a:focus-visible,
+button:focus-visible:not([data-slot="button"]):not([data-slot="input"]) {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
 }
@@ -230,6 +231,33 @@ html.light .glass-panel {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* Fix Browser Autofill (Chrome/Edge/Safari/Firefox) turning inputs bright white/blue */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0 1000px #0d0f15 inset !important;
+    box-shadow: 0 0 0 1000px #0d0f15 inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Ensure select and its option popup menus respect dark theme across OS/browsers */
+select {
+    color-scheme: dark;
+}
+select option {
+    background-color: #12141c;
+    color: #ffffff;
 }
 
 .dark {

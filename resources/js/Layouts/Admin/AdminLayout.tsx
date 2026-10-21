@@ -55,12 +55,24 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
     const getRoleBadge = (roleName?: string) => {
         if (roleName === "super_admin") {
-            return <Badge variant="accent">SUPER ADMIN</Badge>;
+            return (
+                <span className="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-[#d4ff00]/30 bg-[#d4ff00]/10 text-[#d4ff00] whitespace-nowrap shadow-xs">
+                    SUPER ADMIN
+                </span>
+            );
         }
         if (roleName === "admin") {
-            return <Badge variant="success">ADMIN</Badge>;
+            return (
+                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 whitespace-nowrap">
+                    ADMIN
+                </span>
+            );
         }
-        return <Badge variant="secondary">USER</Badge>;
+        return (
+            <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-white/10 bg-white/5 text-neutral-400 whitespace-nowrap">
+                USER
+            </span>
+        );
     };
 
     const navSections = [
@@ -252,8 +264,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         </SidebarContent>
 
                         <SidebarFooter className="border-t border-white/10 p-4 bg-[#0a0b0f] space-y-3">
-                            <div className="flex items-center justify-between group-data-[collapsible=icon]:hidden">
-                                <div className="flex flex-col truncate pr-2">
+                            <div className="flex items-center justify-between gap-2 min-w-0 group-data-[collapsible=icon]:hidden">
+                                <div className="flex flex-col min-w-0 flex-1">
                                     <span className="text-xs font-semibold text-white truncate">
                                         {user?.name || "Architect"}
                                     </span>
@@ -261,7 +273,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                         {user?.email}
                                     </span>
                                 </div>
-                                {getRoleBadge(user?.role)}
+                                <div className="shrink-0">
+                                    {getRoleBadge(user?.role)}
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-2 pt-2 border-t border-white/5 group-data-[collapsible=icon]:hidden">
