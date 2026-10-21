@@ -30,7 +30,20 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navItems: { label: string; href: string; children?: { label: string; href: string }[] }[] = [
+    interface NavGroup {
+        category: string;
+        items: { label: string; href: string }[];
+    }
+
+    interface NavItem {
+        label: string;
+        href: string;
+        isMegaMenu?: boolean;
+        groups?: NavGroup[];
+        children?: { label: string; href: string }[];
+    }
+
+    const navItems: NavItem[] = [
         {
             label: 'Home',
             href: '/',
@@ -46,24 +59,56 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
                 { label: 'Studio FAQ', href: '/faq' },
             ],
         },
-        {
-            label: 'Projects',
-            href: '/work',
-            children: [
-                { label: 'All Commissions (24+)', href: '/work' },
-                { label: '3D Spatial CGI', href: '/work?category=3d' },
-                { label: '2D Vector Identity', href: '/work?category=2d' },
-                { label: 'Kinetic WebGL Systems', href: '/work?category=web' },
-            ],
-        },
+
         {
             label: 'Services',
             href: '/services',
+            isMegaMenu: true,
             children: [
-                { label: 'All Disciplines', href: '/services' },
-                { label: 'Brand Architecture', href: '/services/brand-architecture' },
-                { label: 'Kinetic 3D & CGI', href: '/services/kinetic-3d' },
-                { label: 'Full-Stack Web Velocity', href: '/services/creative-web' },
+                { label: 'All Services', href: '/services' },
+            ],
+            groups: [
+                {
+                    category: 'Core Cutout & Prep',
+                    items: [
+                        { label: 'Background Removal', href: '/services' },
+                        { label: 'Ghost Mannequin', href: '/services' },
+                        { label: 'Regular Model Retouch', href: '/services' },
+                        { label: 'Multipath Clipping', href: '/services' },
+                        { label: 'Color Correction', href: '/services' },
+                        { label: 'Face Swapping', href: '/services' },
+                    ],
+                },
+                {
+                    category: 'High-End Retouching',
+                    items: [
+                        { label: 'Accessories Retouch', href: '/services' },
+                        { label: 'High End Model Retouch', href: '/services' },
+                        { label: 'Calendar Model Retouch', href: '/services' },
+                        { label: 'Image Masking', href: '/services' },
+                        { label: 'Creative Manipulation', href: '/services' },
+                    ],
+                },
+                {
+                    category: 'Commercial & Product',
+                    items: [
+                        { label: 'Automobile Retouch', href: '/services' },
+                        { label: 'Hollow Man Effect', href: '/services' },
+                        { label: 'Shoe & Footwear Retouch', href: '/services' },
+                        { label: 'Shadow Creation (Drop/Cast)', href: '/services' },
+                        { label: 'Harmonization & Grading', href: '/services' },
+                    ],
+                },
+                {
+                    category: 'Luxury & Spatial',
+                    items: [
+                        { label: 'Jewelry & Gem Retouch', href: '/services' },
+                        { label: 'Lifestyle Editorial Retouch', href: '/services' },
+                        { label: 'Lingerie Model Retouch', href: '/services' },
+                        { label: 'Reflection Creation', href: '/services' },
+                        { label: 'Image Restoration', href: '/services' },
+                    ],
+                },
             ],
         },
         {
@@ -141,21 +186,66 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
                                         )}
                                     </Link>
 
-                                    {/* Dropdown Menu */}
+                                    {/* Dropdown / Mega Menu */}
                                     {hasChildren && openDropdown === item.label && (
-                                        <div className="absolute top-full left-0 w-56 pt-2 z-50">
-                                            <div className="rounded-2xl p-2 bg-[#12141c] border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1">
-                                                {item.children.map((child, idx) => (
-                                                    <Link
-                                                        key={idx}
-                                                        href={child.href}
-                                                        className="block px-3 py-2 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-black hover:bg-[#d4ff00] rounded-xl transition-colors"
-                                                    >
-                                                        {child.label}
-                                                    </Link>
-                                                ))}
+                                        item.isMegaMenu && item.groups ? (
+                                            /* Services Wide Mega Menu Dropdown */
+                                            <div className="absolute top-full -left-20 sm:-left-32 md:-left-44 w-[92vw] max-w-5xl pt-3 z-[100]">
+                                                <div className="rounded-3xl p-6 sm:p-8 bg-[#10121a] border-2 border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.98),0_0_35px_rgba(212,255,0,0.12)] backdrop-blur-3xl ring-1 ring-white/10 relative overflow-hidden">
+                                                    {/* Top ambient highlight line */}
+                                                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4ff00] to-transparent pointer-events-none" />
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                                        {item.groups.map((group, gIdx) => (
+                                                            <div key={gIdx} className="space-y-3">
+                                                                <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#d4ff00] pb-2 border-b border-white/15 flex items-center justify-between">
+                                                                    <span>{group.category}</span>
+                                                                </h4>
+                                                                <ul className="space-y-1.5">
+                                                                    {group.items.map((sub, sIdx) => (
+                                                                        <li key={sIdx}>
+                                                                            <Link
+                                                                                href={sub.href}
+                                                                                className="block text-xs font-medium text-neutral-200 hover:text-black hover:bg-[#d4ff00] px-2.5 py-1.5 rounded-lg transition-all duration-150"
+                                                                            >
+                                                                                {sub.label}
+                                                                            </Link>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Mega Menu Footer Banner */}
+                                                    <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono text-neutral-300 bg-white/[0.02] -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 px-6 sm:px-8 py-4">
+                                                        <span className="text-neutral-400">Need high-volume studio retouching or custom workflow?</span>
+                                                        <Link
+                                                            href="/services"
+                                                            className="text-[#d4ff00] hover:text-white flex items-center gap-1 font-bold uppercase tracking-wider transition-colors"
+                                                        >
+                                                            <span>Explore All Capabilities</span>
+                                                            <ArrowUpRight className="w-3.5 h-3.5" />
+                                                        </Link>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            /* Standard Dropdown */
+                                            <div className="absolute top-full left-0 w-56 pt-2 z-50">
+                                                <div className="rounded-2xl p-2 bg-[#12141c] border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1">
+                                                    {item.children?.map((child, idx) => (
+                                                        <Link
+                                                            key={idx}
+                                                            href={child.href}
+                                                            className="block px-3 py-2 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-black hover:bg-[#d4ff00] rounded-xl transition-colors"
+                                                        >
+                                                            {child.label}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             );
