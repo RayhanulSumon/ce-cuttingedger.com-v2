@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CareerOpening;
+use App\Models\Job;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ class AdminCareerOpeningController extends Controller
      */
     public function index(): Response
     {
-        $careers = CareerOpening::latest()->get();
+        $careers = Job::latest()->get();
 
         return Inertia::render('Admin/Careers/Index', [
             'careers' => $careers,
@@ -40,7 +40,7 @@ class AdminCareerOpeningController extends Controller
 
         $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(3);
 
-        CareerOpening::create($validated);
+        Job::create($validated);
 
         return redirect()->back()->with('success', 'Career opening opened.');
     }
@@ -48,7 +48,7 @@ class AdminCareerOpeningController extends Controller
     /**
      * Update the specified opening.
      */
-    public function update(Request $request, CareerOpening $career): RedirectResponse
+    public function update(Request $request, Job $career): RedirectResponse
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -67,7 +67,7 @@ class AdminCareerOpeningController extends Controller
     /**
      * Remove the specified career opening.
      */
-    public function destroy(CareerOpening $career): RedirectResponse
+    public function destroy(Job $career): RedirectResponse
     {
         $title = $career->title;
         $career->delete();

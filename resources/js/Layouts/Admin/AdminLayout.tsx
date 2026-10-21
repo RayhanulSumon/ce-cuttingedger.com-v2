@@ -20,9 +20,13 @@ import {
     ExternalLink,
     ChevronRight,
     Terminal,
+    CheckCircle2,
+    AlertCircle,
+    X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
+import { Toaster, toast } from "@/Components/ui/sonner";
 import {
     Sidebar,
     SidebarContent,
@@ -50,6 +54,15 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         auth: { user: { name: string; email: string; role: string } | null };
         flash: { success?: string; error?: string };
     }>().props;
+
+    React.useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    }, [flash]);
 
     const user = auth?.user;
     const isSuperAdmin = user?.role === "super_admin";
@@ -328,17 +341,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             </div>
                         </header>
 
-                        {/* Notifications Banner */}
-                        {flash?.success && (
-                            <div className="mx-8 mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center justify-between">
-                                <span>{flash.success}</span>
-                            </div>
-                        )}
-                        {flash?.error && (
-                            <div className="mx-8 mt-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center justify-between">
-                                <span>{flash.error}</span>
-                            </div>
-                        )}
+                        {/* Shadcn Sonner Toaster */}
+                        <Toaster />
 
                         {/* Main Page Children */}
                         <div className="p-8 flex-1">{children}</div>

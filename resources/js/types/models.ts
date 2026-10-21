@@ -132,6 +132,8 @@ export interface Job {
     is_open: boolean;
 }
 
+export type CareerOpening = Job;
+
 export interface Faq {
     id: number;
     category: string;
