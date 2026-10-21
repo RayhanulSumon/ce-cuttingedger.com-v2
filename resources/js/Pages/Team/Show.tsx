@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
-import { TeamMember, Post } from '@/types/models';
+import { TeamMember, Blog } from '@/types/models';
 import { Phone, Mail, Globe, CheckCircle2, ArrowUpRight } from 'lucide-react';
 
 interface TeamShowProps {
-    member: TeamMember & { posts?: Post[] };
+    member: TeamMember & { blogs?: Blog[] };
 }
 
 export default function Show({ member }: TeamShowProps) {

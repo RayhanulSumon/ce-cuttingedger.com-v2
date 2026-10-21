@@ -4,6 +4,8 @@ import { Head } from '@inertiajs/react';
 interface SeoHeadProps {
     title?: string;
     description?: string;
+    keywords?: string;
+    robots?: string;
     image?: string;
     canonicalUrl?: string;
     type?: 'website' | 'article';
@@ -13,6 +15,8 @@ interface SeoHeadProps {
 export function SeoHead({
     title,
     description = 'CuttingEdger is an elite digital agency engineering kinetic software interfaces, tactile brand identities, and high-performance web applications.',
+    keywords,
+    robots,
     image = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
     canonicalUrl,
     type = 'website',
@@ -38,6 +42,8 @@ export function SeoHead({
         <Head>
             <title>{siteTitle}</title>
             <meta name="description" content={description} />
+            {keywords && <meta name="keywords" content={keywords} />}
+            {robots && <meta name="robots" content={robots} />}
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={type} />

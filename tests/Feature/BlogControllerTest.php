@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Post;
+use App\Models\Blog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -17,30 +17,30 @@ class BlogControllerTest extends TestCase
         $this->seed();
     }
 
-    public function test_renders_blog_index_with_journal_posts(): void
+    public function test_renders_blog_index_with_journal_blogs(): void
     {
         $response = $this->get('/blog');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Blog/Index')
-            ->has('posts')
+            ->has('blogs')
             ->has('categories')
             ->where('activeCategory', 'all')
         );
     }
 
-    public function test_renders_individual_post_detail_view(): void
+    public function test_renders_individual_blog_detail_view(): void
     {
-        $post = Post::firstOrFail();
+        $blog = Blog::firstOrFail();
 
-        $response = $this->get("/blog/{$post->slug}");
+        $response = $this->get("/blog/{$blog->slug}");
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Blog/Show')
-            ->where('post.slug', $post->slug)
-            ->has('relatedPosts')
+            ->where('blog.slug', $blog->slug)
+            ->has('relatedBlogs')
         );
     }
 }

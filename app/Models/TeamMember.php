@@ -17,8 +17,8 @@ class TeamMember extends Model
         'featured' => 'boolean',
     ];
 
-    public function posts(): HasMany
+    public function blogs(): HasMany
     {
-        return $this->hasMany(Post::class, 'author_id');
+        return $this->hasMany(Blog::class, 'author_id');
     }
 }

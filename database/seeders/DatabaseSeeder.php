@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Faq;
 use App\Models\Job;
-use App\Models\Post;
 use App\Models\PricingPlan;
 use App\Models\Project;
 use App\Models\Service;
@@ -22,13 +21,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleAndSuperAdminSeeder::class);
 
-        // 1. Categories
-        $catEng = Category::create(['name' => 'Creative Engineering', 'slug' => 'creative-engineering', 'type' => 'work']);
-        $catBrand = Category::create(['name' => 'Brand Architecture', 'slug' => 'brand-architecture', 'type' => 'work']);
-        $catSpatial = Category::create(['name' => '3D & Spatial', 'slug' => '3d-spatial', 'type' => 'work']);
-        $catProduct = Category::create(['name' => 'Product Design', 'slug' => 'product-design', 'type' => 'work']);
-        $catTechBlog = Category::create(['name' => 'Engineering Insights', 'slug' => 'engineering-insights', 'type' => 'blog']);
-        $catDesignBlog = Category::create(['name' => 'Design Theory', 'slug' => 'design-theory', 'type' => 'blog']);
+        // 1. Portfolio Categories
+        $catEng = Category::firstOrCreate(['slug' => 'creative-engineering'], ['name' => 'Creative Engineering', 'type' => 'work']);
+        $catBrand = Category::firstOrCreate(['slug' => 'brand-architecture'], ['name' => 'Brand Architecture', 'type' => 'work']);
+        $catSpatial = Category::firstOrCreate(['slug' => '3d-spatial'], ['name' => '3D & Spatial', 'type' => 'work']);
+        $catProduct = Category::firstOrCreate(['slug' => 'product-design'], ['name' => 'Product Design', 'type' => 'work']);
 
         // 2. Featured Projects
         Project::create([
@@ -417,37 +414,7 @@ class DatabaseSeeder extends Seeder
             'is_open' => true,
         ]);
 
-        // 9. Blog Posts
-        Post::create([
-            'category_id' => $catDesignBlog->id,
-            'author_id' => 1,
-            'title' => 'The Death of the Minimalist Box: Why Modern Software Craves Visceral Tactility',
-            'slug' => 'death-of-minimalist-box',
-            'excerpt' => 'A decade of sterile gray-on-gray SaaS interfaces has created collective user apathy. Here is how we engineer tactile interfaces with physical weight and kinetic satisfaction.',
-            'body' => 'For the past ten years, software design has suffered from an obsession with reductionism. Every button became a borderless gray link; every dashboard converged on the same sterile typography; every brand identity surrendered its character to standard geometric sans-serifs.
-
-At CuttingEdger, we believe the next era of digital craft belongs to tactile realism—not retro skeuomorphism, but kinetic physics, micro-refractions, purposeful tension, and bold typographic hierarchy. When software feels physical, it creates muscle memory, fosters trust, and turns daily utility into an emotional joy.',
-            'cover_image' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-            'reading_time' => 6,
-            'published_at' => now()->subDays(4),
-            'meta_title' => 'The Death of the Minimalist Box — CuttingEdger Journal',
-            'meta_description' => 'Why modern digital software craves visceral tactility, kinetic motion, and distinct personality.',
-        ]);
-
-        Post::create([
-            'category_id' => $catTechBlog->id,
-            'author_id' => 2,
-            'title' => 'Engineering 100/100 Lighthouse on Laravel 13 + Inertia + Tailwind 4',
-            'slug' => 'engineering-100-lighthouse-laravel-inertia',
-            'excerpt' => 'A deep dive into zero-CLS font preloading, server-side render fallbacks, and microsecond hydration strategies for high-octane creative portfolios.',
-            'body' => 'Many developers assume that heavy kinetic animations and rich aesthetics are fundamentally incompatible with high Lighthouse scores. That is a myth born of unoptimized bundles and lazy asset pipelines.
-
-By pairing Laravel 13 with Inertia React 19 and Tailwind CSS 4, we leverage the best of both worlds: instant initial server rendering (SSR) for search engine spiders, followed by client hydration with hardware-accelerated transforms (transform3d) that run strictly on the GPU compositor thread.',
-            'cover_image' => 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80',
-            'reading_time' => 8,
-            'published_at' => now()->subDays(12),
-            'meta_title' => 'Engineering 100 Lighthouse with Laravel & Inertia — CuttingEdger Journal',
-            'meta_description' => 'Technical blueprint for sub-second load times on animation-heavy web applications.',
-        ]);
+        // 9. Full Blogs with Subcategories & Dynamic SEO Suite
+        $this->call(BlogSeeder::class);
     }
 }

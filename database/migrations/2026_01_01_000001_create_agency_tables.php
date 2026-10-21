@@ -15,7 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('type')->default('work'); // work, blog
+            $table->string('type')->default('work'); // work
+            $table->timestamps();
+        });
+
+        Schema::create('blog_categories', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('parent_id')->nullable()->constrained('blog_categories')->nullOnDelete();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
@@ -92,9 +101,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('posts', function (Blueprint $table): void {
+        Schema::create('blogs', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('blog_category_id')->nullable()->constrained('blog_categories')->nullOnDelete();
+            $table->foreignId('subcategory_id')->nullable()->constrained('blog_categories')->nullOnDelete();
             $table->foreignId('author_id')->nullable()->constrained('team_members')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
@@ -102,9 +112,19 @@ return new class extends Migration
             $table->longText('body');
             $table->string('cover_image');
             $table->integer('reading_time')->default(5);
+            $table->boolean('is_featured')->default(false);
+            $table->enum('status', ['draft', 'published', 'archived'])->default('published');
+            $table->json('tags')->nullable();
             $table->timestamp('published_at')->nullable();
+
+            // Full dynamic SEO suite
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->string('canonical_url')->nullable();
+            $table->string('og_image')->nullable();
+            $table->string('robots')->default('index, follow');
+
             $table->timestamps();
         });
 
@@ -188,7 +208,8 @@ return new class extends Migration
         Schema::dropIfExists('pricing_plans');
         Schema::dropIfExists('faqs');
         Schema::dropIfExists('career_openings');
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('blogs');
+        Schema::dropIfExists('blog_categories');
         Schema::dropIfExists('clients');
         Schema::dropIfExists('testimonials');
         Schema::dropIfExists('team_members');

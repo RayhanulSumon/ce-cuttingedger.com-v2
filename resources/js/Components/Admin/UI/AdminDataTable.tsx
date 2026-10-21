@@ -7,8 +7,11 @@ import { cn } from "@/lib/utils";
 export interface Column<T> {
     header: string;
     accessorKey?: keyof T;
+    key?: string;
     cell?: (item: T) => React.ReactNode;
+    render?: (item: T) => React.ReactNode;
     className?: string;
+    sortable?: boolean;
 }
 
 interface AdminDataTableProps<T> {
@@ -105,9 +108,11 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                             >
                                                 {col.cell
                                                     ? col.cell(row)
-                                                    : col.accessorKey
+                                                    : col.render
+                                                    ? col.render(row)
+                                                    : (col.accessorKey || col.key)
                                                     ? String(
-                                                          row[col.accessorKey] ?? ""
+                                                          row[(col.accessorKey || col.key) as keyof T] ?? ""
                                                       )
                                                     : null}
                                             </td>

@@ -7,9 +7,12 @@ interface AdminPageHeaderProps {
     title: string;
     description?: string;
     badge?: string;
+    eyebrow?: string;
     actionLabel?: string;
     actionHref?: string;
     onActionClick?: () => void;
+    createLabel?: string;
+    onCreate?: () => void;
     children?: React.ReactNode;
 }
 
@@ -17,14 +20,24 @@ export function AdminPageHeader({
     title,
     description,
     badge,
+    eyebrow,
     actionLabel,
     actionHref,
     onActionClick,
+    createLabel,
+    onCreate,
     children,
 }: AdminPageHeaderProps) {
+    const finalActionLabel = actionLabel || createLabel;
+    const finalActionClick = onActionClick || onCreate;
     return (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-white/10 mb-8">
             <div className="space-y-1">
+                {eyebrow && (
+                    <div className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                        {eyebrow}
+                    </div>
+                )}
                 <div className="flex items-center gap-3">
                     <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                         {title}
@@ -43,18 +56,18 @@ export function AdminPageHeader({
             <div className="flex items-center gap-3">
                 {children}
 
-                {actionLabel && (
+                {finalActionLabel && (
                     actionHref ? (
                         <Link href={actionHref}>
-                            <Button className="gap-2">
+                            <Button className="gap-2 bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold">
                                 <Plus className="w-4 h-4" />
-                                <span>{actionLabel}</span>
+                                <span>{finalActionLabel}</span>
                             </Button>
                         </Link>
                     ) : (
-                        <Button onClick={onActionClick} className="gap-2">
+                        <Button onClick={finalActionClick} className="gap-2 bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold cursor-pointer">
                             <Plus className="w-4 h-4" />
-                            <span>{actionLabel}</span>
+                            <span>{finalActionLabel}</span>
                         </Button>
                     )
                 )}

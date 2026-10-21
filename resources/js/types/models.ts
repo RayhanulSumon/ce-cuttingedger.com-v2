@@ -2,7 +2,19 @@ export interface Category {
     id: number;
     name: string;
     slug: string;
-    type: 'work' | 'blog';
+    type: 'work';
+    created_at?: string;
+}
+
+export interface BlogCategory {
+    id: number;
+    parent_id?: number | null;
+    parent?: BlogCategory | null;
+    subcategories?: BlogCategory[];
+    name: string;
+    slug: string;
+    description?: string;
+    blogs_count?: number;
     created_at?: string;
 }
 
@@ -80,10 +92,12 @@ export interface Client {
     sort_order: number;
 }
 
-export interface Post {
+export interface Blog {
     id: number;
-    category_id: number;
-    category?: Category;
+    blog_category_id: number;
+    category?: BlogCategory;
+    subcategory_id?: number | null;
+    subcategory?: BlogCategory | null;
     author_id?: number;
     author?: TeamMember;
     title: string;
@@ -93,8 +107,15 @@ export interface Post {
     cover_image: string;
     reading_time: number;
     published_at: string;
+    is_featured?: boolean;
+    status: 'draft' | 'published' | 'archived';
+    tags?: string[];
     meta_title?: string;
     meta_description?: string;
+    meta_keywords?: string;
+    canonical_url?: string;
+    og_image?: string;
+    robots?: string;
 }
 
 export interface Job {

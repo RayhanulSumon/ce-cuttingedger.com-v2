@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Job;
-use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\TeamMember;
@@ -47,8 +47,8 @@ class SitemapController extends Controller
             $urls[] = url("/careers/{$job->slug}");
         }
 
-        foreach (Post::all() as $post) {
-            $urls[] = url("/blog/{$post->slug}");
+        foreach (Blog::where('status', 'published')->get() as $blog) {
+            $urls[] = url("/blog/{$blog->slug}");
         }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';

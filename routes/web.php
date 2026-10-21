@@ -22,11 +22,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminBlogCategoryController;
+use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminCareerOpeningController;
 use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminFaqController;
-use App\Http\Controllers\Admin\AdminPostController;
 use App\Http\Controllers\Admin\AdminPricingPlanController;
 use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\Admin\AdminServiceController;
@@ -60,7 +61,8 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('team', AdminTeamMemberController::class)->except(['show', 'create', 'edit']);
     Route::resource('clients', AdminClientController::class)->except(['show', 'create', 'edit']);
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show', 'create', 'edit']);
-    Route::resource('posts', AdminPostController::class)->except(['show', 'create', 'edit']);
+    Route::resource('blog-categories', AdminBlogCategoryController::class)->except(['show', 'create', 'edit']);
+    Route::resource('blogs', AdminBlogController::class)->except(['show', 'create', 'edit']);
     Route::resource('careers', AdminCareerOpeningController::class)->except(['show', 'create', 'edit']);
     Route::resource('pricing', AdminPricingPlanController::class)->except(['show', 'create', 'edit']);
     Route::resource('faqs', AdminFaqController::class)->except(['show', 'create', 'edit']);
@@ -94,7 +96,7 @@ Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])
