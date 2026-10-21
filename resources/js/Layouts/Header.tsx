@@ -30,15 +30,10 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navItems = [
+    const navItems: { label: string; href: string; children?: { label: string; href: string }[] }[] = [
         {
             label: 'Home',
             href: '/',
-            children: [
-                { label: 'Creative Studio (Dark)', href: '/' },
-                { label: '2D & 3D Interactive Reel', href: '/work' },
-                { label: 'Capabilities & Services', href: '/services' },
-            ],
         },
         {
             label: 'Pages',
@@ -74,18 +69,10 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
         {
             label: 'Blog',
             href: '/blog',
-            children: [
-                { label: 'Studio Insights', href: '/blog' },
-                { label: 'Design System Notes', href: '/blog' },
-            ],
         },
         {
             label: 'Contact',
             href: '/contact',
-            children: [
-                { label: 'Contact Us', href: '/contact' },
-                { label: 'Start a Commission', href: '/contact' },
-            ],
         },
     ];
 
