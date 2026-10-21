@@ -26,7 +26,7 @@ export function AdminPageHeader({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-white/10 mb-8">
             <div className="space-y-1">
                 <div className="flex items-center gap-3">
-                    <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                         {title}
                     </h1>
                     {badge && (

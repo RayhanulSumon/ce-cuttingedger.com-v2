@@ -57,7 +57,7 @@ export default function Dashboard({
                             </span>
                             <FolderKanban className="w-4 h-4 text-[#d4ff00]" />
                         </div>
-                        <div className="text-4xl font-display font-black text-white">
+                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                             {stats.total_projects}
                         </div>
                         <span className="text-xs font-mono text-[#d4ff00] block">
@@ -72,7 +72,7 @@ export default function Dashboard({
                             </span>
                             <Layers className="w-4 h-4 text-emerald-400" />
                         </div>
-                        <div className="text-4xl font-display font-black text-white">
+                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                             {stats.total_services}
                         </div>
                         <span className="text-xs font-mono text-emerald-400 block">
@@ -87,7 +87,7 @@ export default function Dashboard({
                             </span>
                             <Mail className="w-4 h-4 text-amber-400" />
                         </div>
-                        <div className="text-4xl font-display font-black text-white">
+                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                             {stats.new_inquiries}
                         </div>
                         <span className="text-xs font-mono text-amber-400 block">
@@ -102,7 +102,7 @@ export default function Dashboard({
                             </span>
                             <Send className="w-4 h-4 text-sky-400" />
                         </div>
-                        <div className="text-4xl font-display font-black text-white">
+                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                             {stats.total_subscribers}
                         </div>
                         <span className="text-xs font-mono text-sky-400 block">

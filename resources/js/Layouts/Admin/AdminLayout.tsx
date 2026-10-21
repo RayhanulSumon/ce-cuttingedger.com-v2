@@ -194,19 +194,19 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     return (
         <TooltipProvider>
             <SidebarProvider defaultOpen={true}>
-                <div className="dark min-h-screen w-full bg-[#08090c] text-white flex">
+                <div className="dark admin-shell min-h-screen w-full bg-[#08090c] text-white flex antialiased">
                     {/* Official shadcn Sidebar */}
                     <Sidebar className="border-r border-white/10 bg-[#0c0e14] text-white">
                         <SidebarHeader className="border-b border-white/10 p-4">
                             <Link
                                 href="/admin"
-                                className="flex items-center gap-2 group cursor-pointer"
+                                className="flex items-center gap-2.5 group cursor-pointer"
                             >
                                 <div className="w-8 h-8 rounded-lg bg-[#d4ff00] text-black font-black flex items-center justify-center font-mono text-sm tracking-tighter">
                                     CE
                                 </div>
                                 <div className="group-data-[collapsible=icon]:hidden">
-                                    <span className="font-display font-black text-sm tracking-wide text-white block">
+                                    <span className="font-bold text-sm tracking-tight text-white block">
                                         CUTTING EDGER
                                     </span>
                                     <span className="text-[10px] font-mono tracking-widest text-[#d4ff00] uppercase block">
