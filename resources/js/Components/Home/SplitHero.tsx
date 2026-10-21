@@ -345,29 +345,32 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                             </span>
                         </div>
 
-                        {/* Kinetic Main Headline */}
+                        {/* Kinetic Main Headline with perfect wrapping and zero clipping */}
                         <div className="space-y-4">
-                            <h1 className="text-5xl sm:text-7xl lg:text-[5.5rem] font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.02]">
+                            <h1 className="text-4xl sm:text-6xl lg:text-[4.75rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.04]">
                                 WE SCULPT <br />
-                                UNFAIR ADVANTAGE FOR <br />
-                                <span className="overflow-hidden h-[1.25em] relative block text-[#d4ff00] pt-1">
-                                    <AnimatePresence mode="wait">
-                                        <motion.span
-                                            key={rotatingWords[currentWordIndex]}
-                                            initial={{ y: 35, opacity: 0 }}
-                                            animate={{ y: 0, opacity: 1 }}
-                                            exit={{ y: -35, opacity: 0 }}
-                                            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                                            className="block whitespace-nowrap"
-                                        >
-                                            IN {rotatingWords[currentWordIndex]}
-                                        </motion.span>
-                                    </AnimatePresence>
+                                UNFAIR ADVANTAGE <br />
+                                <span className="flex items-baseline flex-wrap gap-x-3 text-white">
+                                    <span>FOR</span>
+                                    <span className="overflow-hidden h-[1.25em] inline-block relative text-[#d4ff00]">
+                                        <AnimatePresence mode="wait">
+                                            <motion.span
+                                                key={rotatingWords[currentWordIndex]}
+                                                initial={{ y: 35, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                exit={{ y: -35, opacity: 0 }}
+                                                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                                                className="inline-block whitespace-nowrap"
+                                            >
+                                                {rotatingWords[currentWordIndex]}
+                                            </motion.span>
+                                        </AnimatePresence>
+                                    </span>
                                 </span>
                             </h1>
 
-                            <p className="text-lg sm:text-xl text-neutral-400 max-w-xl font-normal leading-relaxed pt-2">
-                                CuttingEdger is a boundary-pushing design &amp; technology agency. We transform audacious founders and global brands into untouchable market forces.
+                            <p className="text-base sm:text-lg text-neutral-400 max-w-xl font-normal leading-relaxed pt-1">
+                                CuttingEdger is a boundary-pushing creative engineering studio. We sculpt high-octane brand architecture, kinetic 3D platforms, and category-defining software interfaces.
                             </p>
                         </div>
 
@@ -394,23 +397,23 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                         {/* Quick Trust Highlights */}
                         <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg">
                             <div>
-                                <span className="block font-['Antonio',_'Bebas_Neue',_sans-serif] font-bold text-3xl text-white">100%</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">100%</span>
                                 <span className="text-xs font-mono text-neutral-400 uppercase">Independent</span>
                             </div>
                             <div>
-                                <span className="block font-['Antonio',_'Bebas_Neue',_sans-serif] font-bold text-3xl text-[#d4ff00]">14+</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-[#d4ff00]">14+</span>
                                 <span className="text-xs font-mono text-neutral-400 uppercase">Awwwards / FWA</span>
                             </div>
                             <div>
-                                <span className="block font-['Antonio',_'Bebas_Neue',_sans-serif] font-bold text-3xl text-white">&lt;0.5s</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">&lt;0.5s</span>
                                 <span className="text-xs font-mono text-neutral-400 uppercase">Edge Velocity</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right Column: Interactive 3D Work Reel Shuffle */}
-                    <div className="lg:col-span-5 relative flex justify-center items-center py-8">
-                        <div className="relative w-full max-w-md h-[430px]">
+                    {/* Right Column: High-Impact Visual Showcase Cards with Rich Imagery */}
+                    <div className="lg:col-span-5 relative flex justify-center items-center py-6">
+                        <div className="relative w-full max-w-md h-[460px]">
                             {reelCards.map((card, idx) => {
                                 const offset = (idx - activeCardIndex + reelCards.length) % reelCards.length;
 
@@ -419,42 +422,56 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                         key={card.title}
                                         onClick={() => setActiveCardIndex((prev) => (prev + 1) % reelCards.length)}
                                         data-cursor-view="CLICK TO SHUFFLE"
-                                        className={`absolute inset-0 rounded-3xl p-7 border border-white/15 bg-gradient-to-b ${card.color} backdrop-blur-xl shadow-2xl transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none group`}
+                                        className={`absolute inset-0 rounded-[28px] overflow-hidden border border-white/15 bg-[#10121a] shadow-[0_30px_90px_rgba(0,0,0,0.95)] transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none group`}
                                         style={{
-                                            transform: `translateY(${offset * 18}px) scale(${1 - offset * 0.06})`,
+                                            transform: `translateY(${offset * 18}px) scale(${1 - offset * 0.05})`,
                                             zIndex: reelCards.length - offset,
-                                            opacity: 1 - offset * 0.2,
+                                            opacity: 1 - offset * 0.18,
                                         }}
                                     >
-                                        {/* Card Top Pill */}
-                                        <div className="flex items-center justify-between">
-                                            <span className="font-mono text-[11px] uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/10">
+                                        {/* Background Showcase Imagery */}
+                                        <div className="absolute inset-0">
+                                            <img
+                                                src={card.preview}
+                                                alt={card.title}
+                                                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 contrast-110"
+                                            />
+                                            {/* Layered Film Vignette Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60" />
+                                        </div>
+
+                                        {/* Card Top Pill Badge */}
+                                        <div className="relative z-10 p-6 flex items-center justify-between">
+                                            <span className="font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white/90 border border-white/20">
                                                 {card.tag}
                                             </span>
-                                            <span className="font-mono text-xs text-neutral-400">
+                                            <span className="font-mono text-xs text-white/80 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md">
                                                 [{card.year}]
                                             </span>
                                         </div>
 
-                                        {/* Visual Graphic Representation */}
-                                        <div className="my-auto py-8">
-                                            <div className="w-16 h-16 rounded-2xl border border-white/20 bg-white/5 flex items-center justify-center mb-6 shadow-inner group-hover:bg-[#d4ff00]/10 transition-colors">
-                                                <Sparkles className="w-8 h-8 text-[#d4ff00]" />
+                                        {/* Bottom Information Section */}
+                                        <div className="relative z-10 p-6 space-y-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-12">
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-semibold">
+                                                    {card.category}
+                                                </span>
+                                                <span className="text-[10px] font-mono uppercase text-neutral-400">
+                                                    0{idx + 1} / 0{reelCards.length}
+                                                </span>
                                             </div>
-                                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
-                                                {card.category}
-                                            </span>
-                                            <h3 className="text-3xl font-['Antonio',_'Bebas_Neue',_sans-serif] uppercase font-bold text-white mt-1">
+
+                                            <h3 className="text-3xl sm:text-4xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-wide">
                                                 {card.title}
                                             </h3>
-                                        </div>
 
-                                        {/* Card Bottom Strip */}
-                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
-                                            <span>Case Study 0{idx + 1}</span>
-                                            <div className="flex items-center gap-1.5 text-white font-medium group-hover:text-[#d4ff00] transition-colors">
-                                                <span>Shuffle Next</span>
-                                                <ArrowUpRight className="w-4 h-4 text-[#d4ff00]" />
+                                            {/* Shuffle Trigger Footer */}
+                                            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+                                                <span className="text-neutral-400">Click card to shuffle showcase</span>
+                                                <div className="flex items-center gap-1.5 text-white font-semibold group-hover:text-[#d4ff00] transition-colors">
+                                                    <span>Next Reel</span>
+                                                    <ArrowUpRight className="w-4 h-4 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -92,10 +92,10 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                     </svg>
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-white transition-colors">
+                                    <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-white transition-colors">
                                         CUTTING
                                     </span>
-                                    <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] text-2xl sm:text-3xl font-bold text-[#d4ff00] ml-1">
+                                    <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-[#d4ff00] ml-1.5">
                                         EDGER.
                                     </span>
                                 </div>

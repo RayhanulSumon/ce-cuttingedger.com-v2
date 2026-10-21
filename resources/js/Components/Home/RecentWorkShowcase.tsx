@@ -117,7 +117,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
 
                         {/* Title with kinetic horizontal scroll & customized lightning 'K' */}
                         <div className="overflow-visible select-none">
-                            <h2 className="text-6xl sm:text-8xl lg:text-[9.5rem] font-['Antonio',_'Bebas_Neue',_sans-serif] uppercase font-bold text-white tracking-tighter leading-[0.88]">
+                            <h2 className="text-6xl sm:text-8xl lg:text-[9.5rem] font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tighter leading-[0.88]">
                                 <motion.span
                                     style={{ x: recentX }}
                                     className="block whitespace-nowrap will-change-transform text-white/90"

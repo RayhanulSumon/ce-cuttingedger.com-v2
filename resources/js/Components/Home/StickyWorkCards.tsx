@@ -119,7 +119,7 @@ function CardView({ item, style, zIndex }: CardViewProps) {
 
             {/* Card Bottom Bar: Massive Centered Title (.des-portfolio-title) */}
             <div className="absolute bottom-10 sm:bottom-14 lg:bottom-16 inset-x-0 z-30 text-center px-4 pointer-events-none">
-                <h3 className="font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] text-5xl sm:text-7xl md:text-8xl lg:text-[120px] xl:text-[145px] font-bold uppercase text-[#f9f4e8] tracking-tight leading-none group-hover:text-[#d4ff00] transition-colors drop-shadow-[0_15px_30px_rgba(0,0,0,0.95)]">
+                <h3 className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-5xl sm:text-7xl md:text-8xl lg:text-[110px] xl:text-[135px] font-bold uppercase text-[#f9f4e8] tracking-tight leading-none group-hover:text-[#d4ff00] transition-colors drop-shadow-[0_15px_30px_rgba(0,0,0,0.95)]">
                     {item.title}
                 </h3>
             </div>

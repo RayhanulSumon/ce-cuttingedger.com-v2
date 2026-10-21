@@ -7,10 +7,11 @@
 
         <title inertia>{{ config('app.name', 'CuttingEdger') }}</title>
 
-        <!-- Google Fonts: Inter + Plus Jakarta Sans + Space Grotesk + Agency Display Fonts -->
+        <!-- Google & Studio Display Fonts: Clash Display, Outfit, Syne, Antonio, Plus Jakarta Sans, Space Grotesk -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+        <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
 
         <!-- Anti-FOUC theme detector -->
         <script>
