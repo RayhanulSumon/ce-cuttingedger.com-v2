@@ -122,7 +122,7 @@ function KineticMarqueeRow({
                                 className="flex items-center gap-10 sm:gap-14 shrink-0 [transform:translateZ(0)]"
                             >
                                 <span
-                                    className={`font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-4xl sm:text-6xl md:text-7xl lg:text-[86px] tracking-wide leading-none pointer-events-none [backface-visibility:hidden] [transform:translateZ(0)] ${
+                                    className={`font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-3xl sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[76px] tracking-wide leading-none pointer-events-none [backface-visibility:hidden] [transform:translateZ(0)] ${
                                         item.style === 'highlight'
                                             ? accentColor === '#d4ff00'
                                                 ? 'text-[#d4ff00] [text-shadow:0_0_25px_rgba(212,255,0,0.5),0_0_50px_rgba(212,255,0,0.2)]'
@@ -177,7 +177,7 @@ function InvertLine({ text }: InvertLineProps) {
                     display: 'inline-block',
                     transform: 'translateZ(0)',
                 }}
-                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-[18px] xs:text-[22px] sm:text-[30px] md:text-[38px] lg:text-[46px] xl:text-[54px] font-semibold tracking-tight leading-[1.2] whitespace-nowrap"
+                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-[clamp(12px,2.4vw,42px)] font-semibold tracking-tight leading-[1.24] whitespace-nowrap"
             >
                 {text}
             </motion.span>
@@ -229,7 +229,7 @@ export function IntroBand() {
     return (
         <section
             ref={sectionRef}
-            className="relative pt-24 sm:pt-28 pb-32 sm:pb-40 border-y border-white/10 bg-[#090a0d] overflow-hidden select-none"
+            className="relative pt-16 sm:pt-20 lg:pt-24 pb-20 sm:pb-24 lg:pb-28 border-y border-white/10 bg-[#090a0d] overflow-hidden select-none"
         >
             {/* Ambient Backlight Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[32rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
@@ -246,7 +246,7 @@ export function IntroBand() {
             </div>
 
             {/* DUAL OPPOSING CONTINUOUS VELOCITY MARQUEES */}
-            <div className="space-y-4 pb-20 sm:pb-28 overflow-hidden">
+            <div className="space-y-3 sm:space-y-4 pb-14 sm:pb-18 lg:pb-22 overflow-hidden">
                 {/* Strip 1: Continuous Drift Left, Accelerates with Scroll, Draggable */}
                 <KineticMarqueeRow
                     items={marqueeRow1}
@@ -267,7 +267,7 @@ export function IntroBand() {
             </div>
 
             {/* CENTERED ABOUT MANIFESTO STATEMENT */}
-            <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10">
+            <div className="w-full max-w-[96%] xl:max-w-[1560px] mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10">
                 {/* 5 Equal-width lines that scrub smoothly with scroll */}
                 <div className="flex flex-col items-center w-full space-y-1">
                     {manifestoLines.map((line, index) => (

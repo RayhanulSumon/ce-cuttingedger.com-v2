@@ -37,17 +37,17 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
 
     return (
         <section
-            className="relative py-28 bg-[#0c0d12] border-t border-white/10 overflow-hidden"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#0c0d12] border-t border-white/10 overflow-hidden"
             aria-label="Client Testimonials Carousel"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 pb-6 border-b border-white/10 gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-white/10 gap-6">
                     <div>
                         <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-3">
                             [ 06 // CLIENT ENDORSEMENTS ]
                         </span>
-                        <h2 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight">
+                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight">
                             WHAT THEY SAY.
                         </h2>
                     </div>
@@ -58,7 +58,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                             type="button"
                             onClick={prevSlide}
                             aria-label="Previous testimonial"
-                            className="p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
+                            className="p-3 sm:p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
@@ -66,7 +66,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                             type="button"
                             onClick={nextSlide}
                             aria-label="Next testimonial"
-                            className="p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
+                            className="p-3 sm:p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
                         >
                             <ArrowRight className="w-5 h-5" />
                         </button>
@@ -76,7 +76,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                 {/* Main Carousel Card */}
                 <div
                     key={currentIndex}
-                    className="relative rounded-3xl p-8 sm:p-14 border border-white/10 bg-[#12141c] backdrop-blur-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-500"
+                    className="relative rounded-3xl p-6 sm:p-10 lg:p-12 border border-white/10 bg-[#12141c] backdrop-blur-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-500"
                 >
                     <div className="flex items-center justify-between mb-8">
                         {/* Rating Stars */}

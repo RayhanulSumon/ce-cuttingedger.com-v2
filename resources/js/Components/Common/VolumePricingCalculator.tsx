@@ -301,26 +301,26 @@ export function VolumePricingCalculator() {
     return (
         <section
             id="volume-calculator-section"
-            className="relative py-24 sm:py-32 bg-[#090a0d] border-t border-white/10 overflow-hidden"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
             <div className="absolute bottom-10 right-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[200px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center max-w-3xl mx-auto mb-14">
+                <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                         <Calculator className="w-3.5 h-3.5" />
                         <span>[ LIVE PRODUCTION & COMBO RATE ESTIMATOR ]</span>
                     </div>
 
-                    <h2 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.05]">
+                    <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.05]">
                         Calculate Your Rate <br />
                         <span className="text-[#d4ff00]">Down to the Penny.</span>
                     </h2>
 
-                    <p className="mt-4 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
+                    <p className="mt-3.5 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
                         Select a single service or combine multiple services to activate <strong>Buy 2 Get 1 Free</strong> combo discounts. Rates automatically decrease as your batch size grows.
                     </p>
 

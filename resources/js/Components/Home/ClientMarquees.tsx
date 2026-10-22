@@ -37,20 +37,20 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
     return (
         <section
             id="collaborators-section"
-            className="relative py-28 sm:py-36 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-[#d4ff00]/5 rounded-full blur-[190px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 mb-16 text-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-14 text-center">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>[ TRUSTED BY 173+ ENTERPRISES ]</span>
                 </div>
-                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-none">
+                <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-none">
                     Global Collaborators
                 </h2>
-                <p className="mt-3 text-sm text-neutral-400 font-sans max-w-xl mx-auto">
+                <p className="mt-3 text-sm sm:text-base text-neutral-400 font-sans max-w-xl mx-auto">
                     Powering e-commerce leaders, luxury fashion houses, and automotive brands with high-throughput post-production.
                 </p>
             </div>

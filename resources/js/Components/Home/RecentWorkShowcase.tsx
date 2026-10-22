@@ -100,7 +100,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
     return (
         <section
             ref={sectionRef}
-            className="relative py-28 sm:py-36 lg:py-44 bg-[#08090b] text-white overflow-hidden border-t border-white/10"
+            className="relative py-16 sm:py-24 lg:py-28 xl:py-32 bg-[#08090b] text-white overflow-hidden border-t border-white/10"
         >
             {/* Ambient Background Glows */}
             <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-[#00f5ff]/5 rounded-full blur-[220px] pointer-events-none" />
@@ -108,16 +108,16 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 {/* SECTION HEADER: AGNTIX RECENT WORK WITH KINETIC SCROLL & LIGHTNING K */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 sm:mb-32 lg:mb-40 gap-8">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-14 sm:mb-20 lg:mb-24 gap-8">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#00f5ff] mb-6">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#00f5ff] mb-4 sm:mb-6">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ 02 // RECENT COMMISSIONS ]</span>
                         </div>
 
                         {/* Title with kinetic horizontal scroll & customized lightning 'K' */}
                         <div className="overflow-visible select-none">
-                            <h2 className="text-6xl sm:text-8xl lg:text-[9.5rem] font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tighter leading-[0.88]">
+                            <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] xl:text-[8.5rem] font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tighter leading-[0.88]">
                                 <motion.span
                                     style={{ x: recentX }}
                                     className="block whitespace-nowrap will-change-transform text-white/90"
@@ -146,7 +146,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
                             </h2>
                         </div>
 
-                        <p className="text-lg sm:text-2xl text-neutral-400 font-medium max-w-sm mt-8 leading-snug tracking-tight">
+                        <p className="text-base sm:text-xl lg:text-2xl text-neutral-400 font-medium max-w-sm mt-6 sm:mt-8 leading-snug tracking-tight">
                             In the creative wilderness, clients find our work truly beloved.
                         </p>
                     </div>
@@ -163,7 +163,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
                 </div>
 
                 {/* SHOWCASE ITEMS: AGNTIX ALTERNATING ZIG-ZAG WITH SLIDING TILT PHYSICS */}
-                <div className="space-y-28 sm:space-y-36 lg:space-y-48">
+                <div className="space-y-16 sm:space-y-24 lg:space-y-32">
                     {items.map((item, index) => {
                         const isEven = index % 2 === 1;
 

@@ -125,21 +125,21 @@ export function BeforeAfterShowcase() {
     return (
         <section
             id="before-after-showcase-section"
-            className="relative py-24 sm:py-32 bg-[#0a0b0f] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#0a0b0f] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 right-10 w-[35rem] h-[35rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
             <div className="absolute bottom-10 left-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[180px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
                     <div>
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ SURGICAL CRAFT DEMO ]</span>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-[1.02]">
+                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.04]">
                             See The Difference <br />
                             <span className="text-[#d4ff00]">Pixel By Pixel.</span>
                         </h2>

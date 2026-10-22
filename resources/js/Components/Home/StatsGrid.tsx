@@ -48,26 +48,26 @@ function FunFactRow({ value, suffix = '', badge, title, subtitle }: FunFactRowPr
     return (
         <div
             ref={rowRef}
-            className="group py-10 sm:py-14 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 transition-colors duration-300 hover:border-white/25"
+            className="group py-6 sm:py-10 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 transition-colors duration-300 hover:border-white/25"
         >
-            {/* Massive Counter on Left */}
+            {/* Counter on Left */}
             <div className="flex items-baseline">
-                <span className="font-display text-7xl sm:text-8xl lg:text-[110px] xl:text-[125px] font-black tracking-tight text-white leading-none select-none group-hover:text-[#d4ff00] transition-colors tabular-nums">
+                <span className="font-display text-5xl sm:text-7xl lg:text-7xl xl:text-8xl 2xl:text-[105px] font-black tracking-tight text-white leading-none select-none group-hover:text-[#d4ff00] transition-colors tabular-nums">
                     {count}
                 </span>
                 {suffix && (
-                    <span className="font-display text-5xl sm:text-6xl lg:text-8xl font-black text-[#d4ff00] leading-none ml-1 select-none">
+                    <span className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-[#d4ff00] leading-none ml-1 select-none">
                         {suffix}
                     </span>
                 )}
             </div>
 
             {/* Badge & Title on Right */}
-            <div className="sm:text-right space-y-2.5">
+            <div className="sm:text-right space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                     <span>{badge}</span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-200 group-hover:text-white transition-colors tracking-tight leading-tight">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-neutral-200 group-hover:text-white transition-colors tracking-tight leading-tight">
                     {title}
                 </h3>
                 {subtitle && (
@@ -115,27 +115,27 @@ export function StatsGrid() {
     return (
         <section
             id="fun-facts-section"
-            className="relative py-28 sm:py-36 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/3 left-10 w-[40rem] h-[40rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
             <div className="absolute bottom-10 right-10 w-[35rem] h-[35rem] bg-[#ff5e36]/5 rounded-full blur-[200px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Asymmetric 2-Column Layout matching Agntix Design Studio */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 xl:gap-20 items-start">
                     {/* Left Column: Fun Facts Eyebrow, Display Headline, and Manifesto Paragraph */}
-                    <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-6">
+                    <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-4 sm:space-y-6">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>Daily Production Insights</span>
                         </div>
 
-                        <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] xl:text-[88px] font-display font-extrabold text-white tracking-tight leading-[0.98]">
+                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.04]">
                             Numbers that Speak Volumes
                         </h2>
 
-                        <p className="text-base sm:text-lg text-neutral-400 font-sans leading-relaxed pt-2 max-w-lg">
+                        <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed max-w-lg">
                             Operating 24 hours a day with 100+ specialized Photoshop artists and 3D CGI modelers. 
                             We partner directly with international retail powerhouses, advertising agencies, and e-commerce studios requiring unmatched scale and surgical precision.
                         </p>

@@ -441,7 +441,7 @@ export function ChatWidget() {
     };
 
     return (
-        <aside aria-label="Live Assistant" className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+        <aside aria-label="Live Assistant" className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end">
             {/* Inactivity / Exit Nudge Bubble */}
             <AnimatePresence>
                 {showNudgeBubble && !isOpen && (
@@ -500,8 +500,8 @@ export function ChatWidget() {
                         }}
                         className={`relative flex flex-col rounded-3xl bg-[#0b0c10]/95 border border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden mb-3 transition-all duration-300 ${
                             isExpanded
-                                ? 'w-[92vw] sm:w-[760px] h-[82vh] max-h-[850px]'
-                                : 'w-[360px] sm:w-[420px] h-[590px] max-h-[85vh]'
+                                ? 'w-[calc(100vw-2rem)] sm:w-[720px] h-[min(700px,80vh)]'
+                                : 'w-[calc(100vw-2rem)] sm:w-[380px] md:w-[410px] h-[min(540px,78vh)]'
                         }`}
                     >
                         {/* Drag and Drop Active Overlay */}
@@ -1010,19 +1010,19 @@ export function ChatWidget() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-4 rounded-2xl bg-gradient-to-tr from-[#12141a] to-[#1c1f2b] border border-[#d4ff00]/40 text-[#d4ff00] shadow-2xl hover:border-[#d4ff00] transition-all flex items-center justify-center group cursor-pointer"
+                className="relative p-3.5 sm:p-4 rounded-2xl bg-gradient-to-tr from-[#12141a] to-[#1c1f2b] border border-[#d4ff00]/40 text-[#d4ff00] shadow-2xl hover:border-[#d4ff00] transition-all flex items-center justify-center group cursor-pointer"
                 aria-label="Toggle AI Chat Dialog"
             >
                 {/* Glow ring */}
                 <span className="absolute inset-0 rounded-2xl bg-[#d4ff00]/20 blur-md group-hover:bg-[#d4ff00]/30 transition-all -z-10" />
 
                 {isOpen ? (
-                    <Minimize2 className="w-6 h-6 text-white" />
+                    <Minimize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 ) : (
                     <>
-                        <MessageSquare className="w-6 h-6 text-[#d4ff00]" />
+                        <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-[#d4ff00]" />
                         {/* Status dot */}
-                        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#d4ff00] border-2 border-[#0a0b0e]" />
+                        <span className="absolute -top-1 -right-1 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-[#d4ff00] border-2 border-[#0a0b0e]" />
                     </>
                 )}
 

@@ -245,14 +245,14 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
     return (
         <section
             id="featured-work"
-            className="relative py-20 sm:py-28 bg-[#090a0d] border-t border-white/10 select-none"
+            className="relative py-14 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
         >
             {/* Ambient Background Glow */}
             <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 pb-6 border-b border-white/10 gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
                             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
@@ -266,7 +266,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             </div>
                         </div>
 
-                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
+                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
                             ENGINEERED FOR IMPACT.
                         </h2>
                     </div>
@@ -283,7 +283,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                 {/* PINNED COLLAPSIBLE CARDS CONTAINER (.des-portfolio-wrap) */}
                 <div ref={containerRef} className="relative h-[320vh] sm:h-[360vh]">
                     {/* Sticky Viewport Window: Safe Height to Guarantee Bottom Title Visibility */}
-                    <div className="sticky top-16 sm:top-20 lg:top-24 h-[60vh] sm:h-[68vh] lg:h-[72vh] min-h-[440px] max-h-[720px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
+                    <div className="sticky top-16 sm:top-20 lg:top-24 h-[58vh] sm:h-[64vh] lg:h-[68vh] min-h-[400px] max-h-[660px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
                         {/* Card 0 */}
                         <CardView
                             item={activeWorks[0]}

@@ -72,20 +72,20 @@ export function TeamPreview({ members }: TeamPreviewProps) {
             ref={sectionRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setHoveredMember(null)}
-            className="relative py-28 sm:py-36 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[30rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
 
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-8 border-b border-white/10 gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ 05 // LEADERSHIP VANGUARD ]</span>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
+                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
                             Passionate Minds Behind the Studio
                         </h2>
                     </div>
@@ -106,7 +106,7 @@ export function TeamPreview({ members }: TeamPreviewProps) {
                             key={member.id || member.slug}
                             href={`/team/${member.slug}`}
                             onMouseEnter={() => setHoveredMember(member)}
-                            className="group py-10 sm:py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300 cursor-pointer block relative"
+                            className="group py-6 sm:py-9 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300 cursor-pointer block relative"
                         >
                             {/* Left: Since Year */}
                             <div className="sm:w-1/4">

@@ -17,10 +17,10 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
     // Rotating kinetic agency disciplines
     const rotatingWords = [
         'IMAGE EDITING',
-        '3D CGI & PRODUCT MODELING',
+        '3D CGI & PRODUCT',
         'GHOST MANNEQUIN',
-        'FINE JEWELRY RETOUCHING',
-        'CLIPPING PATH & MULTIPATH',
+        'JEWELRY RETOUCH',
+        'CLIPPING PATHS',
         'DESKTOP PUBLISHING',
     ];
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -295,7 +295,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative min-h-[94vh] pt-32 pb-16 flex flex-col justify-between overflow-hidden bg-[#090a0d] text-white select-none"
+            className="relative min-h-[100svh] lg:min-h-[calc(100vh-4.5rem)] xl:min-h-[94vh] pt-24 sm:pt-28 lg:pt-24 xl:pt-28 2xl:pt-32 pb-6 sm:pb-8 lg:pb-6 xl:pb-10 flex flex-col justify-between overflow-hidden bg-[#090a0d] text-white select-none"
         >
             {/* AMBIENT BACKGROUND GLOWS */}
             <div className="absolute inset-0 pointer-events-none">
@@ -334,26 +334,26 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                 ))}
             </div>
 
-            {/* MAIN MODERN AGENCY HERO CONTENT (Option A Modern Format) */}
+            {/* MAIN MODERN AGENCY HERO CONTENT */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto relative z-20">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center">
                     {/* Left Column: Kinetic Headline & Rotating Disciplines */}
-                    <div className="lg:col-span-7 space-y-8">
+                    <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-4 xl:space-y-6 2xl:space-y-7">
                         {/* Eyebrow Status Badge */}
-                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-300">
+                        <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs font-mono text-neutral-300">
                             <span className="w-2 h-2 rounded-full bg-[#d4ff00] animate-pulse" />
                             <span className="uppercase tracking-widest">
                                 AVAILABLE FOR COMMISSIONS // 2026 ARCHITECTURE
                             </span>
                         </div>
 
-                        {/* Kinetic Main Headline with perfect wrapping and zero clipping */}
-                        <div className="space-y-4">
-                            <h1 className="text-4xl sm:text-6xl lg:text-[4.75rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.04]">
+                        {/* Kinetic Main Headline with perfect wrapping and responsive font size */}
+                        <div className="space-y-2.5 sm:space-y-3">
+                            <h1 className="text-3xl sm:text-5xl lg:text-[2.75rem] xl:text-[3.65rem] 2xl:text-[4.5rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.08] lg:leading-[1.06]">
                                 ARE YOU <br />
                                 LOOKING FOR <br />
                                 <span className="flex items-baseline flex-wrap gap-x-3 text-white">
-                                    <span className="overflow-hidden h-[1.25em] inline-block relative text-[#d4ff00]">
+                                    <span className="overflow-hidden min-h-[1.2em] h-[1.25em] inline-block relative text-[#d4ff00] max-w-full">
                                         <AnimatePresence mode="wait">
                                             <motion.span
                                                 key={rotatingWords[currentWordIndex]}
@@ -370,17 +370,17 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 </span>
                             </h1>
 
-                            <p className="text-base sm:text-lg text-neutral-400 max-w-xl font-normal leading-relaxed pt-1">
+                            <p className="text-sm sm:text-base lg:text-sm xl:text-base 2xl:text-lg text-neutral-400 max-w-xl font-normal leading-relaxed pt-0.5">
                                 CuttingEdger delivers surgical 2D photo editing and photorealistic 3D product CGI for high-growth e-commerce brands, fashion houses, and advertising agencies worldwide.
                             </p>
                         </div>
 
                         {/* CTAs */}
-                        <div className="flex flex-wrap items-center gap-4 pt-2">
-                            <Button asChild size="lg">
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
+                            <Button asChild size="lg" className="h-10 sm:h-11 px-5 sm:px-6 text-xs sm:text-sm">
                                 <a href="#trial-uploader-section">
                                     Try 3 Images Free
-                                    <ArrowUpRight />
+                                    <ArrowUpRight className="w-4 h-4" />
                                 </a>
                             </Button>
 
@@ -388,31 +388,32 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 variant="secondary"
                                 size="lg"
                                 onClick={onOpenContact}
+                                className="h-10 sm:h-11 px-5 sm:px-6 text-xs sm:text-sm"
                             >
                                 Instant Volume Quote
                             </Button>
                         </div>
 
                         {/* Quick Trust Highlights */}
-                        <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg">
+                        <div className="pt-4 sm:pt-5 xl:pt-6 border-t border-white/10 grid grid-cols-3 gap-3 sm:gap-6 max-w-lg">
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">10K+</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Daily Images</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-xl sm:text-2xl xl:text-3xl text-white">10K+</span>
+                                <span className="text-[10px] sm:text-xs font-mono text-neutral-400 uppercase tracking-wider">Daily Images</span>
                             </div>
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-[#d4ff00]">99.8%</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">First-Pass QA</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-xl sm:text-2xl xl:text-3xl text-[#d4ff00]">99.8%</span>
+                                <span className="text-[10px] sm:text-xs font-mono text-neutral-400 uppercase tracking-wider">First-Pass QA</span>
                             </div>
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">&lt;12h</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Turnaround SLA</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-xl sm:text-2xl xl:text-3xl text-white">&lt;12h</span>
+                                <span className="text-[10px] sm:text-xs font-mono text-neutral-400 uppercase tracking-wider">Turnaround SLA</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Column: High-Impact Visual Showcase Cards with Rich Imagery */}
-                    <div className="lg:col-span-5 relative flex justify-center items-center py-6">
-                        <div className="relative w-full max-w-md h-[460px]">
+                    <div className="lg:col-span-5 relative flex justify-center items-center py-4 lg:py-0">
+                        <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-[340px] xl:max-w-md h-[340px] sm:h-[390px] lg:h-[370px] xl:h-[430px] 2xl:h-[470px]">
                             {reelCards.map((card, idx) => {
                                 const offset = (idx - activeCardIndex + reelCards.length) % reelCards.length;
 
@@ -421,9 +422,9 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                         key={card.title}
                                         onClick={() => setActiveCardIndex((prev) => (prev + 1) % reelCards.length)}
                                         data-cursor-view="CLICK TO SHUFFLE"
-                                        className={`absolute inset-0 rounded-[28px] overflow-hidden border border-white/15 bg-[#10121a] shadow-[0_30px_90px_rgba(0,0,0,0.95)] transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none group`}
+                                        className={`absolute inset-0 rounded-[24px] sm:rounded-[28px] overflow-hidden border border-white/15 bg-[#10121a] shadow-[0_30px_90px_rgba(0,0,0,0.95)] transition-all duration-700 ease-out cursor-pointer flex flex-col justify-between select-none group`}
                                         style={{
-                                            transform: `translateY(${offset * 18}px) scale(${1 - offset * 0.05})`,
+                                            transform: `translateY(${offset * 14}px) scale(${1 - offset * 0.05})`,
                                             zIndex: reelCards.length - offset,
                                             opacity: 1 - offset * 0.18,
                                         }}
@@ -440,19 +441,19 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                         </div>
 
                                         {/* Card Top Pill Badge */}
-                                        <div className="relative z-10 p-6 flex items-center justify-between">
-                                            <span className="font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white/90 border border-white/20">
+                                        <div className="relative z-10 p-4 sm:p-5 xl:p-6 flex items-center justify-between">
+                                            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white/90 border border-white/20">
                                                 {card.tag}
                                             </span>
-                                            <span className="font-mono text-xs text-white/80 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md">
+                                            <span className="font-mono text-[11px] sm:text-xs text-white/80 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-black/40 backdrop-blur-md">
                                                 [{card.year}]
                                             </span>
                                         </div>
 
                                         {/* Bottom Information Section */}
-                                        <div className="relative z-10 p-6 space-y-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-12">
+                                        <div className="relative z-10 p-4 sm:p-5 xl:p-6 space-y-2 sm:space-y-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-8 sm:pt-10 xl:pt-12">
                                             <div className="flex items-center justify-between">
-                                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-semibold">
+                                                <span className="font-mono text-[11px] sm:text-xs uppercase tracking-widest text-[#d4ff00] font-semibold">
                                                     {card.category}
                                                 </span>
                                                 <span className="text-[10px] font-mono uppercase text-neutral-400">
@@ -460,16 +461,16 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                                 </span>
                                             </div>
 
-                                            <h3 className="text-3xl sm:text-4xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-wide">
+                                            <h3 className="text-2xl sm:text-3xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-wide">
                                                 {card.title}
                                             </h3>
 
                                             {/* Shuffle Trigger Footer */}
-                                            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
-                                                <span className="text-neutral-400">Click card to shuffle showcase</span>
+                                            <div className="pt-2 sm:pt-3 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-mono">
+                                                <span className="text-neutral-400">Click to shuffle</span>
                                                 <div className="flex items-center gap-1.5 text-white font-semibold group-hover:text-[#d4ff00] transition-colors">
                                                     <span>Next Reel</span>
-                                                    <ArrowUpRight className="w-4 h-4 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                                    <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                                 </div>
                                             </div>
                                         </div>
@@ -482,18 +483,18 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             </div>
 
             {/* Scroll Indicator */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-8 flex items-center justify-between text-xs font-mono text-neutral-500 relative z-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 lg:pt-3 xl:pt-6 flex items-center justify-between text-xs font-mono text-neutral-500 relative z-20">
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#d4ff00]" />
-                    <span className="uppercase tracking-widest">SCROLL TO REVEAL</span>
+                    <span className="uppercase tracking-widest text-[11px] sm:text-xs">SCROLL TO REVEAL</span>
                 </div>
                 <button
                     type="button"
                     onClick={scrollToWork}
                     aria-label="Scroll down"
-                    className="p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors cursor-pointer"
+                    className="p-1.5 sm:p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors cursor-pointer"
                 >
-                    <ArrowDown className="w-4 h-4 animate-bounce" />
+                    <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
                 </button>
             </div>
         </section>
