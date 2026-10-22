@@ -166,7 +166,9 @@ class ChatFlowTest extends TestCase
         $response->assertStatus(200);
         $toolCards = $response->json('message.tool_cards');
         $this->assertNotEmpty($toolCards);
-        $this->assertSame('upload_prompt_card', $toolCards[0]['type']);
+        $cardTypes = array_column($toolCards, 'type');
+        $this->assertContains('order_confirmed_card', $cardTypes);
+        $this->assertContains('upload_prompt_card', $cardTypes);
     }
 
     public function test_view_all_services_returns_service_catalog_card(): void
@@ -481,5 +483,56 @@ class ChatFlowTest extends TestCase
             'success' => false,
             'error_type' => 'disposable_domain',
         ]);
+    }
+
+    public function test_resets_chat_session_and_returns_fresh_welcome(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'last_active_at' => now(),
+        ]);
+        ChatMessage::create([
+            'chat_session_id' => $session->id,
+            'sender' => 'user',
+            'content' => 'Old message that needs to be cleared',
+        ]);
+
+        $response = $this->withHeader('X-Chat-Session-Id', $session->id)
+            ->postJson('/api/chat/reset');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'session_id',
+                'messages',
+            ]);
+
+        $newSessionId = $response->json('session_id');
+        $this->assertNotEquals($session->id, $newSessionId);
+        $this->assertEquals('archived', $session->fresh()->status);
+
+        $messages = $response->json('messages');
+        $this->assertCount(1, $messages);
+        $this->assertEquals('assistant', $messages[0]['sender']);
+        $this->assertStringContainsString('Welcome to **CuttingEdger**', $messages[0]['content']);
+    }
+
+    public function test_fresh_chat_intent_returns_reset_prompt_card(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'last_active_at' => now(),
+        ]);
+
+        $response = $this->withHeader('X-Chat-Session-Id', $session->id)
+            ->postJson('/api/chat/message', [
+                'message' => 'can we start a fresh chat please?',
+            ]);
+
+        $response->assertStatus(200);
+        $toolCards = $response->json('message.tool_cards');
+        $this->assertNotEmpty($toolCards);
+        $this->assertEquals('reset_chat_prompt_card', $toolCards[0]['type']);
     }
 }

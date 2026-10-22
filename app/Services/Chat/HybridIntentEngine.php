@@ -4,8 +4,11 @@ namespace App\Services\Chat;
 
 use App\Models\ChatSession;
 use App\Models\FreeTrialRequest;
+use App\Models\Order;
+use App\Services\Chat\Tools\PriceCalculatorTool;
 use App\Services\Notification\NotificationService;
 use App\Services\Security\EmailAndSpamGuard;
+use App\Services\Security\LinkAndFileSecurityGuard;
 
 class HybridIntentEngine
 {
@@ -38,10 +41,16 @@ class HybridIntentEngine
                         $q->where('email', 'like', '%temp.local%')->orWhereNull('email');
                     })
                     ->update(['email' => $email]);
+
+                Order::where('chat_session_id', $session->id)
+                    ->where(function ($q) {
+                        $q->where('client_email', 'like', '%temp.local%')->orWhereNull('client_email');
+                    })
+                    ->update(['client_email' => $email]);
             }
 
             return [
-                'content' => "Got it! Saved **{$email}** for updates. We'll send your completed files here. Need help with anything else?",
+                'content' => "Got it! Saved **{$email}** for updates. We'll send your completed files and invoice here. Need help with anything else?",
                 'tool_cards' => [$toolResult],
                 'suggested_replies' => [
                     'Schedule Consultation Call',
@@ -51,29 +60,407 @@ class HybridIntentEngine
             ];
         }
 
-        // 2. Detect Uploaded Images -> Offer Instant Quote
+        // 1.2. Detect Cloud Storage / Drive Link (Google Drive, Dropbox, WeTransfer, OneDrive, Box)
+        if (preg_match('/(https?:\/\/[^\s]+)/i', $message, $cloudMatches)) {
+            $cloudUrl = trim($cloudMatches[0]);
+            $secCheck = app(LinkAndFileSecurityGuard::class)->validateCloudLink($cloudUrl);
+
+            // If it is a link but not a valid cloud link, check if it was specifically attempting to share files
+            if (! $secCheck['valid']) {
+                $isCloudAttempt = str_contains($text, 'drive') || str_contains($text, 'dropbox') || str_contains($text, 'wetransfer') || str_contains($text, 'folder') || str_contains($text, 'files');
+                if ($isCloudAttempt) {
+                    return [
+                        'content' => "⚠️ **Security Notice:** {$secCheck['reason']}\n\nTo protect studio workstations, we only accept links from trusted cloud storage providers (**Google Drive, Dropbox, WeTransfer, OneDrive, or Box**). Executable scripts or unverified domains are strictly blocked.",
+                        'tool_cards' => [],
+                        'suggested_replies' => [
+                            'How to share Google Drive link?',
+                            'Calculate Pricing First',
+                            'Schedule Consultation Call',
+                        ],
+                    ];
+                }
+            } else {
+                $pendingOrder = $session
+                    ? Order::where('chat_session_id', $session->id)->where('status', 'pending')->latest('id')->first()
+                    : null;
+
+                if ($pendingOrder) {
+                    $pendingOrder->update(['cloud_link' => $cloudUrl]);
+
+                    try {
+                        app(NotificationService::class)->toAllAdmins()->send('order.updated', [
+                            'title' => '🔗 Drive Link Attached: Order #'.$pendingOrder->order_number,
+                            'message' => "Client attached cloud folder: {$cloudUrl}",
+                            'order_id' => $pendingOrder->id,
+                            'admin_url' => url('/admin/orders'),
+                            'timestamp' => now()->toISOString(),
+                        ]);
+                    } catch (\Throwable $e) {
+                    }
+
+                    return [
+                        'content' => "🔗 **Cloud Drive Link Attached!**\n\nWe've linked your folder to Order **#{$pendingOrder->order_number}**:\n{$cloudUrl}\n\nOur production artists can download your raw files directly from this link. Need anything else before we begin?",
+                        'tool_cards' => [
+                            [
+                                'type' => 'order_confirmed_card',
+                                'order_number' => $pendingOrder->order_number,
+                                'service_name' => $pendingOrder->service_name,
+                                'service_slug' => $pendingOrder->service_slug,
+                                'complexity' => $pendingOrder->complexity,
+                                'quantity' => $pendingOrder->quantity,
+                                'uploaded_count' => $pendingOrder->uploaded_count,
+                                'remaining_count' => max(0, $pendingOrder->quantity - $pendingOrder->uploaded_count),
+                                'discrepancy_status' => 'complete',
+                                'unit_price' => number_format($pendingOrder->unit_price, 2),
+                                'total_price' => number_format($pendingOrder->total_price, 2),
+                                'turnaround' => $pendingOrder->turnaround,
+                                'client_email' => $pendingOrder->client_email,
+                                'cloud_link' => $cloudUrl,
+                                'images' => $pendingOrder->images ?? [],
+                            ],
+                        ],
+                        'suggested_replies' => [
+                            'Schedule Consultation Call',
+                            'Check Turnaround SLA',
+                            'Ask About Delivery Formats (PSD/TIFF)',
+                        ],
+                    ];
+                } else {
+                    $clientEmail = $session?->lead_email ?: 'pending-email@temp.local';
+                    $clientName = $session?->lead_name ?: 'Client';
+
+                    $order = Order::create([
+                        'chat_session_id' => $session?->id,
+                        'client_name' => $clientName,
+                        'client_email' => $clientEmail,
+                        'client_phone' => $session?->lead_phone,
+                        'service_name' => 'Clipping Path / Commercial Retouching',
+                        'service_slug' => 'background-removal',
+                        'complexity' => 'simple',
+                        'quantity' => 25,
+                        'uploaded_count' => 0,
+                        'unit_price' => 0.45,
+                        'total_price' => 11.25,
+                        'currency' => 'USD',
+                        'turnaround' => 'Standard 24h SLA',
+                        'cloud_link' => $cloudUrl,
+                        'status' => 'pending',
+                        'payment_status' => 'unpaid',
+                        'source' => 'chat',
+                    ]);
+
+                    try {
+                        app(NotificationService::class)->toAllAdmins()->send('order.new', [
+                            'title' => '🔗 New Order #'.$order->order_number.' (Drive Link)',
+                            'message' => "Client submitted cloud drive folder: {$cloudUrl}",
+                            'order_id' => $order->id,
+                            'admin_url' => url('/admin/orders'),
+                            'timestamp' => now()->toISOString(),
+                        ]);
+                    } catch (\Throwable $e) {
+                    }
+
+                    return [
+                        'content' => "🔗 **Cloud Link Received!**\n\nWe created Order **#{$order->order_number}** and linked your folder:\n{$cloudUrl}\n\nApproximately how many images are in this folder, or what retouching service do you need?",
+                        'tool_cards' => [
+                            [
+                                'type' => 'order_confirmed_card',
+                                'order_number' => $order->order_number,
+                                'service_name' => $order->service_name,
+                                'service_slug' => $order->service_slug,
+                                'complexity' => $order->complexity,
+                                'quantity' => $order->quantity,
+                                'uploaded_count' => 0,
+                                'discrepancy_status' => 'complete',
+                                'unit_price' => number_format($order->unit_price, 2),
+                                'total_price' => number_format($order->total_price, 2),
+                                'turnaround' => $order->turnaround,
+                                'client_email' => $order->client_email,
+                                'cloud_link' => $cloudUrl,
+                                'images' => [],
+                            ],
+                        ],
+                        'suggested_replies' => [
+                            'Background Removal (25 images)',
+                            'Ghost Mannequin (50 images)',
+                            'Jewelry Macro Retouch',
+                            'Schedule Consultation Call',
+                        ],
+                    ];
+                }
+            }
+        }
+
+        // 1.5. Detect Quantity Discrepancy Adjustment Intent (e.g. "Proceed with 10", "Adjust to 10")
+        if (preg_match('/(?:proceed with|adjust to|change to|only|make it)\s*(\d{1,5})\s*(?:images|files|photos|pics)?/i', $text, $adjMatch)) {
+            $adjQty = max(1, (int) $adjMatch[1]);
+            $pendingOrder = $session ? Order::where('chat_session_id', $session->id)->where('status', 'pending')->latest('id')->first() : null;
+            if ($pendingOrder) {
+                $calc = app(PriceCalculatorTool::class)->execute([
+                    'service' => $pendingOrder->service_slug,
+                    'complexity' => $pendingOrder->complexity,
+                    'quantity' => $adjQty,
+                ]);
+                $newTotal = (float) str_replace(',', '', (string) ($calc['total_price'] ?? '0'));
+                $newUnit = (float) str_replace(',', '', (string) ($calc['unit_price'] ?? '0'));
+                $newDiscount = $calc['discount_applied'] ? (int) filter_var($calc['discount_applied'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+                $pendingOrder->update([
+                    'quantity' => $adjQty,
+                    'unit_price' => $newUnit,
+                    'total_price' => $newTotal,
+                    'discount_percent' => $newDiscount,
+                ]);
+
+                $uploaded = $pendingOrder->uploaded_count;
+                $discStatus = $uploaded < $adjQty ? 'under' : ($uploaded > $adjQty ? 'over' : 'complete');
+
+                return [
+                    'content' => "👍 **Order #{$pendingOrder->order_number} adjusted to {$adjQty} images** (\${$newTotal} USD total). Current uploads: {$uploaded} of {$adjQty}.",
+                    'tool_cards' => [
+                        [
+                            'type' => 'order_confirmed_card',
+                            'order_number' => $pendingOrder->order_number,
+                            'service_name' => $pendingOrder->service_name,
+                            'service_slug' => $pendingOrder->service_slug,
+                            'complexity' => $pendingOrder->complexity,
+                            'quantity' => $adjQty,
+                            'uploaded_count' => $uploaded,
+                            'remaining_count' => max(0, $adjQty - $uploaded),
+                            'discrepancy_status' => $discStatus,
+                            'unit_price' => number_format($newUnit, 2),
+                            'total_price' => number_format($newTotal, 2),
+                            'turnaround' => $pendingOrder->turnaround,
+                            'client_email' => $pendingOrder->client_email,
+                            'images' => $pendingOrder->images ?? [],
+                        ],
+                    ],
+                    'suggested_replies' => [
+                        'Schedule Consultation Call',
+                        'Ask About Turnaround SLA',
+                    ],
+                ];
+            }
+        }
+
+        // 2. Detect Uploaded Images -> Link to Order or Offer Instant Quote
         if (! empty($attachments)) {
             $count = count($attachments);
-            $quoteResult = $this->tools->execute('calculate_image_price', [
-                'service' => 'background-removal',
-                'complexity' => 'simple',
-                'quantity' => $count,
-            ], $session);
 
-            $intro = $count <= 3
-                ? 'Got your photo! Since this is within 3 images, your test edit is 100% on us ($0). Ready to test our quality?'
-                : 'Got your images! Here is our quick pricing breakdown:';
+            // Check if there is an active pending order for this session
+            $pendingOrder = $session
+                ? Order::where('chat_session_id', $session->id)->where('status', 'pending')->latest('id')->first()
+                : null;
 
-            return [
-                'content' => $intro,
-                'tool_cards' => [$quoteResult],
-                'suggested_replies' => [
-                    'Claim 3 Free Sample Edits',
-                    'Ghost Mannequin Quote',
-                    'Jewelry Macro Retouch',
-                    'Model Skin Retouch',
-                ],
-            ];
+            if ($pendingOrder) {
+                // Merge newly uploaded attachments with existing files
+                $allImages = array_values(array_unique(array_merge($pendingOrder->images ?? [], $attachments)));
+                $uploadedCount = count($allImages);
+                $targetQty = $pendingOrder->quantity;
+
+                // Discrepancy Validation
+                if ($uploadedCount < $targetQty) {
+                    $remaining = $targetQty - $uploadedCount;
+                    $pendingOrder->update([
+                        'images' => $allImages,
+                        'uploaded_count' => $uploadedCount,
+                    ]);
+
+                    return [
+                        'content' => "⚠️ **Received {$uploadedCount} of {$targetQty} images** for Order **#{$pendingOrder->order_number}** ({$remaining} images remaining).\n\nYou can drop the remaining **{$remaining} images** anytime, or reply *'Proceed with {$uploadedCount}'* if this is your full batch.",
+                        'tool_cards' => [
+                            [
+                                'type' => 'order_confirmed_card',
+                                'order_number' => $pendingOrder->order_number,
+                                'service_name' => $pendingOrder->service_name,
+                                'service_slug' => $pendingOrder->service_slug,
+                                'complexity' => $pendingOrder->complexity,
+                                'quantity' => $targetQty,
+                                'uploaded_count' => $uploadedCount,
+                                'remaining_count' => $remaining,
+                                'discrepancy_status' => 'under',
+                                'unit_price' => number_format($pendingOrder->unit_price, 2),
+                                'total_price' => number_format($pendingOrder->total_price, 2),
+                                'turnaround' => $pendingOrder->turnaround,
+                                'client_email' => $pendingOrder->client_email,
+                                'images' => $allImages,
+                            ],
+                        ],
+                        'suggested_replies' => [
+                            "Proceed with {$uploadedCount} images",
+                            'Schedule Consultation Call',
+                            'Ask About Turnaround SLA',
+                        ],
+                    ];
+                } elseif ($uploadedCount > $targetQty) {
+                    $extra = $uploadedCount - $targetQty;
+                    $calc = app(PriceCalculatorTool::class)->execute([
+                        'service' => $pendingOrder->service_slug,
+                        'complexity' => $pendingOrder->complexity,
+                        'quantity' => $uploadedCount,
+                    ]);
+                    $newTotal = (float) str_replace(',', '', (string) ($calc['total_price'] ?? '0'));
+                    $newUnit = (float) str_replace(',', '', (string) ($calc['unit_price'] ?? '0'));
+                    $newDiscount = $calc['discount_applied'] ? (int) filter_var($calc['discount_applied'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+                    $pendingOrder->update([
+                        'images' => $allImages,
+                        'quantity' => $uploadedCount,
+                        'uploaded_count' => $uploadedCount,
+                        'unit_price' => $newUnit,
+                        'total_price' => $newTotal,
+                        'discount_percent' => $newDiscount,
+                    ]);
+
+                    return [
+                        'content' => "📦 **Received {$uploadedCount} images** ({$extra} more than your quoted {$targetQty})! We've automatically updated Order **#{$pendingOrder->order_number}** to {$uploadedCount} images with our volume discount applied (\${$newTotal} total).",
+                        'tool_cards' => [
+                            [
+                                'type' => 'order_confirmed_card',
+                                'order_number' => $pendingOrder->order_number,
+                                'service_name' => $pendingOrder->service_name,
+                                'service_slug' => $pendingOrder->service_slug,
+                                'complexity' => $pendingOrder->complexity,
+                                'quantity' => $uploadedCount,
+                                'uploaded_count' => $uploadedCount,
+                                'remaining_count' => 0,
+                                'discrepancy_status' => 'over',
+                                'unit_price' => number_format($newUnit, 2),
+                                'total_price' => number_format($newTotal, 2),
+                                'turnaround' => $pendingOrder->turnaround,
+                                'client_email' => $pendingOrder->client_email,
+                                'images' => $allImages,
+                            ],
+                        ],
+                        'suggested_replies' => [
+                            'Schedule Consultation Call',
+                            'Turnaround SLAs',
+                        ],
+                    ];
+                } else {
+                    // Exact match
+                    $pendingOrder->update([
+                        'images' => $allImages,
+                        'uploaded_count' => $uploadedCount,
+                    ]);
+
+                    return [
+                        'content' => "✅ **All {$targetQty} images received** for Order **#{$pendingOrder->order_number}**! Your batch is queued for production.",
+                        'tool_cards' => [
+                            [
+                                'type' => 'order_confirmed_card',
+                                'order_number' => $pendingOrder->order_number,
+                                'service_name' => $pendingOrder->service_name,
+                                'service_slug' => $pendingOrder->service_slug,
+                                'complexity' => $pendingOrder->complexity,
+                                'quantity' => $targetQty,
+                                'uploaded_count' => $uploadedCount,
+                                'remaining_count' => 0,
+                                'discrepancy_status' => 'complete',
+                                'unit_price' => number_format($pendingOrder->unit_price, 2),
+                                'total_price' => number_format($pendingOrder->total_price, 2),
+                                'turnaround' => $pendingOrder->turnaround,
+                                'client_email' => $pendingOrder->client_email,
+                                'images' => $allImages,
+                            ],
+                        ],
+                        'suggested_replies' => [
+                            'Schedule Consultation Call',
+                            'Turnaround SLAs',
+                        ],
+                    ];
+                }
+            }
+
+            // No pending order:
+            if ($count <= 3) {
+                $quoteResult = $this->tools->execute('calculate_image_price', [
+                    'service' => 'background-removal',
+                    'complexity' => 'simple',
+                    'quantity' => $count,
+                ], $session);
+
+                $intro = 'Got your photo! Since this is within 3 images, your test edit is 100% on us ($0). Ready to test our quality?';
+
+                return [
+                    'content' => $intro,
+                    'tool_cards' => [$quoteResult],
+                    'suggested_replies' => [
+                        'Claim 3 Free Sample Edits',
+                        'Ghost Mannequin Quote',
+                        'Jewelry Macro Retouch',
+                        'Model Skin Retouch',
+                    ],
+                ];
+            } else {
+                // Direct commercial batch upload (>3 images)
+                $calc = app(PriceCalculatorTool::class)->execute([
+                    'service' => 'background-removal',
+                    'complexity' => 'simple',
+                    'quantity' => $count,
+                ]);
+                $total = (float) str_replace(',', '', (string) ($calc['total_price'] ?? '0'));
+                $unit = (float) str_replace(',', '', (string) ($calc['unit_price'] ?? '0'));
+                $discountPercent = $calc['discount_applied'] ? (int) filter_var($calc['discount_applied'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+                $order = Order::create([
+                    'chat_session_id' => $session?->id,
+                    'client_name' => $session?->lead_name ?? 'Client',
+                    'client_email' => $session?->lead_email ?? 'pending-email@temp.local',
+                    'client_phone' => $session?->lead_phone,
+                    'service_name' => 'Clipping Path / Background Removal',
+                    'service_slug' => 'background-removal',
+                    'complexity' => 'simple',
+                    'quantity' => $count,
+                    'uploaded_count' => $count,
+                    'unit_price' => $unit,
+                    'discount_percent' => $discountPercent,
+                    'total_price' => $total,
+                    'currency' => 'USD',
+                    'turnaround' => 'Standard 24h SLA',
+                    'images' => $attachments,
+                    'status' => 'pending',
+                    'payment_status' => 'unpaid',
+                    'source' => 'chat',
+                ]);
+
+                try {
+                    app(NotificationService::class)->toAllAdmins()->send('order.new', [
+                        'title' => '🛒 New Order #'.$order->order_number,
+                        'message' => "Order #{$order->order_number} created with {$count} images (\$".number_format($total, 2).')',
+                        'order_id' => $order->id,
+                        'admin_url' => url('/admin/orders'),
+                        'timestamp' => now()->toISOString(),
+                    ]);
+                } catch (\Throwable $e) {
+                }
+
+                return [
+                    'content' => "🎉 **Order #{$order->order_number} Created!** Received all {$count} images (\${$total} total). Where should we email your completed files and invoice?",
+                    'tool_cards' => [
+                        [
+                            'type' => 'order_confirmed_card',
+                            'order_number' => $order->order_number,
+                            'service_name' => $order->service_name,
+                            'service_slug' => $order->service_slug,
+                            'complexity' => $order->complexity,
+                            'quantity' => $count,
+                            'uploaded_count' => $count,
+                            'remaining_count' => 0,
+                            'discrepancy_status' => 'complete',
+                            'unit_price' => number_format($unit, 2),
+                            'total_price' => number_format($total, 2),
+                            'turnaround' => $order->turnaround,
+                            'client_email' => $order->client_email,
+                            'images' => $attachments,
+                        ],
+                    ],
+                    'suggested_replies' => [
+                        'Schedule Consultation Call',
+                        'Ask About Turnaround SLA',
+                    ],
+                ];
+            }
         }
 
         // 3. Detect Calendar, Meeting & Reschedule Intent
@@ -142,11 +529,12 @@ class HybridIntentEngine
 
         $isConfirmBatchIntent = str_contains($text, 'confirm') ||
             str_contains($text, 'proceed') ||
+            str_contains($text, 'order') ||
             str_contains($text, 'upload batch') ||
             str_contains($text, 'upload my') ||
             str_contains($text, 'upload own');
 
-        if ($isFreeTrialIntent || $isConfirmBatchIntent) {
+        if ($isFreeTrialIntent) {
             // Retrieve latest batch of attachments for this submission (not summing across all history)
             $trialImages = [];
             if (! empty($attachments)) {
@@ -176,7 +564,7 @@ class HybridIntentEngine
             }
 
             // If a trial already exists, enforce the 1-trial rule
-            if ($isFreeTrialIntent && $existingTrial) {
+            if ($existingTrial) {
                 if ($existingTrial->status === 'completed') {
                     return [
                         'content' => "Looks like you've already used your free test edits with **{$existingTrial->email}**! Regular edits start at just $0.49/image. Here are the rates:",
@@ -273,10 +661,9 @@ class HybridIntentEngine
             }
 
             // Case A: User is claiming free trial and already has images attached in this conversation
-            if ($isFreeTrialIntent && $uploadedCount > 0) {
+            if ($uploadedCount > 0) {
                 $actualCount = min($uploadedCount, 3);
 
-                // Persist Free Trial Request in database for Admin visibility & processing
                 if ($session) {
                     $trialOrder = FreeTrialRequest::firstOrCreate(
                         [
@@ -296,7 +683,7 @@ class HybridIntentEngine
 
                     if (! empty($clientEmail)) {
                         try {
-                            app(NotificationService::class)->sendToAllAdmins('trial.new', [
+                            app(NotificationService::class)->toAllAdmins()->send('trial.new', [
                                 'title' => '🎁 New Free Trial Order',
                                 'message' => "Client {$clientEmail} submitted {$actualCount} sample image(s) for retouching",
                                 'trial_id' => $trialOrder->id,
@@ -304,7 +691,6 @@ class HybridIntentEngine
                                 'timestamp' => now()->toISOString(),
                             ]);
                         } catch (\Throwable $e) {
-                            // Silently log
                         }
                     }
                 }
@@ -336,42 +722,210 @@ class HybridIntentEngine
             }
 
             // Case B: User clicked Free Trial but hasn't uploaded any photos yet
-            if ($isFreeTrialIntent) {
-                return [
-                    'content' => 'Add up to 3 sample photos below to try us out for free ($0):',
-                    'tool_cards' => [
-                        [
-                            'type' => 'upload_prompt_card',
-                            'title' => 'Select Up to 3 Test Images to Upload',
-                            'description' => 'Upload 1 to 3 images to claim your 100% Free Sample Trial ($0.00 cost). Our artists will hand-craft vector clipping paths and deliver layered master PSDs.',
-                            'cta' => 'Select 3 Test Images',
-                        ],
-                    ],
-                    'suggested_replies' => [
-                        'Schedule 15-Min Technical Call',
-                        'What formats are accepted?',
-                        'Turnaround SLAs',
-                    ],
-                ];
-            }
-
-            // Case C: Standard batch upload for volume production
             return [
-                'content' => 'Upload your photos below to get started:',
+                'content' => 'Add up to 3 sample photos below to try us out for free ($0):',
                 'tool_cards' => [
                     [
                         'type' => 'upload_prompt_card',
-                        'title' => 'Select Batch Images to Upload',
-                        'description' => 'Upload your JPEG, PNG, RAW, PSD, or TIFF files. Submissions under 3 images qualify for 100% Free Sample Trial.',
-                        'cta' => 'Browse & Upload Images',
+                        'title' => 'Select Up to 3 Test Images to Upload',
+                        'description' => 'Upload 1 to 3 images to claim your 100% Free Sample Trial ($0.00 cost). Our artists will hand-craft vector clipping paths and deliver layered master PSDs.',
+                        'cta' => 'Select 3 Test Images',
                     ],
                 ],
                 'suggested_replies' => [
                     'Schedule 15-Min Technical Call',
+                    'What formats are accepted?',
                     'Turnaround SLAs',
-                    'Ask About Formats (PSD / PNG)',
                 ],
             ];
+        }
+
+        // 3.6. Detect Commercial Batch Order Intent (Quote Confirmation & File Fulfill)
+        if ($isConfirmBatchIntent) {
+            $batchQty = 50;
+            if (preg_match('/(?:for|order|batch)\s*(\d{1,5})\b/i', $text, $m)) {
+                $batchQty = max(1, (int) $m[1]);
+            } elseif (preg_match('/\b(\d{1,5})\s*(?:images|photos|items|files|pics)\b/i', $text, $m)) {
+                $batchQty = max(1, (int) $m[1]);
+            }
+
+            $serviceSlug = 'background-removal';
+            $serviceTitle = 'Clipping Path / Background Removal';
+            if (str_contains($text, 'mannequin') || str_contains($text, 'neck') || str_contains($text, 'joint')) {
+                $serviceSlug = 'ghost-mannequin';
+                $serviceTitle = 'Ghost Mannequin / Invisible Symmetry';
+            } elseif (str_contains($text, 'model') || str_contains($text, 'skin') || str_contains($text, 'beauty')) {
+                $serviceSlug = 'high-end-model-retouch';
+                $serviceTitle = 'High-End Model & Skin Retouch';
+            } elseif (str_contains($text, 'jewelry') || str_contains($text, 'diamond') || str_contains($text, 'gem')) {
+                $serviceSlug = 'jewelry-retouch';
+                $serviceTitle = 'Jewelry Macro Retouch';
+            } elseif (str_contains($text, '3d') || str_contains($text, 'cgi')) {
+                $serviceSlug = '3d-modeling';
+                $serviceTitle = '3D Product Modeling';
+            }
+
+            $complexity = 'simple';
+            if (str_contains($text, 'super complex') || str_contains($text, 'super_complex')) {
+                $complexity = 'super_complex';
+            } elseif (str_contains($text, 'medium')) {
+                $complexity = 'medium';
+            } elseif (str_contains($text, 'complex')) {
+                $complexity = 'complex';
+            }
+
+            $calc = app(PriceCalculatorTool::class)->execute([
+                'service' => $serviceSlug,
+                'complexity' => $complexity,
+                'quantity' => $batchQty,
+            ]);
+            $total = (float) str_replace(',', '', (string) ($calc['total_price'] ?? '0'));
+            $unit = (float) str_replace(',', '', (string) ($calc['unit_price'] ?? '0'));
+            $discountPercent = $calc['discount_applied'] ? (int) filter_var($calc['discount_applied'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+            $sessionImages = [];
+            if (! empty($attachments)) {
+                $sessionImages = $attachments;
+            } elseif ($session) {
+                $latestMsg = $session->messages()->whereNotNull('attachments')->latest('id')->first();
+                $sessionImages = (array) ($latestMsg?->attachments ?? []);
+            }
+            $uploadedCount = count($sessionImages);
+
+            $clientEmail = $session?->lead_email ?: 'pending-email@temp.local';
+            $clientName = $session?->lead_name ?: 'Client';
+
+            $order = Order::updateOrCreate(
+                [
+                    'chat_session_id' => $session?->id,
+                    'status' => 'pending',
+                ],
+                [
+                    'client_name' => $clientName,
+                    'client_email' => $clientEmail,
+                    'client_phone' => $session?->lead_phone,
+                    'service_name' => $serviceTitle,
+                    'service_slug' => $serviceSlug,
+                    'complexity' => $complexity,
+                    'quantity' => $batchQty,
+                    'uploaded_count' => $uploadedCount,
+                    'unit_price' => $unit,
+                    'discount_percent' => $discountPercent,
+                    'total_price' => $total,
+                    'currency' => 'USD',
+                    'turnaround' => 'Standard 24h SLA',
+                    'images' => $sessionImages,
+                    'payment_status' => 'unpaid',
+                    'source' => 'chat',
+                ]
+            );
+
+            try {
+                app(NotificationService::class)->toAllAdmins()->send('order.new', [
+                    'title' => '🛒 Order #'.$order->order_number.' Placed',
+                    'message' => "Order #{$order->order_number} for {$batchQty} {$serviceTitle} images (\$".number_format($total, 2).')',
+                    'order_id' => $order->id,
+                    'admin_url' => url('/admin/orders'),
+                    'timestamp' => now()->toISOString(),
+                ]);
+            } catch (\Throwable $e) {
+            }
+
+            if ($uploadedCount === 0) {
+                return [
+                    'content' => "🎉 **Order #{$order->order_number} Created!**\n\nQuoted **{$batchQty} images** at **\${$unit}/image** (\${$total} total). Please upload your {$batchQty} files below to start production:",
+                    'tool_cards' => [
+                        [
+                            'type' => 'order_confirmed_card',
+                            'order_number' => $order->order_number,
+                            'service_name' => $order->service_name,
+                            'service_slug' => $order->service_slug,
+                            'complexity' => $order->complexity,
+                            'quantity' => $batchQty,
+                            'uploaded_count' => 0,
+                            'remaining_count' => $batchQty,
+                            'discrepancy_status' => 'under',
+                            'unit_price' => number_format($unit, 2),
+                            'total_price' => number_format($total, 2),
+                            'turnaround' => $order->turnaround,
+                            'client_email' => $order->client_email,
+                            'images' => [],
+                        ],
+                        [
+                            'type' => 'upload_prompt_card',
+                            'title' => "Upload {$batchQty} Images for Order #{$order->order_number}",
+                            'description' => 'Drop your JPEG, PNG, RAW, PSD, or TIFF files. Our team will begin hand-crafting paths upon receipt.',
+                            'cta' => "Select {$batchQty} Images to Upload",
+                        ],
+                    ],
+                    'suggested_replies' => [
+                        'Schedule Consultation Call',
+                        'Ask About Turnaround SLA',
+                        'What formats are accepted?',
+                    ],
+                ];
+            } elseif ($uploadedCount < $batchQty) {
+                $remaining = $batchQty - $uploadedCount;
+
+                return [
+                    'content' => "⚠️ **Order #{$order->order_number} Created!**\n\nReceived **{$uploadedCount} of {$batchQty} images** ({$remaining} pending). Please upload the remaining {$remaining} files, or reply *'Proceed with {$uploadedCount}'* if this is your complete set.",
+                    'tool_cards' => [
+                        [
+                            'type' => 'order_confirmed_card',
+                            'order_number' => $order->order_number,
+                            'service_name' => $order->service_name,
+                            'service_slug' => $order->service_slug,
+                            'complexity' => $order->complexity,
+                            'quantity' => $batchQty,
+                            'uploaded_count' => $uploadedCount,
+                            'remaining_count' => $remaining,
+                            'discrepancy_status' => 'under',
+                            'unit_price' => number_format($unit, 2),
+                            'total_price' => number_format($total, 2),
+                            'turnaround' => $order->turnaround,
+                            'client_email' => $order->client_email,
+                            'images' => $sessionImages,
+                        ],
+                        [
+                            'type' => 'upload_prompt_card',
+                            'title' => "Upload Remaining {$remaining} Images",
+                            'description' => "Order #{$order->order_number} currently has {$uploadedCount} of {$batchQty} files. Select the remaining {$remaining} images to proceed.",
+                            'cta' => "Select Remaining {$remaining} Images",
+                        ],
+                    ],
+                    'suggested_replies' => [
+                        "Proceed with {$uploadedCount} images",
+                        'Schedule Consultation Call',
+                        'Ask About Turnaround SLA',
+                    ],
+                ];
+            } else {
+                return [
+                    'content' => "✅ **Order #{$order->order_number} Created!**\n\nAll **{$batchQty} images** are received and verified. Your order is queued for production with 24h SLA delivery.",
+                    'tool_cards' => [
+                        [
+                            'type' => 'order_confirmed_card',
+                            'order_number' => $order->order_number,
+                            'service_name' => $order->service_name,
+                            'service_slug' => $order->service_slug,
+                            'complexity' => $order->complexity,
+                            'quantity' => $batchQty,
+                            'uploaded_count' => $uploadedCount,
+                            'remaining_count' => 0,
+                            'discrepancy_status' => 'complete',
+                            'unit_price' => number_format($unit, 2),
+                            'total_price' => number_format($total, 2),
+                            'turnaround' => $order->turnaround,
+                            'client_email' => $order->client_email,
+                            'images' => $sessionImages,
+                        ],
+                    ],
+                    'suggested_replies' => [
+                        'Schedule Consultation Call',
+                        'Turnaround SLAs',
+                    ],
+                ];
+            }
         }
 
         // 4. Detect Pricing & Cost Intent
@@ -385,20 +939,37 @@ class HybridIntentEngine
             str_contains($text, 'how much')) {
 
             $service = 'background-removal';
-            if (str_contains($text, 'mannequin') || str_contains($text, 'neck')) {
+            if (str_contains($text, 'mannequin') || str_contains($text, 'neck') || str_contains($text, 'joint')) {
                 $service = 'ghost-mannequin';
-            } elseif (str_contains($text, 'model') || str_contains($text, 'skin') || str_contains($text, 'fashion')) {
+            } elseif (str_contains($text, 'model') || str_contains($text, 'skin') || str_contains($text, 'fashion') || str_contains($text, 'beauty')) {
                 $service = 'high-end-model-retouch';
-            } elseif (str_contains($text, 'jewelry') || str_contains($text, 'diamond')) {
+            } elseif (str_contains($text, 'jewelry') || str_contains($text, 'diamond') || str_contains($text, 'gem') || str_contains($text, 'ring')) {
                 $service = 'jewelry-retouch';
-            } elseif (str_contains($text, '3d') || str_contains($text, 'cgi')) {
+            } elseif (str_contains($text, '3d') || str_contains($text, 'cgi') || str_contains($text, 'render')) {
                 $service = '3d-modeling';
+            }
+
+            $complexity = 'simple';
+            if (str_contains($text, 'super complex') || str_contains($text, 'super_complex')) {
+                $complexity = 'super_complex';
+            } elseif (str_contains($text, 'medium')) {
+                $complexity = 'medium';
+            } elseif (str_contains($text, 'complex')) {
+                $complexity = 'complex';
+            }
+
+            $quantity = 50;
+            if (preg_match('/\b(\d{1,5})\s*(?:images|photos|items|pics|files)?\b/', $text, $m)) {
+                $val = (int) $m[1];
+                if ($val > 0) {
+                    $quantity = $val;
+                }
             }
 
             $quoteResult = $this->tools->execute('calculate_image_price', [
                 'service' => $service,
-                'complexity' => 'simple',
-                'quantity' => 50,
+                'complexity' => $complexity,
+                'quantity' => $quantity,
             ], $session);
 
             return [
@@ -468,6 +1039,34 @@ class HybridIntentEngine
             return [
                 'content' => 'Here is a quick breakdown:',
                 'tool_cards' => [$infoResult],
+                'suggested_replies' => [],
+            ];
+        }
+
+        // 5.6. Reset / Fresh Chat Intent
+        if (str_contains($text, 'fresh chat') ||
+            str_contains($text, 'new chat') ||
+            str_contains($text, 'clear chat') ||
+            str_contains($text, 'reset chat') ||
+            str_contains($text, 'start fresh') ||
+            str_contains($text, 'start over') ||
+            str_contains($text, 'restart chat') ||
+            str_contains($text, 'clear conversation') ||
+            $text === 'reset' ||
+            $text === 'clear' ||
+            $text === '/reset' ||
+            $text === '/clear') {
+
+            return [
+                'content' => 'Ready for a clean slate! Click below to start a fresh chat:',
+                'tool_cards' => [
+                    [
+                        'type' => 'reset_chat_prompt_card',
+                        'title' => 'Start Fresh Conversation',
+                        'description' => 'Clear this conversation history and begin a new session.',
+                        'cta' => 'Start Fresh Chat Now',
+                    ],
+                ],
                 'suggested_replies' => [],
             ];
         }

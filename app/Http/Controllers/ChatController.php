@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
 use App\Models\FreeTrialRequest;
+use App\Models\Order;
 use App\Services\Chat\ChatOrchestrator;
 use App\Services\Chat\ChatSessionManager;
 use App\Services\Chat\Tools\CalendarBookingTool;
 use App\Services\Notification\NotificationService;
 use App\Services\Security\EmailAndSpamGuard;
+use App\Services\Security\LinkAndFileSecurityGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ChatController extends Controller
 {
@@ -83,6 +86,55 @@ class ChatController extends Controller
     }
 
     /**
+     * Start a fresh chat session and return the initial welcome message.
+     */
+    public function reset(Request $request): JsonResponse
+    {
+        // Resolve and archive current session if one exists
+        $currentSession = $this->sessionManager->resolve($request, touch: false, createIfMissing: false);
+        if ($currentSession) {
+            $currentSession->update(['status' => 'archived']);
+        }
+
+        // Force creation of a brand new session
+        $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: true, forceNew: true);
+
+        // Always create fresh welcome assistant message for the new session
+        $welcome = ChatMessage::create([
+            'chat_session_id' => $session->id,
+            'sender' => 'assistant',
+            'content' => '👋 Hi! Welcome to **CuttingEdger**. Have any questions, or how can I help you today?',
+            'suggested_replies' => [
+                'What services do you offer?',
+                'How does pricing work?',
+                'Can I test sample edits?',
+                'Schedule a Consultation',
+            ],
+        ]);
+
+        $messages = collect([[
+            'id' => $welcome->id,
+            'sender' => 'assistant',
+            'content' => $welcome->content,
+            'attachments' => [],
+            'tool_cards' => [],
+            'suggested_replies' => $welcome->suggested_replies,
+            'created_at' => $welcome->created_at->toISOString(),
+        ]]);
+
+        return response()->json([
+            'session_id' => $session->id,
+            'lead_name' => null,
+            'lead_email' => null,
+            'messages' => $messages,
+        ])->cookie(
+            ChatSessionManager::COOKIE_NAME,
+            $session->id,
+            60 * 24 * 30 // 30 days
+        );
+    }
+
+    /**
      * Send user message and get orchestrated response.
      */
     public function message(Request $request): JsonResponse
@@ -116,27 +168,90 @@ class ChatController extends Controller
     }
 
     /**
-     * Upload an image to attach to chat.
+     * Upload an image to attach to chat with size guard and cloud drive fallback.
      */
     public function uploadImage(Request $request): JsonResponse
     {
-        $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,webp,tiff|max:15360', // 15MB
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:jpeg,png,jpg,webp,tiff,tif,psd|max:25600', // 25MB max
+        ], [
+            'file.max' => 'File exceeds the 25MB server limit. For large RAW/PSD batches or high-res archives, you can paste a Google Drive, Dropbox, or WeTransfer link directly in chat!',
+            'file.mimes' => 'Accepted formats: JPEG, PNG, WEBP, TIFF, PSD. For other formats or bulk zip archives, please share via Google Drive or WeTransfer.',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first('file'),
+                'suggest_cloud_drive' => true,
+            ], 422);
+        }
+
         $file = $request->file('file');
+
+        // Deep security inspection against webshells, PHP injection, double extensions, and polyglots
+        $securityGuard = app(LinkAndFileSecurityGuard::class);
+        $inspectResult = $securityGuard->inspectUploadedFile($file);
+        if (! $inspectResult['valid']) {
+            return response()->json([
+                'error' => $inspectResult['reason'],
+                'suggest_cloud_drive' => false,
+            ], 422);
+        }
+
         $path = $file->store('chat_uploads', 'public');
         $url = Storage::disk('public')->url($path);
 
-        // Also prepare base64 for Vision model if needed
-        $fileContents = file_get_contents($file->getRealPath());
-        $base64 = base64_encode($fileContents);
+        // Prepare base64 for Vision model only if file <= 5MB to preserve memory
+        $base64 = null;
+        if ($file->getSize() <= 5 * 1024 * 1024 && str_starts_with($file->getMimeType() ?? '', 'image/')) {
+            $fileContents = file_get_contents($file->getRealPath());
+            $base64 = base64_encode($fileContents);
+        }
 
         return response()->json([
             'url' => $url,
             'filename' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
             'base64' => $base64,
+        ]);
+    }
+
+    /**
+     * Link a Google Drive, Dropbox, or WeTransfer URL to active session or order.
+     */
+    public function saveCloudLink(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'link' => 'required|url|max:1000',
+        ]);
+
+        $link = trim((string) $validated['link']);
+
+        // Strict security validation: HTTPS, domain whitelisting, SSRF protection, blocked extensions
+        $securityGuard = app(LinkAndFileSecurityGuard::class);
+        $check = $securityGuard->validateCloudLink($link);
+        if (! $check['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $check['reason'],
+            ], 422);
+        }
+
+        $session = $this->sessionManager->resolve($request);
+
+        $order = Order::where('chat_session_id', $session->id)
+            ->where('status', 'pending')
+            ->latest('id')
+            ->first();
+
+        if ($order) {
+            $order->update(['cloud_link' => $link]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'cloud_link' => $link,
+            'order_number' => $order?->order_number,
         ]);
     }
 
@@ -226,6 +341,19 @@ class ChatController extends Controller
                 'email' => $email,
                 'name' => $name,
                 'ip_address' => $clientIp,
+            ]);
+
+        // Link pending orders in this session to this email and name
+        Order::where('chat_session_id', $session->id)
+            ->where(function ($q) {
+                $q->whereNull('client_email')
+                    ->orWhere('client_email', '')
+                    ->orWhere('client_email', 'like', '%temp.local%');
+            })
+            ->update([
+                'client_email' => $email,
+                'client_name' => $name,
+                'client_phone' => $phone ?: $session->lead_phone,
             ]);
 
         // Notify admins

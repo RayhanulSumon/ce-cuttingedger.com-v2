@@ -32,6 +32,7 @@ import { BookingConfirmedCard } from './BookingConfirmedCard';
 import { ServiceCatalogCard } from './ServiceCatalogCard';
 import { FreeTrialConfirmedCard } from './FreeTrialConfirmedCard';
 import { TrialQuotaExhaustedCard } from './TrialQuotaExhaustedCard';
+import { OrderConfirmedCard } from './OrderConfirmedCard';
 
 interface ChatMessageItem {
     id: number | string;
@@ -50,6 +51,7 @@ export function ChatWidget() {
     const [inputText, setInputText] = useState('');
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
@@ -83,6 +85,7 @@ export function ChatWidget() {
 
     // 1. Initialize or resume session (lazy loading: only creates DB session on chat open or when resuming)
     const initSession = (force = false) => {
+        if (isResetting) return;
         const storedSession = localStorage.getItem('ce_chat_session_id');
         if (!storedSession && !force) {
             return;
@@ -119,10 +122,10 @@ export function ChatWidget() {
 
     // When visitor clicks to open the chat widget, initialize session if not already loaded
     useEffect(() => {
-        if (isOpen && !sessionId) {
+        if (isOpen && !sessionId && !isResetting) {
             initSession(true);
         }
-    }, [isOpen, sessionId]);
+    }, [isOpen, sessionId, isResetting]);
 
     // 2. Auto-scroll on new messages
     useEffect(() => {
@@ -183,6 +186,12 @@ export function ChatWidget() {
 
         setShowQuickMenu(false);
 
+        // Immediate reset command handling
+        if (['/reset', '/clear', 'reset', 'clear'].includes(text.toLowerCase())) {
+            handleResetChat();
+            return;
+        }
+
         const optimisticId = `user-${Date.now()}`;
         const newMsg: ChatMessageItem = {
             id: optimisticId,
@@ -239,9 +248,37 @@ export function ChatWidget() {
         }
     };
 
-    // 5. Image Upload Handler (Handles single or multiple files)
+    // 5. Image Upload Handler (Handles single or multiple files with 25MB limit)
+    const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB server safety limit
+
     const uploadFiles = async (files: File[]) => {
         if (files.length === 0) return;
+
+        const oversizedFiles = files.filter((f) => f.size > MAX_FILE_SIZE_BYTES);
+        const validFiles = files.filter((f) => f.size <= MAX_FILE_SIZE_BYTES);
+
+        if (oversizedFiles.length > 0) {
+            const oversizedNames = oversizedFiles.map((f) => `${f.name} (${(f.size / (1024 * 1024)).toFixed(1)}MB)`).join(', ');
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: Date.now() + Math.random(),
+                    sender: 'assistant',
+                    content: `⚠️ **File Size Limit Notice:**\n\n${oversizedFiles.length === 1 ? 'This file' : 'These files'} exceed our 25MB direct upload limit:\n*${oversizedNames}*\n\n📁 **For large RAW, PSD, TIFF, or batch archives**, please share a **Google Drive, Dropbox, or WeTransfer link** right here in chat! Our retouchers will download directly from your cloud folder.`,
+                    suggested_replies: [
+                        'How do I share a Google Drive link?',
+                        'Calculate Pricing First',
+                        'Schedule Consultation Call',
+                    ],
+                    created_at: new Date().toISOString(),
+                },
+            ]);
+        }
+
+        if (validFiles.length === 0) {
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
 
         setIsUploading(true);
         try {
@@ -249,7 +286,7 @@ export function ChatWidget() {
             const base64List: string[] = [];
             let lastFileName = '';
 
-            for (const file of files) {
+            for (const file of validFiles) {
                 const formData = new FormData();
                 formData.append('file', file);
 
@@ -263,10 +300,21 @@ export function ChatWidget() {
                 });
 
                 const uploadData = await uploadRes.json();
-                if (uploadData.url) {
+                if (uploadRes.ok && uploadData.url) {
                     uploadedUrls.push(uploadData.url);
                     if (uploadData.base64) base64List.push(uploadData.base64);
                     lastFileName = uploadData.filename;
+                } else if (uploadData.error) {
+                    setMessages((prev) => [
+                        ...prev,
+                        {
+                            id: Date.now() + Math.random(),
+                            sender: 'assistant',
+                            content: `⚠️ ${uploadData.error}`,
+                            suggested_replies: ['Share Google Drive Link', 'Schedule Consultation Call'],
+                            created_at: new Date().toISOString(),
+                        },
+                    ]);
                 }
             }
 
@@ -331,19 +379,15 @@ export function ChatWidget() {
 
     // 7. Restart conversation (forces brand new session and clears cookie)
     const handleResetChat = async () => {
-        if (!window.confirm('Start a fresh conversation?')) return;
-        localStorage.removeItem('ce_chat_session_id');
-        setSessionId(null);
-        setMessages([]);
+        setIsResetting(true);
         try {
-            const res = await fetch('/api/chat/session', {
+            const res = await fetch('/api/chat/reset', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-Chat-Reset': 'true',
+                    ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
                 },
-                body: JSON.stringify({ force_new: true }),
             });
             const data = await res.json();
             if (data.session_id) {
@@ -353,8 +397,12 @@ export function ChatWidget() {
             if (data.messages && Array.isArray(data.messages)) {
                 setMessages(data.messages);
             }
+            setInputText('');
+            setShowQuickMenu(false);
         } catch (err) {
             console.error('Reset error:', err);
+        } finally {
+            setIsResetting(false);
         }
     };
 
@@ -494,10 +542,12 @@ export function ChatWidget() {
                                 <button
                                     type="button"
                                     onClick={handleResetChat}
-                                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                    disabled={isResetting}
+                                    className="px-2 py-1 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center gap-1.5 text-[11px] font-mono border border-white/5 hover:border-white/15"
                                     title="Start fresh conversation"
                                 >
-                                    <RotateCcw className="w-3.5 h-3.5" />
+                                    <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-[#d4ff00]' : ''}`} />
+                                    <span className="hidden sm:inline">{isResetting ? 'Resetting...' : 'New Chat'}</span>
                                 </button>
                                 <button
                                     type="button"
@@ -639,6 +689,16 @@ export function ChatWidget() {
                                                             />
                                                         );
                                                     }
+                                                    if (card.type === 'order_confirmed_card') {
+                                                        return (
+                                                            <OrderConfirmedCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onSendPrompt={(text) => handleSendMessage(text)}
+                                                                onUploadClick={() => fileInputRef.current?.click()}
+                                                            />
+                                                        );
+                                                    }
                                                     if (card.type === 'trial_quota_exhausted_card') {
                                                         return (
                                                             <TrialQuotaExhaustedCard
@@ -646,6 +706,28 @@ export function ChatWidget() {
                                                                 card={card}
                                                                 onSendPrompt={(text) => handleSendMessage(text)}
                                                             />
+                                                        );
+                                                    }
+                                                    if (card.type === 'reset_chat_prompt_card') {
+                                                        return (
+                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-[#151720] border border-[#d4ff00]/30 shadow-lg text-left space-y-2.5 animate-in fade-in duration-200">
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="p-1.5 rounded-lg bg-[#d4ff00]/10 text-[#d4ff00]">
+                                                                        <RotateCcw className="w-4 h-4" />
+                                                                    </div>
+                                                                    <h4 className="text-xs font-bold text-white tracking-tight">{card.title || 'Start Fresh Conversation'}</h4>
+                                                                </div>
+                                                                <p className="text-[11px] text-white/70 leading-relaxed">{card.description}</p>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleResetChat}
+                                                                    disabled={isResetting}
+                                                                    className="w-full py-2 px-3 rounded-xl bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                                                >
+                                                                    <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
+                                                                    <span>{isResetting ? 'Resetting...' : (card.cta || 'Start Fresh Chat')}</span>
+                                                                </button>
+                                                            </div>
                                                         );
                                                     }
                                                     if (card.type === 'upload_prompt_card') {

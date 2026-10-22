@@ -26,6 +26,7 @@ import {
     CalendarCheck2,
     MessageSquareText,
     Sparkles,
+    ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
@@ -72,6 +73,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         auth: { user: { name: string; email: string; role: string } | null };
         flash: { success?: string; error?: string };
         admin_badges?: {
+            pending_orders?: number;
             pending_consultations: number;
             pending_trials?: number;
             unread_leads: number;
@@ -217,6 +219,16 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         {
             title: "AI ASSISTANT & LEADS",
             items: [
+                {
+                    name: "Client Orders",
+                    href: "/admin/orders",
+                    icon: ShoppingBag,
+                    active: url.startsWith("/admin/orders"),
+                    badge: admin_badges?.pending_orders
+                        ? `${admin_badges.pending_orders}`
+                        : null,
+                    badgeColor: "bg-[#d4ff00] text-black",
+                },
                 {
                     name: "Free Trial Orders",
                     href: "/admin/free-trials",
