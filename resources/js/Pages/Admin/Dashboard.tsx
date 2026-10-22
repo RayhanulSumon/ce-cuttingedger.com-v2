@@ -14,6 +14,8 @@ import {
     Sparkles,
     CheckCircle2,
     Users,
+    CalendarCheck2,
+    MessageSquareText,
 } from "lucide-react";
 
 interface AdminDashboardProps {
@@ -22,6 +24,8 @@ interface AdminDashboardProps {
         total_services: number;
         new_inquiries: number;
         total_subscribers: number;
+        upcoming_consultations?: number;
+        total_chat_leads?: number;
     };
     recentInquiries: ContactMessage[];
     featuredProjects: Project[];
@@ -49,7 +53,7 @@ export default function Dashboard({
 
             <div className="space-y-10">
                 {/* KPI Metrics Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
                     <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
@@ -109,6 +113,38 @@ export default function Dashboard({
                             Dispatch audience
                         </span>
                     </div>
+
+                    <Link href="/admin/consultations" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#00f5ff]/40 transition-colors">
+                        <div className="flex items-center justify-between text-neutral-400">
+                            <span className="font-mono text-xs uppercase tracking-wider">
+                                Booked Calls
+                            </span>
+                            <CalendarCheck2 className="w-4 h-4 text-[#00f5ff]" />
+                        </div>
+                        <div className="text-3xl sm:text-4xl font-extrabold text-[#00f5ff] tracking-tight">
+                            {stats.upcoming_consultations ?? 0}
+                        </div>
+                        <span className="text-xs font-mono text-[#00f5ff] flex items-center gap-1">
+                            <span>Upcoming calls</span>
+                            <ArrowUpRight className="w-3 h-3" />
+                        </span>
+                    </Link>
+
+                    <Link href="/admin/chat-sessions" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                        <div className="flex items-center justify-between text-neutral-400">
+                            <span className="font-mono text-xs uppercase tracking-wider">
+                                Chat Leads
+                            </span>
+                            <MessageSquareText className="w-4 h-4 text-[#d4ff00]" />
+                        </div>
+                        <div className="text-3xl sm:text-4xl font-extrabold text-[#d4ff00] tracking-tight">
+                            {stats.total_chat_leads ?? 0}
+                        </div>
+                        <span className="text-xs font-mono text-[#d4ff00] flex items-center gap-1">
+                            <span>View Transcripts</span>
+                            <ArrowUpRight className="w-3 h-3" />
+                        </span>
+                    </Link>
                 </div>
 
                 {/* Split Overview: Inquiries & Flagships */}

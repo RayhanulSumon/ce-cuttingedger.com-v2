@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chat_consultations', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('chat_session_id')->constrained('chat_sessions')->cascadeOnDelete();
+            $table->foreignUuid('chat_session_id')->nullable()->constrained('chat_sessions')->nullOnDelete();
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();

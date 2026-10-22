@@ -26,7 +26,9 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminBlogCategoryController;
 use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminCareerOpeningController;
+use App\Http\Controllers\Admin\AdminChatSessionController;
 use App\Http\Controllers\Admin\AdminClientController;
+use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminPricingPlanController;
@@ -69,6 +71,8 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('faqs', AdminFaqController::class)->except(['show', 'create', 'edit']);
     Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
     Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
+    Route::resource('consultations', AdminConsultationController::class)->only(['index', 'update', 'destroy']);
+    Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
 
     // Super Admin Exclusive Endpoints
     Route::middleware('role:super_admin')->group(function () {

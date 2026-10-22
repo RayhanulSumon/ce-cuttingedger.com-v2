@@ -23,6 +23,8 @@ import {
     CheckCircle2,
     AlertCircle,
     X,
+    CalendarCheck2,
+    MessageSquareText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
@@ -185,6 +187,23 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     href: "/admin/subscribers",
                     icon: Send,
                     active: url.startsWith("/admin/subscribers"),
+                },
+            ],
+        },
+        {
+            title: "AI ASSISTANT & LEADS",
+            items: [
+                {
+                    name: "Calendar Bookings",
+                    href: "/admin/consultations",
+                    icon: CalendarCheck2,
+                    active: url.startsWith("/admin/consultations"),
+                },
+                {
+                    name: "Chat Transcripts & Leads",
+                    href: "/admin/chat-sessions",
+                    icon: MessageSquareText,
+                    active: url.startsWith("/admin/chat-sessions"),
                 },
             ],
         },
