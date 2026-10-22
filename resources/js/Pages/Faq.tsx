@@ -35,7 +35,10 @@ export default function FaqPage({ faqs = [], categories = [] }: FaqPageProps) {
             />
 
             {/* Filter Pills */}
-            <section className="py-8 bg-[#0c0d12] border-b border-white/10 sticky top-[72px] z-30 backdrop-blur-xl bg-[#0c0d12]/90">
+            <section
+                style={{ top: 'var(--header-height)' }}
+                className="py-8 bg-[#0c0d12] border-b border-white/10 sticky top-[var(--header-height,61px)] z-30 backdrop-blur-xl bg-[#0c0d12]/90"
+            >
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                         {allCategories.map((cat) => (

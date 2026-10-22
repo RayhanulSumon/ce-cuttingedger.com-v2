@@ -46,7 +46,10 @@ export default function Index({
             />
 
             {/* Category Filter Pills */}
-            <section className="py-6 bg-[#0c0d12] border-b border-white/10 sticky top-[72px] z-30 backdrop-blur-xl bg-[#0c0d12]/90 space-y-3">
+            <section
+                style={{ top: 'var(--header-height)' }}
+                className="py-6 bg-[#0c0d12] border-b border-white/10 sticky top-[var(--header-height,61px)] z-30 backdrop-blur-xl bg-[#0c0d12]/90 space-y-3"
+            >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Top-Level Categories */}
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">

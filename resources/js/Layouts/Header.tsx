@@ -14,8 +14,18 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
     const { url } = usePage();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const headerRef = React.useRef<HTMLElement>(null);
 
     useEffect(() => {
+        const updateHeaderHeight = () => {
+            if (headerRef.current) {
+                const height = headerRef.current.getBoundingClientRect().height;
+                if (height > 0) {
+                    document.documentElement.style.setProperty('--header-height', `${height}px`);
+                }
+            }
+        };
+
         const handleScroll = () => {
             if (window.scrollY > 15) {
                 setIsScrolled(true);
@@ -25,10 +35,29 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', updateHeaderHeight);
         handleScroll();
 
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', updateHeaderHeight);
+        };
     }, []);
+
+    useEffect(() => {
+        const updateHeaderHeight = () => {
+            if (headerRef.current && isScrolled) {
+                const height = headerRef.current.getBoundingClientRect().height;
+                if (height > 0) {
+                    document.documentElement.style.setProperty('--header-height', `${height}px`);
+                }
+            }
+        };
+
+        updateHeaderHeight();
+        const timer = setTimeout(updateHeaderHeight, 320);
+        return () => clearTimeout(timer);
+    }, [isScrolled]);
 
     interface NavGroup {
         category: string;
@@ -131,6 +160,15 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
 
     return (
         <header
+            ref={headerRef}
+            onTransitionEnd={() => {
+                if (headerRef.current && isScrolled) {
+                    const height = headerRef.current.getBoundingClientRect().height;
+                    if (height > 0) {
+                        document.documentElement.style.setProperty('--header-height', `${height}px`);
+                    }
+                }
+            }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                 isScrolled
                     ? 'py-3 bg-[#0c0d12]/95 backdrop-blur-xl border-b border-white/10 shadow-lg'

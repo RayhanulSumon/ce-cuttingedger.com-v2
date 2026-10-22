@@ -24,6 +24,7 @@
 }
 
 :root {
+    --header-height: 61px;
     --bg-main: #f8f9fc;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #f0f2f7;
@@ -43,6 +44,12 @@
     --sidebar-accent-foreground: hsl(240 5.9% 10%);
     --sidebar-border: hsl(220 13% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@media (max-width: 1023px) {
+    :root {
+        --header-height: 67px;
+    }
 }
 
 html.dark {
