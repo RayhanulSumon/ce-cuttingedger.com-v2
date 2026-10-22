@@ -1,3 +1,4 @@
+import { route as routeFn } from 'ziggy-js';
 import { SiteSettings } from './models';
 
 export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> {
@@ -14,7 +15,8 @@ export interface PageProps<T extends Record<string, unknown> = Record<string, un
 }
 
 declare global {
+    var route: typeof routeFn;
     interface Window {
-        route: any;
+        route: typeof routeFn;
     }
 }

@@ -25,12 +25,14 @@ class AdminBlogController extends Controller
             ->get();
         $allCategories = BlogCategory::all();
         $authors = TeamMember::all();
+        $trashedCount = Blog::onlyTrashed()->count();
 
         return Inertia::render('Admin/Blogs/Index', [
             'blogs' => $blogs,
             'categories' => $categories,
             'allCategories' => $allCategories,
             'authors' => $authors,
+            'trashedCount' => $trashedCount,
         ]);
     }
 
@@ -144,13 +146,52 @@ class AdminBlogController extends Controller
     }
 
     /**
-     * Remove the specified blog post.
+     * Remove the specified blog post (soft delete).
      */
     public function destroy(Blog $blog): RedirectResponse
     {
         $title = $blog->title;
         $blog->delete();
 
-        return redirect()->back()->with('success', "Article [{$title}] purged.");
+        return redirect()->back()->with('success', "Article [{$title}] moved to trash.");
+    }
+
+    /**
+     * Display a listing of soft-deleted blog posts.
+     */
+    public function trash(): Response
+    {
+        $trashedBlogs = Blog::onlyTrashed()
+            ->with(['category', 'subcategory', 'author'])
+            ->latest('deleted_at')
+            ->get();
+
+        return Inertia::render('Admin/Blogs/Trash', [
+            'blogs' => $trashedBlogs,
+        ]);
+    }
+
+    /**
+     * Restore the specified soft-deleted blog post to its exact previous stage.
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        $blog = Blog::onlyTrashed()->findOrFail($id);
+        $title = $blog->title;
+        $blog->restore();
+
+        return redirect()->back()->with('success', "Article [{$title}] restored to its previous state.");
+    }
+
+    /**
+     * Permanently remove the specified blog post from storage.
+     */
+    public function forceDelete(int $id): RedirectResponse
+    {
+        $blog = Blog::onlyTrashed()->findOrFail($id);
+        $title = $blog->title;
+        $blog->forceDelete();
+
+        return redirect()->back()->with('success', "Article [{$title}] permanently deleted.");
     }
 }

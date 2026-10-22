@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, Link } from "@inertiajs/react";
+import { route } from "ziggy-js";
 import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
 import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
 import { AdminDataTable, Column } from "@/Components/Admin/UI/AdminDataTable";
@@ -52,6 +53,7 @@ interface BlogsIndexProps {
     categories: BlogCategory[];
     allCategories: BlogCategory[];
     authors: TeamMember[];
+    trashedCount?: number;
 }
 
 export default function BlogsIndex({
@@ -59,6 +61,7 @@ export default function BlogsIndex({
     categories = [],
     allCategories = [],
     authors = [],
+    trashedCount = 0,
 }: BlogsIndexProps) {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
@@ -338,7 +341,22 @@ export default function BlogsIndex({
                     description="Compose long-form essays, assign category & subcategory taxonomies, and manage granular dynamic SEO metadata."
                     createLabel="New Blog Post"
                     onCreate={() => setIsCreateOpen(true)}
-                />
+                >
+                    <Link href={route("admin.blogs.trash")}>
+                        <Button
+                            variant="outline"
+                            className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono"
+                        >
+                            <Trash2 className="w-4 h-4 text-rose-400" />
+                            <span>Trash</span>
+                            {trashedCount > 0 && (
+                                <Badge className="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold px-1.5 py-0 h-4">
+                                    {trashedCount}
+                                </Badge>
+                            )}
+                        </Button>
+                    </Link>
+                </AdminPageHeader>
 
                 <AdminDataTable
                     data={blogs}
@@ -554,7 +572,7 @@ export default function BlogsIndex({
                                     og_image: createForm.data.og_image,
                                     robots: createForm.data.robots,
                                 }}
-                                onChange={(field, val) => createForm.setData(field, val)}
+                                onChange={(field, val) => createForm.setData(field as any, val)}
                                 fallbackTitle={createForm.data.title}
                                 fallbackDescription={createForm.data.excerpt}
                                 fallbackSlug={createForm.data.slug}
@@ -792,7 +810,7 @@ export default function BlogsIndex({
                                         og_image: editForm.data.og_image,
                                         robots: editForm.data.robots,
                                     }}
-                                    onChange={(field, val) => editForm.setData(field, val)}
+                                    onChange={(field, val) => editForm.setData(field as any, val)}
                                     fallbackTitle={editForm.data.title}
                                     fallbackDescription={editForm.data.excerpt}
                                     fallbackSlug={editForm.data.slug}
@@ -832,8 +850,8 @@ export default function BlogsIndex({
                                 PURGE BLOG DISPATCH
                             </AlertDialogTitle>
                             <AlertDialogDescription className="text-neutral-400 text-xs font-mono">
-                                Are you sure you wish to permanently purge &ldquo;{blogToDelete?.title}&rdquo;?
-                                All analytics, URLs, and SEO indexes associated with this post will be removed.
+                                Are you sure you wish to purge &ldquo;{blogToDelete?.title}&rdquo; to the trash?
+                                It will be removed from public view and can be restored or permanently removed from the trash archive.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

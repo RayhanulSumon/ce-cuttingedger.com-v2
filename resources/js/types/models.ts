@@ -117,6 +117,7 @@ export interface Blog {
     canonical_url?: string;
     og_image?: string;
     robots?: string;
+    deleted_at?: string | null;
 }
 
 export interface Job {
