@@ -31,6 +31,8 @@ use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminFaqController;
+use App\Http\Controllers\Admin\AdminFreeTrialController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPricingPlanController;
 use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\Admin\AdminServiceController;
@@ -72,7 +74,17 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
     Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
     Route::resource('consultations', AdminConsultationController::class)->only(['index', 'update', 'destroy']);
+    Route::resource('free-trials', AdminFreeTrialController::class)->only(['index', 'update', 'destroy']);
+    Route::delete('chat-sessions-bulk/destroy-all', [AdminChatSessionController::class, 'destroyAll'])->name('chat-sessions.destroy-all');
+    Route::post('chat-sessions/mark-all-read', [AdminChatSessionController::class, 'markAllLeadsRead'])->name('chat-sessions.mark-all-read');
     Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
+
+    // Admin Realtime Notifications Dropdown
+    Route::get('notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-all-read', [AdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+    Route::post('notifications/{id}/read', [AdminNotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::delete('notifications/clear-all', [AdminNotificationController::class, 'clearAll'])->name('notifications.clear-all');
+    Route::delete('notifications/{id}', [AdminNotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Super Admin Exclusive Endpoints
     Route::middleware('role:super_admin')->group(function () {
@@ -130,6 +142,7 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/session', [ChatController::class, 'session'])->name('session');
     Route::post('/message', [ChatController::class, 'message'])->name('message');
     Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
+    Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
     Route::post('/book-slot', [ChatController::class, 'bookSlot'])->name('book-slot');
     Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
 });

@@ -27,6 +27,9 @@ import {
 import { QuoteCard } from './QuoteCard';
 import { CalendarSlotPicker } from './CalendarSlotPicker';
 import { BookingConfirmedCard } from './BookingConfirmedCard';
+import { ServiceCatalogCard } from './ServiceCatalogCard';
+import { FreeTrialConfirmedCard } from './FreeTrialConfirmedCard';
+import { TrialQuotaExhaustedCard } from './TrialQuotaExhaustedCard';
 
 interface ChatMessageItem {
     id: number | string;
@@ -76,9 +79,13 @@ export function ChatWidget() {
         };
     }, [isOpen]);
 
-    // 1. Initialize or resume session
-    useEffect(() => {
+    // 1. Initialize or resume session (lazy loading: only creates DB session on chat open or when resuming)
+    const initSession = (force = false) => {
         const storedSession = localStorage.getItem('ce_chat_session_id');
+        if (!storedSession && !force) {
+            return;
+        }
+
         fetch('/api/chat/session', {
             method: 'POST',
             headers: {
@@ -98,7 +105,22 @@ export function ChatWidget() {
                 }
             })
             .catch((err) => console.error('Chat init error:', err));
+    };
+
+    // On initial page mount: only resume if visitor already had an ongoing session in localStorage
+    useEffect(() => {
+        const storedSession = localStorage.getItem('ce_chat_session_id');
+        if (storedSession) {
+            initSession(false);
+        }
     }, []);
+
+    // When visitor clicks to open the chat widget, initialize session if not already loaded
+    useEffect(() => {
+        if (isOpen && !sessionId) {
+            initSession(true);
+        }
+    }, [isOpen, sessionId]);
 
     // 2. Auto-scroll on new messages
     useEffect(() => {
@@ -109,7 +131,7 @@ export function ChatWidget() {
         }
     }, [messages, isOpen]);
 
-    // 3. User activity tracker & Inactivity Heartbeat
+    // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
     useEffect(() => {
         const updateActivity = () => {
             lastActivityRef.current = Date.now();
@@ -121,7 +143,8 @@ export function ChatWidget() {
 
         const interval = setInterval(() => {
             const idleTimeMs = Date.now() - lastActivityRef.current;
-            if (idleTimeMs > 90000 && sessionId) {
+            // Only ping if chat has a valid session and at least one message has been exchanged
+            if (idleTimeMs > 90000 && sessionId && messages.length > 0) {
                 fetch('/api/chat/inactivity-check', {
                     headers: {
                         'X-Chat-Session-Id': sessionId,
@@ -555,6 +578,24 @@ export function ChatWidget() {
                                                             />
                                                         );
                                                     }
+                                                    if (card.type === 'free_trial_confirmed_card') {
+                                                        return (
+                                                            <FreeTrialConfirmedCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onSendPrompt={(text) => handleSendMessage(text)}
+                                                            />
+                                                        );
+                                                    }
+                                                    if (card.type === 'trial_quota_exhausted_card') {
+                                                        return (
+                                                            <TrialQuotaExhaustedCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onSendPrompt={(text) => handleSendMessage(text)}
+                                                            />
+                                                        );
+                                                    }
                                                     if (card.type === 'upload_prompt_card') {
                                                         return (
                                                             <div key={cIdx} className="my-2 p-4 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/40 shadow-xl backdrop-blur-md text-left">
@@ -588,13 +629,36 @@ export function ChatWidget() {
                                                             />
                                                         );
                                                     }
+                                                    if (card.type === 'service_catalog_card' || card.type === 'service_detail_card') {
+                                                        return (
+                                                            <ServiceCatalogCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onSendPrompt={(prompt) => handleSendMessage(prompt)}
+                                                            />
+                                                        );
+                                                    }
                                                     if (card.type === 'booking_confirmed_card') {
-                                                        return <BookingConfirmedCard key={cIdx} card={card} />;
+                                                        return (
+                                                            <BookingConfirmedCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onReschedule={() => {
+                                                                    handleSendMessage('I would like to reschedule my consultation call');
+                                                                }}
+                                                            />
+                                                        );
                                                     }
                                                     if (card.type === 'info_card') {
+                                                        const hasServices = card.services && card.services.length > 0;
+                                                        const hasFaqs = card.faqs && card.faqs.length > 0;
+                                                        if (!hasServices && !hasFaqs) {
+                                                            return null;
+                                                        }
+
                                                         return (
                                                             <div key={cIdx} className="my-2 p-4 rounded-2xl bg-[#151720] border border-white/10 text-left space-y-2.5">
-                                                                {card.services && card.services.length > 0 && (
+                                                                {hasServices && (
                                                                     <div>
                                                                         <span className="text-[10px] font-mono uppercase tracking-wider text-[#d4ff00] block mb-1">
                                                                             Studio Services
@@ -607,7 +671,7 @@ export function ChatWidget() {
                                                                         ))}
                                                                     </div>
                                                                 )}
-                                                                {card.faqs && card.faqs.length > 0 && (
+                                                                {hasFaqs && (
                                                                     <div>
                                                                         <span className="text-[10px] font-mono uppercase tracking-wider text-[#00f5ff] block mb-1">
                                                                             FAQ Answers

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
+use App\Models\FreeTrialRequest;
 use App\Services\Chat\ChatOrchestrator;
 use App\Services\Chat\ChatSessionManager;
 use App\Services\Chat\Tools\CalendarBookingTool;
+use App\Services\Notification\NotificationService;
+use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -137,6 +140,108 @@ class ChatController extends Controller
     }
 
     /**
+     * Save/link visitor lead email and name to active chat session.
+     */
+    public function saveLead(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:150',
+            'name' => 'nullable|string|max:120',
+            'phone' => 'nullable|string|max:50',
+        ]);
+
+        $session = $this->sessionManager->resolve($request);
+        $email = strtolower(trim((string) $validated['email']));
+        $name = trim((string) ($validated['name'] ?? ($session->lead_name ?? 'Client')));
+        $phone = trim((string) ($validated['phone'] ?? ($session->lead_phone ?? '')));
+        $clientIp = $request->ip() ?: $session->ip_address;
+
+        // 1. Spam & Disposable Email Guard
+        $spamGuard = app(EmailAndSpamGuard::class);
+        $emailCheck = $spamGuard->validateEmail($email);
+        if (! $emailCheck['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $emailCheck['reason'],
+                'error_type' => $emailCheck['error_type'],
+            ], 422);
+        }
+
+        // 2. IP Rate Limit Guard (prevent switching emails from same IP to abuse free trial)
+        $ipCheck = $spamGuard->checkIpRateLimit($clientIp, $session->id);
+        if (! $ipCheck['allowed']) {
+            // Delete any unconfirmed temporary trial in this session
+            FreeTrialRequest::where('chat_session_id', $session->id)
+                ->where(function ($q) {
+                    $q->whereNull('email')
+                        ->orWhere('email', '')
+                        ->orWhere('email', 'like', '%temp.local%');
+                })->delete();
+
+            return response()->json([
+                'success' => false,
+                'quota_exceeded' => true,
+                'message' => $ipCheck['reason'],
+                'lead_email' => $email,
+                'lead_name' => $name,
+            ]);
+        }
+
+        $session->update([
+            'lead_email' => $email,
+            'lead_name' => $name,
+            'lead_phone' => $phone ?: $session->lead_phone,
+            'status' => 'converted',
+        ]);
+
+        // 3. Enforce single email free trial quota: block if already completed, in production, or registered
+        $existingTrial = FreeTrialRequest::where('email', $email)->first();
+        if ($existingTrial && (in_array($existingTrial->status, ['completed', 'in_production'], true) || $existingTrial->chat_session_id !== $session->id)) {
+            // Delete temporary pending trial in this session to prevent quota bypass
+            FreeTrialRequest::where('chat_session_id', $session->id)
+                ->where(function ($q) {
+                    $q->whereNull('email')
+                        ->orWhere('email', '')
+                        ->orWhere('email', 'like', '%temp.local%');
+                })->delete();
+
+            return response()->json([
+                'success' => false,
+                'quota_exceeded' => true,
+                'message' => "Free trial quota limit reached for {$email}. You have already redeemed your 100% Free Trial sample quota (Order #{$existingTrial->id}). Please apply our standard production rates ($0.49/image).",
+                'lead_email' => $session->lead_email,
+                'lead_name' => $session->lead_name,
+            ]);
+        }
+
+        // Link pending trial requests in this session to this email and store IP
+        FreeTrialRequest::where('chat_session_id', $session->id)
+            ->where(function ($q) {
+                $q->whereNull('email')
+                    ->orWhere('email', '')
+                    ->orWhere('email', 'like', '%temp.local%');
+            })
+            ->update([
+                'email' => $email,
+                'name' => $name,
+                'ip_address' => $clientIp,
+            ]);
+
+        // Notify admins
+        try {
+            app(NotificationService::class)->triggerLeadCaptured($session);
+        } catch (\Throwable $e) {
+            // Silently log
+        }
+
+        return response()->json([
+            'success' => true,
+            'lead_email' => $session->lead_email,
+            'lead_name' => $session->lead_name,
+        ]);
+    }
+
+    /**
      * Direct slot booking submission from in-chat interactive calendar card.
      */
     public function bookSlot(Request $request): JsonResponse
@@ -148,20 +253,40 @@ class ChatController extends Controller
             'phone' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:1000',
             'service' => 'nullable|string|max:100',
+            'consultation_id' => 'nullable|integer',
+            'is_reschedule' => 'nullable|boolean',
         ]);
 
         $session = $this->sessionManager->resolve($request);
+
+        // Spam & Disposable Email Guard for Calendar Appointments
+        $spamGuard = app(EmailAndSpamGuard::class);
+        $emailCheck = $spamGuard->validateEmail($validated['email']);
+        if (! $emailCheck['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $emailCheck['reason'],
+                'error_type' => $emailCheck['error_type'],
+            ], 422);
+        }
+
         $result = $this->calendarTool->book($validated, $session);
+
+        $isRescheduled = ! empty($result['is_rescheduled']);
+        $content = $isRescheduled
+            ? "🔄 **Consultation Rescheduled!** We have moved your session to {$result['datetime_formatted']}."
+            : "🎉 **Consultation Booked!** We have confirmed your session for {$result['datetime_formatted']}.";
 
         // Record as system/assistant message in chat history
         $bookingMessage = ChatMessage::create([
             'chat_session_id' => $session->id,
             'sender' => 'assistant',
-            'content' => "🎉 **Consultation Booked!** We have confirmed your session for {$result['datetime_formatted']}.",
+            'content' => $content,
             'tool_results' => [$result],
             'suggested_replies' => [
                 'How to prepare images for the call?',
                 'Upload Sample Files Now',
+                'Ask About Turnaround SLA',
             ],
         ]);
 
@@ -183,7 +308,17 @@ class ChatController extends Controller
      */
     public function checkInactivity(Request $request): JsonResponse
     {
-        $session = $this->sessionManager->resolve($request, touch: false);
+        $session = $this->sessionManager->resolve($request, touch: false, createIfMissing: false);
+
+        if (! $session) {
+            return response()->json(['nudge' => null]);
+        }
+
+        // Only nudge sessions that actually have conversation messages
+        if ($session->messages()->count() === 0) {
+            return response()->json(['nudge' => null]);
+        }
+
         $nudge = $this->sessionManager->checkInactivityNudge($session);
 
         if (! $nudge) {

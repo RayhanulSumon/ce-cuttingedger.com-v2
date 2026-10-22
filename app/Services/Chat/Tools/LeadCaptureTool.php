@@ -4,6 +4,7 @@ namespace App\Services\Chat\Tools;
 
 use App\Models\ChatSession;
 use App\Models\ContactMessage;
+use App\Services\Notification\NotificationService;
 
 class LeadCaptureTool
 {
@@ -68,6 +69,19 @@ class LeadCaptureTool
             'status' => 'new',
             'ip_address' => $session?->ip_address,
         ]);
+
+        // Broadcast real-time alert to administrators
+        try {
+            app(NotificationService::class)->triggerLeadCaptured([
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'company' => $company,
+                'notes' => $notes,
+            ]);
+        } catch (\Throwable $e) {
+            // Silently log without breaking client response
+        }
 
         return [
             'type' => 'lead_captured_card',

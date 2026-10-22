@@ -11,6 +11,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
+    DialogFooter,
 } from "@/Components/ui/dialog";
 import {
     AlertDialog,
@@ -40,7 +41,10 @@ import {
     XCircle,
     Trash2,
     FileText,
+    CalendarClock,
+    Sparkles,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ConsultationItem {
     id: number;
@@ -53,7 +57,7 @@ interface ConsultationItem {
     scheduled_at_formatted: string;
     is_upcoming: boolean;
     timezone: string;
-    status: "confirmed" | "completed" | "cancelled";
+    status: "pending" | "confirmed" | "completed" | "cancelled";
     notes?: string;
     created_at: string;
 }
@@ -62,6 +66,7 @@ interface ConsultationsIndexProps {
     consultations: ConsultationItem[];
     stats: {
         total: number;
+        pending: number;
         upcoming: number;
         completed: number;
         cancelled: number;
@@ -78,12 +83,61 @@ export default function ConsultationsIndex({
         useState<ConsultationItem | null>(null);
     const [consultationToDelete, setConsultationToDelete] =
         useState<ConsultationItem | null>(null);
+    const [consultationToReschedule, setConsultationToReschedule] =
+        useState<ConsultationItem | null>(null);
+    const [rescheduleDatetime, setRescheduleDatetime] = useState<string>("");
+    const [rescheduleNotes, setRescheduleNotes] = useState<string>("");
+    const [isSubmittingReschedule, setIsSubmittingReschedule] = useState<boolean>(false);
 
     const updateStatus = (item: ConsultationItem, newStatus: string) => {
         router.put(
             route("admin.consultations.update", item.id),
             { status: newStatus },
-            { preserveScroll: true }
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    if (selectedConsultation?.id === item.id) {
+                        setSelectedConsultation(null);
+                    }
+                },
+            }
+        );
+    };
+
+    const openRescheduleModal = (item: ConsultationItem) => {
+        setConsultationToReschedule(item);
+        const dateObj = new Date(item.scheduled_at);
+        const pad = (n: number) => n.toString().padStart(2, "0");
+        const formatted = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+        setRescheduleDatetime(formatted);
+        setRescheduleNotes("");
+    };
+
+    const handleRescheduleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!consultationToReschedule || !rescheduleDatetime) return;
+
+        setIsSubmittingReschedule(true);
+        router.put(
+            route("admin.consultations.update", consultationToReschedule.id),
+            {
+                scheduled_at: rescheduleDatetime,
+                notes: rescheduleNotes,
+                status: "confirmed",
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setConsultationToReschedule(null);
+                    setIsSubmittingReschedule(false);
+                    if (selectedConsultation?.id === consultationToReschedule.id) {
+                        setSelectedConsultation(null);
+                    }
+                },
+                onError: () => {
+                    setIsSubmittingReschedule(false);
+                },
+            }
         );
     };
 
@@ -97,6 +151,12 @@ export default function ConsultationsIndex({
 
     const getStatusBadge = (status: string, isUpcoming: boolean) => {
         switch (status) {
+            case "pending":
+                return (
+                    <Badge className="font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        PENDING REVIEW
+                    </Badge>
+                );
             case "confirmed":
                 return isUpcoming ? (
                     <Badge variant="accent" className="font-mono">
@@ -211,28 +271,41 @@ export default function ConsultationsIndex({
                                 <MoreHorizontal className="w-4 h-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-52 bg-[#12141c] border border-white/10 text-white">
+                            {row.status === "pending" && (
+                                <DropdownMenuItem
+                                    onClick={() => updateStatus(row, "confirmed")}
+                                    className="cursor-pointer gap-2 text-[#d4ff00] focus:text-[#d4ff00] font-semibold"
+                                >
+                                    <CheckCircle2 className="w-4 h-4 text-[#d4ff00]" />
+                                    <span>Confirm & Acknowledge</span>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
-                                onClick={() => updateStatus(row, "completed")}
-                                className="cursor-pointer gap-2"
+                                onClick={() => openRescheduleModal(row)}
+                                className="cursor-pointer gap-2 text-[#00f5ff] focus:text-[#00f5ff]"
                             >
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                                <span>Mark as Completed</span>
+                                <CalendarClock className="w-4 h-4 text-[#00f5ff]" />
+                                <span>Reschedule Call</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => updateStatus(row, "confirmed")}
-                                className="cursor-pointer gap-2"
-                            >
-                                <CalendarCheck2 className="w-4 h-4 text-[#d4ff00]" />
-                                <span>Mark as Confirmed</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => updateStatus(row, "cancelled")}
-                                className="cursor-pointer gap-2 text-amber-400"
-                            >
-                                <XCircle className="w-4 h-4 text-amber-400" />
-                                <span>Mark as Cancelled</span>
-                            </DropdownMenuItem>
+                            {row.status !== "completed" && (
+                                <DropdownMenuItem
+                                    onClick={() => updateStatus(row, "completed")}
+                                    className="cursor-pointer gap-2 text-emerald-400 focus:text-emerald-400"
+                                >
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                    <span>Mark as Completed</span>
+                                </DropdownMenuItem>
+                            )}
+                            {row.status !== "cancelled" && (
+                                <DropdownMenuItem
+                                    onClick={() => updateStatus(row, "cancelled")}
+                                    className="cursor-pointer gap-2 text-amber-400 focus:text-amber-400"
+                                >
+                                    <XCircle className="w-4 h-4 text-amber-400" />
+                                    <span>Mark as Cancelled</span>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                                 onClick={() => setConsultationToDelete(row)}
                                 className="cursor-pointer gap-2 text-rose-400 focus:text-rose-400"
@@ -256,13 +329,31 @@ export default function ConsultationsIndex({
                 />
 
                 {/* KPI Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div className="bg-[#12141a] border border-white/5 rounded-2xl p-4">
                         <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
                             Total Bookings
                         </span>
                         <div className="text-2xl font-bold font-mono text-white">
                             {stats.total}
+                        </div>
+                    </div>
+                    <div
+                        className={cn(
+                            "rounded-2xl p-4 border transition-colors",
+                            stats.pending > 0
+                                ? "bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm"
+                                : "bg-[#12141a] border-white/5 text-neutral-400"
+                        )}
+                    >
+                        <span className="text-[10px] font-mono uppercase tracking-wider block mb-1 font-semibold flex items-center justify-between">
+                            <span>Pending Review</span>
+                            {stats.pending > 0 && (
+                                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                            )}
+                        </span>
+                        <div className="text-2xl font-bold font-mono text-amber-300">
+                            {stats.pending}
                         </div>
                     </div>
                     <div className="bg-[#12141a] border border-[#d4ff00]/30 rounded-2xl p-4">
@@ -353,7 +444,133 @@ export default function ConsultationsIndex({
                                         <p className="text-white/80 whitespace-pre-wrap">{selectedConsultation.notes}</p>
                                     </div>
                                 )}
+
+                                {/* Action Buttons Toolbar */}
+                                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-2 justify-end">
+                                    {selectedConsultation.status === "pending" && (
+                                        <Button
+                                            size="sm"
+                                            onClick={() => updateStatus(selectedConsultation, "confirmed")}
+                                            className="bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold text-xs gap-1.5"
+                                        >
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            <span>Confirm & Acknowledge</span>
+                                        </Button>
+                                    )}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => openRescheduleModal(selectedConsultation)}
+                                        className="border-[#00f5ff]/30 bg-[#00f5ff]/10 hover:bg-[#00f5ff]/20 text-[#00f5ff] font-mono text-xs gap-1.5"
+                                    >
+                                        <CalendarClock className="w-3.5 h-3.5" />
+                                        <span>Reschedule Call</span>
+                                    </Button>
+                                    {selectedConsultation.status !== "completed" && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => updateStatus(selectedConsultation, "completed")}
+                                            className="text-emerald-400 hover:bg-emerald-500/10 font-mono text-xs gap-1.5"
+                                        >
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            <span>Mark Completed</span>
+                                        </Button>
+                                    )}
+                                    {selectedConsultation.status !== "cancelled" && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => updateStatus(selectedConsultation, "cancelled")}
+                                            className="text-rose-400 hover:bg-rose-500/10 font-mono text-xs gap-1.5"
+                                        >
+                                            <XCircle className="w-3.5 h-3.5" />
+                                            <span>Cancel</span>
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
+
+                {/* Reschedule Consultation Dialog */}
+                <Dialog
+                    open={!!consultationToReschedule}
+                    onOpenChange={(open) => !open && setConsultationToReschedule(null)}
+                >
+                    <DialogContent className="max-w-md bg-[#0c0e14] border border-white/10 text-white rounded-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2 text-base">
+                                <CalendarClock className="w-5 h-5 text-[#00f5ff]" />
+                                <span>Reschedule Technical Consultation</span>
+                            </DialogTitle>
+                            <DialogDescription className="text-neutral-400 text-xs font-mono">
+                                Select a new date and time for {consultationToReschedule?.name}.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {consultationToReschedule && (
+                            <form onSubmit={handleRescheduleSubmit} className="space-y-4 pt-2">
+                                <div className="p-3 bg-white/5 border border-white/5 rounded-xl space-y-1 text-xs font-mono">
+                                    <span className="text-neutral-500 block text-[10px]">CURRENT SCHEDULED TIME</span>
+                                    <div className="text-white font-semibold flex items-center gap-1.5">
+                                        <Clock className="w-3.5 h-3.5 text-neutral-400" />
+                                        <span>{consultationToReschedule.scheduled_at_formatted} ({consultationToReschedule.timezone})</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[11px] font-mono text-neutral-300 block uppercase">
+                                        New Date & Time
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        required
+                                        value={rescheduleDatetime}
+                                        onChange={(e) => setRescheduleDatetime(e.target.value)}
+                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-hidden focus:border-[#00f5ff] transition-colors"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-[11px] font-mono text-neutral-300 block uppercase">
+                                        Reschedule Reason / Notes (Optional)
+                                    </label>
+                                    <textarea
+                                        rows={2}
+                                        value={rescheduleNotes}
+                                        onChange={(e) => setRescheduleNotes(e.target.value)}
+                                        placeholder="e.g. Client requested to move call to afternoon via WhatsApp..."
+                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-neutral-600 focus:outline-hidden focus:border-[#00f5ff] transition-colors resize-none"
+                                    />
+                                </div>
+
+                                <DialogFooter className="pt-2 gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setConsultationToReschedule(null)}
+                                        className="font-mono text-xs text-neutral-400 hover:text-white"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={isSubmittingReschedule}
+                                        className="bg-[#00f5ff] hover:bg-[#00d0db] text-black font-mono font-bold text-xs gap-1.5 cursor-pointer"
+                                    >
+                                        {isSubmittingReschedule ? (
+                                            <span>Rescheduling...</span>
+                                        ) : (
+                                            <>
+                                                <CalendarClock className="w-3.5 h-3.5" />
+                                                <span>Save & Confirm Reschedule</span>
+                                            </>
+                                        )}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
                         )}
                     </DialogContent>
                 </Dialog>

@@ -8,6 +8,7 @@ export interface QuoteCardProps {
         complexity: string;
         quantity: number;
         unit_price: string;
+        regular_total?: string | null;
         total_price: string;
         currency: string;
         turnaround: string;
@@ -20,6 +21,8 @@ export interface QuoteCardProps {
 }
 
 export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps) {
+    const isFreeTrial = Boolean(card.free_trial_eligible);
+
     return (
         <div className="my-2 p-4 rounded-2xl bg-[#12141a]/95 border border-[#d4ff00]/30 shadow-2xl backdrop-blur-md text-left">
             <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5 mb-3">
@@ -34,7 +37,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                         </span>
                     </div>
                 </div>
-                {card.free_trial_eligible && (
+                {isFreeTrial && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#d4ff00] text-black">
                         <Sparkles className="w-3 h-3" /> Free Trial Eligible
                     </span>
@@ -52,7 +55,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                 </div>
                 {card.discount_applied && (
                     <div className="col-span-2 pt-1 border-t border-white/5 text-[#00f5ff] text-[11px] flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
+                        <CheckCircle2 className="w-3 h-3 text-[#00f5ff]" />
                         <span>{card.discount_applied}</span>
                     </div>
                 )}
@@ -60,29 +63,38 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
 
             <div className="flex items-baseline justify-between pt-1 mb-3">
                 <span className="text-xs text-white/60 font-medium">Estimated Total:</span>
-                <div className="text-right">
+                <div className="text-right flex items-baseline gap-1.5 justify-end">
+                    {isFreeTrial && card.regular_total && (
+                        <span className="text-xs line-through text-white/40 font-mono">
+                            ${card.regular_total}
+                        </span>
+                    )}
                     <span className="text-xl font-bold font-mono text-[#d4ff00] tracking-tight">
                         ${card.total_price}
                     </span>
-                    <span className="text-[10px] text-white/40 ml-1 font-mono">USD</span>
+                    <span className="text-[10px] text-white/40 font-mono">
+                        {isFreeTrial ? 'USD (ZERO COST)' : 'USD'}
+                    </span>
                 </div>
             </div>
 
             <button
                 type="button"
                 onClick={() => {
-                    if (onUploadClick) {
-                        onUploadClick();
+                    if (isFreeTrial) {
+                        // Directly claim the 3 free trial edits without opening file picker modal
+                        onSelectReply('Claim 3 Free Sample Edits');
+                    } else {
+                        // For large batches, open file picker to upload batch
+                        if (onUploadClick) {
+                            onUploadClick();
+                        }
+                        onSelectReply('I confirm this quote and want to upload my batch');
                     }
-                    onSelectReply(
-                        card.free_trial_eligible
-                            ? 'Claim 3 Free Sample Edits'
-                            : 'I confirm this quote and want to upload my batch'
-                    );
                 }}
                 className="w-full py-2.5 px-4 rounded-xl bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#d4ff00]/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
             >
-                <span>{card.call_to_action || 'Confirm Quote & Upload Batch'}</span>
+                <span>{card.call_to_action || (isFreeTrial ? 'Claim 3 Free Sample Edits ($0.00 Zero Cost)' : 'Confirm Quote & Upload Batch')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
             </button>
         </div>

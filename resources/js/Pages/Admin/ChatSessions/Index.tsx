@@ -38,6 +38,7 @@ import {
     Paperclip,
     Shield,
     Loader2,
+    CheckCircle2,
 } from "lucide-react";
 
 interface ChatSessionItem {
@@ -94,6 +95,7 @@ export default function ChatSessionsIndex({
     } | null>(null);
     const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
     const [sessionToDelete, setSessionToDelete] = useState<ChatSessionItem | null>(null);
+    const [bulkDeleteType, setBulkDeleteType] = useState<"empty" | "all" | null>(null);
 
     const openTranscript = async (session: ChatSessionItem) => {
         setActiveSessionId(session.id);
@@ -118,6 +120,15 @@ export default function ChatSessionsIndex({
         router.delete(route("admin.chat-sessions.destroy", sessionToDelete.id), {
             preserveScroll: true,
             onSuccess: () => setSessionToDelete(null),
+        });
+    };
+
+    const handleBulkDelete = () => {
+        if (!bulkDeleteType) return;
+        router.delete(route("admin.chat-sessions.destroy-all"), {
+            data: { type: bulkDeleteType },
+            preserveScroll: true,
+            onSuccess: () => setBulkDeleteType(null),
         });
     };
 
@@ -240,7 +251,40 @@ export default function ChatSessionsIndex({
                 <AdminPageHeader
                     title="Live Chat Sessions & Transcripts"
                     description="Monitor real-time visitor inquiries, captured leads, image quote calculations, and complete conversation logs."
-                />
+                >
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.post(route("admin.chat-sessions.mark-all-read"), {}, { preserveScroll: true })}
+                            className="border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs gap-1.5 h-9"
+                            title="Mark all new chat leads as acknowledged / read"
+                        >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Mark Leads Read</span>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setBulkDeleteType("empty")}
+                            className="border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs gap-1.5 h-9"
+                            title="Delete all empty sessions with 0 messages"
+                        >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Clear 0-Msg Sessions</span>
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setBulkDeleteType("all")}
+                            className="bg-rose-500/20 border border-rose-500/30 hover:bg-rose-600 text-rose-300 hover:text-white font-mono text-xs gap-1.5 h-9"
+                            title="Delete all visitor chat sessions and transcripts"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete All</span>
+                        </Button>
+                    </div>
+                </AdminPageHeader>
 
                 {/* KPI Metrics */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -426,6 +470,37 @@ export default function ChatSessionsIndex({
                                 className="bg-rose-500 hover:bg-rose-600 text-white"
                             >
                                 Delete Transcript
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
+                {/* Bulk Delete Confirmation Alert */}
+                <AlertDialog
+                    open={!!bulkDeleteType}
+                    onOpenChange={(open) => !open && setBulkDeleteType(null)}
+                >
+                    <AlertDialogContent className="bg-[#0b0c10] border border-white/10 text-white">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white flex items-center gap-2">
+                                <Trash2 className="w-5 h-5 text-rose-400" />
+                                {bulkDeleteType === "empty" ? "Clear Empty Visitor Sessions?" : "Delete All Chat Transcripts?"}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-neutral-400">
+                                {bulkDeleteType === "empty"
+                                    ? "This will delete all visitor chat sessions that have 0 messages and no captured email leads, cleaning up phantom rows."
+                                    : "Are you sure you want to delete ALL chat sessions? All visitor conversations, leads, and transcripts will be permanently purged."}
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                                Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={handleBulkDelete}
+                                className="bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold"
+                            >
+                                {bulkDeleteType === "empty" ? "Clear Empty Sessions" : "Yes, Delete All"}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

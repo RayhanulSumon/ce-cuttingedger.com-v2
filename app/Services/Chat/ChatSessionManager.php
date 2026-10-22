@@ -11,9 +11,9 @@ class ChatSessionManager
     public const COOKIE_NAME = 'ce_chat_session_id';
 
     /**
-     * Resolve existing session or create a new public session for the visitor.
+     * Resolve existing session or optionally create a new public session for the visitor.
      */
-    public function resolve(Request $request, bool $touch = true): ChatSession
+    public function resolve(Request $request, bool $touch = true, bool $createIfMissing = true): ?ChatSession
     {
         $sessionId = $request->header('X-Chat-Session-Id')
             ?? $request->cookie(self::COOKIE_NAME)
@@ -25,6 +25,10 @@ class ChatSessionManager
         }
 
         if (! $session) {
+            if (! $createIfMissing) {
+                return null;
+            }
+
             $session = ChatSession::create([
                 'id' => (string) Str::uuid(),
                 'ip_address' => $request->ip(),
