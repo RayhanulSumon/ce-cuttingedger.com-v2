@@ -115,3 +115,57 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+
+/*
+|--------------------------------------------------------------------------
+| Legacy 301 Permanent Redirects (Preserves Google Search Authority & Traffic)
+|--------------------------------------------------------------------------
+*/
+$legacyRedirects = [
+    // 2D Image Editing services
+    '/photo-background-removal-services' => '/services/background-removal',
+    '/best-clipping-path-service' => '/services/background-removal',
+    '/invisible-mannequin' => '/services/ghost-mannequin',
+    '/photo-hollow-man-services' => '/services/ghost-mannequin',
+    '/photo-jewelry-retouch-services' => '/services/jewelry-retouch',
+    '/photo-high-end-model-retouch-services' => '/services/high-end-model-retouch',
+    '/photo-retouching-outsourcing' => '/services/high-end-model-retouch',
+    '/photo-lifestyle-retouch-services' => '/services/high-end-model-retouch',
+    '/photo-semi-nude-or-calendar-model-retouch-services' => '/services/high-end-model-retouch',
+    '/photo-lingerie-model-retouch-services' => '/services/high-end-model-retouch',
+    '/photo-automobile-retouch-services' => '/services/background-removal',
+    '/photo-accessories-retouch-services' => '/services/jewelry-retouch',
+    '/photo-shoe-retouch-services' => '/services/high-end-model-retouch',
+    '/image-masking-service' => '/services/background-removal',
+    '/shadow-creation-service' => '/services/jewelry-retouch',
+    '/photo-reflection-creation-services' => '/services/jewelry-retouch',
+    '/photo-color-correction-services' => '/services/background-removal',
+    '/photo-manipulation-services' => '/services/high-end-model-retouch',
+    '/photo-harmonization-services' => '/services/background-removal',
+    '/photo-image-restoration-services' => '/services/high-end-model-retouch',
+    '/photo-face-swapping-services' => '/services/high-end-model-retouch',
+
+    // 3D & CGI services
+    '/3D/3d-modeling-and-rendering-service' => '/services/3d-modeling-and-rendering',
+    '/3d/3d-modeling-and-rendering-service' => '/services/3d-modeling-and-rendering',
+
+    // DTP services
+    '/multilingual-typesetting-and-formatting-services' => '/services/desktop-publishing',
+    '/brand-identity-services' => '/services/desktop-publishing',
+    '/ai-concept-art-and-illustration-services' => '/services/3d-modeling-and-rendering',
+    '/presentation-services' => '/services/desktop-publishing',
+    '/adaption-services' => '/services/desktop-publishing',
+    '/data-entry-services' => '/services/desktop-publishing',
+
+    // Orders & Legacy Pages
+    '/option/free-trial' => '/#trial-uploader-section',
+    '/option/order' => '/pricing',
+    '/page/aboutus' => '/about',
+    '/page/contact' => '/contact',
+    '/page/pricing' => '/pricing',
+    '/page/faqs' => '/faq',
+];
+
+foreach ($legacyRedirects as $oldUri => $targetUri) {
+    Route::redirect($oldUri, $targetUri, 301);
+}

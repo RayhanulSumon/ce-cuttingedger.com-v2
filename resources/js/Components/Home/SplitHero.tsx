@@ -16,17 +16,19 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
     // Rotating kinetic agency disciplines
     const rotatingWords = [
-        '3D SPATIAL CGI',
-        '2D BRAND IDENTITY',
-        'KINETIC SHADERS',
-        'MOTION DIRECTION',
+        'IMAGE EDITING',
+        '3D CGI & PRODUCT MODELING',
+        'GHOST MANNEQUIN',
+        'FINE JEWELRY RETOUCHING',
+        'CLIPPING PATH & MULTIPATH',
+        'DESKTOP PUBLISHING',
     ];
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length);
-        }, 3200);
+        }, 2800);
         return () => clearInterval(interval);
     }, [rotatingWords.length]);
 
@@ -324,7 +326,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                             <span className="font-mono text-[10px] uppercase tracking-widest text-[#d4ff00]">
                                 {item.category}
                             </span>
-                            <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] uppercase text-sm font-bold text-white tracking-wider">
+                            <span className="font-display text-sm font-bold text-white tracking-wide">
                                 {item.title}
                             </span>
                         </div>
@@ -348,10 +350,9 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                         {/* Kinetic Main Headline with perfect wrapping and zero clipping */}
                         <div className="space-y-4">
                             <h1 className="text-4xl sm:text-6xl lg:text-[4.75rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.04]">
-                                WE SCULPT <br />
-                                UNFAIR ADVANTAGE <br />
+                                ARE YOU <br />
+                                LOOKING FOR <br />
                                 <span className="flex items-baseline flex-wrap gap-x-3 text-white">
-                                    <span>FOR</span>
                                     <span className="overflow-hidden h-[1.25em] inline-block relative text-[#d4ff00]">
                                         <AnimatePresence mode="wait">
                                             <motion.span
@@ -370,43 +371,44 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                             </h1>
 
                             <p className="text-base sm:text-lg text-neutral-400 max-w-xl font-normal leading-relaxed pt-1">
-                                CuttingEdger is a boundary-pushing creative engineering studio. We sculpt high-octane brand architecture, kinetic 3D platforms, and category-defining software interfaces.
+                                CuttingEdger delivers surgical 2D photo editing and photorealistic 3D product CGI for high-growth e-commerce brands, fashion houses, and advertising agencies worldwide.
                             </p>
                         </div>
 
                         {/* CTAs */}
                         <div className="flex flex-wrap items-center gap-4 pt-2">
-                            <Button
-                                variant="primary"
-                                size="lg"
-                                onClick={scrollToWork}
-                                withArrow
-                            >
-                                Explore Selected Work
-                            </Button>
+                            <a href="#trial-uploader-section">
+                                <Button
+                                    variant="primary"
+                                    size="lg"
+                                    withArrow
+                                >
+                                    Try 3 Images Free
+                                </Button>
+                            </a>
 
                             <Button
                                 variant="secondary"
                                 size="lg"
                                 onClick={onOpenContact}
                             >
-                                Initiate Project
+                                Instant Volume Quote
                             </Button>
                         </div>
 
                         {/* Quick Trust Highlights */}
                         <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg">
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">100%</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Independent</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">10K+</span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">Daily Images</span>
                             </div>
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-[#d4ff00]">14+</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Awwwards / FWA</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-[#d4ff00]">99.8%</span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">First-Pass QA</span>
                             </div>
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">&lt;0.5s</span>
-                                <span className="text-xs font-mono text-neutral-400 uppercase">Edge Velocity</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-2xl sm:text-3xl text-white">&lt;12h</span>
+                                <span className="text-xs font-mono text-neutral-400 uppercase">Turnaround SLA</span>
                             </div>
                         </div>
                     </div>

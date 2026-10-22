@@ -10,4 +10,8 @@ class ContactMessage extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'attachments' => 'array',
+    ];
 }

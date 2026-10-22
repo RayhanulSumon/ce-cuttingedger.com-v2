@@ -24,7 +24,7 @@ class ServiceControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Services/Index')
-            ->has('services', 4)
+            ->has('services', 6)
         );
     }
 

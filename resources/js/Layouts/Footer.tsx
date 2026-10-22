@@ -298,7 +298,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                     {/* Agency Brand Mark */}
                     <Link
                         href="/"
-                        className="order-1 sm:order-2 inline-flex items-center gap-1.5 font-['MangoGrotesque',_'Antonio',_sans-serif] text-3xl sm:text-4xl font-normal tracking-wider text-white uppercase hover:text-[#d4ff00] transition-colors"
+                        className="order-1 sm:order-2 inline-flex items-center gap-1.5 font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase hover:text-[#d4ff00] transition-colors"
                     >
                         <span className="text-2xl font-black text-[#d4ff00]">▲</span>
                         <span>cuttingedger</span>
@@ -364,7 +364,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                         style={{
                                             transformOrigin: 'center center',
                                         }}
-                                        className="inline-block font-['MangoGrotesque',_'Antonio',_sans-serif] font-normal uppercase text-[90px] xs:text-[130px] sm:text-[190px] md:text-[270px] lg:text-[340px] xl:text-[400px] leading-[0.86] text-[#f9f4e8] tracking-[-0.01em] will-change-transform select-none cursor-pointer hover:text-white"
+                                        className="inline-block font-display font-black uppercase text-[90px] xs:text-[130px] sm:text-[190px] md:text-[270px] lg:text-[340px] xl:text-[400px] leading-[0.86] text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
                                     >
                                         {char}
                                     </motion.span>

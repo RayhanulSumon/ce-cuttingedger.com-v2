@@ -2,8 +2,11 @@ import React from 'react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { SplitHero } from '@/Components/Home/SplitHero';
 import { IntroBand } from '@/Components/Home/IntroBand';
+import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
 import { StickyWorkCards } from '@/Components/Home/StickyWorkCards';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
+import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
+import { VolumePricingCalculator } from '@/Components/Common/VolumePricingCalculator';
 import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
 import { RecentWorkShowcase } from '@/Components/Home/RecentWorkShowcase';
@@ -28,32 +31,41 @@ export default function Home({
     return (
         <>
             <SeoHead
-                title="Radical Digital Agency & Creative Engineering"
-                description="CuttingEdger builds high-octane brand systems, kinetic software interfaces, and immersive web platforms for visionary innovators."
+                title="AI-Based 2D Image Retouching & 3D CGI Model Solutions"
+                description="CuttingEdger provides surgical 2D photo editing, invisible ghost mannequin jointing, high-end jewelry retouching, and 3D CGI product modeling for e-commerce brands worldwide."
             />
 
-            {/* 1. Hero Section (Option A Split Hero) */}
+            {/* 1. Hero Section */}
             <SplitHero />
 
             {/* 2. Intro Manifesto Band */}
             <IntroBand />
 
-            {/* 3. Featured Work Sticky Stacked Cards */}
+            {/* 3. Interactive Before/After Craft Comparison Slider */}
+            <BeforeAfterShowcase />
+
+            {/* 4. Featured Work Sticky Stacked Cards */}
             <StickyWorkCards projects={featuredProjects} />
 
-            {/* 4. Animated Stats Grid */}
+            {/* 5. Animated Daily Production Stats Grid */}
             <StatsGrid />
 
-            {/* 6. Dual Counter-Scrolling Client Marquees */}
+            {/* 6. Free Trial & Instant Batch Uploader Wizard */}
+            <FreeTrialDropzone />
+
+            {/* 7. Interactive Volume Price Estimator */}
+            <VolumePricingCalculator />
+
+            {/* 8. Dual Counter-Scrolling Client Marquees */}
             <ClientMarquees clients={clients} />
 
-            {/* 7. Leadership Team */}
+            {/* 8. Leadership Team */}
             <TeamPreview members={teamMembers} />
 
-            {/* 8. Recent Work Kinetic Parallax Showcase (Agntix Design Agency Style) */}
+            {/* 9. Recent Work Kinetic Parallax Showcase */}
             <RecentWorkShowcase projects={featuredProjects} />
 
-            {/* 9. Accessible Testimonials Slider */}
+            {/* 10. Accessible Testimonials Slider */}
             <TestimonialsSlider testimonials={testimonials} />
         </>
     );

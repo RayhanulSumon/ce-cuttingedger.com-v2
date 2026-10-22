@@ -50,13 +50,13 @@ function FunFactRow({ value, suffix = '', badge, title, subtitle }: FunFactRowPr
             ref={rowRef}
             className="group py-10 sm:py-14 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 transition-colors duration-300 hover:border-white/25"
         >
-            {/* Massive Counter on Left (exact Agntix purecounter size & style) */}
+            {/* Massive Counter on Left */}
             <div className="flex items-baseline">
-                <span className="font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] text-7xl sm:text-8xl lg:text-[110px] xl:text-[125px] font-bold tracking-tight text-white leading-none select-none group-hover:text-[#d4ff00] transition-colors tabular-nums">
+                <span className="font-display text-7xl sm:text-8xl lg:text-[110px] xl:text-[125px] font-black tracking-tight text-white leading-none select-none group-hover:text-[#d4ff00] transition-colors tabular-nums">
                     {count}
                 </span>
                 {suffix && (
-                    <span className="font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] text-5xl sm:text-6xl lg:text-8xl font-bold text-[#d4ff00] leading-none ml-1 select-none">
+                    <span className="font-display text-5xl sm:text-6xl lg:text-8xl font-black text-[#d4ff00] leading-none ml-1 select-none">
                         {suffix}
                     </span>
                 )}
@@ -67,7 +67,7 @@ function FunFactRow({ value, suffix = '', badge, title, subtitle }: FunFactRowPr
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                     <span>{badge}</span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-neutral-200 group-hover:text-white transition-colors tracking-tight leading-tight">
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-neutral-200 group-hover:text-white transition-colors tracking-tight leading-tight">
                     {title}
                 </h3>
                 {subtitle && (
@@ -83,25 +83,32 @@ function FunFactRow({ value, suffix = '', badge, title, subtitle }: FunFactRowPr
 export function StatsGrid() {
     const stats: FunFactRowProps[] = [
         {
-            value: 120,
+            value: 10000,
             suffix: '+',
-            badge: '[ Nice! ]',
-            title: 'Projects Completed',
-            subtitle: 'Delivered across North America, Europe, and Asia-Pacific.',
+            badge: '[ DAILY VOLUME ]',
+            title: 'Images Processed Daily',
+            subtitle: 'High-throughput 2D clipping, ghost mannequin, and high-end fashion retouching.',
         },
         {
-            value: 16,
+            value: 450,
             suffix: '+',
-            badge: '[ Holy Moly! ]',
-            title: 'Years of Experience',
-            subtitle: 'Proven track record of high-stakes digital craftsmanship.',
+            badge: '[ DTP SPRINT ]',
+            title: 'Pages Formatted',
+            subtitle: 'Overnight multilingual desktop publishing and InDesign catalog production.',
         },
         {
-            value: 185,
-            suffix: '%',
-            badge: '[ Ho Ho! ]',
-            title: 'Growing Agency',
-            subtitle: 'Year-over-year client recurring revenue acceleration.',
+            value: 200,
+            suffix: '+',
+            badge: '[ 3D SPATIAL ]',
+            title: '3D CGI Models Rendered',
+            subtitle: 'Photorealistic furniture, consumer electronics, and 360° spin turntables.',
+        },
+        {
+            value: 2300,
+            suffix: '+',
+            badge: '[ 24/7/365 ]',
+            title: 'Hours of Production',
+            subtitle: 'Dedicated round-the-clock shift operation ensuring sub-12 hour turnarounds.',
         },
     ];
 
@@ -121,17 +128,16 @@ export function StatsGrid() {
                     <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-6">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                             <Sparkles className="w-3.5 h-3.5" />
-                            <span>Fun Facts</span>
+                            <span>Daily Production Insights</span>
                         </div>
 
-                        <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] xl:text-[88px] font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-[0.95]">
+                        <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] xl:text-[88px] font-display font-extrabold text-white tracking-tight leading-[0.98]">
                             Numbers that Speak Volumes
                         </h2>
 
                         <p className="text-base sm:text-lg text-neutral-400 font-sans leading-relaxed pt-2 max-w-lg">
-                            We are a team of passionate and crazy individuals dedicated to bringing your ideas to life.
-                            With a keen eye for aesthetics, attention to detail, & a deep understanding of design
-                            principles, we strive to deliver exceptional results that exceed your expectations!
+                            Operating 24 hours a day with 100+ specialized Photoshop artists and 3D CGI modelers. 
+                            We partner directly with international retail powerhouses, advertising agencies, and e-commerce studios requiring unmatched scale and surgical precision.
                         </p>
 
                         <div className="pt-4">

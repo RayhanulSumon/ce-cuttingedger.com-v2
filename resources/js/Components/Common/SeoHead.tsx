@@ -26,15 +26,46 @@ export function SeoHead({
 
     const defaultJsonLd = jsonLd || {
         '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: 'CuttingEdger',
-        url: 'https://cuttingedger.com',
-        logo: 'https://cuttingedger.com/logo.png',
+        '@type': 'ProfessionalService',
+        name: 'Cutting Edger',
+        url: 'https://www.cuttingedger.com',
+        image: 'https://www.cuttingedger.com/images/ce/ce_logo_word.png',
+        telephone: '+14099952565',
+        priceRange: '$0.35 - $2.50',
         description: description,
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Artisan Center, Level-7, House# 57/9, West Panthapath',
+            addressLocality: 'Dhaka',
+            postalCode: '1215',
+            addressCountry: 'BD',
+        },
+        geo: {
+            '@type': 'GeoCoordinates',
+            latitude: 23.7527991,
+            longitude: 90.3819406,
+        },
+        openingHoursSpecification: {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+            ],
+            opens: '00:00',
+            closes: '23:59',
+        },
         sameAs: [
-            'https://twitter.com/cuttingedger',
-            'https://linkedin.com/company/cuttingedger',
-            'https://github.com/cuttingedger',
+            'https://www.facebook.com/CuttingEdgerInc',
+            'https://twitter.com/cutting_edger',
+            'https://www.instagram.com/cuttingedgerinc/',
+            'https://www.linkedin.com/company/cutting-edger/',
+            'https://www.youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
+            'https://www.pinterest.com/CuttingEdgerTeam2019/',
         ],
     };
 

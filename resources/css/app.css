@@ -5,43 +5,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('/fonts/MangoGrotesque-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('/fonts/MangoGrotesque-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('/fonts/MangoGrotesque-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('/fonts/MangoGrotesque-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
 @theme {
-    --font-mango: 'MangoGrotesque', 'Clash Display', 'Antonio', sans-serif;
-    --font-condensed: 'Clash Display', 'Syne', 'Antonio', -apple-system, sans-serif;
-    --font-display: 'Clash Display', 'Syne', 'Outfit', sans-serif;
-    --font-sans: 'General Sans', 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    --font-condensed: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    --font-mango: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'Space Grotesk', monospace;
 
     --color-accent: #d4ff00;

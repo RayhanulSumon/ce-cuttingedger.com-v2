@@ -4,6 +4,8 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { PricingPlan, Faq } from '@/types/models';
 import { Accordion } from '@/Components/ui/Accordion';
+import { VolumePricingCalculator } from '@/Components/Common/VolumePricingCalculator';
+import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
 import { Check, Sparkles, ArrowUpRight } from 'lucide-react';
 
 interface PricingProps {
@@ -20,15 +22,30 @@ export default function Pricing({ plans = [], faqs = [] }: PricingProps) {
             />
 
             <PageHero
-                eyebrow="TRANSPARENT VALUE"
-                title="PREDICTABLE INVESTMENT."
-                highlight="UNMATCHED RETURN."
-                description="No vague estimates or hidden line items. We engage through focused sprints and milestone-anchored flagships designed for maximum ROI."
+                eyebrow="HIGH-VOLUME TRANSPARENCY"
+                title="PREDICTABLE PER-IMAGE PRICING."
+                highlight="HIGH-SPEED TURNAROUND."
+                description="From $0.35 per image. No hidden setup fees or minimum contract lock-ins. Free unlimited revisions with 24/7 round-the-clock studio capacity."
             />
 
-            {/* Plans Grid */}
+            {/* 1. Interactive Volume & Combo Price Estimator */}
+            <VolumePricingCalculator />
+
+            {/* 3. Dedicated Studio & Enterprise Retainer Plans */}
             <section className="py-24 bg-[#0a0b0e]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                            [ DEDICATED SQUAD RETAINERS ]
+                        </span>
+                        <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                            Long-Term Studio Engagements
+                        </h2>
+                        <p className="text-xs text-neutral-400 font-mono">
+                            For enterprise brands and studios needing dedicated artist squads embedded into daily production.
+                        </p>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
                         {plans.map((plan) => (
                             <div
@@ -95,6 +112,9 @@ export default function Pricing({ plans = [], faqs = [] }: PricingProps) {
                     </div>
                 </div>
             </section>
+
+            {/* 4. Instant Batch Trial Dropzone */}
+            <FreeTrialDropzone />
 
             {/* Pricing FAQ Section */}
             {faqs.length > 0 && (

@@ -26,6 +26,14 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
         { name: 'SONAR CRYPTO', symbol: '◇', industry: 'Decentralized Tech' },
     ];
 
+    // Partition real clients by marquee_row or fallback
+    const row1Clients = clients && clients.length > 0 
+        ? clients.filter(c => c.marquee_row === 1 || !c.marquee_row)
+        : null;
+    const row2Clients = clients && clients.length > 0
+        ? clients.filter(c => c.marquee_row === 2)
+        : null;
+
     return (
         <section
             id="collaborators-section"
@@ -37,61 +45,117 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
             <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 mb-16 text-center">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>[ COLLABORATORS ]</span>
+                    <span>[ TRUSTED BY 173+ ENTERPRISES ]</span>
                 </div>
-                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
-                    Collaborators
+                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-none">
+                    Global Collaborators
                 </h2>
                 <p className="mt-3 text-sm text-neutral-400 font-sans max-w-xl mx-auto">
-                    Powering visionary startups and global leaders with high-conviction creative engineering.
+                    Powering e-commerce leaders, luxury fashion houses, and automotive brands with high-throughput post-production.
                 </p>
             </div>
 
-            {/* Marquee Row 1: Scrolling Left (Agntix des-brand-moving-top) */}
+            {/* Marquee Row 1: Scrolling Left */}
             <div className="py-3.5 border-y border-white/5 bg-black/20">
                 <Marquee direction="left" speed="normal" pauseOnHover>
-                    {row1Fallback.map((item, index) => (
-                        <div
-                            key={index}
-                            className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
-                        >
-                            <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
-                                {item.symbol}
-                            </span>
-                            <div className="text-left">
-                                <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] font-bold text-xl sm:text-2xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
-                                    {item.name}
+                    {row1Clients && row1Clients.length > 0
+                        ? row1Clients.map((client, index) => (
+                            <a
+                                key={client.id || index}
+                                href={client.url || '#'}
+                                target={client.url ? '_blank' : undefined}
+                                rel="noopener noreferrer"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300"
+                            >
+                                {client.logo_dark ? (
+                                    <img 
+                                        src={client.logo_dark} 
+                                        alt={client.name} 
+                                        className="h-9 w-auto max-w-[130px] object-contain opacity-75 group-hover:opacity-100 filter brightness-110 contrast-125 transition-all duration-300" 
+                                    />
+                                ) : (
+                                    <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">★</span>
+                                )}
+                                <div className="text-left">
+                                    <span className="font-display font-bold text-lg sm:text-xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
+                                        {client.name}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
+                                        Enterprise Partner
+                                    </span>
+                                </div>
+                            </a>
+                        ))
+                        : row1Fallback.map((item, index) => (
+                            <div
+                                key={index}
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
+                            >
+                                <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
+                                    {item.symbol}
                                 </span>
-                                <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
-                                    {item.industry}
-                                </span>
+                                <div className="text-left">
+                                    <span className="font-display font-bold text-xl sm:text-2xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
+                                        {item.name}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
+                                        {item.industry}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </Marquee>
             </div>
 
-            {/* Marquee Row 2: Scrolling Right (Agntix des-brand-moving-bottom) */}
+            {/* Marquee Row 2: Scrolling Right */}
             <div className="py-3.5 border-b border-white/5 bg-black/40 mt-4">
                 <Marquee direction="right" speed="normal" pauseOnHover>
-                    {row2Fallback.map((item, index) => (
-                        <div
-                            key={index}
-                            className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
-                        >
-                            <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
-                                {item.symbol}
-                            </span>
-                            <div className="text-left">
-                                <span className="font-['Antonio',_'Bebas_Neue',_sans-serif] font-bold text-xl sm:text-2xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
-                                    {item.name}
+                    {row2Clients && row2Clients.length > 0
+                        ? row2Clients.map((client, index) => (
+                            <a
+                                key={client.id || index}
+                                href={client.url || '#'}
+                                target={client.url ? '_blank' : undefined}
+                                rel="noopener noreferrer"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300"
+                            >
+                                {client.logo_dark ? (
+                                    <img 
+                                        src={client.logo_dark} 
+                                        alt={client.name} 
+                                        className="h-9 w-auto max-w-[130px] object-contain opacity-75 group-hover:opacity-100 filter brightness-110 contrast-125 transition-all duration-300" 
+                                    />
+                                ) : (
+                                    <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">◈</span>
+                                )}
+                                <div className="text-left">
+                                    <span className="font-display font-bold text-lg sm:text-xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
+                                        {client.name}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
+                                        Enterprise Partner
+                                    </span>
+                                </div>
+                            </a>
+                        ))
+                        : row2Fallback.map((item, index) => (
+                            <div
+                                key={index}
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
+                            >
+                                <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
+                                    {item.symbol}
                                 </span>
-                                <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
-                                    {item.industry}
-                                </span>
+                                <div className="text-left">
+                                    <span className="font-display font-bold text-xl sm:text-2xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
+                                        {item.name}
+                                    </span>
+                                    <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest block">
+                                        {item.industry}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </Marquee>
             </div>
         </section>

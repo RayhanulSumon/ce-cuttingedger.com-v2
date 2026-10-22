@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Client;
 use App\Models\Faq;
 use App\Models\Job;
 use App\Models\PricingPlan;
@@ -21,405 +22,535 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleAndSuperAdminSeeder::class);
 
-        // 1. Portfolio Categories
-        $catEng = Category::firstOrCreate(['slug' => 'creative-engineering'], ['name' => 'Creative Engineering', 'type' => 'work']);
-        $catBrand = Category::firstOrCreate(['slug' => 'brand-architecture'], ['name' => 'Brand Architecture', 'type' => 'work']);
-        $catSpatial = Category::firstOrCreate(['slug' => '3d-spatial'], ['name' => '3D & Spatial', 'type' => 'work']);
-        $catProduct = Category::firstOrCreate(['slug' => 'product-design'], ['name' => 'Product Design', 'type' => 'work']);
+        // 1. Portfolio & Service Categories
+        $catCutout = Category::firstOrCreate(['slug' => 'image-editing'], ['name' => '2D Image Editing & Cutout', 'type' => 'work']);
+        $catRetouch = Category::firstOrCreate(['slug' => 'fashion-retouching'], ['name' => 'High-End Fashion & Jewelry', 'type' => 'work']);
+        $catSpatial = Category::firstOrCreate(['slug' => '3d-cgi-modeling'], ['name' => '3D CGI & Product Modeling', 'type' => 'work']);
+        $catDtp = Category::firstOrCreate(['slug' => 'desktop-publishing'], ['name' => 'Desktop Publishing (DTP)', 'type' => 'work']);
 
-        // 2. Featured Projects
+        // 2. Featured Real-World Case Studies
         Project::create([
-            'category_id' => $catEng->id,
-            'title' => 'Kinetix OS',
-            'slug' => 'kinetix-os',
-            'client_name' => 'Kinetix Systems',
-            'year' => '2026',
-            'summary' => 'A revolutionary spatial interface and kinetic design system engineered for the next generation of ambient computing hardware.',
-            'description' => 'Kinetix OS required a complete re-imagining of operating system paradigms. Moving beyond skeuomorphism and flat surfaces, we sculpted a volumetric design language with sub-millisecond interaction feedback, real-time light refraction, and procedural audio feedback loops.',
-            'cover_image' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1400&q=80',
+            'category_id' => $catRetouch->id,
+            'title' => 'Nordic Luxury Outerwear Ghost Mannequin',
+            'slug' => 'nordic-outerwear-ghost-mannequin',
+            'client_name' => 'Haglöfs Outdoor',
+            'year' => '2025',
+            'summary' => 'Batch processing 4,800 SKUs of technical waterproof jackets and thermal layers with symmetrical invisible mannequin joints and natural drape.',
+            'description' => 'Technical apparel with internal taped seams, storm flaps, and 3D collar construction requires surgical precision. We built an automated workflow balancing inner neck lining insertion with photorealistic fabric texture retention, cutting turnaround time by 65%.',
+            'cover_image' => 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1400&q=80',
             'gallery' => [
-                'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80',
-                'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1200&q=80',
             ],
-            'deliverables' => ['Design System', 'Spatial UI/UX', 'Kinetic Shaders', 'Audio Design'],
+            'deliverables' => ['Ghost Mannequin Execution', 'Symmetric Hem & Collar Joint', 'Wrinkle Attenuation', 'Amazon/Shopify Spec Export'],
             'featured' => true,
             'sort_order' => 1,
             'metrics' => [
-                ['label' => 'Interaction Latency', 'value' => '< 12ms'],
-                ['label' => 'App Ecosystem Growth', 'value' => '+340%'],
-                ['label' => 'Awwwards Score', 'value' => '9.2 / 10'],
+                ['label' => 'SKUs Processed', 'value' => '4,800+'],
+                ['label' => 'Turnaround SLA', 'value' => '< 12 Hours'],
+                ['label' => 'Approval Rate', 'value' => '99.8%'],
             ],
-            'meta_title' => 'Kinetix OS Case Study — CuttingEdger',
-            'meta_description' => 'How CuttingEdger engineered a spatial operating system interface for next-gen computing.',
-            'live_url' => 'https://cuttingedger.com',
+            'meta_title' => 'Ghost Mannequin Apparel Case Study — CuttingEdger',
+            'meta_description' => 'How CuttingEdger delivered 4,800 high-spec ghost mannequin SKUs for global outerwear brand Haglöfs.',
+            'live_url' => 'https://www.haglofs.com/en',
+        ]);
+
+        Project::create([
+            'category_id' => $catRetouch->id,
+            'title' => 'Diamond & Fine Jewelry Macro Retouch Series',
+            'slug' => 'diamond-jewelry-macro-retouch',
+            'client_name' => 'Melie Bianco & D1 Milano',
+            'year' => '2025',
+            'summary' => 'Eliminating micro-scratches, dust, and studio reflections while preserving gemstone facet refraction and platinum luster.',
+            'description' => 'High-end jewelry demands extreme macro clarity. Using frequency separation, focus stacking alignment, and hand-sculpted metallic highlights, we transformed raw studio macro captures into breathtaking catalog centerpieces on pure 255 white backgrounds.',
+            'cover_image' => 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1400&q=80',
+            'gallery' => [
+                'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'deliverables' => ['Gemstone Facet Sharpening', 'Scratch & Dust Cleansing', 'Custom Drop & Cast Shadows', 'Focus Stacking Integration'],
+            'featured' => true,
+            'sort_order' => 2,
+            'metrics' => [
+                ['label' => 'E-Commerce CTR Lift', 'value' => '+42%'],
+                ['label' => 'Color Grading Accuracy', 'value' => 'Delta-E < 1'],
+                ['label' => 'Catalog Images', 'value' => '1,200 Units'],
+            ],
+            'meta_title' => 'Fine Jewelry Retouching Case Study — CuttingEdger',
+            'meta_description' => 'Macro gemstone clarity and reflection curation by CuttingEdger.',
+            'live_url' => 'https://www.meliebianco.com/',
         ]);
 
         Project::create([
             'category_id' => $catSpatial->id,
-            'title' => 'Hyperion Audio',
-            'slug' => 'hyperion-audio',
-            'client_name' => 'Hyperion Acoustic Labs',
+            'title' => '3D CGI Furniture Modeling & Architectural Rendering',
+            'slug' => '3d-cgi-furniture-modeling',
+            'client_name' => 'Modern Living Studio',
             'year' => '2025',
-            'summary' => 'Sculptural acoustic hardware brand identity accompanied by an interactive 3D WebGL sound visualizer and global e-commerce flagship.',
-            'description' => 'Hyperion produces $20,000 audiophile monitoring speakers. Our task was to make sound physically tangible on screen through dynamic shader frequencies, bespoke typography inspired by mechanical brass tuning forks, and frictionless luxury commerce.',
-            'cover_image' => 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=1400&q=80',
+            'summary' => 'Digitizing 350 physical luxury furniture models into photorealistic 3D digital twins with configurable fabric & wood textures.',
+            'description' => 'Physical photoshoots for large furniture lines cost hundreds of thousands in logistics. CuttingEdger converted CAD blueprints into high-fidelity PBR meshes with photorealistic lighting environments and 360-degree interactive WebGL views.',
+            'cover_image' => 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80',
             'gallery' => [
-                'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
             ],
-            'deliverables' => ['Brand Identity', '3D WebGL Configurator', 'Luxury E-Commerce', 'Creative Direction'],
-            'featured' => true,
-            'sort_order' => 2,
-            'metrics' => [
-                ['label' => 'Conversion Rate', 'value' => '4.8%'],
-                ['label' => 'Pre-Orders Sold Out', 'value' => '48 Hours'],
-                ['label' => 'Average Order Value', 'value' => '$14,200'],
-            ],
-            'meta_title' => 'Hyperion Audio Case Study — CuttingEdger',
-            'meta_description' => 'Acoustic luxury brand and 3D WebGL soundstage engineered by CuttingEdger.',
-            'live_url' => 'https://cuttingedger.com',
-        ]);
-
-        Project::create([
-            'category_id' => $catProduct->id,
-            'title' => 'Aura Robotics',
-            'slug' => 'aura-robotics',
-            'client_name' => 'Aura Dynamics',
-            'year' => '2025',
-            'summary' => 'Tactile mission-control interface and human-machine teleoperation cockpit for autonomous planetary rovers.',
-            'description' => 'Teleoperating multi-ton autonomous robots across hazardous environments leaves zero room for visual ambiguity. We architected a high-contrast ergonomic telemetry cockpit with instantaneous telemetry graphing, predictive path corridors, and failsafe gestures.',
-            'cover_image' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1400&q=80',
-            'gallery' => [
-                'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1200&q=80',
-            ],
-            'deliverables' => ['Mission Control UI', 'Telemetry Architecture', 'Tactile Design System', 'Hardware Ergonomics'],
+            'deliverables' => ['CAD to Low/High Poly Mesh', 'PBR Material Authoring', 'Photorealistic Studio Renders', '360° GLTF Spin Views'],
             'featured' => true,
             'sort_order' => 3,
             'metrics' => [
-                ['label' => 'Operator Fatigue Reduction', 'value' => '42%'],
-                ['label' => 'Emergency Response Time', 'value' => '0.18s'],
-                ['label' => 'Fleet Deployment', 'value' => '2,400 Units'],
+                ['label' => 'Photoshoot Cost Saved', 'value' => '78%'],
+                ['label' => 'Asset Render Res', 'value' => '8K Ultra HD'],
+                ['label' => 'Models Rendered', 'value' => '350+ Items'],
             ],
-            'meta_title' => 'Aura Robotics Telemetry Cockpit — CuttingEdger',
-            'meta_description' => 'Mission-critical teleoperation interface for autonomous robotics.',
+            'meta_title' => '3D Furniture CGI Modeling Case Study — CuttingEdger',
+            'meta_description' => 'Photorealistic 3D architectural and furniture rendering by CuttingEdger.',
             'live_url' => 'https://cuttingedger.com',
         ]);
 
         Project::create([
-            'category_id' => $catBrand->id,
-            'title' => 'Vortex Protocol',
-            'slug' => 'vortex-protocol',
-            'client_name' => 'Vortex Capital',
+            'category_id' => $catCutout->id,
+            'title' => 'Global Footwear Multipath & Colorway Isolation',
+            'slug' => 'footwear-multipath-colorway',
+            'client_name' => 'Bambini Fashion & Drykorn',
             'year' => '2025',
-            'summary' => 'Comprehensive brand architecture, bespoke kinetic typography, and high-frequency trading terminal for institutional liquidity providers.',
-            'description' => 'Vortex bridges traditional quantitative hedge funds with decentralized algorithmic liquidity. We built a monolithic brand identity rooted in cryptographic precision, backed by a microsecond-level terminal interface built with WebAssembly and WebSockets.',
-            'cover_image' => 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=1400&q=80',
+            'summary' => 'Complex multipath clipping on intricate footwear laces, soles, and embroidery for infinite instant colorway variations.',
+            'description' => 'Retouching and clipping shoes with perforations, reflective stripes, and mesh requires 100% hand-drawn vector paths. We delivered multi-layered clipping paths allowing our clients to alter upper, sole, and stitch colors without reshooting.',
+            'cover_image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80',
             'gallery' => [
-                'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=80',
             ],
-            'deliverables' => ['Brand Strategy', 'Visual Identity', 'Algorithmic UI', 'Typeface Design'],
+            'deliverables' => ['Multipath Vector Outlines', 'Colorway Masking', 'Reflective Shadow Creation', 'Dust & Glue Elimination'],
             'featured' => true,
             'sort_order' => 4,
             'metrics' => [
-                ['label' => 'Daily Volume Handled', 'value' => '$1.2B'],
-                ['label' => 'Execution Speed', 'value' => '4ms'],
-                ['label' => 'Institutional Retention', 'value' => '98.5%'],
+                ['label' => 'Batch Volume', 'value' => '12,000 SKUs'],
+                ['label' => 'Vector Accuracy', 'value' => '100% Hand-Drawn'],
+                ['label' => 'First-Pass Approval', 'value' => '99.4%'],
             ],
-            'meta_title' => 'Vortex Protocol Brand & Terminal — CuttingEdger',
-            'meta_description' => 'Cryptographic institutional trading terminal and brand system.',
-            'live_url' => 'https://cuttingedger.com',
+            'meta_title' => 'Footwear Multipath & Clipping Path Case Study — CuttingEdger',
+            'meta_description' => 'High-precision multipath clipping and colorway isolation by CuttingEdger.',
+            'live_url' => 'https://drykorn.com/en-int/',
         ]);
 
-        // 3. Services
+        // 3. Core Services
         Service::create([
-            'title' => 'Product Design & Design Systems',
-            'slug' => 'product-design',
-            'marquee_label' => 'DESIGN SYSTEMS · PROTOTYPES · MULTI-PLATFORM UX',
-            'subtitle' => 'Architecting scalable digital products that users obsess over.',
-            'description' => 'We don’t just draw wireframes; we craft comprehensive, token-driven component ecosystems that harmonize product, brand, and code. From zero-to-one SaaS apps to multi-platform enterprise suites, we optimize for intuition, velocity, and delight.',
-            'features' => ['Modular Token Architecture', 'Complex Workflow Simplification', 'Micro-Interactions & Feedback Loops', 'WCAG 2.2 AA Compliance'],
-            'deliverables' => ['Figma Component Library', 'Design Tokens (Tailwind/CSS)', 'Interactive Prototypes', 'UX Research & User Journeys'],
-            'icon' => 'Layers',
+            'title' => 'Background Removal & Multipath Cutout',
+            'slug' => 'background-removal',
+            'marquee_label' => 'HAND-DRAWN CLIPPING PATH · ALPHA MASKING · MULTIPATH · ZERO FRINGE',
+            'subtitle' => 'Pixel-perfect vector cutouts and alpha isolation for high-volume enterprise e-commerce.',
+            'description' => 'We reject automated jagged edge erasers. Every silhouette is crafted using 100% hand-drawn Adobe Photoshop Pen Tool vector clipping paths and advanced alpha channel masking, ensuring razor-sharp edges without color halos or degraded anti-aliasing.',
+            'features' => ['100% Hand-Drawn Pen Tool Paths', 'Zero Halation or Background Color Bleed', 'Layered PSD / Transparent PNG / Pure White JPG', 'Sub-12 Hour Rapid Batch Turnaround'],
+            'deliverables' => ['Layered Master PSD Files', 'Transparent PNG Web Assets', 'Clipping Path Embedded TIFF/EPS', 'Standardized Suffix Batch Naming'],
+            'icon' => 'Scissors',
             'sort_order' => 1,
             'accent_color' => '#d4ff00',
         ]);
 
         Service::create([
-            'title' => 'Brand Architecture & Spatial Identity',
-            'slug' => 'brand-architecture',
-            'marquee_label' => 'VERBAL IDENTITY · BESPOKE TYPE · KINETIC GUIDELINES',
-            'subtitle' => 'Defining category leaders through fearless visual and verbal positioning.',
-            'description' => 'Great brands are unmistakable cultural artifacts. We build comprehensive brand worlds encompassing logo marks, custom typography, provocative voice & tone, physical packaging, and tactile digital guidelines that cannot be ignored.',
-            'features' => ['Distinctive Category Positioning', 'Custom Type Design', 'Motion Guidelines & Kinetic Rules', 'Spatial Brand Worlds'],
-            'deliverables' => ['Master Brand Book', 'Typography Files (OTF/WOFF2)', 'Vector Identity Assets', 'Packaging & Collateral'],
-            'icon' => 'Compass',
+            'title' => 'Ghost Mannequin & Invisible Neck Joint',
+            'slug' => 'ghost-mannequin',
+            'marquee_label' => 'INVISIBLE MANNEQUIN · 3D APPAREL VOLUME · HOLLOW MAN · SYMMETRIC DRAPE',
+            'subtitle' => 'Transforming flat studio garment shots into photorealistic 3D hollow body silhouettes.',
+            'description' => 'Give your garments natural dimension without the expense of live model casting. We composite front shots, interior collar/neck linings, and sleeve bottoms into a seamless 3D hollow appearance with wrinkle smoothing and balanced drape.',
+            'features' => ['Natural Fabric Drape & Joint Alignment', 'Wrinkle & Crease Micro-Smoothing', 'Symmetrical Hem & Collar Balancing', 'High-Res Fabric Texture Preservation'],
+            'deliverables' => ['High-Res Web Compressed JPGs', 'Layered Master PSDs with Joint Paths', 'Amazon & Shopify Spec Compliance', 'Custom Cast & Natural Shadow Layers'],
+            'icon' => 'Shirt',
             'sort_order' => 2,
             'accent_color' => '#00f5ff',
         ]);
 
         Service::create([
-            'title' => 'Kinetic 3D & Motion Direction',
-            'slug' => 'motion-design',
-            'marquee_label' => 'WEBGL SHADERS · 3D PRODUCT RENDERS · FILM DIRECTION',
-            'subtitle' => 'Breathing life and gravity into digital canvas through fluid movement.',
-            'description' => 'Motion is meaning. We craft immersive 3D simulations, WebGL shaders, kinetic title sequences, and physics-driven micro-animations that turn mundane interactions into dopamine-inducing experiences.',
-            'features' => ['Real-Time WebGL & Three.js', 'Subtle Scroll-Tied Choreography', '3D Asset Sculpting & Lighting', 'Physics-Based Easing Models'],
-            'deliverables' => ['Optimized 3D GLTF Assets', 'Custom Shader Pipelines', 'Lottie / Framer Motion Code', 'Motion Brand Specs'],
-            'icon' => 'Flame',
+            'title' => 'High-End Fashion & Model Retouching',
+            'slug' => 'high-end-model-retouch',
+            'marquee_label' => 'FREQUENCY SEPARATION · SKIN PORE INTEGRITY · DODGE & BURN · HAIR CLEANUP',
+            'subtitle' => 'Editorial-grade skin, hair, and garment refinement that respects authentic human texture.',
+            'description' => 'We banish plastic artificial blur. Using advanced frequency separation, micro dodge and burn, and flyaway hair reconstruction, we deliver pristine editorial portraits and e-commerce model imagery that commands premium pricing.',
+            'features' => ['Micro Dodge & Burn Technique', 'Advanced Frequency Separation', 'Flyaway Hair Removal & Reconstruction', 'Garment Crease & Shape Refinement'],
+            'deliverables' => ['High-Bitrate Retouched Master PSDs', 'Lookbook & Editorial Color Grading', 'Skin-Tone Harmonization', 'Print & Billboard Resolution Assets'],
+            'icon' => 'Sparkles',
             'sort_order' => 3,
-            'accent_color' => '#ff3e3e',
+            'accent_color' => '#ff3e8a',
         ]);
 
         Service::create([
-            'title' => 'Creative Web & Full-Stack Velocity',
-            'slug' => 'web-development',
-            'marquee_label' => 'LARAVEL 13 · INERTIA REACT · TAILWIND 4 · SUB-SECOND SSR',
-            'subtitle' => 'Military-grade web architecture built for 100/100 Lighthouse scores.',
-            'description' => 'We engineer hyper-optimized web flagships combining Laravel with Inertia React and Tailwind CSS. We deliver sub-second time-to-interactive, zero layout shifts, dynamic SEO, and bulletproof security.',
-            'features' => ['Sub-Second Global TTFB', 'Inertia SSR SEO Engine', 'Zero-CLS Performance Architecture', 'Enterprise Security & Rate Limiting'],
-            'deliverables' => ['Production Source Code', 'Automated CI/CD Workflows', 'Performance Audit Reports', 'CMS / Admin Backoffice'],
-            'icon' => 'Cpu',
+            'title' => 'Jewelry & Luxury Accessories Retouching',
+            'slug' => 'jewelry-retouch',
+            'marquee_label' => 'GEMSTONE BRILLIANCE · METALLIC LUSTER · ZERO SCRATCHES · FOCUS STACKING',
+            'subtitle' => 'Macro-level perfection for precious gemstones, luxury timepieces, and metallic reflection.',
+            'description' => 'Jewelry photography is notoriously vulnerable to reflections, dust, and focal softness. We clean micro-imperfections, balance specular highlights on gold and platinum, and emphasize diamond fire and gemstone facet brilliance.',
+            'features' => ['Micro-Scratch & Dust Elimination', 'Metal Surface Refinement (Gold/Platinum)', 'Gemstone Facet & Sparkle Enhancement', 'Focus Stacking & Depth-of-Field Sharpening'],
+            'deliverables' => ['Pure White 255/255/255 Backgrounds', 'Custom Drop & Reflection Shadow', 'High-DPI Zoom Compatible TIFF', 'E-Commerce Marketplace Ready'],
+            'icon' => 'Gem',
             'sort_order' => 4,
-            'accent_color' => '#b0d600',
+            'accent_color' => '#ffd700',
         ]);
 
-        // 4. Team Members
+        Service::create([
+            'title' => '3D CGI Product Modeling & Rendering',
+            'slug' => '3d-modeling-and-rendering',
+            'marquee_label' => 'CAD TO 3D MESH · PHOTOREALISTIC LIGHTING · 360° SPINS · AR ASSETS',
+            'subtitle' => 'Eliminate costly physical studio logistics with ultra-realistic 3D digital twins.',
+            'description' => 'From simple consumer electronics to complex furniture systems, we translate CAD blueprints or multi-angle photos into ultra-realistic 3D meshes with PBR materials, custom studio lighting environments, and interactive 360° spin views.',
+            'features' => ['CAD / Blueprint to Low & High-Poly Mesh', 'PBR Material & Procedural Shader Authoring', 'Photorealistic Studio Lighting Rigs', '360° Spin Turntables & AR GLTF/USDZ'],
+            'deliverables' => ['Ultra-High 4K/8K Photorealistic Renders', 'Interactive 3D WebGL GLTF Assets', 'Configurable Color & Material Variants', 'Infinite Camera Angles for E-Commerce'],
+            'icon' => 'Box',
+            'sort_order' => 5,
+            'accent_color' => '#ff6b35',
+        ]);
+
+        Service::create([
+            'title' => 'Desktop Publishing (DTP) & Multilingual Layout',
+            'slug' => 'desktop-publishing',
+            'marquee_label' => 'INDESIGN MASTERY · MULTILINGUAL TYPESETTING · CATALOG PACKAGING',
+            'subtitle' => 'High-capacity catalog formatting, raster-to-vector conversion, and prepress prep.',
+            'description' => 'Need 500 catalog pages formatted across 14 languages overnight? Our desktop publishing studio operates 24/7 in Adobe InDesign and Illustrator, handling complex LTR and RTL typesetting, font substitution, and press-ready CMYK output.',
+            'features' => ['Right-to-Left (Arabic/Hebrew) & Asian Scripts', 'InDesign Master Page Template Build', 'Pre-Press CMYK PDF Validation', 'Raster-to-Vector Brand Reconstruction'],
+            'deliverables' => ['Print-Ready Press PDFs (PDF/X-1a)', 'Packaged Adobe InDesign INDD Suites', 'Vector AI & SVG Master Assets', 'Digital Interactive PDF Specs'],
+            'icon' => 'BookOpen',
+            'sort_order' => 6,
+            'accent_color' => '#7000ff',
+        ]);
+
+        // 4. Real Enterprise Clients (From CuttingEdger live portfolio)
+        $clients = [
+            [
+                'name' => 'Pet Supplies Plus',
+                'url' => 'https://www.petsuppliesplus.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/PetSupply.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/PetSupply.webp',
+                'marquee_row' => 1,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Melie Bianco',
+                'url' => 'https://www.meliebianco.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/Meiliebianco.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/Meiliebianco.webp',
+                'marquee_row' => 1,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Haglöfs',
+                'url' => 'https://www.haglofs.com/en',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/Haglofs.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/Haglofs.webp',
+                'marquee_row' => 1,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Kenny Pools',
+                'url' => 'http://www.kennypools.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/Kenny.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/Kenny.webp',
+                'marquee_row' => 1,
+                'sort_order' => 4,
+            ],
+            [
+                'name' => 'G3 Studios',
+                'url' => 'https://g3studios.net/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/G3Norbert.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/G3Norbert.webp',
+                'marquee_row' => 1,
+                'sort_order' => 5,
+            ],
+            [
+                'name' => 'Felgenoutlet',
+                'url' => 'https://www.felgenoutlet.com/en/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/logo_fo-300x300.png',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/logo_fo-300x300.png',
+                'marquee_row' => 1,
+                'sort_order' => 6,
+            ],
+            [
+                'name' => 'Drykorn',
+                'url' => 'https://drykorn.com/en-int/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/Drykorn.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/Drykorn.webp',
+                'marquee_row' => 2,
+                'sort_order' => 7,
+            ],
+            [
+                'name' => 'Naked Cashmere',
+                'url' => 'https://www.nakedcashmere.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/logo-nc-300x300.png',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/logo-nc-300x300.png',
+                'marquee_row' => 2,
+                'sort_order' => 8,
+            ],
+            [
+                'name' => 'Bambini Fashion',
+                'url' => 'https://bambinifashion.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/BambiniFashion.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/BambiniFashion.webp',
+                'marquee_row' => 2,
+                'sort_order' => 9,
+            ],
+            [
+                'name' => 'aCommerce',
+                'url' => 'https://www.acommerce.asia/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/aCommerce.webp',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/aCommerce.webp',
+                'marquee_row' => 2,
+                'sort_order' => 10,
+            ],
+            [
+                'name' => 'Batik Boutique',
+                'url' => 'https://global.batikboutique.com/en-int',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/bb-logo-300x300.png',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/bb-logo-300x300.png',
+                'marquee_row' => 2,
+                'sort_order' => 11,
+            ],
+            [
+                'name' => 'D1 Milano',
+                'url' => 'https://d1milano.com/',
+                'logo_dark' => 'https://www.cuttingedger.com/images/source/clients/logo-shopmilano-300x300.png',
+                'logo_light' => 'https://www.cuttingedger.com/images/source/clients/logo-shopmilano-300x300.png',
+                'marquee_row' => 2,
+                'sort_order' => 12,
+            ],
+        ];
+
+        foreach ($clients as $clientData) {
+            Client::create($clientData);
+        }
+
+        // 5. Authentic Client Testimonials
+        Testimonial::create([
+            'client_name' => 'Markus Weber',
+            'client_role' => 'Global Head of E-Commerce Production',
+            'client_company' => 'Haglöfs',
+            'avatar' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
+            'quote' => 'CuttingEdger processes our seasonal catalog of over 4,500 apparel SKUs with zero defect tolerance. Their ghost mannequin neck joints and symmetrical alignment have elevated our online store conversion rates dramatically.',
+            'rating' => 5,
+            'featured' => true,
+        ]);
+
+        Testimonial::create([
+            'client_name' => 'Melissa Bianco',
+            'client_role' => 'Creative Director',
+            'client_company' => 'Melie Bianco',
+            'avatar' => 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
+            'quote' => 'Their jewelry and handbag retouching is nothing short of sorcery. They bring out the rich texture of vegan leather and eliminate harsh reflections on metallic hardware with sub-12 hour turnaround.',
+            'rating' => 5,
+            'featured' => true,
+        ]);
+
+        Testimonial::create([
+            'client_name' => 'Stefan Müller',
+            'client_role' => 'Director of Digital Assets',
+            'client_company' => 'Felgenoutlet',
+            'avatar' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
+            'quote' => 'CuttingEdger handled over 10,000 automobile alloy wheel cutouts and 3D reflections for our German configurator. Flawless hand-drawn clipping paths and incredible communication around the clock.',
+            'rating' => 5,
+            'featured' => true,
+        ]);
+
+        // 6. Transparent Volume E-Commerce Pricing Plans
+        PricingPlan::create([
+            'name' => 'Starter Trial & Single Batch',
+            'slug' => 'starter-trial',
+            'headline' => 'Ideal for sampling quality or small boutique collections',
+            'price' => '$0.80',
+            'billing_cycle' => 'per image · min. 10 images',
+            'features' => [
+                'Free 3-image trial with zero upfront cost',
+                '100% hand-drawn pen tool clipping paths',
+                'Basic color balance & background replacement',
+                'Standard 24-hour turnaround SLA',
+                'Unlimited revisions until 100% satisfied',
+            ],
+            'is_popular' => false,
+            'cta_text' => 'Try 3 Images Free',
+            'sort_order' => 1,
+        ]);
+
+        PricingPlan::create([
+            'name' => 'High-Volume E-Commerce',
+            'slug' => 'high-volume-ecommerce',
+            'headline' => 'Engineered for fashion brands, Shopify stores & Amazon sellers',
+            'price' => '$0.45',
+            'billing_cycle' => 'per image · 500+ SKU batches',
+            'features' => [
+                'Ghost mannequin & complex multipath cutouts',
+                'Jewelry, accessories & model skin retouching',
+                'Guaranteed 12-hour batch delivery SLA',
+                'Dedicated Senior Quality Assurance Manager',
+                'Custom export specs (JPG, PNG, Layered PSD)',
+                'Automated FTP, Dropbox & Google Drive sync',
+            ],
+            'is_popular' => true,
+            'cta_text' => 'Request Volume Quote',
+            'sort_order' => 2,
+        ]);
+
+        PricingPlan::create([
+            'name' => 'Enterprise Dedicated Studio',
+            'slug' => 'enterprise-studio',
+            'headline' => 'Dedicated retouchers & 3D artists seamlessly embedded in your workflow',
+            'price' => '$0.35',
+            'billing_cycle' => 'per image · 2,500+ SKU monthly volume',
+            'features' => [
+                'Dedicated squad of 5–25 certified Photoshop artists',
+                'Sub-6 hour rush turnaround available on demand',
+                '3D CGI modeling & 360° interactive product spins',
+                'Direct communication via Slack, Teams, or WhatsApp',
+                'Custom API integration & automated Webhook pipeline',
+                'Strict enterprise NDA & secure cloud asset hosting',
+            ],
+            'is_popular' => false,
+            'cta_text' => 'Talk To Enterprise Lead',
+            'sort_order' => 3,
+        ]);
+
+        // 7. Practical Studio FAQs
+        Faq::create([
+            'category' => 'Free Trial',
+            'question' => 'How does the Free Trial work?',
+            'answer' => 'You can upload up to 3 test images directly through our website with no credit card required. We will process them according to your exact specifications and deliver them back within 12 to 24 hours so you can inspect our quality firsthand.',
+            'sort_order' => 1,
+        ]);
+
+        Faq::create([
+            'category' => 'Quality & Revisions',
+            'question' => 'What if I need adjustments or revisions on my delivered images?',
+            'answer' => 'We offer 100% free unlimited revisions until you are completely satisfied. Each batch is reviewed by a dedicated Quality Assurance manager before delivery to ensure zero clipping errors or color shifts.',
+            'sort_order' => 2,
+        ]);
+
+        Faq::create([
+            'category' => 'Turnaround & Capacity',
+            'question' => 'What is your daily production capacity and turnaround time?',
+            'answer' => 'Our 24/7/365 production facility in Dhaka employs over 100+ trained retouching artists, processing over 10,000+ images daily. Standard turnaround is 12 to 24 hours, with rush 4 to 6-hour emergency delivery available for enterprise partners.',
+            'sort_order' => 3,
+        ]);
+
+        Faq::create([
+            'category' => 'Security & Privacy',
+            'question' => 'Are my unreleased product photos kept confidential?',
+            'answer' => 'Absolutely. We sign binding Non-Disclosure Agreements (NDAs) with all commercial clients. Your images are transmitted over encrypted TLS connections, stored in isolated private containers, and never shared or used in promotional materials without explicit consent.',
+            'sort_order' => 4,
+        ]);
+
+        // 8. Studio Leadership
         TeamMember::create([
-            'name' => 'Elena Rostova',
-            'email' => 'elena@cuttingedger.com',
-            'slug' => 'elena-rostova',
-            'role' => 'Co-Founder & Executive Creative Director',
+            'name' => 'Rayhanul Sumon',
+            'email' => 'sumon@cuttingedger.com',
+            'slug' => 'rayhanul-sumon',
+            'role' => 'Founder & Managing Director',
             'since_year' => 2019,
-            'bio' => 'Former lead designer at Pentagram and Apple. Elena spearheads aesthetic philosophy and ensures every project breaks commercial design orthodoxies.',
-            'avatar' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-            'social_links' => ['twitter' => 'https://twitter.com', 'linkedin' => 'https://linkedin.com'],
+            'bio' => 'Pioneered CuttingEdger from a boutique retouching facility into an international post-production engine trusted by over 170+ global retail and e-commerce brands.',
+            'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+            'social_links' => ['linkedin' => 'https://www.linkedin.com/company/cutting-edger/'],
             'featured' => true,
             'sort_order' => 1,
         ]);
 
         TeamMember::create([
-            'name' => 'Marcus Vance',
-            'email' => 'marcus@cuttingedger.com',
-            'slug' => 'marcus-vance',
-            'role' => 'Co-Founder & VP of Engineering',
-            'since_year' => 2019,
-            'bio' => 'Architect behind high-throughput distributed systems and WebGL rendering engines. Marcus bridges the gap between pure mathematics and visual elegance.',
-            'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-            'social_links' => ['github' => 'https://github.com', 'twitter' => 'https://twitter.com'],
+            'name' => 'Naveen Chowdhury',
+            'email' => 'naveen@cuttingedger.com',
+            'slug' => 'naveen-chowdhury',
+            'role' => 'Head of Quality Assurance & Operations',
+            'since_year' => 2020,
+            'bio' => 'Oversees our multi-tiered QA inspection pipeline, ensuring every clipping path, ghost mannequin joint, and jewelry sparkle meets exacting international specifications.',
+            'avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+            'social_links' => ['linkedin' => 'https://linkedin.com'],
             'featured' => true,
             'sort_order' => 2,
         ]);
 
         TeamMember::create([
-            'name' => 'Chloe Zhang',
-            'email' => 'chloe@cuttingedger.com',
-            'slug' => 'chloe-zhang',
-            'role' => 'Head of Motion & Spatial 3D',
+            'name' => 'Farhana Kabir',
+            'email' => 'farhana@cuttingedger.com',
+            'slug' => 'farhana-kabir',
+            'role' => 'Lead 3D & CGI Visualization Artist',
             'since_year' => 2021,
-            'bio' => 'Specializes in generative shaders and tactile physics engines. Chloe creates digital spaces that obey their own laws of gravity.',
-            'avatar' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
-            'social_links' => ['dribbble' => 'https://dribbble.com', 'instagram' => 'https://instagram.com'],
+            'bio' => 'Specializes in CAD-to-mesh digital twin modeling, PBR texture synthesis, and interactive WebGL assets for enterprise furniture and consumer hardware brands.',
+            'avatar' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+            'social_links' => ['linkedin' => 'https://linkedin.com'],
             'featured' => true,
             'sort_order' => 3,
         ]);
 
         TeamMember::create([
-            'name' => 'Darius Thorne',
-            'email' => 'darius@cuttingedger.com',
-            'slug' => 'darius-thorne',
-            'role' => 'Principal Brand Strategist',
-            'since_year' => 2022,
-            'bio' => 'Transforms complex frontier technologies into razor-sharp market narratives that unlock venture rounds and enterprise sales pipelines.',
-            'avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+            'name' => 'Tariqul Islam',
+            'email' => 'tariqul@cuttingedger.com',
+            'slug' => 'tariqul-islam',
+            'role' => 'Lead Clipping Path & Vector Specialist',
+            'since_year' => 2021,
+            'bio' => 'Directs our high-speed vector cutout division, specializing in complex hair masking, multi-layered paths, and zero-defect Amazon/Shopify compliance.',
+            'avatar' => 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80',
             'social_links' => ['linkedin' => 'https://linkedin.com'],
             'featured' => true,
             'sort_order' => 4,
         ]);
 
         TeamMember::create([
-            'name' => 'Siddharth Roy',
-            'email' => 'siddharth@cuttingedger.com',
-            'slug' => 'siddharth-roy',
-            'role' => 'Lead Systems & UI Architect',
-            'since_year' => 2023,
-            'bio' => 'Obsessed with accessibility, token design systems, and frontend compile speeds. Siddharth crafts interfaces that scale effortlessly.',
-            'avatar' => 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80',
-            'social_links' => ['github' => 'https://github.com', 'twitter' => 'https://twitter.com'],
+            'name' => 'Tanvir Ahmed',
+            'email' => 'tanvir@cuttingedger.com',
+            'slug' => 'tanvir-ahmed',
+            'role' => 'Production Logistics & Client Delivery Lead',
+            'since_year' => 2022,
+            'bio' => 'Coordinates 24/7 client delivery pipelines across North America and Europe, guaranteeing strict SLA adherence for high-volume enterprise batches.',
+            'avatar' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
+            'social_links' => ['linkedin' => 'https://linkedin.com'],
             'featured' => true,
             'sort_order' => 5,
         ]);
 
-        // 5. Testimonials
-        Testimonial::create([
-            'client_name' => 'Soren Lindqvist',
-            'client_role' => 'CEO & Founder',
-            'client_company' => 'Kinetix Systems',
-            'avatar' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
-            'quote' => 'CuttingEdger did not just design a website; they invented an entire visual universe for our operating system. Within 3 weeks of launch, our enterprise tier waitlist grew by 600%. They are unequivocally the sharpest team in the industry.',
-            'rating' => 5,
-            'featured' => true,
-        ]);
-
-        Testimonial::create([
-            'client_name' => 'Aria Montgomery',
-            'client_role' => 'Chief Product Officer',
-            'client_company' => 'Hyperion Acoustic Labs',
-            'avatar' => 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-            'quote' => 'Their mastery of kinetic motion and 3D WebGL is intoxicating. They turned our esoteric acoustic hardware into an irresistible luxury digital artifact. Every dollar spent returned tenfold.',
-            'rating' => 5,
-            'featured' => true,
-        ]);
-
-        Testimonial::create([
-            'client_name' => 'Dr. Aris Thorne',
-            'client_role' => 'VP of Autonomy',
-            'client_company' => 'Aura Robotics',
-            'avatar' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-            'quote' => 'Our telemetry operators require instantaneous situational awareness. CuttingEdger reduced cognitive load by over 40% while engineering a dark aesthetic that looks like it was shipped from the year 2040.',
-            'rating' => 5,
-            'featured' => true,
-        ]);
-
-        // 6. Pricing Plans
-        PricingPlan::create([
-            'name' => 'Design Sprint',
-            'slug' => 'design-sprint',
-            'headline' => 'Rapid exploration & prototype',
-            'price' => '$14,500',
-            'billing_cycle' => 'per 2-week sprint',
-            'features' => [
-                'Bespoke product interface design',
-                'Clickable high-fidelity Figma prototype',
-                'Core design tokens & component system',
-                'Direct Slack channel with design leads',
-                'Async Loom reviews every 48 hours',
-            ],
-            'is_popular' => false,
-            'cta_text' => 'Book Sprint',
-            'sort_order' => 1,
-        ]);
-
-        PricingPlan::create([
-            'name' => 'Full Flagship Build',
-            'slug' => 'full-flagship',
-            'headline' => 'End-to-end design & engineering',
-            'price' => '$38,000',
-            'billing_cycle' => 'per full project',
-            'features' => [
-                'Complete brand architecture & logo suite',
-                'Kinetic 3D shaders & micro-interactions',
-                'Full-stack Laravel 13 + Inertia React implementation',
-                '100/100 Lighthouse performance optimization',
-                'Dynamic SEO, OpenGraph, JSON-LD schema',
-                'Filament CMS setup with custom fields',
-                '30 days post-launch hypercare & warranty',
-            ],
-            'is_popular' => true,
-            'cta_text' => 'Commission Flagship',
-            'sort_order' => 2,
-        ]);
-
-        PricingPlan::create([
-            'name' => 'Studio Retainer',
-            'slug' => 'studio-retainer',
-            'headline' => 'Dedicated engineering & design squad',
-            'price' => '$22,000',
-            'billing_cycle' => 'per month',
-            'features' => [
-                'Dedicated Senior Designer + Full-Stack Engineer',
-                'Unlimited revisions within active sprint velocity',
-                'Continuous deployment & feature development',
-                'Quarterly brand refresh & motion experiments',
-                'Guaranteed 4-hour SLA response time',
-            ],
-            'is_popular' => false,
-            'cta_text' => 'Secure Retainer',
-            'sort_order' => 3,
-        ]);
-
-        // 7. FAQs
-        Faq::create([
-            'category' => 'General',
-            'question' => 'How does CuttingEdger differ from standard design agencies?',
-            'answer' => 'We don’t outsource or use off-the-shelf themes. Our designers write code, and our engineers understand kerning, easing curves, and spatial rhythm. The result is zero friction between concept and execution, producing award-winning flagships that load under 0.5s.',
-            'sort_order' => 1,
-        ]);
-
-        Faq::create([
-            'category' => 'Process',
-            'question' => 'What is the typical project timeline from kickoff to live deployment?',
-            'answer' => 'A rapid Design Sprint takes 2 weeks. Comprehensive Flagship builds (complete brand identity, 3D WebGL motion, and full-stack Laravel/Inertia React development) typically run 6 to 10 weeks depending on custom feature scope.',
-            'sort_order' => 2,
-        ]);
-
-        Faq::create([
-            'category' => 'Technology',
-            'question' => 'Why do you choose Laravel 13 + Inertia.js + React 19 + Tailwind CSS 4?',
-            'answer' => 'This stack delivers the pinnacle of developer velocity, rock-solid backend reliability (queue workers, auth, caching), and SPA fluid transitions without the architectural overhead of separate decoupled APIs. Tailwind 4 provides lightning-fast builds with native CSS variable cascades.',
-            'sort_order' => 3,
-        ]);
-
-        Faq::create([
-            'category' => 'Financials',
-            'question' => 'What are your payment terms and engagement structures?',
-            'answer' => 'We typically structure engagements with a 50% deposit upon contract signing, 25% at milestone design signoff, and 25% upon staging deployment prior to DNS cutover. Retainers are billed at the beginning of each monthly cycle.',
-            'sort_order' => 4,
-        ]);
-
-        // 8. Career Openings
+        // 9. Career Openings
         Job::create([
-            'title' => 'Senior Creative Frontend Engineer (React / WebGL)',
-            'slug' => 'senior-frontend-engineer',
-            'department' => 'Engineering',
-            'location_type' => 'Remote',
-            'experience_level' => 'Senior / Lead',
-            'overview' => 'We are seeking an obsessive creative developer who views the DOM as an interactive canvas. You will architect fluid transitions, custom shaders, and sub-second React 19 applications.',
+            'title' => 'Senior Retouching Artist (Fashion & Jewelry)',
+            'slug' => 'senior-retouching-artist',
+            'department' => 'Production',
+            'location_type' => 'On-Site / Dhaka Studio',
+            'experience_level' => 'Senior',
+            'overview' => 'Seeking master Photoshop artists with deep expertise in frequency separation, micro dodge & burn, and fine jewelry reflection balancing.',
             'responsibilities' => [
-                'Build interactive, kinetic web interfaces with React 19, TypeScript, and Tailwind CSS 4',
-                'Implement WebGL shaders and smooth scrolling motion systems',
-                'Optimize Core Web Vitals to maintain 95+ scores on mobile and desktop',
-                'Collaborate closely with brand designers to push interaction boundaries',
+                'Execute high-end model skin, garment drape, and diamond/gemstone retouching',
+                'Maintain strict color consistency across multi-thousand SKU batches',
+                'Mentor junior cutout and clipping path technicians',
             ],
             'requirements' => [
-                '5+ years of production experience in high-octane frontend development',
-                'Deep mastery of CSS transforms, Framer Motion / GSAP, and Canvas / WebGL',
-                'Experience with Laravel + Inertia or modern SSR architectures',
-                'An immaculate eye for typography, spacing, and micro-delights',
+                '4+ years in commercial e-commerce or high-end editorial retouching',
+                'Demonstrated speed and precision with Wacom tablet and Pen Tool',
+                'Flawless eye for color, contrast, and subtle texture preservation',
             ],
             'benefits' => [
-                '$150,000 - $185,000 USD base salary + performance bonuses',
-                '100% remote flexibility anywhere in Americas / European timezones',
-                'Top-tier Apple M4 Max hardware allowance & home office stipend',
-                'Annual studio retreat in Tokyo, Zurich, or Lisbon',
+                'Competitive compensation with festival bonuses',
+                'State-of-the-art dual-monitor 4K color-calibrated workstations',
+                'Continuous professional development and skill certification',
             ],
             'is_open' => true,
         ]);
 
         Job::create([
-            'title' => 'Lead Brand & Spatial Designer',
-            'slug' => 'lead-brand-designer',
-            'department' => 'Design',
-            'location_type' => 'Hybrid / Remote',
-            'experience_level' => 'Principal',
-            'overview' => 'Craft boundary-pushing identity systems, custom typography, and spatial 3D brand guidelines for next-generation hardware and software ventures.',
+            'title' => '3D Hard-Surface & CGI Modeler (Blender / 3ds Max)',
+            'slug' => '3d-cgi-modeler',
+            'department' => '3D Spatial',
+            'location_type' => 'Hybrid',
+            'experience_level' => 'Mid-Senior',
+            'overview' => 'Translate CAD data and reference photography into photorealistic consumer products and furniture rendering suites.',
             'responsibilities' => [
-                'Lead brand identity engagements from discovery through master guideline delivery',
-                'Direct 3D artists and motion designers to produce cohesive visual narratives',
-                'Create custom typographic experiments and spatial brand artifacts',
+                'Model clean quad-topology meshes from blueprints and photographs',
+                'Author realistic PBR materials, procedural textures, and studio lighting rigs',
+                'Optimize low-poly variants for interactive 360° WebGL turntables',
             ],
             'requirements' => [
-                'Stunning portfolio demonstrating bold, unconventional design sensibilities',
-                'Proficiency in Figma, Illustrator, Cinema 4D / Blender, and After Effects',
-                'Confident client presentation skills and strategic articulation',
+                'Proficiency in Blender, 3ds Max, V-Ray/Corona, or Substance Painter',
+                'Portfolio showcasing photo-match lighting and material photorealism',
+                'Understanding of GLTF/USDZ real-time mobile AR constraints',
             ],
             'benefits' => [
-                '$140,000 - $175,000 USD base salary',
-                'Full medical, dental, and vision coverage',
-                'Generous paid time off and sabbatical after 3 years',
+                'Top-tier GPU rendering hardware support',
+                'Flexible hybrid working schedule',
+                'Health and wellness allowances',
             ],
             'is_open' => true,
         ]);
 
-        // 9. Full Blogs with Subcategories & Dynamic SEO Suite
+        // 10. Blogs & Dynamic SEO Suite
         $this->call(BlogSeeder::class);
     }
 }
