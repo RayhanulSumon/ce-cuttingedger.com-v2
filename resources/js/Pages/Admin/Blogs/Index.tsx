@@ -188,22 +188,22 @@ export default function BlogsIndex({
             key: "cover_image",
             header: "ARTICLE / COVER",
             cell: (b) => (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 py-1">
                     <img
                         src={b.cover_image}
                         alt={b.title}
                         className="w-16 h-10 rounded object-cover border border-white/10 shrink-0"
                     />
-                    <div className="min-w-0">
-                        <div className="font-medium text-white truncate max-w-sm flex items-center gap-1.5">
-                            {b.title}
+                    <div className="min-w-0 space-y-1">
+                        <div className="font-medium text-white leading-snug break-words">
+                            <span>{b.title}</span>
                             {b.is_featured && (
-                                <Badge className="bg-[#d4ff00] text-black text-[9px] font-mono font-bold px-1 py-0 h-4">
+                                <Badge className="bg-[#d4ff00] text-black text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
                                     FEATURED
                                 </Badge>
                             )}
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-mono text-neutral-400">
                             <span className="text-[#d4ff00]">
                                 {b.category?.name || "General"}
                             </span>
