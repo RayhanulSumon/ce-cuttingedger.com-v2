@@ -129,6 +129,10 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:public-contact')
     ->name('contact.store');
 
+Route::post('/free-trial', [ContactController::class, 'storeFreeTrial'])
+    ->middleware('throttle:public-contact')
+    ->name('free-trial.store');
+
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:newsletter')
     ->name('newsletter.store');
