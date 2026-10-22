@@ -6,7 +6,7 @@ use App\Models\ChatConsultation;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\ContactMessage;
-use App\Models\FreeTrialRequest;
+use App\Models\Order;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Security\EmailAndSpamGuard;
@@ -280,9 +280,10 @@ class ChatFlowTest extends TestCase
         $this->assertStringContainsString('$0.00', $claimCards[0]['total_cost']);
         $this->assertStringContainsString('Free Trial', $claimResponse->json('message.content'));
 
-        $this->assertDatabaseHas('free_trial_requests', [
+        $this->assertDatabaseHas('orders', [
             'chat_session_id' => $sessionId,
-            'images_count' => 1,
+            'payment_status' => 'free_trial',
+            'quantity' => 1,
             'status' => 'pending',
         ]);
     }
@@ -293,12 +294,16 @@ class ChatFlowTest extends TestCase
         $sessionId = $sessionResponse->json('session_id');
 
         // Create pending trial
-        FreeTrialRequest::create([
+        Order::create([
+            'order_number' => 'CE-TRL-TEST01',
             'chat_session_id' => $sessionId,
-            'email' => 'pending-email@temp.local',
-            'name' => 'Guest Client',
-            'images_count' => 1,
+            'client_email' => 'pending-email@temp.local',
+            'client_name' => 'Guest Client',
+            'service_name' => 'Background Removal',
+            'service_slug' => 'background-removal',
+            'quantity' => 1,
             'status' => 'pending',
+            'payment_status' => 'free_trial',
         ]);
 
         $response = $this->withHeader('X-Chat-Session-Id', $sessionId)
@@ -316,9 +321,9 @@ class ChatFlowTest extends TestCase
             'lead_name' => 'Artisan Lead',
         ]);
 
-        $this->assertDatabaseHas('free_trial_requests', [
+        $this->assertDatabaseHas('orders', [
             'chat_session_id' => $sessionId,
-            'email' => 'artisan@studio.com',
+            'client_email' => 'artisan@studio.com',
         ]);
     }
 
@@ -359,25 +364,29 @@ class ChatFlowTest extends TestCase
             ['name' => 'Admin User', 'password' => 'secret', 'role_id' => $role->id, 'status' => 'active']
         );
 
-        $trial = FreeTrialRequest::create([
-            'email' => 'client@brand.com',
-            'name' => 'Brand Director',
+        $trial = Order::create([
+            'order_number' => 'CE-TRL-TEST02',
+            'client_email' => 'client@brand.com',
+            'client_name' => 'Brand Director',
+            'service_name' => 'Background Removal',
+            'service_slug' => 'background-removal',
             'images' => ['https://cuttingedger.test/storage/chat_uploads/sample.jpg'],
-            'images_count' => 1,
+            'quantity' => 1,
             'status' => 'pending',
+            'payment_status' => 'free_trial',
         ]);
 
-        $response = $this->actingAs($admin)->get('/admin/free-trials');
+        $response = $this->actingAs($admin)->get('/admin/orders?type=free_trial');
         $response->assertStatus(200);
 
         // Update status to in_production
-        $updateResponse = $this->actingAs($admin)->put("/admin/free-trials/{$trial->id}", [
+        $updateResponse = $this->actingAs($admin)->put("/admin/orders/{$trial->id}", [
             'status' => 'in_production',
             'admin_notes' => 'Assigned to senior retoucher',
         ]);
         $updateResponse->assertRedirect();
 
-        $this->assertDatabaseHas('free_trial_requests', [
+        $this->assertDatabaseHas('orders', [
             'id' => $trial->id,
             'status' => 'in_production',
             'admin_notes' => 'Assigned to senior retoucher',
@@ -387,12 +396,16 @@ class ChatFlowTest extends TestCase
     public function test_single_email_can_only_claim_free_trial_once(): void
     {
         $existingEmail = 'claimed-trial@brand.com';
-        FreeTrialRequest::create([
-            'email' => $existingEmail,
-            'name' => 'Existing Client',
+        Order::create([
+            'order_number' => 'CE-TRL-TEST03',
+            'client_email' => $existingEmail,
+            'client_name' => 'Existing Client',
+            'service_name' => 'Background Removal',
+            'service_slug' => 'background-removal',
             'images' => ['https://cuttingedger.test/storage/chat_uploads/sample.jpg'],
-            'images_count' => 3,
+            'quantity' => 3,
             'status' => 'completed',
+            'payment_status' => 'free_trial',
         ]);
 
         // Attempting to link the same email in a new session to claim another trial must be blocked
@@ -451,13 +464,17 @@ class ChatFlowTest extends TestCase
         $spamIp = '198.51.100.42';
 
         // First trial from this IP is registered
-        FreeTrialRequest::create([
-            'email' => 'legit1@company.com',
+        Order::create([
+            'order_number' => 'CE-TRL-TEST04',
+            'client_email' => 'legit1@company.com',
             'ip_address' => $spamIp,
-            'name' => 'First User',
+            'client_name' => 'First User',
+            'service_name' => 'Background Removal',
+            'service_slug' => 'background-removal',
             'images' => ['https://cuttingedger.test/storage/chat_uploads/sample1.jpg'],
-            'images_count' => 1,
+            'quantity' => 1,
             'status' => 'pending',
+            'payment_status' => 'free_trial',
             'created_at' => now()->subDay(),
         ]);
 

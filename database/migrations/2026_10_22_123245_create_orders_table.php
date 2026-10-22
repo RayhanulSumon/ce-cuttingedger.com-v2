@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('client_name');
             $table->string('client_email')->index();
             $table->string('client_phone')->nullable();
+            $table->string('ip_address', 45)->nullable()->index();
             $table->string('service_name');
             $table->string('service_slug');
             $table->string('complexity')->default('simple');
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('turnaround')->default('24h Standard');
             $table->json('images')->nullable();
             $table->json('completed_files')->nullable();
+            $table->string('cloud_link', 1000)->nullable();
             $table->text('instructions')->nullable();
             $table->text('admin_notes')->nullable();
             $table->string('status')->default('pending')->index();

@@ -29,9 +29,20 @@ class Order extends Model
     {
         static::creating(function (Order $order): void {
             if (empty($order->order_number)) {
-                $order->order_number = 'CE-ORD-'.strtoupper(Str::random(6));
+                $prefix = ($order->payment_status === 'free_trial' || $order->source === 'web_trial' || $order->source === 'chat_trial')
+                    ? 'CE-TRL-'
+                    : 'CE-ORD-';
+                $order->order_number = $prefix.strtoupper(Str::random(6));
             }
         });
+    }
+
+    /**
+     * Check if this order is a free trial.
+     */
+    public function isFreeTrial(): bool
+    {
+        return $this->payment_status === 'free_trial' || $this->source === 'web_trial' || $this->source === 'chat_trial';
     }
 
     /**

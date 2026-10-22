@@ -85,5 +85,31 @@ class OrderSeeder extends Seeder
             'payment_status' => 'paid',
             'source' => 'chat',
         ]);
+
+        Order::create([
+            'order_number' => 'CE-TRL-1082',
+            'client_name' => 'Elena Rostova',
+            'client_email' => 'elena@nordic-wear.se',
+            'client_phone' => '+46 8 123 4567',
+            'ip_address' => '192.168.1.100',
+            'service_name' => 'Background Removal & Clipping Path',
+            'service_slug' => 'background-removal',
+            'complexity' => 'trial',
+            'quantity' => 2,
+            'uploaded_count' => 2,
+            'unit_price' => 0.00,
+            'discount_percent' => 100,
+            'total_price' => 0.00,
+            'currency' => 'USD',
+            'turnaround' => '24h Standard',
+            'images' => [
+                'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'instructions' => 'Free trial test batch: Remove background, output transparent PNG with soft shadow.',
+            'status' => 'pending',
+            'payment_status' => 'free_trial',
+            'source' => 'web_trial',
+        ]);
     }
 }

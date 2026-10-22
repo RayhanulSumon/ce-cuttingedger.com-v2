@@ -552,5 +552,8 @@ class DatabaseSeeder extends Seeder
 
         // 10. Blogs & Dynamic SEO Suite
         $this->call(BlogSeeder::class);
+
+        // 11. Initial Production & Trial Orders
+        $this->call(OrderSeeder::class);
     }
 }

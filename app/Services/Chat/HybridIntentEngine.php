@@ -3,12 +3,12 @@
 namespace App\Services\Chat;
 
 use App\Models\ChatSession;
-use App\Models\FreeTrialRequest;
 use App\Models\Order;
 use App\Services\Chat\Tools\PriceCalculatorTool;
 use App\Services\Notification\NotificationService;
 use App\Services\Security\EmailAndSpamGuard;
 use App\Services\Security\LinkAndFileSecurityGuard;
+use Illuminate\Support\Str;
 
 class HybridIntentEngine
 {
@@ -36,12 +36,6 @@ class HybridIntentEngine
             ], $session);
 
             if ($session) {
-                FreeTrialRequest::where('chat_session_id', $session->id)
-                    ->where(function ($q) {
-                        $q->where('email', 'like', '%temp.local%')->orWhereNull('email');
-                    })
-                    ->update(['email' => $email]);
-
                 Order::where('chat_session_id', $session->id)
                     ->where(function ($q) {
                         $q->where('client_email', 'like', '%temp.local%')->orWhereNull('client_email');
@@ -557,23 +551,23 @@ class HybridIntentEngine
             // Find ANY existing trial for this email or session
             $existingTrial = null;
             if (! empty($clientEmail)) {
-                $existingTrial = FreeTrialRequest::where('email', $clientEmail)->first();
+                $existingTrial = Order::where('payment_status', 'free_trial')->where('client_email', $clientEmail)->first();
             }
             if (! $existingTrial && $session) {
-                $existingTrial = FreeTrialRequest::where('chat_session_id', $session->id)->first();
+                $existingTrial = Order::where('payment_status', 'free_trial')->where('chat_session_id', $session->id)->first();
             }
 
             // If a trial already exists, enforce the 1-trial rule
             if ($existingTrial) {
                 if ($existingTrial->status === 'completed') {
                     return [
-                        'content' => "Looks like you've already used your free test edits with **{$existingTrial->email}**! Regular edits start at just $0.49/image. Here are the rates:",
+                        'content' => "Looks like you've already used your free test edits with **{$existingTrial->client_email}**! Regular edits start at just $0.49/image. Here are the rates:",
                         'tool_cards' => [
                             [
                                 'type' => 'trial_quota_exhausted_card',
                                 'title' => 'Trial Quota Limit Reached',
-                                'client_email' => $existingTrial->email,
-                                'message' => "You have already completed your 100% Free Trial sample order (#{$existingTrial->id}). Standard production rates apply.",
+                                'client_email' => $existingTrial->client_email,
+                                'message' => "You have already completed your 100% Free Trial sample order ({$existingTrial->order_number}). Standard production rates apply.",
                                 'starting_rate' => '$0.49 / image',
                                 'services' => [
                                     ['name' => 'Clipping Path / Background Removal', 'rate' => '$0.49 / image'],
@@ -593,16 +587,16 @@ class HybridIntentEngine
 
                 if ($existingTrial->status === 'in_production') {
                     return [
-                        'content' => "Your test edits (Order #{$existingTrial->id}) are already in production! We'll email the finished files to **{$existingTrial->email}** soon.",
+                        'content' => "Your test edits (Order {$existingTrial->order_number}) are already in production! We'll email the finished files to **{$existingTrial->client_email}** soon.",
                         'tool_cards' => [
                             [
                                 'type' => 'free_trial_confirmed_card',
                                 'title' => 'Free Trial Already In Production',
-                                'images_count' => $existingTrial->images_count,
+                                'images_count' => $existingTrial->quantity,
                                 'total_cost' => '$0.00 USD (FREE)',
                                 'turnaround' => 'Sub-12 Hours Rapid SLA',
                                 'status' => 'In Production Queue',
-                                'client_email' => $existingTrial->email,
+                                'client_email' => $existingTrial->client_email,
                                 'images' => $existingTrial->images ?? [],
                             ],
                         ],
@@ -615,16 +609,16 @@ class HybridIntentEngine
 
                 // If already pending, show the existing pending order without creating another row
                 return [
-                    'content' => "We have your sample order (Order #{$existingTrial->id}) queued! We'll deliver the files to **{$existingTrial->email}** once finished.",
+                    'content' => "We have your sample order (Order {$existingTrial->order_number}) queued! We'll deliver the files to **{$existingTrial->client_email}** once finished.",
                     'tool_cards' => [
                         [
                             'type' => 'free_trial_confirmed_card',
                             'title' => '100% Free Trial Activated',
-                            'images_count' => $existingTrial->images_count,
+                            'images_count' => $existingTrial->quantity,
                             'total_cost' => '$0.00 USD (FREE)',
                             'turnaround' => 'Sub-12 Hours Rapid SLA',
                             'status' => 'In Production Queue',
-                            'client_email' => $existingTrial->email,
+                            'client_email' => $existingTrial->client_email,
                             'images' => $existingTrial->images ?? [],
                         ],
                     ],
@@ -665,19 +659,31 @@ class HybridIntentEngine
                 $actualCount = min($uploadedCount, 3);
 
                 if ($session) {
-                    $trialOrder = FreeTrialRequest::firstOrCreate(
+                    $trialOrder = Order::firstOrCreate(
                         [
                             'chat_session_id' => $session->id,
+                            'payment_status' => 'free_trial',
                         ],
                         [
-                            'email' => $clientEmail ?: 'pending-email@temp.local',
+                            'order_number' => 'CE-TRL-'.strtoupper(Str::random(6)),
+                            'client_name' => $session->lead_name ?? 'Guest Client',
+                            'client_email' => $clientEmail ?: 'pending-email@temp.local',
+                            'client_phone' => $session->lead_phone,
                             'ip_address' => $session->ip_address,
-                            'name' => $session->lead_name ?? 'Guest Client',
-                            'phone' => $session->lead_phone,
+                            'service_name' => 'Background Removal',
+                            'service_slug' => 'background-removal',
+                            'complexity' => 'simple',
+                            'quantity' => $actualCount,
+                            'uploaded_count' => $actualCount,
+                            'unit_price' => 0.00,
+                            'total_price' => 0.00,
+                            'currency' => 'USD',
+                            'turnaround' => '12h Free Trial SLA',
                             'images' => array_slice($trialImages, 0, 3),
-                            'images_count' => $actualCount,
-                            'service' => 'background-removal',
+                            'instructions' => '100% Free Trial requested via smart chat assistant.',
                             'status' => 'pending',
+                            'payment_status' => 'free_trial',
+                            'source' => 'chat_trial',
                         ]
                     );
 
@@ -687,7 +693,7 @@ class HybridIntentEngine
                                 'title' => '🎁 New Free Trial Order',
                                 'message' => "Client {$clientEmail} submitted {$actualCount} sample image(s) for retouching",
                                 'trial_id' => $trialOrder->id,
-                                'admin_url' => url('/admin/free-trials'),
+                                'admin_url' => url('/admin/orders?type=free_trial'),
                                 'timestamp' => now()->toISOString(),
                             ]);
                         } catch (\Throwable $e) {

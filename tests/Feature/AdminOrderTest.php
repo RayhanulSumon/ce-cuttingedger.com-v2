@@ -34,6 +34,8 @@ class AdminOrderTest extends TestCase
 
     public function test_admin_can_view_orders_index(): void
     {
+        Order::query()->delete();
+
         Order::factory()->create([
             'order_number' => 'CE-ORD-TEST01',
             'client_name' => 'John Doe',

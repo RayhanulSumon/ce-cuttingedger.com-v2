@@ -21,15 +21,22 @@ class AdminOrderController extends Controller
     {
         $status = $request->query('status');
         $paymentStatus = $request->query('payment_status');
+        $type = $request->query('type');
         $search = $request->query('search');
 
         $query = Order::with('chatSession')->latest('id');
+
+        if ($type === 'free_trial') {
+            $query->where('payment_status', 'free_trial');
+        } elseif ($type === 'paid') {
+            $query->where('payment_status', '!=', 'free_trial');
+        }
 
         if ($status && in_array($status, ['pending', 'in_production', 'review', 'completed', 'cancelled'], true)) {
             $query->where('status', $status);
         }
 
-        if ($paymentStatus && in_array($paymentStatus, ['unpaid', 'paid', 'invoice_sent'], true)) {
+        if ($paymentStatus && in_array($paymentStatus, ['unpaid', 'paid', 'invoice_sent', 'free_trial'], true)) {
             $query->where('payment_status', $paymentStatus);
         }
 
@@ -67,6 +74,7 @@ class AdminOrderController extends Controller
             'status' => $order->status,
             'payment_status' => $order->payment_status,
             'source' => $order->source,
+            'is_free_trial' => $order->payment_status === 'free_trial' || $order->source === 'web_trial',
             'created_at' => $order->created_at->toISOString(),
             'created_at_formatted' => $order->created_at->format('M j, Y \a\t g:i A'),
         ]);
@@ -76,6 +84,9 @@ class AdminOrderController extends Controller
             'pending' => Order::where('status', 'pending')->count(),
             'in_production' => Order::where('status', 'in_production')->count(),
             'completed' => Order::where('status', 'completed')->count(),
+            'total_trials' => Order::where('payment_status', 'free_trial')->count(),
+            'pending_trials' => Order::where('payment_status', 'free_trial')->where('status', 'pending')->count(),
+            'paid_orders' => Order::where('payment_status', '!=', 'free_trial')->count(),
             'total_revenue' => (float) Order::where('payment_status', 'paid')->sum('total_price'),
         ];
 
@@ -84,6 +95,7 @@ class AdminOrderController extends Controller
             'stats' => $stats,
             'currentStatus' => $status,
             'currentPaymentStatus' => $paymentStatus,
+            'currentType' => $type,
             'searchTerm' => $search,
         ]);
     }

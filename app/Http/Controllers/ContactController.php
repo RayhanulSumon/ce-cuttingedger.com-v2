@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
-use App\Models\FreeTrialRequest;
+use App\Models\Order;
 use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,7 +23,7 @@ class ContactController extends Controller
     }
 
     /**
-     * Store an inbound contact inquiry.
+     * Store an inbound customer contact inquiry or quote request.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -38,41 +39,7 @@ class ContactController extends Controller
             'company' => ['nullable', 'string', 'max:255'],
             'budget' => ['nullable', 'string', 'max:255'],
             'service_interest' => ['nullable', 'string', 'max:255'],
-            'inquiry_type' => ['nullable', 'string', 'max:50'],
-            'turnaround_time' => ['nullable', 'string', 'max:50'],
-            'output_format' => ['nullable', 'string', 'max:50'],
-            'attachments.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd,zip,pdf'],
         ]);
-
-        // If this is a free trial inquiry, verify single-trial eligibility
-        if (($validated['inquiry_type'] ?? '') === 'free_trial') {
-            $guard = app(EmailAndSpamGuard::class);
-            $eligibility = $guard->checkTrialEligibility($validated['email'], $request->ip());
-            if (! $eligibility['eligible']) {
-                return back()->withErrors([
-                    'trial_exhausted' => $eligibility['reason'],
-                ])->with('trial_exhausted', [
-                    'reason' => $eligibility['reason'],
-                    'email' => $validated['email'],
-                ])->withInput();
-            }
-        }
-
-        $uploadedPaths = [];
-        $imageUrls = [];
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('trials', 'public');
-                    $uploadedPaths[] = [
-                        'name' => $file->getClientOriginalName(),
-                        'path' => $path,
-                        'size' => $file->getSize(),
-                    ];
-                    $imageUrls[] = '/storage/'.$path;
-                }
-            }
-        }
 
         // Deduplication & Double-Click Guard (15s replay lockout)
         $fingerprint = 'contact_inquiry_'.md5($request->ip().strtolower($validated['email']).substr($validated['message'], 0, 50));
@@ -88,39 +55,16 @@ class ContactController extends Controller
             'budget' => $validated['budget'] ?? null,
             'service_interest' => $validated['service_interest'] ?? null,
             'message' => $validated['message'],
-            'inquiry_type' => $validated['inquiry_type'] ?? 'general',
-            'turnaround_time' => $validated['turnaround_time'] ?? null,
-            'output_format' => $validated['output_format'] ?? null,
-            'attachments' => $uploadedPaths,
+            'inquiry_type' => 'general',
             'ip_address' => $request->ip(),
             'status' => 'new',
         ]);
 
-        // Directly store FreeTrialRequest if inquiry type is free_trial
-        $trialId = null;
-        if (($validated['inquiry_type'] ?? '') === 'free_trial') {
-            $trial = FreeTrialRequest::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'ip_address' => $request->ip(),
-                'images' => $imageUrls,
-                'images_count' => count($imageUrls) ?: 1,
-                'service' => $validated['service_interest'] ?? 'Background Removal',
-                'instructions' => $validated['message'],
-                'status' => 'pending',
-            ]);
-            $trialId = $trial->id;
-        }
-
-        $successMessage = ($validated['inquiry_type'] ?? '') === 'free_trial'
-            ? "Free trial order #{$trialId} received! Our production team will process your sample images within 24 hours."
-            : 'Inquiry transmitted successfully. Our studio partners will review and respond promptly.';
-
-        return back()->with('success', $successMessage);
+        return back()->with('success', 'Inquiry transmitted successfully. Our studio team will review and respond promptly.');
     }
 
     /**
-     * Store a free trial order request directly from the trial dropzone.
+     * Store a free trial order request directly into the orders table.
      */
     public function storeFreeTrial(Request $request): RedirectResponse
     {
@@ -157,17 +101,11 @@ class ContactController extends Controller
             ])->withInput();
         }
 
-        $uploadedPaths = [];
         $imageUrls = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 if ($file->isValid()) {
                     $path = $file->store('trials', 'public');
-                    $uploadedPaths[] = [
-                        'name' => $file->getClientOriginalName(),
-                        'path' => $path,
-                        'size' => $file->getSize(),
-                    ];
                     $imageUrls[] = '/storage/'.$path;
                 }
             }
@@ -180,31 +118,36 @@ class ContactController extends Controller
         }
         Cache::put($fingerprint, true, 15);
 
-        // Directly create the FreeTrialRequest record
-        $trial = FreeTrialRequest::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
+        $serviceName = $validated['service'] ?? 'Background Removal & Clipping Path';
+        $orderNumber = 'CE-TRL-'.strtoupper(Str::random(6));
+
+        // Directly create the unified Order record
+        $order = Order::create([
+            'order_number' => $orderNumber,
+            'client_name' => $validated['name'],
+            'client_email' => strtolower(trim($validated['email'])),
+            'client_phone' => $validated['phone'] ?? null,
             'ip_address' => $request->ip(),
+            'service_name' => $serviceName,
+            'service_slug' => Str::slug($serviceName),
+            'complexity' => 'trial',
+            'quantity' => count($imageUrls) ?: 1,
+            'uploaded_count' => count($imageUrls) ?: 1,
+            'unit_price' => 0.00,
+            'discount_percent' => 100,
+            'total_price' => 0.00,
+            'currency' => 'USD',
+            'turnaround' => '24h Standard',
             'images' => $imageUrls,
-            'images_count' => count($imageUrls) ?: 1,
-            'service' => $validated['service'] ?? 'Background Removal',
-            'instructions' => $validated['instructions'] ?? 'Free trial sample request',
+            'instructions' => $validated['instructions'] ?? 'Complimentary 2-image production test batch',
             'status' => 'pending',
+            'payment_status' => 'free_trial',
+            'source' => 'web_trial',
         ]);
 
-        // Also record a ContactMessage for unified messaging view
-        ContactMessage::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'service_interest' => $validated['service'] ?? 'Background Removal',
-            'message' => $validated['instructions'] ?? 'Free trial request',
-            'inquiry_type' => 'free_trial',
-            'attachments' => $uploadedPaths,
-            'ip_address' => $request->ip(),
-            'status' => 'new',
+        return back()->with([
+            'success' => "Free trial order #{$order->order_number} created successfully! Our senior artists will return your retouched files within 24 hours.",
+            'order_number' => $order->order_number,
         ]);
-
-        return back()->with('success', "Free trial order #{$trial->id} created successfully! Our senior artists will return your retouched files within 24 hours.");
     }
 }

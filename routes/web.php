@@ -31,7 +31,6 @@ use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminFaqController;
-use App\Http\Controllers\Admin\AdminFreeTrialController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPricingPlanController;
@@ -78,7 +77,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
     Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
     Route::resource('consultations', AdminConsultationController::class)->only(['index', 'update', 'destroy']);
-    Route::resource('free-trials', AdminFreeTrialController::class)->only(['index', 'update', 'destroy']);
+    Route::get('free-trials', fn () => redirect()->route('admin.orders.index', ['type' => 'free_trial']))->name('free-trials.index');
     Route::get('orders/{order}/download-zip', [AdminOrderController::class, 'downloadZip'])->name('orders.download-zip');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
     Route::delete('chat-sessions-bulk/destroy-all', [AdminChatSessionController::class, 'destroyAll'])->name('chat-sessions.destroy-all');

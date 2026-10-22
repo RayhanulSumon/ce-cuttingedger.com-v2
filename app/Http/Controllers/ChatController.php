@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
-use App\Models\FreeTrialRequest;
 use App\Models\Order;
 use App\Services\Chat\ChatOrchestrator;
 use App\Services\Chat\ChatSessionManager;
@@ -286,12 +285,13 @@ class ChatController extends Controller
         // 2. IP Rate Limit Guard (prevent switching emails from same IP to abuse free trial)
         $ipCheck = $spamGuard->checkIpRateLimit($clientIp, $session->id);
         if (! $ipCheck['allowed']) {
-            // Delete any unconfirmed temporary trial in this session
-            FreeTrialRequest::where('chat_session_id', $session->id)
+            // Delete any unconfirmed temporary trial order in this session
+            Order::where('chat_session_id', $session->id)
+                ->where('payment_status', 'free_trial')
                 ->where(function ($q) {
-                    $q->whereNull('email')
-                        ->orWhere('email', '')
-                        ->orWhere('email', 'like', '%temp.local%');
+                    $q->whereNull('client_email')
+                        ->orWhere('client_email', '')
+                        ->orWhere('client_email', 'like', '%temp.local%');
                 })->delete();
 
             return response()->json([
@@ -311,14 +311,18 @@ class ChatController extends Controller
         ]);
 
         // 3. Enforce single email free trial quota: block if already completed, in production, or registered
-        $existingTrial = FreeTrialRequest::where('email', $email)->first();
+        $existingTrial = Order::where('client_email', $email)
+            ->where('payment_status', 'free_trial')
+            ->first();
+
         if ($existingTrial && (in_array($existingTrial->status, ['completed', 'in_production'], true) || $existingTrial->chat_session_id !== $session->id)) {
             // Delete temporary pending trial in this session to prevent quota bypass
-            FreeTrialRequest::where('chat_session_id', $session->id)
+            Order::where('chat_session_id', $session->id)
+                ->where('payment_status', 'free_trial')
                 ->where(function ($q) {
-                    $q->whereNull('email')
-                        ->orWhere('email', '')
-                        ->orWhere('email', 'like', '%temp.local%');
+                    $q->whereNull('client_email')
+                        ->orWhere('client_email', '')
+                        ->orWhere('client_email', 'like', '%temp.local%');
                 })->delete();
 
             return response()->json([
@@ -329,19 +333,6 @@ class ChatController extends Controller
                 'lead_name' => $session->lead_name,
             ]);
         }
-
-        // Link pending trial requests in this session to this email and store IP
-        FreeTrialRequest::where('chat_session_id', $session->id)
-            ->where(function ($q) {
-                $q->whereNull('email')
-                    ->orWhere('email', '')
-                    ->orWhere('email', 'like', '%temp.local%');
-            })
-            ->update([
-                'email' => $email,
-                'name' => $name,
-                'ip_address' => $clientIp,
-            ]);
 
         // Link pending orders in this session to this email and name
         Order::where('chat_session_id', $session->id)

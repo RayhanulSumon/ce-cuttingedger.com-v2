@@ -2,7 +2,7 @@
 
 namespace App\Services\Security;
 
-use App\Models\FreeTrialRequest;
+use App\Models\Order;
 
 class EmailAndSpamGuard
 {
@@ -126,7 +126,8 @@ class EmailAndSpamGuard
             return ['allowed' => true, 'reason' => null, 'existing_id' => null];
         }
 
-        $existingRecentTrial = FreeTrialRequest::where('ip_address', $ipAddress)
+        $existingRecentTrial = Order::where('ip_address', $ipAddress)
+            ->where('payment_status', 'free_trial')
             ->where('created_at', '>=', now()->subDays(7))
             ->when($currentSessionId, fn ($q) => $q->where('chat_session_id', '!=', $currentSessionId))
             ->latest('id')
@@ -154,7 +155,11 @@ class EmailAndSpamGuard
         $normalizedEmail = strtolower(trim($email));
 
         // 1. Check if email has ever claimed a free trial
-        $existingEmailTrial = FreeTrialRequest::where('email', $normalizedEmail)->latest('id')->first();
+        $existingEmailTrial = Order::where('client_email', $normalizedEmail)
+            ->where('payment_status', 'free_trial')
+            ->latest('id')
+            ->first();
+
         if ($existingEmailTrial) {
             return [
                 'eligible' => false,
@@ -165,7 +170,8 @@ class EmailAndSpamGuard
 
         // 2. Check if IP address has claimed a free trial recently (skip local test IPs in dev)
         if (! empty($ipAddress) && ! (app()->environment('local') && in_array($ipAddress, ['127.0.0.1', '::1', 'localhost'], true))) {
-            $existingIpTrial = FreeTrialRequest::where('ip_address', $ipAddress)
+            $existingIpTrial = Order::where('ip_address', $ipAddress)
+                ->where('payment_status', 'free_trial')
                 ->where('created_at', '>=', now()->subDays(30))
                 ->latest('id')
                 ->first();
