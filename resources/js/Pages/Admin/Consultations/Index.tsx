@@ -218,11 +218,19 @@ export default function ConsultationsIndex({
             ),
         },
         {
-            header: "Service Topic",
+            header: "Topic & Client Concern",
             accessorKey: "service_name",
             cell: (row) => (
-                <div className="text-xs text-neutral-200 font-medium">
-                    {row.service_name}
+                <div className="space-y-1">
+                    <div className="text-xs text-neutral-200 font-medium">
+                        {row.service_name}
+                    </div>
+                    {row.notes && (
+                        <div className="text-[11px] text-neutral-300 font-mono bg-white/[0.04] px-2 py-1 rounded border border-white/5 line-clamp-2 max-w-xs">
+                            <span className="text-[#00f5ff] font-bold text-[9px] uppercase tracking-wider block">Client Concern:</span>
+                            "{row.notes}"
+                        </div>
+                    )}
                 </div>
             ),
         },

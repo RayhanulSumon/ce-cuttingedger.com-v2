@@ -41,7 +41,7 @@ class HybridIntentEngine
             }
 
             return [
-                'content' => "Perfect! I've linked **{$email}** to your session and your sample trial order. Our studio director will send your retouched master files as soon as they are complete. Would you like to schedule a 15-minute intake call or review our standard turnaround times?",
+                'content' => "Got it! Saved **{$email}** for updates. We'll send your completed files here. Need help with anything else?",
                 'tool_cards' => [$toolResult],
                 'suggested_replies' => [
                     'Schedule Consultation Call',
@@ -61,8 +61,8 @@ class HybridIntentEngine
             ], $session);
 
             $intro = $count <= 3
-                ? "I've received your image! Because you've submitted {$count} ".($count === 1 ? 'image' : 'images').', you qualify for our **100% Free Sample Trial at $0.00 cost** (zero payment required). Click below to activate your free test edits:'
-                : "I've received your images! Here is your itemized baseline quote. Submissions up to 3 images are eligible for 100% Free Sample Edits:";
+                ? 'Got your photo! Since this is within 3 images, your test edit is 100% on us ($0). Ready to test our quality?'
+                : 'Got your images! Here is our quick pricing breakdown:';
 
             return [
                 'content' => $intro,
@@ -94,7 +94,7 @@ class HybridIntentEngine
             $checkResult = $this->tools->execute('check_my_appointment', [], $session);
 
             return [
-                'content' => 'Here is the current status of your scheduled consultation call:',
+                'content' => 'Your appointment details:',
                 'tool_cards' => [$checkResult],
                 'suggested_replies' => [
                     'Reschedule to Another Time',
@@ -118,8 +118,8 @@ class HybridIntentEngine
             ], $session);
 
             $messageText = $isRescheduleQuery
-                ? "I'd be glad to help you reschedule your technical consultation! Here are our available 15-minute slots. Select your new preferred time below:"
-                : "I'd love to connect you with our studio lead! Here are our open 15-minute consultation slots. Pick a time that fits your calendar:";
+                ? 'Pick a new time below to reschedule:'
+                : 'Pick a time below that works for a quick 15-min chat:';
 
             return [
                 'content' => $messageText,
@@ -179,7 +179,7 @@ class HybridIntentEngine
             if ($isFreeTrialIntent && $existingTrial) {
                 if ($existingTrial->status === 'completed') {
                     return [
-                        'content' => "⚠️ **Free Trial Quota Limit Reached**\n\nOur records indicate that **{$existingTrial->email}** has already redeemed and completed the complimentary 3-image trial quota (Order #{$existingTrial->id}).\n\nTo ensure fair studio capacity for all new brands, our 100% Free Trial is limited to **one trial batch per client / studio**.\n\n💼 **Please Apply Our Standard Production Rates:**\nYou can proceed with our standard studio rates starting at just **$0.49 USD per photo** for clipping paths and background removal with sub-12h turnaround, or schedule a technical consultation for high-volume enterprise discounts.",
+                        'content' => "Looks like you've already used your free test edits with **{$existingTrial->email}**! Regular edits start at just $0.49/image. Here are the rates:",
                         'tool_cards' => [
                             [
                                 'type' => 'trial_quota_exhausted_card',
@@ -205,7 +205,7 @@ class HybridIntentEngine
 
                 if ($existingTrial->status === 'in_production') {
                     return [
-                        'content' => "🎨 **Sample Order Already In Production!**\n\nYour 100% Free Trial sample order (**Order #{$existingTrial->id}**) is currently being retouched by our senior artists.\n\nFinished layered master files (PSD & PNG) will be delivered to **{$existingTrial->email}** as soon as quality inspection passes!",
+                        'content' => "Your test edits (Order #{$existingTrial->id}) are already in production! We'll email the finished files to **{$existingTrial->email}** soon.",
                         'tool_cards' => [
                             [
                                 'type' => 'free_trial_confirmed_card',
@@ -227,7 +227,7 @@ class HybridIntentEngine
 
                 // If already pending, show the existing pending order without creating another row
                 return [
-                    'content' => "⏳ **Trial Request Already Queued**\n\nYour free trial sample order (**Order #{$existingTrial->id}**) has already been received and is queued for studio assignment with **$0.00 cost**.\n\nDelivery destination: **{$existingTrial->email}**",
+                    'content' => "We have your sample order (Order #{$existingTrial->id}) queued! We'll deliver the files to **{$existingTrial->email}** once finished.",
                     'tool_cards' => [
                         [
                             'type' => 'free_trial_confirmed_card',
@@ -253,7 +253,7 @@ class HybridIntentEngine
                 $ipCheck = $spamGuard->checkIpRateLimit($session->ip_address, $session->id);
                 if (! $ipCheck['allowed']) {
                     return [
-                        'content' => "⚠️ **Free Trial Limit Reached**\n\n{$ipCheck['reason']}",
+                        'content' => 'Your network has already used the free test trial. Regular edits start at just $0.49/image:',
                         'tool_cards' => [
                             [
                                 'type' => 'trial_quota_exhausted_card',
@@ -310,8 +310,8 @@ class HybridIntentEngine
                 }
 
                 $contentMsg = ! empty($clientEmail)
-                    ? "🎉 **100% Free Trial Order Confirmed!**\n\nYour sample image has been entered into our production queue with **$0.00 cost** (Zero upfront payment, no credit card required).\n\nYour finished retouched master PSD & PNG files will be delivered to **{$clientEmail}** within 12 hours!"
-                    : "🎉 **100% Free Trial Order Confirmed!**\n\nYour sample image has been entered into our production queue with **$0.00 cost** (Zero upfront payment, no credit card required).\n\nPlease enter your **email address** below so our production team can deliver your retouched master files!";
+                    ? "🎉 **Free Trial Activated!** We'll email your finished edits to **{$clientEmail}** within 12 hours."
+                    : '🎉 **Free Trial Activated!** Where should we email your finished edits?';
 
                 return [
                     'content' => $contentMsg,
@@ -338,7 +338,7 @@ class HybridIntentEngine
             // Case B: User clicked Free Trial but hasn't uploaded any photos yet
             if ($isFreeTrialIntent) {
                 return [
-                    'content' => "You qualify for **3 complimentary test edits** with zero cost or commitment!\n\nClick the button below or drag & drop up to 3 test photos directly into the chat window:",
+                    'content' => 'Add up to 3 sample photos below to try us out for free ($0):',
                     'tool_cards' => [
                         [
                             'type' => 'upload_prompt_card',
@@ -357,7 +357,7 @@ class HybridIntentEngine
 
             // Case C: Standard batch upload for volume production
             return [
-                'content' => "🎉 **Quote Confirmed!** Let's get your images into production.\n\nClick the button below or use the paperclip 📎 icon to select your batch photos. Please also reply with your **email address** so our studio director can send your job receipt, invoice, and finished edits!",
+                'content' => 'Upload your photos below to get started:',
                 'tool_cards' => [
                     [
                         'type' => 'upload_prompt_card',
@@ -376,9 +376,12 @@ class HybridIntentEngine
 
         // 4. Detect Pricing & Cost Intent
         if (str_contains($text, 'price') ||
+            str_contains($text, 'pricing') ||
             str_contains($text, 'cost') ||
             str_contains($text, 'quote') ||
             str_contains($text, 'rate') ||
+            str_contains($text, 'volume') ||
+            str_contains($text, 'calculat') ||
             str_contains($text, 'how much')) {
 
             $service = 'background-removal';
@@ -399,13 +402,9 @@ class HybridIntentEngine
             ], $session);
 
             return [
-                'content' => 'Here is our volume pricing model. Every new brand is eligible for **3 free test edits** with zero upfront commitment:',
+                'content' => 'Here is our volume pricing calculator. Rates adapt based on image complexity and batch volume:',
                 'tool_cards' => [$quoteResult],
-                'suggested_replies' => [
-                    'Claim 3 Free Sample Edits',
-                    'Book a Call with Lead',
-                    'Upload My Own Images',
-                ],
+                'suggested_replies' => [],
             ];
         }
 
@@ -442,17 +441,13 @@ class HybridIntentEngine
             ], $session);
 
             $intro = $specificSlug
-                ? 'Here are the technical capabilities, turnaround SLAs, and deliverable formats for this service:'
-                : 'Here is our studio production services catalog. You can inspect specs, turnaround SLAs, or calculate volume rates:';
+                ? 'Here are the details:'
+                : 'Here is what we specialize in:';
 
             return [
                 'content' => $intro,
                 'tool_cards' => [$catalogResult],
-                'suggested_replies' => [
-                    'Calculate Pricing',
-                    'Claim 3 Free Test Images',
-                    'Schedule 15-Min Technical Call',
-                ],
+                'suggested_replies' => [],
             ];
         }
 
@@ -471,26 +466,17 @@ class HybridIntentEngine
             ], $session);
 
             return [
-                'content' => 'Here are key facts regarding our production capacity, turnaround SLAs, delivery formats, and free trial policy:',
+                'content' => 'Here is a quick breakdown:',
                 'tool_cards' => [$infoResult],
-                'suggested_replies' => [
-                    'Get an Instant Quote',
-                    'Book Technical Consultation',
-                    'Claim Free Trial',
-                ],
+                'suggested_replies' => [],
             ];
         }
 
         // 6. Default Smart Greeting / Fallback Menu
         return [
-            'content' => 'Hello! Welcome to **CuttingEdger**. I can estimate immediate retouching pricing for your images, check our studio turnaround SLAs, or schedule a quick technical call. How can I assist you today?',
+            'content' => "I'm right here! Feel free to ask about our editing services, turnaround SLAs, or volume pricing. What kind of images are you working on?",
             'tool_cards' => [],
-            'suggested_replies' => [
-                'Calculate Price Quote',
-                'Schedule 15-Min Meeting',
-                'Test 3 Images Free',
-                'View All Services',
-            ],
+            'suggested_replies' => [],
         ];
     }
 }

@@ -276,7 +276,7 @@ class ChatFlowTest extends TestCase
         $this->assertSame('free_trial_confirmed_card', $claimCards[0]['type']);
         $this->assertSame(1, $claimCards[0]['images_count']); // Exact single image count!
         $this->assertStringContainsString('$0.00', $claimCards[0]['total_cost']);
-        $this->assertStringContainsString('100% Free Trial Order Confirmed', $claimResponse->json('message.content'));
+        $this->assertStringContainsString('Free Trial', $claimResponse->json('message.content'));
 
         $this->assertDatabaseHas('free_trial_requests', [
             'chat_session_id' => $sessionId,

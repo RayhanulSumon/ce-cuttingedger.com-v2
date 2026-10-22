@@ -281,7 +281,7 @@ class CalendarBookingTool
         $email = trim((string) ($params['email'] ?? ''));
         $phone = trim((string) ($params['phone'] ?? ''));
         $slotDatetime = trim((string) ($params['slot_datetime'] ?? ''));
-        $notes = trim((string) ($params['notes'] ?? 'Booked via smart chat dialog'));
+        $notes = ! empty($params['notes']) ? trim((string) $params['notes']) : 'General technical intake & studio inquiry';
         $serviceSlug = trim((string) ($params['service'] ?? ''));
 
         $serviceId = null;

@@ -23,6 +23,8 @@ import {
     UploadCloud,
     FileText,
     HelpCircle,
+    Pencil,
+    Trash2,
 } from 'lucide-react';
 import { QuoteCard } from './QuoteCard';
 import { CalendarSlotPicker } from './CalendarSlotPicker';
@@ -193,6 +195,7 @@ export function ChatWidget() {
         setInputText('');
         setIsLoading(true);
 
+        const startTime = Date.now();
         try {
             const res = await fetch('/api/chat/message', {
                 method: 'POST',
@@ -208,6 +211,13 @@ export function ChatWidget() {
             if (data.session_id) {
                 setSessionId(data.session_id);
                 localStorage.setItem('ce_chat_session_id', data.session_id);
+            }
+
+            // Natural typing delay (minimum 750ms - 1100ms) so typing indicator feels human and authentic
+            const elapsed = Date.now() - startTime;
+            const targetDelay = Math.min(1100, Math.max(750, 900 - elapsed));
+            if (targetDelay > 0) {
+                await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
 
             if (data.message) {
@@ -319,27 +329,45 @@ export function ChatWidget() {
         }
     };
 
-    // 7. Restart conversation
-    const handleResetChat = () => {
-        if (window.confirm('Start a fresh conversation?')) {
-            localStorage.removeItem('ce_chat_session_id');
-            setSessionId(null);
-            fetch('/api/chat/session', {
+    // 7. Restart conversation (forces brand new session and clears cookie)
+    const handleResetChat = async () => {
+        if (!window.confirm('Start a fresh conversation?')) return;
+        localStorage.removeItem('ce_chat_session_id');
+        setSessionId(null);
+        setMessages([]);
+        try {
+            const res = await fetch('/api/chat/session', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
+                    'X-Chat-Reset': 'true',
                 },
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    if (data.session_id) {
-                        setSessionId(data.session_id);
-                        localStorage.setItem('ce_chat_session_id', data.session_id);
-                    }
-                    if (data.messages) setMessages(data.messages);
-                });
+                body: JSON.stringify({ force_new: true }),
+            });
+            const data = await res.json();
+            if (data.session_id) {
+                setSessionId(data.session_id);
+                localStorage.setItem('ce_chat_session_id', data.session_id);
+            }
+            if (data.messages && Array.isArray(data.messages)) {
+                setMessages(data.messages);
+            }
+        } catch (err) {
+            console.error('Reset error:', err);
         }
+    };
+
+    // 7.5. Edit user message (rewinds conversation so user can fix typos/misspellings)
+    const handleEditUserMessage = (msgId: number | string, text: string, index: number) => {
+        setInputText(text);
+        // Rewind messages up to this index so the user can re-send their corrected text
+        setMessages((prev) => prev.slice(0, index));
+    };
+
+    // 7.6. Delete user message
+    const handleDeleteUserMessage = (msgId: number | string, index: number) => {
+        setMessages((prev) => prev.filter((_, i) => i !== index));
     };
 
     // 8. Copy message content
@@ -562,6 +590,30 @@ export function ChatWidget() {
                                                     )}
                                                 </button>
                                             )}
+
+                                            {/* Edit & Delete controls for user messages */}
+                                            {isUser && (
+                                                <div className="opacity-0 group-hover:opacity-100 absolute -bottom-5 right-1 flex items-center gap-2 text-[10px] text-white/50 transition-opacity">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleEditUserMessage(msg.id, msg.content, index)}
+                                                        className="hover:text-[#d4ff00] flex items-center gap-1 cursor-pointer transition-colors"
+                                                        title="Edit & fix typo in message"
+                                                    >
+                                                        <Pencil className="w-2.5 h-2.5" />
+                                                        <span>Edit</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteUserMessage(msg.id, index)}
+                                                        className="hover:text-rose-400 flex items-center gap-1 cursor-pointer transition-colors"
+                                                        title="Remove message"
+                                                    >
+                                                        <Trash2 className="w-2.5 h-2.5" />
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Tool Cards (Quote / Calendar / Confirmation / Upload / Info) */}
@@ -715,11 +767,20 @@ export function ChatWidget() {
                                 );
                             })}
 
-                            {/* Loading Indicator */}
+                            {/* Realistic Typing Indicator Bubble */}
                             {isLoading && (
-                                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[#151720] border border-white/5 text-white/70 text-xs w-fit">
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#d4ff00]" />
-                                    <span className="font-mono text-[11px]">Calculating estimate & checking studio slots...</span>
+                                <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
+                                    <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/15 flex items-center justify-center text-[#d4ff00] shrink-0 mt-0.5">
+                                        <Bot className="w-3.5 h-3.5" />
+                                    </div>
+                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#151720] border border-white/10 shadow-md flex items-center gap-2">
+                                        <div className="flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce" />
+                                        </div>
+                                        <span className="text-[11px] font-mono text-white/50">CuttingEdger is typing...</span>
+                                    </div>
                                 </div>
                             )}
 
@@ -828,7 +889,7 @@ export function ChatWidget() {
                                 <button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    title="Drop or upload photos to calculate price"
+                                    title="Attach sample photos"
                                     className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors shrink-0 cursor-pointer"
                                 >
                                     <Paperclip className="w-4 h-4" />
@@ -838,7 +899,7 @@ export function ChatWidget() {
                                     type="text"
                                     value={inputText}
                                     onChange={(e) => setInputText(e.target.value)}
-                                    placeholder="Ask a question or request a custom quote..."
+                                    placeholder="Ask a question, pricing, turnaround, or edits..."
                                     className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#d4ff00] transition-colors"
                                 />
 
@@ -852,7 +913,7 @@ export function ChatWidget() {
                             </form>
 
                             <div className="flex items-center justify-between text-[10px] text-white/40 pt-1.5 px-1 font-mono">
-                                <span>Tip: Drag & drop photos anywhere into chat</span>
+                                <span>We reply instantly • Ask us anything</span>
                                 <span className="flex items-center gap-1 text-white/50">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" /> 100% Confidential
                                 </span>

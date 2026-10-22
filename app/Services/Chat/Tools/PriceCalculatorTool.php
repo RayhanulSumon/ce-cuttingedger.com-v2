@@ -142,6 +142,29 @@ class PriceCalculatorTool
             'call_to_action' => $isEligibleForFreeTrial
                 ? 'Claim 3 Free Sample Edits ($0.00 Zero Cost)'
                 : 'Confirm Quote & Upload Batch',
+            'complexity_rates' => [
+                'simple' => [
+                    'rate' => $rateTable['simple'],
+                    'label' => 'Simple',
+                    'desc' => 'Solid edges, clean outlines (shoes, bottles, boxes)',
+                ],
+                'medium' => [
+                    'rate' => $rateTable['medium'],
+                    'label' => 'Medium',
+                    'desc' => 'Multiple cutouts, moderate holes, soft edges',
+                ],
+                'complex' => [
+                    'rate' => $rateTable['complex'],
+                    'label' => 'Complex',
+                    'desc' => 'Intricate outlines, netting, hair, bicycles, multipaths',
+                ],
+                'super_complex' => [
+                    'rate' => $rateTable['super_complex'],
+                    'label' => 'Super Complex',
+                    'desc' => 'Fine jewelry, extreme detail, transparent fabrics',
+                ],
+            ],
+            'base_rates' => $baseRates[$resolvedService] ?? $baseRates['background-removal'],
         ];
     }
 }

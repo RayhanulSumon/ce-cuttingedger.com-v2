@@ -43,6 +43,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
     const [name, setName] = useState(existing?.client_name || '');
     const [email, setEmail] = useState(existing?.client_email || '');
     const [phone, setPhone] = useState('');
+    const [notes, setNotes] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -67,6 +68,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                 name: name.trim(),
                 email: email.trim(),
                 phone: phone.trim() || undefined,
+                notes: notes.trim() || undefined,
                 consultation_id: existing?.consultation_id,
                 is_reschedule: isReschedule,
             });
@@ -186,6 +188,13 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff]"
+                    />
+                    <textarea
+                        rows={2}
+                        placeholder="What would you like to discuss? (e.g. ghost mannequin, turnaround, 3D specs) (Optional)"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff] resize-none"
                     />
 
                     {error && (

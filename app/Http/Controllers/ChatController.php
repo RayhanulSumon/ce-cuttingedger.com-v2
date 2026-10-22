@@ -26,7 +26,8 @@ class ChatController extends Controller
      */
     public function session(Request $request): JsonResponse
     {
-        $session = $this->sessionManager->resolve($request);
+        $forceNew = $request->boolean('force_new') || $request->header('X-Chat-Reset') === 'true';
+        $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: true, forceNew: $forceNew);
 
         $messages = $session->messages()
             ->latest('id')
@@ -49,12 +50,12 @@ class ChatController extends Controller
             $welcome = ChatMessage::create([
                 'chat_session_id' => $session->id,
                 'sender' => 'assistant',
-                'content' => '👋 Hi there! Welcome to **CuttingEdger**. How can I help you today? You can drop a photo for an **instant price quote**, schedule a call, or explore our services.',
+                'content' => '👋 Hi! Welcome to **CuttingEdger**. Have any questions, or how can I help you today?',
                 'suggested_replies' => [
-                    'Get an Instant Quote',
-                    'Claim 3 Free Sample Edits',
-                    'Schedule Consultation Call',
-                    'Turnaround SLAs',
+                    'What services do you offer?',
+                    'How does pricing work?',
+                    'Can I test sample edits?',
+                    'Schedule a Consultation',
                 ],
             ]);
 
@@ -208,7 +209,7 @@ class ChatController extends Controller
             return response()->json([
                 'success' => false,
                 'quota_exceeded' => true,
-                'message' => "Free trial quota limit reached for {$email}. You have already redeemed your 100% Free Trial sample quota (Order #{$existingTrial->id}). Please apply our standard production rates ($0.49/image).",
+                'message' => "You've already used your free trial quota with {$email}. Regular edits start at just $0.49/image.",
                 'lead_email' => $session->lead_email,
                 'lead_name' => $session->lead_name,
             ]);
@@ -274,8 +275,8 @@ class ChatController extends Controller
 
         $isRescheduled = ! empty($result['is_rescheduled']);
         $content = $isRescheduled
-            ? "🔄 **Consultation Rescheduled!** We have moved your session to {$result['datetime_formatted']}."
-            : "🎉 **Consultation Booked!** We have confirmed your session for {$result['datetime_formatted']}.";
+            ? "🔄 **Rescheduled!** Your session is now set for {$result['datetime_formatted']}."
+            : "🎉 **All set!** Your consultation is booked for {$result['datetime_formatted']}.";
 
         // Record as system/assistant message in chat history
         $bookingMessage = ChatMessage::create([

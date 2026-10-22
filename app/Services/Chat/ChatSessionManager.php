@@ -13,15 +13,18 @@ class ChatSessionManager
     /**
      * Resolve existing session or optionally create a new public session for the visitor.
      */
-    public function resolve(Request $request, bool $touch = true, bool $createIfMissing = true): ?ChatSession
+    public function resolve(Request $request, bool $touch = true, bool $createIfMissing = true, bool $forceNew = false): ?ChatSession
     {
-        $sessionId = $request->header('X-Chat-Session-Id')
-            ?? $request->cookie(self::COOKIE_NAME)
-            ?? $request->input('session_id');
-
         $session = null;
-        if ($sessionId && Str::isUuid($sessionId)) {
-            $session = ChatSession::find($sessionId);
+
+        if (! $forceNew && $request->header('X-Chat-Reset') !== 'true') {
+            $sessionId = $request->header('X-Chat-Session-Id')
+                ?? $request->cookie(self::COOKIE_NAME)
+                ?? $request->input('session_id');
+
+            if ($sessionId && Str::isUuid($sessionId)) {
+                $session = ChatSession::find($sessionId);
+            }
         }
 
         if (! $session) {
@@ -69,7 +72,7 @@ class ChatSessionManager
 
             return [
                 'type' => 'inactivity_nudge',
-                'content' => "👋 Still thinking it over? We'd love to help you test our work! You can upload **2 to 3 photos for a 100% free test edit** with zero payment or credit card required.",
+                'content' => '👋 Still thinking it over? Feel free to ask any questions, or test our quality with up to 3 free sample edits.',
                 'suggested_replies' => [
                     'Claim 3 Free Sample Edits',
                     'Ask a Question',
