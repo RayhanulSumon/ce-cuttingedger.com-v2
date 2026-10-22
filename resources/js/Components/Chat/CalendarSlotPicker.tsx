@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Loader2, CheckCircle2, RefreshCw, CalendarClock } from 'lucide-react';
 
 export interface CalendarSlotPickerProps {
     card: {
         title: string;
         description: string;
         timezone: string;
+        is_reschedule?: boolean;
+        existing_booking?: {
+            consultation_id: number;
+            current_time_formatted: string;
+            client_name?: string;
+            client_email?: string;
+            status?: string;
+        } | null;
         days: Array<{
             date: string;
             label: string;
@@ -21,15 +29,21 @@ export interface CalendarSlotPickerProps {
         email: string;
         phone?: string;
         notes?: string;
+        consultation_id?: number;
+        is_reschedule?: boolean;
     }) => Promise<void>;
 }
 
 export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps) {
+    const isReschedule = Boolean(card.is_reschedule || card.existing_booking);
+    const existing = card.existing_booking;
+
     const [selectedDayIndex, setSelectedDayIndex] = useState(0);
     const [selectedSlot, setSelectedSlot] = useState<{ time: string; iso: string } | null>(null);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState(existing?.client_name || '');
+    const [email, setEmail] = useState(existing?.client_email || '');
     const [phone, setPhone] = useState('');
+    const [notes, setNotes] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -54,6 +68,9 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                 name: name.trim(),
                 email: email.trim(),
                 phone: phone.trim() || undefined,
+                notes: notes.trim() || undefined,
+                consultation_id: existing?.consultation_id,
+                is_reschedule: isReschedule,
             });
             setSelectedSlot(null);
         } catch (err: any) {
@@ -64,10 +81,14 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
     };
 
     return (
-        <div className="my-2 p-4 rounded-2xl bg-[#12141a]/95 border border-[#00f5ff]/30 shadow-2xl backdrop-blur-md text-left">
+        <div className={`my-2 p-4 rounded-2xl border shadow-2xl backdrop-blur-md text-left transition-all ${
+            isReschedule
+                ? 'bg-[#12141a]/95 border-[#d4ff00]/40'
+                : 'bg-[#12141a]/95 border-[#00f5ff]/30'
+        }`}>
             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
-                <span className="p-1.5 rounded-lg bg-[#00f5ff]/10 text-[#00f5ff]">
-                    <Calendar className="w-4 h-4" />
+                <span className={`p-1.5 rounded-lg ${isReschedule ? 'bg-[#d4ff00]/15 text-[#d4ff00]' : 'bg-[#00f5ff]/10 text-[#00f5ff]'}`}>
+                    {isReschedule ? <CalendarClock className="w-4 h-4" /> : <Calendar className="w-4 h-4" />}
                 </span>
                 <div>
                     <h4 className="text-sm font-bold text-white tracking-tight">{card.title}</h4>
@@ -76,6 +97,17 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                     </span>
                 </div>
             </div>
+
+            {/* Existing booking notice if rescheduling */}
+            {isReschedule && existing?.current_time_formatted && (
+                <div className="mb-3 p-2.5 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/20 flex items-start gap-2 text-xs font-mono">
+                    <RefreshCw className="w-3.5 h-3.5 text-[#d4ff00] shrink-0 mt-0.5" />
+                    <div className="text-white/80">
+                        <span className="text-[#d4ff00] font-bold block">Rescheduling Current Booking</span>
+                        <span>Currently booked for: {existing.current_time_formatted}</span>
+                    </div>
+                </div>
+            )}
 
             {/* Day Selector Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
@@ -87,9 +119,11 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                             setSelectedDayIndex(idx);
                             setSelectedSlot(null);
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium whitespace-nowrap transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium whitespace-nowrap transition-all cursor-pointer ${
                             selectedDayIndex === idx
-                                ? 'bg-[#00f5ff] text-black shadow-md'
+                                ? isReschedule
+                                    ? 'bg-[#d4ff00] text-black font-bold shadow-md'
+                                    : 'bg-[#00f5ff] text-black shadow-md'
                                 : 'bg-white/5 text-white/70 hover:bg-white/10'
                         }`}
                     >
@@ -107,7 +141,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                             key={slot.iso}
                             type="button"
                             onClick={() => setSelectedSlot(slot)}
-                            className={`py-2 px-1 text-center rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1 ${
+                            className={`py-2 px-1 text-center rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1 cursor-pointer ${
                                 isSelected
                                     ? 'bg-[#d4ff00] text-black font-bold shadow-md scale-102'
                                     : 'bg-white/5 text-white hover:bg-white/10 border border-white/5'
@@ -125,7 +159,9 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                 <form onSubmit={handleSubmit} className="mt-3 p-3 rounded-xl bg-black/40 border border-white/10 space-y-2 animate-in fade-in slide-in-from-top-2">
                     <div className="text-[11px] font-mono text-[#d4ff00] flex items-center gap-1 pb-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Selected: {activeDay.label} at {selectedSlot.time}</span>
+                        <span>
+                            {isReschedule ? 'New Slot:' : 'Selected:'} {activeDay.label} at {selectedSlot.time}
+                        </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -153,6 +189,13 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff]"
                     />
+                    <textarea
+                        rows={2}
+                        placeholder="What would you like to discuss? (e.g. ghost mannequin, turnaround, 3D specs) (Optional)"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="w-full px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff] resize-none"
+                    />
 
                     {error && (
                         <p className="text-[11px] text-red-400 font-mono">{error}</p>
@@ -161,17 +204,30 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-2 px-3 rounded-lg bg-[#00f5ff] hover:bg-[#00d8e6] text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                        className={`w-full py-2 px-3 rounded-lg text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer ${
+                            isReschedule
+                                ? 'bg-[#d4ff00] hover:bg-[#c2eb00]'
+                                : 'bg-[#00f5ff] hover:bg-[#00d8e6]'
+                        }`}
                     >
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                <span>Reserving Slot...</span>
+                                <span>{isReschedule ? 'Rescheduling Slot...' : 'Reserving Slot...'}</span>
                             </>
                         ) : (
                             <>
-                                <span>Confirm Consultation</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
+                                {isReschedule ? (
+                                    <>
+                                        <RefreshCw className="w-3.5 h-3.5" />
+                                        <span>Confirm Rescheduled Time</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Confirm Consultation</span>
+                                        <ArrowRight className="w-3.5 h-3.5" />
+                                    </>
+                                )}
                             </>
                         )}
                     </button>

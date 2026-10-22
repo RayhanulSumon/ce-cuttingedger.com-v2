@@ -127,18 +127,44 @@ class PriceCalculatorTool
             'complexity' => ucfirst(str_replace('_', ' ', $complexity)),
             'quantity' => $quantity,
             'unit_price' => number_format($finalUnitPrice, 2),
-            'total_price' => number_format($totalEstimated, 2),
+            'regular_total' => $isEligibleForFreeTrial ? number_format($totalEstimated, 2) : null,
+            'total_price' => $isEligibleForFreeTrial ? '0.00' : number_format($totalEstimated, 2),
             'currency' => 'USD',
             'turnaround' => match ($turnaround) {
                 'rush_6h' => 'Express 6 Hours SLA',
                 'rush_12h' => 'Rush 12 Hours SLA',
                 default => 'Standard 24 Hours SLA',
             },
-            'discount_applied' => $discountPercent > 0 ? "{$discountPercent}% Volume Discount" : null,
+            'discount_applied' => $isEligibleForFreeTrial
+                ? '100% Free Trial ($0.00 Zero Cost)'
+                : ($discountPercent > 0 ? "{$discountPercent}% Volume Discount" : null),
             'free_trial_eligible' => $isEligibleForFreeTrial,
             'call_to_action' => $isEligibleForFreeTrial
-                ? 'Claim 3 Free Sample Edits (Zero Cost)'
+                ? 'Claim 3 Free Sample Edits ($0.00 Zero Cost)'
                 : 'Confirm Quote & Upload Batch',
+            'complexity_rates' => [
+                'simple' => [
+                    'rate' => $rateTable['simple'],
+                    'label' => 'Simple',
+                    'desc' => 'Solid edges, clean outlines (shoes, bottles, boxes)',
+                ],
+                'medium' => [
+                    'rate' => $rateTable['medium'],
+                    'label' => 'Medium',
+                    'desc' => 'Multiple cutouts, moderate holes, soft edges',
+                ],
+                'complex' => [
+                    'rate' => $rateTable['complex'],
+                    'label' => 'Complex',
+                    'desc' => 'Intricate outlines, netting, hair, bicycles, multipaths',
+                ],
+                'super_complex' => [
+                    'rate' => $rateTable['super_complex'],
+                    'label' => 'Super Complex',
+                    'desc' => 'Fine jewelry, extreme detail, transparent fabrics',
+                ],
+            ],
+            'base_rates' => $baseRates[$resolvedService] ?? $baseRates['background-removal'],
         ];
     }
 }

@@ -162,4 +162,99 @@ class AdminChatAndConsultationTest extends TestCase
             'id' => $session->id,
         ]);
     }
+
+    public function test_admin_can_bulk_delete_empty_chat_sessions(): void
+    {
+        // 1 empty session
+        $emptySession = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'last_active_at' => now(),
+        ]);
+
+        // 1 engaged session with message
+        $engagedSession = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'lead_name' => 'Active Lead',
+            'status' => 'converted',
+            'last_active_at' => now(),
+        ]);
+        ChatMessage::create([
+            'chat_session_id' => $engagedSession->id,
+            'sender' => 'user',
+            'content' => 'Hello',
+        ]);
+
+        $response = $this->actingAs($this->admin)->delete('/admin/chat-sessions-bulk/destroy-all', [
+            'type' => 'empty',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseMissing('chat_sessions', ['id' => $emptySession->id]);
+        $this->assertDatabaseHas('chat_sessions', ['id' => $engagedSession->id]);
+    }
+
+    public function test_admin_can_bulk_delete_all_chat_sessions(): void
+    {
+        ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'last_active_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->admin)->delete('/admin/chat-sessions-bulk/destroy-all', [
+            'type' => 'all',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertEquals(0, ChatSession::count());
+    }
+
+    public function test_admin_can_confirm_pending_consultation(): void
+    {
+        $consultation = ChatConsultation::create([
+            'chat_session_id' => null,
+            'name' => 'Jean-Luc Godard',
+            'email' => 'jeanluc@cinema.fr',
+            'scheduled_at' => now()->addDays(3),
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($this->admin)->put("/admin/consultations/{$consultation->id}", [
+            'status' => 'confirmed',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('chat_consultations', [
+            'id' => $consultation->id,
+            'status' => 'confirmed',
+        ]);
+    }
+
+    public function test_admin_can_reschedule_consultation(): void
+    {
+        $oldDate = now()->addDays(2);
+        $newDate = now()->addDays(5)->startOfHour();
+
+        $consultation = ChatConsultation::create([
+            'chat_session_id' => null,
+            'name' => 'Jean-Luc Godard',
+            'email' => 'jeanluc@cinema.fr',
+            'scheduled_at' => $oldDate,
+            'status' => 'pending',
+            'notes' => 'Original booking note',
+        ]);
+
+        $response = $this->actingAs($this->admin)->put("/admin/consultations/{$consultation->id}", [
+            'scheduled_at' => $newDate->toIso8601String(),
+            'notes' => 'Client requested Friday afternoon',
+        ]);
+
+        $response->assertRedirect();
+
+        $consultation->refresh();
+        $this->assertEquals('confirmed', $consultation->status);
+        $this->assertStringContainsString('Rescheduled: previously', (string) $consultation->notes);
+        $this->assertStringContainsString('Client requested Friday afternoon', (string) $consultation->notes);
+    }
 }

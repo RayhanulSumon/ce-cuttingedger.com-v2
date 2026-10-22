@@ -25,10 +25,13 @@ import {
     X,
     CalendarCheck2,
     MessageSquareText,
+    Sparkles,
+    ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
 import { Toaster, toast } from "@/Components/ui/sonner";
+import { AdminNotificationDropdown } from "@/Components/Admin/AdminNotificationDropdown";
 import {
     Sidebar,
     SidebarContent,
@@ -52,9 +55,30 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
     const { url } = usePage();
-    const { auth, flash } = usePage<{
+    const sidebarContentRef = React.useRef<HTMLDivElement>(null);
+
+    // Restore sidebar scroll position on mount & page navigation
+    React.useLayoutEffect(() => {
+        const saved = sessionStorage.getItem("admin_sidebar_scroll");
+        if (saved && sidebarContentRef.current) {
+            sidebarContentRef.current.scrollTop = parseInt(saved, 10);
+        }
+    }, [url]);
+
+    const handleSidebarScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        sessionStorage.setItem("admin_sidebar_scroll", String(e.currentTarget.scrollTop));
+    };
+
+    const { auth, flash, admin_badges } = usePage<{
         auth: { user: { name: string; email: string; role: string } | null };
         flash: { success?: string; error?: string };
+        admin_badges?: {
+            pending_orders?: number;
+            pending_consultations: number;
+            pending_trials?: number;
+            unread_leads: number;
+            new_messages: number;
+        };
     }>().props;
 
     React.useEffect(() => {
@@ -181,6 +205,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     href: "/admin/messages",
                     icon: Mail,
                     active: url.startsWith("/admin/messages"),
+                    badge: admin_badges?.new_messages ? `${admin_badges.new_messages}` : null,
+                    badgeColor: "bg-amber-400 text-black",
                 },
                 {
                     name: "Subscribers",
@@ -194,16 +220,42 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             title: "AI ASSISTANT & LEADS",
             items: [
                 {
+                    name: "Client Orders",
+                    href: "/admin/orders",
+                    icon: ShoppingBag,
+                    active: url.startsWith("/admin/orders"),
+                    badge: admin_badges?.pending_orders
+                        ? `${admin_badges.pending_orders}`
+                        : null,
+                    badgeColor: "bg-[#d4ff00] text-black",
+                },
+                {
+                    name: "Free Trial Orders",
+                    href: "/admin/free-trials",
+                    icon: Sparkles,
+                    active: url.startsWith("/admin/free-trials"),
+                    badge: admin_badges?.pending_trials
+                        ? `${admin_badges.pending_trials}`
+                        : null,
+                    badgeColor: "bg-[#d4ff00] text-black",
+                },
+                {
                     name: "Calendar Bookings",
                     href: "/admin/consultations",
                     icon: CalendarCheck2,
                     active: url.startsWith("/admin/consultations"),
+                    badge: admin_badges?.pending_consultations
+                        ? `${admin_badges.pending_consultations}`
+                        : null,
+                    badgeColor: "bg-[#00f5ff] text-black",
                 },
                 {
                     name: "Chat Transcripts & Leads",
                     href: "/admin/chat-sessions",
                     icon: MessageSquareText,
                     active: url.startsWith("/admin/chat-sessions"),
+                    badge: admin_badges?.unread_leads ? `${admin_badges.unread_leads}` : null,
+                    badgeColor: "bg-amber-400 text-black",
                 },
             ],
         },
@@ -255,7 +307,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             </Link>
                         </SidebarHeader>
 
-                        <SidebarContent className="px-2 py-4 space-y-4">
+                        <SidebarContent
+                            ref={sidebarContentRef}
+                            onScroll={handleSidebarScroll}
+                            className="px-2 py-4 space-y-4"
+                        >
                             {navSections.map((section, idx) => (
                                 <SidebarGroup key={idx}>
                                     <SidebarGroupLabel className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase font-semibold px-2">
@@ -279,6 +335,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                     >
                                                         <Link
                                                             href={item.href}
+                                                            preserveScroll
                                                             className="flex items-center gap-2.5 w-full"
                                                         >
                                                             <Icon
@@ -289,9 +346,19 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                         : "text-neutral-500 group-hover:text-white"
                                                                 )}
                                                             />
-                                                            <span className="truncate">
+                                                            <span className="truncate flex-1">
                                                                 {item.name}
                                                             </span>
+                                                            {"badge" in item && item.badge && (
+                                                                <span
+                                                                    className={cn(
+                                                                        "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[10px] font-mono font-bold tracking-tight shadow-xs",
+                                                                        ("badgeColor" in item && item.badgeColor) || "bg-[#d4ff00] text-black"
+                                                                    )}
+                                                                >
+                                                                    {item.badge}
+                                                                </span>
+                                                            )}
                                                         </Link>
                                                     </SidebarMenuButton>
                                                 </SidebarMenuItem>
@@ -352,7 +419,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <AdminNotificationDropdown />
                                 <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-mono flex items-center gap-1.5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                     <span>Connected</span>

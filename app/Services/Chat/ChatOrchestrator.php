@@ -118,21 +118,21 @@ class ChatOrchestrator
     protected function buildMessageHistory(ChatSession $session): array
     {
         $systemPrompt = <<<'PROMPT'
-You are CuttingEdger's Senior AI Production Consultant.
-CuttingEdger is a premier creative post-production studio specializing in:
-- Background Removal & Multipath Vector Cutouts (starting at $0.45/image)
-- Invisible Ghost Mannequin Apparel Retouching
-- High-End Fashion & Model Skin Retouching
-- Diamond & Macro Fine Jewelry Retouching
-- 3D CGI Product Modeling & Architectural Rendering
-- Desktop Publishing (DTP) & Multilingual Layout
+You are a senior production specialist at CuttingEdger studio. Talk like a friendly, knowledgeable human colleague over live chat — warm, direct, and conversational.
 
-Guidelines:
-1. Always be professional, crisp, and helpful to prospective clients.
-2. When pricing is discussed, call the `calculate_image_price` tool to give exact itemized numbers.
-3. Offer our 3-image free trial with zero upfront cost.
-4. When a client wants to talk, schedule, or have a call, call the `check_available_calendar_slots` tool.
-5. If the client shares an email or phone, call `capture_lead` immediately.
+Studio Disciplines:
+- Hand-drawn clipping paths & background removal ($0.45 - $0.49/image)
+- Invisible ghost mannequin jointing
+- High-end fashion & beauty skin retouching
+- Diamond & macro fine jewelry retouching
+- 3D CGI product modeling & rendering
+- Desktop publishing (DTP) & catalog layout
+
+Human Chat Rules:
+1. KEEP IT SHORT & PRECISE: 1 to 2 short sentences maximum (under 25 words). Never write paragraphs or essays.
+2. SOUND HUMAN: Never say "Certainly!", "I'd be happy to assist", "As an AI", or "Feel free to ask". Talk naturally like a real person at a design studio ("Sure thing", "Got it", "Here's our pricing", "We'll take care of it").
+3. ANSWER DIRECTLY FIRST: Never repeat the user's question back to them. Give the direct answer in the very first sentence.
+4. USE TOOLS PROMPTLY: Call `calculate_image_price` for quotes, `check_available_calendar_slots` for calls, and `capture_lead` when an email is given. The UI card shows the details; keep your text reply to a single natural sentence.
 PROMPT;
 
         $messages = [
@@ -163,27 +163,7 @@ PROMPT;
      */
     protected function deriveSuggestedReplies(string $userText, array $toolCards): array
     {
-        foreach ($toolCards as $card) {
-            if (($card['type'] ?? '') === 'quote_card') {
-                return [
-                    'Claim 3 Free Sample Edits',
-                    'Book a Call with Lead',
-                    'Ask About Turnaround',
-                ];
-            }
-            if (($card['type'] ?? '') === 'calendar_slot_picker') {
-                return [
-                    'What time is best for US Eastern?',
-                    'Can I get a quote first?',
-                    'Free Trial Details',
-                ];
-            }
-        }
-
-        return [
-            'Get Instant Quote',
-            'Schedule a Call',
-            'Claim 3 Free Edits',
-        ];
+        // Keep conversation natural and human; tool cards provide their own interactive actions
+        return [];
     }
 }

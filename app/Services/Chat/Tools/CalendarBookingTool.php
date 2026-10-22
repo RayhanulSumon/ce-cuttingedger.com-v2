@@ -5,6 +5,8 @@ namespace App\Services\Chat\Tools;
 use App\Models\ChatConsultation;
 use App\Models\ChatSession;
 use App\Models\Service;
+use App\Services\Notification\NotificationService;
+use App\Services\Security\EmailAndSpamGuard;
 use Carbon\Carbon;
 
 class CalendarBookingTool
@@ -20,13 +22,17 @@ class CalendarBookingTool
             'type' => 'function',
             'function' => [
                 'name' => 'check_available_calendar_slots',
-                'description' => 'Check available meeting slots for client consultation, quote discussion, or technical intake call.',
+                'description' => 'Check available meeting slots for client consultation, quote discussion, or reschedule request.',
                 'parameters' => [
                     'type' => 'object',
                     'properties' => [
                         'timezone' => [
                             'type' => 'string',
                             'description' => 'Client timezone, e.g. America/New_York, Europe/London, Asia/Dhaka. Defaults to UTC.',
+                        ],
+                        'is_reschedule' => [
+                            'type' => 'boolean',
+                            'description' => 'Set to true if user is rescheduling an existing booking.',
                         ],
                     ],
                 ],
@@ -45,7 +51,7 @@ class CalendarBookingTool
             'type' => 'function',
             'function' => [
                 'name' => 'book_calendar_appointment',
-                'description' => 'Book a confirmed consultation call slot directly on the calendar.',
+                'description' => 'Book or reschedule a confirmed consultation call slot directly on the studio calendar.',
                 'parameters' => [
                     'type' => 'object',
                     'properties' => [
@@ -55,6 +61,8 @@ class CalendarBookingTool
                         'slot_datetime' => ['type' => 'string', 'description' => 'ISO datetime string of the selected slot'],
                         'service' => ['type' => 'string', 'description' => 'Service of interest'],
                         'notes' => ['type' => 'string', 'description' => 'Any project details or specifications'],
+                        'consultation_id' => ['type' => 'integer', 'description' => 'Optional existing consultation ID to reschedule'],
+                        'is_reschedule' => ['type' => 'boolean', 'description' => 'Whether this is a reschedule action'],
                     ],
                     'required' => ['name', 'email', 'slot_datetime'],
                 ],
@@ -63,11 +71,59 @@ class CalendarBookingTool
     }
 
     /**
-     * Generate next available slots over the coming 5 business days.
+     * Get tool definition schema for explicitly rescheduling an appointment.
      *
      * @return array<string, mixed>
      */
-    public function getAvailableSlots(string $clientTimezone = 'UTC'): array
+    public static function rescheduleAppointmentSchema(): array
+    {
+        return [
+            'type' => 'function',
+            'function' => [
+                'name' => 'reschedule_calendar_appointment',
+                'description' => 'Reschedule an existing scheduled consultation call to a new date and time slot.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'slot_datetime' => ['type' => 'string', 'description' => 'New ISO datetime slot'],
+                        'consultation_id' => ['type' => 'integer', 'description' => 'Optional specific consultation ID to reschedule'],
+                        'email' => ['type' => 'string', 'description' => 'Client email to match consultation if ID not known'],
+                        'reason' => ['type' => 'string', 'description' => 'Reason for rescheduling'],
+                    ],
+                    'required' => ['slot_datetime'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Get tool definition schema for checking current appointment status.
+     *
+     * @return array<string, mixed>
+     */
+    public static function checkMyAppointmentSchema(): array
+    {
+        return [
+            'type' => 'function',
+            'function' => [
+                'name' => 'check_my_appointment',
+                'description' => 'Check the status and scheduled time of an existing consultation booking for the user.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'email' => ['type' => 'string', 'description' => 'Client email address'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Generate next available slots over coming business days.
+     *
+     * @return array<string, mixed>
+     */
+    public function getAvailableSlots(string $clientTimezone = 'UTC', ?ChatSession $session = null, bool $isReschedule = false): array
     {
         $days = [];
         $current = Carbon::now($clientTimezone)->addDay();
@@ -118,28 +174,114 @@ class CalendarBookingTool
             $current->addDay();
         }
 
+        // Check if there is an active UPCOMING booking (scheduled_at >= now) in this session or for this email
+        $existingBooking = null;
+        if ($session) {
+            $queryUpcoming = function ($builder) {
+                return $builder->where('scheduled_at', '>=', now()->subMinutes(15))
+                    ->whereNotIn('status', ['cancelled', 'completed']);
+            };
+
+            $existingConsultation = $queryUpcoming(ChatConsultation::where('chat_session_id', $session->id))
+                ->latest('scheduled_at')
+                ->first();
+
+            if (! $existingConsultation && $session->lead_email) {
+                $existingConsultation = $queryUpcoming(ChatConsultation::where('email', $session->lead_email))
+                    ->latest('scheduled_at')
+                    ->first();
+            }
+
+            if ($existingConsultation) {
+                $existingBooking = [
+                    'consultation_id' => $existingConsultation->id,
+                    'current_time_formatted' => $existingConsultation->scheduled_at->format('l, M j \a\t g:i A T'),
+                    'client_name' => $existingConsultation->name,
+                    'client_email' => $existingConsultation->email,
+                    'status' => $existingConsultation->status,
+                ];
+                $isReschedule = true;
+            }
+        }
+
         return [
             'type' => 'calendar_slot_picker',
-            'title' => 'Schedule a 15-Minute Technical Call with Our Production Lead',
-            'description' => 'Pick a time that works best for you. We will review your images and delivery SLA.',
+            'title' => $isReschedule
+                ? 'Reschedule Technical Intake Call'
+                : 'Schedule a 15-Minute Technical Call with Our Production Lead',
+            'description' => $isReschedule
+                ? "You have an upcoming consultation booked for {$existingBooking['current_time_formatted']}. Select a new slot below to move it, or keep your existing appointment."
+                : 'Pick a time that works best for you. We will review your images and delivery SLA.',
             'timezone' => $clientTimezone,
+            'is_reschedule' => $isReschedule,
+            'existing_booking' => $existingBooking,
             'days' => $days,
         ];
     }
 
     /**
-     * Book appointment and store in DB.
+     * Book appointment or reschedule existing appointment.
      *
      * @param  array<string, mixed>  $params
      * @return array<string, mixed>
      */
     public function book(array $params, ?ChatSession $session = null): array
     {
+        $consultationId = $params['consultation_id'] ?? null;
+        $email = trim((string) ($params['email'] ?? ($session?->lead_email ?? '')));
+
+        if ($email) {
+            $spamGuard = app(EmailAndSpamGuard::class);
+            $emailCheck = $spamGuard->validateEmail($email);
+            if (! $emailCheck['valid']) {
+                return [
+                    'type' => 'error_card',
+                    'success' => false,
+                    'error' => $emailCheck['reason'],
+                    'message' => $emailCheck['reason'],
+                ];
+            }
+        }
+
+        // Check if user already has an active upcoming consultation in database
+        $existingConsultation = null;
+        if ($consultationId) {
+            $existingConsultation = ChatConsultation::find($consultationId);
+        }
+
+        if (! $existingConsultation) {
+            $query = ChatConsultation::where('scheduled_at', '>=', now()->subMinutes(15))
+                ->whereNotIn('status', ['cancelled', 'completed']);
+
+            if ($session && $email) {
+                $existingConsultation = $query->where(function ($q) use ($session, $email) {
+                    $q->where('chat_session_id', $session->id)
+                        ->orWhere('email', $email);
+                })->latest('scheduled_at')->first();
+            } elseif ($session) {
+                $existingConsultation = $query->where('chat_session_id', $session->id)->latest('scheduled_at')->first();
+            } elseif ($email) {
+                $existingConsultation = $query->where('email', $email)->latest('scheduled_at')->first();
+            }
+        }
+
+        // If an upcoming consultation exists, automatically update/reschedule it to prevent duplicates
+        if ($existingConsultation) {
+            return $this->reschedule([
+                'consultation_id' => $existingConsultation->id,
+                'slot_datetime' => $params['slot_datetime'] ?? '',
+                'reason' => $params['notes'] ?? 'Rescheduled via chat slot picker',
+                'name' => $params['name'] ?? $existingConsultation->name,
+                'email' => $email ?: $existingConsultation->email,
+                'phone' => $params['phone'] ?? $existingConsultation->phone,
+            ], $session);
+        }
+
         $name = trim((string) ($params['name'] ?? 'Guest Client'));
         $email = trim((string) ($params['email'] ?? ''));
         $phone = trim((string) ($params['phone'] ?? ''));
         $slotDatetime = trim((string) ($params['slot_datetime'] ?? ''));
-        $notes = trim((string) ($params['notes'] ?? 'Booked via smart chat dialog'));
+        $notes = ! empty($params['notes']) ? trim((string) $params['notes']) : 'General technical intake & studio inquiry';
         $serviceSlug = trim((string) ($params['service'] ?? ''));
 
         $serviceId = null;
@@ -158,7 +300,7 @@ class CalendarBookingTool
             'service_id' => $serviceId,
             'scheduled_at' => $scheduledCarbon,
             'timezone' => $scheduledCarbon->getTimezone()->getName() ?: 'UTC',
-            'status' => 'confirmed',
+            'status' => 'pending',
             'notes' => $notes,
         ]);
 
@@ -171,6 +313,13 @@ class CalendarBookingTool
             ]);
         }
 
+        // Broadcast real-time alert to administrators
+        try {
+            app(NotificationService::class)->triggerConsultationBooked($consultation);
+        } catch (\Throwable $e) {
+            // Silently log
+        }
+
         return [
             'type' => 'booking_confirmed_card',
             'consultation_id' => $consultation->id,
@@ -179,6 +328,130 @@ class CalendarBookingTool
             'datetime_formatted' => $scheduledCarbon->format('l, F j, Y \a\t g:i A T'),
             'meeting_link_note' => 'A Google Meet / Zoom link has been sent to your email with calendar invitation.',
             'status' => 'Confirmed',
+            'is_rescheduled' => false,
+        ];
+    }
+
+    /**
+     * Reschedule an existing consultation.
+     *
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
+     */
+    public function reschedule(array $params, ?ChatSession $session = null): array
+    {
+        $slotDatetime = trim((string) ($params['slot_datetime'] ?? ''));
+        $consultationId = $params['consultation_id'] ?? null;
+        $email = trim((string) ($params['email'] ?? ''));
+        $reason = trim((string) ($params['reason'] ?? 'Requested new slot via chat'));
+
+        $consultation = null;
+        if ($consultationId) {
+            $consultation = ChatConsultation::find($consultationId);
+        }
+        if (! $consultation && $session) {
+            $consultation = ChatConsultation::where('chat_session_id', $session->id)
+                ->where('status', '!=', 'cancelled')
+                ->latest('id')
+                ->first();
+        }
+        if (! $consultation && $email) {
+            $consultation = ChatConsultation::where('email', $email)
+                ->where('status', '!=', 'cancelled')
+                ->latest('id')
+                ->first();
+        }
+
+        if (! $consultation) {
+            // If no prior consultation found, fall back to new booking
+            return $this->book($params, $session);
+        }
+
+        $oldFormatted = $consultation->scheduled_at->format('M j, Y \a\t g:i A');
+        $newCarbon = Carbon::parse($slotDatetime);
+        $newFormatted = $newCarbon->format('M j, Y \a\t g:i A');
+
+        $auditNote = "\n[Rescheduled via Chat: was {$oldFormatted}, moved to {$newFormatted}. Reason: {$reason}]";
+
+        $consultation->update([
+            'scheduled_at' => $newCarbon,
+            'status' => 'confirmed',
+            'notes' => trim(($consultation->notes ?? '').$auditNote),
+        ]);
+
+        if (! empty($params['name'])) {
+            $consultation->update(['name' => trim((string) $params['name'])]);
+        }
+        if (! empty($params['phone'])) {
+            $consultation->update(['phone' => trim((string) $params['phone'])]);
+        }
+
+        // Notify Admins
+        try {
+            app(NotificationService::class)->sendToAllAdmins('consultation.rescheduled', [
+                'title' => '📅 Consultation Rescheduled',
+                'message' => "Client {$consultation->name} moved call to {$newCarbon->format('l, M j \a\t g:i A T')}",
+                'consultation_id' => $consultation->id,
+                'admin_url' => url('/admin/consultations'),
+                'timestamp' => now()->toISOString(),
+            ]);
+        } catch (\Throwable $e) {
+            // Silently log
+        }
+
+        return [
+            'type' => 'booking_confirmed_card',
+            'consultation_id' => $consultation->id,
+            'client_name' => $consultation->name,
+            'email' => $consultation->email,
+            'datetime_formatted' => $newCarbon->format('l, F j, Y \a\t g:i A T'),
+            'previous_datetime' => $oldFormatted,
+            'meeting_link_note' => 'Your calendar invitation has been updated with the new time.',
+            'status' => 'Rescheduled',
+            'is_rescheduled' => true,
+        ];
+    }
+
+    /**
+     * Check status of client's active appointment.
+     *
+     * @param  array<string, mixed>  $params
+     * @return array<string, mixed>
+     */
+    public function checkAppointment(array $params, ?ChatSession $session = null): array
+    {
+        $email = trim((string) ($params['email'] ?? ''));
+
+        $query = ChatConsultation::where('scheduled_at', '>=', now()->subMinutes(15))
+            ->whereNotIn('status', ['cancelled', 'completed']);
+
+        $consultation = null;
+        if ($session && $email) {
+            $consultation = $query->where(function ($q) use ($session, $email) {
+                $q->where('chat_session_id', $session->id)->orWhere('email', $email);
+            })->latest('scheduled_at')->first();
+        } elseif ($session) {
+            $consultation = $query->where('chat_session_id', $session->id)->latest('scheduled_at')->first();
+        } elseif ($email) {
+            $consultation = $query->where('email', $email)->latest('scheduled_at')->first();
+        }
+
+        if (! $consultation) {
+            return [
+                'type' => 'no_appointment_found',
+                'message' => 'No active upcoming consultations found. Would you like to schedule a 15-minute intake call?',
+            ];
+        }
+
+        return [
+            'type' => 'appointment_status_card',
+            'consultation_id' => $consultation->id,
+            'client_name' => $consultation->name,
+            'email' => $consultation->email,
+            'datetime_formatted' => $consultation->scheduled_at->format('l, F j, Y \a\t g:i A T'),
+            'status' => ucfirst($consultation->status),
+            'notes' => $consultation->notes,
+            'can_reschedule' => true,
         ];
     }
 }

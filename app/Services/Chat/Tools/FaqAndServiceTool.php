@@ -58,6 +58,12 @@ class FaqAndServiceTool
             ->take(2)
             ->get();
 
+        // If no matches, fallback to default popular FAQs and top services
+        if ($faqs->isEmpty() && $services->isEmpty()) {
+            $faqs = Faq::orderBy('sort_order', 'asc')->take(2)->get();
+            $services = Service::orderBy('sort_order', 'asc')->take(2)->get();
+        }
+
         $pricing = PricingPlan::where('name', 'like', "%{$topic}%")
             ->orWhere('headline', 'like', "%{$topic}%")
             ->take(2)

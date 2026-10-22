@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
+use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,11 @@ class AdminChatSessionController extends Controller
      */
     public function index(Request $request): Response
     {
+        // Acknowledge unread chat leads when admin opens the transcripts & leads page
+        ContactMessage::where('inquiry_type', 'chat_lead')
+            ->where('status', 'new')
+            ->update(['status' => 'read']);
+
         $status = $request->query('status');
 
         $query = ChatSession::withCount('messages')
@@ -64,6 +70,14 @@ class AdminChatSessionController extends Controller
      */
     public function show(ChatSession $chatSession): JsonResponse
     {
+        // If this session has a lead email, mark associated contact message as read
+        if ($chatSession->lead_email) {
+            ContactMessage::where('inquiry_type', 'chat_lead')
+                ->where('email', $chatSession->lead_email)
+                ->where('status', 'new')
+                ->update(['status' => 'read']);
+        }
+
         $messages = $chatSession->messages()
             ->orderBy('created_at', 'asc')
             ->get()
@@ -94,6 +108,18 @@ class AdminChatSessionController extends Controller
     }
 
     /**
+     * Mark all unread chat leads as read.
+     */
+    public function markAllLeadsRead(): RedirectResponse
+    {
+        ContactMessage::where('inquiry_type', 'chat_lead')
+            ->where('status', 'new')
+            ->update(['status' => 'read']);
+
+        return redirect()->back()->with('success', 'All new chat leads marked as read.');
+    }
+
+    /**
      * Delete a chat session and associated messages.
      */
     public function destroy(ChatSession $chatSession): RedirectResponse
@@ -101,5 +127,24 @@ class AdminChatSessionController extends Controller
         $chatSession->delete();
 
         return redirect()->back()->with('success', 'Chat session transcript deleted.');
+    }
+
+    /**
+     * Delete multiple or all chat sessions.
+     */
+    public function destroyAll(Request $request): RedirectResponse
+    {
+        $type = $request->input('type', 'all');
+
+        if ($type === 'empty') {
+            $count = ChatSession::doesntHave('messages')->whereNull('lead_email')->delete();
+
+            return redirect()->back()->with('success', "Cleared {$count} empty visitor chat sessions.");
+        }
+
+        $count = ChatSession::count();
+        ChatSession::query()->delete();
+
+        return redirect()->back()->with('success', "All {$count} chat sessions deleted successfully.");
     }
 }
