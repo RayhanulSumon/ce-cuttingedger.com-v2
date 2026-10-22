@@ -177,7 +177,7 @@ function InvertLine({ text }: InvertLineProps) {
                     display: 'inline-block',
                     transform: 'translateZ(0)',
                 }}
-                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-[clamp(12px,2.4vw,42px)] font-semibold tracking-tight leading-[1.24] whitespace-nowrap"
+                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-[clamp(14px,2.95vw,52px)] font-semibold tracking-tight leading-[1.26] whitespace-nowrap"
             >
                 {text}
             </motion.span>
@@ -227,65 +227,70 @@ export function IntroBand() {
     ];
 
     return (
-        <section
-            ref={sectionRef}
-            className="relative pt-16 sm:pt-20 lg:pt-24 pb-20 sm:pb-24 lg:pb-28 border-y border-white/10 bg-[#090a0d] overflow-hidden select-none"
-        >
-            {/* Ambient Backlight Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[32rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
-
-            {/* Sub-label strip header */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-neutral-500">
-                <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-pulse" />
-                    <span>DUAL VELOCITY KINETIC STREAM</span>
-                </div>
-                <span className="hidden sm:inline-block text-neutral-600">
-                    DRAG HORIZONTALLY • SCROLL TO ACCELERATE
-                </span>
-            </div>
-
-            {/* DUAL OPPOSING CONTINUOUS VELOCITY MARQUEES */}
-            <div className="space-y-3 sm:space-y-4 pb-14 sm:pb-18 lg:pb-22 overflow-hidden">
-                {/* Strip 1: Continuous Drift Left, Accelerates with Scroll, Draggable */}
-                <KineticMarqueeRow
-                    items={marqueeRow1}
-                    baseSpeed={-0.6}
-                    accentColor="#d4ff00"
-                    bgClass="bg-black/40 border-y border-white/5"
-                    velocityFactor={velocityFactor}
-                />
-
-                {/* Strip 2: Continuous Drift Right, Accelerates with Scroll, Draggable */}
-                <KineticMarqueeRow
-                    items={marqueeRow2}
-                    baseSpeed={0.6}
-                    accentColor="#00f5ff"
-                    bgClass="bg-black/60 border-b border-white/5"
-                    velocityFactor={velocityFactor}
-                />
-            </div>
-
-            {/* CENTERED ABOUT MANIFESTO STATEMENT */}
-            <div className="w-full max-w-[96%] xl:max-w-[1560px] mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10">
-                {/* 5 Equal-width lines that scrub smoothly with scroll */}
-                <div className="flex flex-col items-center w-full space-y-1">
-                    {manifestoLines.map((line, index) => (
-                        <InvertLine key={index} text={line} />
-                    ))}
+        <>
+            {/* 1. DUAL VELOCITY KINETIC MARQUEE TRANSITION STRIP */}
+            <section
+                ref={sectionRef}
+                className="relative py-12 sm:py-16 border-y border-white/10 bg-[#07080a] overflow-hidden select-none"
+            >
+                {/* Sub-label strip header */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5 flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-neutral-500">
+                    <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-pulse" />
+                        <span>DUAL VELOCITY KINETIC STREAM</span>
+                    </div>
+                    <span className="hidden sm:inline-block text-neutral-600">
+                        DRAG HORIZONTALLY • SCROLL TO ACCELERATE
+                    </span>
                 </div>
 
-                {/* Modern Studio CTA Button */}
-                <div className="pt-4 flex justify-center">
-                    <Link
-                        href="/about"
-                        className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-white/20 bg-white/5 hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] text-sm sm:text-base font-['General_Sans',_'Outfit',_sans-serif] uppercase font-semibold tracking-widest text-[#f9f4e8] transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] group"
-                    >
-                        <span>Discover Our Studio</span>
-                        <ArrowUpRight className="w-4 h-4 text-[#d4ff00] group-hover:text-black transition-colors" />
-                    </Link>
+                {/* DUAL OPPOSING CONTINUOUS VELOCITY MARQUEES */}
+                <div className="space-y-3 sm:space-y-4 overflow-hidden">
+                    {/* Strip 1: Continuous Drift Left, Accelerates with Scroll, Draggable */}
+                    <KineticMarqueeRow
+                        items={marqueeRow1}
+                        baseSpeed={-0.6}
+                        accentColor="#d4ff00"
+                        bgClass="bg-black/40 border-y border-white/5"
+                        velocityFactor={velocityFactor}
+                    />
+
+                    {/* Strip 2: Continuous Drift Right, Accelerates with Scroll, Draggable */}
+                    <KineticMarqueeRow
+                        items={marqueeRow2}
+                        baseSpeed={0.6}
+                        accentColor="#00f5ff"
+                        bgClass="bg-black/60 border-b border-white/5"
+                        velocityFactor={velocityFactor}
+                    />
                 </div>
-            </div>
-        </section>
+            </section>
+
+            {/* 2. DEDICATED FULL-SCREEN STUDIO MANIFESTO STATEMENT */}
+            <section className="relative min-h-[85vh] lg:min-h-screen py-24 sm:py-32 lg:py-36 flex flex-col justify-center items-center border-b border-white/10 bg-[#090a0d] overflow-hidden select-none">
+                {/* Ambient Backlight Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65rem] h-[36rem] bg-[#d4ff00]/6 rounded-full blur-[220px] pointer-events-none" />
+
+                <div className="w-full max-w-[96%] xl:max-w-[1560px] mx-auto px-4 sm:px-6 text-center space-y-10 sm:space-y-14 relative z-10">
+                    {/* 5 Equal-width lines that scrub smoothly with scroll */}
+                    <div className="flex flex-col items-center w-full space-y-2 sm:space-y-3">
+                        {manifestoLines.map((line, index) => (
+                            <InvertLine key={index} text={line} />
+                        ))}
+                    </div>
+
+                    {/* Modern Studio CTA Button */}
+                    <div className="pt-2 flex justify-center">
+                        <Link
+                            href="/about"
+                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border border-white/20 bg-white/5 hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] text-xs sm:text-sm font-['General_Sans',_'Outfit',_sans-serif] uppercase font-bold tracking-widest text-[#f9f4e8] transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] group cursor-pointer"
+                        >
+                            <span>Discover Our Studio</span>
+                            <ArrowUpRight className="w-4 h-4 text-[#d4ff00] group-hover:text-black transition-colors" />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+        </>
     );
 }
