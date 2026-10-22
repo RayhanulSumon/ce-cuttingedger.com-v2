@@ -377,15 +377,12 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
                         {/* CTAs */}
                         <div className="flex flex-wrap items-center gap-4 pt-2">
-                            <a href="#trial-uploader-section">
-                                <Button
-                                    variant="primary"
-                                    size="lg"
-                                    withArrow
-                                >
+                            <Button asChild size="lg">
+                                <a href="#trial-uploader-section">
                                     Try 3 Images Free
-                                </Button>
-                            </a>
+                                    <ArrowUpRight />
+                                </a>
+                            </Button>
 
                             <Button
                                 variant="secondary"

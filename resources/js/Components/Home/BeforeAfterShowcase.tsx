@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BeforeAfterSlider } from '@/Components/UI/BeforeAfterSlider';
+import { BeforeAfterSlider } from '@/Components/ui/BeforeAfterSlider';
 import { Sparkles, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
 interface ShowcaseItem {
