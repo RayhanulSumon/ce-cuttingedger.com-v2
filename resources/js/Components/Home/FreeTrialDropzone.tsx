@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, Link } from '@inertiajs/react';
 import {
     UploadCloud,
     FileImage,
@@ -12,6 +12,10 @@ import {
     Lock,
     Clock,
     Layers,
+    AlertTriangle,
+    ArrowUpRight,
+    Calculator,
+    CreditCard,
 } from 'lucide-react';
 
 const POPULAR_SERVICES = [
@@ -30,7 +34,7 @@ export function FreeTrialDropzone() {
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
         email: '',
         service: POPULAR_SERVICES[0],
@@ -106,7 +110,97 @@ export function FreeTrialDropzone() {
                     </p>
                 </div>
 
-                {submitted ? (
+                {/* 1. Trial Quota Limit Reached (Single Email or IP Limit Exceeded) */}
+                {errors.trial_exhausted ? (
+                    <div className="max-w-2xl mx-auto p-6 sm:p-10 rounded-3xl border border-amber-500/40 bg-[#12141c]/95 backdrop-blur-2xl text-left space-y-6 shadow-[0_20px_60px_rgba(245,158,11,0.12)]">
+                        <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl sm:text-2xl font-['Clash_Display',_'Syne',_sans-serif] font-bold text-white uppercase tracking-tight">
+                                        Free Trial Limit Reached
+                                    </h3>
+                                    <span className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">
+                                        Trial Sample Previously Claimed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold uppercase tracking-wider shrink-0 hidden sm:inline-block">
+                                Paid Plans Available
+                            </span>
+                        </div>
+
+                        {/* Explanation Notice */}
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2 text-xs sm:text-sm font-sans leading-relaxed text-neutral-300">
+                            <p>
+                                {errors.trial_exhausted}
+                            </p>
+                            <p className="text-xs font-mono text-neutral-400 pt-1">
+                                To prevent automated abuse, complimentary free trials are strictly limited to <span className="text-[#d4ff00] font-semibold">one batch per client or network</span>. Standard production rates apply.
+                            </p>
+                        </div>
+
+                        {/* Standard Studio Production Rates */}
+                        <div className="space-y-2">
+                            <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400 font-semibold block">
+                                Transparent Standard Rates:
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-neutral-300">Clipping & Background Removal</span>
+                                    <span className="text-[#d4ff00] font-bold">$0.49 / image</span>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-neutral-300">Ghost Mannequin / Joint</span>
+                                    <span className="text-[#d4ff00] font-bold">$0.99 / image</span>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-neutral-300">High-End Fashion Retouch</span>
+                                    <span className="text-[#d4ff00] font-bold">$1.49 / image</span>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-neutral-300">3D CGI Product Modeling</span>
+                                    <span className="text-[#d4ff00] font-bold">From $29.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons to Paid Plans */}
+                        <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                            <Link
+                                href="/pricing"
+                                className="flex-1 py-3.5 px-5 rounded-full bg-[#d4ff00] hover:bg-[#bde600] text-black font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(212,255,0,0.25)]"
+                            >
+                                <CreditCard className="w-4 h-4" />
+                                <span>Explore Paid Plans</span>
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                            </Link>
+
+                            <a
+                                href="#pricing-calculator"
+                                onClick={() => {
+                                    const el = document.getElementById('pricing-calculator') || document.getElementById('volume-pricing');
+                                    el?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="py-3.5 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 transition-all border border-white/10"
+                            >
+                                <Calculator className="w-4 h-4 text-[#d4ff00]" />
+                                <span>Volume Calculator</span>
+                            </a>
+
+                            <button
+                                type="button"
+                                onClick={() => clearErrors('trial_exhausted')}
+                                className="py-3.5 px-4 text-xs font-mono text-neutral-400 hover:text-white underline transition-colors cursor-pointer text-center"
+                            >
+                                Try different email
+                            </button>
+                        </div>
+                    </div>
+                ) : submitted ? (
                     /* Clean Success State */
                     <div className="max-w-lg mx-auto p-8 sm:p-10 rounded-3xl border border-[#d4ff00]/30 bg-[#12141c]/90 backdrop-blur-2xl text-center space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
                         <div className="w-16 h-16 rounded-2xl bg-[#d4ff00]/15 border border-[#d4ff00]/40 text-[#d4ff00] mx-auto flex items-center justify-center shadow-[0_0_25px_rgba(212,255,0,0.2)]">

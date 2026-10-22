@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
 use App\Models\FreeTrialRequest;
+use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -42,6 +43,20 @@ class ContactController extends Controller
             'output_format' => ['nullable', 'string', 'max:50'],
             'attachments.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd,zip,pdf'],
         ]);
+
+        // If this is a free trial inquiry, verify single-trial eligibility
+        if (($validated['inquiry_type'] ?? '') === 'free_trial') {
+            $guard = app(EmailAndSpamGuard::class);
+            $eligibility = $guard->checkTrialEligibility($validated['email'], $request->ip());
+            if (! $eligibility['eligible']) {
+                return back()->withErrors([
+                    'trial_exhausted' => $eligibility['reason'],
+                ])->with('trial_exhausted', [
+                    'reason' => $eligibility['reason'],
+                    'email' => $validated['email'],
+                ])->withInput();
+            }
+        }
 
         $uploadedPaths = [];
         $imageUrls = [];
@@ -122,6 +137,25 @@ class ContactController extends Controller
             'instructions' => ['nullable', 'string', 'max:5000'],
             'attachments.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd,zip,pdf'],
         ]);
+
+        $guard = app(EmailAndSpamGuard::class);
+
+        // 1. Email format and disposable burner domain check
+        $emailCheck = $guard->validateEmail($validated['email']);
+        if (! $emailCheck['valid']) {
+            return back()->withErrors(['email' => $emailCheck['reason']])->withInput();
+        }
+
+        // 2. Strict 1-Trial Limit Enforcement (single email or single IP network)
+        $eligibility = $guard->checkTrialEligibility($validated['email'], $request->ip());
+        if (! $eligibility['eligible']) {
+            return back()->withErrors([
+                'trial_exhausted' => $eligibility['reason'],
+            ])->with('trial_exhausted', [
+                'reason' => $eligibility['reason'],
+                'email' => $validated['email'],
+            ])->withInput();
+        }
 
         $uploadedPaths = [];
         $imageUrls = [];

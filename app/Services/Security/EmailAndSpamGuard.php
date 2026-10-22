@@ -144,6 +144,49 @@ class EmailAndSpamGuard
     }
 
     /**
+     * Check if a client is eligible for a free trial based on email and IP.
+     * Enforces strict limit: 1 free trial per email address and per network/IP.
+     *
+     * @return array{eligible: bool, reason: string|null, existing_id: int|null}
+     */
+    public function checkTrialEligibility(string $email, ?string $ipAddress): array
+    {
+        $normalizedEmail = strtolower(trim($email));
+
+        // 1. Check if email has ever claimed a free trial
+        $existingEmailTrial = FreeTrialRequest::where('email', $normalizedEmail)->latest('id')->first();
+        if ($existingEmailTrial) {
+            return [
+                'eligible' => false,
+                'reason' => 'Free trial quota limit reached. A complimentary trial has already been redeemed under this email address. Free trials are strictly limited to 1 trial per client/studio. Please review our paid plans starting at $0.49/image or contact us for high-volume pricing.',
+                'existing_id' => $existingEmailTrial->id,
+            ];
+        }
+
+        // 2. Check if IP address has claimed a free trial recently (skip local test IPs in dev)
+        if (! empty($ipAddress) && ! (app()->environment('local') && in_array($ipAddress, ['127.0.0.1', '::1', 'localhost'], true))) {
+            $existingIpTrial = FreeTrialRequest::where('ip_address', $ipAddress)
+                ->where('created_at', '>=', now()->subDays(30))
+                ->latest('id')
+                ->first();
+
+            if ($existingIpTrial) {
+                return [
+                    'eligible' => false,
+                    'reason' => 'Free trial quota limit reached. A complimentary trial sample has already been activated from your network/location recently. To prevent abuse, complimentary trials are limited to 1 per client/studio. Please apply our standard production rates ($0.49/image) or choose a paid plan.',
+                    'existing_id' => $existingIpTrial->id,
+                ];
+            }
+        }
+
+        return [
+            'eligible' => true,
+            'reason' => null,
+            'existing_id' => null,
+        ];
+    }
+
+    /**
      * Check if domain is disposable.
      */
     protected function isDisposableDomain(string $domain): bool
