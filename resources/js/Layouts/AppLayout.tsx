@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
+import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { PageProps } from '@/types';
 
@@ -71,6 +72,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                 onOpenContact={() => setIsContactOpen(true)}
                 settings={settings}
             />
+
+            {/* Smart Public Client Chat & MCP Dialog */}
+            <ChatWidget />
         </div>
     );
 }
