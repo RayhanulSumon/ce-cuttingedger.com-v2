@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
@@ -115,6 +116,19 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+
+/*
+|--------------------------------------------------------------------------
+| Smart Client Chat Dialog & Hybrid MCP API
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api/chat')->name('chat.')->group(function (): void {
+    Route::post('/session', [ChatController::class, 'session'])->name('session');
+    Route::post('/message', [ChatController::class, 'message'])->name('message');
+    Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
+    Route::post('/book-slot', [ChatController::class, 'bookSlot'])->name('book-slot');
+    Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
+});
 
 /*
 |--------------------------------------------------------------------------
