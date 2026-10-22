@@ -86,19 +86,19 @@ export function BeforeAfterSlider({
             onKeyDown={handleKeyDown}
             onMouseDown={() => setIsDragging(true)}
             onTouchStart={() => setIsDragging(true)}
-            className={`relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden rounded-2xl select-none cursor-ew-resize border border-white/10 bg-[#090a0e] shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#d4ff00] ${className}`}
+            className={`relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden rounded-3xl select-none cursor-ew-resize border border-white/10 bg-[#12141c] shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#d4ff00] ${className}`}
         >
             {/* 1. Underlying AFTER Image (The Retouched Masterpiece) */}
             <img
                 src={afterImage}
                 alt={`${altText} - ${afterLabel}`}
-                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+                className="absolute inset-0 w-full h-full object-contain p-2 sm:p-4 object-center pointer-events-none select-none"
                 loading="lazy"
             />
 
             {/* After Tag Badge */}
             <div className="absolute top-4 right-4 z-20 pointer-events-none">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-[#d4ff00]/40 text-[11px] font-mono uppercase tracking-wider text-[#d4ff00] font-semibold shadow-lg">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#d4ff00]/40 text-[11px] font-mono uppercase tracking-wider text-[#d4ff00] font-semibold shadow-lg">
                     <Sparkles className="w-3 h-3" />
                     <span>{afterLabel}</span>
                 </span>
@@ -112,7 +112,7 @@ export function BeforeAfterSlider({
                 <img
                     src={beforeImage}
                     alt={`${altText} - ${beforeLabel}`}
-                    className="absolute inset-0 w-full h-full object-cover object-center max-w-none"
+                    className="absolute inset-0 w-full h-full object-contain p-2 sm:p-4 object-center max-w-none select-none"
                     style={{
                         width: containerRef.current ? `${containerRef.current.offsetWidth}px` : '100%',
                         height: containerRef.current ? `${containerRef.current.offsetHeight}px` : '100%',
@@ -123,7 +123,7 @@ export function BeforeAfterSlider({
 
             {/* Before Tag Badge */}
             <div className="absolute top-4 left-4 z-20 pointer-events-none">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-mono uppercase tracking-wider text-neutral-300 font-semibold shadow-lg">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[11px] font-mono uppercase tracking-wider text-neutral-300 font-semibold shadow-lg">
                     <span>{beforeLabel}</span>
                 </span>
             </div>

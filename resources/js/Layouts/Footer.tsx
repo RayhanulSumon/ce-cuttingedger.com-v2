@@ -84,19 +84,21 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         <div className="lg:col-span-4 space-y-6">
                             <Link
                                 href="/"
-                                className="group inline-flex items-center gap-2.5 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg"
+                                className="group inline-flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg"
                             >
-                                <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black transition-all duration-300">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                                        <path d="M12 2L2 22h7l3-6 3 6h7L12 2zm0 6l1.8 3.6h-3.6L12 8z" />
-                                    </svg>
+                                <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-[#d4ff00]/60 group-hover:bg-[#d4ff00]/10 transition-all duration-300">
+                                    <img
+                                        src="/images/ce/ce_icon_neon.png"
+                                        alt="Cutting Edger"
+                                        className="w-5 h-5 object-contain group-hover:scale-110 transition-transform duration-300"
+                                    />
                                 </div>
                                 <div className="flex items-baseline tracking-tight">
-                                    <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-white transition-colors">
+                                    <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-white transition-colors">
                                         CUTTING
                                     </span>
-                                    <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-[#d4ff00] ml-1.5">
-                                        EDGER.
+                                    <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-[#d4ff00] ml-1">
+                                        EDGER
                                     </span>
                                 </div>
                             </Link>
@@ -298,9 +300,13 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                     {/* Agency Brand Mark */}
                     <Link
                         href="/"
-                        className="order-1 sm:order-2 inline-flex items-center gap-1.5 font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase hover:text-[#d4ff00] transition-colors"
+                        className="order-1 sm:order-2 inline-flex items-center gap-2.5 font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase hover:text-[#d4ff00] transition-colors"
                     >
-                        <span className="text-2xl font-black text-[#d4ff00]">▲</span>
+                        <img
+                            src="/images/ce/ce_icon_neon.png"
+                            alt="Cutting Edger"
+                            className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
+                        />
                         <span>cuttingedger</span>
                     </Link>
 
@@ -329,13 +335,13 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         className="cursor-pointer group flex items-start justify-center select-none w-full max-w-[98%] mx-auto"
                         title="Click to get in touch"
                     >
-                        <div className="flex items-start justify-center flex-nowrap overflow-visible">
+                        <div className="flex items-center justify-center flex-nowrap w-full overflow-hidden py-4 sm:py-8">
                             {letters.map((char, index) => {
                                 if (char === ' ') {
                                     return (
                                         <span
                                             key={`space-${index}`}
-                                            className="w-3 sm:w-6 md:w-10 lg:w-14 inline-block pointer-events-none"
+                                            className="w-[1.8vw] sm:w-[2.2vw] lg:w-[2.6vw] inline-block pointer-events-none"
                                         />
                                     );
                                 }
@@ -354,8 +360,8 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                             setHoveredIndex((prev) => (prev === index ? null : prev));
                                         }}
                                         animate={{
-                                            scaleY: isHovered ? 1.3 : 1,
-                                            y: isHovered ? '6.5%' : '0%',
+                                            scaleY: isHovered ? 1.22 : 1,
+                                            y: isHovered ? '3%' : '0%',
                                         }}
                                         transition={{
                                             duration: 0.2,
@@ -364,7 +370,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                         style={{
                                             transformOrigin: 'center center',
                                         }}
-                                        className="inline-block font-display font-black uppercase text-[90px] xs:text-[130px] sm:text-[190px] md:text-[270px] lg:text-[340px] xl:text-[400px] leading-[0.86] text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
+                                        className="inline-block font-display font-black uppercase text-[6.8vw] sm:text-[7.4vw] md:text-[8vw] lg:text-[8.5vw] xl:text-[8.8vw] 2xl:text-[135px] leading-none text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
                                     >
                                         {char}
                                     </motion.span>

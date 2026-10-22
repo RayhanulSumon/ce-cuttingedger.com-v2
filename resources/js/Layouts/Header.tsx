@@ -139,25 +139,27 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
-                    {/* Brand Logo matching Agntix reference styling */}
+                    {/* Brand Logo with authentic Cutting Edger emblem */}
                     <Link
                         href="/"
-                        className="group flex items-center gap-2.5 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg select-none"
+                        className="group flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg select-none"
                     >
-                        {/* Stylized Modern Emblem Glyph */}
-                        <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black transition-all duration-300">
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                                <path d="M12 2L2 22h7l3-6 3 6h7L12 2zm0 6l1.8 3.6h-3.6L12 8z" />
-                            </svg>
+                        {/* Authentic Brand Emblem */}
+                        <div className="w-9 h-9 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-[#d4ff00]/60 group-hover:bg-[#d4ff00]/10 transition-all duration-300">
+                            <img
+                                src="/images/ce/ce_icon_neon.png"
+                                alt="Cutting Edger Emblem"
+                                className="w-6 h-6 object-contain group-hover:scale-110 transition-transform duration-300"
+                            />
                         </div>
 
                         {/* Wordmark */}
                         <div className="flex items-baseline tracking-tight">
-                            <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-white transition-colors">
+                            <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-white transition-colors">
                                 CUTTING
                             </span>
-                            <span className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-2xl sm:text-3xl font-bold tracking-wider text-[#d4ff00] ml-1.5">
-                                EDGER.
+                            <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-[#d4ff00] ml-1">
+                                EDGER
                             </span>
                         </div>
                     </Link>

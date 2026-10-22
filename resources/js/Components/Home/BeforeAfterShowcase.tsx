@@ -23,79 +23,99 @@ export function BeforeAfterShowcase() {
             serviceCategory: 'Apparel Post-Production',
             headline: '3D Hollow Invisible Joint',
             description:
-                'We composite flat front and inner neck lining captures into photorealistic 3D hollow volume with symmetrical hem balance, eliminating mannequin plastic and model reshoots.',
+                'We composite flat front and inner neck lining captures into photorealistic 3D hollow volume with symmetrical hem balance, eliminating plastic mannequins and model reshoots.',
             highlights: [
-                'Seamless Inner Neck Joint',
-                'Natural Fabric Drape Alignment',
-                'Wrinkle Attenuation & Crease Cleanup',
-                'Custom Floor Drop Shadow',
+                'Seamless Inner Neck Joint Composite',
+                'Natural Fabric Drape & Symmetrical Alignment',
+                'Wrinkle Micro-Smoothing & Crease Cleanup',
+                'Custom Studio Drop Shadow Creation',
             ],
             beforeImage:
-                'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1400&q=80',
+                'https://www.cuttingedger.com/images/source/service/before_after/ghost_mannequin_01_before.png',
             afterImage:
-                'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1400&q=80',
-            beforeLabel: 'RAW STUDIO CAPTURE',
-            afterLabel: '3D GHOST MANNEQUIN',
+                'https://www.cuttingedger.com/images/source/service/before_after/ghost_mannequin_01_after.png',
+            beforeLabel: 'ON-MANNEQUIN RAW CAPTURE',
+            afterLabel: '3D GHOST MANNEQUIN FINISH',
         },
         {
             id: 'jewelry',
             tabName: 'Fine Jewelry Retouch',
             serviceCategory: 'Macro Luxury Studio',
-            headline: 'Brilliant Diamond Sparkle & Zero Glare',
+            headline: 'Brilliant Gemstone Facet Fire & Zero Glare',
             description:
-                'Micro-scratch eradication, platinum highlight balancing, and gemstone facet enhancement without losing precious stone fire or depth of field.',
+                'Micro-scratch eradication, platinum highlight balancing, and gemstone facet enhancement without losing precious stone fire or natural depth of field.',
             highlights: [
-                'Gemstone Facet Sharpening',
-                'Micro-Scratch & Dust Cleansing',
-                'Focus Stacking Depth Alignment',
-                'Pure 255 White RGB Isolation',
+                'Diamond & Gemstone Facet Sharpening',
+                'Metallic Luster & Specular Highlight Tuning',
+                'Micro-Scratch, Dust & Smudge Elimination',
+                '100% Marketplace-Ready White RGB Isolation',
             ],
             beforeImage:
-                'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=1400&q=80',
+                'https://www.cuttingedger.com/images/source/service/before_after/jewelry_retouch_01_before.png',
             afterImage:
-                'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1400&q=80',
-            beforeLabel: 'RAW UNPROCESSED MACRO',
-            afterLabel: 'CATALOG-READY BRILLIANCE',
+                'https://www.cuttingedger.com/images/source/service/before_after/jewelry_retouch_01_after.png',
+            beforeLabel: 'RAW MACRO CAPTURE',
+            afterLabel: 'LUXURY RETOUCHED BRILLIANCE',
         },
         {
             id: 'model-retouch',
             tabName: 'High-End Model Retouch',
             serviceCategory: 'Fashion & Editorial',
-            headline: 'Authentic Skin Texture Preservation',
+            headline: 'Authentic Skin Texture & Pore Preservation',
             description:
-                'We use frequency separation and micro dodge & burn to eliminate blemishes, stray hairs, and color splotches while preserving every natural skin pore.',
+                'We use non-destructive frequency separation and micro dodge & burn to eliminate blemishes, stray hairs, and color splotches while preserving every authentic skin pore.',
             highlights: [
-                '100% Pore Texture Preservation',
-                'Micro Dodge & Burn Lighting',
-                'Flyaway Hair Reconstruction',
-                'Garment Fold Harmonization',
+                '100% Pore Texture Integrity (No Plastic Blur)',
+                'Micro Dodge & Burn Lighting Sculpting',
+                'Flyaway Hair Reconstruction & Harmonization',
+                'Editorial Lookbook Color Grading',
             ],
             beforeImage:
-                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=80',
+                'https://www.cuttingedger.com/images/source/service/before_after/high_end_01_before.png',
             afterImage:
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1400&q=80',
-            beforeLabel: 'RAW LIGHTROOM EXPORT',
-            afterLabel: 'VOGUE-GRADE RETOUCH',
+                'https://www.cuttingedger.com/images/source/service/before_after/high_end_01_after.png',
+            beforeLabel: 'UNTOUCHED STUDIO RAW',
+            afterLabel: 'EDITORIAL MASTER GRADE',
+        },
+        {
+            id: 'multipath',
+            tabName: 'Multipath Clipping',
+            serviceCategory: 'Core Cutout & Prep',
+            headline: '100% Hand-Drawn Pen Tool Vector Isolation',
+            description:
+                'Surgical vector clipping paths with multi-channel separation for color swaps, individual component isolation, and zero-halo cutout edges.',
+            highlights: [
+                'Smooth 100% Hand-Drawn Bézier Curves',
+                'Multi-Channel Component Separation',
+                'Natural Edge Feathering Without Halos',
+                'Layered PSD with Embedded Named Paths',
+            ],
+            beforeImage:
+                'https://www.cuttingedger.com/images/source/service/before_after/multi_path_before_01.png',
+            afterImage:
+                'https://www.cuttingedger.com/images/source/service/before_after/multi_path_after_01.png',
+            beforeLabel: 'RAW COMPLEX BACKGROUND',
+            afterLabel: 'MULTIPATH VECTOR ISOLATION',
         },
         {
             id: '3d-cgi',
             tabName: '3D CGI Product Twin',
             serviceCategory: 'CGI & Spatial Asset',
-            headline: 'CAD to Photorealistic 8K Render',
+            headline: 'CAD Wireframe to Photorealistic 8K Render',
             description:
                 'Transform engineering CAD blueprints into photorealistic 3D digital twins with realistic PBR materials, custom studio HDRI lighting, and 360-degree spin views.',
             highlights: [
-                'Quad-Topology CAD to Mesh',
-                'PBR Texture & Procedural Shaders',
-                'Infinite Camera Shot Angles',
-                'Interactive WebGL GLTF Export',
+                'Clean Quad-Topology CAD to Mesh Conversion',
+                'PBR Texture & Photorealistic Shader Shading',
+                'Infinite Studio Camera Shot Angles',
+                'Interactive WebGL GLTF & AR Ready Export',
             ],
             beforeImage:
-                'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80',
+                'https://www.cuttingedger.com/images/three/3d-furniture-rendering-services/wireframe.webp',
             afterImage:
-                'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80',
-            beforeLabel: 'RAW WIREFRAME CAD',
-            afterLabel: '8K PHOTOREALISTIC CGI',
+                'https://www.cuttingedger.com/images/three/3d-furniture-rendering-services/texture.webp',
+            beforeLabel: 'RAW CAD WIREFRAME MESH',
+            afterLabel: '8K PHOTOREALISTIC PBR RENDER',
         },
     ];
 
@@ -113,7 +133,7 @@ export function BeforeAfterShowcase() {
 
             <div className="w-full max-w-[96%] xl:max-w-[1560px] 2xl:max-w-[1750px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
                     <div>
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                             <Sparkles className="w-3.5 h-3.5" />
@@ -126,7 +146,7 @@ export function BeforeAfterShowcase() {
                     </div>
 
                     <p className="text-sm sm:text-base text-neutral-400 font-sans max-w-md">
-                        Drag the comparison handle across any sample to inspect our hand-drawn vector paths, invisible apparel joints, and macro retouches.
+                        Drag the comparison handle across any actual production sample to inspect our hand-drawn vector paths, invisible apparel neck joints, and macro jewelry retouches.
                     </p>
                 </div>
 
@@ -138,7 +158,7 @@ export function BeforeAfterShowcase() {
                             <button
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id)}
-                                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-mono text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap transition-all duration-300 ${
+                                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-mono text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap transition-all duration-300 cursor-pointer ${
                                     isActive
                                         ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_20px_rgba(212,255,0,0.3)]'
                                         : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5'
@@ -179,27 +199,27 @@ export function BeforeAfterShowcase() {
                             {activeItem.description}
                         </p>
 
-                        <div className="space-y-3 pt-2">
-                            <span className="font-mono text-xs text-neutral-300 uppercase tracking-widest block font-bold">
+                        <div className="space-y-3 pt-2 border-t border-white/10">
+                            <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest block">
                                 Guaranteed Execution Standards:
                             </span>
-                            <div className="grid grid-cols-1 gap-2.5">
-                                {activeItem.highlights.map((highlight, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm text-neutral-200">
+                            <ul className="space-y-2.5">
+                                {activeItem.highlights.map((point, index) => (
+                                    <li key={index} className="flex items-center gap-3 text-xs sm:text-sm text-neutral-300 font-sans">
                                         <CheckCircle2 className="w-4 h-4 text-[#d4ff00] shrink-0" />
-                                        <span>{highlight}</span>
-                                    </div>
+                                        <span>{point}</span>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
                         </div>
 
-                        <div className="pt-4 border-t border-white/10 flex items-center gap-4">
+                        <div className="pt-4">
                             <a
                                 href="#trial-uploader-section"
-                                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#d4ff00] hover:bg-[#bde600] text-black font-mono text-xs uppercase tracking-widest font-bold transition-all duration-300 shadow-lg"
+                                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer"
                             >
                                 <span>Test This On Your Images</span>
-                                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />
                             </a>
                         </div>
                     </div>
