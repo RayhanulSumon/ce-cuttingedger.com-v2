@@ -109,7 +109,7 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 {/* Vignette gradients */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/50 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45 pointer-events-none" />
             </div>
 
             {/* Clickable Card Link */}
@@ -139,20 +139,20 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                 </span>
             </div>
 
-            {/* Card Bottom Bar: Massive Centered Title with Safe Height Framing */}
-            <div className="absolute bottom-6 sm:bottom-9 lg:bottom-12 inset-x-0 z-30 text-center px-4 pointer-events-none">
-                <h3 className="font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-4xl sm:text-6xl md:text-7xl lg:text-[88px] xl:text-[104px] font-bold uppercase text-[#f9f4e8] tracking-tight leading-[1] group-hover:text-[#d4ff00] transition-colors drop-shadow-[0_15px_30px_rgba(0,0,0,0.95)]">
+            {/* Card Bottom Bar: Unobstructed Image with Clean Title Pill */}
+            <div className="absolute bottom-6 sm:bottom-8 inset-x-6 sm:inset-x-8 z-30 flex items-center justify-between pointer-events-none">
+                <span className="px-4 sm:px-5 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-['Clash_Display',_'Syne',_sans-serif] font-bold text-white uppercase tracking-wider shadow-lg">
                     {item.title}
-                </h3>
-                <div className="mt-2.5 sm:mt-3 flex items-center justify-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                    <span className="font-mono text-xs uppercase tracking-widest text-white/80 group-hover:text-[#d4ff00] transition-colors">
-                        EXPLORE CASE STUDY
-                    </span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </div>
+                </span>
+
+                {/* Mobile tap indicator */}
+                <span className="sm:hidden px-3.5 py-1.5 rounded-full bg-[#d4ff00] text-black text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-md">
+                    <span>View</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                </span>
             </div>
 
-            {/* Hardware Accelerated Frosted Dark Glass GPU Mouse Follower Pill */}
+            {/* Hardware-Accelerated Frosted Dark Glass GPU Mouse Follower Pill */}
             <motion.div
                 style={{
                     x: cursorX,
@@ -166,7 +166,7 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                     scale: isHovered ? 1 : 0.7,
                 }}
                 transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/80 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(212,255,0,0.18)] will-change-transform select-none"
+                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(212,255,0,0.18)] will-change-transform select-none"
             >
                 <span className="w-2 h-2 rounded-full bg-[#d4ff00] shadow-[0_0_8px_#d4ff00] shrink-0" />
                 <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
