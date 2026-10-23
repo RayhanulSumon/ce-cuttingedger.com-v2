@@ -37,6 +37,22 @@ class AdminBlogController extends Controller
     }
 
     /**
+     * Show the form for creating a new blog post.
+     */
+    public function create(): Response
+    {
+        $categories = BlogCategory::whereNull('parent_id')
+            ->with('subcategories')
+            ->get();
+        $authors = TeamMember::all();
+
+        return Inertia::render('Admin/Blogs/Create', [
+            'categories' => $categories,
+            'authors' => $authors,
+        ]);
+    }
+
+    /**
      * Store a newly created blog post with dynamic SEO and subcategories.
      */
     public function store(Request $request): RedirectResponse
@@ -95,7 +111,25 @@ class AdminBlogController extends Controller
 
         Blog::create($validated);
 
-        return redirect()->back()->with('success', 'Article published with full dynamic SEO suite.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Article published with full dynamic SEO suite.');
+    }
+
+    /**
+     * Show the form for editing the specified blog post.
+     */
+    public function edit(Blog $blog): Response
+    {
+        $blog->load(['category', 'subcategory', 'author']);
+        $categories = BlogCategory::whereNull('parent_id')
+            ->with('subcategories')
+            ->get();
+        $authors = TeamMember::all();
+
+        return Inertia::render('Admin/Blogs/Edit', [
+            'blog' => $blog,
+            'categories' => $categories,
+            'authors' => $authors,
+        ]);
     }
 
     /**
@@ -142,7 +176,7 @@ class AdminBlogController extends Controller
 
         $blog->update($validated);
 
-        return redirect()->back()->with('success', "Article [{$blog->title}] and SEO metadata updated.");
+        return redirect()->route('admin.blogs.index')->with('success', "Article [{$blog->title}] and SEO metadata updated.");
     }
 
     /**

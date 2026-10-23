@@ -70,7 +70,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::get('blogs/trash', [AdminBlogController::class, 'trash'])->name('blogs.trash');
     Route::post('blogs/{id}/restore', [AdminBlogController::class, 'restore'])->name('blogs.restore');
     Route::delete('blogs/{id}/force-delete', [AdminBlogController::class, 'forceDelete'])->name('blogs.force-delete');
-    Route::resource('blogs', AdminBlogController::class)->except(['show', 'create', 'edit']);
+    Route::resource('blogs', AdminBlogController::class)->except(['show']);
     Route::resource('careers', AdminCareerOpeningController::class)->except(['show', 'create', 'edit']);
     Route::resource('pricing', AdminPricingPlanController::class)->except(['show', 'create', 'edit']);
     Route::resource('faqs', AdminFaqController::class)->except(['show', 'create', 'edit']);
