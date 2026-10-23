@@ -44,9 +44,9 @@ class ContactControllerTest extends TestCase
             'message' => 'Need 3D WebGL product configurator and 2D branding.',
         ];
 
-        $response = $this->post('/contact', $payload);
+        $response = $this->from('/contact')->post('/contact', $payload);
 
-        $response->assertRedirect();
+        $response->assertRedirect('/contact');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('contact_messages', [

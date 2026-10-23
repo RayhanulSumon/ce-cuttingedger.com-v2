@@ -18,6 +18,7 @@ import { PageProps } from '@/types';
 export default function ThankYou() {
     const { settings, flash } = usePage<PageProps>().props;
     const orderNumber = (flash as any)?.order_number;
+    const isPilot = Boolean(orderNumber);
     const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
     const [copied, setCopied] = useState(false);
 
@@ -53,7 +54,9 @@ export default function ThankYou() {
                             Request <span className="text-[#d4ff00]">Confirmed.</span>
                         </h1>
                         <p className="text-neutral-400 text-sm sm:text-base max-w-md mx-auto">
-                            Confirmation email sent. Your raw files are now in our studio production queue.
+                            {isPilot
+                                ? 'Confirmation email sent. Your raw files are now in our studio production queue.'
+                                : 'Confirmation email sent. Our studio directors are reviewing your project requirements.'}
                         </p>
                     </div>
 
@@ -70,36 +73,46 @@ export default function ThankYou() {
                                         01 · Received
                                     </span>
                                 </div>
-                                <p className="text-white text-sm font-bold">Files Logged</p>
-                                <p className="text-xs text-neutral-400">Confirmation email sent</p>
+                                <p className="text-white text-sm font-bold">
+                                    {isPilot ? 'Files Logged' : 'Brief Logged'}
+                                </p>
+                                <p className="text-xs text-neutral-400">
+                                    {isPilot ? 'Confirmation email sent' : 'Direct studio notification'}
+                                </p>
                             </div>
 
-                            {/* Step 2: In Retouching */}
+                            {/* Step 2: In Retouching / Review */}
                             <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 relative">
                                 <div className="flex items-center gap-2">
                                     <div className="w-8 h-8 rounded-xl bg-[#d4ff00] text-black flex items-center justify-center font-bold shadow-[0_0_20px_rgba(212,255,0,0.35)] animate-pulse">
                                         <Sparkles className="w-4 h-4" />
                                     </div>
                                     <span className="text-[11px] font-mono uppercase tracking-wider text-white font-bold">
-                                        02 · In Queue
+                                        {isPilot ? '02 · In Queue' : '02 · In Review'}
                                     </span>
                                 </div>
-                                <p className="text-white text-sm font-bold">Senior Artisan</p>
-                                <p className="text-xs text-neutral-400">Manual clipping & color work</p>
+                                <p className="text-white text-sm font-bold">
+                                    {isPilot ? 'Senior Artisan' : 'Studio Director'}
+                                </p>
+                                <p className="text-xs text-neutral-400">
+                                    {isPilot ? 'Manual clipping & color work' : 'Scope & capacity assessment'}
+                                </p>
                             </div>
 
-                            {/* Step 3: Delivery */}
+                            {/* Step 3: Delivery / Response */}
                             <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 relative">
                                 <div className="flex items-center gap-2">
                                     <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400">
                                         <DownloadCloud className="w-4 h-4" />
                                     </div>
                                     <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 font-bold">
-                                        03 · Delivery
+                                        {isPilot ? '03 · Delivery' : '03 · Response'}
                                     </span>
                                 </div>
                                 <p className="text-neutral-300 text-sm font-bold">&lt; 24h Turnaround</p>
-                                <p className="text-xs text-neutral-400">Layered PSD & web previews</p>
+                                <p className="text-xs text-neutral-400">
+                                    {isPilot ? 'Layered PSD & web previews' : 'Custom estimate & next steps'}
+                                </p>
                             </div>
                         </div>
 

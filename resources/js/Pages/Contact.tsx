@@ -9,6 +9,7 @@ import {
     Calendar,
     ShieldCheck,
     Check,
+    CheckCircle2,
     Copy,
     RotateCw,
     Loader2,
@@ -26,7 +27,7 @@ const SERVICES = [
 ];
 
 export default function Contact() {
-    const { settings } = usePage<PageProps>().props;
+    const { settings, flash } = usePage<PageProps>().props;
     const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
     const [copiedEmail, setCopiedEmail] = useState(false);
 
@@ -114,6 +115,10 @@ export default function Contact() {
 
         post('/contact', {
             preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                refreshCaptcha();
+            },
             onError: () => refreshCaptcha(),
         });
     };
@@ -237,6 +242,17 @@ export default function Contact() {
                                         Tell us about your requirements. No spam, ever.
                                     </p>
                                 </div>
+
+                                {/* Clean In-page Success Banner */}
+                                {flash?.success && (
+                                    <div className="p-4 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-start gap-3.5 text-white animate-in fade-in duration-300">
+                                        <CheckCircle2 className="w-5 h-5 text-[#d4ff00] shrink-0 mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-bold text-[#d4ff00]">Inquiry Transmitted Successfully</p>
+                                            <p className="text-xs text-neutral-300 leading-relaxed">{flash.success}</p>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Honeypot */}
                                 <input

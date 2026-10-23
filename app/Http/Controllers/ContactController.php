@@ -110,7 +110,7 @@ class ContactController extends Controller
             report($e);
         }
 
-        return redirect()->route('thank-you')->with('success', 'Inquiry transmitted successfully. Our studio team will review your requirements.');
+        return back()->with('success', 'Thank you! Your project brief has been received. Our studio directors will review your requirements and respond within 24 hours.');
     }
 
     /**
