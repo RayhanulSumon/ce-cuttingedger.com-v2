@@ -12,8 +12,7 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        Order::create([
-            'order_number' => 'CE-ORD-9281',
+        Order::firstOrCreate(['order_number' => 'CE-ORD-9281'], [
             'client_name' => 'Sarah Jenkins',
             'client_email' => 'sarah.jenkins@lumina-apparel.com',
             'client_phone' => '+1 (415) 890-2134',
@@ -38,8 +37,7 @@ class OrderSeeder extends Seeder
             'source' => 'chat',
         ]);
 
-        Order::create([
-            'order_number' => 'CE-ORD-4720',
+        Order::firstOrCreate(['order_number' => 'CE-ORD-4720'], [
             'client_name' => 'David Kim',
             'client_email' => 'david.kim@aurora-jewelry.co',
             'client_phone' => '+1 (212) 441-9980',
@@ -62,8 +60,7 @@ class OrderSeeder extends Seeder
             'source' => 'chat',
         ]);
 
-        Order::create([
-            'order_number' => 'CE-ORD-1154',
+        Order::firstOrCreate(['order_number' => 'CE-ORD-1154'], [
             'client_name' => 'Marcus Vance',
             'client_email' => 'marcus@hypekicks.de',
             'client_phone' => '+49 30 901820',
@@ -86,8 +83,7 @@ class OrderSeeder extends Seeder
             'source' => 'chat',
         ]);
 
-        Order::create([
-            'order_number' => 'CE-TRL-1082',
+        Order::firstOrCreate(['order_number' => 'CE-TRL-1082'], [
             'client_name' => 'Elena Rostova',
             'client_email' => 'elena@nordic-wear.se',
             'client_phone' => '+46 8 123 4567',

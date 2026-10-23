@@ -34,7 +34,9 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkController;
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -198,4 +200,15 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/book-slot', [ChatController::class, 'bookSlot'])->name('book-slot');
     Route::get('/available-slots', [ChatController::class, 'availableSlots'])->name('available-slots');
     Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Dynamic Fallback Router: 301 Redirect Engine & 404 Intelligence
+|--------------------------------------------------------------------------
+*/
+Route::fallback(function (Request $request) {
+    return Inertia::render('Errors/404')
+        ->toResponse($request)
+        ->setStatusCode(404);
 });
