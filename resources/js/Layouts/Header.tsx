@@ -222,50 +222,51 @@ export function Header({
                                     {hasDropdown && openDropdown === item.label && (
                                         item.isMegaMenu ? (
                                             /* Modernized Dynamic Mega Menu for Backend Service Pillars */
-                                            <div className="absolute top-full -left-16 w-[940px] max-w-[95vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div className="absolute top-full -left-20 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                                 <div className="rounded-3xl p-6 sm:p-7 bg-[#0b0d13]/98 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative overflow-hidden">
                                                     {/* Subtle top ambient glowing line */}
                                                     <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#d4ff00]/40 to-transparent pointer-events-none" />
 
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                                                         {servicesList.map((pillar, pIdx) => {
                                                             const IconComponent = resolveServiceIcon(pillar.icon);
                                                             return (
-                                                                <div key={pillar.slug || pIdx} className="space-y-3 flex flex-col justify-between">
+                                                                <div
+                                                                    key={pillar.slug || pIdx}
+                                                                    className="flex flex-col justify-between lg:border-r lg:border-white/10 lg:pr-5 lg:last:border-r-0 lg:last:pr-0"
+                                                                >
                                                                     <div>
-                                                                        {/* Pillar Card Header */}
+                                                                        {/* Service Pillar Header (Clean & modern, no clunky Pillar tags) */}
                                                                         <Link
                                                                             href={pillar.path}
-                                                                            className="group/pillar block pb-3 border-b border-white/10 hover:border-[#d4ff00]/50 transition-colors"
+                                                                            className="group/pillar flex items-center justify-between gap-2.5 pb-3.5 border-b border-white/10 hover:border-[#d4ff00]/50 transition-colors"
                                                                         >
-                                                                            <div className="flex items-center gap-2 mb-2">
-                                                                                <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#d4ff00] group-hover/pillar:bg-[#d4ff00]/15 group-hover/pillar:border-[#d4ff00]/40 transition-all shadow-sm">
-                                                                                    <IconComponent className="w-3.5 h-3.5" />
+                                                                            <div className="flex items-center gap-2.5 min-w-0">
+                                                                                <div className="w-8 h-8 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[#d4ff00] group-hover/pillar:bg-[#d4ff00] group-hover/pillar:text-black group-hover/pillar:border-[#d4ff00] transition-all duration-300 shadow-sm shrink-0">
+                                                                                    <IconComponent className="w-4 h-4 transition-transform group-hover/pillar:scale-110" />
                                                                                 </div>
-                                                                                <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 group-hover/pillar:text-[#d4ff00] font-bold">
-                                                                                    Pillar 0{pIdx + 1}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="flex items-center justify-between gap-1">
                                                                                 <h3 className="text-xs font-display font-bold text-white group-hover/pillar:text-[#d4ff00] transition-colors leading-snug">
                                                                                     {pillar.title}
                                                                                 </h3>
-                                                                                <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500 group-hover/pillar:text-[#d4ff00] group-hover/pillar:translate-x-0.5 group-hover/pillar:-translate-y-0.5 transition-all shrink-0" />
                                                                             </div>
+                                                                            <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500 group-hover/pillar:text-[#d4ff00] group-hover/pillar:translate-x-0.5 group-hover/pillar:-translate-y-0.5 transition-all shrink-0" />
                                                                         </Link>
 
-                                                                        {/* Pillar Sub-items */}
-                                                                        <ul className="mt-2.5 space-y-1">
+                                                                        {/* Pillar Sub-items with illuminated dots and micro-interactions */}
+                                                                        <ul className="mt-3 space-y-1.5">
                                                                             {pillar.children.map((sub, sIdx) => (
                                                                                 <li key={sIdx}>
                                                                                     <Link
                                                                                         href={sub.path}
-                                                                                        className="group/sub flex items-center justify-between px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all text-xs"
+                                                                                        className="group/sub flex items-center justify-between px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-white/[0.05] border border-transparent hover:border-white/10 transition-all text-xs"
                                                                                     >
-                                                                                        <span className="truncate pr-1 group-hover/sub:translate-x-0.5 transition-transform">
-                                                                                            {sub.title}
-                                                                                        </span>
-                                                                                        <ArrowRight className="w-2.5 h-2.5 text-neutral-600 group-hover/sub:text-[#d4ff00] shrink-0 opacity-0 group-hover/sub:opacity-100 transition-opacity" />
+                                                                                        <div className="flex items-center gap-2 min-w-0">
+                                                                                            <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 group-hover/sub:bg-[#d4ff00] group-hover/sub:scale-125 transition-all shrink-0" />
+                                                                                            <span className="truncate group-hover/sub:translate-x-0.5 transition-transform text-[12px] font-medium text-neutral-300 group-hover/sub:text-white">
+                                                                                                {sub.title}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <ArrowRight className="w-3 h-3 text-neutral-500 group-hover/sub:text-[#d4ff00] shrink-0 opacity-0 group-hover/sub:opacity-100 group-hover/sub:translate-x-0.5 transition-all ml-1.5" />
                                                                                     </Link>
                                                                                 </li>
                                                                             ))}
