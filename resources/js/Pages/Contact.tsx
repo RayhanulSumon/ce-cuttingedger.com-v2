@@ -290,15 +290,14 @@ export default function Contact() {
                                 <p className="text-xs text-neutral-300 leading-relaxed">
                                     Skip the email queue. Schedule a 15-minute screen-share with our Production Director to review asset guidelines, sample tests, and dedicated volume pricing.
                                 </p>
-                                <a
-                                    href={calendlyUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center justify-center gap-2 shadow-lg"
+                                <button
+                                    type="button"
+                                    onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                    className="w-full py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                                 >
                                     <Calendar className="w-4 h-4" />
-                                    <span>Schedule on Calendly</span>
-                                </a>
+                                    <span>Select Real-Time Calendar Slot</span>
+                                </button>
                             </div>
 
                             {/* Direct Contact Coordinates */}

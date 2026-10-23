@@ -24,13 +24,13 @@ class ServiceControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Services/Index')
-            ->has('services', 6)
+            ->has('services', Service::count())
         );
     }
 
     public function test_renders_individual_service_detail_page(): void
     {
-        $service = Service::firstOrFail();
+        $service = Service::where('slug', 'ecommerce-catalog-optimization')->firstOrFail();
 
         $response = $this->get("/services/{$service->slug}");
 

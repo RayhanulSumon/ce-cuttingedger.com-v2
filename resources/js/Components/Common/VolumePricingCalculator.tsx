@@ -19,6 +19,8 @@ import {
     Gift,
     Coins,
     Layers,
+    Plus,
+    Minus,
 } from 'lucide-react';
 
 interface ServiceRate {
@@ -42,7 +44,7 @@ export function VolumePricingCalculator() {
     const services: ServiceRate[] = [
         {
             id: 'cutout',
-            name: 'Background Removal / Cutout',
+            name: 'Background Removal',
             category: '2D Image Editing',
             basePrice: 0.40,
             unitNameSingular: 'Image',
@@ -58,7 +60,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'colour-correction',
-            name: 'Colour Correction & Matching',
+            name: 'Color Correction',
             category: '2D Image Editing',
             basePrice: 0.31,
             unitNameSingular: 'Image',
@@ -74,7 +76,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'ghost-mannequin',
-            name: 'Ghost Mannequin / Joint',
+            name: 'Ghost Mannequin',
             category: '2D Image Editing',
             basePrice: 0.80,
             unitNameSingular: 'Image',
@@ -90,7 +92,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'wedding-retouch',
-            name: 'Wedding & Event Retouch',
+            name: 'Wedding & Event',
             category: '2D Image Editing',
             basePrice: 2.50,
             unitNameSingular: 'Image',
@@ -106,7 +108,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'jewelry',
-            name: 'Fine Jewelry Retouch',
+            name: 'Fine Jewelry',
             category: '2D Image Editing',
             basePrice: 3.00,
             unitNameSingular: 'Image',
@@ -122,7 +124,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'model-retouch',
-            name: 'High-End Model Retouch',
+            name: 'Model Retouch',
             category: '2D Image Editing',
             basePrice: 8.00,
             unitNameSingular: 'Image',
@@ -138,7 +140,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: '3d-cgi',
-            name: '3D CGI Product Model',
+            name: '3D CGI Product',
             category: '3D CGI',
             basePrice: 25.00,
             unitNameSingular: 'Model',
@@ -154,7 +156,7 @@ export function VolumePricingCalculator() {
         },
         {
             id: 'dtp',
-            name: 'Desktop Publishing (DTP)',
+            name: 'Desktop Publishing',
             category: 'Desktop Publishing',
             basePrice: 1.80,
             unitNameSingular: 'Page',
@@ -175,6 +177,18 @@ export function VolumePricingCalculator() {
     const [quantity, setQuantity] = useState<number>(500);
     const [speedMultiplier, setSpeedMultiplier] = useState<number>(1.0);
     const [speedLabel, setSpeedLabel] = useState<string>('Standard 24h');
+    const [categoryFilter, setCategoryFilter] = useState<'all' | '2d' | 'specialty'>('all');
+
+    // Filtered services
+    const filteredServices = useMemo(() => {
+        if (categoryFilter === '2d') {
+            return services.filter((s) => s.category === '2D Image Editing');
+        }
+        if (categoryFilter === 'specialty') {
+            return services.filter((s) => s.category !== '2D Image Editing');
+        }
+        return services;
+    }, [categoryFilter, services]);
 
     // Toggle service selection
     const handleToggleService = (serviceId: string) => {
@@ -207,11 +221,11 @@ export function VolumePricingCalculator() {
     // Selected primary service (for unit name / slider bounds)
     const primaryService = useMemo(() => {
         return services.find((s) => s.id === selectedServiceIds[0]) || services[0];
-    }, [selectedServiceIds]);
+    }, [selectedServiceIds, services]);
 
     const activeServices = useMemo(() => {
         return services.filter((s) => selectedServiceIds.includes(s.id));
-    }, [selectedServiceIds]);
+    }, [selectedServiceIds, services]);
 
     // Aggregate Base Unit Price across selected services
     const combinedBasePrice = useMemo(() => {
@@ -312,7 +326,7 @@ export function VolumePricingCalculator() {
                 <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                         <Calculator className="w-3.5 h-3.5" />
-                        <span>[ LIVE PRODUCTION & COMBO RATE ESTIMATOR ]</span>
+                        <span>[ LIVE PRODUCTION RATE ESTIMATOR ]</span>
                     </div>
 
                     <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.05]">
@@ -321,7 +335,7 @@ export function VolumePricingCalculator() {
                     </h2>
 
                     <p className="mt-3.5 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
-                        Select a single service or combine multiple services to activate <strong>Buy 2 Get 1 Free</strong> combo discounts. Rates automatically decrease as your batch size grows.
+                        Select a single service or combine multiple services for <strong>bundled volume discounts</strong>. Rates automatically scale down as your batch size grows.
                     </p>
 
                     {/* Quick Preset Combos */}
@@ -354,23 +368,65 @@ export function VolumePricingCalculator() {
                 </div>
 
                 {/* Calculator Interactive Container */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch max-w-6xl mx-auto">
                     {/* Left Column: Interactive Controls */}
-                    <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-[#0c0d12]/90 backdrop-blur-xl p-6 sm:p-10 space-y-8 shadow-2xl">
+                    <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-[#0d0f15]/95 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-2xl flex flex-col justify-between">
                         {/* 1. Service Selection */}
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <label className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold flex items-center gap-2">
-                                    <span>01.</span>
-                                    <span>Select Service Discipline (Click to Select / Combine)</span>
-                                </label>
-                                <span className="text-[11px] font-mono text-neutral-400">
-                                    {selectedServiceIds.length} Selected · Base: ${combinedBasePrice.toFixed(2)}
-                                </span>
+                        <div className="space-y-3.5">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                        1
+                                    </span>
+                                    <label className="text-sm font-semibold text-white tracking-wide">
+                                        Select Services
+                                    </label>
+                                    <span className="text-xs font-mono text-neutral-400 ml-1">
+                                        ({selectedServiceIds.length} active · ${combinedBasePrice.toFixed(2)} base)
+                                    </span>
+                                </div>
+
+                                {/* Category Switcher Filter */}
+                                <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/5 self-start sm:self-auto">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCategoryFilter('all')}
+                                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
+                                            categoryFilter === 'all'
+                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                : 'text-neutral-400 hover:text-white'
+                                        }`}
+                                    >
+                                        All ({services.length})
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCategoryFilter('2d')}
+                                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
+                                            categoryFilter === '2d'
+                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                : 'text-neutral-400 hover:text-white'
+                                        }`}
+                                    >
+                                        2D Retouch
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCategoryFilter('specialty')}
+                                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
+                                            categoryFilter === 'specialty'
+                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                : 'text-neutral-400 hover:text-white'
+                                        }`}
+                                    >
+                                        3D & DTP
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                {services.map((svc) => {
+                            {/* Service Cards Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {filteredServices.map((svc) => {
                                     const isSelected = selectedServiceIds.includes(svc.id);
                                     const IconComponent = svc.icon;
 
@@ -379,39 +435,42 @@ export function VolumePricingCalculator() {
                                             type="button"
                                             key={svc.id}
                                             onClick={() => handleToggleService(svc.id)}
-                                            className={`p-3.5 rounded-2xl border text-left transition-all relative overflow-hidden cursor-pointer select-none ${
+                                            className={`group px-3 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer select-none relative flex items-center justify-between gap-2.5 ${
                                                 isSelected
-                                                    ? 'border-[#d4ff00] bg-[#d4ff00]/10 text-white shadow-[0_0_18px_rgba(212,255,0,0.18)] ring-1 ring-[#d4ff00]/50'
-                                                    : 'border-white/10 bg-white/[0.02] text-neutral-300 hover:border-white/20 hover:bg-white/[0.05]'
+                                                    ? 'border-[#d4ff00] bg-[#d4ff00]/10 text-white shadow-[0_0_15px_rgba(212,255,0,0.12)] ring-1 ring-[#d4ff00]/40'
+                                                    : 'border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-white/20 hover:bg-white/[0.05]'
                                             }`}
                                         >
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-2.5 min-w-0">
                                                 <div
-                                                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                                                         isSelected
                                                             ? 'bg-[#d4ff00] text-black shadow-sm'
-                                                            : 'bg-white/5 text-neutral-400 border border-white/10'
+                                                            : 'bg-white/5 text-neutral-400 group-hover:text-white border border-white/10'
                                                     }`}
                                                 >
                                                     <IconComponent className="w-4 h-4" />
                                                 </div>
 
-                                                <div className="overflow-hidden flex-1">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="font-mono text-xs font-bold uppercase tracking-wider block truncate">
-                                                            {svc.name}
-                                                        </span>
-                                                        {isSelected && (
-                                                            <div className="w-4 h-4 rounded-full bg-[#d4ff00] text-black flex items-center justify-center shrink-0 ml-1">
-                                                                <Check className="w-3 h-3 stroke-[3]" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mt-0.5">
-                                                        <span>${svc.basePrice.toFixed(2)} / {svc.unitNameSingular.toLowerCase()}</span>
-                                                        <span className="text-[10px] text-neutral-500">{svc.unitNamePlural}</span>
-                                                    </div>
+                                                <div className="min-w-0">
+                                                    <span className="text-xs font-semibold text-white block truncate leading-tight">
+                                                        {svc.name}
+                                                    </span>
+                                                    <span className="text-[11px] font-mono text-neutral-400 block mt-0.5">
+                                                        ${svc.basePrice.toFixed(2)}
+                                                        <span className="text-neutral-500 text-[10px]"> / {svc.unitNameSingular.toLowerCase()}</span>
+                                                    </span>
                                                 </div>
+                                            </div>
+
+                                            <div
+                                                className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                                                    isSelected
+                                                        ? 'bg-[#d4ff00] text-black shadow-sm'
+                                                        : 'border border-white/20 bg-white/5'
+                                                }`}
+                                            >
+                                                {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                                             </div>
                                         </button>
                                     );
@@ -420,50 +479,68 @@ export function VolumePricingCalculator() {
 
                             {/* COMBO PERKS BANNER */}
                             {hasSameFlowFreeFinish && (
-                                <div className="mt-3 p-3.5 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-start gap-3 animate-in fade-in">
-                                    <div className="w-7 h-7 rounded-lg bg-[#d4ff00] text-black flex items-center justify-center shrink-0 mt-0.5">
+                                <div className="p-3 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/25 flex items-center gap-3 animate-in fade-in">
+                                    <div className="w-7 h-7 rounded-lg bg-[#d4ff00] text-black flex items-center justify-center shrink-0">
                                         <Gift className="w-4 h-4" />
                                     </div>
-                                    <div className="text-xs font-mono">
-                                        <span className="font-bold text-[#d4ff00] block">
-                                            🎉 COMBO DEAL UNLOCKED: Same-Flow Free Finish
+                                    <div className="text-xs leading-tight min-w-0">
+                                        <span className="font-semibold text-[#d4ff00] block">
+                                            Combo Deal Active: Free Natural Shadow & Resize
                                         </span>
-                                        <p className="text-neutral-300 text-[11px] mt-0.5">
-                                            Natural/Drop Shadow + Resizing included at <strong>$0.00 FREE</strong> ($0.15 value per photo = +${calculation.freeFinishValue} bonus value!).
-                                        </p>
+                                        <span className="text-neutral-300 block text-[11px] mt-0.5">
+                                            $0.15/photo value included free (<strong>+${calculation.freeFinishValue} bonus</strong> value)
+                                        </span>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* 2. Interactive Quantity Slider & Direct Input */}
-                        <div className="space-y-4 pt-2 border-t border-white/10">
+                        {/* 2. Interactive Quantity Slider & Stepper */}
+                        <div className="space-y-3 pt-4 border-t border-white/[0.08]">
                             <div className="flex items-center justify-between">
-                                <label className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold flex items-center gap-2">
-                                    <span>02.</span>
-                                    <span>Quantity of {primaryService.unitNamePlural}</span>
-                                </label>
-
-                                {/* Direct Editable Numerical Input */}
                                 <div className="flex items-center gap-2">
-                                    <div className="relative">
-                                        <input
-                                            type="number"
-                                            min={sliderMin}
-                                            max={sliderMax}
-                                            value={quantity}
-                                            onChange={handleQuantityInputChange}
-                                            className="w-24 sm:w-28 px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white font-mono text-base font-bold text-right focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                        />
-                                    </div>
-                                    <span className="text-xs font-mono text-neutral-400 uppercase hidden sm:inline">
-                                        {primaryService.unitNamePlural}
+                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                        2
                                     </span>
+                                    <label className="text-sm font-semibold text-white tracking-wide">
+                                        Batch Volume
+                                    </label>
+                                    <span className="text-xs font-mono text-neutral-400">
+                                        ({primaryService.unitNamePlural})
+                                    </span>
+                                </div>
+
+                                {/* Direct Editable Numerical Stepper */}
+                                <div className="flex items-center gap-1 bg-white/[0.04] border border-white/10 rounded-xl p-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((q) => Math.max(sliderMin, q - primaryService.stepQty))}
+                                        className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer select-none"
+                                        title="Decrease volume"
+                                    >
+                                        <Minus className="w-3.5 h-3.5" />
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min={sliderMin}
+                                        max={sliderMax}
+                                        value={quantity}
+                                        onChange={handleQuantityInputChange}
+                                        className="w-16 sm:w-20 bg-transparent text-center text-white font-mono text-sm font-bold focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((q) => Math.min(sliderMax, q + primaryService.stepQty))}
+                                        className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer select-none"
+                                        title="Increase volume"
+                                    >
+                                        <Plus className="w-3.5 h-3.5" />
+                                    </button>
                                 </div>
                             </div>
 
                             {/* Range Slider with Active Fill */}
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                                 <div className="relative flex items-center">
                                     <input
                                         type="range"
@@ -472,49 +549,58 @@ export function VolumePricingCalculator() {
                                         step={primaryService.stepQty}
                                         value={quantity}
                                         onChange={(e) => setQuantity(Number(e.target.value))}
-                                        className="w-full h-3 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#d4ff00] relative z-10"
+                                        className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#d4ff00] relative z-10"
                                         style={{
                                             background: `linear-gradient(to right, #d4ff00 0%, #d4ff00 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
                                         }}
                                     />
                                 </div>
 
-                                <div className="flex justify-between text-[11px] font-mono text-neutral-500">
-                                    <span>Min: {sliderMin} {primaryService.unitNamePlural}</span>
-                                    <span>Max: {sliderMax.toLocaleString()} {primaryService.unitNamePlural}</span>
+                                <div className="flex justify-between text-[10px] font-mono text-neutral-500">
+                                    <span>Min: {sliderMin.toLocaleString()}</span>
+                                    <span>Max: {sliderMax.toLocaleString()}</span>
                                 </div>
                             </div>
 
                             {/* Preset Buttons */}
-                            <div className="flex items-center gap-2 overflow-x-auto pt-1">
-                                <span className="text-xs font-mono text-neutral-500 uppercase mr-1">Presets:</span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[11px] font-mono text-neutral-500 uppercase mr-1">Presets:</span>
                                 {primaryService.presets.map((preset) => (
                                     <button
                                         type="button"
                                         key={preset}
                                         onClick={() => setQuantity(preset)}
-                                        className={`px-3 py-1 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+                                        className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer select-none ${
                                             quantity === preset
                                                 ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_10px_rgba(212,255,0,0.3)]'
                                                 : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                         }`}
                                     >
-                                        {preset.toLocaleString()}
+                                        {preset >= 1000 ? `${preset / 1000}k` : preset}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* 3. Turnaround SLA Speed Selector */}
-                        <div className="space-y-3 pt-2 border-t border-white/10">
-                            <label className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold flex items-center gap-2">
-                                <span>03.</span>
-                                <span>Production Delivery SLA</span>
-                            </label>
+                        {/* 3. Turnaround SLA Speed Selector - Sleek Segmented Switch */}
+                        <div className="space-y-2.5 pt-4 border-t border-white/[0.08]">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                        3
+                                    </span>
+                                    <label className="text-sm font-semibold text-white tracking-wide">
+                                        Turnaround Speed
+                                    </label>
+                                </div>
+                                <span className="text-xs font-mono text-[#d4ff00] font-medium">
+                                    {speedLabel}
+                                </span>
+                            </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/10">
                                 {[
-                                    { multiplier: 1.0, label: 'Standard 24h', desc: 'Default SLA' },
+                                    { multiplier: 1.0, label: 'Standard 24h', desc: 'Standard' },
                                     { multiplier: 1.25, label: 'Rush 12h', desc: '+25% Priority' },
                                     { multiplier: 1.5, label: 'Emergency 6h', desc: '+50% Dedicated' },
                                 ].map((tier) => {
@@ -527,18 +613,18 @@ export function VolumePricingCalculator() {
                                                 setSpeedMultiplier(tier.multiplier);
                                                 setSpeedLabel(tier.label);
                                             }}
-                                            className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                            className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer select-none ${
                                                 active
-                                                    ? 'border-[#d4ff00] bg-[#d4ff00]/10 text-white shadow-[0_0_15px_rgba(212,255,0,0.2)]'
-                                                    : 'border-white/10 bg-white/[0.02] text-neutral-400 hover:text-white hover:border-white/20'
+                                                    ? 'bg-[#d4ff00] text-black font-bold shadow-md'
+                                                    : 'text-neutral-400 hover:text-white hover:bg-white/5 font-medium'
                                             }`}
                                         >
-                                            <span className="font-mono text-xs font-bold uppercase tracking-wider block">
+                                            <div className="text-xs font-sans font-semibold leading-tight">
                                                 {tier.label}
-                                            </span>
-                                            <span className="text-[10px] text-neutral-400 font-mono mt-0.5 block">
+                                            </div>
+                                            <div className={`text-[10px] font-mono mt-0.5 ${active ? 'text-black/70' : 'text-neutral-500'}`}>
                                                 {tier.desc}
-                                            </span>
+                                            </div>
                                         </button>
                                     );
                                 })}

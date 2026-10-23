@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
+import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
@@ -17,6 +18,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
     const { settings, flash } = usePage<PageProps>().props;
     const [isContactOpen, setIsContactOpen] = useState(false);
+    const [isDiscoveryCallOpen, setIsDiscoveryCallOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Initialize Lenis smooth scroll
@@ -25,6 +27,13 @@ export function AppLayout({ children }: AppLayoutProps) {
     // Initialize first-touch lead attribution tracker
     useEffect(() => {
         initializeAttribution();
+    }, []);
+
+    // Global listener for dedicated Discovery Call calendar modal
+    useEffect(() => {
+        const handleOpenDiscovery = () => setIsDiscoveryCallOpen(true);
+        window.addEventListener('ce:open-discovery-call', handleOpenDiscovery);
+        return () => window.removeEventListener('ce:open-discovery-call', handleOpenDiscovery);
     }, []);
 
     return (
@@ -50,6 +59,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             {/* Persistent Header */}
             <Header
                 onOpenContact={() => setIsContactOpen(true)}
+                onOpenDiscoveryCall={() => setIsDiscoveryCallOpen(true)}
                 onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
                 settings={settings}
             />
@@ -63,6 +73,12 @@ export function AppLayout({ children }: AppLayoutProps) {
             <Footer
                 settings={settings}
                 onOpenContact={() => setIsContactOpen(true)}
+            />
+
+            {/* Dedicated Discovery Call Calendar Modal */}
+            <DiscoveryCallModal
+                isOpen={isDiscoveryCallOpen}
+                onClose={() => setIsDiscoveryCallOpen(false)}
             />
 
             {/* Slide-out Contact Drawer */}

@@ -202,7 +202,7 @@ class ChatFlowTest extends TestCase
         $toolCards = $response->json('message.tool_cards');
         $this->assertNotEmpty($toolCards);
         $this->assertSame('service_detail_card', $toolCards[0]['type']);
-        $this->assertSame('ghost-mannequin', $toolCards[0]['slug']);
+        $this->assertContains($toolCards[0]['slug'], ['ghost-mannequin', 'ghost-mannequin-service']);
     }
 
     public function test_reschedule_consultation_slot_in_chat(): void

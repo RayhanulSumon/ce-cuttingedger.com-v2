@@ -6,11 +6,17 @@ import { SiteSettings } from '@/types/models';
 
 interface HeaderProps {
     onOpenContact: () => void;
+    onOpenDiscoveryCall?: () => void;
     onOpenMobileMenu: () => void;
     settings?: SiteSettings;
 }
 
-export function Header({ onOpenContact, onOpenMobileMenu, settings }: HeaderProps) {
+export function Header({
+    onOpenContact,
+    onOpenDiscoveryCall,
+    onOpenMobileMenu,
+    settings,
+}: HeaderProps) {
     const { url } = usePage();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -304,16 +310,21 @@ export function Header({ onOpenContact, onOpenMobileMenu, settings }: HeaderProp
                             <span>3-Asset Pilot</span>
                         </Link>
 
-                        {/* Book Discovery Call / Contact */}
-                        <a
-                            href={calendlyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        {/* Book Discovery Call via Dedicated On-Site Calendar Modal */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (onOpenDiscoveryCall) {
+                                    onOpenDiscoveryCall();
+                                } else {
+                                    window.dispatchEvent(new CustomEvent('ce:open-discovery-call'));
+                                }
+                            }}
                             className="hidden md:inline-flex items-center gap-1.5 xl:gap-2 px-3.5 py-2 xl:px-5 xl:py-2.5 rounded-full bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer select-none shrink-0 whitespace-nowrap"
                         >
                             <Calendar className="w-3.5 h-3.5 text-black stroke-[2.5] shrink-0" />
                             <span>Discovery Call</span>
-                        </a>
+                        </button>
 
                         {/* Mobile Menu Hamburger */}
                         <button

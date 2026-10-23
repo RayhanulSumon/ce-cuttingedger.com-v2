@@ -464,4 +464,16 @@ class ChatController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get available consultation slots for dedicated modal or booking page.
+     */
+    public function availableSlots(Request $request): JsonResponse
+    {
+        $timezone = $request->query('timezone', 'UTC');
+        $session = $this->sessionManager->resolve($request);
+        $data = $this->calendarTool->getAvailableSlots($timezone, $session);
+
+        return response()->json($data);
+    }
 }
