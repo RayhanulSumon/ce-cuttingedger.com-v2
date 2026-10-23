@@ -54,6 +54,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
     const createForm = useForm({
         title: "",
+        slug: "",
         client_name: "",
         year: "2026",
         category_id: categories[0]?.id || "",
@@ -64,10 +65,19 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         is_concept: false,
         sort_order: 0,
         live_url: "",
+        h1_title: "",
+        meta_title: "",
+        meta_description: "",
+        canonical_url: "",
+        is_noindex: false,
+        client_challenge: "",
+        work_done: "",
+        measurable_result: "",
     });
 
     const editForm = useForm({
         title: "",
+        slug: "",
         client_name: "",
         year: "2026",
         category_id: "" as number | string,
@@ -78,6 +88,14 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         is_concept: false,
         sort_order: 0,
         live_url: "",
+        h1_title: "",
+        meta_title: "",
+        meta_description: "",
+        canonical_url: "",
+        is_noindex: false,
+        client_challenge: "",
+        work_done: "",
+        measurable_result: "",
     });
 
     const handleCreate = (e: React.FormEvent) => {
@@ -94,6 +112,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         setEditingProject(project);
         editForm.setData({
             title: project.title,
+            slug: project.slug || "",
             client_name: project.client_name,
             year: project.year,
             category_id: project.category_id || "",
@@ -104,6 +123,14 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
             is_concept: Boolean((project as any).is_concept),
             sort_order: project.sort_order,
             live_url: project.live_url || "",
+            h1_title: (project as any).h1_title || "",
+            meta_title: (project as any).meta_title || "",
+            meta_description: (project as any).meta_description || "",
+            canonical_url: (project as any).canonical_url || "",
+            is_noindex: Boolean((project as any).is_noindex),
+            client_challenge: (project as any).client_challenge || "",
+            work_done: (project as any).work_done || "",
+            measurable_result: (project as any).measurable_result || "",
         });
     };
 
@@ -244,7 +271,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
             {/* Create Project Modal */}
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogContent className="max-w-xl">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Commission New Flagship Project</DialogTitle>
                         <DialogDescription>
@@ -252,11 +279,11 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleCreate} className="space-y-4 pt-2">
+                    <form onSubmit={handleCreate} className="space-y-5 pt-2">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Project Title
+                                    Project Title *
                                 </label>
                                 <Input
                                     value={createForm.data.title}
@@ -269,7 +296,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Client / Brand
+                                    Client / Brand *
                                 </label>
                                 <Input
                                     value={createForm.data.client_name}
@@ -282,10 +309,37 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Custom URL Slug (Optional)
+                                </label>
+                                <Input
+                                    value={createForm.data.slug}
+                                    onChange={(e) =>
+                                        createForm.setData("slug", e.target.value)
+                                    }
+                                    placeholder="auto-generated-if-empty"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    H1 Headline Override
+                                </label>
+                                <Input
+                                    value={createForm.data.h1_title}
+                                    onChange={(e) =>
+                                        createForm.setData("h1_title", e.target.value)
+                                    }
+                                    placeholder="Leave empty to use title"
+                                />
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Release Year
+                                    Release Year *
                                 </label>
                                 <Input
                                     value={createForm.data.year}
@@ -311,9 +365,9 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                     <SelectContent>
                                         <SelectItem value="uncategorized">Uncategorized</SelectItem>
                                         {categories.map((c) => (
-                                            <SelectItem key={c.id} value={String(c.id)}>
-                                                {c.name}
-                                            </SelectItem>
+                                             <SelectItem key={c.id} value={String(c.id)}>
+                                                 {c.name}
+                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -337,7 +391,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Cover Image Asset Path / URL
+                                Cover Image Asset Path / URL *
                             </label>
                             <Input
                                 value={createForm.data.cover_image}
@@ -351,7 +405,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Executive Summary
+                                Executive Summary *
                             </label>
                             <Textarea
                                 value={createForm.data.summary}
@@ -359,8 +413,105 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                     createForm.setData("summary", e.target.value)
                                 }
                                 placeholder="High-impact synopsis for marquee cards..."
+                                rows={2}
                                 required
                             />
+                        </div>
+
+                        {/* B2B Case Study Narrative (§6.2 Outline) */}
+                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
+                            <span className="font-mono text-xs uppercase tracking-wider text-[#d4ff00] font-bold block">
+                                Case Study Narrative (Challenge, Execution & Outcome)
+                            </span>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    01. Client Situation & Challenge
+                                </label>
+                                <Textarea
+                                    value={createForm.data.client_challenge}
+                                    onChange={(e) =>
+                                        createForm.setData("client_challenge", e.target.value)
+                                    }
+                                    placeholder="Describe the production bottleneck or scale challenge..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    02. Execution & Work Done
+                                </label>
+                                <Textarea
+                                    value={createForm.data.work_done}
+                                    onChange={(e) =>
+                                        createForm.setData("work_done", e.target.value)
+                                    }
+                                    placeholder="Describe the retouching pipelines, pen tool vector clipping, or CGI shaders built..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    03. Measurable Commercial Result
+                                </label>
+                                <Textarea
+                                    value={createForm.data.measurable_result}
+                                    onChange={(e) =>
+                                        createForm.setData("measurable_result", e.target.value)
+                                    }
+                                    placeholder="e.g. Delivered 4,800 SKUs in 48 hours with 99.8% first-pass approval..."
+                                    rows={2}
+                                />
+                            </div>
+                        </div>
+
+                        {/* SEO Metadata */}
+                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
+                            <span className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold block">
+                                Page-Level SEO Metadata
+                            </span>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Meta Title
+                                </label>
+                                <Input
+                                    value={createForm.data.meta_title}
+                                    onChange={(e) =>
+                                        createForm.setData("meta_title", e.target.value)
+                                    }
+                                    placeholder="Target Keyword | Cutting Edger"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Meta Description
+                                </label>
+                                <Textarea
+                                    value={createForm.data.meta_description}
+                                    onChange={(e) =>
+                                        createForm.setData("meta_description", e.target.value)
+                                    }
+                                    placeholder="Compelling synopsis for SERP snippets..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Canonical URL Override (Optional)
+                                </label>
+                                <Input
+                                    value={createForm.data.canonical_url}
+                                    onChange={(e) =>
+                                        createForm.setData("canonical_url", e.target.value)
+                                    }
+                                    placeholder="Default: self (/case-studies/...)"
+                                />
+                            </div>
                         </div>
 
                         <div className="space-y-1.5">
@@ -411,6 +562,23 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <div>
+                                <span className="text-xs font-semibold text-rose-300 block">
+                                    Noindex (Exclude from Search Engines)
+                                </span>
+                                <span className="text-[11px] text-neutral-400 block">
+                                    Prevents crawlers and sitemap inclusion for unreleased or sensitive client work.
+                                </span>
+                            </div>
+                            <Switch
+                                checked={createForm.data.is_noindex}
+                                onCheckedChange={(val) =>
+                                    createForm.setData("is_noindex", val)
+                                }
+                            />
+                        </div>
+
                         <DialogFooter>
                             <Button
                                 type="button"
@@ -435,7 +603,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                 open={!!editingProject}
                 onOpenChange={(open) => !open && setEditingProject(null)}
             >
-                <DialogContent className="max-w-xl">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Modify Project Blueprint</DialogTitle>
                         <DialogDescription>
@@ -443,11 +611,11 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleUpdate} className="space-y-4 pt-2">
+                    <form onSubmit={handleUpdate} className="space-y-5 pt-2">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Project Title
+                                    Project Title *
                                 </label>
                                 <Input
                                     value={editForm.data.title}
@@ -459,7 +627,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Client / Brand
+                                    Client / Brand *
                                 </label>
                                 <Input
                                     value={editForm.data.client_name}
@@ -471,10 +639,37 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Custom URL Slug
+                                </label>
+                                <Input
+                                    value={editForm.data.slug}
+                                    onChange={(e) =>
+                                        editForm.setData("slug", e.target.value)
+                                    }
+                                    placeholder="e.g. lumina-hyperdrive"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    H1 Headline Override
+                                </label>
+                                <Input
+                                    value={editForm.data.h1_title}
+                                    onChange={(e) =>
+                                        editForm.setData("h1_title", e.target.value)
+                                    }
+                                    placeholder="Leave empty to use title"
+                                />
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Release Year
+                                    Release Year *
                                 </label>
                                 <Input
                                     value={editForm.data.year}
@@ -522,7 +717,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Cover Image Asset Path / URL
+                                Cover Image Asset Path / URL *
                             </label>
                             <Input
                                 value={editForm.data.cover_image}
@@ -535,20 +730,117 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Executive Summary
+                                Executive Summary *
                             </label>
                             <Textarea
                                 value={editForm.data.summary}
                                 onChange={(e) =>
                                     editForm.setData("summary", e.target.value)
                                 }
+                                rows={2}
                                 required
                             />
                         </div>
 
+                        {/* B2B Case Study Narrative (§6.2 Outline) */}
+                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
+                            <span className="font-mono text-xs uppercase tracking-wider text-[#d4ff00] font-bold block">
+                                Case Study Narrative (Challenge, Execution & Outcome)
+                            </span>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    01. Client Situation & Challenge
+                                </label>
+                                <Textarea
+                                    value={editForm.data.client_challenge}
+                                    onChange={(e) =>
+                                        editForm.setData("client_challenge", e.target.value)
+                                    }
+                                    placeholder="Describe the production bottleneck or scale challenge..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    02. Execution & Work Done
+                                </label>
+                                <Textarea
+                                    value={editForm.data.work_done}
+                                    onChange={(e) =>
+                                        editForm.setData("work_done", e.target.value)
+                                    }
+                                    placeholder="Describe the retouching pipelines, pen tool vector clipping, or CGI shaders built..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    03. Measurable Commercial Result
+                                </label>
+                                <Textarea
+                                    value={editForm.data.measurable_result}
+                                    onChange={(e) =>
+                                        editForm.setData("measurable_result", e.target.value)
+                                    }
+                                    placeholder="e.g. Delivered 4,800 SKUs in 48 hours with 99.8% first-pass approval..."
+                                    rows={2}
+                                />
+                            </div>
+                        </div>
+
+                        {/* SEO Metadata */}
+                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
+                            <span className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold block">
+                                Page-Level SEO Metadata
+                            </span>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Meta Title
+                                </label>
+                                <Input
+                                    value={editForm.data.meta_title}
+                                    onChange={(e) =>
+                                        editForm.setData("meta_title", e.target.value)
+                                    }
+                                    placeholder="Target Keyword | Cutting Edger"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Meta Description
+                                </label>
+                                <Textarea
+                                    value={editForm.data.meta_description}
+                                    onChange={(e) =>
+                                        editForm.setData("meta_description", e.target.value)
+                                    }
+                                    placeholder="Compelling synopsis for SERP snippets..."
+                                    rows={2}
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                    Canonical URL Override (Optional)
+                                </label>
+                                <Input
+                                    value={editForm.data.canonical_url}
+                                    onChange={(e) =>
+                                        editForm.setData("canonical_url", e.target.value)
+                                    }
+                                    placeholder="Default: self (/case-studies/...)"
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Live Demonstration URL
+                                Live Demonstration URL (Optional)
                             </label>
                             <Input
                                 type="url"
@@ -556,6 +848,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 onChange={(e) =>
                                     editForm.setData("live_url", e.target.value)
                                 }
+                                placeholder="https://client-showcase.com"
                             />
                         </div>
 
@@ -589,6 +882,23 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 checked={editForm.data.is_concept}
                                 onCheckedChange={(val) =>
                                     editForm.setData("is_concept", val)
+                                }
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                            <div>
+                                <span className="text-xs font-semibold text-rose-300 block">
+                                    Noindex (Exclude from Search Engines)
+                                </span>
+                                <span className="text-[11px] text-neutral-400 block">
+                                    Prevents crawlers and sitemap inclusion for unreleased or sensitive client work.
+                                </span>
+                            </div>
+                            <Switch
+                                checked={editForm.data.is_noindex}
+                                onCheckedChange={(val) =>
+                                    editForm.setData("is_noindex", val)
                                 }
                             />
                         </div>

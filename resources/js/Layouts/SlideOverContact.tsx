@@ -48,7 +48,10 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
         setIsSubmitting(true);
         post('/contact', {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                onClose();
+            },
             onFinish: () => setIsSubmitting(false),
         });
     };

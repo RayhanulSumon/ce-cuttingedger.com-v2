@@ -65,4 +65,16 @@ class PageControllerTest extends TestCase
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
         $this->assertStringContainsString('User-agent: *', $response->getContent());
     }
+
+    public function test_renders_reviews_page(): void
+    {
+        $response = $this->get('/reviews');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Reviews')
+            ->has('testimonials')
+            ->has('clients')
+        );
+    }
 }

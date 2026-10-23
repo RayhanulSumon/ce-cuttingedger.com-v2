@@ -188,7 +188,7 @@ class SeoAndPillarsSeeder extends Seeder
         );
 
         // Pillar 2: Color Standardization
-        Service::updateOrCreate(
+        $pillar2 = Service::updateOrCreate(
             ['slug' => 'color-standardization'],
             [
                 'parent_id' => null,
@@ -228,8 +228,128 @@ class SeoAndPillarsSeeder extends Seeder
             ]
         );
 
-        // Pillar 3: White-Label Agency Extension
+        // Sub-page 2.1: Delta-E Swatch Calibration
         Service::updateOrCreate(
+            ['slug' => 'delta-e-swatch-calibration'],
+            [
+                'parent_id' => $pillar2->id,
+                'title' => 'Delta-E Swatch Calibration',
+                'h1_title' => 'Delta-E < 1 Swatch Calibration & Color Matching Services',
+                'marquee_label' => 'LAB-GRADE COLOR ACCURACY · SPECTRAL MEASUREMENT · ICC PROFILES · ZERO COLOR SHIFT',
+                'subtitle' => 'Scientific, lab-grade color alignment to physical fabric swatches, Pantone libraries, and brand hex palettes.',
+                'description' => 'Eliminate color discrepancy between digital catalog listings and physical deliveries. We use spectrophotometer references, calibrated L*a*b* space curves, and certified ICC color workflows to calibrate every product with Delta-E under 1.0, ensuring visual perfection across mobile screens and desktop monitors.',
+                'problem_statement' => 'Shoppers return up to 24% of online apparel orders because the physical color differs from the product listing photos.',
+                'solution_statement' => 'Our certified color technicians align digital imagery against physical production swatches and spectrophotometer data under standardized D50/D65 illuminants.',
+                'features' => [
+                    'Delta-E < 1 Spectral Measurement & Precise Calibration',
+                    'Pantone TCX, TPX, and Solid Coated Cross-Matching',
+                    'Custom ICC Display Profiling (sRGB, Adobe RGB, Display P3)',
+                    'Neutral White-Point and Luminance Curve Balancing',
+                ],
+                'deliverables' => [
+                    'Color-Calibrated Master Layered PSD Files',
+                    'Batch Delta-E Quality Assurance Verification Audit',
+                    'Web-Ready WebP and JPEG Assets Tagged with sRGB Profiles',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Spectral Swatch Ingestion', 'description' => 'Importing Pantone, hex, or physical spectral measurement references.'],
+                    ['step' => '02', 'title' => 'L*a*b* Curve Balancing', 'description' => 'Calibrating fabric tones in perceptual color space without clipping.'],
+                    ['step' => '03', 'title' => 'Cross-Display Verification', 'description' => 'Validating against wide-gamut and standard consumer color spaces.'],
+                ],
+                'faqs' => [
+                    ['question' => 'What is Delta-E and why does < 1 matter?', 'answer' => 'Delta-E measures color difference. A Delta-E value under 1.0 represents a difference that is imperceptible to the human eye, guaranteeing absolute visual fidelity.'],
+                ],
+                'icon' => 'Palette',
+                'sort_order' => 1,
+                'accent_color' => '#ffd700',
+                'meta_title' => 'Delta-E Swatch Calibration & Color Matching Service | Cutting Edger',
+                'meta_description' => 'Lab-grade Delta-E < 1 color calibration service. Match e-commerce apparel and products precisely to physical swatches and Pantone colors.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 2.2: Apparel Multi-Colorway Shifts
+        Service::updateOrCreate(
+            ['slug' => 'apparel-colorway-generation'],
+            [
+                'parent_id' => $pillar2->id,
+                'title' => 'Apparel Colorway Shifts',
+                'h1_title' => 'Multi-Colorway Apparel Color Shifts & Pattern Generation',
+                'marquee_label' => 'SHOOT ONCE · MULTIPLY SKUS · PERFECT WEAVE PRESERVATION · 70% BUDGET SAVINGS',
+                'subtitle' => 'Turn a single base garment photoshoot into 50+ hyper-realistic colorways without costly studio reshoots.',
+                'description' => 'Drastically slash photography budgets and production timelines. Shoot one neutral garment in-studio, and our digital colorists multiply it across your full seasonal colorway line. Every stitch, crease, fabric weave, and sheen gradient is maintained with absolute photographic reality.',
+                'problem_statement' => 'Photographing every single garment SKU in every colorway costs tens of thousands in studio time, model fees, and shipping delay.',
+                'solution_statement' => 'We photograph one master neutral item and digitally shift colors to match production swatches, cutting total studio photography costs by over 70%.',
+                'features' => [
+                    'Multi-Colorway Generation from a Single Studio Master Frame',
+                    'Micro-Weave Fabric Sheen and Thread Preservation',
+                    'Realistic Seam, Hem, and Shadow Value Continuity',
+                    'Rapid Turnaround for Seasonal Collection Launches',
+                ],
+                'deliverables' => [
+                    'Complete Multi-SKU E-Commerce Catalog Asset Packs',
+                    'Organized PSDs with Non-Destructive Hue Adjustment Layers',
+                    'Marketplace-Compliant Formats for Shopify, Amazon, and ASOS',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Master Mask Isolation', 'description' => 'Drawing sub-pixel pen tool paths isolating garment fabrics from skin and backgrounds.'],
+                    ['step' => '02', 'title' => 'Hue & Luminance Transformation', 'description' => 'Applying target colorway values while protecting dynamic highlights.'],
+                    ['step' => '03', 'title' => 'Texture Integrity Check', 'description' => 'Ensuring fine fabric weave, ribbed knits, and stitching retain natural depth.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Can you also apply printed patterns or graphics?', 'answer' => 'Yes. We can map custom textile prints, plaids, and repeat graphics naturally across garment folds and curvature.'],
+                ],
+                'icon' => 'Sparkles',
+                'sort_order' => 2,
+                'accent_color' => '#ffd700',
+                'meta_title' => 'Apparel Colorway Generation & Color Shift Service | Cutting Edger',
+                'meta_description' => 'Outsource apparel colorway generation. Convert a single studio photoshoot into dozens of photo-accurate garment colorways and save 70% on reshoots.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 2.3: Skin Tone Preservation & Color Grading
+        Service::updateOrCreate(
+            ['slug' => 'skin-tone-color-grading'],
+            [
+                'parent_id' => $pillar2->id,
+                'title' => 'Skin Tone & Color Grading',
+                'h1_title' => 'Fashion Skin Tone Preservation & Commercial Color Grading',
+                'marquee_label' => 'NATURAL MELANIN PRESERVATION · ZERO COLOR SPILL · EDITORIAL GRADING · BEAUTY RETOUCH',
+                'subtitle' => 'Protect organic skin tones during aggressive garment color shifts, campaign grading, and studio lighting edits.',
+                'description' => 'In commercial fashion photography, changing garment colors or applying moody atmospheric grades often causes unnatural color spill onto model skin. Our colorists isolate and preserve organic skin undertones, ensuring rich, healthy melanin textures while executing bold campaign color grading.',
+                'problem_statement' => 'Aggressive color grading and garment recoloring often creates muddy, plastic, or unnatural skin discoloration on models.',
+                'solution_statement' => 'We separate skin tones into dedicated frequency and hue separation channels, maintaining lifelike micro-skin texture and radiant undertones.',
+                'features' => [
+                    'Multi-Ethnic Melanin Tone Protection & Standardization',
+                    'Zero Color Bleed from High-Saturation Garments onto Skin',
+                    'Commercial Fashion Campaign Color Grading & Harmonization',
+                    'Non-Destructive Frequency Separation Retouching Workflows',
+                ],
+                'deliverables' => [
+                    'High-End Fashion Editorial Master Retouched Files',
+                    'Consistent Brand Look & Feel Color Profiles',
+                    'Multi-Campaign Lookbook Assets Ready for Web and Print',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Skin Map Isolation', 'description' => 'Isolating exposed model skin with feathered multi-channel masks.'],
+                    ['step' => '02', 'title' => 'Garment Grade Application', 'description' => 'Applying target fashion grades and color adjustments to apparel and scene.'],
+                    ['step' => '03', 'title' => 'Undertone Balancing', 'description' => 'Harmonizing warm highlights and natural skin reflectance for a radiant look.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Do you preserve natural freckles, moles, and skin texture?', 'answer' => 'Absolutely. We strictly maintain authentic pores and texture without artificial blurring or plastic airbrushing.'],
+                ],
+                'icon' => 'Sparkles',
+                'sort_order' => 3,
+                'accent_color' => '#ffd700',
+                'meta_title' => 'Fashion Skin Tone Retouching & Color Grading | Cutting Edger',
+                'meta_description' => 'Professional fashion skin tone preservation and commercial color grading. Natural melanin tones and flawless editorial lookbooks.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Pillar 3: White-Label Agency Extension
+        $pillar3 = Service::updateOrCreate(
             ['slug' => 'white-label-agency-extension'],
             [
                 'parent_id' => null,
@@ -265,6 +385,126 @@ class SeoAndPillarsSeeder extends Seeder
                 'accent_color' => '#7000ff',
                 'meta_title' => 'White-Label Photo Editing for Creative Agencies | Cutting Edger',
                 'meta_description' => 'Scale creative agency post-production capacity with white-label photo retouching, clipping path, and CGI services under strict NDA protection.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 3.1: Overnight Batch Retouching
+        Service::updateOrCreate(
+            ['slug' => 'overnight-batch-retouching'],
+            [
+                'parent_id' => $pillar3->id,
+                'title' => 'Overnight Batch Retouching',
+                'h1_title' => '24/7 Overnight Batch Photo Retouching for Creative Studios',
+                'marquee_label' => 'CLOSE OF BUSINESS INGEST · 8 AM DELIVERY · FOLLOW-THE-SUN SHIFTS · STRICT NDAS',
+                'subtitle' => 'Drop thousands of RAW studio frames at 6:00 PM, wake up to client-ready retouched masters by 8:00 AM.',
+                'description' => 'Eliminate overnight studio crunch. Operating round-the-clock across global timezones, our senior production team processes high-volume catalog batches while your internal team sleeps. Accelerate turnaround, satisfy impatient clients, and keep internal creative directors focused on high-level strategy.',
+                'problem_statement' => 'Tight client deadlines force agency staff into costly overtime or frantic weekend retouching sprints that hurt morale and work quality.',
+                'solution_statement' => 'We leverage time zone differences to deliver overnight post-production cycles, returning polished files within 12 to 24 hours guaranteed.',
+                'features' => [
+                    'Guaranteed 12-to-24-Hour Overnight Turnaround SLAs',
+                    'Multi-Shift Round-the-Clock Global Production Capacity',
+                    'Direct Hot-Folder Integration via Aspera, Dropbox, and Google Drive',
+                    'Zero Metadata Footprint and Complete White-Label Anonymity',
+                ],
+                'deliverables' => [
+                    'Print and Web Ready Retouched Master PSDs & TIFFs',
+                    'Batch QA Checklists Signed by Senior Retouching Leads',
+                    'Real-Time Dashboard Progress Tracking for Account Directors',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Evening Ingestion', 'description' => 'Automated ingestion of RAW assets from your secure shared studio server.'],
+                    ['step' => '02', 'title' => 'Overnight Execution', 'description' => 'Multi-seat team executes clipping, retouching, and color standardization.'],
+                    ['step' => '03', 'title' => 'Morning Delivery', 'description' => 'Files undergo two-tier QA and sync back to your folders before 8:00 AM.'],
+                ],
+                'faqs' => [
+                    ['question' => 'What if an urgent rush job requires 6-hour delivery?', 'answer' => 'We offer expedited emergency turnaround options for active retainers and priority agency clients.'],
+                ],
+                'icon' => 'Clock',
+                'sort_order' => 1,
+                'accent_color' => '#7000ff',
+                'meta_title' => 'Overnight Batch Photo Retouching Service | Cutting Edger',
+                'meta_description' => 'Overnight batch photo retouching for creative agencies. 12-hour turnaround, follow-the-sun shifts, and billboard-grade quality under strict NDA.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 3.2: Dedicated Retoucher Teams
+        Service::updateOrCreate(
+            ['slug' => 'dedicated-retoucher-teams'],
+            [
+                'parent_id' => $pillar3->id,
+                'title' => 'Dedicated Retoucher Teams',
+                'h1_title' => 'Dedicated Retoucher Teams & White-Label Post-Production Pods',
+                'marquee_label' => 'EXCLUSIVE TALENT SEATS · EMBEDDED SLACK WORKFLOW · CONSISTENT ARTISTRY · FLEXIBLE SCALING',
+                'subtitle' => 'Exclusive retouchers dedicated 100% to your agency, trained on your exact style guides and embedded in your team.',
+                'description' => 'Freelancers come and go, taking institutional knowledge with them. Secure a dedicated team of elite digital retouchers and 3D artists who work exclusively on your brand roster, integrated seamlessly into your project management tools (Slack, Teams, ClickUp, Asana).',
+                'problem_statement' => 'Hiring local retouching staff carries massive overhead, while juggling ad-hoc freelancers leads to wildly inconsistent aesthetic handwriting.',
+                'solution_statement' => 'We assign a dedicated, vetted pod of retouchers and an English-fluent Team Lead who master your style guidelines and remain your permanent crew.',
+                'features' => [
+                    '100% Dedicated Full-Time Talent (Zero Shared Allocation)',
+                    'Direct Real-Time Collaboration in Your Slack or Microsoft Teams',
+                    'Consistent Style Handwriting Across Multi-Year Campaigns',
+                    'Flexible Monthly Seat Scaling to Match Campaign Volume Peaks',
+                ],
+                'deliverables' => [
+                    'Dedicated Production Capacity Reserved 5 Days a Week',
+                    'Daily Standup Worklogs and Velocity Tracking',
+                    'Comprehensive Brand Retouching SOP Documentation',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Style Calibration', 'description' => 'Deep-dive onboarding with your Art Director to document retouching aesthetics.'],
+                    ['step' => '02', 'title' => 'Workflow Integration', 'description' => 'Inviting dedicated artists to your communication channels and asset servers.'],
+                    ['step' => '03', 'title' => 'Continuous Production', 'description' => 'High-throughput daily production with compounding efficiency over time.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Can we interview and approve retouchers before they start?', 'answer' => 'Yes. You can test and review candidate portfolios to ensure their craftsmanship aligns with your creative expectations.'],
+                ],
+                'icon' => 'Users',
+                'sort_order' => 2,
+                'accent_color' => '#7000ff',
+                'meta_title' => 'Dedicated Retoucher Teams for Creative Agencies | Cutting Edger',
+                'meta_description' => 'Hire dedicated photo retouchers embedded in your agency workflow. Full-time dedicated post-production artists trained on your brand guidelines.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 3.3: High-Volume Retainer SLAs
+        Service::updateOrCreate(
+            ['slug' => 'volume-retainer-slas'],
+            [
+                'parent_id' => $pillar3->id,
+                'title' => 'High-Volume Retainer SLAs',
+                'h1_title' => 'Enterprise High-Volume Photo Retouching Retainer SLAs',
+                'marquee_label' => 'VOLUME DISCOUNTS UP TO 40% · GUARANTEED QUEUE PRIORITY · CUSTOM SLAS · SINGLE INVOICE',
+                'subtitle' => 'Volume-tiered contracts, preferential queue reservations, and custom disaster-recovery SLAs for enterprise studios.',
+                'description' => 'Designed for commercial photo studios and e-commerce aggregators processing 5,000 to 50,000+ assets every month. Lock in enterprise-level cost efficiencies, guaranteed throughput during peak shopping seasons, and clear contractual Service Level Agreements.',
+                'problem_statement' => 'Enterprise studios face unpredictable seasonal surges during Q4 holidays and spring collection drops, risking missed deadlines and budget overruns.',
+                'solution_statement' => 'Our retainer SLAs lock in capacity reserves, fixed discounted per-image rates, and contractually binding quality and turnaround guarantees.',
+                'features' => [
+                    'Volume Discount Tiers (Save 30% to 45% Over Ad-Hoc Rates)',
+                    'Contractual Quality and Turnaround SLA Guarantees',
+                    'Guaranteed Peak Season Surge Capacity (Black Friday / Cyber Week)',
+                    'Consolidated Monthly Billing with Detailed SKU Analytics',
+                ],
+                'deliverables' => [
+                    'Signed Enterprise Service Level Agreement (SLA)',
+                    'Dedicated Account Executive & Senior Quality Lead',
+                    'Monthly Asset Velocity and Error-Rate Performance Scorecards',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Capacity Forecasting', 'description' => 'Analyzing historical SKU volumes and projecting peak season surges.'],
+                    ['step' => '02', 'title' => 'Custom SLA Tailoring', 'description' => 'Establishing turnaround windows, file specifications, and QA thresholds.'],
+                    ['step' => '03', 'title' => 'Production Execution', 'description' => 'Guaranteed queue priority with continuous delivery and monthly billing.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Do unused retainer credits roll over?', 'answer' => 'Yes, our enterprise contracts include flexible quarterly rollover allowances to accommodate seasonal ebbs and flows.'],
+                ],
+                'icon' => 'Shield',
+                'sort_order' => 3,
+                'accent_color' => '#7000ff',
+                'meta_title' => 'Enterprise High-Volume Photo Editing Retainers | Cutting Edger',
+                'meta_description' => 'High-volume photo retouching retainers for enterprise brands and commercial studios. Guaranteed SLAs, volume pricing, and priority capacity.',
                 'is_noindex' => false,
             ]
         );
@@ -347,6 +587,86 @@ class SeoAndPillarsSeeder extends Seeder
                 'accent_color' => '#ff6b35',
                 'meta_title' => 'Outsource 3D Furniture Modeling & CGI Rendering | Cutting Edger',
                 'meta_description' => 'Outsource 3D furniture modeling and photorealistic interior CGI rendering. High-fidelity digital twins and AR assets for furniture manufacturers.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 4.2: 3D Product CGI Studio
+        Service::updateOrCreate(
+            ['slug' => '3d-product-cgi-studio'],
+            [
+                'parent_id' => $pillar4->id,
+                'title' => '3D Product CGI Studio',
+                'h1_title' => 'Photorealistic 3D Product Rendering & Digital Studio Staging',
+                'marquee_label' => 'CAD TO 8K RENDER · SUB-SURFACE SCATTERING · EXPLODED VIEWS · PACKAGING CGI',
+                'subtitle' => 'Transform industrial CAD models into breathtaking 8K commercial product renders and macro studio shots.',
+                'description' => 'Escape the limitations of physical cameras. We build ultra-realistic 3D CGI product renders for cosmetics, consumer electronics, beverage packaging, and hardware. Simulate complex glass refraction, metallic sheen, brushed finishes, and dynamic liquid droplets with zero set construction.',
+                'problem_statement' => 'Photographing reflective glass, chrome finishes, and unreleased product prototypes in physical studios results in glare, dust flaws, and leak risks.',
+                'solution_statement' => 'We rebuild clean CAD topology with physics-based PBR materials and procedural lighting rigs, creating billboard-quality assets before manufacturing finishes.',
+                'features' => [
+                    'CAD, STEP, IGES, and SolidWorks Quad Retopology',
+                    'Photorealistic PBR Materials (Glass, Liquid, Chrome, Matte Plastics)',
+                    '8K Ultra-HD Macro Renders & Exploded-View Animations',
+                    'Custom Environmental Studio HDRI Lighting Rigs',
+                ],
+                'deliverables' => [
+                    'Multi-Pass 8K Master Renders (Beauty, Diffuse, Depth, Normal)',
+                    'Transparent PNG Product Silhouette Cutouts',
+                    'Dynamic Exploded Engineering Render Animations',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'CAD Optimization', 'description' => 'Converting dense engineering CAD meshes into clean subdivision quad geometry.'],
+                    ['step' => '02', 'title' => 'PBR Shader Creation', 'description' => 'Applying accurate optical properties, index of refraction, and surface roughness.'],
+                    ['step' => '03', 'title' => 'Lighting Rig & Render', 'description' => 'Balancing studio softboxes and executing multi-pass ray-traced rendering.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Can you render products before manufacturing is completed?', 'answer' => 'Yes! We only require CAD 3D blueprints or technical dimensional drawings to build fully photorealistic renders for pre-launch marketing.'],
+                ],
+                'icon' => 'Box',
+                'sort_order' => 2,
+                'accent_color' => '#ff6b35',
+                'meta_title' => 'Photorealistic 3D Product Rendering & CGI Studio | Cutting Edger',
+                'meta_description' => 'Commercial 3D product rendering studio. Transform CAD drawings into hyper-realistic 8K renders for electronics, cosmetics, and packaging.',
+                'is_noindex' => false,
+            ]
+        );
+
+        // Sub-page 4.3: Interactive 360° WebGL Spins
+        Service::updateOrCreate(
+            ['slug' => 'interactive-360-webgl-spins'],
+            [
+                'parent_id' => $pillar4->id,
+                'title' => 'Interactive 360° WebGL Spins',
+                'h1_title' => 'Interactive 360° Product Turntable Spins & WebGL 3D Models',
+                'marquee_label' => 'SHOPIFY 3D · APPLE QUICK LOOK AR · SUB-3MB COMPRESSION · 60 FPS MOBILE RENDERING',
+                'subtitle' => 'Web-optimized GLTF/GLB 3D models and smooth 360-degree turntable spins for high-converting e-commerce.',
+                'description' => 'Empower online shoppers to rotate, zoom, and inspect your products from every possible angle. We deliver lightweight, real-time 3D models and interactive 360° image sequences with fast load times, direct Shopify 3D viewer support, and native iOS AR Quick Look compatibility.',
+                'problem_statement' => 'Static 2D photos leave customer questions unanswered, leading to hesitation, lower conversion rates, and higher returns.',
+                'solution_statement' => 'We create ultra-compact, high-performance WebGL 3D models under 3MB that load instantaneously and boost shopper engagement by up to 250%.',
+                'features' => [
+                    'Shopify 3D & Amazon AR Certified GLTF / GLB File Exports',
+                    'Native iOS Safari Apple Quick Look USDZ Formatting',
+                    'Smooth 72-Frame 360° WebP Turntable Image Sequences',
+                    'Sub-3MB Lightweight Compression for Zero Page Speed Penalty',
+                ],
+                'deliverables' => [
+                    'Production GLTF/GLB Real-Time 3D Mesh with Baked PBR Textures',
+                    'Optimized Apple USDZ File for Augmented Reality',
+                    'Full Interactive 360° Turntable Sequence Pack',
+                ],
+                'process_steps' => [
+                    ['step' => '01', 'title' => 'Mesh Optimization', 'description' => 'Decimating polygon counts while preserving silhouette smoothness.'],
+                    ['step' => '02', 'title' => 'Texture Baking', 'description' => 'Baking normal, ambient occlusion, and roughness maps into compact textures.'],
+                    ['step' => '03', 'title' => 'Cross-Platform AR QA', 'description' => 'Testing in Shopify 3D viewer and iOS/Android AR environments.'],
+                ],
+                'faqs' => [
+                    ['question' => 'Will 3D models slow down my Shopify storefront?', 'answer' => 'No. We rigorously optimize draw calls and compress textures using Draco / KTX2 algorithms so the entire 3D asset loads under 3MB.'],
+                ],
+                'icon' => 'Sparkles',
+                'sort_order' => 3,
+                'accent_color' => '#ff6b35',
+                'meta_title' => 'Interactive 360 Product Spins & WebGL 3D Models | Cutting Edger',
+                'meta_description' => 'Outsource interactive 360 product turntable spins and lightweight WebGL 3D models for Shopify and Amazon AR shopping.',
                 'is_noindex' => false,
             ]
         );

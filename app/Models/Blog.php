@@ -43,4 +43,45 @@ class Blog extends Model
     {
         return $this->belongsTo(TeamMember::class, 'author_id');
     }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (Blog $blog): void {
+            if ($blog->isDirty('slug')) {
+                $oldPath = "/blog/{$blog->getOriginal('slug')}";
+                $newPath = "/blog/{$blog->slug}";
+
+                if ($oldPath !== $newPath) {
+                    Redirect::updateOrCreate(
+                        ['source_path' => $oldPath],
+                        [
+                            'target_url' => $newPath,
+                            'status_code' => 301,
+                            'is_regex' => false,
+                            'is_active' => true,
+                            'notes' => 'Automatic 301 created on blog article URL change',
+                        ]
+                    );
+                }
+            }
+        });
+
+        static::deleted(function (Blog $blog): void {
+            if ($blog->isForceDeleting()) {
+                Redirect::updateOrCreate(
+                    ['source_path' => "/blog/{$blog->slug}"],
+                    [
+                        'target_url' => '/blog',
+                        'status_code' => 301,
+                        'is_regex' => false,
+                        'is_active' => true,
+                        'notes' => 'Automatic 301 created on blog article permanent deletion',
+                    ]
+                );
+            }
+        });
+    }
 }

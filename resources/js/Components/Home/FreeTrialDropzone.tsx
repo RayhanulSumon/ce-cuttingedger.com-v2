@@ -19,6 +19,7 @@ import {
     Briefcase,
     Globe,
     ShoppingBag,
+    RotateCw,
 } from 'lucide-react';
 import { getAttributionData } from '@/lib/attribution';
 
@@ -55,7 +56,7 @@ export function FreeTrialDropzone() {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, processing, errors, reset, clearErrors, transform } = useForm({
         name: '',
         email: '',
         phone: '',
@@ -68,6 +69,8 @@ export function FreeTrialDropzone() {
         instructions: '',
         attachments: [] as File[],
         honeypot: '',
+        captcha_answer: '',
+        captcha_token: '',
         // Attribution
         landing_page_url: '',
         submission_page_url: '',
@@ -78,6 +81,24 @@ export function FreeTrialDropzone() {
         utm_content: '',
         click_id: '',
     });
+
+    const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
+
+    const refreshCaptcha = () => {
+        fetch('/api/captcha/math')
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.question && res.token) {
+                    setCaptchaQuestion(res.question);
+                    setData((prev) => ({
+                        ...prev,
+                        captcha_token: res.token,
+                        captcha_answer: '',
+                    }));
+                }
+            })
+            .catch(() => {});
+    };
 
     useEffect(() => {
         const attr = getAttributionData();
@@ -92,7 +113,32 @@ export function FreeTrialDropzone() {
             utm_content: attr.utm_content || '',
             click_id: attr.click_id || '',
         }));
+
+        refreshCaptcha();
     }, []);
+
+    useEffect(() => {
+        if (
+            errors.email ||
+            errors.name ||
+            errors.trial_exhausted ||
+            errors['captcha_answer'] ||
+            errors.phone ||
+            errors.company ||
+            errors.website ||
+            errors.service ||
+            errors.monthly_volume ||
+            errors.platform
+        ) {
+            setStep(2);
+        } else if (errors['attachments'] || errors['attachments.0']) {
+            setStep(1);
+        }
+
+        if (errors['captcha_answer']) {
+            refreshCaptcha();
+        }
+    }, [errors]);
 
     const handleFilesAdded = (files: FileList | null) => {
         if (!files) return;
@@ -121,13 +167,23 @@ export function FreeTrialDropzone() {
         e.preventDefault();
         const attr = getAttributionData();
 
+        transform((currentData) => ({
+            ...currentData,
+            submission_page_url: window.location.href,
+            landing_page_url: attr.landing_page_url || currentData.landing_page_url || window.location.href,
+            utm_source: attr.utm_source || currentData.utm_source || '',
+            utm_medium: attr.utm_medium || currentData.utm_medium || '',
+            utm_campaign: attr.utm_campaign || currentData.utm_campaign || '',
+            utm_term: attr.utm_term || currentData.utm_term || '',
+            utm_content: attr.utm_content || currentData.utm_content || '',
+            click_id: attr.click_id || currentData.click_id || '',
+        }));
+
         post('/free-trial', {
             forceFormData: true,
             preserveScroll: true,
-            data: {
-                ...data,
-                submission_page_url: window.location.href,
-                landing_page_url: attr.landing_page_url,
+            onError: () => {
+                setStep(2);
             },
         });
     };
@@ -302,6 +358,38 @@ export function FreeTrialDropzone() {
                     {/* STEP 2: B2B BRAND & SPECIFICATION COORDINATES */}
                     {step === 2 && (
                         <div className="space-y-6">
+                            {/* Hidden Captcha Token */}
+                            <input type="hidden" name="captcha_token" value={data.captcha_token} />
+
+                            {/* Trial Limit Notice Banner */}
+                            {errors.trial_exhausted && (
+                                <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm space-y-3">
+                                    <div className="flex items-start gap-3">
+                                        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p className="font-bold text-amber-300">Free Pilot Quota Notice</p>
+                                            <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed">
+                                                {errors.trial_exhausted}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-2.5 pt-2 border-t border-amber-500/20">
+                                        <Link
+                                            href="/pricing"
+                                            className="px-4 py-2 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all"
+                                        >
+                                            Explore Production Pricing ($0.49/img)
+                                        </Link>
+                                        <Link
+                                            href="/contact"
+                                            className="px-4 py-2 rounded-xl border border-white/20 text-white font-mono text-xs hover:border-white transition-colors"
+                                        >
+                                            Contact Studio Team
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
@@ -330,7 +418,11 @@ export function FreeTrialDropzone() {
                                         placeholder="alex@company.com"
                                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
                                     />
-                                    {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
+                                    {(errors.email || errors.trial_exhausted) && (
+                                        <p className="text-xs text-red-400 font-mono">
+                                            {errors.email || errors.trial_exhausted}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-1.5">
@@ -434,6 +526,41 @@ export function FreeTrialDropzone() {
                                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
                                 />
                             </div>
+
+                            {/* Math Spam Protection (Doc §4.4) */}
+                            {captchaQuestion && (
+                                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-4">
+                                    <div className="space-y-0.5">
+                                        <span className="text-xs font-mono text-neutral-300 font-bold flex items-center gap-1.5">
+                                            <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <span>Security Verification: What is {captchaQuestion} ?</span>
+                                            <button
+                                                type="button"
+                                                onClick={refreshCaptcha}
+                                                title="Generate new question"
+                                                className="p-1 text-neutral-500 hover:text-[#d4ff00] transition-colors"
+                                            >
+                                                <RotateCw className="w-3 h-3" />
+                                            </button>
+                                        </span>
+                                        <span className="text-[11px] text-neutral-500 font-mono">Solve the math problem to submit.</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={data.captcha_answer}
+                                        onChange={(e) => setData('captcha_answer', e.target.value)}
+                                        placeholder="Answer"
+                                        className="w-24 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-center text-white focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                </div>
+                            )}
+
+                            {errors['captcha_answer'] && (
+                                <p className="text-xs text-rose-400 font-mono">
+                                    {errors['captcha_answer']}
+                                </p>
+                            )}
 
                             <div className="flex items-center justify-between pt-4 border-t border-white/10">
                                 <button

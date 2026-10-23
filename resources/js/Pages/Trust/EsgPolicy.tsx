@@ -11,7 +11,7 @@ export default function EsgPolicy() {
                 description="Cutting Edger is committed to sustainable digital visual production, ethical artist compensation, and transparent institutional governance."
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
-                    { name: 'ESG Policy', url: '/ESG-policy' },
+                    { name: 'ESG Policy', url: '/esg-policy' },
                 ]}
             />
 

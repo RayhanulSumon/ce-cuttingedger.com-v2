@@ -34,6 +34,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkController;
 use App\Models\Project;
+use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -147,7 +148,8 @@ Route::get('/reviews', [PageController::class, 'reviews'])->name('reviews');
 // Legal, Trust & Security Compliance Pages
 Route::get('/cookie-policy', [PageController::class, 'cookiePolicy'])->name('cookie-policy');
 Route::get('/nda-compliance', [PageController::class, 'ndaCompliance'])->name('nda-compliance');
-Route::get('/ESG-policy', [PageController::class, 'esgPolicy'])->name('esg-policy');
+Route::get('/esg-policy', [PageController::class, 'esgPolicy'])->name('esg-policy');
+Route::get('/ESG-policy', fn () => redirect()->to('/esg-policy', 301));
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
@@ -162,6 +164,7 @@ Route::post('/team/{member:slug}/inquiry', [TeamController::class, 'sendInquiry'
     ->name('team.inquiry');
 
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
+Route::get('/career', fn () => redirect()->to('/careers', 301))->name('career');
 Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('careers.show');
 
 Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
@@ -202,6 +205,10 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::get('/available-slots', [ChatController::class, 'availableSlots'])->name('available-slots');
     Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
 });
+
+Route::get('/api/captcha/math', function (EmailAndSpamGuard $guard) {
+    return response()->json($guard->generateMathCaptcha());
+})->name('captcha.math');
 
 /*
 |--------------------------------------------------------------------------
