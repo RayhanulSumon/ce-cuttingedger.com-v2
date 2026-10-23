@@ -43,6 +43,7 @@ export default function Index({
                 title="THOUGHTS ON KINETICS,"
                 highlight="CODE & BRAND GRAVITY."
                 description="Long-form essays, technical post-mortems, and design manifestos dissecting what works on the modern web."
+                containerMaxWidth="max-w-[1440px]"
             />
 
             {/* Category Filter Pills */}
@@ -50,7 +51,7 @@ export default function Index({
                 style={{ top: 'var(--header-height)' }}
                 className="py-5 bg-[#0c0d12] border-b border-white/10 sticky top-[var(--header-height,61px)] z-30 backdrop-blur-xl bg-[#0c0d12]/90 space-y-3"
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Top-Level Categories */}
                     <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                         <button
@@ -128,7 +129,7 @@ export default function Index({
 
             {/* Articles Grid (Compact 3-Column Premium Cards) */}
             <section className="py-12 sm:py-16 bg-[#0a0b0e]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
                     {blogs.length === 0 ? (
                         <div className="text-center py-20 border border-dashed border-white/10 rounded-2xl p-8 bg-[#0c0d14]/40">
                             <Tag className="w-8 h-8 text-neutral-600 mx-auto mb-3" />
@@ -138,11 +139,11 @@ export default function Index({
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 xl:gap-8">
                             {blogs.map((blog) => (
                                 <article
                                     key={blog.id || blog.slug}
-                                    className="group relative rounded-2xl bg-gradient-to-b from-[#12141d] to-[#0c0e16] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#d4ff00]/50 hover:shadow-[0_12px_32px_rgba(0,0,0,0.6),0_0_24px_rgba(212,255,0,0.06)] transition-all duration-300 hover:-translate-y-1"
+                                    className="group relative rounded-2xl bg-gradient-to-b from-[#12141d] to-[#0c0e16] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#d4ff00]/50 hover:shadow-[0_16px_36px_rgba(0,0,0,0.65),0_0_28px_rgba(212,255,0,0.08)] transition-all duration-300 hover:-translate-y-1.5"
                                 >
                                     <div>
                                         {/* Media Frame */}
@@ -157,7 +158,7 @@ export default function Index({
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                             />
                                             {/* Vignette Overlay for Smooth Transition */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#12141d] via-black/20 to-transparent pointer-events-none" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#12141d] via-black/25 to-transparent pointer-events-none" />
 
                                             {/* Badges Overlay */}
                                             <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
@@ -182,14 +183,18 @@ export default function Index({
                                         </Link>
 
                                         {/* Content Body */}
-                                        <div className="p-5 sm:p-6 space-y-3">
+                                        <div className="p-5 sm:p-6 lg:p-7 space-y-3.5">
                                             {/* Metadata (Reading time + Date) */}
                                             <div className="flex items-center gap-3 text-[11px] font-mono text-neutral-400">
-                                                <span className="flex items-center gap-1.5">
-                                                    <Clock className="w-3.5 h-3.5 text-[#d4ff00]" />
-                                                    {blog.reading_time || 5} min read
-                                                </span>
-                                                <span className="text-neutral-600">•</span>
+                                                {blog.reading_time ? (
+                                                    <>
+                                                        <span className="flex items-center gap-1.5 text-neutral-300">
+                                                            <Clock className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                                            {blog.reading_time} min read
+                                                        </span>
+                                                        <span className="text-neutral-600">•</span>
+                                                    </>
+                                                ) : null}
                                                 <span className="flex items-center gap-1 text-neutral-400">
                                                     <Calendar className="w-3 h-3 text-neutral-500" />
                                                     {new Date(blog.published_at).toLocaleDateString('en-US', {
@@ -201,7 +206,7 @@ export default function Index({
                                             </div>
 
                                             {/* Title */}
-                                            <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors leading-snug line-clamp-2">
+                                            <h3 className="text-lg sm:text-xl lg:text-[21px] font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors leading-snug line-clamp-2">
                                                 <Link href={`/blog/${blog.slug}`}>
                                                     {blog.title}
                                                 </Link>
@@ -218,7 +223,7 @@ export default function Index({
                                                     {blog.tags.slice(0, 3).map((tag, i) => (
                                                         <span
                                                             key={i}
-                                                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-neutral-400"
+                                                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-neutral-400 hover:text-white transition-colors"
                                                         >
                                                             #{tag}
                                                         </span>
@@ -243,7 +248,7 @@ export default function Index({
                                                         {blog.author.name.charAt(0)}
                                                     </span>
                                                 )}
-                                                <span className="text-xs font-mono text-neutral-300 truncate max-w-[130px]">
+                                                <span className="text-xs font-mono text-neutral-300 truncate max-w-[180px]">
                                                     {blog.author.name}
                                                 </span>
                                             </div>
@@ -255,7 +260,7 @@ export default function Index({
 
                                         <Link
                                             href={`/blog/${blog.slug}`}
-                                            className="inline-flex items-center gap-1 text-xs font-mono font-bold text-[#d4ff00] group-hover:text-white transition-colors"
+                                            className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#d4ff00] group-hover:text-white transition-colors"
                                         >
                                             <span>Read</span>
                                             <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
