@@ -24,8 +24,8 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
     }, [isOpen]);
 
     const navLinks = [
-        { label: 'Work', href: '/work', count: '08' },
         { label: 'Services', href: '/services', count: '04' },
+        { label: 'Case Studies', href: '/case-studies', count: '08' },
         { label: 'About', href: '/about', count: '01' },
         { label: 'Team', href: '/team', count: '05' },
         { label: 'Careers', href: '/careers', count: '03' },

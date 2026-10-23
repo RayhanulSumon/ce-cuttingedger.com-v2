@@ -3,6 +3,7 @@ import { Link, usePage, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChevronUp, ArrowUpRight, Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { SiteSettings } from '@/types/models';
+import { PageProps } from '@/types';
 
 interface FooterProps {
     settings?: SiteSettings;
@@ -12,6 +13,7 @@ interface FooterProps {
 
 export function Footer({ settings, onOpenContact, compact }: FooterProps) {
     const { url } = usePage();
+    const { services_nav = [] } = usePage<PageProps>().props;
     const isHomePage = url === '/' || url.split('?')[0] === '';
     const isCompact = compact !== undefined ? compact : !isHomePage;
 
@@ -48,16 +50,17 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
         { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
     ];
 
-    const serviceLinks = [
-        { label: 'E-Commerce Catalog Optimization', href: '/services/ecommerce-catalog-optimization' },
-        { label: 'Hand-Drawn Clipping Path Service', href: '/services/ecommerce-catalog-optimization/clipping-path-service' },
-        { label: 'Image Masking (Alpha & Hair)', href: '/services/ecommerce-catalog-optimization/image-masking-service' },
-        { label: 'Ghost Mannequin & Neck Joint', href: '/services/ecommerce-catalog-optimization/ghost-mannequin-service' },
-        { label: 'Color Standardization Services', href: '/services/color-standardization' },
-        { label: 'White-Label Agency Bandwidth', href: '/services/white-label-agency-extension' },
-        { label: 'Virtual Production & 3D CGI Studio', href: '/services/virtual-production-cgi' },
-        { label: '3D Furniture Modeling & AR Assets', href: '/services/virtual-production-cgi/3d-furniture-modeling' },
-    ];
+    const dynamicServiceLinks = services_nav.length > 0
+        ? services_nav.flatMap((pillar) => [
+            { label: pillar.title, href: pillar.path },
+            ...(pillar.children || []).slice(0, 1).map((child) => ({ label: child.title, href: child.path })),
+        ]).slice(0, 8)
+        : [
+            { label: 'E-Commerce Catalog Optimization', href: '/services/ecommerce-catalog-optimization' },
+            { label: 'Color Standardization', href: '/services/color-standardization' },
+            { label: 'White-Label Agency Extension', href: '/services/white-label-agency-extension' },
+            { label: 'Virtual Production & CGI Studio', href: '/services/virtual-production-cgi' },
+        ];
 
     const agencyLinks = [
         { label: 'Case Studies', href: '/case-studies' },
@@ -134,7 +137,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                 Visual Disciplines
                             </h3>
                             <ul className="space-y-2 text-xs text-neutral-400 font-sans">
-                                {serviceLinks.map((item) => (
+                                {dynamicServiceLinks.map((item) => (
                                     <li key={item.label}>
                                         <Link
                                             href={item.href}

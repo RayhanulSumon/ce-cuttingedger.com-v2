@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\ChatConsultation;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Service;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -83,6 +84,39 @@ class HandleInertiaRequests extends Middleware
                 'unread_leads' => ContactMessage::where('inquiry_type', 'chat_lead')->where('status', 'new')->count(),
                 'new_messages' => ContactMessage::where('inquiry_type', '!=', 'chat_lead')->where('status', 'new')->count(),
             ] : null,
+            'services_nav' => function () {
+                try {
+                    return Service::whereNull('parent_id')
+                        ->with(['children' => fn ($q) => $q->orderBy('sort_order')])
+                        ->orderBy('sort_order')
+                        ->get()
+                        ->map(function (Service $pillar) {
+                            $children = $pillar->children->map(function (Service $child) use ($pillar) {
+                                return [
+                                    'id' => $child->id,
+                                    'title' => $child->title,
+                                    'slug' => $child->slug,
+                                    'path' => "/services/{$pillar->slug}/{$child->slug}",
+                                    'subtitle' => $child->subtitle,
+                                    'icon' => $child->icon ?: 'Sparkles',
+                                ];
+                            })->values()->all();
+
+                            return [
+                                'id' => $pillar->id,
+                                'title' => $pillar->title,
+                                'slug' => $pillar->slug,
+                                'path' => "/services/{$pillar->slug}",
+                                'subtitle' => $pillar->subtitle,
+                                'icon' => $pillar->icon ?: 'Layers',
+                                'accent_color' => $pillar->accent_color ?: '#d4ff00',
+                                'children' => $children,
+                            ];
+                        })->values()->all();
+                } catch (\Throwable $e) {
+                    return [];
+                }
+            },
         ];
     }
 }
