@@ -3,7 +3,7 @@ import { Link, router } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { Project, Category } from '@/types/models';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface WorkIndexProps {
     projects: Project[];
@@ -18,7 +18,7 @@ export default function Index({
 }: WorkIndexProps) {
     const handleFilter = (slug: string) => {
         router.get(
-            '/work',
+            '/case-studies',
             slug === 'all' ? {} : { category: slug },
             { preserveState: true, preserveScroll: true }
         );
@@ -27,15 +27,19 @@ export default function Index({
     return (
         <>
             <SeoHead
-                title="Work Archives & Case Studies"
-                description="Explore selected client commissions in software architecture, brand systems, and 3D spatial experiences."
+                title="Client Case Studies & Visual Performance Results"
+                description="Explore real-world case studies from Cutting Edger: 4,800+ SKU ghost mannequin rollouts, macro fine jewelry retouching, and 3D furniture CGI modeling."
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Case Studies', url: '/case-studies' },
+                ]}
             />
 
             <PageHero
-                eyebrow="SELECTED ARCHIVES"
-                title="CATALOG OF RADICAL"
-                highlight="DIGITAL CRAFT."
-                description="A curated index of production flagships engineered for venture-backed founders and ambitious category leaders."
+                eyebrow="PORTFOLIO & CASE STUDIES"
+                title="MEASURABLE VISUAL"
+                highlight="PERFORMANCE PROOF."
+                description="Explore how Cutting Edger optimizes high-volume catalog production, Delta-E color fidelity, and 3D virtual staging for global commerce brands."
             />
 
             {/* Category Filter Pills */}
@@ -54,12 +58,12 @@ export default function Index({
                                     : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                             }`}
                         >
-                            All Commissions ({projects.length})
+                            All Results ({projects.length})
                         </button>
 
                         {categories.map((cat) => (
                             <button
-                                key={cat.id}
+                                key={cat.id || cat.slug}
                                 type="button"
                                 onClick={() => handleFilter(cat.slug)}
                                 className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
@@ -75,71 +79,77 @@ export default function Index({
                 </div>
             </section>
 
-            {/* Work Grid */}
+            {/* Case Studies Grid */}
             <section className="py-20 bg-[#0a0b0e]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {projects.map((project, index) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                        {projects.map((project, idx) => (
                             <article
                                 key={project.id || project.slug}
-                                className="group relative rounded-3xl bg-[#12141c] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#d4ff00]/50 transition-all duration-500"
+                                className="group p-6 sm:p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-[#d4ff00]/40 transition-all shadow-xl flex flex-col justify-between"
                             >
-                                {/* Media Container */}
-                                <Link
-                                    href={`/work/${project.slug}`}
-                                    data-cursor-view="EXPLORE"
-                                    className="block relative aspect-[16/10] overflow-hidden bg-neutral-900"
-                                >
-                                    <img
-                                        src={project.cover_image}
-                                        alt={project.title}
-                                        loading="lazy"
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                    />
-                                    <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs font-mono text-[#d4ff00]">
-                                        {project.category?.name || 'Commission'}
-                                    </div>
-                                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs font-mono text-neutral-400">
-                                        [{project.year}]
-                                    </div>
-                                </Link>
+                                <div className="space-y-4">
+                                    {/* Cover Image Container */}
+                                    <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-neutral-900 border border-white/5">
+                                        <img
+                                            src={project.cover_image}
+                                            alt={project.title}
+                                            loading={idx < 2 ? 'eager' : 'lazy'}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
 
-                                {/* Project Details */}
-                                <div className="p-8 space-y-4">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <span className="font-mono text-xs uppercase text-neutral-400 block mb-1">
-                                                {project.client_name}
-                                            </span>
-                                            <h3 className="text-2xl sm:text-3xl font-display font-black text-white group-hover:text-[#d4ff00] transition-colors">
-                                                <Link href={`/work/${project.slug}`}>
-                                                    {project.title}
-                                                </Link>
-                                            </h3>
+                                        {/* Badges Overlay */}
+                                        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                                            {project.is_concept ? (
+                                                <span className="px-3 py-1 rounded-full bg-cyan-400/20 border border-cyan-400/40 text-cyan-300 font-mono text-[11px] font-bold uppercase backdrop-blur-md">
+                                                    [ Concept Showcase ]
+                                                </span>
+                                            ) : (
+                                                <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold uppercase backdrop-blur-md">
+                                                    ✓ Client Case Study
+                                                </span>
+                                            )}
                                         </div>
 
-                                        <Link
-                                            href={`/work/${project.slug}`}
-                                            className="w-10 h-10 rounded-full border border-white/10 group-hover:border-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black flex items-center justify-center transition-all shrink-0 mt-1"
-                                        >
-                                            <ArrowUpRight className="w-5 h-5" />
-                                        </Link>
+                                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white/90">
+                                            <span className="font-bold text-[#d4ff00]">{project.client_name}</span>
+                                            <span>{project.year}</span>
+                                        </div>
                                     </div>
 
-                                    <p className="text-sm text-neutral-400 line-clamp-2 leading-relaxed">
+                                    <h2 className="text-2xl font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors">
+                                        <Link href={`/case-studies/${project.slug}`}>
+                                            {project.title}
+                                        </Link>
+                                    </h2>
+
+                                    <p className="text-neutral-400 text-sm leading-relaxed line-clamp-3">
                                         {project.summary}
                                     </p>
 
-                                    <div className="pt-2 flex flex-wrap gap-2">
-                                        {project.deliverables?.map((deliv, i) => (
-                                            <span
-                                                key={i}
-                                                className="text-[11px] font-mono text-neutral-400 bg-white/5 px-2.5 py-1 rounded border border-white/5"
-                                            >
-                                                {deliv}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    {/* Quantified Metrics Pills */}
+                                    {project.metrics && project.metrics.length > 0 && (
+                                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
+                                            {project.metrics.slice(0, 3).map((m, i) => (
+                                                <div key={i} className="text-center p-2 rounded-xl bg-white/[0.02]">
+                                                    <p className="font-display font-black text-sm text-[#d4ff00]">{m.value}</p>
+                                                    <p className="text-[10px] font-mono text-neutral-400 truncate">{m.label}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="pt-6 mt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-neutral-400">{project.category?.name || 'Production'}</span>
+                                    <Link
+                                        href={`/case-studies/${project.slug}`}
+                                        className="text-[#d4ff00] font-bold inline-flex items-center gap-1 group-hover:underline"
+                                    >
+                                        <span>Read Full Study</span>
+                                        <ArrowUpRight className="w-3.5 h-3.5" />
+                                    </Link>
                                 </div>
                             </article>
                         ))}

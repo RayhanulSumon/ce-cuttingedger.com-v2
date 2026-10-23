@@ -1,36 +1,71 @@
-import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
-import { Mail, Phone, MapPin, Send, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Calendar, ShieldCheck, Clock, Building2, Briefcase, Globe, ShoppingBag } from 'lucide-react';
+import { getAttributionData } from '@/lib/attribution';
+import { PageProps } from '@/types';
 
 export default function Contact() {
+    const { settings } = usePage<PageProps>().props;
+    const calendlyUrl = (settings as any)?.calendly_url || 'https://calendly.com/cuttingedger/discovery-call';
     const [isSubmitting, setIsSubmitting] = useState(false);
+
     const { data, setData, post, processing, wasSuccessful, reset } = useForm({
         name: '',
         email: '',
         company: '',
-        budget: '$25k - $50k',
-        service_interest: 'Product Design & Web',
+        role: '',
+        website: '',
+        monthly_volume: '500 – 2,000 SKUs / mo',
+        platform: 'Shopify / Shopify Plus',
+        service_interest: 'E-Commerce Catalog Optimization',
+        budget: '$1,500 – $5,000 / mo Retainer',
         message: '',
         honeypot: '',
+        // Attribution
+        landing_page_url: '',
+        submission_page_url: '',
+        utm_source: '',
+        utm_medium: '',
+        utm_campaign: '',
+        utm_term: '',
+        utm_content: '',
+        click_id: '',
     });
+
+    useEffect(() => {
+        const attr = getAttributionData();
+        setData((prev) => ({
+            ...prev,
+            landing_page_url: attr.landing_page_url,
+            submission_page_url: attr.submission_page_url,
+            utm_source: attr.utm_source || '',
+            utm_medium: attr.utm_medium || '',
+            utm_campaign: attr.utm_campaign || '',
+            utm_term: attr.utm_term || '',
+            utm_content: attr.utm_content || '',
+            click_id: attr.click_id || '',
+        }));
+    }, []);
 
     const isBusy = processing || isSubmitting;
 
     const budgetTiers = [
-        '< $15k',
-        '$15k - $30k',
-        '$30k - $60k',
-        '$60k+',
+        'Ad-Hoc / Pilot Test (< $1,000)',
+        '$1,000 – $3,000 / month',
+        '$3,000 – $8,000 / month',
+        '$8,000+ / month (Enterprise High-Volume)',
     ];
 
     const serviceOptions = [
-        'Product Design & UX',
-        'Brand Architecture',
-        'Kinetic 3D & Motion',
-        'Creative Full-Stack Web',
-        'Complete Flagship Build',
+        'E-Commerce Catalog Optimization',
+        'Hand-Drawn Clipping Path & Masking',
+        'Invisible Ghost Mannequin 3D Jointing',
+        'Color Standardization & Delta-E Matching',
+        'White-Label Agency Dedicated Bandwidth',
+        '3D CGI Product Modeling & Virtual Staging',
+        '3D Furniture Modeling & AR Digital Twins',
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +75,6 @@ export default function Contact() {
         setIsSubmitting(true);
         post('/contact', {
             preserveScroll: true,
-            onSuccess: () => reset(),
             onFinish: () => setIsSubmitting(false),
         });
     };
@@ -48,238 +82,260 @@ export default function Contact() {
     return (
         <>
             <SeoHead
-                title="Initiate Project Commission"
-                description="Connect with the partners at CuttingEdger. Let's discuss your next digital flagship or category transformation."
+                title="Initiate Production Partnership & Quote Consultation"
+                description="Connect with Cutting Edger directors. Inquire about high-volume catalog retouching, color standardization, white-label agency partnerships, or 3D CGI production."
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Contact Us', url: '/contact' },
+                ]}
             />
 
             <PageHero
-                eyebrow="DIRECT ACCESS"
-                title="LET’S INVENT THE"
-                highlight="NEXT FRONTIER."
-                description="We partner with a maximum of 4 clients concurrently to guarantee undivided focus, velocity, and uncompromised craft."
+                eyebrow="COMMERCIAL ACCESS"
+                title="SCALE YOUR"
+                highlight="VISUAL PERFORMANCE."
+                description="Connect with our Senior Production Directors for custom catalog SLAs, white-label agency partnerships, or virtual 3D staging."
             />
 
-            <section className="py-24 bg-[#0a0b0e]">
+            <section className="py-20 bg-[#0a0b0e]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                         {/* Contact Form */}
                         <div className="lg:col-span-7 p-8 sm:p-12 rounded-3xl bg-[#12141c] border border-white/10 shadow-2xl">
-                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-2">
-                                [ TRANSMISSION PROTOCOL ]
+                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-2 font-bold">
+                                [ PRODUCTION BRIEF TRANSMISSION ]
                             </span>
                             <h2 className="text-3xl font-display font-bold text-white mb-8">
-                                Project Brief
+                                Project Brief & Quote Request
                             </h2>
 
-                            {wasSuccessful ? (
-                                <div className="p-8 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00] text-center space-y-4">
-                                    <CheckCircle2 className="w-12 h-12 text-[#d4ff00] mx-auto" />
-                                    <h3 className="text-2xl font-display font-bold text-white">
-                                        Transmission Acknowledged.
-                                    </h3>
-                                    <p className="text-neutral-300 text-sm max-w-md mx-auto">
-                                        Your brief has landed in our studio terminal. Elena or Marcus will review your parameters and follow up within 24 business hours.
-                                    </p>
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    {/* Honeypot */}
-                                    <input
-                                        type="text"
-                                        name="website_url"
-                                        value={data.honeypot}
-                                        onChange={(e) => setData('honeypot', e.target.value)}
-                                        tabIndex={-1}
-                                        autoComplete="off"
-                                        className="hidden"
-                                        aria-hidden="true"
-                                    />
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                {/* Honeypot */}
+                                <input
+                                    type="text"
+                                    name="website_url"
+                                    value={data.honeypot}
+                                    onChange={(e) => setData('honeypot', e.target.value)}
+                                    tabIndex={-1}
+                                    autoComplete="off"
+                                    className="hidden"
+                                    aria-hidden="true"
+                                />
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                                                Your Name *
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={data.name}
-                                                onChange={(e) => setData('name', e.target.value)}
-                                                placeholder="Dr. Jessica Vance"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                                                Email Address *
-                                            </label>
-                                            <input
-                                                type="email"
-                                                required
-                                                value={data.email}
-                                                onChange={(e) => setData('email', e.target.value)}
-                                                placeholder="jessica@quantum.io"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                            />
-                                        </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
+                                            Your Name *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            placeholder="Marcus Vance"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        />
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                                            Company / Venture Name
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
+                                            Work Email Address *
+                                        </label>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            placeholder="marcus@brand.com"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold flex items-center gap-1.5">
+                                            <Building2 className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <span>Company / Studio</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={data.company}
                                             onChange={(e) => setData('company', e.target.value)}
-                                            placeholder="Quantum Dynamics Inc."
+                                            placeholder="Vance Fashion Studio"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
                                         />
                                     </div>
 
-                                    {/* Service Focus Selection */}
                                     <div>
-                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold flex items-center gap-1.5">
+                                            <Briefcase className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <span>Your Role</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.role}
+                                            onChange={(e) => setData('role', e.target.value)}
+                                            placeholder="VP of E-Commerce / Creative Director"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold flex items-center gap-1.5">
+                                            <Globe className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <span>Store / Website URL</span>
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={data.website}
+                                            onChange={(e) => setData('website', e.target.value)}
+                                            placeholder="https://vancefashion.com"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold flex items-center gap-1.5">
+                                            <ShoppingBag className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <span>Commerce Platform</span>
+                                        </label>
+                                        <select
+                                            value={data.platform}
+                                            onChange={(e) => setData('platform', e.target.value)}
+                                            className="w-full bg-[#161822] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        >
+                                            <option value="Shopify / Shopify Plus">Shopify / Shopify Plus</option>
+                                            <option value="Amazon Marketplace">Amazon Marketplace</option>
+                                            <option value="Magento / Adobe Commerce">Magento / Adobe Commerce</option>
+                                            <option value="BigCommerce">BigCommerce</option>
+                                            <option value="Custom Headless / Other">Custom Headless / Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
                                             Primary Discipline
                                         </label>
-                                        <div className="flex flex-wrap gap-2">
+                                        <select
+                                            value={data.service_interest}
+                                            onChange={(e) => setData('service_interest', e.target.value)}
+                                            className="w-full bg-[#161822] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        >
                                             {serviceOptions.map((opt) => (
-                                                <button
-                                                    key={opt}
-                                                    type="button"
-                                                    onClick={() => setData('service_interest', opt)}
-                                                    className={`px-3.5 py-2 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-                                                        data.service_interest === opt
-                                                            ? 'bg-[#d4ff00] text-black font-bold'
-                                                            : 'bg-white/5 text-neutral-400 border border-white/10 hover:border-white/20'
-                                                    }`}
-                                                >
-                                                    {opt}
-                                                </button>
+                                                <option key={opt} value={opt}>{opt}</option>
                                             ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Budget Tier Selection */}
-                                    <div>
-                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                                            Anticipated Capital Allocation
-                                        </label>
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                            {budgetTiers.map((b) => (
-                                                <button
-                                                    key={b}
-                                                    type="button"
-                                                    onClick={() => setData('budget', b)}
-                                                    className={`px-3 py-2.5 rounded-lg text-xs font-mono text-center transition-colors cursor-pointer ${
-                                                        data.budget === b
-                                                            ? 'bg-[#d4ff00] text-black font-bold'
-                                                            : 'bg-white/5 text-neutral-400 border border-white/10 hover:border-white/20'
-                                                    }`}
-                                                >
-                                                    {b}
-                                                </button>
-                                            ))}
-                                        </div>
+                                        </select>
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-                                            Project Vision & Scope *
+                                        <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
+                                            Estimated Monthly Volume / Budget
                                         </label>
-                                        <textarea
-                                            required
-                                            rows={4}
-                                            value={data.message}
-                                            onChange={(e) => setData('message', e.target.value)}
-                                            placeholder="Tell us about the problem, timeline, references, and ideal outcome..."
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                        />
+                                        <select
+                                            value={data.budget}
+                                            onChange={(e) => setData('budget', e.target.value)}
+                                            className="w-full bg-[#161822] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                        >
+                                            {budgetTiers.map((tier) => (
+                                                <option key={tier} value={tier}>{tier}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
+                                        Project Scope & Turnaround Requirements *
+                                    </label>
+                                    <textarea
+                                        required
+                                        rows={4}
+                                        value={data.message}
+                                        onChange={(e) => setData('message', e.target.value)}
+                                        placeholder="Detail your monthly SKU volume, background specifications, desired turnaround SLA, or custom retouching guidelines..."
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                    />
+                                </div>
+
+                                <div className="flex items-center justify-between pt-2">
+                                    <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+                                        <ShieldCheck className="w-4 h-4 text-[#d4ff00]" />
+                                        <span>Mutual NDA Protected</span>
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={isBusy}
-                                        className="w-full bg-[#d4ff00] text-black font-display font-bold py-4 px-6 rounded-xl hover:bg-[#c2eb00] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_25px_rgba(212,255,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-8 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center gap-2 shadow-xl disabled:opacity-50"
                                     >
-                                        <span>{isBusy ? 'Transmitting...' : 'Dispatch Project Brief'}</span>
                                         <Send className="w-4 h-4" />
+                                        <span>{isBusy ? 'Transmitting...' : 'Send Inquiry'}</span>
                                     </button>
-                                </form>
-                            )}
+                                </div>
+                            </form>
                         </div>
 
-                        {/* Coordinates & Custom Dark Map Embed */}
+                        {/* Direct Calendly & Coordinates Sidebar */}
                         <div className="lg:col-span-5 space-y-8">
+                            {/* Direct Calendly Card */}
+                            <div className="p-8 rounded-3xl bg-[#12141c] border border-[#d4ff00]/30 shadow-2xl space-y-5">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4ff00]/10 text-xs font-mono text-[#d4ff00] font-bold">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    <span>INSTANT SCHEDULING</span>
+                                </div>
+                                <h3 className="text-2xl font-display font-bold text-white">
+                                    Prefer a Direct Video Discovery Call?
+                                </h3>
+                                <p className="text-xs text-neutral-300 leading-relaxed">
+                                    Skip the email queue. Schedule a 15-minute screen-share with our Production Director to review asset guidelines, sample tests, and dedicated volume pricing.
+                                </p>
+                                <a
+                                    href={calendlyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center justify-center gap-2 shadow-lg"
+                                >
+                                    <Calendar className="w-4 h-4" />
+                                    <span>Schedule on Calendly</span>
+                                </a>
+                            </div>
+
+                            {/* Direct Contact Coordinates */}
                             <div className="p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-6">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block">
-                                    [ PHYSICAL & DIGITAL PRESENCE ]
-                                </span>
+                                <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-400 font-bold">
+                                    [ STUDIO COMMUNICATIONS ]
+                                </h3>
 
-                                <div className="space-y-4">
+                                <div className="space-y-4 text-xs font-mono text-neutral-300">
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2.5 rounded-xl bg-white/5 text-[#d4ff00] mt-0.5">
-                                            <MapPin className="w-5 h-5" />
-                                        </div>
+                                        <Mail className="w-4 h-4 text-[#d4ff00] shrink-0 mt-0.5" />
                                         <div>
-                                            <span className="font-mono text-xs text-neutral-400 uppercase block">San Francisco Studio</span>
-                                            <p className="text-white text-sm font-medium">
-                                                742 Mission St, Design District, San Francisco, CA 94103
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2.5 rounded-xl bg-white/5 text-[#d4ff00] mt-0.5">
-                                            <Mail className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <span className="font-mono text-xs text-neutral-400 uppercase block">Inbound Commissions</span>
-                                            <a href="mailto:hello@cuttingedger.com" className="text-white hover:text-[#d4ff00] text-sm font-medium transition-colors">
+                                            <p className="text-white font-bold">Enterprise Client Support</p>
+                                            <a href="mailto:hello@cuttingedger.com" className="text-neutral-400 hover:text-white transition-colors">
                                                 hello@cuttingedger.com
                                             </a>
                                         </div>
                                     </div>
 
                                     <div className="flex items-start gap-3">
-                                        <div className="p-2.5 rounded-xl bg-white/5 text-[#d4ff00] mt-0.5">
-                                            <Phone className="w-5 h-5" />
-                                        </div>
+                                        <Phone className="w-4 h-4 text-[#d4ff00] shrink-0 mt-0.5" />
                                         <div>
-                                            <span className="font-mono text-xs text-neutral-400 uppercase block">Studio Switchboard</span>
-                                            <a href="tel:+18005553343" className="text-white hover:text-[#d4ff00] text-sm font-medium transition-colors">
-                                                +1 (800) 555-EDGE
-                                            </a>
+                                            <p className="text-white font-bold">Direct Phone Hotline</p>
+                                            <span className="text-neutral-400">+1 (409) 995-2565</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <MapPin className="w-4 h-4 text-[#d4ff00] shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-white font-bold">Global Operations Center</p>
+                                            <span className="text-neutral-400">
+                                                Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Styled Dark Interactive SVG Map */}
-                            <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0e1018] p-6 text-center space-y-4">
-                                <span className="font-mono text-xs uppercase tracking-widest text-neutral-400 block">
-                                    Studio Radar Coordinates
-                                </span>
-
-                                <div className="relative w-full aspect-[16/10] bg-[#0c0d12] rounded-2xl border border-white/5 overflow-hidden flex items-center justify-center">
-                                    {/* Grid Lines */}
-                                    <div className="absolute inset-0 bg-grain opacity-40" />
-                                    <div className="absolute inset-0 [background:radial-gradient(#2d3345_1px,transparent_1px)] [background-size:16px_16px]" />
-
-                                    {/* Radar Circle Rings */}
-                                    <div className="w-32 h-32 rounded-full border border-white/10 flex items-center justify-center animate-ping" style={{ animationDuration: '4s' }} />
-                                    <div className="absolute w-24 h-24 rounded-full border border-[#d4ff00]/30 flex items-center justify-center" />
-                                    <div className="absolute w-3 h-3 rounded-full bg-[#d4ff00] shadow-[0_0_15px_#d4ff00]" />
-
-                                    <div className="absolute bottom-3 left-3 bg-black/80 px-2.5 py-1 rounded text-[10px] font-mono text-[#d4ff00]">
-                                        37.7749° N, 122.4194° W
-                                    </div>
-                                </div>
-
-                                <p className="text-xs text-neutral-500 font-mono">
-                                    In-person studio workshops by appointment only.
-                                </p>
                             </div>
                         </div>
                     </div>

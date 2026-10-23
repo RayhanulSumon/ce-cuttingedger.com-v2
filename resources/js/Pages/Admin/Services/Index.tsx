@@ -34,16 +34,30 @@ import {
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Service } from "@/types/models";
 
-interface ServicesIndexProps {
-    services: Service[];
+interface ParentService {
+    id: number;
+    title: string;
+    slug: string;
 }
 
-export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
+interface ServicesIndexProps {
+    services: (Service & {
+        parent?: { id: number; title: string; slug: string } | null;
+        parent_id?: number | null;
+    })[];
+    parentServices?: ParentService[];
+}
+
+export default function ServicesIndex({
+    services = [],
+    parentServices = [],
+}: ServicesIndexProps) {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [editingService, setEditingService] = useState<Service | null>(null);
+    const [editingService, setEditingService] = useState<any>(null);
     const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
 
     const createForm = useForm({
+        parent_id: "" as number | string,
         title: "",
         marquee_label: "",
         subtitle: "",
@@ -54,6 +68,7 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
     });
 
     const editForm = useForm({
+        parent_id: "" as number | string,
         title: "",
         marquee_label: "",
         subtitle: "",
@@ -73,9 +88,10 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
         });
     };
 
-    const openEdit = (service: Service) => {
+    const openEdit = (service: any) => {
         setEditingService(service);
         editForm.setData({
+            parent_id: service.parent_id || "",
             title: service.title,
             marquee_label: service.marquee_label,
             subtitle: service.subtitle,
@@ -110,7 +126,7 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
             cell: (s) => (
                 <div className="flex items-center gap-3">
                     <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-black"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-black shrink-0"
                         style={{
                             backgroundColor: `${s.accent_color || "#d4ff00"}20`,
                             color: s.accent_color || "#d4ff00",
@@ -127,6 +143,20 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
                     </div>
                 </div>
             ),
+        },
+        {
+            header: "PILLAR / HIERARCHY",
+            cell: (s: any) =>
+                s.parent ? (
+                    <div className="flex items-center gap-1.5 font-mono text-xs text-neutral-300">
+                        <span className="text-[#d4ff00]">↳</span>
+                        <span className="font-semibold">{s.parent.title}</span>
+                    </div>
+                ) : (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30 whitespace-nowrap">
+                        ★ CORE PILLAR
+                    </span>
+                ),
         },
         {
             header: "MARQUEE LABEL",
@@ -217,6 +247,32 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
                     </DialogHeader>
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
+                        <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.04] border border-white/10">
+                            <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold block">
+                                Service Parent Pillar (Hierarchy)
+                            </label>
+                            <p className="text-[11px] text-neutral-400">
+                                Leave as "Top-Level Core Pillar" for primary disciplines, or select a parent to create a specialized child sub-service.
+                            </p>
+                            <select
+                                value={createForm.data.parent_id}
+                                onChange={(e) =>
+                                    createForm.setData(
+                                        "parent_id",
+                                        e.target.value === "" ? "" : Number(e.target.value)
+                                    )
+                                }
+                                className="w-full h-9 rounded-md bg-neutral-900 border border-white/15 text-xs text-white px-3 font-mono"
+                            >
+                                <option value="">★ Top-Level Core Pillar (No Parent)</option>
+                                {parentServices.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        ↳ Sub-service of: {p.title}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
                                 Discipline Title
@@ -351,6 +407,34 @@ export default function ServicesIndex({ services = [] }: ServicesIndexProps) {
                     </DialogHeader>
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
+                        <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.04] border border-white/10">
+                            <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold block">
+                                Service Parent Pillar (Hierarchy)
+                            </label>
+                            <p className="text-[11px] text-neutral-400">
+                                Leave as "Top-Level Core Pillar" for primary disciplines, or select a parent to nest under a pillar.
+                            </p>
+                            <select
+                                value={editForm.data.parent_id}
+                                onChange={(e) =>
+                                    editForm.setData(
+                                        "parent_id",
+                                        e.target.value === "" ? "" : Number(e.target.value)
+                                    )
+                                }
+                                className="w-full h-9 rounded-md bg-neutral-900 border border-white/15 text-xs text-white px-3 font-mono"
+                            >
+                                <option value="">★ Top-Level Core Pillar (No Parent)</option>
+                                {parentServices
+                                    .filter((p) => p.id !== editingService?.id)
+                                    .map((p) => (
+                                        <option key={p.id} value={p.id}>
+                                            ↳ Sub-service of: {p.title}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
                                 Discipline Title

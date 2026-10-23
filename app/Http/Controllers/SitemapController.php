@@ -6,66 +6,99 @@ use App\Models\Blog;
 use App\Models\Job;
 use App\Models\Project;
 use App\Models\Service;
-use App\Models\TeamMember;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
     /**
-     * Generate dynamic sitemap.xml.
+     * Generate dynamic XML sitemap conforming to Google & Bing standards.
      */
     public function index(): Response
     {
-        $urls = [
-            url('/'),
-            url('/about'),
-            url('/services'),
-            url('/work'),
-            url('/team'),
-            url('/careers'),
-            url('/pricing'),
-            url('/faq'),
-            url('/blog'),
-            url('/contact'),
-            url('/privacy'),
-            url('/terms'),
+        $entries = [];
+
+        // Static core indexable pages
+        $staticPages = [
+            ['url' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/services'), 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/case-studies'), 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/pricing'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/reviews'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/about'), 'priority' => '0.7', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/contact'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/faq'), 'priority' => '0.7', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/nda-compliance'), 'priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/cookie-policy'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/ESG-policy'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/privacy'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/terms'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/careers'), 'priority' => '0.6', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/blog'), 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => date('Y-m-d')],
         ];
 
-        foreach (Project::all() as $project) {
-            $urls[] = url("/work/{$project->slug}");
+        foreach ($staticPages as $page) {
+            $entries[] = $page;
         }
 
-        foreach (Service::all() as $service) {
-            $urls[] = url("/services/{$service->slug}");
+        // Services & Child Sub-services (Only indexable)
+        $services = Service::where('is_noindex', false)->with('parent')->get();
+        foreach ($services as $service) {
+            $entries[] = [
+                'url' => url($service->path),
+                'priority' => $service->parent_id ? '0.85' : '0.9',
+                'changefreq' => 'weekly',
+                'lastmod' => $service->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
+            ];
         }
 
-        foreach (TeamMember::all() as $member) {
-            $urls[] = url("/team/{$member->slug}");
+        // Case studies (Only indexable)
+        $projects = Project::where('is_noindex', false)->get();
+        foreach ($projects as $project) {
+            $entries[] = [
+                'url' => url("/case-studies/{$project->slug}"),
+                'priority' => '0.8',
+                'changefreq' => 'weekly',
+                'lastmod' => $project->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
+            ];
         }
 
-        foreach (Job::where('is_open', true)->get() as $job) {
-            $urls[] = url("/careers/{$job->slug}");
+        // Active Careers
+        $jobs = Job::where('is_open', true)->get();
+        foreach ($jobs as $job) {
+            $entries[] = [
+                'url' => url("/careers/{$job->slug}"),
+                'priority' => '0.6',
+                'changefreq' => 'weekly',
+                'lastmod' => $job->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
+            ];
         }
 
-        foreach (Blog::where('status', 'published')->get() as $blog) {
-            $urls[] = url("/blog/{$blog->slug}");
+        // Published Blogs
+        $blogs = Blog::where('status', 'published')->get();
+        foreach ($blogs as $blog) {
+            $entries[] = [
+                'url' => url("/blog/{$blog->slug}"),
+                'priority' => '0.7',
+                'changefreq' => 'weekly',
+                'lastmod' => $blog->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
+            ];
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
-        foreach ($urls as $url) {
-            $xml .= '<url>';
-            $xml .= '<loc>'.htmlspecialchars($url).'</loc>';
-            $xml .= '<lastmod>'.date('Y-m-d').'</lastmod>';
-            $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.8</priority>';
-            $xml .= '</url>';
+        foreach ($entries as $entry) {
+            $xml .= "  <url>\n";
+            $xml .= '    <loc>'.htmlspecialchars($entry['url']).'</loc>'."\n";
+            $xml .= '    <lastmod>'.$entry['lastmod'].'</lastmod>'."\n";
+            $xml .= '    <changefreq>'.$entry['changefreq'].'</changefreq>'."\n";
+            $xml .= '    <priority>'.$entry['priority'].'</priority>'."\n";
+            $xml .= "  </url>\n";
         }
 
         $xml .= '</urlset>';
 
         return response($xml, 200)
-            ->header('Content-Type', 'application/xml');
+            ->header('Content-Type', 'application/xml; charset=utf-8');
     }
 }
