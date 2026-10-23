@@ -61,6 +61,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         description: "",
         cover_image: "/images/work/project-1.jpg",
         featured: false,
+        is_concept: false,
         sort_order: 0,
         live_url: "",
     });
@@ -74,6 +75,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         description: "",
         cover_image: "",
         featured: false,
+        is_concept: false,
         sort_order: 0,
         live_url: "",
     });
@@ -99,6 +101,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
             description: project.description || "",
             cover_image: project.cover_image,
             featured: project.featured,
+            is_concept: Boolean((project as any).is_concept),
             sort_order: project.sort_order,
             live_url: project.live_url || "",
         });
@@ -155,12 +158,18 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         },
         {
             header: "STATUS",
-            cell: (p) =>
-                p.featured ? (
-                    <Badge variant="accent">FEATURED</Badge>
-                ) : (
-                    <Badge variant="outline">ARCHIVE</Badge>
-                ),
+            cell: (p) => (
+                <div className="flex flex-wrap gap-1">
+                    {p.featured && <Badge variant="accent">FEATURED</Badge>}
+                    {(p as any).is_concept ? (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                            CONCEPT
+                        </span>
+                    ) : (
+                        <Badge variant="outline">CLIENT WORK</Badge>
+                    )}
+                </div>
+            ),
         },
         {
             header: "ORDER",
@@ -385,6 +394,23 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <div>
+                                <span className="text-xs font-semibold text-amber-300 block">
+                                    Concept / Speculative Case Study
+                                </span>
+                                <span className="text-[11px] text-neutral-400 block">
+                                    Tags project as Concept Work to maintain B2B enterprise transparency.
+                                </span>
+                            </div>
+                            <Switch
+                                checked={createForm.data.is_concept}
+                                onCheckedChange={(val) =>
+                                    createForm.setData("is_concept", val)
+                                }
+                            />
+                        </div>
+
                         <DialogFooter>
                             <Button
                                 type="button"
@@ -546,6 +572,23 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 checked={editForm.data.featured}
                                 onCheckedChange={(val) =>
                                     editForm.setData("featured", val)
+                                }
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <div>
+                                <span className="text-xs font-semibold text-amber-300 block">
+                                    Concept / Speculative Case Study
+                                </span>
+                                <span className="text-[11px] text-neutral-400 block">
+                                    Tags project as Concept Work to maintain B2B enterprise transparency.
+                                </span>
+                            </div>
+                            <Switch
+                                checked={editForm.data.is_concept}
+                                onCheckedChange={(val) =>
+                                    editForm.setData("is_concept", val)
                                 }
                             />
                         </div>

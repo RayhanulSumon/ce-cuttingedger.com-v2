@@ -17,10 +17,21 @@ class Project extends Model
         'deliverables' => 'array',
         'metrics' => 'array',
         'featured' => 'boolean',
+        'is_concept' => 'boolean',
+        'is_noindex' => 'boolean',
+        'before_after_images' => 'array',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Resolve the public canonical path for this case study.
+     */
+    public function getPathAttribute(): string
+    {
+        return "/case-studies/{$this->slug}";
     }
 }
