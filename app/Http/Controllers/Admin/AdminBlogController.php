@@ -121,7 +121,6 @@ class AdminBlogController extends Controller
             'body' => ['required', 'string'],
             'cover_image' => ['required_without:cover_image_file', 'nullable', 'string'],
             'cover_image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
-            'reading_time' => ['nullable', 'integer', 'min:1'],
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'in:draft,published,archived'],
             'tags' => ['nullable'],
@@ -146,12 +145,6 @@ class AdminBlogController extends Controller
             $validated['slug'] = Str::slug($validated['slug']);
         }
 
-        // Automatic reading time estimate if not specified (words / 200)
-        if (empty($validated['reading_time'])) {
-            $wordCount = str_word_count(strip_tags($validated['body']));
-            $validated['reading_time'] = max(1, (int) ceil($wordCount / 200));
-        }
-
         // Smart dynamic SEO fallbacks
         if (empty($validated['meta_title'])) {
             $validated['meta_title'] = $validated['title'];
@@ -159,8 +152,11 @@ class AdminBlogController extends Controller
         if (empty($validated['meta_description'])) {
             $validated['meta_description'] = Str::limit(strip_tags($validated['excerpt']), 160);
         }
+        if (empty($validated['canonical_url'])) {
+            $validated['canonical_url'] = url('/blog/'.$validated['slug']);
+        }
         if (empty($validated['og_image'])) {
-            $validated['og_image'] = $validated['cover_image'];
+            $validated['og_image'] = $validated['cover_image'] ?? null;
         }
 
         if (is_string($validated['tags'] ?? null)) {
@@ -207,7 +203,6 @@ class AdminBlogController extends Controller
             'body' => ['required', 'string'],
             'cover_image' => ['required_without:cover_image_file', 'nullable', 'string'],
             'cover_image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
-            'reading_time' => ['nullable', 'integer', 'min:1'],
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'in:draft,published,archived'],
             'tags' => ['nullable'],
@@ -227,9 +222,11 @@ class AdminBlogController extends Controller
 
         $validated['slug'] = Str::slug($validated['slug']);
 
-        if (empty($validated['reading_time'])) {
-            $wordCount = str_word_count(strip_tags($validated['body']));
-            $validated['reading_time'] = max(1, (int) ceil($wordCount / 200));
+        if (empty($validated['canonical_url'])) {
+            $validated['canonical_url'] = url('/blog/'.$validated['slug']);
+        }
+        if (empty($validated['og_image'])) {
+            $validated['og_image'] = $validated['cover_image'] ?? $blog->cover_image;
         }
 
         if (is_string($validated['tags'] ?? null)) {

@@ -20,7 +20,6 @@ import {
 } from "@/Components/ui/select";
 import {
     Sparkles,
-    Clock,
     ArrowLeft,
     ExternalLink,
     Save,
@@ -38,6 +37,7 @@ import {
     UploadCloud,
     Loader2,
     Check,
+    Copy,
     X,
     Trash2,
 } from "lucide-react";
@@ -68,7 +68,6 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
         excerpt: blog?.excerpt || "",
         body: blog?.body || "",
         cover_image: blog?.cover_image || "",
-        reading_time: blog?.reading_time || 5,
         is_featured: !!blog?.is_featured,
         status: (blog?.status || "published") as "draft" | "published" | "archived",
         tags: initialTags,
@@ -86,7 +85,16 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+    const [isUrlCopied, setIsUrlCopied] = useState(false);
     const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+    const handleCopyLiveUrl = () => {
+        const slugToCopy = data.slug || "your-slug";
+        const fullUrl = `https://cuttingedger.com/blog/${slugToCopy}`;
+        navigator.clipboard.writeText(fullUrl);
+        setIsUrlCopied(true);
+        setTimeout(() => setIsUrlCopied(false), 2000);
+    };
 
     useEffect(() => {
         setImagePreviewError(false);
@@ -217,13 +225,6 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
         setData("slug", generated);
     };
 
-    // Helper: Auto-estimate reading time based on word count
-    const handleEstimateReadingTime = () => {
-        const text = data.body.replace(/<[^>]*>/g, " ").trim();
-        const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-        const estimated = Math.max(1, Math.ceil(words / 200));
-        setData("reading_time", estimated);
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -318,12 +319,32 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         required={isEdit}
                                     />
                                 </div>
-                                <div className="text-[11px] font-mono text-neutral-500 truncate flex items-center gap-1">
-                                    <Globe className="w-3 h-3 shrink-0 text-neutral-400" />
-                                    <span>Live URL preview:</span>
-                                    <span className="text-[#d4ff00]">
-                                        https://cuttingedger.com/blog/{data.slug || "your-slug"}
-                                    </span>
+                                <div className="text-[11px] font-mono text-neutral-500 flex items-center gap-2 flex-wrap">
+                                    <div className="flex items-center gap-1 min-w-0">
+                                        <Globe className="w-3 h-3 shrink-0 text-neutral-400" />
+                                        <span>Live URL preview:</span>
+                                        <span className="text-[#d4ff00]">
+                                            https://cuttingedger.com/blog/{data.slug || "your-slug"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleCopyLiveUrl}
+                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-neutral-300 hover:text-white transition-all cursor-pointer text-[10px] font-mono shrink-0"
+                                        title="Copy live URL to clipboard"
+                                    >
+                                        {isUrlCopied ? (
+                                            <>
+                                                <Check className="w-3 h-3 text-emerald-400" />
+                                                <span className="text-emerald-400 font-medium">Copied</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Copy className="w-3 h-3 text-neutral-400" />
+                                                <span>Copy</span>
+                                            </>
+                                        )}
+                                    </button>
                                 </div>
                                 {errors.slug && (
                                     <p className="text-rose-400 text-xs font-mono flex items-center gap-1.5 mt-1">
@@ -362,21 +383,9 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* Body Content Editor */}
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label className="text-xs font-mono text-neutral-300">
-                                    Full Article Body Content *
-                                </label>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleEstimateReadingTime}
-                                    className="h-6 px-2 text-[11px] font-mono text-neutral-400 hover:text-white hover:bg-white/10 gap-1 cursor-pointer"
-                                >
-                                    <Clock className="w-3 h-3 text-[#d4ff00]" />
-                                    <span>Recalculate Read Time</span>
-                                </Button>
-                            </div>
+                            <label className="text-xs font-mono text-neutral-300 block">
+                                Full Article Body Content *
+                            </label>
                             <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0c0d12]">
                                 <RichContentEditor
                                     value={data.body}
@@ -732,31 +741,47 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             </span>
                                         </div>
                                     </div>
-                                ) : uploadedFileName ? (
+                                ) : (uploadedFileName || data.cover_image) ? (
                                     <div className="flex items-center justify-between w-full p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                                             <div className="flex flex-col text-left min-w-0">
-                                                <span className="text-xs font-mono text-white truncate max-w-[190px]">
-                                                    {uploadedFileName}
+                                                <span className="text-xs font-mono text-white truncate max-w-[170px]">
+                                                    {uploadedFileName || data.cover_image.split("/").pop()}
                                                 </span>
                                                 <span className="text-[10px] font-mono text-emerald-400">
                                                     Optimized WebP • Click to replace
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                fileInputRef.current?.click();
-                                            }}
-                                            className="h-7 px-2 text-[10px] font-mono text-neutral-300 hover:text-white"
-                                        >
-                                            Replace
-                                        </Button>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    fileInputRef.current?.click();
+                                                }}
+                                                className="h-7 px-2 text-[10px] font-mono text-neutral-300 hover:text-white"
+                                            >
+                                                Replace
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setData("cover_image", "");
+                                                    setUploadedFileName(null);
+                                                }}
+                                                className="h-7 px-2 text-[10px] font-mono text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                                                title="Remove cover image"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <>
@@ -800,39 +825,59 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             )}
                         </div>
 
-                        {/* Live Image Preview */}
-                        <div className="space-y-1.5 pt-1">
-                            <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                                    <ImageIcon className="w-3 h-3 text-[#d4ff00]" />
-                                    <span>Live 16:9 Cinema Banner Preview</span>
-                                </span>
-                                {data.cover_image && !imagePreviewError && (
-                                    <a
-                                        href={data.cover_image}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-[10px] font-mono text-neutral-400 hover:text-[#d4ff00] flex items-center gap-1 transition-colors"
-                                        title="View full resolution image in new tab"
-                                    >
-                                        <span>Full Size</span>
-                                        <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
-                                )}
-                            </div>
+                        {/* Live Image Preview (Only visible when image is uploaded / exists) */}
+                        {Boolean(data.cover_image) && (
+                            <div className="space-y-1.5 pt-1">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                                        <ImageIcon className="w-3 h-3 text-[#d4ff00]" />
+                                        <span>Live 16:9 Cinema Banner Preview</span>
+                                    </span>
+                                    {!imagePreviewError && (
+                                        <a
+                                            href={data.cover_image}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-[10px] font-mono text-neutral-400 hover:text-[#d4ff00] flex items-center gap-1 transition-colors"
+                                            title="View full resolution image in new tab"
+                                        >
+                                            <span>Full Size</span>
+                                            <ExternalLink className="w-2.5 h-2.5" />
+                                        </a>
+                                    )}
+                                </div>
 
-                            <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-[#0c0d12] flex items-center justify-center group/preview shadow-inner">
-                                {data.cover_image && !imagePreviewError ? (
-                                    <>
-                                        <img
-                                            src={data.cover_image}
-                                            alt={data.title || "Cover preview"}
-                                            onError={() => setImagePreviewError(true)}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/preview:scale-[1.02]"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-0 group-hover/preview:opacity-100 transition-opacity duration-200 flex items-end justify-between p-3">
-                                            <span className="text-[10px] font-mono text-neutral-300 truncate max-w-[210px]">
-                                                {uploadedFileName || data.cover_image.split("/").pop()}
+                                <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-[#0c0d12] flex items-center justify-center group/preview shadow-inner">
+                                    {!imagePreviewError ? (
+                                        <>
+                                            <img
+                                                src={data.cover_image}
+                                                alt={data.title || "Cover preview"}
+                                                onError={() => setImagePreviewError(true)}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover/preview:scale-[1.02]"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-0 group-hover/preview:opacity-100 transition-opacity duration-200 flex items-end justify-between p-3">
+                                                <span className="text-[10px] font-mono text-neutral-300 truncate max-w-[210px]">
+                                                    {uploadedFileName || data.cover_image.split("/").pop()}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setData("cover_image", "");
+                                                        setUploadedFileName(null);
+                                                    }}
+                                                    className="px-2 py-1 rounded bg-rose-500/80 hover:bg-rose-600 text-white text-[10px] font-mono flex items-center gap-1 transition-colors shadow-lg cursor-pointer"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-2 text-neutral-500 font-mono text-xs p-4 text-center">
+                                            <ImageIcon className="w-8 h-8 opacity-30 text-neutral-400" />
+                                            <span className="text-rose-400 text-[11px]">
+                                                Failed to load cover image
                                             </span>
                                             <button
                                                 type="button"
@@ -840,25 +885,15 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                     setData("cover_image", "");
                                                     setUploadedFileName(null);
                                                 }}
-                                                className="px-2 py-1 rounded bg-rose-500/80 hover:bg-rose-600 text-white text-[10px] font-mono flex items-center gap-1 transition-colors shadow-lg cursor-pointer"
+                                                className="text-[10px] font-mono text-neutral-400 hover:text-white underline cursor-pointer"
                                             >
-                                                <Trash2 className="w-3 h-3" />
-                                                <span>Remove</span>
+                                                Remove image
                                             </button>
                                         </div>
-                                    </>
-                                ) : (
-                                    <div className="flex flex-col items-center gap-2 text-neutral-500 font-mono text-xs p-4 text-center">
-                                        <ImageIcon className="w-8 h-8 opacity-30 text-neutral-400" />
-                                        <span className="text-neutral-400 text-[11px]">
-                                            {imagePreviewError
-                                                ? "Failed to load cover image"
-                                                : "Upload an image above to generate banner preview"}
-                                        </span>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* PUBLISHING HUB CARD */}
@@ -973,26 +1008,6 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             />
                         </div>
 
-                        {/* Estimated Reading Time */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-mono text-neutral-300 flex items-center justify-between">
-                                <span>Estimated Reading Time</span>
-                                <span className="text-[10px] font-mono text-neutral-500">Minutes</span>
-                            </label>
-                            <div className="relative flex items-center">
-                                <Clock className="w-4 h-4 text-neutral-400 absolute left-3 pointer-events-none" />
-                                <Input
-                                    type="number"
-                                    min={1}
-                                    max={120}
-                                    value={data.reading_time}
-                                    onChange={(e) =>
-                                        setData("reading_time", parseInt(e.target.value) || 1)
-                                    }
-                                    className="pl-9 bg-[#0c0d12] border-white/10 focus:border-[#d4ff00] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
 
                         {/* Form Submission Buttons */}
                         <div className="pt-2 space-y-2.5">

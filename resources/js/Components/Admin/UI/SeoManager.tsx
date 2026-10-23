@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Badge } from "@/Components/ui/badge";
 import {
     Search,
     Globe,
-    CheckCircle2,
-    AlertTriangle,
     Sparkles,
-    Link2,
     Bot,
-    Share2,
-    Image as ImageIcon,
 } from "lucide-react";
 import {
     Select,
@@ -52,10 +47,30 @@ export function SeoManager({
     const displayTitle = data.meta_title || fallbackTitle || "Article Title — CuttingEdger";
     const displayDesc = data.meta_description || fallbackDescription || "Detailed article excerpt and architectural summary...";
     const displayUrl = data.canonical_url || `https://cuttingedger.com/blog/${fallbackSlug || "article-slug"}`;
-    const displayOgImage = data.og_image || fallbackImage;
 
     const titleLength = (data.meta_title || "").length;
     const descLength = (data.meta_description || "").length;
+
+    // Automatically synchronize Canonical URL and OG Image in the background
+    useEffect(() => {
+        if (fallbackSlug) {
+            const expectedCanonical = `https://cuttingedger.com/blog/${fallbackSlug}`;
+            if (!data.canonical_url || data.canonical_url.startsWith("https://cuttingedger.com/blog/")) {
+                if (data.canonical_url !== expectedCanonical) {
+                    onChange("canonical_url", expectedCanonical);
+                }
+            }
+        }
+    }, [fallbackSlug, data.canonical_url, onChange]);
+
+    useEffect(() => {
+        if (fallbackImage !== undefined) {
+            const targetOg = fallbackImage || "";
+            if (data.og_image !== targetOg) {
+                onChange("og_image", targetOg);
+            }
+        }
+    }, [fallbackImage, data.og_image, onChange]);
 
     // Calculate dynamic SEO health score
     let score = 0;
@@ -66,7 +81,7 @@ export function SeoManager({
     else if (descLength > 0) score += 20;
 
     if (data.meta_keywords?.trim()) score += 15;
-    if (data.canonical_url?.trim()) score += 10;
+    if (data.canonical_url?.trim() || fallbackSlug) score += 10;
     if (data.og_image?.trim() || fallbackImage) score += 10;
 
     const handleAutoGenerate = () => {
@@ -76,16 +91,20 @@ export function SeoManager({
         if (!data.meta_description && fallbackDescription) {
             onChange("meta_description", fallbackDescription.slice(0, 155));
         }
-        if (!data.canonical_url && fallbackSlug) {
+        if (fallbackSlug) {
             onChange("canonical_url", `https://cuttingedger.com/blog/${fallbackSlug}`);
         }
-        if (!data.og_image && fallbackImage) {
+        if (fallbackImage) {
             onChange("og_image", fallbackImage);
         }
     };
 
     return (
         <div className="space-y-4 rounded-lg border border-white/10 bg-[#0c0d12] p-4 text-white">
+            {/* Hidden background inputs to guarantee form payload submission */}
+            <input type="hidden" name="canonical_url" value={data.canonical_url || ""} />
+            <input type="hidden" name="og_image" value={data.og_image || ""} />
+
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
                     <Search className="w-4 h-4 text-[#d4ff00]" />
@@ -195,180 +214,77 @@ export function SeoManager({
                 />
             </div>
 
-            {/* Advanced Directives: Canonical URL & Robots */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                {/* Canonical URL */}
-                <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                        <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                            <Link2 className="w-3.5 h-3.5 text-[#d4ff00]" />
-                            <span>Canonical URL</span>
-                        </label>
-                        <span className="text-[10px] font-mono text-neutral-500">
-                            Preferred indexing URL
-                        </span>
-                    </div>
-                    <Input
-                        placeholder={fallbackSlug ? `https://cuttingedger.com/blog/${fallbackSlug}` : "https://cuttingedger.com/blog/..."}
-                        value={data.canonical_url || ""}
-                        onChange={(e) => onChange("canonical_url", e.target.value)}
-                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00] font-mono text-xs text-neutral-200"
-                    />
-                </div>
-
-                {/* Robots Directives */}
-                <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                        <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                            <Bot className="w-3.5 h-3.5 text-[#d4ff00]" />
-                            <span>Robots Directives</span>
-                        </label>
-                        <span className="text-[10px] font-mono text-neutral-500">
-                            Crawler index rules
-                        </span>
-                    </div>
-                    <Select
-                        value={data.robots || "index, follow"}
-                        onValueChange={(val) => onChange("robots", val)}
-                    >
-                        <SelectTrigger className="h-10 bg-[#12131a] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
-                            <SelectValue placeholder="Select robots rule">
-                                {(data.robots || "index, follow") === "noindex, nofollow" ? (
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
-                                        <span className="font-mono text-xs text-white">noindex, nofollow</span>
-                                        <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Strictly Private)</span>
-                                    </div>
-                                ) : (data.robots || "index, follow") === "noindex, follow" ? (
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                                        <span className="font-mono text-xs text-white">noindex, follow</span>
-                                        <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Hidden from Search)</span>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                                        <span className="font-mono text-xs text-white">index, follow</span>
-                                        <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Standard Public)</span>
-                                    </div>
-                                )}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[300px]">
-                            <SelectGroup>
-                                <SelectLabel>SEARCH CRAWLER DIRECTIVES</SelectLabel>
-                                <SelectItem value="index, follow" className="py-2.5 px-3 cursor-pointer">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] shrink-0" />
-                                        <div className="flex flex-col text-left">
-                                            <span className="font-medium text-white text-xs font-mono">index, follow</span>
-                                            <span className="text-[11px] text-neutral-400">Standard Public • Index article & crawl links</span>
-                                        </div>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="noindex, follow" className="py-2.5 px-3 cursor-pointer">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] shrink-0" />
-                                        <div className="flex flex-col text-left">
-                                            <span className="font-medium text-white text-xs font-mono">noindex, follow</span>
-                                            <span className="text-[11px] text-neutral-400">Hidden from Search • Hide page, follow links</span>
-                                        </div>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="noindex, nofollow" className="py-2.5 cursor-pointer">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)] shrink-0" />
-                                        <div className="flex flex-col text-left">
-                                            <span className="font-medium text-white text-xs font-mono">noindex, nofollow</span>
-                                            <span className="text-[11px] text-neutral-400">Strictly Private • Block index & all links</span>
-                                        </div>
-                                    </div>
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-
-            {/* Social Share (OG) Image URL */}
+            {/* Crawler Robots Directives */}
             <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between">
                     <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                        <Share2 className="w-3.5 h-3.5 text-[#d4ff00]" />
-                        <span>Social Share Image (Open Graph / Twitter Card)</span>
+                        <Bot className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <span>Robots Directives</span>
                     </label>
                     <span className="text-[10px] font-mono text-neutral-500">
-                        {data.og_image ? "Custom override active" : "Auto-inherited from cover image"}
+                        Crawler index & link rules
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                        <Input
-                            placeholder={fallbackImage || "https://images.unsplash.com/... or /storage/..."}
-                            value={data.og_image || ""}
-                            onChange={(e) => onChange("og_image", e.target.value)}
-                            className="bg-[#12131a] border-white/10 focus:border-[#d4ff00] font-mono text-xs text-neutral-200"
-                        />
-                    </div>
-                    {fallbackImage && data.og_image !== fallbackImage && (
-                        <button
-                            type="button"
-                            onClick={() => onChange("og_image", fallbackImage)}
-                            className="h-10 px-3 text-xs font-mono text-[#d4ff00] hover:text-black bg-[#d4ff00]/10 hover:bg-[#d4ff00] border border-[#d4ff00]/30 rounded-lg transition-all shrink-0 cursor-pointer flex items-center gap-1.5"
-                            title="Set to article cover image"
-                        >
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>Use Cover</span>
-                        </button>
-                    )}
-                    {data.og_image && (
-                        <button
-                            type="button"
-                            onClick={() => onChange("og_image", "")}
-                            className="h-10 px-2.5 text-xs font-mono text-neutral-400 hover:text-rose-400 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/30 rounded-lg transition-all shrink-0 cursor-pointer"
-                            title="Reset to default cover image"
-                        >
-                            Reset
-                        </button>
-                    )}
-                </div>
-
-                {/* Compact Social Thumbnail Preview */}
-                {displayOgImage && (
-                    <div className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-[#12131a]/80 border border-white/5 mt-1.5">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <img
-                                src={displayOgImage}
-                                alt="Social preview"
-                                className="w-14 h-9 rounded object-cover border border-white/10 shrink-0 shadow-sm"
-                                onError={(e) => {
-                                    (e.target as HTMLElement).style.display = "none";
-                                }}
-                            />
-                            <div className="flex flex-col min-w-0 text-left">
-                                <span className="text-[11px] font-mono text-neutral-300 truncate max-w-[340px]">
-                                    {displayOgImage}
-                                </span>
-                                <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-                                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                                    <span>
-                                        {data.og_image
-                                            ? "Custom social card image active"
-                                            : "Defaulting to article cover image"}
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                        <a
-                            href={displayOgImage}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[10px] font-mono text-neutral-400 hover:text-[#d4ff00] shrink-0 transition-colors"
-                        >
-                            View
-                        </a>
-                    </div>
-                )}
+                <Select
+                    value={data.robots || "index, follow"}
+                    onValueChange={(val) => onChange("robots", val)}
+                >
+                    <SelectTrigger className="h-10 bg-[#12131a] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
+                        <SelectValue placeholder="Select robots rule">
+                            {(data.robots || "index, follow") === "noindex, nofollow" ? (
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
+                                    <span className="font-mono text-xs text-white">noindex, nofollow</span>
+                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Strictly Private)</span>
+                                </div>
+                            ) : (data.robots || "index, follow") === "noindex, follow" ? (
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                                    <span className="font-mono text-xs text-white">noindex, follow</span>
+                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Hidden from Search)</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                                    <span className="font-mono text-xs text-white">index, follow</span>
+                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Standard Public)</span>
+                                </div>
+                            )}
+                        </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[300px]">
+                        <SelectGroup>
+                            <SelectLabel>SEARCH CRAWLER DIRECTIVES</SelectLabel>
+                            <SelectItem value="index, follow" className="py-2.5 px-3 cursor-pointer">
+                                <div className="flex items-center gap-2.5">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] shrink-0" />
+                                    <div className="flex flex-col text-left">
+                                        <span className="font-medium text-white text-xs font-mono">index, follow</span>
+                                        <span className="text-[11px] text-neutral-400">Standard Public • Index article & crawl links</span>
+                                    </div>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="noindex, follow" className="py-2.5 px-3 cursor-pointer">
+                                <div className="flex items-center gap-2.5">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] shrink-0" />
+                                    <div className="flex flex-col text-left">
+                                        <span className="font-medium text-white text-xs font-mono">noindex, follow</span>
+                                        <span className="text-[11px] text-neutral-400">Hidden from Search • Hide page, follow links</span>
+                                    </div>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="noindex, nofollow" className="py-2.5 cursor-pointer">
+                                <div className="flex items-center gap-2.5">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)] shrink-0" />
+                                    <div className="flex flex-col text-left">
+                                        <span className="font-medium text-white text-xs font-mono">noindex, nofollow</span>
+                                        <span className="text-[11px] text-neutral-400">Strictly Private • Block index & all links</span>
+                                    </div>
+                                </div>
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
         </div>
     );

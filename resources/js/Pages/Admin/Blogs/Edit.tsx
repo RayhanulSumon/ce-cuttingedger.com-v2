@@ -24,6 +24,16 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                     description={`Editing "${blog.title}". Modify content, calibrate category taxonomies, and tune search metadata.`}
                 >
                     <div className="flex items-center gap-3">
+                        <Link href={route("admin.blogs.index")}>
+                            <Button
+                                variant="outline"
+                                className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                <span>Back to Articles</span>
+                            </Button>
+                        </Link>
+
                         {blog.slug && (
                             <a
                                 href={`/blog/${blog.slug}`}
@@ -39,16 +49,6 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                                 </Button>
                             </a>
                         )}
-
-                        <Link href={route("admin.blogs.index")}>
-                            <Button
-                                variant="outline"
-                                className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                                <span>Back to Articles</span>
-                            </Button>
-                        </Link>
                     </div>
                 </AdminPageHeader>
 

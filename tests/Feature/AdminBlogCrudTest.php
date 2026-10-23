@@ -54,7 +54,6 @@ class AdminBlogCrudTest extends TestCase
             'excerpt' => 'A comprehensive deep-dive into crafting tactile, spatial web interfaces.',
             'body' => '<h2>Introduction</h2><p>Spatial layouts redefine digital depth.</p>',
             'cover_image' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe',
-            'reading_time' => 4,
             'is_featured' => true,
             'status' => 'published',
             'tags' => 'Spatial, Design, UI',
@@ -103,7 +102,6 @@ class AdminBlogCrudTest extends TestCase
             'excerpt' => 'Updated excerpt synopsis for this article.',
             'body' => '<p>Updated content body for testing purposes.</p>',
             'cover_image' => $blog->cover_image,
-            'reading_time' => 7,
             'is_featured' => false,
             'status' => 'published',
             'tags' => 'Updated, Architecture',
@@ -116,7 +114,6 @@ class AdminBlogCrudTest extends TestCase
         $this->assertDatabaseHas('blogs', [
             'id' => $blog->id,
             'title' => 'Updated Article Title for Testing',
-            'reading_time' => 7,
         ]);
     }
 
