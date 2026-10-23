@@ -6,11 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\TeamMember;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Intervention\Image\Format;
+use Intervention\Image\Laravel\Facades\Image;
 
 class AdminBlogController extends Controller
 {
@@ -53,6 +58,55 @@ class AdminBlogController extends Controller
     }
 
     /**
+     * Upload and optimize a blog cover image using Intervention Image.
+     */
+    public function uploadCover(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => ['required', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
+        ]);
+
+        $file = $request->file('image');
+        $url = $this->optimizeAndStoreCoverImage($file);
+        $relativeStoragePath = str_replace('/storage/', '', $url);
+
+        return response()->json([
+            'success' => true,
+            'url' => $url,
+            'filename' => $file->getClientOriginalName(),
+            'size' => Storage::disk('public')->size($relativeStoragePath),
+        ]);
+    }
+
+    /**
+     * Optimize and store an uploaded blog cover image using Intervention Image.
+     */
+    protected function optimizeAndStoreCoverImage(UploadedFile $file): string
+    {
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $cleanName = Str::slug($originalName);
+        $filename = ($cleanName ? Str::limit($cleanName, 35, '') : 'cover').'-'.Str::random(8).'.webp';
+        $path = 'blogs/covers/'.$filename;
+
+        // Decode image from uploaded file
+        $image = Image::decode($file->getRealPath());
+
+        // Correct orientation based on EXIF metadata
+        $image->orient();
+
+        // Scale down proportionally to 1920px max width (preventing upscaling)
+        $image->scaleDown(width: 1920);
+
+        // Encode as lightweight modern WebP at 85% quality
+        $encoded = $image->encodeUsingFormat(Format::WEBP, quality: 85);
+
+        // Store into public disk
+        Storage::disk('public')->put($path, (string) $encoded);
+
+        return '/storage/'.$path;
+    }
+
+    /**
      * Store a newly created blog post with dynamic SEO and subcategories.
      */
     public function store(Request $request): RedirectResponse
@@ -65,7 +119,8 @@ class AdminBlogController extends Controller
             'author_id' => ['nullable', 'exists:team_members,id'],
             'excerpt' => ['required', 'string'],
             'body' => ['required', 'string'],
-            'cover_image' => ['required', 'string'],
+            'cover_image' => ['required_without:cover_image_file', 'nullable', 'string'],
+            'cover_image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
             'reading_time' => ['nullable', 'integer', 'min:1'],
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'in:draft,published,archived'],
@@ -78,6 +133,11 @@ class AdminBlogController extends Controller
             'og_image' => ['nullable', 'string', 'max:255'],
             'robots' => ['nullable', 'string', 'max:100'],
         ]);
+
+        if ($request->hasFile('cover_image_file')) {
+            $validated['cover_image'] = $this->optimizeAndStoreCoverImage($request->file('cover_image_file'));
+        }
+        unset($validated['cover_image_file']);
 
         if (empty($validated['slug'])) {
             $baseSlug = Str::slug($validated['title']);
@@ -145,7 +205,8 @@ class AdminBlogController extends Controller
             'author_id' => ['nullable', 'exists:team_members,id'],
             'excerpt' => ['required', 'string'],
             'body' => ['required', 'string'],
-            'cover_image' => ['required', 'string'],
+            'cover_image' => ['required_without:cover_image_file', 'nullable', 'string'],
+            'cover_image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
             'reading_time' => ['nullable', 'integer', 'min:1'],
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'in:draft,published,archived'],
@@ -158,6 +219,11 @@ class AdminBlogController extends Controller
             'og_image' => ['nullable', 'string', 'max:255'],
             'robots' => ['nullable', 'string', 'max:100'],
         ]);
+
+        if ($request->hasFile('cover_image_file')) {
+            $validated['cover_image'] = $this->optimizeAndStoreCoverImage($request->file('cover_image_file'));
+        }
+        unset($validated['cover_image_file']);
 
         $validated['slug'] = Str::slug($validated['slug']);
 

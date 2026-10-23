@@ -8,6 +8,8 @@ use App\Models\Role;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -127,5 +129,33 @@ class AdminBlogCrudTest extends TestCase
 
         $editResponse = $this->get(route('admin.blogs.edit', $blog->id));
         $editResponse->assertRedirect('/login');
+    }
+
+    public function test_admin_can_upload_blog_cover_image(): void
+    {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('hero-banner.jpg', 1600, 900);
+
+        $response = $this->actingAs($this->admin)
+            ->postJson(route('admin.blogs.upload-cover'), [
+                'image' => $file,
+            ]);
+
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'success',
+            'url',
+            'filename',
+            'size',
+        ]);
+
+        $data = $response->json();
+        $this->assertTrue($data['success']);
+        $this->assertStringStartsWith('/storage/blogs/covers/', $data['url']);
+
+        // Verify storage file exists
+        $storedPath = str_replace('/storage/', '', $data['url']);
+        Storage::disk('public')->assertExists($storedPath);
     }
 }
