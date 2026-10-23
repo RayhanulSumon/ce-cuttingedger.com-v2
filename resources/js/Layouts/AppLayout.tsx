@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
+import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
+import { initializeAttribution } from '@/lib/attribution';
 import { PageProps } from '@/types';
 
 interface AppLayoutProps {
@@ -19,6 +21,11 @@ export function AppLayout({ children }: AppLayoutProps) {
 
     // Initialize Lenis smooth scroll
     useSmoothScroll();
+
+    // Initialize first-touch lead attribution tracker
+    useEffect(() => {
+        initializeAttribution();
+    }, []);
 
     return (
         <div className="min-h-screen flex flex-col bg-[#0a0b0e] text-[#f4f5f8] relative selection:bg-[#d4ff00] selection:text-black">
@@ -75,6 +82,9 @@ export function AppLayout({ children }: AppLayoutProps) {
 
             {/* Smart Public Client Chat & MCP Dialog */}
             <ChatWidget />
+
+            {/* Cookie & Privacy Consent Banner */}
+            <CookieConsentBanner />
         </div>
     );
 }

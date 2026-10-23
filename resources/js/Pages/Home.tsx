@@ -3,7 +3,7 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { SplitHero } from '@/Components/Home/SplitHero';
 import { IntroBand } from '@/Components/Home/IntroBand';
 import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
-import { StickyWorkCards } from '@/Components/Home/StickyWorkCards';
+import { StickyServiceCards } from '@/Components/Home/StickyServiceCards';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
 import { VolumePricingCalculator } from '@/Components/Common/VolumePricingCalculator';
@@ -44,8 +44,8 @@ export default function Home({
             {/* 3. Interactive Before/After Craft Comparison Slider */}
             <BeforeAfterShowcase />
 
-            {/* 4. Featured Work Sticky Stacked Cards */}
-            <StickyWorkCards projects={featuredProjects} />
+            {/* 4. Core Services Sticky Stacked Cards */}
+            <StickyServiceCards services={services} />
 
             {/* 5. Animated Daily Production Stats Grid */}
             <StatsGrid />

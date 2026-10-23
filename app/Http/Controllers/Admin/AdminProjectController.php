@@ -45,11 +45,18 @@ class AdminProjectController extends Controller
             'description' => ['nullable', 'string'],
             'cover_image' => ['required', 'string'],
             'featured' => ['boolean'],
+            'is_concept' => ['boolean'],
             'sort_order' => ['integer'],
             'live_url' => ['nullable', 'url'],
+            'h1_title' => ['nullable', 'string', 'max:255'],
+            'canonical_url' => ['nullable', 'string', 'max:500'],
+            'is_noindex' => ['boolean'],
+            'og_image' => ['nullable', 'string', 'max:500'],
         ]);
 
         $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(4);
+        $validated['is_concept'] = $request->boolean('is_concept', false);
+        $validated['is_noindex'] = $request->boolean('is_noindex', false);
 
         Project::create($validated);
 
@@ -70,9 +77,17 @@ class AdminProjectController extends Controller
             'description' => ['nullable', 'string'],
             'cover_image' => ['required', 'string'],
             'featured' => ['boolean'],
+            'is_concept' => ['boolean'],
             'sort_order' => ['integer'],
             'live_url' => ['nullable', 'url'],
+            'h1_title' => ['nullable', 'string', 'max:255'],
+            'canonical_url' => ['nullable', 'string', 'max:500'],
+            'is_noindex' => ['boolean'],
+            'og_image' => ['nullable', 'string', 'max:500'],
         ]);
+
+        $validated['is_concept'] = $request->boolean('is_concept', false);
+        $validated['is_noindex'] = $request->boolean('is_noindex', false);
 
         $project->update($validated);
 

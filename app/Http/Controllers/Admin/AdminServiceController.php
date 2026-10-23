@@ -17,10 +17,12 @@ class AdminServiceController extends Controller
      */
     public function index(): Response
     {
-        $services = Service::orderBy('sort_order', 'asc')->get();
+        $services = Service::with('parent')->orderBy('sort_order', 'asc')->get();
+        $parentServices = Service::whereNull('parent_id')->orderBy('sort_order', 'asc')->get(['id', 'title', 'slug']);
 
         return Inertia::render('Admin/Services/Index', [
             'services' => $services,
+            'parentServices' => $parentServices,
         ]);
     }
 
@@ -30,6 +32,7 @@ class AdminServiceController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'parent_id' => ['nullable', 'exists:services,id'],
             'title' => ['required', 'string', 'max:255'],
             'marquee_label' => ['required', 'string', 'max:255'],
             'subtitle' => ['required', 'string', 'max:255'],
@@ -37,9 +40,17 @@ class AdminServiceController extends Controller
             'icon' => ['required', 'string', 'max:50'],
             'accent_color' => ['nullable', 'string', 'max:20'],
             'sort_order' => ['integer'],
+            'h1_title' => ['nullable', 'string', 'max:255'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'canonical_url' => ['nullable', 'string', 'max:500'],
+            'is_noindex' => ['boolean'],
+            'og_image' => ['nullable', 'string', 'max:500'],
         ]);
 
         $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(3);
+        $validated['parent_id'] = ! empty($validated['parent_id']) ? $validated['parent_id'] : null;
+        $validated['is_noindex'] = $request->boolean('is_noindex', false);
 
         Service::create($validated);
 
@@ -52,6 +63,7 @@ class AdminServiceController extends Controller
     public function update(Request $request, Service $service): RedirectResponse
     {
         $validated = $request->validate([
+            'parent_id' => ['nullable', 'exists:services,id'],
             'title' => ['required', 'string', 'max:255'],
             'marquee_label' => ['required', 'string', 'max:255'],
             'subtitle' => ['required', 'string', 'max:255'],
@@ -59,7 +71,16 @@ class AdminServiceController extends Controller
             'icon' => ['required', 'string', 'max:50'],
             'accent_color' => ['nullable', 'string', 'max:20'],
             'sort_order' => ['integer'],
+            'h1_title' => ['nullable', 'string', 'max:255'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'canonical_url' => ['nullable', 'string', 'max:500'],
+            'is_noindex' => ['boolean'],
+            'og_image' => ['nullable', 'string', 'max:500'],
         ]);
+
+        $validated['parent_id'] = ! empty($validated['parent_id']) ? $validated['parent_id'] : null;
+        $validated['is_noindex'] = $request->boolean('is_noindex', false);
 
         $service->update($validated);
 

@@ -41,27 +41,34 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
     };
 
     const socials = [
-        { name: 'Twitter', url: settings?.social_twitter || 'https://twitter.com' },
-        { name: 'Instagram', url: settings?.social_instagram || 'https://instagram.com' },
-        { name: 'Behance', url: 'https://behance.net' },
-        { name: 'Dribbble', url: settings?.social_dribbble || 'https://dribbble.com' },
-        { name: 'LinkedIn', url: settings?.social_linkedin || 'https://linkedin.com' },
+        { name: 'Twitter', url: settings?.social_twitter || 'https://twitter.com/cutting_edger' },
+        { name: 'Instagram', url: settings?.social_instagram || 'https://instagram.com/cuttingedgerinc' },
+        { name: 'LinkedIn', url: settings?.social_linkedin || 'https://linkedin.com/company/cutting-edger' },
+        { name: 'Facebook', url: 'https://facebook.com/CuttingEdgerInc' },
+        { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
     ];
 
     const serviceLinks = [
-        { label: 'Product & Web Design', href: '/services' },
-        { label: 'Brand Identity Systems', href: '/services' },
-        { label: 'Kinetic 3D & Spatial Web', href: '/services' },
-        { label: 'Full-Stack Engineering', href: '/services' },
-        { label: 'Motion & Interactive Reel', href: '/work' },
+        { label: 'E-Commerce Catalog Optimization', href: '/services/ecommerce-catalog-optimization' },
+        { label: 'Hand-Drawn Clipping Path Service', href: '/services/ecommerce-catalog-optimization/clipping-path-service' },
+        { label: 'Image Masking (Alpha & Hair)', href: '/services/ecommerce-catalog-optimization/image-masking-service' },
+        { label: 'Ghost Mannequin & Neck Joint', href: '/services/ecommerce-catalog-optimization/ghost-mannequin-service' },
+        { label: 'Color Standardization Services', href: '/services/color-standardization' },
+        { label: 'White-Label Agency Bandwidth', href: '/services/white-label-agency-extension' },
+        { label: 'Virtual Production & 3D CGI Studio', href: '/services/virtual-production-cgi' },
+        { label: '3D Furniture Modeling & AR Assets', href: '/services/virtual-production-cgi/3d-furniture-modeling' },
     ];
 
     const agencyLinks = [
-        { label: 'Work Archive', href: '/work' },
-        { label: 'Our Philosophy', href: '/about' },
-        { label: 'Creative Team', href: '/team' },
-        { label: 'Careers', href: '/careers' },
-        { label: 'Pricing Plans', href: '/pricing' },
+        { label: 'Case Studies', href: '/case-studies' },
+        { label: 'Verified Reviews & Proof', href: '/reviews' },
+        { label: 'Studio Philosophy & About', href: '/about' },
+        { label: 'Creative Leadership Team', href: '/team' },
+        { label: 'Career Openings', href: '/careers' },
+        { label: 'Transparent Pricing Plans', href: '/pricing' },
+        { label: 'NDA & Security Compliance', href: '/nda-compliance' },
+        { label: 'ESG & Sustainability Charter', href: '/ESG-policy' },
+        { label: 'Cookie Policy', href: '/cookie-policy' },
         { label: 'Studio FAQ', href: '/faq' },
     ];
 
@@ -78,7 +85,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                 <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#d4ff00]/40 to-transparent pointer-events-none" />
 
                 <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 pt-16 sm:pt-20 pb-12">
-                    {/* Top Multi-Column Grid spanning full edge-to-edge container */}
+                    {/* Top Multi-Column Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
                         {/* Col 1: Brand & Studio Identity (4 cols) */}
                         <div className="lg:col-span-4 space-y-6">
@@ -103,33 +110,30 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                 </div>
                             </Link>
 
-                            <p className="text-sm text-neutral-400 font-sans leading-relaxed max-w-md">
-                                Independent digital agency engineering kinetic software interfaces, tactile brand identities, and immersive platforms for visionary leaders.
+                            <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed max-w-sm">
+                                AI-driven visual performance agency engineered for high-volume catalog retouching, swatch color standardization, white-label production, and 3D CGI virtual staging.
                             </p>
 
-                            <div className="space-y-2 text-xs text-neutral-400 font-sans">
-                                <div className="flex items-center gap-2 text-neutral-300">
-                                    <MapPin className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
-                                    <span>{settings?.office_address || '742 Evergreen Terrace, Creative District, SF'}</span>
+                            <div className="space-y-2 text-xs font-mono text-neutral-400">
+                                <div className="flex items-center gap-2">
+                                    <MapPin className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <span>Artisan Center, Level-7, West Panthapath, Dhaka 1215</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-neutral-300">
-                                    <Mail className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
-                                    <a
-                                        href={`mailto:${settings?.contact_email || 'hello@cuttingedger.com'}`}
-                                        className="hover:text-[#d4ff00] transition-colors"
-                                    >
-                                        {settings?.contact_email || 'hello@cuttingedger.com'}
+                                <div className="flex items-center gap-2">
+                                    <Mail className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <a href="mailto:hello@cuttingedger.com" className="hover:text-white transition-colors">
+                                        hello@cuttingedger.com
                                     </a>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Col 2: Services (2 cols) */}
-                        <div className="lg:col-span-2 space-y-4">
-                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
-                                Services
+                        {/* Col 2: Services / Pillars (3 cols) */}
+                        <div className="lg:col-span-3 space-y-4">
+                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                                Visual Disciplines
                             </h3>
-                            <ul className="space-y-2.5 text-xs text-neutral-400 font-sans">
+                            <ul className="space-y-2 text-xs text-neutral-400 font-sans">
                                 {serviceLinks.map((item) => (
                                     <li key={item.label}>
                                         <Link
@@ -143,12 +147,12 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                             </ul>
                         </div>
 
-                        {/* Col 3: Studio & Pages (2 cols) */}
+                        {/* Col 3: Studio & Governance (2 cols) */}
                         <div className="lg:col-span-2 space-y-4">
-                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
-                                Agency
+                            <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                                Agency & Trust
                             </h3>
-                            <ul className="space-y-2.5 text-xs text-neutral-400 font-sans">
+                            <ul className="space-y-2 text-xs text-neutral-400 font-sans">
                                 {agencyLinks.map((item) => (
                                     <li key={item.label}>
                                         <Link
@@ -162,14 +166,14 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                             </ul>
                         </div>
 
-                        {/* Col 4: Dispatch Newsletter & Start a Project CTA (4 cols) */}
-                        <div className="lg:col-span-4 space-y-5">
+                        {/* Col 4: Dispatch Newsletter & Start a Pilot CTA (3 cols) */}
+                        <div className="lg:col-span-3 space-y-5">
                             <div className="space-y-2">
-                                <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
-                                    The Dispatch
+                                <h3 className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                                    Visual Intelligence
                                 </h3>
-                                <p className="text-xs text-neutral-400 font-sans leading-relaxed max-w-sm">
-                                    Subscribed by 4,000+ designers and founders. Tactical essays on code architecture, brand systems, and kinetic UI.
+                                <p className="text-xs text-neutral-400 font-sans leading-relaxed">
+                                    Quarterly briefs on catalog velocity, Delta-E color science, and 3D CGI conversion lift.
                                 </p>
                             </div>
 
@@ -179,7 +183,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                         type="email"
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        placeholder="operative@agency.com"
+                                        placeholder="director@brand.com"
                                         required
                                         className="w-full bg-[#12141c] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors pr-24 font-sans"
                                     />
@@ -195,28 +199,22 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                 {recentlySuccessful && (
                                     <p className="text-[11px] text-[#d4ff00] font-mono flex items-center gap-1.5">
                                         <CheckCircle2 className="w-3 h-3" />
-                                        <span>Subscribed to CuttingEdger Dispatch.</span>
+                                        <span>Subscribed to Cutting Edger Brief.</span>
                                     </p>
                                 )}
                             </form>
 
-                            {/* Direct Project CTA */}
+                            {/* Direct Free Pilot CTA */}
                             <div className="pt-1">
                                 <Link
-                                    href="/contact"
-                                    onClick={(e) => {
-                                        if (onOpenContact) {
-                                            e.preventDefault();
-                                            onOpenContact();
-                                        }
-                                    }}
+                                    href="/#free-trial"
                                     className="group inline-flex items-center justify-between w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] transition-all duration-300"
                                 >
                                     <span className="text-xs font-mono uppercase tracking-wider font-semibold">
-                                        Have a project in mind?
+                                        Test Us On 3 Raw Assets
                                     </span>
                                     <span className="flex items-center gap-1 text-xs font-mono font-bold uppercase text-[#d4ff00] group-hover:text-black transition-colors">
-                                        Let's Talk
+                                        Free Pilot
                                         <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                     </span>
                                 </Link>
@@ -227,13 +225,22 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                     {/* Bottom Sub-Row: Copyright, Legal, Socials & Back To Top */}
                     <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-neutral-400 font-sans">
                         {/* Copyright & Legal */}
-                        <div className="flex flex-wrap items-center gap-5 sm:gap-6 order-2 sm:order-1">
-                            <span>Copyright © {new Date().getFullYear()} CuttingEdger Studio.</span>
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 order-2 sm:order-1 font-mono text-[11px]">
+                            <span>© {new Date().getFullYear()} Cutting Edger Inc.</span>
                             <Link href="/privacy" className="hover:text-white transition-colors">
                                 Privacy Policy
                             </Link>
                             <Link href="/terms" className="hover:text-white transition-colors">
                                 Terms of Service
+                            </Link>
+                            <Link href="/cookie-policy" className="hover:text-white transition-colors">
+                                Cookie Policy
+                            </Link>
+                            <Link href="/nda-compliance" className="hover:text-white transition-colors">
+                                NDA Compliance
+                            </Link>
+                            <Link href="/ESG-policy" className="hover:text-white transition-colors">
+                                ESG Charter
                             </Link>
                         </div>
 
@@ -245,7 +252,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                     href={social.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="relative text-[#f9f4e8]/80 hover:text-white transition-colors font-medium tracking-wide after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] after:bg-[#d4ff00] after:transition-all after:duration-300"
+                                    className="relative text-[#f9f4e8]/80 hover:text-white transition-colors font-medium tracking-wide after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] after:bg-[#d4ff00] after:transition-all after:duration-300 text-xs"
                                 >
                                     {social.name}
                                 </a>
@@ -277,9 +284,8 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
             id="site-footer"
             className="relative bg-[#090a0d] px-3 sm:px-5 pb-4 pt-12 sm:pt-16 select-none"
         >
-            {/* AGNTIX DESIGN STUDIO ISOLATED ROUNDED FOOTER CARD (.elementor-element-bdce392) */}
             <div
-                className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/10 min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between p-6 sm:p-10 lg:p-14 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                className="relative rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/10 min-h-[75vh] flex flex-col justify-between p-6 sm:p-10 lg:p-14 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
                 style={{
                     backgroundColor: '#080302',
                     backgroundImage: "url('/images/footer-bg.jpg')",
@@ -288,16 +294,14 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                     backgroundSize: 'cover',
                 }}
             >
-                {/* Subtle contrast vignette overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
 
-                {/* TOP BAR: Agency Headline, Logo & Location (.des-footer-top) */}
-                <div className="relative z-10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-base font-sans text-[#f9f4e8]">
-                    <span className="font-normal text-[#f9f4e8]/90 tracking-wide order-2 sm:order-1">
-                        Creative Design Agency
+                {/* TOP BAR */}
+                <div className="relative z-10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm font-sans text-[#f9f4e8]">
+                    <span className="font-normal text-[#f9f4e8]/90 tracking-wide order-2 sm:order-1 font-mono text-xs">
+                        AI-Driven Visual Performance Agency
                     </span>
 
-                    {/* Agency Brand Mark */}
                     <Link
                         href="/"
                         className="order-1 sm:order-2 inline-flex items-center gap-2.5 font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase hover:text-[#d4ff00] transition-colors"
@@ -307,22 +311,20 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                             alt="Cutting Edger"
                             className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
                         />
-                        <span>cuttingedger</span>
+                        <span>cutting edger</span>
                     </Link>
 
-                    <span className="font-normal text-[#f9f4e8]/90 tracking-wide order-3 hidden sm:inline-block">
-                        {settings?.office_address || 'Based in London'}
+                    <span className="font-normal text-[#f9f4e8]/90 tracking-wide order-3 hidden sm:inline-block font-mono text-xs">
+                        Dhaka · London · San Francisco
                     </span>
                 </div>
 
-                {/* MIDDLE SECTION: GIANT AGNTIX "CONTACT US" WITH VERTICAL LETTER-SCALE HOVER (.des-footer-title) */}
-                <div className="relative z-10 w-full px-2 sm:px-4 py-14 sm:py-20 flex flex-col items-center justify-center text-center my-auto">
-                    {/* Eyebrow Subtitle */}
-                    <span className="font-['Plus_Jakarta_Sans',_sans-serif] text-xs sm:text-sm uppercase tracking-[0.22em] text-[#f9f4e8]/70 font-medium mb-6 sm:mb-8 select-none">
-                        CONTACT US AND LET'S BRING YOUR VISION TO LIFE
+                {/* MIDDLE SECTION: GIANT INTERACTIVE "CONTACT US" */}
+                <div className="relative z-10 w-full px-2 sm:px-4 py-12 sm:py-16 flex flex-col items-center justify-center text-center my-auto">
+                    <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#d4ff00] font-bold mb-6 select-none">
+                        READY TO ELEVATE YOUR CATALOG CRAFT & VELOCITY?
                     </span>
 
-                    {/* Giant Interactive Stretch Typography Container */}
                     <Link
                         href="/contact"
                         onClick={(e) => {
@@ -335,7 +337,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         className="cursor-pointer group flex items-start justify-center select-none w-full max-w-[98%] mx-auto"
                         title="Click to get in touch"
                     >
-                        <div className="flex items-center justify-center flex-nowrap w-full overflow-hidden py-4 sm:py-8">
+                        <div className="flex items-center justify-center flex-nowrap w-full overflow-hidden py-4 sm:py-6">
                             {letters.map((char, index) => {
                                 if (char === ' ') {
                                     return (
@@ -360,17 +362,17 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                             setHoveredIndex((prev) => (prev === index ? null : prev));
                                         }}
                                         animate={{
-                                            scaleY: isHovered ? 1.22 : 1,
-                                            y: isHovered ? '3%' : '0%',
+                                            scaleY: isHovered ? 1.2 : 1,
+                                            y: isHovered ? '2%' : '0%',
                                         }}
                                         transition={{
                                             duration: 0.2,
-                                            ease: [0.39, 0.575, 0.565, 1], // Exact GSAP sine easing from Agntix
+                                            ease: [0.39, 0.575, 0.565, 1],
                                         }}
                                         style={{
                                             transformOrigin: 'center center',
                                         }}
-                                        className="inline-block font-display font-black uppercase text-[6.8vw] sm:text-[7.4vw] md:text-[8vw] lg:text-[8.5vw] xl:text-[8.8vw] 2xl:text-[135px] leading-none text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
+                                        className="inline-block font-display font-black uppercase text-[6.5vw] sm:text-[7vw] md:text-[7.5vw] lg:text-[8vw] xl:text-[8.5vw] leading-none text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
                                     >
                                         {char}
                                     </motion.span>
@@ -380,26 +382,27 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                     </Link>
                 </div>
 
-                {/* BOTTOM BAR: Powered by, Socials, Copyright & Back to Top (.des-footer-bottom) */}
-                <div className="relative z-10 w-full pt-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs sm:text-sm font-sans text-[#f9f4e8] border-t border-white/10">
-                    {/* Left: Powered By & Legal Links */}
-                    <div className="flex items-center gap-6">
-                        <span>Powered by CuttingEdger</span>
-                        <Link
-                            href="/privacy"
-                            className="text-[#f9f4e8]/60 hover:text-white transition-colors text-xs"
-                        >
+                {/* BOTTOM BAR */}
+                <div className="relative z-10 w-full pt-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-mono text-[#f9f4e8] border-t border-white/10">
+                    <div className="flex flex-wrap items-center gap-4 text-xs">
+                        <span>© {new Date().getFullYear()} Cutting Edger</span>
+                        <Link href="/privacy" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
                             Privacy
                         </Link>
-                        <Link
-                            href="/terms"
-                            className="text-[#f9f4e8]/60 hover:text-white transition-colors text-xs"
-                        >
+                        <Link href="/terms" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
                             Terms
+                        </Link>
+                        <Link href="/cookie-policy" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
+                            Cookies
+                        </Link>
+                        <Link href="/nda-compliance" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
+                            NDA
+                        </Link>
+                        <Link href="/ESG-policy" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
+                            ESG
                         </Link>
                     </div>
 
-                    {/* Center: Social Links with hover underline */}
                     <div className="flex items-center gap-6 sm:gap-8">
                         {socials.map((social) => (
                             <a
@@ -407,22 +410,19 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                 href={social.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="relative text-[#f9f4e8] hover:text-white transition-colors font-medium tracking-wide after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] after:bg-[#f9f4e8] after:transition-all after:duration-300"
+                                className="relative text-[#f9f4e8]/80 hover:text-white transition-colors font-medium tracking-wide text-xs"
                             >
                                 {social.name}
                             </a>
                         ))}
                     </div>
 
-                    {/* Right: Copyright + White Floating Back to Top Button */}
                     <div className="flex items-center gap-4">
-                        <span>Copyright © {new Date().getFullYear()}</span>
-
                         <button
                             type="button"
                             onClick={scrollToTop}
                             aria-label="Scroll back to top"
-                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#d4ff00] transition-all duration-300 shadow-xl cursor-pointer shrink-0"
+                            className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-[#d4ff00] transition-all duration-300 shadow-xl cursor-pointer shrink-0"
                         >
                             <ChevronUp className="w-5 h-5 stroke-[2.5]" />
                         </button>

@@ -46,8 +46,38 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
         @inertiaHead
+
+        <!-- Injected Head Tracking & Verification Scripts (Managed from Admin) -->
+        @php
+            try {
+                $headScripts = \App\Models\TrackingScript::active()->where('placement', 'head')->pluck('code')->implode("\n");
+            } catch (\Throwable $e) {
+                $headScripts = '';
+            }
+        @endphp
+        {!! $headScripts !!}
     </head>
     <body class="bg-[#0b0c0e] text-[#f4f5f8] antialiased selection:bg-[#d4ff00] selection:text-black transition-colors duration-300">
+        <!-- Injected Body Start Tracking Scripts (GTM noscript, etc.) -->
+        @php
+            try {
+                $bodyStartScripts = \App\Models\TrackingScript::active()->where('placement', 'body_start')->pluck('code')->implode("\n");
+            } catch (\Throwable $e) {
+                $bodyStartScripts = '';
+            }
+        @endphp
+        {!! $bodyStartScripts !!}
+
         @inertia
+
+        <!-- Injected Footer Tracking Scripts (Pixels, Chat, Analytics) -->
+        @php
+            try {
+                $footerScripts = \App\Models\TrackingScript::active()->where('placement', 'footer')->pluck('code')->implode("\n");
+            } catch (\Throwable $e) {
+                $footerScripts = '';
+            }
+        @endphp
+        {!! $footerScripts !!}
     </body>
 </html>

@@ -23,7 +23,7 @@ class ContactController extends Controller
     }
 
     /**
-     * Store an inbound customer contact inquiry or quote request.
+     * Store an inbound customer contact inquiry or quote request with full SEO attribution.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -37,8 +37,21 @@ class ContactController extends Controller
             'email' => ['required', 'email', 'max:255'],
             'message' => ['required', 'string', 'max:5000'],
             'company' => ['nullable', 'string', 'max:255'],
+            'role' => ['nullable', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'max:255'],
+            'monthly_volume' => ['nullable', 'string', 'max:255'],
+            'platform' => ['nullable', 'string', 'max:255'],
             'budget' => ['nullable', 'string', 'max:255'],
             'service_interest' => ['nullable', 'string', 'max:255'],
+            // Attribution
+            'landing_page_url' => ['nullable', 'string', 'max:1000'],
+            'submission_page_url' => ['nullable', 'string', 'max:1000'],
+            'utm_source' => ['nullable', 'string', 'max:255'],
+            'utm_medium' => ['nullable', 'string', 'max:255'],
+            'utm_campaign' => ['nullable', 'string', 'max:255'],
+            'utm_term' => ['nullable', 'string', 'max:255'],
+            'utm_content' => ['nullable', 'string', 'max:255'],
+            'click_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         // Deduplication & Double-Click Guard (15s replay lockout)
@@ -52,19 +65,31 @@ class ContactController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'company' => $validated['company'] ?? null,
+            'role' => $validated['role'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'monthly_volume' => $validated['monthly_volume'] ?? null,
+            'platform' => $validated['platform'] ?? null,
             'budget' => $validated['budget'] ?? null,
             'service_interest' => $validated['service_interest'] ?? null,
             'message' => $validated['message'],
             'inquiry_type' => 'general',
+            'landing_page_url' => $validated['landing_page_url'] ?? null,
+            'submission_page_url' => $validated['submission_page_url'] ?? $request->header('referer'),
+            'utm_source' => $validated['utm_source'] ?? null,
+            'utm_medium' => $validated['utm_medium'] ?? null,
+            'utm_campaign' => $validated['utm_campaign'] ?? null,
+            'utm_term' => $validated['utm_term'] ?? null,
+            'utm_content' => $validated['utm_content'] ?? null,
+            'click_id' => $validated['click_id'] ?? null,
             'ip_address' => $request->ip(),
             'status' => 'new',
         ]);
 
-        return back()->with('success', 'Inquiry transmitted successfully. Our studio team will review and respond promptly.');
+        return redirect()->route('thank-you')->with('success', 'Inquiry transmitted successfully. Our studio team will review your requirements.');
     }
 
     /**
-     * Store a free trial order request directly into the orders table.
+     * Store a free 3-asset pilot request with full SEO attribution.
      */
     public function storeFreeTrial(Request $request): RedirectResponse
     {
@@ -77,9 +102,23 @@ class ContactController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'company' => ['nullable', 'string', 'max:255'],
+            'role' => ['nullable', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'max:255'],
             'service' => ['nullable', 'string', 'max:255'],
+            'monthly_volume' => ['nullable', 'string', 'max:255'],
+            'platform' => ['nullable', 'string', 'max:255'],
             'instructions' => ['nullable', 'string', 'max:5000'],
             'attachments.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd,zip,pdf'],
+            // Attribution
+            'landing_page_url' => ['nullable', 'string', 'max:1000'],
+            'submission_page_url' => ['nullable', 'string', 'max:1000'],
+            'utm_source' => ['nullable', 'string', 'max:255'],
+            'utm_medium' => ['nullable', 'string', 'max:255'],
+            'utm_campaign' => ['nullable', 'string', 'max:255'],
+            'utm_term' => ['nullable', 'string', 'max:255'],
+            'utm_content' => ['nullable', 'string', 'max:255'],
+            'click_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         $guard = app(EmailAndSpamGuard::class);
@@ -118,35 +157,48 @@ class ContactController extends Controller
         }
         Cache::put($fingerprint, true, 15);
 
-        $serviceName = $validated['service'] ?? 'Background Removal & Clipping Path';
+        $serviceName = $validated['service'] ?? 'E-Commerce Catalog Optimization';
         $orderNumber = 'CE-TRL-'.strtoupper(Str::random(6));
 
-        // Directly create the unified Order record
+        // Directly create the unified Order record with B2B & attribution data
         $order = Order::create([
             'order_number' => $orderNumber,
             'client_name' => $validated['name'],
             'client_email' => strtolower(trim($validated['email'])),
             'client_phone' => $validated['phone'] ?? null,
+            'company' => $validated['company'] ?? null,
+            'role' => $validated['role'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'monthly_volume' => $validated['monthly_volume'] ?? null,
+            'platform' => $validated['platform'] ?? null,
+            'landing_page_url' => $validated['landing_page_url'] ?? null,
+            'submission_page_url' => $validated['submission_page_url'] ?? $request->header('referer'),
+            'utm_source' => $validated['utm_source'] ?? null,
+            'utm_medium' => $validated['utm_medium'] ?? null,
+            'utm_campaign' => $validated['utm_campaign'] ?? null,
+            'utm_term' => $validated['utm_term'] ?? null,
+            'utm_content' => $validated['utm_content'] ?? null,
+            'click_id' => $validated['click_id'] ?? null,
             'ip_address' => $request->ip(),
             'service_name' => $serviceName,
             'service_slug' => Str::slug($serviceName),
             'complexity' => 'trial',
-            'quantity' => count($imageUrls) ?: 1,
-            'uploaded_count' => count($imageUrls) ?: 1,
+            'quantity' => count($imageUrls) ?: 3,
+            'uploaded_count' => count($imageUrls) ?: 3,
             'unit_price' => 0.00,
             'discount_percent' => 100,
             'total_price' => 0.00,
             'currency' => 'USD',
             'turnaround' => '24h Standard',
             'images' => $imageUrls,
-            'instructions' => $validated['instructions'] ?? 'Complimentary 2-image production test batch',
+            'instructions' => $validated['instructions'] ?? 'Complimentary 3-asset production pilot test batch',
             'status' => 'pending',
             'payment_status' => 'free_trial',
             'source' => 'web_trial',
         ]);
 
-        return back()->with([
-            'success' => "Free trial order #{$order->order_number} created successfully! Our senior artists will return your retouched files within 24 hours.",
+        return redirect()->route('thank-you')->with([
+            'success' => "Free 3-Asset Pilot #{$order->order_number} submitted successfully! Our senior artists will return your retouched files within 24 hours.",
             'order_number' => $order->order_number,
         ]);
     }

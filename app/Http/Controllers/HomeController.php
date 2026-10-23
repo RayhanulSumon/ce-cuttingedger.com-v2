@@ -24,7 +24,9 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        $services = Service::orderBy('sort_order')
+        // Pass 4 core service pillars to the homepage showcase
+        $services = Service::whereNull('parent_id')
+            ->orderBy('sort_order')
             ->take(4)
             ->get();
 

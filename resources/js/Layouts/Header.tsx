@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { Menu, ArrowUpRight, ChevronDown, Calendar, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '@/Components/ui/ThemeToggle';
 import { SiteSettings } from '@/types/models';
 
@@ -10,11 +10,12 @@ interface HeaderProps {
     settings?: SiteSettings;
 }
 
-export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
+export function Header({ onOpenContact, onOpenMobileMenu, settings }: HeaderProps) {
     const { url } = usePage();
     const [isScrolled, setIsScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const headerRef = React.useRef<HTMLElement>(null);
+    const calendlyUrl = (settings as any)?.calendly_url || 'https://calendly.com/cuttingedger/discovery-call';
 
     useEffect(() => {
         const updateHeaderHeight = () => {
@@ -61,6 +62,7 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
 
     interface NavGroup {
         category: string;
+        hubHref: string;
         items: { label: string; href: string }[];
     }
 
@@ -74,72 +76,76 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
 
     const navItems: NavItem[] = [
         {
-            label: 'Home',
-            href: '/',
-        },
-        {
             label: 'Services',
             href: '/services',
             isMegaMenu: true,
             children: [
-                { label: 'All Services', href: '/services' },
+                { label: 'All Service Pillars', href: '/services' },
             ],
             groups: [
                 {
-                    category: 'Core Cutout & Prep',
+                    category: '1. Catalog Optimization',
+                    hubHref: '/services/ecommerce-catalog-optimization',
                     items: [
-                        { label: 'Background Removal', href: '/services/background-removal' },
-                        { label: 'Ghost Mannequin', href: '/services/ghost-mannequin' },
-                        { label: 'Multipath Clipping', href: '/services/background-removal' },
-                        { label: 'Hollow Man Effect', href: '/services/ghost-mannequin' },
-                        { label: 'Color Correction', href: '/services/background-removal' },
+                        { label: 'Overview & High-Volume Retouching', href: '/services/ecommerce-catalog-optimization' },
+                        { label: 'Clipping Path Service', href: '/services/ecommerce-catalog-optimization/clipping-path-service' },
+                        { label: 'Image Masking Service', href: '/services/ecommerce-catalog-optimization/image-masking-service' },
+                        { label: 'Ghost Mannequin Service', href: '/services/ecommerce-catalog-optimization/ghost-mannequin-service' },
                     ],
                 },
                 {
-                    category: 'High-End Retouching',
+                    category: '2. Color Standardization',
+                    hubHref: '/services/color-standardization',
                     items: [
-                        { label: 'High End Model Retouch', href: '/services/high-end-model-retouch' },
-                        { label: 'Fashion & Editorial Retouch', href: '/services/high-end-model-retouch' },
-                        { label: 'Shoe & Footwear Retouch', href: '/services/high-end-model-retouch' },
-                        { label: 'Automobile & Vehicle Retouch', href: '/services/background-removal' },
+                        { label: 'Color Standardization Overview', href: '/services/color-standardization' },
+                        { label: 'Delta-E Swatch Calibration', href: '/services/color-standardization' },
+                        { label: 'Apparel Multi-Colorway Shifts', href: '/services/color-standardization' },
+                        { label: 'Fabric Texture Preservation', href: '/services/color-standardization' },
                     ],
                 },
                 {
-                    category: 'Luxury & Jewelry',
+                    category: '3. White-Label Extension',
+                    hubHref: '/services/white-label-agency-extension',
                     items: [
-                        { label: 'Fine Jewelry Retouch', href: '/services/jewelry-retouch' },
-                        { label: 'Gemstone & Diamond Polish', href: '/services/jewelry-retouch' },
-                        { label: 'Metallic Luster & Watches', href: '/services/jewelry-retouch' },
-                        { label: 'Shadow & Reflection Creation', href: '/services/jewelry-retouch' },
+                        { label: 'Agency Bandwidth Overview', href: '/services/white-label-agency-extension' },
+                        { label: 'Confidential 24/7 Overnight Delivery', href: '/services/white-label-agency-extension' },
+                        { label: 'Dedicated Account Teams', href: '/services/white-label-agency-extension' },
+                        { label: 'Strict Mutual NDA Governance', href: '/nda-compliance' },
                     ],
                 },
                 {
-                    category: '3D Spatial & DTP',
+                    category: '4. Virtual Production & CGI',
+                    hubHref: '/services/virtual-production-cgi',
                     items: [
-                        { label: '3D CGI Product Modeling', href: '/services/3d-modeling-and-rendering' },
-                        { label: '360° Interactive WebGL Spins', href: '/services/3d-modeling-and-rendering' },
-                        { label: '3D Furniture Rendering', href: '/services/3d-modeling-and-rendering' },
-                        { label: 'Desktop Publishing (DTP)', href: '/services/desktop-publishing' },
+                        { label: '3D CGI Product Studio', href: '/services/virtual-production-cgi' },
+                        { label: '3D Furniture Modeling & Staging', href: '/services/virtual-production-cgi/3d-furniture-modeling' },
+                        { label: 'Procedural PBR Material Authoring', href: '/services/virtual-production-cgi' },
+                        { label: 'Interactive 360° WebGL Spins', href: '/services/virtual-production-cgi' },
                     ],
                 },
             ],
+        },
+        {
+            label: 'Case Studies',
+            href: '/case-studies',
+        },
+        {
+            label: 'Reviews',
+            href: '/reviews',
         },
         {
             label: 'Pricing',
             href: '/pricing',
         },
         {
-            label: 'Work',
-            href: '/work',
-        },
-        {
             label: 'Company',
             href: '/about',
             children: [
                 { label: 'About Studio', href: '/about' },
-                { label: 'Creative Team', href: '/team' },
-                { label: 'Careers & Openings', href: '/careers' },
-                { label: 'Pricing Plans', href: '/pricing' },
+                { label: 'Creative Leadership Team', href: '/team' },
+                { label: 'Career Openings', href: '/careers' },
+                { label: 'NDA & Security Compliance', href: '/nda-compliance' },
+                { label: 'ESG & Sustainability Charter', href: '/ESG-policy' },
                 { label: 'Studio FAQ', href: '/faq' },
             ],
         },
@@ -161,95 +167,85 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
     return (
         <header
             ref={headerRef}
-            onTransitionEnd={() => {
-                if (headerRef.current && isScrolled) {
-                    const height = headerRef.current.getBoundingClientRect().height;
-                    if (height > 0) {
-                        document.documentElement.style.setProperty('--header-height', `${height}px`);
-                    }
-                }
-            }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                 isScrolled
                     ? 'py-3 bg-[#0c0d12]/95 backdrop-blur-xl border-b border-white/10 shadow-lg'
-                    : 'py-5 bg-[#090a0d]/80 backdrop-blur-md border-b border-white/5'
+                    : 'py-4 lg:py-5 bg-[#090a0d]/80 backdrop-blur-md border-b border-white/5'
             }`}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between gap-4">
                     {/* Brand Logo with authentic Cutting Edger emblem */}
                     <Link
                         href="/"
-                        className="group flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg select-none"
+                        className="group shrink-0 flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d4ff00] rounded-lg"
                     >
-                        {/* Authentic Brand Emblem */}
-                        <div className="w-9 h-9 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-[#d4ff00]/60 group-hover:bg-[#d4ff00]/10 transition-all duration-300">
+                        <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-[#d4ff00]/60 group-hover:bg-[#d4ff00]/10 transition-all duration-300">
                             <img
                                 src="/images/ce/ce_icon_neon.png"
-                                alt="Cutting Edger Emblem"
-                                className="w-6 h-6 object-contain group-hover:scale-110 transition-transform duration-300"
+                                alt="Cutting Edger"
+                                className="w-5 h-5 object-contain group-hover:scale-110 transition-transform duration-300"
                             />
                         </div>
-
-                        {/* Wordmark */}
                         <div className="flex items-baseline tracking-tight">
-                            <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-white transition-colors">
+                            <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-[#d4ff00] transition-colors">
                                 CUTTING
                             </span>
-                            <span className="font-display text-2xl sm:text-[26px] font-black tracking-tight text-[#d4ff00] ml-1">
+                            <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#d4ff00] ml-1">
                                 EDGER
                             </span>
                         </div>
                     </Link>
 
-                    {/* Agntix-Style Desktop Navigation with Dropdown Carets */}
-                    <nav className="hidden lg:flex items-center gap-1">
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 font-mono text-[11px] xl:text-xs shrink-0">
                         {navItems.map((item) => {
-                            const active = isActive(item.href);
-                            const hasChildren = item.children && item.children.length > 0;
+                            const isCurrent = isActive(item.href);
+                            const hasDropdown = item.isMegaMenu || (item.children && item.children.length > 0);
 
                             return (
                                 <div
                                     key={item.label}
                                     className="relative"
-                                    onMouseEnter={() => setOpenDropdown(item.label)}
-                                    onMouseLeave={() => setOpenDropdown(null)}
+                                    onMouseEnter={() => hasDropdown && setOpenDropdown(item.label)}
+                                    onMouseLeave={() => hasDropdown && setOpenDropdown(null)}
                                 >
                                     <Link
                                         href={item.href}
-                                        className={`px-3.5 py-2 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors rounded-lg group ${
-                                            active
-                                                ? 'text-[#d4ff00]'
-                                                : 'text-neutral-300 hover:text-white'
+                                        className={`px-2 xl:px-3 py-1.5 xl:py-2 rounded-lg transition-colors flex items-center gap-1 uppercase tracking-wider whitespace-nowrap shrink-0 ${
+                                            isCurrent
+                                                ? 'text-[#d4ff00] font-semibold bg-[#d4ff00]/10'
+                                                : 'text-neutral-300 hover:text-white hover:bg-white/5'
                                         }`}
                                     >
-                                        <span>{item.label}</span>
-                                        {hasChildren && (
-                                            <ChevronDown className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white transition-transform group-hover:rotate-180" />
+                                        <span className="whitespace-nowrap">{item.label}</span>
+                                        {hasDropdown && (
+                                            <ChevronDown className="w-3 h-3 text-neutral-400 group-hover:text-white transition-transform shrink-0" />
                                         )}
                                     </Link>
 
-                                    {/* Dropdown / Mega Menu */}
-                                    {hasChildren && openDropdown === item.label && (
+                                    {/* Dropdown Menu */}
+                                    {hasDropdown && openDropdown === item.label && (
                                         item.isMegaMenu && item.groups ? (
-                                            /* Services Wide Mega Menu Dropdown */
-                                            <div className="absolute top-full -left-20 sm:-left-32 md:-left-44 w-[92vw] max-w-5xl pt-3 z-[100]">
-                                                <div className="rounded-3xl p-6 sm:p-8 bg-[#10121a] border-2 border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.98),0_0_35px_rgba(212,255,0,0.12)] backdrop-blur-3xl ring-1 ring-white/10 relative overflow-hidden">
-                                                    {/* Top ambient highlight line */}
-                                                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4ff00] to-transparent pointer-events-none" />
-
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                            /* Mega Menu for 4 Core Pillars */
+                                            <div className="absolute top-full -left-20 w-[840px] pt-3 z-50">
+                                                <div className="rounded-3xl p-6 sm:p-8 bg-[#12141c] border border-white/15 shadow-2xl backdrop-blur-2xl">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                                                         {item.groups.map((group, gIdx) => (
                                                             <div key={gIdx} className="space-y-3">
-                                                                <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#d4ff00] pb-2 border-b border-white/15 flex items-center justify-between">
+                                                                <Link
+                                                                    href={group.hubHref}
+                                                                    className="font-mono text-xs font-bold uppercase tracking-wider text-[#d4ff00] pb-2 border-b border-white/15 flex items-center justify-between hover:text-white transition-colors"
+                                                                >
                                                                     <span>{group.category}</span>
-                                                                </h4>
+                                                                    <ArrowUpRight className="w-3 h-3" />
+                                                                </Link>
                                                                 <ul className="space-y-1.5">
                                                                     {group.items.map((sub, sIdx) => (
                                                                         <li key={sIdx}>
                                                                             <Link
                                                                                 href={sub.href}
-                                                                                className="block text-xs font-medium text-neutral-200 hover:text-black hover:bg-[#d4ff00] px-2.5 py-1.5 rounded-lg transition-all duration-150"
+                                                                                className="block text-xs font-medium text-neutral-200 hover:text-black hover:bg-[#d4ff00] px-2 py-1.5 rounded-lg transition-all duration-150"
                                                                             >
                                                                                 {sub.label}
                                                                             </Link>
@@ -262,12 +258,12 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
 
                                                     {/* Mega Menu Footer Banner */}
                                                     <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono text-neutral-300 bg-white/[0.02] -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 px-6 sm:px-8 py-4">
-                                                        <span className="text-neutral-400">Need high-volume studio retouching or custom workflow?</span>
+                                                        <span className="text-neutral-400">Looking for custom enterprise catalog turnarounds?</span>
                                                         <Link
                                                             href="/services"
                                                             className="text-[#d4ff00] hover:text-white flex items-center gap-1 font-bold uppercase tracking-wider transition-colors"
                                                         >
-                                                            <span>Explore All Capabilities</span>
+                                                            <span>Explore All Service Disciplines</span>
                                                             <ArrowUpRight className="w-3.5 h-3.5" />
                                                         </Link>
                                                     </div>
@@ -275,7 +271,7 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
                                             </div>
                                         ) : (
                                             /* Standard Dropdown */
-                                            <div className="absolute top-full left-0 w-56 pt-2 z-50">
+                                            <div className="absolute top-full left-0 w-60 pt-2 z-50">
                                                 <div className="rounded-2xl p-2 bg-[#12141c] border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1">
                                                     {item.children?.map((child, idx) => (
                                                         <Link
@@ -296,18 +292,28 @@ export function Header({ onOpenContact, onOpenMobileMenu }: HeaderProps) {
                     </nav>
 
                     {/* Right Action Bar */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 xl:gap-3 shrink-0">
                         <ThemeToggle />
 
-                        {/* Agntix-Style Pill "Get in Touch" Button */}
-                        <button
-                            type="button"
-                            onClick={onOpenContact}
-                            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer select-none"
+                        {/* Free Pilot Lead Magnet Button */}
+                        <Link
+                            href="/#free-trial"
+                            className="hidden xl:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#d4ff00]/40 text-[#d4ff00] hover:bg-[#d4ff00]/10 font-mono text-xs uppercase tracking-wider transition-all shrink-0 whitespace-nowrap"
                         >
-                            <span>Get in Touch</span>
-                            <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />
-                        </button>
+                            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                            <span>3-Asset Pilot</span>
+                        </Link>
+
+                        {/* Book Discovery Call / Contact */}
+                        <a
+                            href={calendlyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden md:inline-flex items-center gap-1.5 xl:gap-2 px-3.5 py-2 xl:px-5 xl:py-2.5 rounded-full bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer select-none shrink-0 whitespace-nowrap"
+                        >
+                            <Calendar className="w-3.5 h-3.5 text-black stroke-[2.5] shrink-0" />
+                            <span>Discovery Call</span>
+                        </a>
 
                         {/* Mobile Menu Hamburger */}
                         <button

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\ChatConsultation;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,20 +39,28 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $dbSettings = [];
+        try {
+            $dbSettings = Setting::pluck('value', 'key')->all();
+        } catch (\Throwable $e) {
+            // Silently fallback if db is migrating
+        }
+
         return [
             ...parent::share($request),
             'settings' => [
-                'brand_name' => config('app.name', 'CUTTING EDGER'),
-                'tagline' => 'Crafting digital supremacy through kinetic engineering and radical design.',
-                'contact_email' => 'hello@cuttingedger.com',
-                'contact_phone' => '+1 (800) 555-EDGE',
-                'office_address' => '742 Mission St, Design District, San Francisco, CA',
+                'brand_name' => $dbSettings['brand_name'] ?? config('app.name', 'Cutting Edger'),
+                'tagline' => $dbSettings['tagline'] ?? 'AI-Driven Visual Performance & Post-Production Agency.',
+                'contact_email' => $dbSettings['contact_email'] ?? 'hello@cuttingedger.com',
+                'contact_phone' => $dbSettings['contact_phone'] ?? '+1 (409) 995-2565',
+                'office_address' => $dbSettings['office_address'] ?? 'Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215',
+                'calendly_url' => $dbSettings['calendly_url'] ?? 'https://calendly.com/cuttingedger/discovery-call',
                 'socials' => [
-                    'twitter' => 'https://twitter.com',
-                    'instagram' => 'https://instagram.com',
-                    'linkedin' => 'https://linkedin.com',
-                    'github' => 'https://github.com',
-                    'dribbble' => 'https://dribbble.com',
+                    'twitter' => 'https://twitter.com/cutting_edger',
+                    'instagram' => 'https://instagram.com/cuttingedgerinc',
+                    'linkedin' => 'https://linkedin.com/company/cutting-edger',
+                    'facebook' => 'https://facebook.com/CuttingEdgerInc',
+                    'youtube' => 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
                 ],
             ],
             'auth' => [

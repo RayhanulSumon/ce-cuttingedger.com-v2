@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import {
     UploadCloud,
@@ -13,35 +13,86 @@ import {
     Clock,
     Layers,
     AlertTriangle,
-    ArrowUpRight,
-    Calculator,
-    CreditCard,
+    ArrowRight,
+    ArrowLeft,
+    Building2,
+    Briefcase,
+    Globe,
+    ShoppingBag,
 } from 'lucide-react';
+import { getAttributionData } from '@/lib/attribution';
 
-const POPULAR_SERVICES = [
-    'Background Removal & Clipping Path',
+const SERVICE_PILLARS = [
+    'E-Commerce Catalog Optimization',
+    'Clipping Path & Multipath Service',
+    'Image Masking (Alpha / Hair)',
     'Ghost Mannequin & Neck Joint',
-    'High-End Fashion & Model Retouching',
-    'Fine Jewelry & Luxury Product',
-    'Color Correction & Vector Masking',
-    '3D CGI Modeling & Product Render',
+    'Color Standardization & Swatches',
+    'White-Label Agency Extension',
+    'Virtual Production & CGI Studio',
+    '3D Furniture Modeling & AR',
+];
+
+const VOLUME_TIERS = [
+    '50 – 200 SKUs / month',
+    '200 – 1,000 SKUs / month',
+    '1,000 – 5,000 SKUs / month',
+    '5,000+ SKUs / month (Enterprise)',
+];
+
+const PLATFORMS = [
+    'Shopify / Shopify Plus',
+    'Amazon Storefront / Seller Central',
+    'Magento / Adobe Commerce',
+    'BigCommerce',
+    'WooCommerce',
+    'Custom Headless / Other',
 ];
 
 export function FreeTrialDropzone() {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [step, setStep] = useState<1 | 2>(1);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [isDragOver, setIsDragOver] = useState<boolean>(false);
-    const [submitted, setSubmitted] = useState<boolean>(false);
-    const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
         email: '',
-        service: POPULAR_SERVICES[0],
+        phone: '',
+        company: '',
+        role: '',
+        website: '',
+        service: SERVICE_PILLARS[0],
+        monthly_volume: VOLUME_TIERS[1],
+        platform: PLATFORMS[0],
         instructions: '',
         attachments: [] as File[],
         honeypot: '',
+        // Attribution
+        landing_page_url: '',
+        submission_page_url: '',
+        utm_source: '',
+        utm_medium: '',
+        utm_campaign: '',
+        utm_term: '',
+        utm_content: '',
+        click_id: '',
     });
+
+    useEffect(() => {
+        const attr = getAttributionData();
+        setData((prev) => ({
+            ...prev,
+            landing_page_url: attr.landing_page_url,
+            submission_page_url: attr.submission_page_url,
+            utm_source: attr.utm_source || '',
+            utm_medium: attr.utm_medium || '',
+            utm_campaign: attr.utm_campaign || '',
+            utm_term: attr.utm_term || '',
+            utm_content: attr.utm_content || '',
+            click_id: attr.click_id || '',
+        }));
+    }, []);
 
     const handleFilesAdded = (files: FileList | null) => {
         if (!files) return;
@@ -51,6 +102,7 @@ export function FreeTrialDropzone() {
         const combined = [...selectedFiles, ...validFiles].slice(0, 3);
         setSelectedFiles(combined);
         setData('attachments', combined);
+        if (errors['attachments']) clearErrors('attachments');
     };
 
     const removeFile = (indexToRemove: number) => {
@@ -67,19 +119,15 @@ export function FreeTrialDropzone() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const attr = getAttributionData();
 
         post('/free-trial', {
             forceFormData: true,
             preserveScroll: true,
-            onSuccess: (page) => {
-                setSubmitted(true);
-                const flash = (page.props as any)?.flash;
-                if (flash?.success) {
-                    const match = flash.success.match(/#(\d+)/);
-                    if (match) setCreatedOrderNumber(match[1]);
-                }
-                reset();
-                setSelectedFiles([]);
+            data: {
+                ...data,
+                submission_page_url: window.location.href,
+                landing_page_url: attr.landing_page_url,
             },
         });
     };
@@ -87,168 +135,78 @@ export function FreeTrialDropzone() {
     return (
         <section
             id="free-trial"
-            className="relative py-18 sm:py-24 lg:py-28 bg-[#07080a] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-20 sm:py-28 bg-[#07080a] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting Sheen */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-[#d4ff00]/5 rounded-full blur-[240px] pointer-events-none" />
 
             <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center max-w-xl mx-auto mb-10 sm:mb-12 space-y-3">
+                <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-3">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/25 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Zero Risk · 2 Free Sample Edits</span>
+                        <span>Zero Risk · Free 3-Asset Enterprise Pilot</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-['Clash_Display',_'Syne',_sans-serif] font-bold text-white uppercase tracking-tight leading-[1.08]">
-                        TEST OUR CRAFT ON <br />
-                        <span className="text-[#d4ff00]">YOUR ACTUAL IMAGES.</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
+                        TEST OUR CRAFT ON <span className="text-[#d4ff00]">YOUR RAW FILES.</span>
                     </h2>
 
-                    <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed">
-                        Upload up to 3 test photos. Our studio artists will edit and return production-ready files within 24 hours. No payment, no commitment.
+                    <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
+                        Upload up to 3 of your most challenging raw product images. Our senior artisans will return billboard-grade retouched master files in under 24 hours. No credit card required.
                     </p>
+
+                    {/* Multi-Step Indicator */}
+                    <div className="flex items-center justify-center gap-3 pt-3 font-mono text-xs">
+                        <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
+                                step === 1
+                                    ? 'bg-[#d4ff00]/15 border-[#d4ff00] text-[#d4ff00] font-bold'
+                                    : 'border-white/10 text-neutral-400 hover:text-white'
+                            }`}
+                        >
+                            <span>01. Sample Uploads</span>
+                            {selectedFiles.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />}
+                        </button>
+                        <span className="text-neutral-600">→</span>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (selectedFiles.length > 0) setStep(2);
+                            }}
+                            className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
+                                step === 2
+                                    ? 'bg-[#d4ff00]/15 border-[#d4ff00] text-[#d4ff00] font-bold'
+                                    : 'border-white/10 text-neutral-400'
+                            }`}
+                        >
+                            <span>02. Brand & Specs</span>
+                        </button>
+                    </div>
                 </div>
 
-                {/* 1. Trial Quota Limit Reached (Single Email or IP Limit Exceeded) */}
-                {errors.trial_exhausted ? (
-                    <div className="max-w-2xl mx-auto p-6 sm:p-10 rounded-3xl border border-amber-500/40 bg-[#12141c]/95 backdrop-blur-2xl text-left space-y-6 shadow-[0_20px_60px_rgba(245,158,11,0.12)]">
-                        <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0">
-                                    <AlertTriangle className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl sm:text-2xl font-['Clash_Display',_'Syne',_sans-serif] font-bold text-white uppercase tracking-tight">
-                                        Free Trial Limit Reached
-                                    </h3>
-                                    <span className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">
-                                        Trial Sample Previously Claimed
-                                    </span>
-                                </div>
-                            </div>
+                {/* Form Card */}
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-[#0f1117] border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                >
+                    {/* Honeypot */}
+                    <input
+                        type="text"
+                        name="website_url"
+                        value={data.honeypot}
+                        onChange={(e) => setData('honeypot', e.target.value)}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        className="hidden"
+                        aria-hidden="true"
+                    />
 
-                            <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold uppercase tracking-wider shrink-0 hidden sm:inline-block">
-                                Paid Plans Available
-                            </span>
-                        </div>
-
-                        {/* Explanation Notice */}
-                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2 text-xs sm:text-sm font-sans leading-relaxed text-neutral-300">
-                            <p>
-                                {errors.trial_exhausted}
-                            </p>
-                            <p className="text-xs font-mono text-neutral-400 pt-1">
-                                To prevent automated abuse, complimentary free trials are strictly limited to <span className="text-[#d4ff00] font-semibold">one batch per client or network</span>. Standard production rates apply.
-                            </p>
-                        </div>
-
-                        {/* Standard Studio Production Rates */}
-                        <div className="space-y-2">
-                            <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400 font-semibold block">
-                                Transparent Standard Rates:
-                            </span>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
-                                    <span className="text-neutral-300">Clipping & Background Removal</span>
-                                    <span className="text-[#d4ff00] font-bold">$0.49 / image</span>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
-                                    <span className="text-neutral-300">Ghost Mannequin / Joint</span>
-                                    <span className="text-[#d4ff00] font-bold">$0.99 / image</span>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
-                                    <span className="text-neutral-300">High-End Fashion Retouch</span>
-                                    <span className="text-[#d4ff00] font-bold">$1.49 / image</span>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs font-mono">
-                                    <span className="text-neutral-300">3D CGI Product Modeling</span>
-                                    <span className="text-[#d4ff00] font-bold">From $29.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons to Paid Plans */}
-                        <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                            <Link
-                                href="/pricing"
-                                className="flex-1 py-3.5 px-5 rounded-full bg-[#d4ff00] hover:bg-[#bde600] text-black font-mono text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(212,255,0,0.25)]"
-                            >
-                                <CreditCard className="w-4 h-4" />
-                                <span>Explore Paid Plans</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                            </Link>
-
-                            <a
-                                href="#pricing-calculator"
-                                onClick={() => {
-                                    const el = document.getElementById('pricing-calculator') || document.getElementById('volume-pricing');
-                                    el?.scrollIntoView({ behavior: 'smooth' });
-                                }}
-                                className="py-3.5 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 transition-all border border-white/10"
-                            >
-                                <Calculator className="w-4 h-4 text-[#d4ff00]" />
-                                <span>Volume Calculator</span>
-                            </a>
-
-                            <button
-                                type="button"
-                                onClick={() => clearErrors('trial_exhausted')}
-                                className="py-3.5 px-4 text-xs font-mono text-neutral-400 hover:text-white underline transition-colors cursor-pointer text-center"
-                            >
-                                Try different email
-                            </button>
-                        </div>
-                    </div>
-                ) : submitted ? (
-                    /* Clean Success State */
-                    <div className="max-w-lg mx-auto p-8 sm:p-10 rounded-3xl border border-[#d4ff00]/30 bg-[#12141c]/90 backdrop-blur-2xl text-center space-y-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-                        <div className="w-16 h-16 rounded-2xl bg-[#d4ff00]/15 border border-[#d4ff00]/40 text-[#d4ff00] mx-auto flex items-center justify-center shadow-[0_0_25px_rgba(212,255,0,0.2)]">
-                            <CheckCircle2 className="w-8 h-8" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <span className="text-xs font-mono uppercase tracking-wider text-[#d4ff00] font-semibold">
-                                {createdOrderNumber ? `Trial Order #${createdOrderNumber}` : 'Trial Request Transmitted'}
-                            </span>
-                            <h3 className="text-2xl sm:text-3xl font-['Clash_Display',_'Syne',_sans-serif] font-bold text-white uppercase tracking-tight">
-                                Test Batch Queued
-                            </h3>
-                            <p className="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed">
-                                Your files are now in our production pipeline. Expect your high-resolution retouched assets delivered to your inbox within 24 hours.
-                            </p>
-                        </div>
-
-                        <div className="pt-2">
-                            <button
-                                type="button"
-                                onClick={() => setSubmitted(false)}
-                                className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs uppercase tracking-widest transition-colors cursor-pointer"
-                            >
-                                Submit Another Sample
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    /* Streamlined, Minimalist Glass Card */
-                    <form
-                        onSubmit={handleSubmit}
-                        className="rounded-3xl border border-white/10 bg-[#10121a]/85 backdrop-blur-2xl p-6 sm:p-9 lg:p-10 shadow-[0_25px_60px_rgba(0,0,0,0.7)] space-y-6"
-                    >
-                        {/* Hidden Honeypot */}
-                        <div className="hidden" aria-hidden="true">
-                            <input
-                                type="text"
-                                name="honeypot"
-                                tabIndex={-1}
-                                value={data.honeypot}
-                                onChange={(e) => setData('honeypot', e.target.value)}
-                                autoComplete="off"
-                            />
-                        </div>
-
-                        {/* 1. Sleek Dropzone */}
-                        <div>
+                    {/* STEP 1: UPLOAD 3 ASSETS */}
+                    {step === 1 && (
+                        <div className="space-y-6">
                             <div
                                 onDragOver={(e) => {
                                     e.preventDefault();
@@ -261,9 +219,9 @@ export function FreeTrialDropzone() {
                                     handleFilesAdded(e.dataTransfer.files);
                                 }}
                                 onClick={() => fileInputRef.current?.click()}
-                                className={`relative rounded-2xl border-2 border-dashed p-7 sm:p-9 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center min-h-[160px] ${
+                                className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-4 ${
                                     isDragOver
-                                        ? 'border-[#d4ff00] bg-[#d4ff00]/10 scale-[1.005]'
+                                        ? 'border-[#d4ff00] bg-[#d4ff00]/10 scale-[0.99]'
                                         : 'border-white/15 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04]'
                                 }`}
                             >
@@ -271,170 +229,243 @@ export function FreeTrialDropzone() {
                                     ref={fileInputRef}
                                     type="file"
                                     multiple
-                                    accept=".jpg,.jpeg,.png,.webp,.tiff,.psd,.zip,.pdf"
+                                    accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.psd,.pdf,.zip"
                                     onChange={(e) => handleFilesAdded(e.target.files)}
                                     className="hidden"
                                 />
 
-                                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-[#d4ff00] flex items-center justify-center mb-3 shadow-inner">
-                                    <UploadCloud className="w-6 h-6" />
+                                <div className="w-16 h-16 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                                    <UploadCloud className="w-8 h-8" />
                                 </div>
 
-                                <p className="text-sm font-semibold text-white">
-                                    <span className="text-[#d4ff00]">Click to upload</span> or drag test images here
-                                </p>
-                                <p className="text-xs text-neutral-400 mt-1 font-sans">
-                                    JPG, PNG, PSD, TIFF, RAW, ZIP · Up to 3 sample files (25MB each)
-                                </p>
+                                <div className="space-y-1">
+                                    <p className="text-white font-display font-bold text-base sm:text-lg">
+                                        Drop your raw photos here, or <span className="text-[#d4ff00] underline">browse files</span>
+                                    </p>
+                                    <p className="text-neutral-400 text-xs font-mono">
+                                        Upload up to 3 test files (Max 25MB each). Formats: PSD, TIFF, RAW, JPG, PNG, ZIP.
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* Selected File Chips */}
+                            {/* Selected Files List */}
                             {selectedFiles.length > 0 && (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3">
-                                    {selectedFiles.map((file, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-white/[0.03] text-left"
-                                        >
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <FileImage className="w-4 h-4 text-[#d4ff00] shrink-0" />
-                                                <div className="truncate">
-                                                    <span className="text-xs text-neutral-200 font-mono block truncate">
-                                                        {file.name}
-                                                    </span>
-                                                    <span className="text-[10px] text-neutral-500 font-mono">
-                                                        {formatFileSize(file.size)}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    removeFile(idx);
-                                                }}
-                                                className="p-1 rounded-md text-neutral-400 hover:text-red-400 hover:bg-white/10 transition-colors cursor-pointer"
-                                                aria-label="Remove file"
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between text-xs font-mono text-neutral-400 px-1">
+                                        <span>Selected Assets ({selectedFiles.length} / 3)</span>
+                                        <span>Ready for upload</span>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        {selectedFiles.map((file, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2 text-xs"
                                             >
-                                                <X className="w-3.5 h-3.5" />
-                                            </button>
-                                        </div>
-                                    ))}
+                                                <div className="flex items-center gap-2 truncate">
+                                                    <FileImage className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                                    <span className="text-white truncate font-mono text-[11px]">{file.name}</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removeFile(idx);
+                                                    }}
+                                                    className="text-neutral-400 hover:text-red-400 p-1"
+                                                >
+                                                    <X className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
-                        </div>
 
-                        {/* 2. Streamlined Form Fields */}
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5 sm:gap-4">
-                            {/* Service Selector Dropdown */}
-                            <div className="sm:col-span-12">
-                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-300 block mb-1.5 font-semibold">
-                                    Service To Test
-                                </label>
-                                <div className="relative">
+                            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+                                    <Lock className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <span>Protected under Mutual Non-Disclosure</span>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(2)}
+                                    className="px-6 py-3 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center gap-2 shadow-lg"
+                                >
+                                    <span>Next: Brand Coordinates</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 2: B2B BRAND & SPECIFICATION COORDINATES */}
+                    {step === 2 && (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <span>Full Name *</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={data.name}
+                                        onChange={(e) => setData('name', e.target.value)}
+                                        placeholder="Alex Mercer"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                    {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <span>Work Email Address *</span>
+                                    </label>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        placeholder="alex@company.com"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                    {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <Building2 className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <span>Company Name</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.company}
+                                        onChange={(e) => setData('company', e.target.value)}
+                                        placeholder="Acme Footwear Co."
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <Briefcase className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <span>Your Role</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.role}
+                                        onChange={(e) => setData('role', e.target.value)}
+                                        placeholder="Head of Visual Production / Founder"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <Globe className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <span>Store / Website URL</span>
+                                    </label>
+                                    <input
+                                        type="url"
+                                        value={data.website}
+                                        onChange={(e) => setData('website', e.target.value)}
+                                        placeholder="https://acme.com"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
+                                        <ShoppingBag className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <span>Primary Platform</span>
+                                    </label>
+                                    <select
+                                        value={data.platform}
+                                        onChange={(e) => setData('platform', e.target.value)}
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                    >
+                                        {PLATFORMS.map((p) => (
+                                            <option key={p} value={p}>{p}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold">
+                                        Primary Service Needed
+                                    </label>
                                     <select
                                         value={data.service}
                                         onChange={(e) => setData('service', e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs sm:text-sm font-sans focus:outline-none focus:border-[#d4ff00] transition-colors cursor-pointer appearance-none"
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
                                     >
-                                        {POPULAR_SERVICES.map((svc) => (
-                                            <option key={svc} value={svc} className="bg-[#12141c] text-white">
-                                                {svc}
-                                            </option>
+                                        {SERVICE_PILLARS.map((s) => (
+                                            <option key={s} value={s}>{s}</option>
                                         ))}
                                     </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
-                                        <Layers className="w-4 h-4 text-[#d4ff00]" />
-                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-mono uppercase text-neutral-300 font-bold">
+                                        Estimated Monthly Volume
+                                    </label>
+                                    <select
+                                        value={data.monthly_volume}
+                                        onChange={(e) => setData('monthly_volume', e.target.value)}
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                    >
+                                        {VOLUME_TIERS.map((v) => (
+                                            <option key={v} value={v}>{v}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
-                            {/* Client Name */}
-                            <div className="sm:col-span-6">
-                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-300 block mb-1.5 font-semibold">
-                                    Your Name *
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-mono uppercase text-neutral-300 font-bold">
+                                    Retouching Instructions / Style Notes (Optional)
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Alex Jensen"
-                                    required
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                />
-                                {errors.name && <p className="text-[11px] text-red-400 mt-1">{errors.name}</p>}
-                            </div>
-
-                            {/* Client Email */}
-                            <div className="sm:col-span-6">
-                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-300 block mb-1.5 font-semibold">
-                                    Work Email *
-                                </label>
-                                <input
-                                    type="email"
-                                    placeholder="e.g. alex@studio.com"
-                                    required
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-[#d4ff00] transition-colors"
-                                />
-                                {errors.email && <p className="text-[11px] text-red-400 mt-1">{errors.email}</p>}
-                            </div>
-
-                            {/* Optional Editing Notes */}
-                            <div className="sm:col-span-12">
-                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 block mb-1.5">
-                                    Editing Notes (Optional)
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Transparent PNG, keep soft shadow, smooth wrinkles..."
+                                <textarea
+                                    rows={3}
                                     value={data.instructions}
                                     onChange={(e) => setData('instructions', e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-neutral-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                    placeholder="e.g. Pure white 255 background, subtle contact shadow, preserve natural fabric texture, crop 1000x1000."
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
                                 />
                             </div>
-                        </div>
 
-                        {/* 3. Action Button & Trust Signals */}
-                        <div className="pt-2 space-y-3">
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="w-full py-4 px-6 rounded-full bg-[#d4ff00] hover:bg-[#bde600] text-black font-mono text-xs sm:text-sm uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,255,0,0.25)] transition-all duration-300 disabled:opacity-50 cursor-pointer"
-                            >
-                                {processing ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        <span>Submitting Trial Order...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <span>Submit Free Trial Order</span>
-                                        <Send className="w-4 h-4" />
-                                    </>
-                                )}
-                            </button>
+                            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(1)}
+                                    className="px-4 py-2.5 rounded-xl border border-white/10 text-neutral-300 hover:text-white flex items-center gap-1.5 text-xs font-mono"
+                                >
+                                    <ArrowLeft className="w-3.5 h-3.5" />
+                                    <span>Back to Files</span>
+                                </button>
 
-                            {/* Trust Signals */}
-                            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 pt-1 text-[11px] text-neutral-400 font-mono">
-                                <span className="flex items-center gap-1.5">
-                                    <Lock className="w-3.5 h-3.5 text-[#d4ff00]" />
-                                    <span>Strict NDA Protected</span>
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <Clock className="w-3.5 h-3.5 text-[#d4ff00]" />
-                                    <span>Sub-24h Return</span>
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
-                                    <span>No Card Required</span>
-                                </span>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-8 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center gap-2 shadow-xl disabled:opacity-50"
+                                >
+                                    {processing ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            <span>Transmitting Assets...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Send className="w-4 h-4" />
+                                            <span>Submit Free 3-Asset Pilot</span>
+                                        </>
+                                    )}
+                                </button>
                             </div>
                         </div>
-                    </form>
-                )}
+                    )}
+                </form>
             </div>
         </section>
     );

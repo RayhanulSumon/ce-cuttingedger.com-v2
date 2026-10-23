@@ -27,6 +27,8 @@ import {
     MessageSquareText,
     Sparkles,
     ShoppingBag,
+    Code2,
+    ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
@@ -256,6 +258,23 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     active: url.startsWith("/admin/chat-sessions"),
                     badge: admin_badges?.unread_leads ? `${admin_badges.unread_leads}` : null,
                     badgeColor: "bg-amber-400 text-black",
+                },
+            ],
+        },
+        {
+            title: "SEO & TRAFFIC ENGINE",
+            items: [
+                {
+                    name: "Tracking & Pixels",
+                    href: "/admin/tracking-scripts",
+                    icon: Code2,
+                    active: url.startsWith("/admin/tracking-scripts"),
+                },
+                {
+                    name: "Redirects & 404s",
+                    href: "/admin/redirects",
+                    icon: ArrowLeftRight,
+                    active: url.startsWith("/admin/redirects"),
                 },
             ],
         },

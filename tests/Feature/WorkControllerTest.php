@@ -17,9 +17,9 @@ class WorkControllerTest extends TestCase
         $this->seed();
     }
 
-    public function test_renders_work_index_with_all_commissions(): void
+    public function test_renders_case_studies_index_with_all_commissions(): void
     {
-        $response = $this->get('/work');
+        $response = $this->get('/case-studies');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
@@ -30,9 +30,17 @@ class WorkControllerTest extends TestCase
         );
     }
 
-    public function test_filters_work_index_by_category(): void
+    public function test_legacy_work_redirects_301_to_case_studies(): void
     {
-        $response = $this->get('/work?category=3d-spatial');
+        $response = $this->get('/work');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/case-studies');
+    }
+
+    public function test_filters_case_studies_by_category(): void
+    {
+        $response = $this->get('/case-studies?category=3d-spatial');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
@@ -45,7 +53,7 @@ class WorkControllerTest extends TestCase
     {
         $project = Project::firstOrFail();
 
-        $response = $this->get("/work/{$project->slug}");
+        $response = $this->get("/case-studies/{$project->slug}");
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
@@ -53,5 +61,15 @@ class WorkControllerTest extends TestCase
             ->where('project.slug', $project->slug)
             ->has('relatedProjects')
         );
+    }
+
+    public function test_legacy_work_slug_redirects_301_to_case_studies_slug(): void
+    {
+        $project = Project::firstOrFail();
+
+        $response = $this->get("/work/{$project->slug}");
+
+        $response->assertStatus(301);
+        $response->assertRedirect("/case-studies/{$project->slug}");
     }
 }

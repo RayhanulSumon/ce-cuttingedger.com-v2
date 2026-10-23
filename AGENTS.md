@@ -21,6 +21,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
+## Development Site Mode & Zero Legacy Code
+
+- This is a development site: modify and refactor code fully to match requirements directly without preserving backward compatibility.
+- Do not keep legacy, deprecated, fallback, or unnecessary code, files, or unused properties. Cleanly delete superseded files and eliminate technical debt.
+
 ## Verification Scripts
 
 - Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
