@@ -472,25 +472,25 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
             {/* CINEMA COVER MEDIA SHOWCASE */}
             {blog.cover_image && (
-                <section className="pt-10 pb-6 bg-[#0a0b0e]">
-                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <section className="pt-6 pb-2 sm:pt-8 sm:pb-4 bg-[#0a0b0e]">
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="relative group">
                             {/* Ambient Glow Reflection */}
                             <div
-                                className="absolute -inset-2 bg-gradient-to-r from-[#d4ff00]/15 via-cyan-500/10 to-[#d4ff00]/15 rounded-3xl blur-2xl opacity-40 group-hover:opacity-75 transition-opacity duration-700 pointer-events-none"
+                                className="absolute -inset-1.5 bg-gradient-to-r from-[#d4ff00]/15 via-cyan-500/10 to-[#d4ff00]/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-75 transition-opacity duration-700 pointer-events-none"
                             />
 
-                            <div className="relative rounded-3xl overflow-hidden aspect-[16/9] border border-white/15 bg-neutral-950 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] sm:aspect-[2/1] max-h-[360px] sm:max-h-[400px] border border-white/15 bg-neutral-950 shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
                                 <img
                                     src={blog.cover_image}
                                     alt={blog.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
+                                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
-                                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6">
-                                    <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/15 text-[10px] font-mono text-neutral-300 tracking-wider uppercase">
-                                        EDITORIAL FRAME // 16:9 CINEMA
+                                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
+                                    <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/15 text-[10px] font-mono text-neutral-300 tracking-wider uppercase">
+                                        EDITORIAL COVER
                                     </span>
                                 </div>
                             </div>
