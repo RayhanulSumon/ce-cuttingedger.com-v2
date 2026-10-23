@@ -180,15 +180,14 @@ export default function Show({
                                         <span>Test 3 Free Sample Assets</span>
                                     </Link>
 
-                                    <a
-                                        href={calendlyUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full border border-white/15 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors"
+                                    <button
+                                        type="button"
+                                        onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                        className="w-full border border-white/15 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                                     >
                                         <Calendar className="w-4 h-4 text-[#d4ff00]" />
                                         <span>Book a 15-Min Discovery Call</span>
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
 

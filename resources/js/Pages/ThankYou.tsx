@@ -50,15 +50,14 @@ export default function ThankYou() {
                                     Discuss volume pricing, custom turnaround SLAs, or review test asset instructions directly with our technical team.
                                 </p>
                             </div>
-                            <a
-                                href={calendlyUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-sm hover:bg-[#bfe600] transition-all shadow-lg shrink-0"
+                            <button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-sm hover:bg-[#bfe600] transition-all shadow-lg shrink-0 cursor-pointer"
                             >
                                 <Calendar className="w-4 h-4" />
-                                <span>Schedule on Calendly</span>
-                            </a>
+                                <span>Select Live Calendar Slot</span>
+                            </button>
                         </div>
 
                         {/* Production Workflow Milestones */}

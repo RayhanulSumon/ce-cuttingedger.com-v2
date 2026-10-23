@@ -196,5 +196,6 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
     Route::post('/cloud-link', [ChatController::class, 'saveCloudLink'])->name('cloud-link');
     Route::post('/book-slot', [ChatController::class, 'bookSlot'])->name('book-slot');
+    Route::get('/available-slots', [ChatController::class, 'availableSlots'])->name('available-slots');
     Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
 });

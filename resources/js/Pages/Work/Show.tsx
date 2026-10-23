@@ -229,15 +229,14 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                 <Sparkles className="w-4 h-4" />
                                 <span>Request Free 3-Asset Pilot</span>
                             </Link>
-                            <a
-                                href={calendlyUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-8 py-3.5 rounded-xl border border-white/20 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2"
+                            <button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                className="px-8 py-3.5 rounded-xl border border-white/20 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
                             >
                                 <Calendar className="w-4 h-4 text-[#d4ff00]" />
                                 <span>Book 15-Min Discovery Call</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
