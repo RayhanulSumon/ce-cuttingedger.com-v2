@@ -136,10 +136,6 @@ export function Header({
             href: '/case-studies',
         },
         {
-            label: 'Reviews',
-            href: '/reviews',
-        },
-        {
             label: 'Pricing',
             href: '/pricing',
         },

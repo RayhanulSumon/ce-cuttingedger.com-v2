@@ -93,7 +93,7 @@ class PageController extends Controller
      */
     public function reviews(): Response
     {
-        $testimonials = Testimonial::orderBy('sort_order')->get();
+        $testimonials = Testimonial::latest()->get();
         $clients = Client::orderBy('sort_order')->get();
 
         return Inertia::render('Reviews', [
