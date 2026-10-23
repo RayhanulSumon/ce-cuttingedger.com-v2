@@ -151,7 +151,7 @@ export function Header({
                 { label: 'Creative Leadership Team', href: '/team' },
                 { label: 'Career Openings', href: '/careers' },
                 { label: 'NDA & Security Compliance', href: '/nda-compliance' },
-                { label: 'ESG & Sustainability Charter', href: '/ESG-policy' },
+                { label: 'ESG & Sustainability Charter', href: '/esg-policy' },
                 { label: 'Studio FAQ', href: '/faq' },
             ],
         },

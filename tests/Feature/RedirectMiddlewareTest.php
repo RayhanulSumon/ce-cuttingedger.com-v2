@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Project;
 use App\Models\Redirect;
+use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -41,5 +43,53 @@ class RedirectMiddlewareTest extends TestCase
             'path' => '/completely-broken-legacy-link-2023',
             'hit_count' => 1,
         ]);
+    }
+
+    public function test_changing_service_slug_automatically_creates_301_redirect(): void
+    {
+        $service = Service::whereNull('parent_id')->firstOrFail();
+        $oldPath = $service->path;
+        $newSlug = $service->slug.'-renamed';
+
+        $service->update(['slug' => $newSlug]);
+
+        $this->assertDatabaseHas('redirects', [
+            'source_path' => $oldPath,
+            'target_url' => "/services/{$newSlug}",
+            'status_code' => 301,
+            'is_active' => true,
+        ]);
+    }
+
+    public function test_changing_case_study_slug_automatically_creates_301_redirect(): void
+    {
+        $project = Project::firstOrFail();
+        $oldPath = "/case-studies/{$project->slug}";
+        $newSlug = $project->slug.'-updated';
+
+        $project->update(['slug' => $newSlug]);
+
+        $this->assertDatabaseHas('redirects', [
+            'source_path' => $oldPath,
+            'target_url' => "/case-studies/{$newSlug}",
+            'status_code' => 301,
+            'is_active' => true,
+        ]);
+    }
+
+    public function test_career_singular_301_redirects_to_careers(): void
+    {
+        $response = $this->get('/career');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/careers');
+    }
+
+    public function test_uppercase_esg_policy_301_redirects_to_lowercase(): void
+    {
+        $response = $this->get('/ESG-policy');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/esg-policy');
     }
 }

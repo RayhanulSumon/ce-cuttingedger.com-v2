@@ -38,6 +38,7 @@ class AdminProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
             'client_name' => ['required', 'string', 'max:255'],
             'year' => ['required', 'string', 'max:10'],
             'category_id' => ['nullable', 'exists:categories,id'],
@@ -49,12 +50,19 @@ class AdminProjectController extends Controller
             'sort_order' => ['integer'],
             'live_url' => ['nullable', 'url'],
             'h1_title' => ['nullable', 'string', 'max:255'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
             'canonical_url' => ['nullable', 'string', 'max:500'],
             'is_noindex' => ['boolean'],
             'og_image' => ['nullable', 'string', 'max:500'],
+            'client_challenge' => ['nullable', 'string'],
+            'work_done' => ['nullable', 'string'],
+            'measurable_result' => ['nullable', 'string'],
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(4);
+        $validated['slug'] = ! empty($validated['slug'])
+            ? Str::slug($validated['slug'])
+            : Str::slug($validated['title']).'-'.Str::random(4);
         $validated['is_concept'] = $request->boolean('is_concept', false);
         $validated['is_noindex'] = $request->boolean('is_noindex', false);
 
@@ -70,6 +78,7 @@ class AdminProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
             'client_name' => ['required', 'string', 'max:255'],
             'year' => ['required', 'string', 'max:10'],
             'category_id' => ['nullable', 'exists:categories,id'],
@@ -81,10 +90,21 @@ class AdminProjectController extends Controller
             'sort_order' => ['integer'],
             'live_url' => ['nullable', 'url'],
             'h1_title' => ['nullable', 'string', 'max:255'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
             'canonical_url' => ['nullable', 'string', 'max:500'],
             'is_noindex' => ['boolean'],
             'og_image' => ['nullable', 'string', 'max:500'],
+            'client_challenge' => ['nullable', 'string'],
+            'work_done' => ['nullable', 'string'],
+            'measurable_result' => ['nullable', 'string'],
         ]);
+
+        if (! empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['slug']);
+        } else {
+            unset($validated['slug']);
+        }
 
         $validated['is_concept'] = $request->boolean('is_concept', false);
         $validated['is_noindex'] = $request->boolean('is_noindex', false);

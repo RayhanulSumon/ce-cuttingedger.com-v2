@@ -48,4 +48,46 @@ class Service extends Model
 
         return "/services/{$this->slug}";
     }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (Service $service): void {
+            if ($service->isDirty('slug') || $service->isDirty('parent_id')) {
+                $oldSlug = $service->getOriginal('slug');
+                $oldParentId = $service->getOriginal('parent_id');
+                $oldParent = $oldParentId ? Service::find($oldParentId) : null;
+                $oldPath = $oldParent ? "/services/{$oldParent->slug}/{$oldSlug}" : "/services/{$oldSlug}";
+                $newPath = $service->path;
+
+                if ($oldPath !== $newPath) {
+                    Redirect::updateOrCreate(
+                        ['source_path' => $oldPath],
+                        [
+                            'target_url' => $newPath,
+                            'status_code' => 301,
+                            'is_regex' => false,
+                            'is_active' => true,
+                            'notes' => 'Automatic 301 created on service URL change',
+                        ]
+                    );
+                }
+            }
+        });
+
+        static::deleted(function (Service $service): void {
+            Redirect::updateOrCreate(
+                ['source_path' => $service->path],
+                [
+                    'target_url' => '/services',
+                    'status_code' => 301,
+                    'is_regex' => false,
+                    'is_active' => true,
+                    'notes' => 'Automatic 301 created on service deletion',
+                ]
+            );
+        });
+    }
 }

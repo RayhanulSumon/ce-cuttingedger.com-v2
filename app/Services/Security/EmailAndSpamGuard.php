@@ -152,6 +152,15 @@ class EmailAndSpamGuard
      */
     public function checkTrialEligibility(string $email, ?string $ipAddress): array
     {
+        // In local development, allow repeated testing so developers can test form submissions
+        if (app()->environment('local')) {
+            return [
+                'eligible' => true,
+                'reason' => null,
+                'existing_id' => null,
+            ];
+        }
+
         $normalizedEmail = strtolower(trim($email));
 
         // 1. Check if email has ever claimed a free trial
@@ -251,5 +260,39 @@ class EmailAndSpamGuard
         }
 
         return true;
+    }
+
+    /**
+     * Generate an encrypted math captcha challenge.
+     *
+     * @return array{question: string, token: string}
+     */
+    public function generateMathCaptcha(): array
+    {
+        $num1 = random_int(2, 9);
+        $num2 = random_int(1, 9);
+        $sum = $num1 + $num2;
+        $secretKey = config('app.key', 'cuttingedger-secret-key');
+        $token = hash_hmac('sha256', (string) $sum, $secretKey);
+
+        return [
+            'question' => "{$num1} + {$num2}",
+            'token' => $token,
+        ];
+    }
+
+    /**
+     * Verify a submitted math captcha answer against the token.
+     */
+    public function verifyMathCaptcha(?string $answer, ?string $token): bool
+    {
+        if ($answer === null || $token === null || trim($answer) === '') {
+            return false;
+        }
+
+        $secretKey = config('app.key', 'cuttingedger-secret-key');
+        $expected = hash_hmac('sha256', trim($answer), $secretKey);
+
+        return hash_equals($expected, $token);
     }
 }

@@ -7,6 +7,7 @@ import { SlideOverContact } from './SlideOverContact';
 import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
+import { Toaster, toast } from '@/Components/ui/sonner';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { initializeAttribution } from '@/lib/attribution';
 import { PageProps } from '@/types';
@@ -16,6 +17,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+    const { url } = usePage();
     const { settings, flash } = usePage<PageProps>().props;
     const [isContactOpen, setIsContactOpen] = useState(false);
     const [isDiscoveryCallOpen, setIsDiscoveryCallOpen] = useState(false);
@@ -36,6 +38,20 @@ export function AppLayout({ children }: AppLayoutProps) {
         return () => window.removeEventListener('ce:open-discovery-call', handleOpenDiscovery);
     }, []);
 
+    // Gracefully handle flash messages via modern dark Sonner toast (suppressed on Thank You page)
+    useEffect(() => {
+        if (url.startsWith('/thank-you')) {
+            return;
+        }
+
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    }, [flash, url]);
+
     return (
         <div className="min-h-screen flex flex-col bg-[#0a0b0e] text-[#f4f5f8] relative selection:bg-[#d4ff00] selection:text-black">
             {/* Accessibility: Skip Link */}
@@ -46,15 +62,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 Skip to main content
             </a>
 
-            {/* Global Notification Banner if Flash */}
-            {flash?.success && (
-                <div
-                    role="alert"
-                    className="fixed top-20 right-6 z-[90] bg-[#d4ff00] text-black px-5 py-3 rounded-xl font-mono text-xs font-bold shadow-xl flex items-center gap-2 animate-in slide-in-from-top-2"
-                >
-                    <span>✓ {flash.success}</span>
-                </div>
-            )}
+            {/* Dark Aesthetic Toast Container */}
+            <Toaster />
 
             {/* Persistent Header */}
             <Header

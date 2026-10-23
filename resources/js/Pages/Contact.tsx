@@ -23,6 +23,8 @@ export default function Contact() {
         budget: '$1,500 – $5,000 / mo Retainer',
         message: '',
         honeypot: '',
+        captcha_answer: '',
+        captcha_token: '',
         // Attribution
         landing_page_url: '',
         submission_page_url: '',
@@ -33,6 +35,8 @@ export default function Contact() {
         utm_content: '',
         click_id: '',
     });
+
+    const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
 
     useEffect(() => {
         const attr = getAttributionData();
@@ -47,6 +51,16 @@ export default function Contact() {
             utm_content: attr.utm_content || '',
             click_id: attr.click_id || '',
         }));
+
+        fetch('/api/captcha/math')
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.question && res.token) {
+                    setCaptchaQuestion(res.question);
+                    setData((prev) => ({ ...prev, captcha_token: res.token }));
+                }
+            })
+            .catch(() => {});
     }, []);
 
     const isBusy = processing || isSubmitting;
@@ -257,6 +271,33 @@ export default function Contact() {
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
                                     />
                                 </div>
+
+                                {/* Math Spam Protection (Doc §4.4) */}
+                                {captchaQuestion && (
+                                    <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-4">
+                                        <div className="space-y-0.5">
+                                            <span className="text-xs font-mono text-neutral-300 font-bold flex items-center gap-1.5">
+                                                <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                                <span>Security Verification: What is {captchaQuestion} ?</span>
+                                            </span>
+                                            <span className="text-[11px] text-neutral-500 font-mono">Solve the math problem to submit inquiry.</span>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={data.captcha_answer}
+                                            onChange={(e) => setData('captcha_answer', e.target.value)}
+                                            placeholder="Answer"
+                                            className="w-24 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-center text-white focus:outline-none focus:border-[#d4ff00]"
+                                        />
+                                    </div>
+                                )}
+
+                                {errors['captcha_answer'] && (
+                                    <p className="text-xs text-rose-400 font-mono">
+                                        {errors['captcha_answer']}
+                                    </p>
+                                )}
 
                                 <div className="flex items-center justify-between pt-2">
                                     <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">

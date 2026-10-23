@@ -34,4 +34,43 @@ class Project extends Model
     {
         return "/case-studies/{$this->slug}";
     }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (Project $project): void {
+            if ($project->isDirty('slug')) {
+                $oldPath = "/case-studies/{$project->getOriginal('slug')}";
+                $newPath = "/case-studies/{$project->slug}";
+
+                if ($oldPath !== $newPath) {
+                    Redirect::updateOrCreate(
+                        ['source_path' => $oldPath],
+                        [
+                            'target_url' => $newPath,
+                            'status_code' => 301,
+                            'is_regex' => false,
+                            'is_active' => true,
+                            'notes' => 'Automatic 301 created on case study URL change',
+                        ]
+                    );
+                }
+            }
+        });
+
+        static::deleted(function (Project $project): void {
+            Redirect::updateOrCreate(
+                ['source_path' => "/case-studies/{$project->slug}"],
+                [
+                    'target_url' => '/case-studies',
+                    'status_code' => 301,
+                    'is_regex' => false,
+                    'is_active' => true,
+                    'notes' => 'Automatic 301 created on case study deletion',
+                ]
+            );
+        });
+    }
 }

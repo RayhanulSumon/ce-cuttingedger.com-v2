@@ -67,7 +67,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
         { label: 'Career Openings', href: '/careers' },
         { label: 'Transparent Pricing Plans', href: '/pricing' },
         { label: 'NDA & Security Compliance', href: '/nda-compliance' },
-        { label: 'ESG & Sustainability Charter', href: '/ESG-policy' },
+        { label: 'ESG & Sustainability Charter', href: '/esg-policy' },
         { label: 'Cookie Policy', href: '/cookie-policy' },
         { label: 'Studio FAQ', href: '/faq' },
     ];
@@ -239,7 +239,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                             <Link href="/nda-compliance" className="hover:text-white transition-colors">
                                 NDA Compliance
                             </Link>
-                            <Link href="/ESG-policy" className="hover:text-white transition-colors">
+                            <Link href="/esg-policy" className="hover:text-white transition-colors">
                                 ESG Charter
                             </Link>
                         </div>
@@ -398,7 +398,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         <Link href="/nda-compliance" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
                             NDA
                         </Link>
-                        <Link href="/ESG-policy" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
+                        <Link href="/esg-policy" className="text-[#f9f4e8]/70 hover:text-white transition-colors">
                             ESG
                         </Link>
                     </div>

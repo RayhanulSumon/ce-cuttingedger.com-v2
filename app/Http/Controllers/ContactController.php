@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactInquiryAdminNotificationMail;
+use App\Mail\ContactInquiryConfirmationMail;
+use App\Mail\FreeTrialAdminNotificationMail;
+use App\Mail\FreeTrialConfirmationMail;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -54,6 +60,15 @@ class ContactController extends Controller
             'click_id' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $guard = app(EmailAndSpamGuard::class);
+
+        // Math Captcha Verification (Doc §4.4)
+        if ($request->filled('captcha_token')) {
+            if (! $guard->verifyMathCaptcha($request->input('captcha_answer'), $request->input('captcha_token'))) {
+                return back()->withErrors(['captcha_answer' => 'Security challenge failed. Please calculate the sum correctly.'])->withInput();
+            }
+        }
+
         // Deduplication & Double-Click Guard (15s replay lockout)
         $fingerprint = 'contact_inquiry_'.md5($request->ip().strtolower($validated['email']).substr($validated['message'], 0, 50));
         if (Cache::has($fingerprint)) {
@@ -61,7 +76,7 @@ class ContactController extends Controller
         }
         Cache::put($fingerprint, true, 15);
 
-        ContactMessage::create([
+        $contactMessage = ContactMessage::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'company' => $validated['company'] ?? null,
@@ -84,6 +99,16 @@ class ContactController extends Controller
             'ip_address' => $request->ip(),
             'status' => 'new',
         ]);
+
+        $adminEmail = Setting::where('key', 'contact_email')->value('value') ?: config('mail.from.address', 'hello@cuttingedger.com');
+        $calendlyUrl = Setting::where('key', 'calendly_url')->value('value') ?: 'https://calendly.com/cuttingedger/discovery-call';
+
+        try {
+            Mail::to($contactMessage->email)->send(new ContactInquiryConfirmationMail($contactMessage, $calendlyUrl));
+            Mail::to($adminEmail)->send(new ContactInquiryAdminNotificationMail($contactMessage));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return redirect()->route('thank-you')->with('success', 'Inquiry transmitted successfully. Our studio team will review your requirements.');
     }
@@ -123,6 +148,13 @@ class ContactController extends Controller
 
         $guard = app(EmailAndSpamGuard::class);
 
+        // Math Captcha Verification (Doc §4.4)
+        if ($request->filled('captcha_token')) {
+            if (! $guard->verifyMathCaptcha($request->input('captcha_answer'), $request->input('captcha_token'))) {
+                return back()->withErrors(['captcha_answer' => 'Security challenge failed. Please calculate the sum correctly.'])->withInput();
+            }
+        }
+
         // 1. Email format and disposable burner domain check
         $emailCheck = $guard->validateEmail($validated['email']);
         if (! $emailCheck['valid']) {
@@ -134,6 +166,7 @@ class ContactController extends Controller
         if (! $eligibility['eligible']) {
             return back()->withErrors([
                 'trial_exhausted' => $eligibility['reason'],
+                'email' => $eligibility['reason'],
             ])->with('trial_exhausted', [
                 'reason' => $eligibility['reason'],
                 'email' => $validated['email'],
@@ -153,7 +186,7 @@ class ContactController extends Controller
         // Deduplication & Double-Click Guard (15s replay lockout)
         $fingerprint = 'trial_order_'.md5($request->ip().strtolower($validated['email']));
         if (Cache::has($fingerprint)) {
-            return back()->with('success', 'Your trial order has already been received! Our team is processing it.');
+            return redirect()->route('thank-you')->with('success', 'Your trial order has already been received! Our team is processing it.');
         }
         Cache::put($fingerprint, true, 15);
 
@@ -196,6 +229,16 @@ class ContactController extends Controller
             'payment_status' => 'free_trial',
             'source' => 'web_trial',
         ]);
+
+        $adminEmail = Setting::where('key', 'contact_email')->value('value') ?: config('mail.from.address', 'hello@cuttingedger.com');
+        $calendlyUrl = Setting::where('key', 'calendly_url')->value('value') ?: 'https://calendly.com/cuttingedger/discovery-call';
+
+        try {
+            Mail::to($order->client_email)->send(new FreeTrialConfirmationMail($order, $calendlyUrl));
+            Mail::to($adminEmail)->send(new FreeTrialAdminNotificationMail($order));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return redirect()->route('thank-you')->with([
             'success' => "Free 3-Asset Pilot #{$order->order_number} submitted successfully! Our senior artists will return your retouched files within 24 hours.",
