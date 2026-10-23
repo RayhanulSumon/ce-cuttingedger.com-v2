@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { Link } from '@inertiajs/react';
 import {
     motion,
@@ -9,9 +9,9 @@ import {
     useSpring,
 } from 'framer-motion';
 import { ArrowUpRight, Sparkles } from 'lucide-react';
-import { Project } from '@/types/models';
+import { Service } from '@/types/models';
 
-interface PortfolioItem {
+interface ServiceCardItem {
     id: number | string;
     title: string;
     slug: string;
@@ -20,43 +20,43 @@ interface PortfolioItem {
     year: string | number;
 }
 
-const DEFAULT_STUDIO_WORKS: PortfolioItem[] = [
+const DEFAULT_SERVICES: ServiceCardItem[] = [
     {
         id: 1,
-        title: 'Electro Spatial',
-        slug: 'electro-spatial',
+        title: 'High-End Model & Fashion Retouching',
+        slug: 'high-end-model-retouch',
         image: '/images/portfolio/portfolio-1.jpg',
-        categories: ['3D Spatial CGI', 'High-End Retouching'],
+        categories: ['High-End Fashion & Jewelry', 'Model Retouch'],
         year: 2026,
     },
     {
         id: 2,
-        title: 'Creative Vision',
-        slug: 'creative-vision',
+        title: 'Ghost Mannequin & Invisible Neck Joint',
+        slug: 'ghost-mannequin',
         image: '/images/portfolio/portfolio-2.jpg',
-        categories: ['Commercial Retouch', 'Color Grading'],
-        year: 2025,
+        categories: ['Invisible Mannequin', 'Apparel Retouch'],
+        year: 2026,
     },
     {
         id: 3,
-        title: 'Design Essence',
-        slug: 'design-essence',
+        title: 'Jewelry & Luxury Accessories Retouching',
+        slug: 'jewelry-retouch',
         image: '/images/portfolio/portfolio-3.jpg',
-        categories: ['Spatial CGI', 'Product Render'],
-        year: 2025,
+        categories: ['Fine Jewelry Retouch', 'Gemstone Polish'],
+        year: 2026,
     },
     {
         id: 4,
-        title: 'Innovative Works',
-        slug: 'innovative-works',
+        title: 'Background Removal & Multipath Cutout',
+        slug: 'background-removal',
         image: '/images/portfolio/portfolio-4.jpg',
-        categories: ['Brand Architecture', 'Luxury Assets'],
+        categories: ['Vector Clipping Path', 'Alpha Masking'],
         year: 2026,
     },
 ];
 
 interface CardViewProps {
-    item: PortfolioItem;
+    item: ServiceCardItem;
     style: any;
     zIndex: number;
 }
@@ -112,11 +112,11 @@ function CardView({ item, style, zIndex }: CardViewProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45 pointer-events-none" />
             </div>
 
-            {/* Clickable Card Link */}
+            {/* Clickable Card Link to Service */}
             <Link
-                href={`/work/${item.slug}`}
+                href={`/services/${item.slug}`}
                 className="absolute inset-0 z-20"
-                aria-label={`View ${item.title} case study`}
+                aria-label={`Explore ${item.title} service`}
             />
 
             {/* Card Top Bar: Frosted Glass Capsule Pills */}
@@ -147,7 +147,7 @@ function CardView({ item, style, zIndex }: CardViewProps) {
 
                 {/* Mobile tap indicator */}
                 <span className="sm:hidden px-3.5 py-1.5 rounded-full bg-[#d4ff00] text-black text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-md">
-                    <span>View</span>
+                    <span>View Service</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                 </span>
             </div>
@@ -170,7 +170,7 @@ function CardView({ item, style, zIndex }: CardViewProps) {
             >
                 <span className="w-2 h-2 rounded-full bg-[#d4ff00] shadow-[0_0_8px_#d4ff00] shrink-0" />
                 <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
-                    Explore Case
+                    Explore Service
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00]" />
             </motion.div>
@@ -178,11 +178,11 @@ function CardView({ item, style, zIndex }: CardViewProps) {
     );
 }
 
-interface StickyWorkCardsProps {
-    projects?: Project[];
+interface StickyServiceCardsProps {
+    services?: Service[];
 }
 
-export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
+export function StickyServiceCards({ services }: StickyServiceCardsProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -202,18 +202,59 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
         else setActiveIndex(3);
     });
 
-    // Dynamic resolution from real database projects with studio fallback
-    const activeWorks: PortfolioItem[] =
-        projects && projects.length >= 4
-            ? projects.slice(0, 4).map((p, i) => ({
-                  id: p.id,
-                  title: p.title,
-                  slug: p.slug,
-                  image: p.featured_image || p.thumbnail_image || DEFAULT_STUDIO_WORKS[i].image,
-                  categories: p.category ? [p.category.name] : DEFAULT_STUDIO_WORKS[i].categories,
-                  year: p.year || (p.created_at ? new Date(p.created_at).getFullYear() : 2026),
-              }))
-            : DEFAULT_STUDIO_WORKS;
+    // Dynamic resolution prioritizing core services
+    const activeCards: ServiceCardItem[] = useMemo(() => {
+        if (!services || services.length === 0) {
+            return DEFAULT_SERVICES;
+        }
+
+        const slugImageMap: Record<string, { image: string; fallbackCategories: string[] }> = {
+            'high-end-model-retouch': {
+                image: '/images/portfolio/portfolio-1.jpg',
+                fallbackCategories: ['High-End Fashion & Jewelry', 'Model Retouch'],
+            },
+            'ghost-mannequin': {
+                image: '/images/portfolio/portfolio-2.jpg',
+                fallbackCategories: ['Invisible Mannequin', 'Apparel Retouch'],
+            },
+            'jewelry-retouch': {
+                image: '/images/portfolio/portfolio-3.jpg',
+                fallbackCategories: ['Fine Jewelry Retouch', 'Gemstone Polish'],
+            },
+            'background-removal': {
+                image: '/images/portfolio/portfolio-4.jpg',
+                fallbackCategories: ['Vector Clipping Path', 'Alpha Masking'],
+            },
+        };
+
+        const desiredSlugs = ['high-end-model-retouch', 'ghost-mannequin', 'jewelry-retouch', 'background-removal'];
+        const matched = desiredSlugs
+            .map((slug) => services.find((s) => s.slug === slug))
+            .filter((s): s is Service => Boolean(s));
+
+        const pool = matched.length === 4 ? matched : services.slice(0, 4);
+
+        return pool.map((s, i) => {
+            const config = slugImageMap[s.slug] || {
+                image: `/images/portfolio/portfolio-${(i % 4) + 1}.jpg`,
+                fallbackCategories: ['Specialist Discipline'],
+            };
+            const categories = s.slug === 'high-end-model-retouch'
+                ? ['High-End Fashion & Jewelry']
+                : s.marquee_label
+                ? s.marquee_label.split(' · ').slice(0, 2)
+                : config.fallbackCategories;
+
+            return {
+                id: s.id,
+                title: s.title,
+                slug: s.slug,
+                image: config.image,
+                categories,
+                year: 2026,
+            };
+        });
+    }, [services]);
 
     // =========================================================================
     // COLLAPSIBLE SCALE & STACK MECHANISM
@@ -244,7 +285,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
 
     return (
         <section
-            id="featured-work"
+            id="featured-services"
             className="relative py-14 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
         >
             {/* Ambient Background Glow */}
@@ -257,7 +298,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                         <div className="flex items-center gap-3">
                             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                                 <Sparkles className="w-3.5 h-3.5" />
-                                <span>[ 01 // SELECTED COMMISSIONS ]</span>
+                                <span>[ 01 // CORE DISCIPLINES & SERVICES ]</span>
                             </div>
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-400">
                                 <span className="text-[#d4ff00] font-semibold">0{activeIndex + 1}</span>
@@ -272,21 +313,21 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                     </div>
 
                     <Link
-                        href="/work"
+                        href="/services"
                         className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm"
                     >
-                        <span>View All Archives ({projects?.length || '24+'})</span>
+                        <span>View All Services ({services?.length || '6+'})</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </Link>
                 </div>
 
-                {/* PINNED COLLAPSIBLE CARDS CONTAINER (.des-portfolio-wrap) */}
+                {/* PINNED COLLAPSIBLE CARDS CONTAINER */}
                 <div ref={containerRef} className="relative h-[320vh] sm:h-[360vh]">
-                    {/* Sticky Viewport Window: Safe Height to Guarantee Bottom Title Visibility */}
+                    {/* Sticky Viewport Window */}
                     <div className="sticky top-16 sm:top-20 lg:top-24 h-[58vh] sm:h-[64vh] lg:h-[68vh] min-h-[400px] max-h-[660px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
                         {/* Card 0 */}
                         <CardView
-                            item={activeWorks[0]}
+                            item={activeCards[0]}
                             zIndex={10}
                             style={{
                                 scale: card0Scale,
@@ -305,7 +346,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={activeWorks[1]}
+                                item={activeCards[1]}
                                 zIndex={20}
                                 style={{
                                     scale: card1Scale,
@@ -325,7 +366,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={activeWorks[2]}
+                                item={activeCards[2]}
                                 zIndex={30}
                                 style={{
                                     scale: card2Scale,
@@ -345,7 +386,7 @@ export function StickyWorkCards({ projects }: StickyWorkCardsProps) {
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
                             <CardView
-                                item={activeWorks[3]}
+                                item={activeCards[3]}
                                 zIndex={40}
                                 style={{
                                     scale: 1,
