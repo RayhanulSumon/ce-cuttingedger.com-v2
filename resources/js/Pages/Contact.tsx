@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Calendar, ShieldCheck, Clock, Building2, Briefcase, Globe, ShoppingBag } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Calendar, ShieldCheck, Clock, Building2, Briefcase, Globe, ShoppingBag, RotateCw } from 'lucide-react';
 import { getAttributionData } from '@/lib/attribution';
 import { PageProps } from '@/types';
 
@@ -11,7 +11,7 @@ export default function Contact() {
     const calendlyUrl = (settings as any)?.calendly_url || 'https://calendly.com/cuttingedger/discovery-call';
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { data, setData, post, processing, wasSuccessful, reset } = useForm({
+    const { data, setData, post, processing, wasSuccessful, reset, errors, transform } = useForm({
         name: '',
         email: '',
         company: '',
@@ -38,6 +38,22 @@ export default function Contact() {
 
     const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
 
+    const refreshCaptcha = () => {
+        fetch('/api/captcha/math')
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.question && res.token) {
+                    setCaptchaQuestion(res.question);
+                    setData((prev) => ({
+                        ...prev,
+                        captcha_token: res.token,
+                        captcha_answer: '',
+                    }));
+                }
+            })
+            .catch(() => {});
+    };
+
     useEffect(() => {
         const attr = getAttributionData();
         setData((prev) => ({
@@ -52,15 +68,7 @@ export default function Contact() {
             click_id: attr.click_id || '',
         }));
 
-        fetch('/api/captcha/math')
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.question && res.token) {
-                    setCaptchaQuestion(res.question);
-                    setData((prev) => ({ ...prev, captcha_token: res.token }));
-                }
-            })
-            .catch(() => {});
+        refreshCaptcha();
     }, []);
 
     const isBusy = processing || isSubmitting;
@@ -87,9 +95,24 @@ export default function Contact() {
         if (isBusy) return;
 
         setIsSubmitting(true);
+        const attr = getAttributionData();
+
+        transform((currentData) => ({
+            ...currentData,
+            submission_page_url: window.location.href,
+            landing_page_url: attr.landing_page_url || currentData.landing_page_url || window.location.href,
+            utm_source: attr.utm_source || currentData.utm_source || '',
+            utm_medium: attr.utm_medium || currentData.utm_medium || '',
+            utm_campaign: attr.utm_campaign || currentData.utm_campaign || '',
+            utm_term: attr.utm_term || currentData.utm_term || '',
+            utm_content: attr.utm_content || currentData.utm_content || '',
+            click_id: attr.click_id || currentData.click_id || '',
+        }));
+
         post('/contact', {
             preserveScroll: true,
             onFinish: () => setIsSubmitting(false),
+            onError: () => refreshCaptcha(),
         });
     };
 
@@ -136,6 +159,9 @@ export default function Contact() {
                                     aria-hidden="true"
                                 />
 
+                                {/* Hidden Captcha Token */}
+                                <input type="hidden" name="captcha_token" value={data.captcha_token} />
+
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2 font-bold">
@@ -149,6 +175,7 @@ export default function Contact() {
                                             placeholder="Marcus Vance"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
                                         />
+                                        {errors.name && <p className="text-xs text-rose-400 mt-1">{errors.name}</p>}
                                     </div>
 
                                     <div>
@@ -163,6 +190,7 @@ export default function Contact() {
                                             placeholder="marcus@brand.com"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
                                         />
+                                        {errors.email && <p className="text-xs text-rose-400 mt-1">{errors.email}</p>}
                                     </div>
 
                                     <div>
@@ -270,6 +298,7 @@ export default function Contact() {
                                         placeholder="Detail your monthly SKU volume, background specifications, desired turnaround SLA, or custom retouching guidelines..."
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
                                     />
+                                    {errors.message && <p className="text-xs text-rose-400 mt-1">{errors.message}</p>}
                                 </div>
 
                                 {/* Math Spam Protection (Doc §4.4) */}
@@ -279,6 +308,14 @@ export default function Contact() {
                                             <span className="text-xs font-mono text-neutral-300 font-bold flex items-center gap-1.5">
                                                 <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
                                                 <span>Security Verification: What is {captchaQuestion} ?</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={refreshCaptcha}
+                                                    title="Generate new question"
+                                                    className="p-1 text-neutral-500 hover:text-[#d4ff00] transition-colors"
+                                                >
+                                                    <RotateCw className="w-3 h-3" />
+                                                </button>
                                             </span>
                                             <span className="text-[11px] text-neutral-500 font-mono">Solve the math problem to submit inquiry.</span>
                                         </div>
