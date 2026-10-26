@@ -26,6 +26,42 @@ class HybridIntentEngine
     {
         $text = strtolower(trim($message));
 
+        // 0.01 Banglish / Phonetic Bengali Greetings & Pleasantries
+        if (preg_match('/\b(kemon\s*(acho|asen|achen|acchen)|ki\s*(obostha|khobor)|bhalo\s*(achi|acho|achen)|valo\s*(achi|acho|achen)|tumi\s*kemon)\b/iu', $text)) {
+            return [
+                'content' => 'ভালো আছি, ধন্যবাদ! কাটিংএজার স্টুডিওতে আপনাকে স্বাগতম। আমরা প্রফেশনাল হ্যান্ড-ড্রন ক্লিপিং পাথ, ঘোস্ট ম্যানিকুইন ও হাই-এন্ড ফটো রিটাচিং সেবা দিয়ে থাকি। আপনার ছবির কাজের জন্য কীভাবে সাহায্য করতে পারি?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        // 0.02 Capability & Speciality Inquiries ("what can you do?", "what is your speciality?", "what are your services?")
+        if (preg_match('/\b(what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|are\s*your\s*services)|tell\s*me\s*about\s*your\s*(services|speciali[tz]y)|your\s*(capabilities|speciali[tz]y|expertise))\b/i', $text)) {
+            $specialityContent = <<<'TXT'
+At CuttingEdger, we specialize in high-end commercial post-production and batch e-commerce image editing. Here are our core studio disciplines:
+
+* **Clipping Path & Cutouts:** 100% hand-drawn Photoshop Pen Tool bezier curves with 0.5px inward feathering to eliminate colored background halos. (Starting at $0.45/image)
+* **Ghost Mannequin & Symmetry:** Invisible neck joint reconstruction, balanced 3D garment volume, and collar alignment. ($0.99/image)
+* **Multi-Clipping Path & Color Masking:** Precision component layer separation for instant e-commerce apparel colorway swaps. ($1.25/image)
+* **High-End Fashion & Beauty Retouching:** Micro frequency separation preserving natural skin pores without plastic blur. ($1.99 – $3.99/image)
+* **Fine Jewelry & Macro Retouching:** 500% macro dust/scratch elimination, metal luster smoothing, and diamond sparkle alignment. ($2.49 – $4.99/image)
+
+⏱️ **Turnaround SLA:** Standard 12–24 hours | Express rush 6 hours
+🎁 **Risk-Free Trial:** Test our precision with **3 Free Sample Edits** right now with zero cost or commitment! Feel free to drop a test image here.
+TXT;
+
+            return [
+                'content' => $specialityContent,
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Calculate Pricing',
+                    'Turnaround SLAs',
+                    'Claim 3 Free Sample Edits',
+                    'Talk to a live specialist',
+                ],
+            ];
+        }
+
         // 0. Detect Human Operator / Live Agent request
         if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative)\b/i', $text)) {
             if ($session) {

@@ -220,8 +220,13 @@ PROMPT;
     {
         $clean = strtolower(trim($text));
 
-        // International greetings
-        if (preg_match('/^(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|greetings|hola|buenos\s*dias|buenas\s*tardes|bonjour|salut|hallo|guten\s*(tag|morgen)|ciao|buongiorno|namaste|salaam|কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম|مرحبا|أهلا|السلام\s*عليكم)[!.? ]*$/iu', $clean)) {
+        // International & Banglish greetings
+        if (preg_match('/^(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|greetings|hola|buenos\s*dias|buenas\s*tardes|bonjour|salut|hallo|guten\s*(tag|morgen)|ciao|buongiorno|namaste|salaam|কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম|مرحبا|أهلا|السلام\s*عليكم|kemon\s*(acho|asen|achen|acchen)|ki\s*(obostha|khobor)|bhalo\s*(achi|acho|achen)|valo\s*(achi|acho|achen))[!.? ]*$/iu', $clean)) {
+            return true;
+        }
+
+        // Capability & Speciality Inquiries ("what can you do?", "what is your speciality?", "what do you do?")
+        if (preg_match('/\b(what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|are\s*your\s*services)|tell\s*me\s*about\s*your\s*(services|speciali[tz]y)|your\s*(capabilities|speciali[tz]y|expertise))\b/i', $clean)) {
             return true;
         }
 
