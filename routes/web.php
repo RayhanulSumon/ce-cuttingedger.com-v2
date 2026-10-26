@@ -88,6 +88,11 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
     Route::delete('chat-sessions-bulk/destroy-all', [AdminChatSessionController::class, 'destroyAll'])->name('chat-sessions.destroy-all');
     Route::post('chat-sessions/mark-all-read', [AdminChatSessionController::class, 'markAllLeadsRead'])->name('chat-sessions.mark-all-read');
+    Route::post('chat-sessions/{chatSession}/takeover', [AdminChatSessionController::class, 'takeover'])->name('chat-sessions.takeover');
+    Route::post('chat-sessions/{chatSession}/release', [AdminChatSessionController::class, 'release'])->name('chat-sessions.release');
+    Route::post('chat-sessions/{chatSession}/reply', [AdminChatSessionController::class, 'reply'])->name('chat-sessions.reply');
+    Route::get('chat-sessions/{chatSession}/poll', [AdminChatSessionController::class, 'poll'])->name('chat-sessions.poll');
+    Route::get('chat sessions', fn () => redirect('/admin/chat-sessions'));
     Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
 
     // Admin Realtime Notifications Dropdown
@@ -198,6 +203,7 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/session', [ChatController::class, 'session'])->name('session');
     Route::post('/reset', [ChatController::class, 'reset'])->name('reset');
     Route::post('/message', [ChatController::class, 'message'])->name('message');
+    Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
     Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
     Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
     Route::post('/cloud-link', [ChatController::class, 'saveCloudLink'])->name('cloud-link');

@@ -257,4 +257,109 @@ class AdminChatAndConsultationTest extends TestCase
         $this->assertStringContainsString('Rescheduled: previously', (string) $consultation->notes);
         $this->assertStringContainsString('Client requested Friday afternoon', (string) $consultation->notes);
     }
+
+    public function test_admin_can_takeover_and_reply_to_chat_session(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'mode' => 'bot',
+            'last_active_at' => now(),
+        ]);
+
+        // 1. Take over
+        $takeoverResponse = $this->actingAs($this->admin)
+            ->postJson("/admin/chat-sessions/{$session->id}/takeover");
+
+        $takeoverResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'session' => [
+                    'id' => $session->id,
+                    'mode' => 'operator',
+                ],
+            ]);
+
+        $session->refresh();
+        $this->assertEquals('operator', $session->mode);
+        $this->assertEquals($this->admin->id, $session->operator_id);
+
+        // 2. Reply as operator
+        $replyResponse = $this->actingAs($this->admin)
+            ->postJson("/admin/chat-sessions/{$session->id}/reply", [
+                'content' => 'Hello from human studio specialist!',
+            ]);
+
+        $replyResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => [
+                    'sender' => 'operator',
+                    'content' => 'Hello from human studio specialist!',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('chat_messages', [
+            'chat_session_id' => $session->id,
+            'sender' => 'operator',
+            'content' => 'Hello from human studio specialist!',
+        ]);
+
+        // 3. Visitor polling receives the operator message
+        $pollResponse = $this->withHeader('X-Chat-Session-Id', $session->id)
+            ->getJson('/api/chat/poll');
+
+        $pollResponse->assertStatus(200)
+            ->assertJson([
+                'mode' => 'operator',
+            ]);
+
+        $messages = $pollResponse->json('messages');
+        $this->assertTrue(collect($messages)->contains('sender', 'operator'));
+    }
+
+    public function test_admin_can_release_chat_session_to_bot(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'mode' => 'operator',
+            'operator_id' => $this->admin->id,
+            'last_active_at' => now(),
+        ]);
+
+        $releaseResponse = $this->actingAs($this->admin)
+            ->postJson("/admin/chat-sessions/{$session->id}/release");
+
+        $releaseResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'session' => [
+                    'mode' => 'bot',
+                ],
+            ]);
+
+        $session->refresh();
+        $this->assertEquals('bot', $session->mode);
+    }
+
+    public function test_visitor_request_human_flags_session_for_takeover(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'mode' => 'bot',
+            'last_active_at' => now(),
+        ]);
+
+        $response = $this->withHeader('X-Chat-Session-Id', $session->id)
+            ->postJson('/api/chat/message', [
+                'message' => 'Can I speak with a real human operator please?',
+            ]);
+
+        $response->assertStatus(200);
+
+        $session->refresh();
+        $this->assertTrue($session->needs_human);
+    }
 }

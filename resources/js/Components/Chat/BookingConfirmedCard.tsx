@@ -18,6 +18,41 @@ export interface BookingConfirmedCardProps {
 export function BookingConfirmedCard({ card, onReschedule }: BookingConfirmedCardProps) {
     const isRescheduled = Boolean(card.is_rescheduled);
 
+    const formatLocalizedSlot = (slotDatetime?: string, fallback?: string) => {
+        if (!slotDatetime) return { local: fallback || '', utc: '' };
+        try {
+            const d = new Date(slotDatetime);
+            if (isNaN(d.getTime())) return { local: fallback || '', utc: '' };
+            const userLocale = navigator.language || 'en-US';
+            const localString = new Intl.DateTimeFormat(userLocale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+            }).format(d);
+
+            const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const utcString = new Intl.DateTimeFormat('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'UTC',
+            }).format(d);
+
+            return {
+                local: `${localString} (${userTz})`,
+                utc: `${utcString} UTC`,
+            };
+        } catch {
+            return { local: fallback || '', utc: '' };
+        }
+    };
+
+    const slotDisplay = formatLocalizedSlot(card.slot_datetime, card.datetime_formatted);
+
     return (
         <div className={`my-2.5 p-4 rounded-2xl border shadow-xl backdrop-blur-md text-left transition-all ${
             isRescheduled
@@ -55,9 +90,14 @@ export function BookingConfirmedCard({ card, onReschedule }: BookingConfirmedCar
                         <span className="line-through">{card.previous_datetime}</span>
                     </div>
                 )}
-                <div className="flex items-center justify-between text-white/70">
-                    <span className="text-white/40 text-[10px] uppercase">New Slot</span>
-                    <span className="font-semibold text-white">{card.datetime_formatted}</span>
+                <div className="flex items-start justify-between text-white/70 gap-2">
+                    <span className="text-white/40 text-[10px] uppercase shrink-0 pt-0.5">Slot</span>
+                    <div className="text-right">
+                        <span className="font-semibold text-white block">{slotDisplay.local}</span>
+                        {slotDisplay.utc && (
+                            <span className="text-[10px] text-white/50 block font-mono">{slotDisplay.utc}</span>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                     <span className="text-white/40 text-[10px] uppercase">Invitee</span>

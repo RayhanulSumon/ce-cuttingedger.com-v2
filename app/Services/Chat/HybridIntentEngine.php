@@ -26,6 +26,75 @@ class HybridIntentEngine
     {
         $text = strtolower(trim($message));
 
+        // 0.01 Banglish / Phonetic Bengali Greetings & Pleasantries
+        if (preg_match('/\b(kemon\s*(acho|asen|achen|acchen)|ki\s*(obostha|khobor)|bhalo\s*(achi|acho|achen)|valo\s*(achi|acho|achen)|tumi\s*kemon)\b/iu', $text)) {
+            return [
+                'content' => 'ভালো আছি, ধন্যবাদ! কাটিংএজার স্টুডিওতে আপনাকে স্বাগতম। আমরা প্রফেশনাল হ্যান্ড-ড্রন ক্লিপিং পাথ, ঘোস্ট ম্যানিকুইন ও হাই-এন্ড ফটো রিটাচিং সেবা দিয়ে থাকি। আপনার ছবির কাজের জন্য কীভাবে সাহায্য করতে পারি?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        // 0.02 Capability & Speciality Inquiries ("what can you do?", "what is your speciality?", "what are your services?")
+        if (preg_match('/\b(what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|are\s*your\s*services)|tell\s*me\s*about\s*your\s*(services|speciali[tz]y)|your\s*(capabilities|speciali[tz]y|expertise))\b/i', $text)) {
+            $specialityContent = <<<'TXT'
+At CuttingEdger, we specialize in high-end commercial post-production and batch e-commerce image editing. Here are our core studio disciplines:
+
+* **Clipping Path & Cutouts:** 100% hand-drawn Photoshop Pen Tool bezier curves with 0.5px inward feathering to eliminate colored background halos. (Starting at $0.45/image)
+* **Ghost Mannequin & Symmetry:** Invisible neck joint reconstruction, balanced 3D garment volume, and collar alignment. ($0.99/image)
+* **Multi-Clipping Path & Color Masking:** Precision component layer separation for instant e-commerce apparel colorway swaps. ($1.25/image)
+* **High-End Fashion & Beauty Retouching:** Micro frequency separation preserving natural skin pores without plastic blur. ($1.99 – $3.99/image)
+* **Fine Jewelry & Macro Retouching:** 500% macro dust/scratch elimination, metal luster smoothing, and diamond sparkle alignment. ($2.49 – $4.99/image)
+
+⏱️ **Turnaround SLA:** Standard 12–24 hours | Express rush 6 hours
+🎁 **Risk-Free Trial:** Test our precision with **3 Free Sample Edits** right now with zero cost or commitment! Feel free to drop a test image here.
+TXT;
+
+            return [
+                'content' => $specialityContent,
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Calculate Pricing',
+                    'Turnaround SLAs',
+                    'Claim 3 Free Sample Edits',
+                    'Talk to a live specialist',
+                ],
+            ];
+        }
+
+        // 0. Detect Human Operator / Live Agent request
+        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative)\b/i', $text)) {
+            if ($session) {
+                $session->requestHuman();
+                try {
+                    app(NotificationService::class)->toAllAdmins()->send('chat_takeover_requested', [
+                        'title' => '🚨 Live Chat Takeover Requested',
+                        'message' => 'Visitor requested to speak with a human specialist.',
+                        'session_id' => $session->id,
+                        'admin_url' => url('/admin/chat-sessions?id='.$session->id),
+                        'timestamp' => now()->toISOString(),
+                    ]);
+                } catch (\Throwable $e) {
+                }
+            }
+
+            $responses = [
+                "I've flagged our live production team! A studio specialist is being notified and will join this chat in a moment. What can we help you solve today?",
+                'Connecting you with our team right away. A senior production specialist has been alerted. Feel free to type your question or share files while they jump in!',
+                'Got it! I just alerted our on-duty team. Someone will take over this chat shortly. Feel free to leave your email or WhatsApp number here so we can reply even if you close the tab.',
+            ];
+
+            return [
+                'content' => $responses[array_rand($responses)],
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Schedule Consultation Call',
+                    'Check Turnaround SLA',
+                    'View Pricing Catalog',
+                ],
+            ];
+        }
+
         // 1. Detect Email / Lead submission
         if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $text, $matches)) {
             $email = $matches[0];
@@ -498,9 +567,12 @@ class HybridIntentEngine
                 'is_reschedule' => $isRescheduleQuery,
             ], $session);
 
+            $hasSpecificTime = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $text);
             $messageText = $isRescheduleQuery
                 ? 'Pick a new time below to reschedule:'
-                : 'Pick a time below that works for a quick 15-min chat:';
+                : ($hasSpecificTime
+                    ? "I've checked our schedule for your requested time. Click the matching slot below to lock it in with our production lead:"
+                    : 'Pick a time below that works for a quick 15-min chat:');
 
             return [
                 'content' => $messageText,
@@ -944,6 +1016,18 @@ class HybridIntentEngine
             str_contains($text, 'calculat') ||
             str_contains($text, 'how much')) {
 
+            if (str_contains($text, 'all') || str_contains($text, 'readable') || str_contains($text, 'list') || str_contains($text, 'every') || str_contains($text, 'overview')) {
+                return [
+                    'content' => "Here is our complete studio pricing list in readable format:\n\n• **Clipping Path / Cutouts:** $0.45 – $0.49 / image (100% hand-drawn vector paths)\n• **Ghost Mannequin / Symmetry:** $0.99 / image\n• **Natural / Drop Shadow:** $0.49 / image\n• **Multi-Clipping Path / Color Separation:** $1.25 / image\n• **High-End Fashion & Beauty Retouching:** $1.99 – $3.99 / image\n• **Fine Jewelry & Diamond Retouching:** $2.49 – $4.99 / image\n• **3D Product Modeling & CGI:** From $29.00 / model\n\n*Volume discounts: 15% off for 100+ photos, 25% off for 500+ photos. Standard delivery is 12–24 hours.*",
+                    'tool_cards' => [],
+                    'suggested_replies' => [
+                        'Claim 3 Free Test Images',
+                        'Calculate Volume Quote',
+                        'Schedule Consultation Call',
+                    ],
+                ];
+            }
+
             $service = 'background-removal';
             if (str_contains($text, 'mannequin') || str_contains($text, 'neck') || str_contains($text, 'joint')) {
                 $service = 'ghost-mannequin';
@@ -1031,7 +1115,8 @@ class HybridIntentEngine
         // 5.5. General FAQs, Turnaround, Free Trial & Policy Queries
         if (str_contains($text, 'turnaround') ||
             str_contains($text, 'trial') ||
-            str_contains($text, 'format') ||
+            str_contains($text, 'file format') ||
+            str_contains($text, 'file type') ||
             str_contains($text, 'revision') ||
             str_contains($text, 'capacity') ||
             str_contains($text, 'sla') ||
@@ -1077,11 +1162,106 @@ class HybridIntentEngine
             ];
         }
 
-        // 6. Default Smart Greeting / Fallback Menu
+        // 5.4. Social Pleasantries: "How are you?"
+        if (preg_match('/\b(how\s*are\s*you|how\'?s\s*it\s*going|how\s*are\s*things|how\s*r\s*u|how\s*do\s*you\s*do)\b/i', $text)) {
+            $pleasantries = [
+                'Doing great, thanks for asking! The studio is bustling with client photo batches today. How are you doing, and what kind of images are you working on?',
+                'Doing very well, thank you! Ready to help you with your editing projects. How are things on your end?',
+                'All good here in the studio! How are you doing today? Let me know if you need clipping paths, ghost mannequins, or high-end retouching.',
+            ];
+
+            return [
+                'content' => $pleasantries[array_rand($pleasantries)],
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Calculate Pricing',
+                    'Turnaround SLAs',
+                    'Claim 3 Free Sample Edits',
+                    'Talk to a live specialist',
+                ],
+            ];
+        }
+
+        // 5.5. Natural Greetings & Pleasantries (Multilingual + English)
+        if (preg_match('/^(hola|buenos\s*dias|buenas\s*tardes)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => '¡Hola! Bienvenido a CuttingEdger. ¿En qué podemos ayudarte con tus fotos hoy?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(bonjour|salut|coucou)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Bonjour! Bienvenue chez CuttingEdger. Comment pouvons-nous vous aider aujourd\'hui?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(hallo|guten\s*(tag|morgen|abend))[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Hallo! Willkommen bei CuttingEdger. Wie können wir Ihnen bei Ihrer Bildbearbeitung helfen?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(ciao|buongiorno|salve)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Ciao! Benvenuto su CuttingEdger. Come possiamo aiutarti oggi?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'হ্যালো! কাটিংএজারে আপনাকে স্বাগতম। আপনার ছবির রিটাচিং বা ক্লিপিং পাথের কাজে আমরা কীভাবে সাহায্য করতে পারি?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(مرحبا|أهلا|السلام\s*عليكم)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'أهلاً بك في CuttingEdger! كيف يمكننا مساعدتك في تعديل صورك اليوم؟',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|what\'?s\s*up|greetings)[\s!?.]*$/i', $text) ||
+            $text === 'hi' || $text === 'hello' || $text === 'hey') {
+            $greetings = [
+                'Hey! Welcome to CuttingEdger. What kind of images or retouching are you working on today?',
+                'Hi there! Doing great, thanks. Are you looking for clipping paths, photo retouching, or a turnaround quote?',
+                "Hello! We're in the studio working on client batches. How can we help with your photos today?",
+                'Hey there! Ready to help with your editing projects. What services or volume are you looking at?',
+            ];
+
+            return [
+                'content' => $greetings[array_rand($greetings)],
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        // 6. Default Smart Greeting / Fallback Menu with dynamic human phrasing
+        $defaultFallbacks = [
+            "I'm right here! Feel free to ask about our editing services, turnaround SLAs, or volume pricing. What kind of images are you working on?",
+            'Got it! We specialize in hand-drawn clipping paths, ghost mannequins, and high-end retouching. Would you like an instant quote or turnaround estimate?',
+            'Sure thing! Let me know what you need help with—you can upload a photo batch, request a quote, or ask for a studio specialist.',
+        ];
+
         return [
-            'content' => "I'm right here! Feel free to ask about our editing services, turnaround SLAs, or volume pricing. What kind of images are you working on?",
+            'content' => $defaultFallbacks[array_rand($defaultFallbacks)],
             'tool_cards' => [],
-            'suggested_replies' => [],
+            'suggested_replies' => [
+                'Calculate Pricing',
+                'Turnaround SLAs',
+                'Schedule Consultation Call',
+            ],
         ];
     }
 }

@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { QuoteCard } from './QuoteCard';
 import { CalendarSlotPicker } from './CalendarSlotPicker';
+import { CompactSlotProposalCard } from './CompactSlotProposalCard';
 import { BookingConfirmedCard } from './BookingConfirmedCard';
 import { ServiceCatalogCard } from './ServiceCatalogCard';
 import { FreeTrialConfirmedCard } from './FreeTrialConfirmedCard';
@@ -36,7 +37,7 @@ import { OrderConfirmedCard } from './OrderConfirmedCard';
 
 interface ChatMessageItem {
     id: number | string;
-    sender: 'user' | 'assistant' | 'system';
+    sender: 'user' | 'assistant' | 'system' | 'operator';
     content: string;
     attachments?: string[];
     tool_cards?: any[];
@@ -50,14 +51,18 @@ export function ChatWidget() {
     const [messages, setMessages] = useState<ChatMessageItem[]>([]);
     const [inputText, setInputText] = useState('');
     const [sessionId, setSessionId] = useState<string | null>(null);
+    const [chatMode, setChatMode] = useState<'bot' | 'operator'>('bot');
+    const [operatorName, setOperatorName] = useState<string | null>(null);
+    const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isTypingVisible, setIsTypingVisible] = useState(false);
+    const [typingPhase, setTypingPhase] = useState<'analyzing' | 'checking' | 'composing'>('analyzing');
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
     const [showNudgeBubble, setShowNudgeBubble] = useState(false);
     const [showQuickMenu, setShowQuickMenu] = useState(false);
-    const [copiedId, setCopiedId] = useState<number | string | null>(null);
     const [isDragOver, setIsDragOver] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -98,6 +103,9 @@ export function ChatWidget() {
                 'X-Requested-With': 'XMLHttpRequest',
                 ...(storedSession ? { 'X-Chat-Session-Id': storedSession } : {}),
             },
+            body: JSON.stringify({
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            }),
         })
             .then((res) => res.json())
             .then((data) => {
@@ -105,6 +113,9 @@ export function ChatWidget() {
                     setSessionId(data.session_id);
                     localStorage.setItem('ce_chat_session_id', data.session_id);
                 }
+                if (data.mode) setChatMode(data.mode);
+                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
                 if (data.messages && Array.isArray(data.messages)) {
                     setMessages(data.messages);
                 }
@@ -127,14 +138,157 @@ export function ChatWidget() {
         }
     }, [isOpen, sessionId, isResetting]);
 
-    // 2. Auto-scroll on new messages
+    // 2. Auto-scroll on new messages & typing indicator
+    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo({
+                top: scrollContainerRef.current.scrollHeight,
+                behavior,
+            });
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            const timer = setTimeout(() => {
+                scrollToBottom('smooth');
+            }, 60);
             setUnreadCount(0);
             setShowNudgeBubble(false);
+            return () => clearTimeout(timer);
         }
-    }, [messages, isOpen]);
+    }, [messages, isOpen, isTypingVisible]);
+
+    // Web Audio Synthesizer: Crisp chime for incoming replies without external asset dependency
+    const playNotificationChime = () => {
+        try {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextClass) return;
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.35);
+        } catch {
+            // Audio context not allowed or supported
+        }
+    };
+
+    // 2.5. Live polling for operator replies and state updates
+    useEffect(() => {
+        if (!sessionId) return;
+
+        const pollInterval = setInterval(async () => {
+            // Do not poll while a message send is in flight to prevent race conditions
+            if (isLoading) return;
+
+            try {
+                // Find highest numeric server message ID (ignore temporary optimistic IDs)
+                const highestId = messages.reduce((max, m) => {
+                    const num = typeof m.id === 'number' ? m.id : parseInt(String(m.id), 10);
+                    return !isNaN(num) && String(m.id).indexOf('user-') === -1 && num > max ? num : max;
+                }, 0);
+
+                const res = await fetch(`/api/chat/poll?after_id=${highestId}`, {
+                    headers: {
+                        'X-Chat-Session-Id': sessionId,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const data = await res.json();
+
+                if (data.mode) setChatMode(data.mode);
+                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
+
+                if (data.messages && data.messages.length > 0) {
+                    setMessages((prev) => {
+                        let updated = [...prev];
+                        let hasChanges = false;
+                        const brandNew: any[] = [];
+
+                        data.messages.forEach((m: any) => {
+                            const strId = String(m.id);
+                            // Skip if already in message list by server ID
+                            if (updated.some((p) => String(p.id) === strId)) return;
+
+                            // Reconcile optimistic user message
+                            if (m.sender === 'user') {
+                                const optIndex = updated.findIndex(
+                                    (p) => String(p.id).startsWith('user-') && p.content.trim() === m.content.trim()
+                                );
+                                if (optIndex !== -1) {
+                                    // Upgrade optimistic ID to the real database ID
+                                    updated[optIndex] = { ...updated[optIndex], id: m.id };
+                                    hasChanges = true;
+                                    return;
+                                }
+                                // If already in updated list by content match, ignore to avoid duplicates
+                                if (updated.some((p) => p.sender === 'user' && p.content.trim() === m.content.trim())) {
+                                    return;
+                                }
+                            }
+
+                            brandNew.push(m);
+                            updated.push(m);
+                            hasChanges = true;
+                        });
+
+                        if (!hasChanges) return prev;
+
+                        if (brandNew.some((m: any) => m.sender === 'operator')) {
+                            playNotificationChime();
+                        }
+
+                        if (!isOpen && brandNew.length > 0) {
+                            setUnreadCount((c) => c + brandNew.length);
+                            setNudgeMessage(brandNew[brandNew.length - 1].content);
+                            setShowNudgeBubble(true);
+                        }
+                        return updated;
+                    });
+                }
+            } catch {
+                // Background poll silent fallback
+            }
+        }, 2500);
+
+        return () => clearInterval(pollInterval);
+    }, [sessionId, messages, isOpen, isLoading]);
+
+    // Natural brief pause and progressive status phases during inference
+    useEffect(() => {
+        if (!isLoading) {
+            setIsTypingVisible(false);
+            setTypingPhase('analyzing');
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setIsTypingVisible(true);
+        }, 700);
+
+        const phase2Timer = setTimeout(() => {
+            setTypingPhase('checking');
+        }, 3500);
+
+        const phase3Timer = setTimeout(() => {
+            setTypingPhase('composing');
+        }, 8500);
+
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(phase2Timer);
+            clearTimeout(phase3Timer);
+        };
+    }, [isLoading]);
 
     // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
     useEffect(() => {
@@ -213,7 +367,10 @@ export function ChatWidget() {
                     'X-Requested-With': 'XMLHttpRequest',
                     ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
                 },
-                body: JSON.stringify({ message: text }),
+                body: JSON.stringify({
+                    message: text,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                }),
             });
 
             const data = await res.json();
@@ -221,17 +378,29 @@ export function ChatWidget() {
                 setSessionId(data.session_id);
                 localStorage.setItem('ce_chat_session_id', data.session_id);
             }
+            if (data.mode) setChatMode(data.mode);
+            if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+            if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
-            // Natural typing delay (minimum 750ms - 1100ms) so typing indicator feels human and authentic
+            // If the server took longer than 600ms, deliver immediately; otherwise pad slightly so it doesn't blink
             const elapsed = Date.now() - startTime;
-            const targetDelay = Math.min(1100, Math.max(750, 900 - elapsed));
+            const targetDelay = Math.max(0, 600 - elapsed);
             if (targetDelay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
 
-            if (data.message) {
-                setMessages((prev) => [...prev, data.message]);
-            }
+            setMessages((prev) => {
+                let updated = prev.map((m) =>
+                    m.id === optimisticId
+                        ? { ...m, id: data.user_message_id || m.id }
+                        : m
+                );
+                // Only append reply message if it's not a user message and not already present
+                if (data.message && data.message.sender !== 'user' && !updated.some((m) => String(m.id) === String(data.message.id))) {
+                    updated.push(data.message);
+                }
+                return updated;
+            });
         } catch (err) {
             console.error('Error sending message:', err);
             setMessages((prev) => [
@@ -357,6 +526,10 @@ export function ChatWidget() {
 
     // 6. Slot Booking Submission
     const handleBookSlot = async (bookingData: any) => {
+        const payload = {
+            ...bookingData,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
         const res = await fetch('/api/chat/book-slot', {
             method: 'POST',
             headers: {
@@ -364,7 +537,7 @@ export function ChatWidget() {
                 'X-Requested-With': 'XMLHttpRequest',
                 ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
             },
-            body: JSON.stringify(bookingData),
+            body: JSON.stringify(payload),
         });
 
         const data = await res.json();
@@ -418,16 +591,9 @@ export function ChatWidget() {
         setMessages((prev) => prev.filter((_, i) => i !== index));
     };
 
-    // 8. Copy message content
-    const handleCopy = (id: number | string, content: string) => {
-        navigator.clipboard.writeText(content);
-        setCopiedId(id);
-        setTimeout(() => setCopiedId(null), 2000);
-    };
-
-    // Helper for rendering simple markdown bold
-    const renderFormattedText = (text: string) => {
-        const parts = text.split(/(\*\*.*?\*\*)/g);
+    // Helper to format inline markdown elements (bold, code)
+    const formatInline = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
         return parts.map((part, i) => {
             if (part.startsWith('**') && part.endsWith('**')) {
                 return (
@@ -436,8 +602,115 @@ export function ChatWidget() {
                     </strong>
                 );
             }
+            if (part.startsWith('`') && part.endsWith('`')) {
+                return (
+                    <code key={i} className="px-1.5 py-0.5 rounded bg-white/10 text-[#d4ff00] font-mono text-[11px]">
+                        {part.slice(1, -1)}
+                    </code>
+                );
+            }
             return part;
         });
+    };
+
+    // Advanced Visual Formatter for Chat Messages
+    const renderVisualMessage = (content: string, isUser: boolean) => {
+        if (isUser) {
+            return (
+                <p className="whitespace-pre-wrap text-xs font-semibold text-[#0a0c10] leading-relaxed select-text">
+                    {content}
+                </p>
+            );
+        }
+
+        const lines = content.split('\n');
+        const elements: React.ReactNode[] = [];
+
+        lines.forEach((rawLine, idx) => {
+            const line = rawLine.trim();
+
+            if (!line) {
+                elements.push(<div key={`sp-${idx}`} className="h-1" />);
+                return;
+            }
+
+            // 1. Numbered Step Cards (e.g. "1. **Ingestion & Calibration:** description" or "1. Ingestion...")
+            const stepMatch = line.match(/^(\d+)[\.\)]\s*(.*)$/);
+            if (stepMatch) {
+                const num = stepMatch[1];
+                const text = stepMatch[2];
+                elements.push(
+                    <div
+                        key={`step-${idx}`}
+                        className="flex items-start gap-2.5 my-1.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/15 transition-all shadow-sm"
+                    >
+                        <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-[#d4ff00]/30 shadow-sm shadow-[#d4ff00]/10">
+                            {num.padStart(2, '0')}
+                        </span>
+                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 2. Bullet list items (e.g. "* **Clipping Path:** ..." or "- Point")
+            const bulletMatch = line.match(/^[\*\-•]\s*(.*)$/);
+            if (bulletMatch) {
+                const text = bulletMatch[1];
+                elements.push(
+                    <div key={`bullet-${idx}`} className="flex items-start gap-2 my-1 pl-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] mt-1.5 shrink-0 shadow-sm shadow-[#d4ff00]/50" />
+                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 3. Highlight / KPI lines (ONLY specific SLA, rate, or trial banners - NOT ordinary emojis or greetings)
+            const kpiMatch = line.match(/^(⏱️|🏷️|🎁|🚀|💡)\s*(.*)$/u);
+            const isActualKpi = kpiMatch && (
+                /turnaround|rate|pricing|price|trial|discount|offer|sla/i.test(line)
+            );
+            if (isActualKpi && kpiMatch) {
+                const icon = kpiMatch[1];
+                const text = kpiMatch[2];
+                elements.push(
+                    <div
+                        key={`hl-${idx}`}
+                        className="my-2 p-2.5 rounded-xl bg-gradient-to-r from-[#d4ff00]/10 via-white/[0.02] to-transparent border border-[#d4ff00]/25 flex items-center gap-2.5 shadow-sm"
+                    >
+                        <span className="text-sm shrink-0">{icon}</span>
+                        <div className="text-xs font-medium text-white/95 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 4. Section Headers (e.g. "### Header")
+            if (line.startsWith('### ')) {
+                elements.push(
+                    <h5 key={`h3-${idx}`} className="text-xs font-mono font-bold uppercase tracking-wider text-[#d4ff00] mt-3 mb-1">
+                        {line.replace('### ', '')}
+                    </h5>
+                );
+                return;
+            }
+
+            // 5. Standard paragraph (clean, natural rendering for greetings like "👋 Hi there!" without tool boxes)
+            elements.push(
+                <p key={`p-${idx}`} className="text-xs leading-relaxed text-neutral-200 my-0.5">
+                    {formatInline(line)}
+                </p>
+            );
+        });
+
+        return <div className="space-y-0.5">{elements}</div>;
     };
 
     return (
@@ -523,18 +796,36 @@ export function ChatWidget() {
                         <div className="px-5 py-3.5 border-b border-white/10 bg-[#12141a]/90 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
-                                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/20 flex items-center justify-center text-[#d4ff00]">
-                                        <Bot className="w-5 h-5" />
+                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                                        chatMode === 'operator'
+                                            ? 'bg-gradient-to-tr from-[#00f5ff]/30 to-[#d4ff00]/20 border border-[#00f5ff]/40 text-[#00f5ff]'
+                                            : 'bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/20 text-[#d4ff00]'
+                                    }`}>
+                                        {chatMode === 'operator' ? (
+                                            <User className="w-5 h-5" />
+                                        ) : (
+                                            <Bot className="w-5 h-5" />
+                                        )}
                                     </div>
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#d4ff00] ring-2 ring-[#0b0c10]" />
+                                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-[#0b0c10] ${
+                                        chatMode === 'operator' ? 'bg-[#00f5ff]' : 'bg-[#d4ff00]'
+                                    }`} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-bold text-white tracking-tight">CuttingEdger Assistant</h3>
+                                        <h3 className="text-sm font-bold text-white tracking-tight">
+                                            {chatMode === 'operator' ? 'CuttingEdger Live Studio' : 'CuttingEdger Assistant'}
+                                        </h3>
                                     </div>
                                     <p className="text-[10px] text-white/50 font-mono flex items-center gap-1.5">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-pulse" />
-                                        <span>24/7 Studio • Instant Estimates</span>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                            chatMode === 'operator' ? 'bg-[#00f5ff] animate-pulse' : 'bg-[#d4ff00] animate-pulse'
+                                        }`} />
+                                        <span>
+                                            {chatMode === 'operator'
+                                                ? `Live with ${operatorName || 'Studio Specialist'}`
+                                                : '24/7 Studio • Instant Estimates'}
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -572,6 +863,25 @@ export function ChatWidget() {
                             </div>
                         </div>
 
+                        {/* Live Operator Active Banner */}
+                        {chatMode === 'operator' && (
+                            <div className="px-4 py-1.5 bg-[#00f5ff]/10 border-b border-[#00f5ff]/20 text-[11px] font-mono text-[#00f5ff] flex items-center justify-between">
+                                <span className="flex items-center gap-1.5 font-semibold">
+                                    <span className="w-2 h-2 rounded-full bg-[#00f5ff] animate-ping" />
+                                    Live Specialist Active ({operatorName || 'Production Lead'})
+                                </span>
+                                <span className="text-[10px] text-white/50">Direct Chat</span>
+                            </div>
+                        )}
+                        {needsHuman && chatMode !== 'operator' && (
+                            <div className="px-4 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-[11px] font-mono text-amber-400 flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                                    Specialist notified • A live agent will reply shortly
+                                </span>
+                            </div>
+                        )}
+
                         {/* Messages Scroll Area */}
                         <div
                             ref={scrollContainerRef}
@@ -585,6 +895,7 @@ export function ChatWidget() {
                         >
                             {messages.map((msg, index) => {
                                 const isUser = msg.sender === 'user';
+                                const isOperator = msg.sender === 'operator';
                                 const isLatestAssistant =
                                     !isUser && index === messages.length - 1;
 
@@ -593,11 +904,20 @@ export function ChatWidget() {
                                         key={msg.id || index}
                                         className={`flex flex-col group ${isUser ? 'items-end' : 'items-start'}`}
                                     >
+                                        {isOperator && (
+                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-[#00f5ff] font-mono">
+                                                <User className="w-3 h-3 text-[#00f5ff]" />
+                                                <span className="font-semibold">{operatorName || 'Live Studio Specialist'}</span>
+                                            </div>
+                                        )}
+
                                         <div className="relative max-w-[88%]">
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
-                                                        ? 'bg-[#d4ff00] text-black font-medium rounded-br-xs shadow-md shadow-[#d4ff00]/10'
+                                                        ? 'bg-gradient-to-r from-[#d4ff00] to-[#c8f500] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-[#d4ff00]/10 border border-[#b8e600]'
+                                                        : isOperator
+                                                        ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
                                                         : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
                                                 }`}
                                             >
@@ -616,30 +936,8 @@ export function ChatWidget() {
                                                 )}
 
                                                 {/* Text Content */}
-                                                <p className="whitespace-pre-wrap">{renderFormattedText(msg.content)}</p>
+                                                {renderVisualMessage(msg.content, isUser)}
                                             </div>
-
-                                            {/* Copy button on hover for assistant messages */}
-                                            {!isUser && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleCopy(msg.id, msg.content)}
-                                                    className="opacity-0 group-hover:opacity-100 absolute -bottom-5 left-1 text-[10px] text-white/40 hover:text-white flex items-center gap-1 transition-opacity"
-                                                    title="Copy response"
-                                                >
-                                                    {copiedId === msg.id ? (
-                                                        <>
-                                                            <Check className="w-2.5 h-2.5 text-[#d4ff00]" />
-                                                            <span className="text-[#d4ff00]">Copied</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Copy className="w-2.5 h-2.5" />
-                                                            <span>Copy</span>
-                                                        </>
-                                                    )}
-                                                </button>
-                                            )}
 
                                             {/* Edit & Delete controls for user messages */}
                                             {isUser && (
@@ -754,6 +1052,16 @@ export function ChatWidget() {
                                                             </div>
                                                         );
                                                     }
+                                                    if (card.type === 'compact_slot_proposal') {
+                                                        return (
+                                                            <CompactSlotProposalCard
+                                                                key={cIdx}
+                                                                card={card}
+                                                                onBookSlot={handleBookSlot}
+                                                                onShowAllTimes={() => handleSendMessage('Show full calendar with all dates')}
+                                                            />
+                                                        );
+                                                    }
                                                     if (card.type === 'calendar_slot_picker') {
                                                         return (
                                                             <CalendarSlotPicker
@@ -772,7 +1080,7 @@ export function ChatWidget() {
                                                             />
                                                         );
                                                     }
-                                                    if (card.type === 'booking_confirmed_card') {
+                                                    if (card.type === 'booking_confirmed_card' || card.type === 'appointment_status_card') {
                                                         return (
                                                             <BookingConfirmedCard
                                                                 key={cIdx}
@@ -849,19 +1157,23 @@ export function ChatWidget() {
                                 );
                             })}
 
-                            {/* Realistic Typing Indicator Bubble */}
-                            {isLoading && (
+                            {/* Realistic Typing Indicator Bubble with Progressive Status */}
+                            {isTypingVisible && (
                                 <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
                                     <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/15 flex items-center justify-center text-[#d4ff00] shrink-0 mt-0.5">
                                         <Bot className="w-3.5 h-3.5" />
                                     </div>
-                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#151720] border border-white/10 shadow-md flex items-center gap-2">
+                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#151720] border border-white/10 shadow-md flex items-center gap-2.5">
                                         <div className="flex items-center gap-1">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.3s]" />
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.15s]" />
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce" />
                                         </div>
-                                        <span className="text-[11px] font-mono text-white/50">CuttingEdger is typing...</span>
+                                        <span className="text-[11px] font-mono text-white/60">
+                                            {typingPhase === 'analyzing' && 'CuttingEdger is analyzing request...'}
+                                            {typingPhase === 'checking' && 'Reviewing studio schedule & specs...'}
+                                            {typingPhase === 'composing' && 'Composing response...'}
+                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -921,6 +1233,14 @@ export function ChatWidget() {
                                         >
                                             <Clock className="w-3.5 h-3.5 text-[#ff3e8a]" />
                                             <span>Turnaround & SLAs</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleSendMessage('Can I speak with a live specialist?')}
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                        >
+                                            <User className="w-3.5 h-3.5 text-[#00f5ff]" />
+                                            <span>Talk to Live Specialist</span>
                                         </button>
                                         <button
                                             type="button"

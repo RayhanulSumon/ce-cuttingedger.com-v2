@@ -31,6 +31,12 @@ class ChatController extends Controller
         $forceNew = $request->boolean('force_new') || $request->header('X-Chat-Reset') === 'true';
         $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: true, forceNew: $forceNew);
 
+        if ($request->filled('timezone')) {
+            $metadata = $session->metadata ?? [];
+            $metadata['timezone'] = $request->input('timezone');
+            $session->update(['metadata' => $metadata]);
+        }
+
         $messages = $session->messages()
             ->latest('id')
             ->take(30)
@@ -76,6 +82,9 @@ class ChatController extends Controller
             'session_id' => $session->id,
             'lead_name' => $session->lead_name,
             'lead_email' => $session->lead_email,
+            'mode' => $session->mode,
+            'needs_human' => (bool) $session->needs_human,
+            'operator_name' => $session->operator_name,
             'messages' => $messages,
         ])->cookie(
             ChatSessionManager::COOKIE_NAME,
@@ -125,6 +134,9 @@ class ChatController extends Controller
             'session_id' => $session->id,
             'lead_name' => null,
             'lead_email' => null,
+            'mode' => 'bot',
+            'needs_human' => false,
+            'operator_name' => null,
             'messages' => $messages,
         ])->cookie(
             ChatSessionManager::COOKIE_NAME,
@@ -156,6 +168,12 @@ class ChatController extends Controller
 
         $session = $this->sessionManager->resolve($request);
 
+        if ($request->filled('timezone')) {
+            $metadata = $session->metadata ?? [];
+            $metadata['timezone'] = $request->input('timezone');
+            $session->update(['metadata' => $metadata]);
+        }
+
         $result = $this->orchestrator->handle(
             $session,
             $message ?: 'I have uploaded sample images. Please calculate quote.',
@@ -163,7 +181,53 @@ class ChatController extends Controller
             $imagesBase64
         );
 
+        $result['mode'] = $session->mode;
+        $result['needs_human'] = (bool) $session->needs_human;
+        $result['operator_name'] = $session->operator_name;
+
         return response()->json($result);
+    }
+
+    /**
+     * Poll for newly arrived messages (e.g. from human operator) or state updates.
+     */
+    public function poll(Request $request): JsonResponse
+    {
+        $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: false);
+
+        if (! $session) {
+            return response()->json([
+                'messages' => [],
+                'mode' => 'bot',
+                'needs_human' => false,
+                'operator_name' => null,
+            ]);
+        }
+
+        $afterId = (int) $request->query('after_id', 0);
+
+        $query = $session->messages()->orderBy('id', 'asc');
+        if ($afterId > 0) {
+            $query->where('id', '>', $afterId);
+        }
+
+        $messages = $query->get()->map(fn (ChatMessage $msg) => [
+            'id' => $msg->id,
+            'sender' => $msg->sender,
+            'content' => $msg->content,
+            'attachments' => $msg->attachments ?? [],
+            'tool_cards' => $msg->tool_results ?? [],
+            'suggested_replies' => $msg->suggested_replies ?? [],
+            'created_at' => $msg->created_at->toISOString(),
+        ]);
+
+        return response()->json([
+            'session_id' => $session->id,
+            'mode' => $session->mode,
+            'needs_human' => (bool) $session->needs_human,
+            'operator_name' => $session->operator_name,
+            'messages' => $messages,
+        ]);
     }
 
     /**
@@ -366,6 +430,16 @@ class ChatController extends Controller
      */
     public function bookSlot(Request $request): JsonResponse
     {
+        $session = $this->sessionManager->resolve($request);
+
+        // Auto-populate from session lead info or authenticated user if not provided in request
+        if (! $request->filled('name')) {
+            $request->merge(['name' => $session->lead_name ?: ($request->user()?->name ?: 'Guest Specialist')]);
+        }
+        if (! $request->filled('email') && ($session->lead_email || $request->user()?->email)) {
+            $request->merge(['email' => $session->lead_email ?: $request->user()?->email]);
+        }
+
         $validated = $request->validate([
             'slot_datetime' => 'required|string',
             'name' => 'required|string|max:120',
@@ -376,8 +450,6 @@ class ChatController extends Controller
             'consultation_id' => 'nullable|integer',
             'is_reschedule' => 'nullable|boolean',
         ]);
-
-        $session = $this->sessionManager->resolve($request);
 
         // Spam & Disposable Email Guard for Calendar Appointments
         $spamGuard = app(EmailAndSpamGuard::class);

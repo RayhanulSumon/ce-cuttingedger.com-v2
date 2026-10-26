@@ -22,8 +22,8 @@ class RoleAndSuperAdminSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@cuttingedger.com'],
             [
-                'name' => 'Lead Architect',
-                'password' => Hash::make('Secret123!'),
+                'name' => 'Super Admin',
+                'password' => Hash::make('12345678'),
                 'role_id' => $superAdminRole->id,
                 'status' => 'active',
             ]
