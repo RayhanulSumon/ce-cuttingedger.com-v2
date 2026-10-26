@@ -229,7 +229,7 @@ export default function BlogsIndex({
             <div className="space-y-6">
                 <AdminPageHeader
                     eyebrow="EDITORIAL CONTENT ENGINE"
-                    title="Blog Posts & Dispatches"
+                    title="Blog Posts & Articles"
                     description="Compose long-form essays, assign category & subcategory taxonomies, and manage granular dynamic SEO metadata."
                     actionLabel="New Blog Post"
                     actionHref={route("admin.blogs.create")}
@@ -265,7 +265,7 @@ export default function BlogsIndex({
                     <AlertDialogContent className="bg-[#0c0d12] border-white/10 text-white">
                         <AlertDialogHeader>
                             <AlertDialogTitle className="font-mono text-rose-400">
-                                PURGE BLOG DISPATCH
+                                DELETE BLOG POST
                             </AlertDialogTitle>
                             <AlertDialogDescription className="text-neutral-400 text-xs font-mono">
                                 Are you sure you wish to purge &ldquo;{blogToDelete?.title}&rdquo; to the trash?

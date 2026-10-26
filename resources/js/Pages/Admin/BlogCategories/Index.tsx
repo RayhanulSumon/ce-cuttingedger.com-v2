@@ -203,7 +203,7 @@ export default function BlogCategoriesIndex({
                 <AdminPageHeader
                     eyebrow="EDITORIAL TAXONOMY"
                     title="Blog Categories & Subcategories"
-                    description="Structure dispatches with top-level blog categories and targeted subcategories for pristine SEO indexing."
+                    description="Structure blog posts with top-level blog categories and targeted subcategories for pristine SEO indexing."
                     createLabel="New Blog Category / Subcategory"
                     onCreate={() => setIsCreateOpen(true)}
                 />

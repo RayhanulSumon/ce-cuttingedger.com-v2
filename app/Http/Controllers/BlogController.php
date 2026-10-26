@@ -55,16 +55,12 @@ class BlogController extends Controller
     {
         $blog->load(['category', 'subcategory', 'author']);
 
-        $relatedBlogs = Blog::with(['category', 'subcategory'])
+        $relatedBlogs = Blog::with(['category', 'subcategory', 'author'])
             ->where('id', '!=', $blog->id)
             ->where('status', 'published')
-            ->where(function ($q) use ($blog): void {
-                if ($blog->blog_category_id) {
-                    $q->where('blog_category_id', $blog->blog_category_id);
-                }
-            })
+            ->orderByRaw('CASE WHEN blog_category_id = ? THEN 0 ELSE 1 END', [$blog->blog_category_id ?? 0])
             ->latest('published_at')
-            ->take(3)
+            ->take(5)
             ->get();
 
         return Inertia::render('Blog/Show', [

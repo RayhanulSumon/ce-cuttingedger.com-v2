@@ -217,7 +217,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         <AlertDialogHeader>
                             <AlertDialogTitle className="font-mono text-emerald-400 flex items-center gap-2">
                                 <RotateCcw className="w-5 h-5" />
-                                RESTORE BLOG DISPATCH
+                                RESTORE BLOG POST
                             </AlertDialogTitle>
                             <AlertDialogDescription className="text-neutral-400 text-xs font-mono space-y-2">
                                 <p>

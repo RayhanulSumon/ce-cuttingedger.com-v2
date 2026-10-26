@@ -248,7 +248,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                 <div className="flex items-center justify-between p-3 rounded-lg border border-[#d4ff00]/30 bg-[#d4ff00]/10 text-neutral-200 text-xs font-mono">
                     <span className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-[#d4ff00] animate-pulse" />
-                        You have unsaved changes in this article dispatch.
+                        You have unsaved changes in this blog post.
                     </span>
                     <span className="text-neutral-400">Remember to commit your changes.</span>
                 </div>
