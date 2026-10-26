@@ -54,6 +54,8 @@ export function ChatWidget() {
     const [operatorName, setOperatorName] = useState<string | null>(null);
     const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isTypingVisible, setIsTypingVisible] = useState(false);
+    const [typingStatus, setTypingStatus] = useState<string>('CuttingEdger is typing...');
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -225,6 +227,35 @@ export function ChatWidget() {
         return () => clearInterval(pollInterval);
     }, [sessionId, messages, isOpen, isLoading]);
 
+    // Progressive typing status indicator (natural human reading pause + status updates on CPU generation)
+    useEffect(() => {
+        if (!isLoading) {
+            setIsTypingVisible(false);
+            setTypingStatus('CuttingEdger is typing...');
+            return;
+        }
+
+        // Natural 450ms reading pause before showing typing dots
+        const readTimer = setTimeout(() => {
+            setIsTypingVisible(true);
+        }, 450);
+
+        // Progressive updates so visitor knows system is actively analyzing their volume & specs
+        const t1 = setTimeout(() => {
+            setTypingStatus('Reviewing project specs...');
+        }, 3200);
+
+        const t2 = setTimeout(() => {
+            setTypingStatus('Calculating turnaround & capacity...');
+        }, 7500);
+
+        return () => {
+            clearTimeout(readTimer);
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
+    }, [isLoading]);
+
     // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
     useEffect(() => {
         const updateActivity = () => {
@@ -314,9 +345,9 @@ export function ChatWidget() {
             if (data.operator_name !== undefined) setOperatorName(data.operator_name);
             if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
-            // Natural typing delay (minimum 750ms - 1100ms) so typing indicator feels human and authentic
+            // If the server took longer than 600ms, deliver immediately; otherwise pad slightly so it doesn't blink
             const elapsed = Date.now() - startTime;
-            const targetDelay = Math.min(1100, Math.max(750, 900 - elapsed));
+            const targetDelay = Math.max(0, 600 - elapsed);
             if (targetDelay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
@@ -994,8 +1025,8 @@ export function ChatWidget() {
                                 );
                             })}
 
-                            {/* Realistic Typing Indicator Bubble */}
-                            {isLoading && (
+                            {/* Realistic Typing Indicator Bubble with Progressive Status */}
+                            {isTypingVisible && (
                                 <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
                                     <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/15 flex items-center justify-center text-[#d4ff00] shrink-0 mt-0.5">
                                         <Bot className="w-3.5 h-3.5" />
@@ -1006,7 +1037,7 @@ export function ChatWidget() {
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.15s]" />
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce" />
                                         </div>
-                                        <span className="text-[11px] font-mono text-white/50">CuttingEdger is typing...</span>
+                                        <span className="text-[11px] font-mono text-white/60 transition-all duration-300">{typingStatus}</span>
                                     </div>
                                 </div>
                             )}

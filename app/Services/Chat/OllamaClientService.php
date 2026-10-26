@@ -26,7 +26,7 @@ class OllamaClientService
         $this->baseUrl = rtrim((string) config('chat.llm.base_url', 'http://127.0.0.1:11434'), '/');
         $this->model = (string) config('chat.llm.model', 'qwen2.5:14b');
         $this->visionModel = (string) config('chat.llm.vision_model', 'qwen2-vl:7b');
-        $this->timeout = (int) config('chat.llm.timeout', 45);
+        $this->timeout = (int) config('chat.llm.timeout', 60);
         $this->temperature = (float) config('chat.llm.temperature', 0.4);
         $this->enabled = (bool) config('chat.llm.enabled', true);
     }
@@ -82,7 +82,7 @@ class OllamaClientService
             'stream' => false,
             'options' => [
                 'temperature' => $this->temperature,
-                'num_ctx' => 4096,
+                'num_ctx' => 2048,
             ],
         ];
 
