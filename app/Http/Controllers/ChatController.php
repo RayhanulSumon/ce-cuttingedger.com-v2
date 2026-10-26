@@ -76,6 +76,9 @@ class ChatController extends Controller
             'session_id' => $session->id,
             'lead_name' => $session->lead_name,
             'lead_email' => $session->lead_email,
+            'mode' => $session->mode,
+            'needs_human' => (bool) $session->needs_human,
+            'operator_name' => $session->operator_name,
             'messages' => $messages,
         ])->cookie(
             ChatSessionManager::COOKIE_NAME,
@@ -125,6 +128,9 @@ class ChatController extends Controller
             'session_id' => $session->id,
             'lead_name' => null,
             'lead_email' => null,
+            'mode' => 'bot',
+            'needs_human' => false,
+            'operator_name' => null,
             'messages' => $messages,
         ])->cookie(
             ChatSessionManager::COOKIE_NAME,
@@ -163,7 +169,53 @@ class ChatController extends Controller
             $imagesBase64
         );
 
+        $result['mode'] = $session->mode;
+        $result['needs_human'] = (bool) $session->needs_human;
+        $result['operator_name'] = $session->operator_name;
+
         return response()->json($result);
+    }
+
+    /**
+     * Poll for newly arrived messages (e.g. from human operator) or state updates.
+     */
+    public function poll(Request $request): JsonResponse
+    {
+        $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: false);
+
+        if (! $session) {
+            return response()->json([
+                'messages' => [],
+                'mode' => 'bot',
+                'needs_human' => false,
+                'operator_name' => null,
+            ]);
+        }
+
+        $afterId = (int) $request->query('after_id', 0);
+
+        $query = $session->messages()->orderBy('id', 'asc');
+        if ($afterId > 0) {
+            $query->where('id', '>', $afterId);
+        }
+
+        $messages = $query->get()->map(fn (ChatMessage $msg) => [
+            'id' => $msg->id,
+            'sender' => $msg->sender,
+            'content' => $msg->content,
+            'attachments' => $msg->attachments ?? [],
+            'tool_cards' => $msg->tool_results ?? [],
+            'suggested_replies' => $msg->suggested_replies ?? [],
+            'created_at' => $msg->created_at->toISOString(),
+        ]);
+
+        return response()->json([
+            'session_id' => $session->id,
+            'mode' => $session->mode,
+            'needs_human' => (bool) $session->needs_human,
+            'operator_name' => $session->operator_name,
+            'messages' => $messages,
+        ]);
     }
 
     /**

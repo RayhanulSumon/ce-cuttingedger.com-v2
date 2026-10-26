@@ -36,6 +36,25 @@ class ChatOrchestrator
 
         $session->touchActivity();
 
+        // If a human operator has taken over this chat session, do not generate bot replies
+        if ($session->isOperatorActive()) {
+            return [
+                'session_id' => $session->id,
+                'engine' => 'operator',
+                'operator_active' => true,
+                'operator_name' => $session->operator_name,
+                'message' => [
+                    'id' => $userMessage->id,
+                    'sender' => 'user',
+                    'content' => $userText,
+                    'attachments' => $attachments,
+                    'tool_cards' => [],
+                    'suggested_replies' => [],
+                    'created_at' => $userMessage->created_at->toISOString(),
+                ],
+            ];
+        }
+
         $engineUsed = 'fallback';
         $assistantContent = '';
         $toolCards = [];

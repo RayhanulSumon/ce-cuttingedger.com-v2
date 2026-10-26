@@ -8,9 +8,9 @@ return [
     */
     'llm' => [
         'base_url' => env('OLLAMA_BASE_URL', 'http://127.0.0.1:11434'),
-        'model' => env('OLLAMA_MODEL', 'qwen2.5:14b'),
+        'model' => env('OLLAMA_MODEL', 'qwen2.5:7b'),
         'vision_model' => env('OLLAMA_VISION_MODEL', 'qwen2-vl:7b'),
-        'timeout' => (int) env('OLLAMA_TIMEOUT', 45), // Generous timeout for CPU inference
+        'timeout' => (int) env('OLLAMA_TIMEOUT', 25), // Optimized for 7B CPU inference
         'max_tokens' => (int) env('OLLAMA_MAX_TOKENS', 1024),
         'temperature' => (float) env('OLLAMA_TEMPERATURE', 0.4),
         'enabled' => (bool) env('OLLAMA_ENABLED', true),

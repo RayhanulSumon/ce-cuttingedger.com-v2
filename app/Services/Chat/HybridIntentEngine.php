@@ -26,6 +26,39 @@ class HybridIntentEngine
     {
         $text = strtolower(trim($message));
 
+        // 0. Detect Human Operator / Live Agent request
+        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative)\b/i', $text)) {
+            if ($session) {
+                $session->requestHuman();
+                try {
+                    app(NotificationService::class)->toAllAdmins()->send('chat_takeover_requested', [
+                        'title' => '🚨 Live Chat Takeover Requested',
+                        'message' => 'Visitor requested to speak with a human specialist.',
+                        'session_id' => $session->id,
+                        'admin_url' => url('/admin/chat-sessions?id='.$session->id),
+                        'timestamp' => now()->toISOString(),
+                    ]);
+                } catch (\Throwable $e) {
+                }
+            }
+
+            $responses = [
+                "I've flagged our live production team! A studio specialist is being notified and will join this chat in a moment. What can we help you solve today?",
+                'Connecting you with our team right away. A senior production specialist has been alerted. Feel free to type your question or share files while they jump in!',
+                'Got it! I just alerted our on-duty team. Someone will take over this chat shortly. Feel free to leave your email or WhatsApp number here so we can reply even if you close the tab.',
+            ];
+
+            return [
+                'content' => $responses[array_rand($responses)],
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Schedule Consultation Call',
+                    'Check Turnaround SLA',
+                    'View Pricing Catalog',
+                ],
+            ];
+        }
+
         // 1. Detect Email / Lead submission
         if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $text, $matches)) {
             $email = $matches[0];

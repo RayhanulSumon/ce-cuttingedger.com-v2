@@ -36,7 +36,7 @@ import { OrderConfirmedCard } from './OrderConfirmedCard';
 
 interface ChatMessageItem {
     id: number | string;
-    sender: 'user' | 'assistant' | 'system';
+    sender: 'user' | 'assistant' | 'system' | 'operator';
     content: string;
     attachments?: string[];
     tool_cards?: any[];
@@ -50,6 +50,9 @@ export function ChatWidget() {
     const [messages, setMessages] = useState<ChatMessageItem[]>([]);
     const [inputText, setInputText] = useState('');
     const [sessionId, setSessionId] = useState<string | null>(null);
+    const [chatMode, setChatMode] = useState<'bot' | 'operator'>('bot');
+    const [operatorName, setOperatorName] = useState<string | null>(null);
+    const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -105,6 +108,9 @@ export function ChatWidget() {
                     setSessionId(data.session_id);
                     localStorage.setItem('ce_chat_session_id', data.session_id);
                 }
+                if (data.mode) setChatMode(data.mode);
+                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
                 if (data.messages && Array.isArray(data.messages)) {
                     setMessages(data.messages);
                 }
@@ -135,6 +141,75 @@ export function ChatWidget() {
             setShowNudgeBubble(false);
         }
     }, [messages, isOpen]);
+
+    // Web Audio Synthesizer: Crisp chime for incoming replies without external asset dependency
+    const playNotificationChime = () => {
+        try {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextClass) return;
+            const audioCtx = new AudioContextClass();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.35);
+        } catch {
+            // Audio context not allowed or supported
+        }
+    };
+
+    // 2.5. Live polling for operator replies and state updates
+    useEffect(() => {
+        if (!sessionId) return;
+
+        const pollInterval = setInterval(async () => {
+            try {
+                const highestId = messages.reduce((max, m) => {
+                    const num = typeof m.id === 'number' ? m.id : parseInt(String(m.id), 10);
+                    return !isNaN(num) && num > max ? num : max;
+                }, 0);
+
+                const res = await fetch(`/api/chat/poll?after_id=${highestId}`, {
+                    headers: {
+                        'X-Chat-Session-Id': sessionId,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const data = await res.json();
+
+                if (data.mode) setChatMode(data.mode);
+                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
+
+                if (data.messages && data.messages.length > 0) {
+                    setMessages((prev) => {
+                        const existingIds = new Set(prev.map((m) => String(m.id)));
+                        const brandNew = data.messages.filter((m: any) => !existingIds.has(String(m.id)));
+                        if (brandNew.length === 0) return prev;
+
+                        playNotificationChime();
+
+                        if (!isOpen) {
+                            setUnreadCount((c) => c + brandNew.length);
+                            setNudgeMessage(brandNew[brandNew.length - 1].content);
+                            setShowNudgeBubble(true);
+                        }
+                        return [...prev, ...brandNew];
+                    });
+                }
+            } catch {
+                // Background poll silent fallback
+            }
+        }, 2500);
+
+        return () => clearInterval(pollInterval);
+    }, [sessionId, messages, isOpen]);
 
     // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
     useEffect(() => {
@@ -523,18 +598,36 @@ export function ChatWidget() {
                         <div className="px-5 py-3.5 border-b border-white/10 bg-[#12141a]/90 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
-                                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/20 flex items-center justify-center text-[#d4ff00]">
-                                        <Bot className="w-5 h-5" />
+                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                                        chatMode === 'operator'
+                                            ? 'bg-gradient-to-tr from-[#00f5ff]/30 to-[#d4ff00]/20 border border-[#00f5ff]/40 text-[#00f5ff]'
+                                            : 'bg-gradient-to-tr from-[#d4ff00]/20 to-[#00f5ff]/20 border border-white/20 text-[#d4ff00]'
+                                    }`}>
+                                        {chatMode === 'operator' ? (
+                                            <User className="w-5 h-5" />
+                                        ) : (
+                                            <Bot className="w-5 h-5" />
+                                        )}
                                     </div>
-                                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#d4ff00] ring-2 ring-[#0b0c10]" />
+                                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-[#0b0c10] ${
+                                        chatMode === 'operator' ? 'bg-[#00f5ff]' : 'bg-[#d4ff00]'
+                                    }`} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-bold text-white tracking-tight">CuttingEdger Assistant</h3>
+                                        <h3 className="text-sm font-bold text-white tracking-tight">
+                                            {chatMode === 'operator' ? 'CuttingEdger Live Studio' : 'CuttingEdger Assistant'}
+                                        </h3>
                                     </div>
                                     <p className="text-[10px] text-white/50 font-mono flex items-center gap-1.5">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-pulse" />
-                                        <span>24/7 Studio • Instant Estimates</span>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                            chatMode === 'operator' ? 'bg-[#00f5ff] animate-pulse' : 'bg-[#d4ff00] animate-pulse'
+                                        }`} />
+                                        <span>
+                                            {chatMode === 'operator'
+                                                ? `Live with ${operatorName || 'Studio Specialist'}`
+                                                : '24/7 Studio • Instant Estimates'}
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -572,6 +665,25 @@ export function ChatWidget() {
                             </div>
                         </div>
 
+                        {/* Live Operator Active Banner */}
+                        {chatMode === 'operator' && (
+                            <div className="px-4 py-1.5 bg-[#00f5ff]/10 border-b border-[#00f5ff]/20 text-[11px] font-mono text-[#00f5ff] flex items-center justify-between">
+                                <span className="flex items-center gap-1.5 font-semibold">
+                                    <span className="w-2 h-2 rounded-full bg-[#00f5ff] animate-ping" />
+                                    Live Specialist Active ({operatorName || 'Production Lead'})
+                                </span>
+                                <span className="text-[10px] text-white/50">Direct Chat</span>
+                            </div>
+                        )}
+                        {needsHuman && chatMode !== 'operator' && (
+                            <div className="px-4 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-[11px] font-mono text-amber-400 flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                                    Specialist notified • A live agent will reply shortly
+                                </span>
+                            </div>
+                        )}
+
                         {/* Messages Scroll Area */}
                         <div
                             ref={scrollContainerRef}
@@ -585,6 +697,7 @@ export function ChatWidget() {
                         >
                             {messages.map((msg, index) => {
                                 const isUser = msg.sender === 'user';
+                                const isOperator = msg.sender === 'operator';
                                 const isLatestAssistant =
                                     !isUser && index === messages.length - 1;
 
@@ -593,11 +706,20 @@ export function ChatWidget() {
                                         key={msg.id || index}
                                         className={`flex flex-col group ${isUser ? 'items-end' : 'items-start'}`}
                                     >
+                                        {isOperator && (
+                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-[#00f5ff] font-mono">
+                                                <User className="w-3 h-3 text-[#00f5ff]" />
+                                                <span className="font-semibold">{operatorName || 'Live Studio Specialist'}</span>
+                                            </div>
+                                        )}
+
                                         <div className="relative max-w-[88%]">
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
                                                         ? 'bg-[#d4ff00] text-black font-medium rounded-br-xs shadow-md shadow-[#d4ff00]/10'
+                                                        : isOperator
+                                                        ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
                                                         : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
                                                 }`}
                                             >
@@ -921,6 +1043,14 @@ export function ChatWidget() {
                                         >
                                             <Clock className="w-3.5 h-3.5 text-[#ff3e8a]" />
                                             <span>Turnaround & SLAs</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleSendMessage('Can I speak with a live specialist?')}
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                        >
+                                            <User className="w-3.5 h-3.5 text-[#00f5ff]" />
+                                            <span>Talk to Live Specialist</span>
                                         </button>
                                         <button
                                             type="button"
