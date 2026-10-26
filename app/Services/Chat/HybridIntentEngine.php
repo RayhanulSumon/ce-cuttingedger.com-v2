@@ -1110,11 +1110,43 @@ class HybridIntentEngine
             ];
         }
 
-        // 6. Default Smart Greeting / Fallback Menu
+        // 5.5. Natural Greetings & Pleasantries
+        if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|how\s*are\s*you|what\'?s\s*up|greetings)[\s!.]*$/i', $text) ||
+            $text === 'hi' || $text === 'hello' || $text === 'hey') {
+            $greetings = [
+                'Hey! Welcome to CuttingEdger. What kind of images or retouching are you working on today?',
+                'Hi there! Doing great, thanks. Are you looking for clipping paths, photo retouching, or a turnaround quote?',
+                "Hello! We're in the studio working on client batches. How can we help with your photos today?",
+                'Hey there! Ready to help with your editing projects. What services or volume are you looking at?',
+            ];
+
+            return [
+                'content' => $greetings[array_rand($greetings)],
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Calculate Pricing',
+                    'Turnaround SLAs',
+                    'Claim 3 Free Sample Edits',
+                    'Talk to a live specialist',
+                ],
+            ];
+        }
+
+        // 6. Default Smart Greeting / Fallback Menu with dynamic human phrasing
+        $defaultFallbacks = [
+            "I'm right here! Feel free to ask about our editing services, turnaround SLAs, or volume pricing. What kind of images are you working on?",
+            'Got it! We specialize in hand-drawn clipping paths, ghost mannequins, and high-end retouching. Would you like an instant quote or turnaround estimate?',
+            'Sure thing! Let me know what you need help with—you can upload a photo batch, request a quote, or ask for a studio specialist.',
+        ];
+
         return [
-            'content' => "I'm right here! Feel free to ask about our editing services, turnaround SLAs, or volume pricing. What kind of images are you working on?",
+            'content' => $defaultFallbacks[array_rand($defaultFallbacks)],
             'tool_cards' => [],
-            'suggested_replies' => [],
+            'suggested_replies' => [
+                'Calculate Pricing',
+                'Turnaround SLAs',
+                'Schedule Consultation Call',
+            ],
         ];
     }
 }

@@ -169,10 +169,14 @@ export function ChatWidget() {
         if (!sessionId) return;
 
         const pollInterval = setInterval(async () => {
+            // Do not poll while a message send is in flight to prevent race conditions
+            if (isLoading) return;
+
             try {
+                // Find highest numeric server message ID (ignore temporary optimistic IDs)
                 const highestId = messages.reduce((max, m) => {
                     const num = typeof m.id === 'number' ? m.id : parseInt(String(m.id), 10);
-                    return !isNaN(num) && num > max ? num : max;
+                    return !isNaN(num) && String(m.id).indexOf('user-') === -1 && num > max ? num : max;
                 }, 0);
 
                 const res = await fetch(`/api/chat/poll?after_id=${highestId}`, {
@@ -190,10 +194,20 @@ export function ChatWidget() {
                 if (data.messages && data.messages.length > 0) {
                     setMessages((prev) => {
                         const existingIds = new Set(prev.map((m) => String(m.id)));
-                        const brandNew = data.messages.filter((m: any) => !existingIds.has(String(m.id)));
+                        const brandNew = data.messages.filter((m: any) => {
+                            if (existingIds.has(String(m.id))) return false;
+                            // Check if this incoming message matches an optimistic user message
+                            const isExistingUser = m.sender === 'user' && prev.some(
+                                (p) => p.sender === 'user' && p.content.trim() === m.content.trim()
+                            );
+                            return !isExistingUser;
+                        });
+
                         if (brandNew.length === 0) return prev;
 
-                        playNotificationChime();
+                        if (brandNew.some((m: any) => m.sender === 'operator')) {
+                            playNotificationChime();
+                        }
 
                         if (!isOpen) {
                             setUnreadCount((c) => c + brandNew.length);
@@ -209,7 +223,7 @@ export function ChatWidget() {
         }, 2500);
 
         return () => clearInterval(pollInterval);
-    }, [sessionId, messages, isOpen]);
+    }, [sessionId, messages, isOpen, isLoading]);
 
     // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
     useEffect(() => {
@@ -296,6 +310,9 @@ export function ChatWidget() {
                 setSessionId(data.session_id);
                 localStorage.setItem('ce_chat_session_id', data.session_id);
             }
+            if (data.mode) setChatMode(data.mode);
+            if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+            if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
             // Natural typing delay (minimum 750ms - 1100ms) so typing indicator feels human and authentic
             const elapsed = Date.now() - startTime;
@@ -304,9 +321,15 @@ export function ChatWidget() {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
 
-            if (data.message) {
-                setMessages((prev) => [...prev, data.message]);
-            }
+            setMessages((prev) => {
+                let updated = prev.map((m) =>
+                    m.id === optimisticId && data.user_message_id ? { ...m, id: data.user_message_id } : m
+                );
+                if (data.message && !updated.some((m) => String(m.id) === String(data.message.id))) {
+                    updated.push(data.message);
+                }
+                return updated;
+            });
         } catch (err) {
             console.error('Error sending message:', err);
             setMessages((prev) => [

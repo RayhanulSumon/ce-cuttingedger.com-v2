@@ -118,6 +118,7 @@ class ChatOrchestrator
         return [
             'session_id' => $session->id,
             'engine' => $engineUsed,
+            'user_message_id' => $userMessage->id,
             'message' => [
                 'id' => $assistantMessage->id,
                 'sender' => 'assistant',
