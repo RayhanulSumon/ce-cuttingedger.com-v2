@@ -321,7 +321,7 @@ export function VolumePricingCalculator() {
             <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
             <div className="absolute bottom-10 right-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[200px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
                 <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
@@ -329,7 +329,7 @@ export function VolumePricingCalculator() {
                         <span>[ LIVE PRODUCTION RATE ESTIMATOR ]</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.05]">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08] sm:leading-[1.05]">
                         Calculate Your Rate <br />
                         <span className="text-[#d4ff00]">Down to the Penny.</span>
                     </h2>
@@ -370,7 +370,7 @@ export function VolumePricingCalculator() {
                 {/* Calculator Interactive Container */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch max-w-6xl mx-auto">
                     {/* Left Column: Interactive Controls */}
-                    <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-[#0d0f15]/95 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-2xl flex flex-col justify-between">
+                    <div className="lg:col-span-7 rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0d0f15]/95 backdrop-blur-xl p-4 sm:p-8 space-y-6 shadow-2xl flex flex-col justify-between">
                         {/* 1. Service Selection */}
                         <div className="space-y-3.5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -633,7 +633,7 @@ export function VolumePricingCalculator() {
                     </div>
 
                     {/* Right Column: Instant Live Estimate Card */}
-                    <div className="lg:col-span-5 rounded-3xl border-2 border-[#d4ff00] bg-[#10121a]/95 backdrop-blur-2xl p-6 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(212,255,0,0.12)] relative overflow-hidden">
+                    <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl border-2 border-[#d4ff00] bg-[#10121a]/95 backdrop-blur-2xl p-4 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(212,255,0,0.12)] relative overflow-hidden">
                         {/* Glow orb */}
                         <div className="absolute top-0 right-0 w-48 h-48 bg-[#d4ff00]/10 rounded-full blur-[70px] pointer-events-none" />
 

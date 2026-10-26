@@ -131,7 +131,7 @@ export function BeforeAfterShowcase() {
             <div className="absolute top-1/2 right-10 w-[35rem] h-[35rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
             <div className="absolute bottom-10 left-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[180px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
                     <div>
@@ -139,7 +139,7 @@ export function BeforeAfterShowcase() {
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ SURGICAL CRAFT DEMO ]</span>
                         </div>
-                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.04]">
+                        <h2 className="text-2xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08] sm:leading-[1.04]">
                             See The Difference <br />
                             <span className="text-[#d4ff00]">Pixel By Pixel.</span>
                         </h2>
@@ -191,7 +191,7 @@ export function BeforeAfterShowcase() {
                             {activeItem.serviceCategory}
                         </div>
 
-                        <h3 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                        <h3 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight break-words">
                             {activeItem.headline}
                         </h3>
 

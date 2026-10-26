@@ -134,13 +134,13 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
             />
 
             {/* Card Top Bar: Frosted Glass Capsule Pills */}
-            <div className="relative z-30 p-6 sm:p-8 lg:p-10 flex items-center justify-between pointer-events-none">
+            <div className="relative z-30 p-4 sm:p-8 lg:p-10 flex items-center justify-between pointer-events-none">
                 {/* Left: Categories */}
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
                     {item.categories.map((cat, cIdx) => (
                         <span
                             key={cIdx}
-                            className="px-3.5 sm:px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono uppercase tracking-wider text-white font-medium shadow-sm group-hover:border-white/40 transition-colors"
+                            className="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono uppercase tracking-wider text-white font-medium shadow-sm group-hover:border-white/40 transition-colors"
                         >
                             {cat}
                         </span>
@@ -148,18 +148,18 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                 </div>
 
                 {/* Right: Year Tag */}
-                <span className="px-3.5 sm:px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono text-white font-semibold shadow-sm">
+                <span className="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono text-white font-semibold shadow-sm">
                     [{item.year}]
                 </span>
             </div>
 
             {/* Card Bottom Bar: Unobstructed Image with Title & CTA */}
-            <div className="absolute bottom-6 sm:bottom-8 inset-x-6 sm:inset-x-8 lg:inset-x-10 z-30 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pointer-events-none">
-                <div className="space-y-2 max-w-xl">
-                    <span className="px-4 sm:px-5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono font-bold text-[#d4ff00] uppercase tracking-wider shadow-lg inline-block">
+            <div className="absolute bottom-4 sm:bottom-8 inset-x-4 sm:inset-x-8 lg:inset-x-10 z-30 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 pointer-events-none">
+                <div className="space-y-1.5 sm:space-y-2 max-w-xl">
+                    <span className="px-3 sm:px-5 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono font-bold text-[#d4ff00] uppercase tracking-wider shadow-lg inline-block">
                         Discipline 0{item.id}
                     </span>
-                    <h3 className="text-2xl sm:text-4xl lg:text-5xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
+                    <h3 className="text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
                         {item.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed line-clamp-2">
@@ -169,9 +169,9 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
 
                 {/* Direct Action Pill */}
                 <div className="pointer-events-auto shrink-0">
-                    <span className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-[#c2eb00] group-hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all">
+                    <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-[#c2eb00] group-hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all">
                         <span>Explore Discipline</span>
-                        <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />
+                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
                     </span>
                 </div>
             </div>
@@ -330,12 +330,12 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
     return (
         <section
             id="featured-services"
-            className="relative py-14 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
+            className="relative py-12 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
         >
             {/* Ambient Background Glow */}
             <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
@@ -351,14 +351,14 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                             </div>
                         </div>
 
-                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-none">
+                        <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
                             ENGINEERED FOR IMPACT.
                         </h2>
                     </div>
 
                     <Link
                         href="/services"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
                     >
                         <span>View All Services ({services?.length || '6+'})</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -390,9 +390,9 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                 </div>
 
                 {/* PINNED COLLAPSIBLE CARDS CONTAINER: STACKS ONE AFTER ANOTHER ON SCROLL */}
-                <div ref={containerRef} className="relative h-[260vh] sm:h-[300vh]">
+                <div ref={containerRef} className="relative h-[220vh] sm:h-[300vh]">
                     {/* Sticky Viewport Window */}
-                    <div className="sticky top-20 sm:top-24 h-[58vh] sm:h-[64vh] lg:h-[68vh] min-h-[420px] max-h-[660px] w-full rounded-[24px] sm:rounded-[36px] overflow-visible">
+                    <div className="sticky top-16 sm:top-24 h-[60vh] sm:h-[64vh] lg:h-[68vh] min-h-[400px] sm:min-h-[460px] max-h-[660px] w-full rounded-[20px] sm:rounded-[36px] overflow-visible">
                         {/* Card 0 */}
                         <CardView
                             item={activeCards[0]}

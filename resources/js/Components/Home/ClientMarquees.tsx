@@ -42,12 +42,12 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-[#d4ff00]/5 rounded-full blur-[190px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-14 text-center">
+            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 mb-10 sm:mb-14 text-center">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>[ TRUSTED BY 173+ ENTERPRISES ]</span>
                 </div>
-                <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-none">
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-tight">
                     Global Collaborators
                 </h2>
                 <p className="mt-3 text-sm sm:text-base text-neutral-400 font-sans max-w-xl mx-auto">

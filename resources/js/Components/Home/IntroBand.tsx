@@ -177,7 +177,7 @@ function InvertLine({ text }: InvertLineProps) {
                     display: 'inline-block',
                     transform: 'translateZ(0)',
                 }}
-                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-[clamp(14px,2.95vw,52px)] font-semibold tracking-tight leading-[1.26] whitespace-nowrap"
+                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-base sm:text-xl md:text-2xl lg:text-[clamp(20px,2.95vw,52px)] font-semibold tracking-tight leading-relaxed sm:leading-[1.26] whitespace-normal sm:whitespace-nowrap max-w-full px-2 sm:px-0"
             >
                 {text}
             </motion.span>
@@ -267,7 +267,7 @@ export function IntroBand() {
             </section>
 
             {/* 2. DEDICATED FULL-SCREEN STUDIO MANIFESTO STATEMENT */}
-            <section className="relative min-h-[85vh] lg:min-h-screen py-24 sm:py-32 lg:py-36 flex flex-col justify-center items-center border-b border-white/10 bg-[#090a0d] overflow-hidden select-none">
+            <section className="relative min-h-[75vh] sm:min-h-[85vh] lg:min-h-screen py-16 sm:py-32 lg:py-36 flex flex-col justify-center items-center border-b border-white/10 bg-[#090a0d] overflow-hidden select-none">
                 {/* Ambient Backlight Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65rem] h-[36rem] bg-[#d4ff00]/6 rounded-full blur-[220px] pointer-events-none" />
 

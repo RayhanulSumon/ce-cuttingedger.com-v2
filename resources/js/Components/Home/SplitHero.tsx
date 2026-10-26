@@ -342,7 +342,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             </div>
 
             {/* PRE-MOUNTED HIGH-PERFORMANCE TRAIL CARDS POOL (AGNTIX 16-CARD HARDWARE ACCELERATED POOL) */}
-            <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden hidden md:block">
                 {gallery.map((item, idx) => (
                     <div
                         key={idx}
@@ -373,7 +373,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             </div>
 
             {/* MAIN MODERN AGENCY HERO CONTENT */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto relative z-20">
+            <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8 w-full my-auto relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 xl:gap-8 items-center">
                     {/* Left Column: Kinetic Headline & Rotating Disciplines */}
                     <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-4 xl:space-y-6 2xl:space-y-7">
@@ -387,7 +387,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
                         {/* Kinetic Main Headline with perfect wrapping and responsive font size */}
                         <div className="space-y-2.5 sm:space-y-3">
-                            <h1 className="text-3xl sm:text-5xl lg:text-[2.75rem] xl:text-[3.65rem] 2xl:text-[4.5rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.08] lg:leading-[1.06]">
+                            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.65rem] 2xl:text-[4.5rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.08] lg:leading-[1.06]">
                                 ARE YOU <br />
                                 LOOKING FOR <br />
                                 <span className="flex items-baseline flex-wrap gap-x-3 text-white">
@@ -451,7 +451,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
                     {/* Right Column: High-Impact Visual Showcase Cards with Rich Imagery */}
                     <div className="lg:col-span-5 relative flex justify-center items-center py-4 lg:py-0">
-                        <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-[340px] xl:max-w-md h-[340px] sm:h-[390px] lg:h-[370px] xl:h-[430px] 2xl:h-[470px]">
+                        <div className="relative w-full max-w-[280px] xs:max-w-xs sm:max-w-sm lg:max-w-[340px] xl:max-w-md h-[310px] xs:h-[350px] sm:h-[390px] lg:h-[370px] xl:h-[430px] 2xl:h-[470px]">
                             {reelCards.map((card, idx) => {
                                 const offset = (idx - activeCardIndex + reelCards.length) % reelCards.length;
 

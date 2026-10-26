@@ -196,15 +196,15 @@ export function FreeTrialDropzone() {
             {/* Ambient Lighting Sheen */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-[#d4ff00]/5 rounded-full blur-[240px] pointer-events-none" />
 
-            <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="w-full max-w-4xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-3">
+                <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-3">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/25 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Zero Risk · Free 3-Asset Enterprise Pilot</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
                         TEST OUR CRAFT ON <span className="text-[#d4ff00]">YOUR RAW FILES.</span>
                     </h2>
 
@@ -213,7 +213,7 @@ export function FreeTrialDropzone() {
                     </p>
 
                     {/* Multi-Step Indicator */}
-                    <div className="flex items-center justify-center gap-3 pt-3 font-mono text-xs">
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 pt-3 font-mono text-xs">
                         <button
                             type="button"
                             onClick={() => setStep(1)}
@@ -246,7 +246,7 @@ export function FreeTrialDropzone() {
                 {/* Form Card */}
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-[#0f1117] border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                    className="bg-[#0f1117] border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl"
                 >
                     {/* Honeypot */}
                     <input
