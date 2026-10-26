@@ -441,7 +441,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         <div className="pb-3 border-b border-white/10">
                             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
                                 <Tag className="w-4 h-4 text-[#d4ff00]" />
-                                TAXONOMY & ATTRIBUTION
+                                CATEGORY & AUTHOR
                             </span>
                         </div>
 

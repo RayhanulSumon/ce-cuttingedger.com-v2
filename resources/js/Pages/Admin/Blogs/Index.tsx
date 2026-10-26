@@ -180,7 +180,7 @@ export default function BlogsIndex({
                     <Link
                         href={route("admin.blogs.edit", b.id)}
                         className="p-1.5 text-neutral-400 hover:text-[#d4ff00] rounded hover:bg-white/5"
-                        title="Edit Article & SEO"
+                        title="Edit"
                     >
                         <Edit className="h-3.5 w-3.5" />
                     </Link>
@@ -207,7 +207,7 @@ export default function BlogsIndex({
                                     className="flex items-center w-full"
                                 >
                                     <Edit className="mr-2 h-3.5 w-3.5" />
-                                    Edit Article & SEO
+                                    Edit
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -215,7 +215,7 @@ export default function BlogsIndex({
                                 className="cursor-pointer text-xs text-rose-400 focus:bg-rose-500 focus:text-white"
                             >
                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                Purge Article
+                                Move to trash
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -228,7 +228,6 @@ export default function BlogsIndex({
         <AdminLayout title="Blog Posts & Editorial Suite">
             <div className="space-y-6">
                 <AdminPageHeader
-                    eyebrow="EDITORIAL CONTENT ENGINE"
                     title="Blog Posts & Articles"
                     description="Compose long-form essays, assign category & subcategory taxonomies, and manage granular dynamic SEO metadata."
                     actionLabel="New Blog Post"
@@ -274,14 +273,14 @@ export default function BlogsIndex({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel className="border-white/10 text-neutral-400 hover:text-white cursor-pointer">
-                                Abort
+                                Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDelete}
                                 disabled={isDeleting}
                                 className="bg-rose-500 hover:bg-rose-600 text-white font-mono font-bold cursor-pointer"
                             >
-                                {isDeleting ? "Purging..." : "Confirm Purge"}
+                                {isDeleting ? "Moving to trash..." : "Confirm"}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

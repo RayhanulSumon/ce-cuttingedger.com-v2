@@ -195,7 +195,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                             className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            <span>Back to Articles</span>
+                            <span>Back to Blogs</span>
                         </Button>
                     </Link>
                 </AdminPageHeader>

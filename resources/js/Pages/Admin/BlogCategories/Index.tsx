@@ -181,14 +181,14 @@ export default function BlogCategoriesIndex({
                                 className="cursor-pointer text-xs focus:bg-[#d4ff00] focus:text-black"
                             >
                                 <Edit className="mr-2 h-3.5 w-3.5" />
-                                Edit Category
+                                Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setCategoryToDelete(c)}
                                 className="cursor-pointer text-xs text-rose-400 focus:bg-rose-500 focus:text-white"
                             >
                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                Purge Category
+                                Move to Trash
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

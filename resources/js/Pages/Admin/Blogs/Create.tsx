@@ -18,7 +18,6 @@ export default function BlogsCreate({ categories = [], authors = [] }: BlogsCrea
         <AdminLayout title="Compose Blog Post">
             <div className="space-y-6">
                 <AdminPageHeader
-                    eyebrow="EDITORIAL CONTENT ENGINE"
                     title="Compose Blog Post"
                     description="Draft an authoritative article with typography hierarchy, category taxonomies, and high-performance SEO metadata."
                 >
@@ -28,7 +27,7 @@ export default function BlogsCreate({ categories = [], authors = [] }: BlogsCrea
                             className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            <span>Back to Articles</span>
+                            <span>Back to Blogs</span>
                         </Button>
                     </Link>
                 </AdminPageHeader>

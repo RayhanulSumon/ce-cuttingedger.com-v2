@@ -19,7 +19,6 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
         <AdminLayout title={`Edit: ${blog.title}`}>
             <div className="space-y-6">
                 <AdminPageHeader
-                    eyebrow="EDITORIAL CONTENT ENGINE"
                     title="Edit Blog Article"
                     description={`Editing "${blog.title}". Modify content, calibrate category taxonomies, and tune search metadata.`}
                 >
@@ -30,7 +29,7 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                                 className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
                             >
                                 <ArrowLeft className="w-4 h-4" />
-                                <span>Back to Articles</span>
+                                <span>Back to Blogs</span>
                             </Button>
                         </Link>
 
