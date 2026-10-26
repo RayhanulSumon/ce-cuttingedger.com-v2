@@ -61,10 +61,19 @@ class ChatOrchestrator
         $suggestedReplies = [];
         $toolCallsData = null;
 
-        // 2. Attempt Ollama AI Processing if online
-        if ($this->ollama->isAvailable()) {
+        // 2. Fast-Path: High-confidence instant queries (greetings, operator takeover, cloud links, email capture)
+        // These answer in <30ms without needing CPU token generation
+        if ($this->isInstantQuery($userText) && empty($attachments) && empty($imagesBase64)) {
+            $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
+            $assistantContent = $fallbackResult['content'];
+            $toolCards = $fallbackResult['tool_cards'];
+            $suggestedReplies = $fallbackResult['suggested_replies'];
+            $engineUsed = 'fast_path';
+        }
+        // 3. Otherwise, route conversational & bespoke queries to Ollama AI
+        elseif ($this->ollama->isAvailable()) {
             $history = $this->buildMessageHistory($session);
-            $toolDefinitions = $this->tools->getDefinitions();
+            $toolDefinitions = $this->tools->getRelevantDefinitions($userText);
 
             $aiResponse = $this->ollama->chat($history, $toolDefinitions, $imagesBase64);
 
@@ -138,21 +147,23 @@ class ChatOrchestrator
     protected function buildMessageHistory(ChatSession $session): array
     {
         $systemPrompt = <<<'PROMPT'
-You are a senior production specialist at CuttingEdger studio. Talk like a friendly, knowledgeable human colleague over live chat — warm, direct, and conversational.
+You are a senior production specialist at CuttingEdger studio. Talk like a friendly, expert human colleague over live chat — warm, direct, smart, and concise.
 
-Studio Disciplines:
-- Hand-drawn clipping paths & background removal ($0.45 - $0.49/image)
-- Invisible ghost mannequin jointing
-- High-end fashion & beauty skin retouching
-- Diamond & macro fine jewelry retouching
-- 3D CGI product modeling & rendering
-- Desktop publishing (DTP) & catalog layout
+Studio Production Disciplines & Pricing:
+- Clipping Path / Cutouts: $0.45 – $0.49 / image (100% hand-drawn pen tool paths)
+- Ghost Mannequin / Invisible Symmetry: $0.99 / image
+- Natural / Drop Shadow & Reflections: $0.49 / image
+- Multi-Clipping Path / Color Masking: $1.25 / image
+- High-End Fashion & Beauty Retouching: $1.99 – $3.99 / image
+- Fine Jewelry & Macro Diamond Retouching: $2.49 – $4.99 / image
+- Turnaround SLA: Standard 12–24 hours, Express rush 6 hours
+- Volume Discounts: 15% off for 100+ photos, 25% off for 500+ photos
+- Free Trial: 3 free test images with no credit card required
 
-Human Chat Rules:
-1. KEEP IT SHORT & PRECISE: 1 to 2 short sentences maximum (under 25 words). Never write paragraphs or essays.
-2. SOUND HUMAN: Never say "Certainly!", "I'd be happy to assist", "As an AI", or "Feel free to ask". Talk naturally like a real person at a design studio ("Sure thing", "Got it", "Here's our pricing", "We'll take care of it").
-3. ANSWER DIRECTLY FIRST: Never repeat the user's question back to them. Give the direct answer in the very first sentence.
-4. USE TOOLS PROMPTLY: Call `calculate_image_price` for quotes, `check_available_calendar_slots` for calls, and `capture_lead` when an email is given. The UI card shows the details; keep your text reply to a single natural sentence.
+Human Chat Guidelines:
+1. UNDERSTAND CONTEXT: Pay close attention to what the client specifically asks. If they ask for "all pricing" or "single readable format", give them a clean, direct pricing breakdown right in text. Never show a single-item calculator when they asked for all rates.
+2. SCHEDULING: If they specify a time like "tomorrow 10 am", acknowledge and confirm that exact time ("I've set aside tomorrow at 10:00 AM UTC for our technical lead").
+3. CONCISE & NATURAL: 1 to 3 short sentences maximum. Direct answer first. Never use robotic filler words like "Certainly!", "I'd be happy to assist", "As an AI language model", or "Feel free to ask". Talk like a real studio lead ("Sure thing", "Got it", "Here's the full breakdown", "We can deliver that in 24 hours").
 PROMPT;
 
         $messages = [
@@ -185,5 +196,35 @@ PROMPT;
     {
         // Keep conversation natural and human; tool cards provide their own interactive actions
         return [];
+    }
+
+    /**
+     * Check if query has a high-confidence instant answer to bypass heavy CPU inference.
+     */
+    protected function isInstantQuery(string $text): bool
+    {
+        $clean = strtolower(trim($text));
+
+        // Greetings
+        if (preg_match('/^(hi|hello|hey|good (morning|afternoon|evening)|howdy|greetings)[!.? ]*$/i', $clean)) {
+            return true;
+        }
+
+        // Request live human operator
+        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|representative)\b/i', $clean)) {
+            return true;
+        }
+
+        // Cloud Drive link
+        if (preg_match('/(https?:\/\/[^\s]+)/i', $text) && (str_contains($clean, 'drive') || str_contains($clean, 'dropbox') || str_contains($clean, 'wetransfer') || str_contains($clean, 'onedrive') || str_contains($clean, 'box.com'))) {
+            return true;
+        }
+
+        // Reset
+        if (in_array($clean, ['reset', 'clear', '/reset', 'new chat', 'fresh chat', 'clear chat', 'start fresh', 'start over', 'restart chat'])) {
+            return true;
+        }
+
+        return false;
     }
 }

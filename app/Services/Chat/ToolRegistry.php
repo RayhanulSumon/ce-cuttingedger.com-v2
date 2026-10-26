@@ -31,6 +31,40 @@ class ToolRegistry
     }
 
     /**
+     * Get dynamically filtered tool schemas matching the user query to avoid heavy CPU prompt bloat.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRelevantDefinitions(string $userText): array
+    {
+        $text = strtolower($userText);
+        $tools = [];
+
+        // Pricing queries
+        if (preg_match('/\b(price|pricing|cost|quote|rate|how much|dollar|\$|discount|estimate)\b/i', $text)) {
+            $tools[] = PriceCalculatorTool::schema();
+        }
+
+        // Booking / Calendar queries
+        if (preg_match('/\b(call|meeting|book|schedule|appointment|calendar|slot|reschedule)\b/i', $text)) {
+            $tools[] = CalendarBookingTool::checkSlotsSchema();
+            $tools[] = CalendarBookingTool::bookAppointmentSchema();
+        }
+
+        // Email / Lead capture
+        if (str_contains($text, '@')) {
+            $tools[] = LeadCaptureTool::schema();
+        }
+
+        // Service exploration
+        if (preg_match('/\b(service|services|catalog|portfolio|what do you (do|offer))\b/i', $text)) {
+            $tools[] = ServiceCatalogTool::schema();
+        }
+
+        return $tools;
+    }
+
+    /**
      * Dispatch and execute a tool by function name.
      *
      * @param  array<string, mixed>  $arguments

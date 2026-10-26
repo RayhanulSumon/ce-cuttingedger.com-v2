@@ -531,9 +531,12 @@ class HybridIntentEngine
                 'is_reschedule' => $isRescheduleQuery,
             ], $session);
 
+            $hasSpecificTime = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $text);
             $messageText = $isRescheduleQuery
                 ? 'Pick a new time below to reschedule:'
-                : 'Pick a time below that works for a quick 15-min chat:';
+                : ($hasSpecificTime
+                    ? "I've checked our schedule for your requested time. Click the matching slot below to lock it in with our production lead:"
+                    : 'Pick a time below that works for a quick 15-min chat:');
 
             return [
                 'content' => $messageText,
@@ -977,6 +980,18 @@ class HybridIntentEngine
             str_contains($text, 'calculat') ||
             str_contains($text, 'how much')) {
 
+            if (str_contains($text, 'all') || str_contains($text, 'readable') || str_contains($text, 'list') || str_contains($text, 'every') || str_contains($text, 'overview')) {
+                return [
+                    'content' => "Here is our complete studio pricing list in readable format:\n\n• **Clipping Path / Cutouts:** $0.45 – $0.49 / image (100% hand-drawn vector paths)\n• **Ghost Mannequin / Symmetry:** $0.99 / image\n• **Natural / Drop Shadow:** $0.49 / image\n• **Multi-Clipping Path / Color Separation:** $1.25 / image\n• **High-End Fashion & Beauty Retouching:** $1.99 – $3.99 / image\n• **Fine Jewelry & Diamond Retouching:** $2.49 – $4.99 / image\n• **3D Product Modeling & CGI:** From $29.00 / model\n\n*Volume discounts: 15% off for 100+ photos, 25% off for 500+ photos. Standard delivery is 12–24 hours.*",
+                    'tool_cards' => [],
+                    'suggested_replies' => [
+                        'Claim 3 Free Test Images',
+                        'Calculate Volume Quote',
+                        'Schedule Consultation Call',
+                    ],
+                ];
+            }
+
             $service = 'background-removal';
             if (str_contains($text, 'mannequin') || str_contains($text, 'neck') || str_contains($text, 'joint')) {
                 $service = 'ghost-mannequin';
@@ -1064,7 +1079,8 @@ class HybridIntentEngine
         // 5.5. General FAQs, Turnaround, Free Trial & Policy Queries
         if (str_contains($text, 'turnaround') ||
             str_contains($text, 'trial') ||
-            str_contains($text, 'format') ||
+            str_contains($text, 'file format') ||
+            str_contains($text, 'file type') ||
             str_contains($text, 'revision') ||
             str_contains($text, 'capacity') ||
             str_contains($text, 'sla') ||

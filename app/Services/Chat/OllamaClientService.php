@@ -108,7 +108,6 @@ class OllamaClientService
             Log::info('Ollama request timed out or server offline, switching to fallback', [
                 'error' => $e->getMessage(),
             ]);
-            Cache::put('ollama_online_status', false, 30);
 
             return null;
         }
