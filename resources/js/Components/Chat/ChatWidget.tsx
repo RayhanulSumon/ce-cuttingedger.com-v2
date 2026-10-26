@@ -55,7 +55,6 @@ export function ChatWidget() {
     const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isTypingVisible, setIsTypingVisible] = useState(false);
-    const [typingStatus, setTypingStatus] = useState<string>('CuttingEdger is typing...');
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -227,33 +226,18 @@ export function ChatWidget() {
         return () => clearInterval(pollInterval);
     }, [sessionId, messages, isOpen, isLoading]);
 
-    // Progressive typing status indicator (natural human reading pause + status updates on CPU generation)
+    // Natural brief pause before showing typing indicator
     useEffect(() => {
         if (!isLoading) {
             setIsTypingVisible(false);
-            setTypingStatus('CuttingEdger is typing...');
             return;
         }
 
-        // Natural 450ms reading pause before showing typing dots
-        const readTimer = setTimeout(() => {
+        const timer = setTimeout(() => {
             setIsTypingVisible(true);
-        }, 450);
+        }, 600);
 
-        // Progressive updates so visitor knows system is actively analyzing their volume & specs
-        const t1 = setTimeout(() => {
-            setTypingStatus('Reviewing project specs...');
-        }, 3200);
-
-        const t2 = setTimeout(() => {
-            setTypingStatus('Calculating turnaround & capacity...');
-        }, 7500);
-
-        return () => {
-            clearTimeout(readTimer);
-            clearTimeout(t1);
-            clearTimeout(t2);
-        };
+        return () => clearTimeout(timer);
     }, [isLoading]);
 
     // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
@@ -1037,7 +1021,7 @@ export function ChatWidget() {
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce [animation-delay:-0.15s]" />
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-bounce" />
                                         </div>
-                                        <span className="text-[11px] font-mono text-white/60 transition-all duration-300">{typingStatus}</span>
+                                        <span className="text-[11px] font-mono text-white/50">CuttingEdger is typing...</span>
                                     </div>
                                 </div>
                             )}
