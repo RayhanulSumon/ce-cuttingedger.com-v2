@@ -46,11 +46,12 @@ class ToolRegistry
             $tools[] = PriceCalculatorTool::schema();
         }
 
-        // Booking / Calendar queries (supports typos like calendaer, calender, shedule, skedule, apointment, and multilingual: agendar, cita, termin, rendez-vous)
+        // Booking / Calendar queries (supports booking new or checking existing appointment)
         if (preg_match('/\b(call\w*|meet\w*|book\w*|sched\w*|sced\w*|sked\w*|appoint\w*|apoint\w*|calend\w*|slot\w*|resched\w*|reserv\w*|agend\w*|cita\w*|termin\w*|rendez\w*|বুকিং|অ্যাপয়েন্টমেন্ট|حجز)\b/iu', $text)) {
             $tools[] = CalendarBookingTool::checkSpecificSlotSchema();
             $tools[] = CalendarBookingTool::checkSlotsSchema();
             $tools[] = CalendarBookingTool::bookAppointmentSchema();
+            $tools[] = CalendarBookingTool::checkMyAppointmentSchema();
         }
 
         // Email / Lead capture

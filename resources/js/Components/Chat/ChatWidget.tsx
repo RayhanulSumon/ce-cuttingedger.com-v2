@@ -103,6 +103,9 @@ export function ChatWidget() {
                 'X-Requested-With': 'XMLHttpRequest',
                 ...(storedSession ? { 'X-Chat-Session-Id': storedSession } : {}),
             },
+            body: JSON.stringify({
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            }),
         })
             .then((res) => res.json())
             .then((data) => {
@@ -364,7 +367,10 @@ export function ChatWidget() {
                     'X-Requested-With': 'XMLHttpRequest',
                     ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
                 },
-                body: JSON.stringify({ message: text }),
+                body: JSON.stringify({
+                    message: text,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                }),
             });
 
             const data = await res.json();
@@ -520,6 +526,10 @@ export function ChatWidget() {
 
     // 6. Slot Booking Submission
     const handleBookSlot = async (bookingData: any) => {
+        const payload = {
+            ...bookingData,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
         const res = await fetch('/api/chat/book-slot', {
             method: 'POST',
             headers: {
@@ -527,7 +537,7 @@ export function ChatWidget() {
                 'X-Requested-With': 'XMLHttpRequest',
                 ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
             },
-            body: JSON.stringify(bookingData),
+            body: JSON.stringify(payload),
         });
 
         const data = await res.json();
@@ -1070,7 +1080,7 @@ export function ChatWidget() {
                                                             />
                                                         );
                                                     }
-                                                    if (card.type === 'booking_confirmed_card') {
+                                                    if (card.type === 'booking_confirmed_card' || card.type === 'appointment_status_card') {
                                                         return (
                                                             <BookingConfirmedCard
                                                                 key={cIdx}

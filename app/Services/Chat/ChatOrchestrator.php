@@ -2,6 +2,7 @@
 
 namespace App\Services\Chat;
 
+use App\Models\ChatConsultation;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Services\Chat\Tools\CalendarBookingTool;
@@ -90,12 +91,26 @@ class ChatOrchestrator
             }
         }
 
+        $clientTimezone = $session->metadata['timezone'] ?? 'UTC';
+
+        // Auto-safeguard for existing appointment inquiries: e.g. "when will be my schedule date and time?", "when is my meeting", "what is my schedule"
+        $isCheckingExisting = preg_match('/\b(when|what|check|show|tell me|my|current)\b/i', $userText) && preg_match('/\b(sched\w*|appoint\w*|meet\w*|call\w*|book\w*|slot\w*)\b/i', $userText);
+
+        if ($isCheckingExisting && empty($toolCards)) {
+            $appointmentCard = (new CalendarBookingTool)->checkAppointment([], $session);
+            if (! empty($appointmentCard) && ($appointmentCard['type'] ?? '') === 'appointment_status_card') {
+                $toolCards[] = $appointmentCard;
+                if (empty($assistantContent)) {
+                    $assistantContent = "Your consultation is confirmed for **{$appointmentCard['datetime_formatted']}**! Our senior production specialist will meet with you over Google Meet.";
+                }
+            }
+        }
         // Auto-safeguard: If the client asked to book a specific day/time (e.g. "book me tomorrow 11am", "calendaer bookg", "shedule")
         // but no booking card was generated, automatically execute checkSpecificSlot so they get a compact 1-click confirm card!
-        if (empty($toolCards) && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
+        elseif (empty($toolCards) && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
             $isSpecific = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm)|mañana|demain|morgen)\b/iu', $userText);
             if ($isSpecific) {
-                $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, 'UTC', $session);
+                $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, $clientTimezone, $session);
                 $toolCards[] = $proposal;
                 if (empty($assistantContent) || $assistantContent === "We're ready to take on your project!") {
                     $assistantContent = $proposal['message'];
@@ -171,6 +186,31 @@ Formatting & Business Communication Guidelines:
 4. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language (German, Spanish, French, Italian, Bengali, Arabic, etc.). Seamlessly auto-correct typos ("calendaer bookg", "priicng", "shedule") without judging or correcting them.
 5. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
 PROMPT;
+
+        // Inject Active Booking context if user already has a scheduled appointment
+        $activeBooking = ChatConsultation::where('chat_session_id', $session->id)
+            ->orWhere(function ($q) use ($session) {
+                if ($session->lead_email) {
+                    $q->where('email', $session->lead_email);
+                }
+            })
+            ->where('scheduled_at', '>=', now()->subMinutes(30))
+            ->whereNotIn('status', ['cancelled'])
+            ->latest('scheduled_at')
+            ->first();
+
+        if ($activeBooking) {
+            $clientTz = $session->metadata['timezone'] ?? 'UTC';
+            $slotFormattedUtc = $activeBooking->scheduled_at->format('l, F j, Y \a\t g:i A \U\T\C');
+            $localSlot = $clientTz !== 'UTC' ? ' ('.$activeBooking->scheduled_at->copy()->setTimezone($clientTz)->format('g:i A T').' in client local timezone)' : '';
+
+            $systemPrompt .= "\n\nCRITICAL CONTEXT - CLIENT ALREADY HAS AN ACTIVE BOOKING:
+The client ({$activeBooking->name}, email: {$activeBooking->email}) ALREADY HAS A CONFIRMED CONSULTATION:
+- Scheduled Date & Time: {$slotFormattedUtc}{$localSlot}
+- Meeting: 15-Minute Technical Intake Call (Google Meet / Zoom calendar invite sent to their inbox)
+- Status: Confirmed
+RULE: When the client asks about their appointment, date, time, or schedule (e.g. 'when will be my schedule date and time?'), DIRECTLY state and confirm their exact scheduled time ({$slotFormattedUtc}{$localSlot}). DO NOT offer or ask them to book a new slot unless they explicitly ask to change or reschedule.";
+        }
 
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt],

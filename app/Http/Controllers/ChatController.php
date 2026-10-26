@@ -31,6 +31,12 @@ class ChatController extends Controller
         $forceNew = $request->boolean('force_new') || $request->header('X-Chat-Reset') === 'true';
         $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: true, forceNew: $forceNew);
 
+        if ($request->filled('timezone')) {
+            $metadata = $session->metadata ?? [];
+            $metadata['timezone'] = $request->input('timezone');
+            $session->update(['metadata' => $metadata]);
+        }
+
         $messages = $session->messages()
             ->latest('id')
             ->take(30)
@@ -161,6 +167,12 @@ class ChatController extends Controller
         }
 
         $session = $this->sessionManager->resolve($request);
+
+        if ($request->filled('timezone')) {
+            $metadata = $session->metadata ?? [];
+            $metadata['timezone'] = $request->input('timezone');
+            $session->update(['metadata' => $metadata]);
+        }
 
         $result = $this->orchestrator->handle(
             $session,

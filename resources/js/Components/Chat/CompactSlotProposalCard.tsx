@@ -82,6 +82,27 @@ export function CompactSlotProposalCard({
         );
     }
 
+    const formatHeaderTime = () => {
+        if (!card.slot_datetime) return `${card.date_label} at ${card.selected_time} UTC`;
+        try {
+            const d = new Date(card.slot_datetime);
+            if (isNaN(d.getTime())) return `${card.date_label} at ${card.selected_time} UTC`;
+            const userLocale = navigator.language || 'en-US';
+            const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const localFormatted = new Intl.DateTimeFormat(userLocale, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+            }).format(d);
+            return `${localFormatted} (${userTz}) • ${card.selected_time} UTC`;
+        } catch {
+            return `${card.date_label} at ${card.selected_time} UTC`;
+        }
+    };
+
     return (
         <div className="my-2 p-3.5 rounded-2xl bg-[#151720] border border-[#00f5ff]/30 shadow-xl text-left">
             {/* Header */}
@@ -91,7 +112,7 @@ export function CompactSlotProposalCard({
                 </span>
                 <div>
                     <h4 className="text-xs font-bold text-white tracking-tight">
-                        {card.date_label} at {card.selected_time} UTC
+                        {formatHeaderTime()}
                     </h4>
                     <span className="text-[10px] text-[#00f5ff] font-mono">15-min Technical Intake Call</span>
                 </div>
