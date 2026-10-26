@@ -256,29 +256,62 @@ class CalendarBookingTool
      */
     public function checkSpecificSlot(string $requestedTime, string $clientTimezone = 'UTC', ?ChatSession $session = null): array
     {
-        $targetDate = Carbon::now($clientTimezone);
+        $now = Carbon::now($clientTimezone);
+        $targetDate = $now->copy();
+
         if (str_contains(strtolower($requestedTime), 'tomorrow')) {
             $targetDate = $targetDate->addDay();
         } elseif (preg_match('/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i', $requestedTime, $dayMatch)) {
             $targetDate = Carbon::parse("next {$dayMatch[1]}", $clientTimezone);
         }
 
+        $standardTimes = ['10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM', '05:00 PM'];
+
+        // Helper to collect slots strictly in the future for a given date
+        $getFutureOpenSlots = function (Carbon $date) use ($clientTimezone, $standardTimes, $now) {
+            $dateKey = $date->format('Y-m-d');
+            $bookedSlots = ChatConsultation::whereDate('scheduled_at', $dateKey)
+                ->where('status', '!=', 'cancelled')
+                ->pluck('scheduled_at')
+                ->map(fn ($dt) => $dt->setTimezone($clientTimezone)->format('g:i A'))
+                ->toArray();
+
+            $slots = [];
+            foreach ($standardTimes as $st) {
+                $slotCarbon = Carbon::parse("{$dateKey} {$st}", $clientTimezone);
+                // Must be at least 30 minutes in the future (never in the past!)
+                if ($slotCarbon->isAfter($now->copy()->addMinutes(30)) && ! in_array($st, $bookedSlots, true)) {
+                    $slots[] = [
+                        'time' => $st,
+                        'iso' => $slotCarbon->toIso8601String(),
+                    ];
+                }
+            }
+
+            return $slots;
+        };
+
         if ($targetDate->isWeekend()) {
             $targetDate = Carbon::parse('next monday', $clientTimezone);
         }
 
-        $dateKey = $targetDate->format('Y-m-d');
+        $availableSlots = $getFutureOpenSlots($targetDate);
+
+        // If no slots remain open/future for today (e.g. it is already evening/past 5pm), advance to tomorrow (or Monday)
+        if (empty($availableSlots)) {
+            $targetDate = $targetDate->addDay();
+            if ($targetDate->isWeekend()) {
+                $targetDate = Carbon::parse('next monday', $clientTimezone);
+            }
+            $availableSlots = $getFutureOpenSlots($targetDate);
+        }
+
         $dateLabel = $targetDate->format('l, F j');
 
-        $standardTimes = ['10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM', '05:00 PM'];
-
-        $bookedSlots = ChatConsultation::whereDate('scheduled_at', $dateKey)
-            ->where('status', '!=', 'cancelled')
-            ->pluck('scheduled_at')
-            ->map(fn ($dt) => $dt->format('g:i A'))
-            ->toArray();
-
-        $closestTime = null;
+        $closestSlot = $availableSlots[0] ?? [
+            'time' => '10:00 AM',
+            'iso' => $targetDate->copy()->setTime(10, 0)->toIso8601String(),
+        ];
         $isExact = false;
 
         if (preg_match('/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b/i', $requestedTime, $m)) {
@@ -291,40 +324,34 @@ class CalendarBookingTool
 
             $requestedMinutes = ($meridiem === 'PM' && $hour < 12 ? $hour + 12 : $hour) * 60 + $minute;
             $minDiff = 9999;
-            foreach ($standardTimes as $st) {
-                $stCarbon = Carbon::parse("{$dateKey} {$st}", $clientTimezone);
+            foreach ($availableSlots as $slotItem) {
+                $stCarbon = Carbon::parse($slotItem['iso'], $clientTimezone);
                 $stMinutes = $stCarbon->hour * 60 + $stCarbon->minute;
                 $diff = abs($stMinutes - $requestedMinutes);
-                if ($diff < $minDiff && ! in_array($st, $bookedSlots, true)) {
+                if ($diff < $minDiff) {
                     $minDiff = $diff;
-                    $closestTime = $st;
+                    $closestSlot = $slotItem;
                 }
             }
 
-            if ($closestTime) {
-                $isExact = ($minDiff === 0);
+            if ($minDiff === 0) {
+                $isExact = true;
             }
         }
-
-        if (! $closestTime) {
-            $open = array_values(array_diff($standardTimes, $bookedSlots));
-            $closestTime = $open[0] ?? '10:00 AM';
-        }
-
-        $slotCarbon = Carbon::parse("{$dateKey} {$closestTime}", $clientTimezone);
 
         return [
             'type' => 'compact_slot_proposal',
             'date_label' => $dateLabel,
             'requested_time' => $requestedTime,
-            'selected_time' => $closestTime,
-            'slot_datetime' => $slotCarbon->toIso8601String(),
+            'selected_time' => $closestSlot['time'],
+            'slot_datetime' => $closestSlot['iso'],
+            'available_slots' => $availableSlots,
             'is_exact' => $isExact,
             'message' => $isExact
-                ? "{$dateLabel} at {$closestTime} UTC is available! Click below to confirm or reply with your email to lock it in:"
+                ? "{$dateLabel} at {$closestSlot['time']} is available! Click below to confirm or select another slot:"
                 : (preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $requestedTime)
-                    ? "For {$requestedTime}, our closest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:"
-                    : "We would be delighted to schedule your technical intake call! Our earliest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:"),
+                    ? "For {$requestedTime}, our closest available slot on {$dateLabel} is **{$closestSlot['time']}**. Click below to confirm or pick another time:"
+                    : "We would be delighted to schedule your technical intake call! Our earliest available slot on {$dateLabel} is **{$closestSlot['time']}**. Pick a time below to confirm:"),
         ];
     }
 
