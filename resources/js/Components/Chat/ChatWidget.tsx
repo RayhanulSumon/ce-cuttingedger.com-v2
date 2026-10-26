@@ -61,7 +61,6 @@ export function ChatWidget() {
     const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
     const [showNudgeBubble, setShowNudgeBubble] = useState(false);
     const [showQuickMenu, setShowQuickMenu] = useState(false);
-    const [copiedId, setCopiedId] = useState<number | string | null>(null);
     const [isDragOver, setIsDragOver] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -194,28 +193,49 @@ export function ChatWidget() {
 
                 if (data.messages && data.messages.length > 0) {
                     setMessages((prev) => {
-                        const existingIds = new Set(prev.map((m) => String(m.id)));
-                        const brandNew = data.messages.filter((m: any) => {
-                            if (existingIds.has(String(m.id))) return false;
-                            // Check if this incoming message matches an optimistic user message
-                            const isExistingUser = m.sender === 'user' && prev.some(
-                                (p) => p.sender === 'user' && p.content.trim() === m.content.trim()
-                            );
-                            return !isExistingUser;
+                        let updated = [...prev];
+                        let hasChanges = false;
+                        const brandNew: any[] = [];
+
+                        data.messages.forEach((m: any) => {
+                            const strId = String(m.id);
+                            // Skip if already in message list by server ID
+                            if (updated.some((p) => String(p.id) === strId)) return;
+
+                            // Reconcile optimistic user message
+                            if (m.sender === 'user') {
+                                const optIndex = updated.findIndex(
+                                    (p) => String(p.id).startsWith('user-') && p.content.trim() === m.content.trim()
+                                );
+                                if (optIndex !== -1) {
+                                    // Upgrade optimistic ID to the real database ID
+                                    updated[optIndex] = { ...updated[optIndex], id: m.id };
+                                    hasChanges = true;
+                                    return;
+                                }
+                                // If already in updated list by content match, ignore to avoid duplicates
+                                if (updated.some((p) => p.sender === 'user' && p.content.trim() === m.content.trim())) {
+                                    return;
+                                }
+                            }
+
+                            brandNew.push(m);
+                            updated.push(m);
+                            hasChanges = true;
                         });
 
-                        if (brandNew.length === 0) return prev;
+                        if (!hasChanges) return prev;
 
                         if (brandNew.some((m: any) => m.sender === 'operator')) {
                             playNotificationChime();
                         }
 
-                        if (!isOpen) {
+                        if (!isOpen && brandNew.length > 0) {
                             setUnreadCount((c) => c + brandNew.length);
                             setNudgeMessage(brandNew[brandNew.length - 1].content);
                             setShowNudgeBubble(true);
                         }
-                        return [...prev, ...brandNew];
+                        return updated;
                     });
                 }
             } catch {
@@ -338,9 +358,12 @@ export function ChatWidget() {
 
             setMessages((prev) => {
                 let updated = prev.map((m) =>
-                    m.id === optimisticId && data.user_message_id ? { ...m, id: data.user_message_id } : m
+                    m.id === optimisticId
+                        ? { ...m, id: data.user_message_id || m.id }
+                        : m
                 );
-                if (data.message && !updated.some((m) => String(m.id) === String(data.message.id))) {
+                // Only append reply message if it's not a user message and not already present
+                if (data.message && data.message.sender !== 'user' && !updated.some((m) => String(m.id) === String(data.message.id))) {
                     updated.push(data.message);
                 }
                 return updated;
@@ -531,16 +554,9 @@ export function ChatWidget() {
         setMessages((prev) => prev.filter((_, i) => i !== index));
     };
 
-    // 8. Copy message content
-    const handleCopy = (id: number | string, content: string) => {
-        navigator.clipboard.writeText(content);
-        setCopiedId(id);
-        setTimeout(() => setCopiedId(null), 2000);
-    };
-
-    // Helper for rendering simple markdown bold
-    const renderFormattedText = (text: string) => {
-        const parts = text.split(/(\*\*.*?\*\*)/g);
+    // Helper to format inline markdown elements (bold, code)
+    const formatInline = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
         return parts.map((part, i) => {
             if (part.startsWith('**') && part.endsWith('**')) {
                 return (
@@ -549,8 +565,115 @@ export function ChatWidget() {
                     </strong>
                 );
             }
+            if (part.startsWith('`') && part.endsWith('`')) {
+                return (
+                    <code key={i} className="px-1.5 py-0.5 rounded bg-white/10 text-[#d4ff00] font-mono text-[11px]">
+                        {part.slice(1, -1)}
+                    </code>
+                );
+            }
             return part;
         });
+    };
+
+    // Advanced Visual Formatter for Chat Messages
+    const renderVisualMessage = (content: string, isUser: boolean) => {
+        if (isUser) {
+            return (
+                <p className="whitespace-pre-wrap text-xs font-semibold text-[#0a0c10] leading-relaxed select-text">
+                    {content}
+                </p>
+            );
+        }
+
+        const lines = content.split('\n');
+        const elements: React.ReactNode[] = [];
+
+        lines.forEach((rawLine, idx) => {
+            const line = rawLine.trim();
+
+            if (!line) {
+                elements.push(<div key={`sp-${idx}`} className="h-1" />);
+                return;
+            }
+
+            // 1. Numbered Step Cards (e.g. "1. **Ingestion & Calibration:** description" or "1. Ingestion...")
+            const stepMatch = line.match(/^(\d+)[\.\)]\s*(.*)$/);
+            if (stepMatch) {
+                const num = stepMatch[1];
+                const text = stepMatch[2];
+                elements.push(
+                    <div
+                        key={`step-${idx}`}
+                        className="flex items-start gap-2.5 my-1.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/15 transition-all shadow-sm"
+                    >
+                        <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-[#d4ff00]/30 shadow-sm shadow-[#d4ff00]/10">
+                            {num.padStart(2, '0')}
+                        </span>
+                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 2. Bullet list items (e.g. "* **Clipping Path:** ..." or "- Point")
+            const bulletMatch = line.match(/^[\*\-•]\s*(.*)$/);
+            if (bulletMatch) {
+                const text = bulletMatch[1];
+                elements.push(
+                    <div key={`bullet-${idx}`} className="flex items-start gap-2 my-1 pl-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] mt-1.5 shrink-0 shadow-sm shadow-[#d4ff00]/50" />
+                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 3. Highlight / KPI lines (ONLY specific SLA, rate, or trial banners - NOT ordinary emojis or greetings)
+            const kpiMatch = line.match(/^(⏱️|🏷️|🎁|🚀|💡)\s*(.*)$/u);
+            const isActualKpi = kpiMatch && (
+                /turnaround|rate|pricing|price|trial|discount|offer|sla/i.test(line)
+            );
+            if (isActualKpi && kpiMatch) {
+                const icon = kpiMatch[1];
+                const text = kpiMatch[2];
+                elements.push(
+                    <div
+                        key={`hl-${idx}`}
+                        className="my-2 p-2.5 rounded-xl bg-gradient-to-r from-[#d4ff00]/10 via-white/[0.02] to-transparent border border-[#d4ff00]/25 flex items-center gap-2.5 shadow-sm"
+                    >
+                        <span className="text-sm shrink-0">{icon}</span>
+                        <div className="text-xs font-medium text-white/95 flex-1">
+                            {formatInline(text)}
+                        </div>
+                    </div>
+                );
+                return;
+            }
+
+            // 4. Section Headers (e.g. "### Header")
+            if (line.startsWith('### ')) {
+                elements.push(
+                    <h5 key={`h3-${idx}`} className="text-xs font-mono font-bold uppercase tracking-wider text-[#d4ff00] mt-3 mb-1">
+                        {line.replace('### ', '')}
+                    </h5>
+                );
+                return;
+            }
+
+            // 5. Standard paragraph (clean, natural rendering for greetings like "👋 Hi there!" without tool boxes)
+            elements.push(
+                <p key={`p-${idx}`} className="text-xs leading-relaxed text-neutral-200 my-0.5">
+                    {formatInline(line)}
+                </p>
+            );
+        });
+
+        return <div className="space-y-0.5">{elements}</div>;
     };
 
     return (
@@ -755,7 +878,7 @@ export function ChatWidget() {
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
-                                                        ? 'bg-[#d4ff00] text-black font-medium rounded-br-xs shadow-md shadow-[#d4ff00]/10'
+                                                        ? 'bg-gradient-to-r from-[#d4ff00] to-[#c8f500] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-[#d4ff00]/10 border border-[#b8e600]'
                                                         : isOperator
                                                         ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
                                                         : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
@@ -776,30 +899,8 @@ export function ChatWidget() {
                                                 )}
 
                                                 {/* Text Content */}
-                                                <p className="whitespace-pre-wrap">{renderFormattedText(msg.content)}</p>
+                                                {renderVisualMessage(msg.content, isUser)}
                                             </div>
-
-                                            {/* Copy button on hover for assistant messages */}
-                                            {!isUser && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleCopy(msg.id, msg.content)}
-                                                    className="opacity-0 group-hover:opacity-100 absolute -bottom-5 left-1 text-[10px] text-white/40 hover:text-white flex items-center gap-1 transition-opacity"
-                                                    title="Copy response"
-                                                >
-                                                    {copiedId === msg.id ? (
-                                                        <>
-                                                            <Check className="w-2.5 h-2.5 text-[#d4ff00]" />
-                                                            <span className="text-[#d4ff00]">Copied</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Copy className="w-2.5 h-2.5" />
-                                                            <span>Copy</span>
-                                                        </>
-                                                    )}
-                                                </button>
-                                            )}
 
                                             {/* Edit & Delete controls for user messages */}
                                             {isUser && (

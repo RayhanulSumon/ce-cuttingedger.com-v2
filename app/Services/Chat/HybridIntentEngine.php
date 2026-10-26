@@ -1146,7 +1146,55 @@ class HybridIntentEngine
             ];
         }
 
-        // 5.5. Natural Greetings & Pleasantries
+        // 5.5. Natural Greetings & Pleasantries (Multilingual + English)
+        if (preg_match('/^(hola|buenos\s*dias|buenas\s*tardes)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => '¡Hola! Bienvenido a CuttingEdger. ¿En qué podemos ayudarte con tus fotos hoy?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(bonjour|salut|coucou)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Bonjour! Bienvenue chez CuttingEdger. Comment pouvons-nous vous aider aujourd\'hui?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(hallo|guten\s*(tag|morgen|abend))[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Hallo! Willkommen bei CuttingEdger. Wie können wir Ihnen bei Ihrer Bildbearbeitung helfen?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(ciao|buongiorno|salve)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'Ciao! Benvenuto su CuttingEdger. Come possiamo aiutarti oggi?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'হ্যালো! কাটিংএজারে আপনাকে স্বাগতম। আপনার ছবির রিটাচিং বা ক্লিপিং পাথের কাজে আমরা কীভাবে সাহায্য করতে পারি?',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
+        if (preg_match('/^(مرحبا|أهلا|السلام\s*عليكم)[\s!?.]*$/iu', $text)) {
+            return [
+                'content' => 'أهلاً بك في CuttingEdger! كيف يمكننا مساعدتك في تعديل صورك اليوم؟',
+                'tool_cards' => [],
+                'suggested_replies' => [],
+            ];
+        }
+
         if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|what\'?s\s*up|greetings)[\s!?.]*$/i', $text) ||
             $text === 'hi' || $text === 'hello' || $text === 'hey') {
             $greetings = [
@@ -1159,12 +1207,7 @@ class HybridIntentEngine
             return [
                 'content' => $greetings[array_rand($greetings)],
                 'tool_cards' => [],
-                'suggested_replies' => [
-                    'Calculate Pricing',
-                    'Turnaround SLAs',
-                    'Claim 3 Free Sample Edits',
-                    'Talk to a live specialist',
-                ],
+                'suggested_replies' => [],
             ];
         }
 

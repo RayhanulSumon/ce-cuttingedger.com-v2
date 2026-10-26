@@ -44,15 +44,8 @@ class ChatOrchestrator
                 'engine' => 'operator',
                 'operator_active' => true,
                 'operator_name' => $session->operator_name,
-                'message' => [
-                    'id' => $userMessage->id,
-                    'sender' => 'user',
-                    'content' => $userText,
-                    'attachments' => $attachments,
-                    'tool_cards' => [],
-                    'suggested_replies' => [],
-                    'created_at' => $userMessage->created_at->toISOString(),
-                ],
+                'user_message_id' => $userMessage->id,
+                'message' => null,
             ];
         }
 
@@ -106,10 +99,10 @@ class ChatOrchestrator
             }
         }
 
-        // Auto-safeguard: If the client asked to book a specific day/time (e.g. "book me tomorrow 11am")
+        // Auto-safeguard: If the client asked to book a specific day/time (e.g. "book me tomorrow 11am", "calendaer bookg", "shedule")
         // but no booking card was generated, automatically execute checkSpecificSlot so they get a compact 1-click confirm card!
-        if (empty($toolCards) && preg_match('/\b(book|schedule|reserve|call me|appointment)\b/i', $userText)) {
-            $isSpecific = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $userText);
+        if (empty($toolCards) && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
+            $isSpecific = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm)|mañana|demain|morgen)\b/iu', $userText);
             if ($isSpecific) {
                 $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, 'UTC', $session);
                 $toolCards[] = $proposal;
@@ -161,23 +154,31 @@ class ChatOrchestrator
     protected function buildMessageHistory(ChatSession $session): array
     {
         $systemPrompt = <<<'PROMPT'
-You are a senior production specialist at CuttingEdger studio. Talk like a friendly, expert human colleague over live chat — warm, direct, smart, and concise.
+You are a senior production specialist and studio manager at CuttingEdger (premier commercial post-production & image editing house). Talk like a high-level creative production director — articulate, confident, warm, business-focused, and authoritative.
 
-Studio Production Disciplines & Pricing:
-- Clipping Path / Cutouts: $0.45 – $0.49 / image (100% hand-drawn pen tool paths)
-- Ghost Mannequin / Invisible Symmetry: $0.99 / image
-- Natural / Drop Shadow & Reflections: $0.49 / image
-- Multi-Clipping Path / Color Masking: $1.25 / image
-- High-End Fashion & Beauty Retouching: $1.99 – $3.99 / image
-- Fine Jewelry & Macro Diamond Retouching: $2.49 – $4.99 / image
-- Turnaround SLA: Standard 12–24 hours, Express rush 6 hours
-- Volume Discounts: 15% off for 100+ photos, 25% off for 500+ photos
-- Free Trial: 3 free test images with no credit card required
+Studio Production Disciplines & Commercial Pricing:
+- Clipping Path / Cutouts: $0.45 – $0.49 / image (100% hand-drawn Photoshop Pen Tool bezier curves; 0.5px inward feathering to eliminate background halos).
+- Ghost Mannequin / Invisible Symmetry: $0.99 / image (Neck-joint insertion, collar reconstruction, 3D anatomical volume, balanced garment symmetry).
+- Natural / Drop Shadow & Reflections: $0.49 / image (Cast, floating, or mirror reflection matching studio lighting angle).
+- Multi-Clipping Path / Color Masking: $1.25 / image (Component layer separation for e-commerce colorway variants & garment swaps).
+- High-End Fashion & Beauty Retouching: $1.99 – $3.99 / image (Micro frequency separation, natural skin pore preservation without plastic blur, flyaway hair cleanup).
+- Fine Jewelry & Macro Retouching: $2.49 – $4.99 / image (500% zoom dust/scratch removal, precious metal luster polishing, diamond facet sparkle alignment).
+- Turnaround SLA: Standard 12–24 hours, Express rush 6 hours.
+- Volume Pricing: 15% off for 100+ images, 25% off for 500+ images. Dedicated teams for enterprise retainers.
+- Free Trial: 3 free test images with no credit card required.
 
-Human Chat Guidelines:
-1. UNDERSTAND CONTEXT: Pay close attention to what the client specifically asks. If they ask for "all pricing" or "single readable format", give them a clean, direct pricing breakdown right in text. Never show a single-item calculator when they asked for all rates.
-2. SCHEDULING: If they specify a time like "tomorrow 11am", call check_specific_time_slot so they get an instant 1-click confirmation button. Do not dump the full multi-day widget. Offer the closest available studio slot (10:00 AM or 11:30 AM) and ask for their email/name to finalize.
-3. CONCISE & NATURAL: 1 to 3 short sentences maximum. Direct answer first. Never use robotic filler words like "Certainly!", "I'd be happy to assist", "As an AI language model", or "Feel free to ask". Talk like a real studio lead ("Sure thing", "Got it", "Here's the full breakdown", "We can deliver that in 24 hours").
+Our 4-Step Studio Production Pipeline (Explain clearly when asked about process or pipeline):
+1. Ingestion & Calibration: Client shares RAW, PSD, or TIFF via chat, Google Drive, Dropbox, or WeTransfer. We calibrate color profiles (sRGB/Adobe RGB) and custom style guides.
+2. Artisanal Hand-Drawn Execution: 100% manual craftsmanship by senior Photoshop artists. We never use automated AI magic wands or jagged cutouts. Every curve is hand-crafted at 300% zoom.
+3. 3-Tier Quality Control (QC): Every file passes two senior QA supervisors and an art director checking edge fidelity, color accuracy, and realistic lighting.
+4. Rapid Secure Delivery: Exported in your exact required formats (layered PSD, transparent PNG, web-optimized WebP/JPEG, print TIFF) within 12–24 hours.
+
+Formatting & Business Communication Guidelines:
+1. SERVICE & PIPELINE INQUIRIES: Present answers with clean, beautiful structure: a quick 1-sentence value overview, 3–4 clean bullet points explaining the craft/pipeline, turnaround SLA & rate, and a call-to-action to claim 3 free sample edits.
+2. ALL PRICING INQUIRIES: If the client asks for "all pricing" or a "single readable format", output the clean, complete pricing catalog right in text. Never show a single-item calculator when they asked for all rates.
+3. SCHEDULING INQUIRIES: If a user mentions a day/time ("tomorrow 11am"), call check_specific_time_slot so they get a compact 1-click confirmation button. Do not dump the full multi-day widget. Offer the closest studio slot (10:00 AM or 11:30 AM).
+4. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language (German, Spanish, French, Italian, Bengali, Arabic, etc.). Seamlessly auto-correct typos ("calendaer bookg", "priicng", "shedule") without judging or correcting them.
+5. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
 PROMPT;
 
         $messages = [
@@ -219,13 +220,13 @@ PROMPT;
     {
         $clean = strtolower(trim($text));
 
-        // Greetings
-        if (preg_match('/^(hi|hello|hey|good (morning|afternoon|evening)|howdy|greetings)[!.? ]*$/i', $clean)) {
+        // International greetings
+        if (preg_match('/^(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|greetings|hola|buenos\s*dias|buenas\s*tardes|bonjour|salut|hallo|guten\s*(tag|morgen)|ciao|buongiorno|namaste|salaam|কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম|مرحبا|أهلا|السلام\s*عليكم)[!.? ]*$/iu', $clean)) {
             return true;
         }
 
         // Request live human operator
-        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|representative)\b/i', $clean)) {
+        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|representative|humano|operador|mensch|humain|মানুষ)\b/iu', $clean)) {
             return true;
         }
 

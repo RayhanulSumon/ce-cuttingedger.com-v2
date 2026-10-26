@@ -41,13 +41,13 @@ class ToolRegistry
         $text = strtolower($userText);
         $tools = [];
 
-        // Pricing queries
-        if (preg_match('/\b(price|pricing|cost|quote|rate|how much|dollar|\$|discount|estimate)\b/i', $text)) {
+        // Pricing queries (supports typos like priice, priicng, qoute and multilingual: precio, tarif, preis, cout, etc.)
+        if (preg_match('/\b(pric\w*|prc\w*|cost\w*|quot\w*|qout\w*|rate\w*|how\s*mu[sc]h|dollar|\$|discount\w*|estimat\w*|preci\w*|tarif\w*|preis\w*|coute\w*|prezzo\w*|costo\w*|দাম|খরচ|سعر|أسعار)\b/iu', $text)) {
             $tools[] = PriceCalculatorTool::schema();
         }
 
-        // Booking / Calendar queries
-        if (preg_match('/\b(call|meeting|book|schedule|appointment|calendar|slot|reschedule)\b/i', $text)) {
+        // Booking / Calendar queries (supports typos like calendaer, calender, shedule, skedule, apointment, and multilingual: agendar, cita, termin, rendez-vous)
+        if (preg_match('/\b(call\w*|meet\w*|book\w*|sched\w*|sced\w*|sked\w*|appoint\w*|apoint\w*|calend\w*|slot\w*|resched\w*|reserv\w*|agend\w*|cita\w*|termin\w*|rendez\w*|বুকিং|অ্যাপয়েন্টমেন্ট|حجز)\b/iu', $text)) {
             $tools[] = CalendarBookingTool::checkSpecificSlotSchema();
             $tools[] = CalendarBookingTool::checkSlotsSchema();
             $tools[] = CalendarBookingTool::bookAppointmentSchema();
@@ -58,8 +58,8 @@ class ToolRegistry
             $tools[] = LeadCaptureTool::schema();
         }
 
-        // Service exploration
-        if (preg_match('/\b(service|services|catalog|portfolio|what do you (do|offer))\b/i', $text)) {
+        // Service exploration (supports typos and service terms: clippng, retuch, manequin, etc.)
+        if (preg_match('/\b(servic\w*|catalog\w*|portfolio\w*|clip\w*|cutout\w*|mask\w*|retouch\w*|retuch\w*|mannequin\w*|manequin\w*|shadow\w*|jewelry\w*|jewelery\w*|what do you (do|offer))\b/iu', $text)) {
             $tools[] = ServiceCatalogTool::schema();
         }
 
