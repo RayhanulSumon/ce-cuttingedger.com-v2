@@ -92,6 +92,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::post('chat-sessions/{chatSession}/release', [AdminChatSessionController::class, 'release'])->name('chat-sessions.release');
     Route::post('chat-sessions/{chatSession}/reply', [AdminChatSessionController::class, 'reply'])->name('chat-sessions.reply');
     Route::get('chat-sessions/{chatSession}/poll', [AdminChatSessionController::class, 'poll'])->name('chat-sessions.poll');
+    Route::get('chat sessions', fn () => redirect('/admin/chat-sessions'));
     Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
 
     // Admin Realtime Notifications Dropdown
