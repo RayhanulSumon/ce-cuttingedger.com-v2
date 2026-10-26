@@ -105,16 +105,13 @@ class ChatOrchestrator
                 }
             }
         }
-        // Auto-safeguard: If the client asked to book a specific day/time (e.g. "book me tomorrow 11am", "calendaer bookg", "shedule")
-        // but no booking card was generated, automatically execute checkSpecificSlot so they get a compact 1-click confirm card!
-        elseif (empty($toolCards) && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
-            $isSpecific = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm)|mañana|demain|morgen)\b/iu', $userText);
-            if ($isSpecific) {
-                $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, $clientTimezone, $session);
-                $toolCards[] = $proposal;
-                if (empty($assistantContent) || $assistantContent === "We're ready to take on your project!") {
-                    $assistantContent = $proposal['message'];
-                }
+        // Auto-safeguard: If the client asked to book, schedule, or meet (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am")
+        // but no booking card was generated, automatically execute checkSpecificSlot so they get the compact 1-click booking card!
+        elseif (empty($toolCards) && ! $isCheckingExisting && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
+            $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, $clientTimezone, $session);
+            $toolCards[] = $proposal;
+            if (empty($assistantContent) || str_contains(strtolower($assistantContent), 'feel free to ask') || str_contains(strtolower($assistantContent), 'make your project a success')) {
+                $assistantContent = $proposal['message'];
             }
         }
 
@@ -182,7 +179,7 @@ Our 4-Step Studio Production Pipeline (Explain clearly when asked about process 
 Formatting & Business Communication Guidelines:
 1. SERVICE & PIPELINE INQUIRIES: Present answers with clean, beautiful structure: a quick 1-sentence value overview, 3–4 clean bullet points explaining the craft/pipeline, turnaround SLA & rate, and a call-to-action to claim 3 free sample edits.
 2. ALL PRICING INQUIRIES: If the client asks for "all pricing" or a "single readable format", output the clean, complete pricing catalog right in text. Never show a single-item calculator when they asked for all rates.
-3. SCHEDULING INQUIRIES: If a user mentions a day/time ("tomorrow 11am"), call check_specific_time_slot so they get a compact 1-click confirmation button. Do not dump the full multi-day widget. Offer the closest studio slot (10:00 AM or 11:30 AM).
+3. SCHEDULING & DEMO INQUIRIES: Whenever the client expresses intent to book, schedule, meet, or see a demo (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am"), ALWAYS invoke check_specific_time_slot so they get the interactive 1-click confirmation card. Never answer with a passive text-only reply without an interactive booking proposal card!
 4. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language (German, Spanish, French, Italian, Bengali, Arabic, etc.). Seamlessly auto-correct typos ("calendaer bookg", "priicng", "shedule") without judging or correcting them.
 5. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
 PROMPT;

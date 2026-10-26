@@ -322,7 +322,9 @@ class CalendarBookingTool
             'is_exact' => $isExact,
             'message' => $isExact
                 ? "{$dateLabel} at {$closestTime} UTC is available! Click below to confirm or reply with your email to lock it in:"
-                : "For {$requestedTime}, our closest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:",
+                : (preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $requestedTime)
+                    ? "For {$requestedTime}, our closest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:"
+                    : "We would be delighted to schedule your technical intake call! Our earliest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:"),
         ];
     }
 
