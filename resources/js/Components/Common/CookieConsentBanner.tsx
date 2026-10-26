@@ -44,7 +44,7 @@ export function CookieConsentBanner() {
             className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[999] bg-[#0e1017]/95 border border-white/15 p-5 rounded-2xl shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 select-none"
         >
             <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center shrink-0 text-[#d4ff00]">
+                <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center shrink-0 text-accent">
                     <Cookie className="w-4 h-4" />
                 </div>
                 <div className="space-y-1.5 flex-1 text-xs">
@@ -55,11 +55,11 @@ export function CookieConsentBanner() {
                         We deploy privacy-preserving cookies and analytics to calibrate visual pipeline performance. No intrusive third-party cross-tracking.
                     </p>
                     <div className="flex items-center gap-2 pt-1 font-mono text-[11px] text-neutral-400">
-                        <Link href="/cookie-policy" className="underline hover:text-[#d4ff00] transition-colors">
+                        <Link href="/cookie-policy" className="underline hover:text-accent transition-colors">
                             Cookie Policy
                         </Link>
                         <span>·</span>
-                        <Link href="/privacy" className="underline hover:text-[#d4ff00] transition-colors">
+                        <Link href="/privacy" className="underline hover:text-accent transition-colors">
                             Privacy Terms
                         </Link>
                     </div>
@@ -77,7 +77,7 @@ export function CookieConsentBanner() {
                 <button
                     type="button"
                     onClick={handleAccept}
-                    className="px-4 py-1.5 rounded-lg bg-[#d4ff00] text-black font-bold hover:bg-[#bfe600] transition-all shadow-md"
+                    className="px-4 py-1.5 rounded-lg bg-accent text-black font-bold hover:bg-accent-hover transition-all shadow-md"
                 >
                     Accept All
                 </button>

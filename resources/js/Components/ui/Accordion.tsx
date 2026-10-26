@@ -22,15 +22,15 @@ export function AccordionItem({ id, question, answer, defaultOpen = false }: Acc
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full py-6 sm:py-8 flex items-center justify-between text-left cursor-pointer focus:outline-none"
             >
-                <span className="font-display font-bold text-lg sm:text-2xl text-white group-hover:text-[#d4ff00] transition-colors pr-6">
+                <span className="font-display font-bold text-lg sm:text-2xl text-white group-hover:text-accent transition-colors pr-6">
                     {question}
                 </span>
 
                 <div
                     className={`w-9 h-9 shrink-0 rounded-full border border-white/10 flex items-center justify-center transition-all duration-300 ${
                         isOpen
-                            ? 'bg-[#d4ff00] text-black border-[#d4ff00]'
-                            : 'text-neutral-400 group-hover:border-[#d4ff00] group-hover:text-[#d4ff00]'
+                            ? 'bg-accent text-black border-accent'
+                            : 'text-neutral-400 group-hover:border-accent group-hover:text-accent'
                     }`}
                 >
                     {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

@@ -245,9 +245,9 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Top Status Bar if form is dirty */}
             {isDirty && (
-                <div className="flex items-center justify-between p-3 rounded-lg border border-[#d4ff00]/30 bg-[#d4ff00]/10 text-neutral-200 text-xs font-mono">
+                <div className="flex items-center justify-between p-3 rounded-lg border border-accent/30 bg-accent/10 text-neutral-200 text-xs font-mono">
                     <span className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-[#d4ff00] animate-pulse" />
+                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                         You have unsaved changes in this blog post.
                     </span>
                     <span className="text-neutral-400">Remember to commit your changes.</span>
@@ -261,7 +261,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-6 shadow-xl">
                         <div className="flex items-center justify-between pb-4 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-[#d4ff00]" />
+                                <FileText className="w-4 h-4 text-accent" />
                                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
                                     CORE ARTICLE ATTRIBUTES
                                 </span>
@@ -282,7 +282,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     value={data.title}
                                     onChange={(e) => setData("title", e.target.value)}
                                     placeholder="e.g. Kinetic Physics: Sculpting Tactile Interfaces"
-                                    className="bg-[#0c0d12] border-white/10 focus:border-[#d4ff00] text-lg font-medium text-white placeholder:text-neutral-600 h-12"
+                                    className="bg-[#0c0d12] border-white/10 focus:border-accent text-lg font-medium text-white placeholder:text-neutral-600 h-12"
                                     required
                                 />
                                 {errors.title && (
@@ -304,7 +304,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         size="sm"
                                         onClick={handleGenerateSlug}
                                         disabled={!data.title}
-                                        className="h-6 px-2 text-[11px] font-mono text-[#d4ff00] hover:text-[#d4ff00] hover:bg-[#d4ff00]/10 gap-1 cursor-pointer"
+                                        className="h-6 px-2 text-[11px] font-mono text-accent hover:text-accent hover:bg-accent/10 gap-1 cursor-pointer"
                                     >
                                         <Sparkles className="w-3 h-3" />
                                         <span>Generate from Title</span>
@@ -315,7 +315,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         value={data.slug}
                                         onChange={(e) => setData("slug", e.target.value)}
                                         placeholder="kinetic-physics-tactile-interfaces"
-                                        className="bg-[#0c0d12] border-white/10 focus:border-[#d4ff00] font-mono text-sm text-neutral-300"
+                                        className="bg-[#0c0d12] border-white/10 focus:border-accent font-mono text-sm text-neutral-300"
                                         required={isEdit}
                                     />
                                 </div>
@@ -323,7 +323,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     <div className="flex items-center gap-1 min-w-0">
                                         <Globe className="w-3 h-3 shrink-0 text-neutral-400" />
                                         <span>Live URL preview:</span>
-                                        <span className="text-[#d4ff00]">
+                                        <span className="text-accent">
                                             https://cuttingedger.com/blog/{data.slug || "your-slug"}
                                         </span>
                                     </div>
@@ -370,7 +370,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 value={data.excerpt}
                                 onChange={(e) => setData("excerpt", e.target.value)}
                                 placeholder="A brief 1–2 sentence overview of the article. This appears on blog preview cards and search results."
-                                className="bg-[#0c0d12] border-white/10 focus:border-[#d4ff00] text-sm text-neutral-200 leading-relaxed"
+                                className="bg-[#0c0d12] border-white/10 focus:border-accent text-sm text-neutral-200 leading-relaxed"
                                 required
                             />
                             {errors.excerpt && (
@@ -406,7 +406,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-6 shadow-xl">
                         <div className="flex items-center justify-between pb-4 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4 text-[#d4ff00]" />
+                                <Globe className="w-4 h-4 text-accent" />
                                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
                                     DYNAMIC SEARCH ENGINE OPTIMIZATION (SEO)
                                 </span>
@@ -440,7 +440,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
                         <div className="pb-3 border-b border-white/10">
                             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Tag className="w-4 h-4 text-[#d4ff00]" />
+                                <Tag className="w-4 h-4 text-accent" />
                                 TAXONOMY & ATTRIBUTION
                             </span>
                         </div>
@@ -455,7 +455,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 value={data.author_id ? String(data.author_id) : ""}
                                 onValueChange={(val) => setData("author_id", Number(val) || val)}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
+                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
                                     <SelectValue placeholder="Select Author">
                                         {selectedAuthor ? (
                                             <div className="flex items-center gap-2.5 min-w-0 flex-1 text-left">
@@ -466,7 +466,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                         className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0"
                                                     />
                                                 ) : (
-                                                    <span className="w-5 h-5 rounded-full bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30 flex items-center justify-center text-[10px] font-mono font-bold shrink-0">
+                                                    <span className="w-5 h-5 rounded-full bg-accent/10 text-accent border border-accent/30 flex items-center justify-center text-[10px] font-mono font-bold shrink-0">
                                                         {selectedAuthor.name.charAt(0)}
                                                     </span>
                                                 )}
@@ -489,7 +489,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             <SelectItem
                                                 key={a.id}
                                                 value={String(a.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-[#d4ff00]/10 focus:text-white data-[highlighted]:bg-[#d4ff00]/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
                                             >
                                                 <div className="flex items-center gap-3 w-full pr-4">
                                                     {a.avatar ? (
@@ -499,7 +499,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                             className="w-7 h-7 rounded-full object-cover border border-white/10 shrink-0"
                                                         />
                                                     ) : (
-                                                        <div className="w-7 h-7 rounded-full bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30 flex items-center justify-center text-xs font-mono font-bold shrink-0">
+                                                        <div className="w-7 h-7 rounded-full bg-accent/10 text-accent border border-accent/30 flex items-center justify-center text-xs font-mono font-bold shrink-0">
                                                             {a.name.charAt(0)}
                                                         </div>
                                                     )}
@@ -538,11 +538,11 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     }));
                                 }}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
+                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
                                     <SelectValue placeholder="Select Category">
                                         {selectedCategory ? (
                                             <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
-                                                <FolderKanban className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                                <FolderKanban className="w-4 h-4 text-accent shrink-0" />
                                                 <span className="font-medium text-white truncate text-sm">
                                                     {selectedCategory.name}
                                                 </span>
@@ -559,17 +559,17 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             <SelectItem
                                                 key={c.id}
                                                 value={String(c.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-[#d4ff00]/10 focus:text-white data-[highlighted]:bg-[#d4ff00]/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
                                             >
                                                 <div className="flex items-center justify-between w-full pr-4 gap-3">
                                                     <div className="flex items-center gap-2.5 min-w-0">
-                                                        <FolderKanban className="w-4 h-4 text-[#d4ff00] shrink-0 opacity-80" />
+                                                        <FolderKanban className="w-4 h-4 text-accent shrink-0 opacity-80" />
                                                         <span className="font-medium text-white text-sm truncate">
                                                             {c.name}
                                                         </span>
                                                     </div>
                                                     {c.subcategories && c.subcategories.length > 0 && (
-                                                        <span className="text-[10px] font-mono text-[#d4ff00] bg-[#d4ff00]/10 border border-[#d4ff00]/20 px-1.5 py-0.5 rounded shrink-0">
+                                                        <span className="text-[10px] font-mono text-accent bg-accent/10 border border-accent/20 px-1.5 py-0.5 rounded shrink-0">
                                                             {c.subcategories.length} sub
                                                         </span>
                                                     )}
@@ -594,7 +594,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     <span>Subcategory (Optional)</span>
                                 </label>
                                 {activeSubcategories.length > 0 && (
-                                    <span className="text-[10px] font-mono text-[#d4ff00]">
+                                    <span className="text-[10px] font-mono text-accent">
                                         {activeSubcategories.length} available
                                     </span>
                                 )}
@@ -606,7 +606,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 }
                                 disabled={activeSubcategories.length === 0}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white disabled:opacity-50">
+                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white disabled:opacity-50">
                                     <SelectValue placeholder="Select Subcategory">
                                         <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
                                             <CornerDownRight className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
@@ -633,10 +633,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             <SelectItem
                                                 key={sub.id}
                                                 value={String(sub.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-[#d4ff00]/10 focus:text-white data-[highlighted]:bg-[#d4ff00]/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
                                             >
                                                 <div className="flex items-center gap-2.5 pr-4">
-                                                    <CornerDownRight className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                                                    <CornerDownRight className="w-3.5 h-3.5 text-accent shrink-0" />
                                                     <span className="text-sm font-medium text-white">{sub.name}</span>
                                                 </div>
                                             </SelectItem>
@@ -660,7 +660,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 placeholder="Motion, Spatial, UI/UX, Engineering"
                                 value={data.tags}
                                 onChange={(e) => setData("tags", e.target.value)}
-                                className="bg-[#0c0d12] border-white/10 focus:border-[#d4ff00] text-sm"
+                                className="bg-[#0c0d12] border-white/10 focus:border-accent text-sm"
                             />
                             {tagPills.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 pt-1">
@@ -684,7 +684,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
                         <div className="flex items-center justify-between pb-3 border-b border-white/10">
                             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <ImageIcon className="w-4 h-4 text-[#d4ff00]" />
+                                <ImageIcon className="w-4 h-4 text-accent" />
                                 COVER MEDIA & BANNER
                             </span>
                             {data.cover_image && (
@@ -711,10 +711,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 onClick={() => !isUploading && fileInputRef.current?.click()}
                                 className={`group relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer overflow-hidden p-5 flex flex-col items-center justify-center text-center gap-2.5 ${
                                     isDragging
-                                        ? "border-[#d4ff00] bg-[#d4ff00]/10 shadow-[0_0_25px_rgba(212,255,0,0.2)]"
+                                        ? "border-accent bg-accent/10 shadow-[0_0_25px_rgba(251, 183, 24, 0.2)]"
                                         : isUploading
-                                        ? "border-[#d4ff00]/50 bg-[#0c0d12] opacity-80 cursor-wait"
-                                        : "border-white/15 bg-[#0c0d12]/70 hover:border-[#d4ff00]/60 hover:bg-[#0c0d12]"
+                                        ? "border-accent/50 bg-[#0c0d12] opacity-80 cursor-wait"
+                                        : "border-white/15 bg-[#0c0d12]/70 hover:border-accent/60 hover:bg-[#0c0d12]"
                                 }`}
                             >
                                 <input
@@ -731,7 +731,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                                 {isUploading ? (
                                     <div className="flex flex-col items-center gap-2 py-2">
-                                        <Loader2 className="w-8 h-8 text-[#d4ff00] animate-spin" />
+                                        <Loader2 className="w-8 h-8 text-accent animate-spin" />
                                         <div className="flex flex-col items-center gap-0.5">
                                             <span className="text-xs font-mono font-bold text-white">
                                                 Optimizing & uploading image...
@@ -785,12 +785,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-[#d4ff00] group-hover:border-[#d4ff00]/40 group-hover:scale-110 transition-all duration-200">
+                                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-accent group-hover:border-accent/40 group-hover:scale-110 transition-all duration-200">
                                             <UploadCloud className="w-5 h-5" />
                                         </div>
                                         <div className="space-y-0.5">
-                                            <p className="text-xs font-medium text-white group-hover:text-[#d4ff00] transition-colors">
-                                                <span className="font-bold underline decoration-[#d4ff00]/60 underline-offset-2">
+                                            <p className="text-xs font-medium text-white group-hover:text-accent transition-colors">
+                                                <span className="font-bold underline decoration-[#fbb718]/60 underline-offset-2">
                                                     Click to upload
                                                 </span>{" "}
                                                 or drag & drop
@@ -830,7 +830,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             <div className="space-y-1.5 pt-1">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                                        <ImageIcon className="w-3 h-3 text-[#d4ff00]" />
+                                        <ImageIcon className="w-3 h-3 text-accent" />
                                         <span>Live 16:9 Cinema Banner Preview</span>
                                     </span>
                                     {!imagePreviewError && (
@@ -838,7 +838,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             href={data.cover_image}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="text-[10px] font-mono text-neutral-400 hover:text-[#d4ff00] flex items-center gap-1 transition-colors"
+                                            className="text-[10px] font-mono text-neutral-400 hover:text-accent flex items-center gap-1 transition-colors"
                                             title="View full resolution image in new tab"
                                         >
                                             <span>Full Size</span>
@@ -900,7 +900,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
                         <div className="flex items-center justify-between pb-3 border-b border-white/10">
                             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Layers className="w-4 h-4 text-[#d4ff00]" />
+                                <Layers className="w-4 h-4 text-accent" />
                                 PUBLISHING HUB
                             </span>
                             <span
@@ -930,7 +930,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     )
                                 }
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
+                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
                                     <SelectValue>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span
@@ -993,7 +993,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 <label className="text-xs font-mono text-white cursor-pointer flex items-center gap-1.5">
                                     <span>Featured Article</span>
                                     {data.is_featured && (
-                                        <Badge className="bg-[#d4ff00] text-black text-[9px] font-mono font-bold px-1 py-0 h-4">
+                                        <Badge className="bg-accent text-black text-[9px] font-mono font-bold px-1 py-0 h-4">
                                             HERO
                                         </Badge>
                                     )}
@@ -1014,7 +1014,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full h-11 bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(212,255,0,0.15)] transition-all"
+                                className="w-full h-11 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(251, 183, 24, 0.15)] transition-all"
                             >
                                 <Save className="w-4 h-4" />
                                 <span>
@@ -1051,7 +1051,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         variant="ghost"
                                         className="w-full h-8 text-[11px] font-mono text-neutral-400 hover:text-white hover:bg-white/5 gap-1.5 cursor-pointer"
                                     >
-                                        <Eye className="w-3 h-3 text-[#d4ff00]" />
+                                        <Eye className="w-3 h-3 text-accent" />
                                         <span>Preview Public Article</span>
                                         <ExternalLink className="w-2.5 h-2.5" />
                                     </Button>

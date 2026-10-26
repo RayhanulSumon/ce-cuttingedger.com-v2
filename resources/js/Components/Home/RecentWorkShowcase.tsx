@@ -62,7 +62,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
             deliverables: ['Design Architecture', 'Biometric App', 'High-Frequency UX'],
             image: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=1200&q=85',
             slug: 'kashtech-doyel',
-            accent: '#d4ff00',
+            accent: '#fbb718',
         },
         {
             id: 3,
@@ -113,7 +113,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
         >
             {/* Ambient Background Glows */}
             <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-[#00f5ff]/5 rounded-full blur-[220px] pointer-events-none" />
-            <div className="absolute bottom-1/4 left-0 w-[50rem] h-[50rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
+            <div className="absolute bottom-1/4 left-0 w-[50rem] h-[50rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 w-full">
                 {/* SECTION HEADER: AGNTIX RECENT WORK WITH KINETIC SCROLL & LIGHTNING K */}

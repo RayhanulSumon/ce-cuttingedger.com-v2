@@ -41,13 +41,13 @@ export default function Index({ pillars = [], services = [] }: ServicesIndexProp
                         return (
                             <article
                                 key={pillar.id || pillar.slug}
-                                className="p-8 sm:p-14 rounded-3xl bg-[#12141c] border border-white/10 hover:border-[#d4ff00]/40 transition-all group shadow-2xl relative overflow-hidden"
+                                className="p-8 sm:p-14 rounded-3xl bg-[#12141c] border border-white/10 hover:border-accent/40 transition-all group shadow-2xl relative overflow-hidden"
                             >
                                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                                     {/* Left Column: Pillar Title & Summary */}
                                     <div className="lg:col-span-6 space-y-5">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                                            <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                                                 [ PILLAR 0{index + 1} ]
                                             </span>
                                             {pillar.children && pillar.children.length > 0 && (
@@ -57,7 +57,7 @@ export default function Index({ pillars = [], services = [] }: ServicesIndexProp
                                             )}
                                         </div>
 
-                                        <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white leading-tight group-hover:text-[#d4ff00] transition-colors">
+                                        <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white leading-tight group-hover:text-accent transition-colors">
                                             <Link href={pillarHref}>
                                                 {pillar.title}
                                             </Link>
@@ -78,7 +78,7 @@ export default function Index({ pillars = [], services = [] }: ServicesIndexProp
                                                         <Link
                                                             key={child.id || child.slug}
                                                             href={`/services/${pillar.slug}/${child.slug}`}
-                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-[#d4ff00] hover:text-black border border-white/10 text-xs font-mono transition-all text-neutral-200"
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-accent hover:text-black border border-white/10 text-xs font-mono transition-all text-neutral-200"
                                                         >
                                                             <span>{child.title}</span>
                                                             <ArrowUpRight className="w-3 h-3" />
@@ -91,7 +91,7 @@ export default function Index({ pillars = [], services = [] }: ServicesIndexProp
                                         <div className="pt-4 flex items-center gap-4">
                                             <Link
                                                 href={pillarHref}
-                                                className="inline-flex items-center gap-2 font-display font-bold text-xs uppercase tracking-widest text-black bg-[#d4ff00] hover:bg-[#bfe600] px-6 py-3.5 rounded-full transition-colors shadow-lg"
+                                                className="inline-flex items-center gap-2 font-display font-bold text-xs uppercase tracking-widest text-black bg-accent hover:bg-accent-hover px-6 py-3.5 rounded-full transition-colors shadow-lg"
                                             >
                                                 <span>Explore Pillar Architecture</span>
                                                 <ArrowUpRight className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function Index({ pillars = [], services = [] }: ServicesIndexProp
                                         <div className="space-y-3">
                                             {pillar.features?.map((feat, i) => (
                                                 <div key={i} className="flex items-start gap-2.5 text-sm text-neutral-300">
-                                                    <CheckCircle2 className="w-4 h-4 text-[#d4ff00] shrink-0 mt-0.5" />
+                                                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                                                     <span>{feat}</span>
                                                 </div>
                                             ))}

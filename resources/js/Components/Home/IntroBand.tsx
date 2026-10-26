@@ -124,23 +124,15 @@ function KineticMarqueeRow({
                                 <span
                                     className={`font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-3xl sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[76px] tracking-wide leading-none pointer-events-none [backface-visibility:hidden] [transform:translateZ(0)] ${
                                         item.style === 'highlight'
-                                            ? accentColor === '#d4ff00'
-                                                ? 'text-[#d4ff00] [text-shadow:0_0_25px_rgba(212,255,0,0.5),0_0_50px_rgba(212,255,0,0.2)]'
-                                                : 'text-[#00f5ff] [text-shadow:0_0_25px_rgba(0,245,255,0.5),0_0_50px_rgba(0,245,255,0.2)]'
+                                            ? 'text-white font-extrabold'
                                             : item.style === 'stroke'
-                                            ? 'text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.45)]'
-                                            : 'text-white/90'
+                                            ? 'text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.35)]'
+                                            : 'text-neutral-400 font-semibold'
                                     }`}
                                 >
                                     {item.text}
                                 </span>
-                                <span
-                                    style={{
-                                        backgroundColor: accentColor,
-                                        boxShadow: `0 0 15px ${accentColor}`,
-                                    }}
-                                    className="w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full shrink-0 pointer-events-none [transform:translateZ(0)]"
-                                />
+                                <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-white/20 shrink-0 pointer-events-none [transform:translateZ(0)]" />
                             </div>
                         ))}
                     </div>
@@ -177,7 +169,7 @@ function InvertLine({ text }: InvertLineProps) {
                     display: 'inline-block',
                     transform: 'translateZ(0)',
                 }}
-                className="will-change-[background-position] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] text-base sm:text-xl md:text-2xl lg:text-[clamp(20px,2.95vw,52px)] font-semibold tracking-tight leading-relaxed sm:leading-[1.26] whitespace-normal sm:whitespace-nowrap max-w-full px-2 sm:px-0"
+                className="will-change-[background-position] font-['Roboto',_sans-serif] font-black text-base sm:text-xl md:text-2xl lg:text-[clamp(20px,2.95vw,52px)] tracking-tight leading-relaxed sm:leading-[1.26] whitespace-normal sm:whitespace-nowrap max-w-full px-2 sm:px-0"
             >
                 {text}
             </motion.span>
@@ -236,7 +228,7 @@ export function IntroBand() {
                 {/* Sub-label strip header */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5 flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-neutral-500">
                     <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                         <span>DUAL VELOCITY KINETIC STREAM</span>
                     </div>
                     <span className="hidden sm:inline-block text-neutral-600">
@@ -244,13 +236,13 @@ export function IntroBand() {
                     </span>
                 </div>
 
-                {/* DUAL OPPOSING CONTINUOUS VELOCITY MARQUEES */}
+                {/* DUAL OPPOSING CONTINUOUS VELOCITY MARQUEES (Clean monochrome with no aggressive brand color) */}
                 <div className="space-y-3 sm:space-y-4 overflow-hidden">
                     {/* Strip 1: Continuous Drift Left, Accelerates with Scroll, Draggable */}
                     <KineticMarqueeRow
                         items={marqueeRow1}
                         baseSpeed={-0.6}
-                        accentColor="#d4ff00"
+                        accentColor="#ffffff"
                         bgClass="bg-black/40 border-y border-white/5"
                         velocityFactor={velocityFactor}
                     />
@@ -259,7 +251,7 @@ export function IntroBand() {
                     <KineticMarqueeRow
                         items={marqueeRow2}
                         baseSpeed={0.6}
-                        accentColor="#00f5ff"
+                        accentColor="#ffffff"
                         bgClass="bg-black/60 border-b border-white/5"
                         velocityFactor={velocityFactor}
                     />
@@ -269,7 +261,7 @@ export function IntroBand() {
             {/* 2. DEDICATED FULL-SCREEN STUDIO MANIFESTO STATEMENT */}
             <section className="relative min-h-[75vh] sm:min-h-[85vh] lg:min-h-screen py-16 sm:py-32 lg:py-36 flex flex-col justify-center items-center border-b border-white/10 bg-[#090a0d] overflow-hidden select-none">
                 {/* Ambient Backlight Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65rem] h-[36rem] bg-[#d4ff00]/6 rounded-full blur-[220px] pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65rem] h-[36rem] bg-accent/5 rounded-full blur-[220px] pointer-events-none" />
 
                 <div className="w-full max-w-[96%] xl:max-w-[1560px] mx-auto px-4 sm:px-6 text-center space-y-10 sm:space-y-14 relative z-10">
                     {/* 5 Equal-width lines that scrub smoothly with scroll */}
@@ -283,10 +275,10 @@ export function IntroBand() {
                     <div className="pt-2 flex justify-center">
                         <Link
                             href="/about"
-                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border border-white/20 bg-white/5 hover:bg-[#d4ff00] hover:text-black hover:border-[#d4ff00] text-xs sm:text-sm font-['General_Sans',_'Outfit',_sans-serif] uppercase font-bold tracking-widest text-[#f9f4e8] transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] group cursor-pointer"
+                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full border border-white/20 bg-white/5 hover:bg-accent hover:text-black hover:border-accent text-xs sm:text-sm font-['General_Sans',_'Outfit',_sans-serif] uppercase font-bold tracking-widest text-[#f9f4e8] transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] group cursor-pointer"
                         >
                             <span>Discover Our Studio</span>
-                            <ArrowUpRight className="w-4 h-4 text-[#d4ff00] group-hover:text-black transition-colors" />
+                            <ArrowUpRight className="w-4 h-4 text-accent group-hover:text-black transition-colors" />
                         </Link>
                     </div>
                 </div>

@@ -27,7 +27,7 @@ export default function NdaCompliance() {
                     {/* Security Pillars */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-4">
-                            <div className="w-10 h-10 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                                 <Lock className="w-5 h-5" />
                             </div>
                             <h3 className="text-lg font-display font-bold text-white">Mutual NDA Binding</h3>
@@ -37,7 +37,7 @@ export default function NdaCompliance() {
                         </div>
 
                         <div className="p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-4">
-                            <div className="w-10 h-10 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                                 <Server className="w-5 h-5" />
                             </div>
                             <h3 className="text-lg font-display font-bold text-white">Encrypted Transit & Storage</h3>
@@ -47,7 +47,7 @@ export default function NdaCompliance() {
                         </div>
 
                         <div className="p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-4">
-                            <div className="w-10 h-10 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                                 <EyeOff className="w-5 h-5" />
                             </div>
                             <h3 className="text-lg font-display font-bold text-white">Air-Gapped Studio Controls</h3>
@@ -60,14 +60,14 @@ export default function NdaCompliance() {
                     {/* Detailed Specifications */}
                     <div className="p-8 sm:p-12 rounded-3xl bg-[#12141c] border border-white/10 space-y-8">
                         <div className="flex items-center gap-3 pb-6 border-b border-white/10">
-                            <ShieldCheck className="w-6 h-6 text-[#d4ff00]" />
+                            <ShieldCheck className="w-6 h-6 text-accent" />
                             <h2 className="text-2xl font-display font-bold text-white">Production Security Safeguards</h2>
                         </div>
 
                         <div className="space-y-6 text-sm text-neutral-300">
                             <div className="space-y-2">
                                 <h3 className="font-bold text-white flex items-center gap-2">
-                                    <span className="text-[#d4ff00] font-mono">01.</span>
+                                    <span className="text-accent font-mono">01.</span>
                                     Embargoed Collection Quarantine
                                 </h3>
                                 <p className="text-xs text-neutral-400 leading-relaxed pl-6">
@@ -77,7 +77,7 @@ export default function NdaCompliance() {
 
                             <div className="space-y-2">
                                 <h3 className="font-bold text-white flex items-center gap-2">
-                                    <span className="text-[#d4ff00] font-mono">02.</span>
+                                    <span className="text-accent font-mono">02.</span>
                                     Automated 30-Day Cryptographic Shredding
                                 </h3>
                                 <p className="text-xs text-neutral-400 leading-relaxed pl-6">
@@ -87,7 +87,7 @@ export default function NdaCompliance() {
 
                             <div className="space-y-2">
                                 <h3 className="font-bold text-white flex items-center gap-2">
-                                    <span className="text-[#d4ff00] font-mono">03.</span>
+                                    <span className="text-accent font-mono">03.</span>
                                     White-Label Silence Guarantee
                                 </h3>
                                 <p className="text-xs text-neutral-400 leading-relaxed pl-6">
@@ -96,14 +96,14 @@ export default function NdaCompliance() {
                             </div>
                         </div>
 
-                        <div className="p-6 rounded-2xl bg-[#d4ff00]/5 border border-[#d4ff00]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="p-6 rounded-2xl bg-accent/5 border border-accent/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="space-y-1">
                                 <h4 className="font-display font-bold text-white text-sm">Need a Signed Mutual NDA?</h4>
                                 <p className="text-xs text-neutral-400">We execute standard DocuSign enterprise NDAs within 2 business hours.</p>
                             </div>
                             <a
                                 href="mailto:legal@cuttingedger.com?subject=Enterprise%20NDA%20Request%20-%20Cutting%20Edger"
-                                className="px-6 py-3 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-colors shrink-0"
+                                className="px-6 py-3 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors shrink-0"
                             >
                                 Request NDA Execution
                             </a>

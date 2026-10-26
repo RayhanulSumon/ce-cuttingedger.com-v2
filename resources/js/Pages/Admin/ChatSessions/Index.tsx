@@ -333,7 +333,7 @@ export default function ChatSessionsIndex({
             cell: (row) => (
                 <div className="space-y-0.5">
                     <div className="font-semibold text-white flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <User className="w-3.5 h-3.5 text-accent" />
                         <span>{row.lead_name}</span>
                         {row.has_consultation && (
                             <span className="text-[9px] font-mono font-bold bg-[#00f5ff]/20 text-[#00f5ff] px-1.5 py-0.2 rounded">
@@ -363,7 +363,7 @@ export default function ChatSessionsIndex({
             cell: (row) => (
                 <div className="font-mono text-xs">
                     {row.estimated_price ? (
-                        <span className="font-bold text-[#d4ff00]">
+                        <span className="font-bold text-accent">
                             ${row.estimated_price}
                         </span>
                     ) : (
@@ -426,7 +426,7 @@ export default function ChatSessionsIndex({
                                 ? "bg-rose-500 text-white hover:bg-rose-600 animate-pulse font-bold"
                                 : row.mode === "operator"
                                 ? "bg-[#00f5ff] text-black hover:bg-[#00d0db] font-bold"
-                                : "bg-white/10 hover:bg-[#d4ff00] hover:text-black text-white"
+                                : "bg-white/10 hover:bg-accent hover:text-black text-white"
                         }`}
                         title="Open Live Chat Console & Take Over"
                     >
@@ -507,11 +507,11 @@ export default function ChatSessionsIndex({
                             {stats.total_sessions}
                         </div>
                     </div>
-                    <div className="bg-[#12141a] border border-[#d4ff00]/30 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#d4ff00] block mb-1">
+                    <div className="bg-[#12141a] border border-accent/30 rounded-2xl p-4">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent block mb-1">
                             Captured Leads
                         </span>
-                        <div className="text-2xl font-bold font-mono text-[#d4ff00]">
+                        <div className="text-2xl font-bold font-mono text-accent">
                             {stats.captured_leads}
                         </div>
                     </div>
@@ -562,7 +562,7 @@ export default function ChatSessionsIndex({
                         <div className="p-4 border-b border-white/10 bg-[#12141a] flex flex-wrap items-center justify-between gap-3 shrink-0">
                             <div>
                                 <DialogTitle className="flex items-center gap-2 text-sm">
-                                    <MessageSquareText className="w-4 h-4 text-[#d4ff00]" />
+                                    <MessageSquareText className="w-4 h-4 text-accent" />
                                     <span>Live Client Chat Console</span>
                                     {transcript?.session?.needs_human && (
                                         <Badge variant="destructive" className="font-mono text-[10px] animate-pulse">
@@ -593,7 +593,7 @@ export default function ChatSessionsIndex({
                                         className="h-8 px-3 text-xs font-mono border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 cursor-pointer"
                                         title="Hand chat back to automated assistant"
                                     >
-                                        <Bot className="w-3.5 h-3.5 mr-1 text-[#d4ff00]" />
+                                        <Bot className="w-3.5 h-3.5 mr-1 text-accent" />
                                         <span>Release to Bot</span>
                                     </Button>
                                 ) : (
@@ -616,7 +616,7 @@ export default function ChatSessionsIndex({
                         <div className="flex-1 overflow-y-auto p-4 space-y-3.5 scrollbar-thin scrollbar-thumb-white/10 min-h-[340px]">
                             {isLoadingTranscript ? (
                                 <div className="flex items-center justify-center py-20 text-neutral-400 gap-2 font-mono text-xs">
-                                    <Loader2 className="w-4 h-4 animate-spin text-[#d4ff00]" />
+                                    <Loader2 className="w-4 h-4 animate-spin text-accent" />
                                     <span>Loading conversation stream...</span>
                                 </div>
                             ) : transcript?.messages && transcript.messages.length > 0 ? (
@@ -645,7 +645,7 @@ export default function ChatSessionsIndex({
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <span className="text-[#d4ff00] font-semibold">Assistant Bot</span>
+                                                        <span className="text-accent font-semibold">Assistant Bot</span>
                                                         <span>{m.created_at_formatted}</span>
                                                     </>
                                                 )}
@@ -654,7 +654,7 @@ export default function ChatSessionsIndex({
                                             <div
                                                 className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
-                                                        ? "bg-[#d4ff00] text-black font-medium rounded-br-xs"
+                                                        ? "bg-accent text-black font-medium rounded-br-xs"
                                                         : isOperator
                                                         ? "bg-[#0e1b29] text-white border border-[#00f5ff]/40 rounded-bl-xs shadow-md shadow-[#00f5ff]/5"
                                                         : "bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs"
@@ -691,7 +691,7 @@ export default function ChatSessionsIndex({
                                                     <div className="mt-2 pt-2 border-t border-white/10 space-y-1 font-mono text-[11px]">
                                                         {m.tool_results.map((res: any, rIdx: number) => (
                                                             <div key={rIdx} className="bg-black/30 p-2 rounded-lg border border-white/5">
-                                                                <span className="text-[#d4ff00] block text-[10px] uppercase font-bold">
+                                                                <span className="text-accent block text-[10px] uppercase font-bold">
                                                                     Tool Executed: {res.type}
                                                                 </span>
                                                                 {res.service_name && (

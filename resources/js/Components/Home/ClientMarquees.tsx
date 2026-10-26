@@ -40,10 +40,10 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
             className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-[#d4ff00]/5 rounded-full blur-[190px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-accent/5 rounded-full blur-[190px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 mb-10 sm:mb-14 text-center">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent mb-4">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>[ TRUSTED BY 173+ ENTERPRISES ]</span>
                 </div>
@@ -65,7 +65,7 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                                 href={client.url || '#'}
                                 target={client.url ? '_blank' : undefined}
                                 rel="noopener noreferrer"
-                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-accent/50 hover:bg-white/[0.06] transition-all duration-300"
                             >
                                 {client.logo_dark ? (
                                     <img 
@@ -74,7 +74,7 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                                         className="h-9 w-auto max-w-[130px] object-contain opacity-75 group-hover:opacity-100 filter brightness-110 contrast-125 transition-all duration-300" 
                                     />
                                 ) : (
-                                    <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">★</span>
+                                    <span className="text-2xl text-accent group-hover:scale-125 transition-transform duration-300">★</span>
                                 )}
                                 <div className="text-left">
                                     <span className="font-display font-bold text-lg sm:text-xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
@@ -89,9 +89,9 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                         : row1Fallback.map((item, index) => (
                             <div
                                 key={index}
-                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-accent/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
                             >
-                                <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
+                                <span className="text-2xl text-accent group-hover:scale-125 transition-transform duration-300">
                                     {item.symbol}
                                 </span>
                                 <div className="text-left">
@@ -117,7 +117,7 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                                 href={client.url || '#'}
                                 target={client.url ? '_blank' : undefined}
                                 rel="noopener noreferrer"
-                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-accent/50 hover:bg-white/[0.06] transition-all duration-300"
                             >
                                 {client.logo_dark ? (
                                     <img 
@@ -126,7 +126,7 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                                         className="h-9 w-auto max-w-[130px] object-contain opacity-75 group-hover:opacity-100 filter brightness-110 contrast-125 transition-all duration-300" 
                                     />
                                 ) : (
-                                    <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">◈</span>
+                                    <span className="text-2xl text-accent group-hover:scale-125 transition-transform duration-300">◈</span>
                                 )}
                                 <div className="text-left">
                                     <span className="font-display font-bold text-lg sm:text-xl tracking-wider text-neutral-200 group-hover:text-white transition-colors block leading-tight">
@@ -141,9 +141,9 @@ export function ClientMarquees({ clients }: ClientMarqueesProps) {
                         : row2Fallback.map((item, index) => (
                             <div
                                 key={index}
-                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-[#d4ff00]/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
+                                className="group flex items-center gap-4 px-8 py-4 mx-3 rounded-2xl border border-white/10 bg-white/[0.03] hover:border-accent/50 hover:bg-white/[0.06] transition-all duration-300 cursor-default"
                             >
-                                <span className="text-2xl text-[#d4ff00] group-hover:scale-125 transition-transform duration-300">
+                                <span className="text-2xl text-accent group-hover:scale-125 transition-transform duration-300">
                                     {item.symbol}
                                 </span>
                                 <div className="text-left">

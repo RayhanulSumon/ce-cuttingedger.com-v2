@@ -128,7 +128,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
         {
             header: "RATING",
             cell: (t) => (
-                <div className="flex items-center gap-1 text-[#d4ff00]">
+                <div className="flex items-center gap-1 text-accent">
                     <Star className="w-3.5 h-3.5 fill-current" />
                     <span className="font-mono text-xs">{t.rating}.0</span>
                 </div>

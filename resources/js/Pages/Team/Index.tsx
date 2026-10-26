@@ -31,7 +31,7 @@ export default function Index({ members = [] }: TeamIndexProps) {
                             <Link
                                 key={member.id || member.slug}
                                 href={`/team/${member.slug}`}
-                                className="group rounded-3xl bg-[#12141c] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#d4ff00]/50 transition-all duration-300"
+                                className="group rounded-3xl bg-[#12141c] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-accent/50 transition-all duration-300"
                             >
                                 <div className="relative aspect-[4/5] bg-neutral-900 overflow-hidden">
                                     <img
@@ -40,16 +40,16 @@ export default function Index({ members = [] }: TeamIndexProps) {
                                         loading="lazy"
                                         className="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-out"
                                     />
-                                    <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[11px] font-mono uppercase tracking-wider text-[#d4ff00]">
+                                    <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[11px] font-mono uppercase tracking-wider text-accent">
                                         Since {member.since_year}
                                     </div>
-                                    <div className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-[#d4ff00] text-black opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                                    <div className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-accent text-black opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
                                         <ArrowUpRight className="w-5 h-5" />
                                     </div>
                                 </div>
 
                                 <div className="p-6 space-y-2">
-                                    <h3 className="font-display font-bold text-2xl text-white group-hover:text-[#d4ff00] transition-colors">
+                                    <h3 className="font-display font-bold text-2xl text-white group-hover:text-accent transition-colors">
                                         {member.name}
                                     </h3>
                                     <p className="font-mono text-xs text-neutral-400">

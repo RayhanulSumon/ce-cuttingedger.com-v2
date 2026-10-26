@@ -39,7 +39,7 @@ export default function Show({ job }: CareerShowProps) {
                                 <ul className="space-y-3">
                                     {job.responsibilities?.map((item, i) => (
                                         <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-neutral-300">
-                                            <CheckCircle2 className="w-5 h-5 text-[#d4ff00] shrink-0 mt-0.5" />
+                                            <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                                             <span>{item}</span>
                                         </li>
                                     ))}
@@ -54,7 +54,7 @@ export default function Show({ job }: CareerShowProps) {
                                 <ul className="space-y-3">
                                     {job.requirements?.map((req, i) => (
                                         <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-neutral-300">
-                                            <span className="text-[#d4ff00] font-mono font-bold">→</span>
+                                            <span className="text-accent font-mono font-bold">→</span>
                                             <span>{req}</span>
                                         </li>
                                     ))}
@@ -80,7 +80,7 @@ export default function Show({ job }: CareerShowProps) {
                         <div className="lg:col-span-4">
                             <div className="sticky top-28 p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-6">
                                 <div>
-                                    <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-2">
+                                    <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-2">
                                         READY TO APPLY?
                                     </span>
                                     <h4 className="text-xl font-display font-bold text-white">
@@ -92,7 +92,7 @@ export default function Show({ job }: CareerShowProps) {
                                 </div>
 
                                 {applied ? (
-                                    <div className="p-4 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00] text-[#d4ff00] text-xs font-mono">
+                                    <div className="p-4 rounded-xl bg-accent/10 border border-accent text-accent text-xs font-mono">
                                         Application link received! We will inspect your portfolio within 48 hours.
                                     </div>
                                 ) : (
@@ -111,7 +111,7 @@ export default function Show({ job }: CareerShowProps) {
                                                 type="text"
                                                 required
                                                 placeholder="Ada Lovelace"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent"
                                             />
                                         </div>
 
@@ -123,7 +123,7 @@ export default function Show({ job }: CareerShowProps) {
                                                 type="email"
                                                 required
                                                 placeholder="ada@domain.com"
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent"
                                             />
                                         </div>
 
@@ -135,13 +135,13 @@ export default function Show({ job }: CareerShowProps) {
                                                 type="url"
                                                 required
                                                 placeholder="https://github.com/..."
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent"
                                             />
                                         </div>
 
                                         <button
                                             type="submit"
-                                            className="w-full bg-[#d4ff00] text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-[#c2eb00] flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                            className="w-full bg-accent text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-accent-hover flex items-center justify-center gap-2 transition-colors cursor-pointer"
                                         >
                                             <span>Transmit Application</span>
                                             <Send className="w-4 h-4" />

@@ -80,14 +80,14 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                 {/* Header */}
                 <div>
                     <div className="flex items-center justify-between pb-6 border-b border-white/10">
-                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-accent">
                             Direct Agency Channel
                         </span>
                         <button
                             type="button"
                             onClick={onClose}
                             aria-label="Close contact drawer"
-                            className="p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-400 transition-colors"
+                            className="p-2 rounded-full border border-white/10 hover:border-accent hover:text-accent text-neutral-400 transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -95,7 +95,7 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
 
                     <div className="mt-8">
                         <h2 id="slideover-title" className="text-3xl sm:text-4xl font-display font-bold leading-tight">
-                            Have a wild project in mind? <span className="text-[#d4ff00]">Let's talk.</span>
+                            Have a wild project in mind? <span className="text-accent">Let's talk.</span>
                         </h2>
                         <p className="mt-3 text-neutral-400 text-sm">
                             We collaborate with ambitious innovators worldwide. Drop us a note or call our studio directly.
@@ -126,7 +126,7 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                                 placeholder="Elon Musk"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-accent transition-colors"
                             />
                         </div>
 
@@ -140,7 +140,7 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="hello@company.com"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-accent transition-colors"
                             />
                         </div>
 
@@ -154,12 +154,12 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                                 value={data.message}
                                 onChange={(e) => setData('message', e.target.value)}
                                 placeholder="Tell us about the scope, timeline, and vision..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-accent transition-colors"
                             />
                         </div>
 
                         {wasSuccessful && (
-                            <div className="p-3 rounded-lg bg-[#d4ff00]/10 border border-[#d4ff00]/40 text-[#d4ff00] text-xs font-mono">
+                            <div className="p-3 rounded-lg bg-accent/10 border border-accent/40 text-accent text-xs font-mono">
                                 Inbound message transmitted. We will reply within 24 hours.
                             </div>
                         )}
@@ -167,7 +167,7 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                         <button
                             type="submit"
                             disabled={isBusy}
-                            className="w-full bg-[#d4ff00] text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-[#c2eb00] transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-accent text-black font-display font-bold py-3.5 px-6 rounded-xl hover:bg-accent-hover transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <span>{isBusy ? 'Sending...' : 'Transmit Inquiry'}</span>
                             <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -180,20 +180,20 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <a
                             href={`mailto:${settings?.contact_email || 'studio@cuttingedger.com'}`}
-                            className="flex items-center gap-2.5 text-neutral-300 hover:text-[#d4ff00] transition-colors"
+                            className="flex items-center gap-2.5 text-neutral-300 hover:text-accent transition-colors"
                         >
-                            <Mail className="w-4 h-4 text-[#d4ff00]" />
+                            <Mail className="w-4 h-4 text-accent" />
                             <span>{settings?.contact_email || 'studio@cuttingedger.com'}</span>
                         </a>
                         <a
                             href={`tel:${settings?.contact_phone || '+18005553343'}`}
-                            className="flex items-center gap-2.5 text-neutral-300 hover:text-[#d4ff00] transition-colors"
+                            className="flex items-center gap-2.5 text-neutral-300 hover:text-accent transition-colors"
                         >
-                            <Phone className="w-4 h-4 text-[#d4ff00]" />
+                            <Phone className="w-4 h-4 text-accent" />
                             <span>{settings?.contact_phone || '+1 (800) 555-EDGE'}</span>
                         </a>
                         <div className="flex items-center gap-2.5 text-neutral-400 sm:col-span-2">
-                            <MapPin className="w-4 h-4 text-[#d4ff00]" />
+                            <MapPin className="w-4 h-4 text-accent" />
                             <span>{settings?.office_address || '742 Evergreen Terrace, Creative District, SF'}</span>
                         </div>
                     </div>
@@ -203,7 +203,7 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                             <a
                                 key={social}
                                 href="#"
-                                className="text-xs font-mono uppercase tracking-wider text-neutral-400 hover:text-[#d4ff00] transition-colors flex items-center gap-1"
+                                className="text-xs font-mono uppercase tracking-wider text-neutral-400 hover:text-accent transition-colors flex items-center gap-1"
                             >
                                 <span>{social}</span>
                                 <ArrowUpRight className="w-3 h-3" />

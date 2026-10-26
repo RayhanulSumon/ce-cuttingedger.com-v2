@@ -44,7 +44,7 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                                     variant="outline"
                                     className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
                                 >
-                                    <ExternalLink className="w-4 h-4 text-[#d4ff00]" />
+                                    <ExternalLink className="w-4 h-4 text-accent" />
                                     <span>View Live</span>
                                 </Button>
                             </a>

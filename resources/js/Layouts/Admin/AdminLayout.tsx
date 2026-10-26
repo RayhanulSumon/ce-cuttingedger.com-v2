@@ -98,7 +98,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     const getRoleBadge = (roleName?: string) => {
         if (roleName === "super_admin") {
             return (
-                <span className="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-[#d4ff00]/30 bg-[#d4ff00]/10 text-[#d4ff00] whitespace-nowrap shadow-xs">
+                <span className="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-accent/30 bg-accent/10 text-accent whitespace-nowrap shadow-xs">
                     SUPER ADMIN
                 </span>
             );
@@ -229,7 +229,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     badge: admin_badges?.pending_orders
                         ? `${admin_badges.pending_orders}`
                         : null,
-                    badgeColor: "bg-[#d4ff00] text-black",
+                    badgeColor: "bg-accent text-black",
                 },
                 {
                     name: "Free Trial Orders",
@@ -239,7 +239,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     badge: admin_badges?.pending_trials
                         ? `${admin_badges.pending_trials}`
                         : null,
-                    badgeColor: "bg-[#d4ff00] text-black",
+                    badgeColor: "bg-accent text-black",
                 },
                 {
                     name: "Calendar Bookings",
@@ -312,14 +312,14 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                 href="/admin"
                                 className="flex items-center gap-2.5 group cursor-pointer"
                             >
-                                <div className="w-8 h-8 rounded-lg bg-[#d4ff00] text-black font-black flex items-center justify-center font-mono text-sm tracking-tighter">
+                                <div className="w-8 h-8 rounded-lg bg-accent text-black font-black flex items-center justify-center font-mono text-sm tracking-tighter">
                                     CE
                                 </div>
                                 <div className="group-data-[collapsible=icon]:hidden">
                                     <span className="font-bold text-sm tracking-tight text-white block">
                                         CUTTING EDGER
                                     </span>
-                                    <span className="text-[10px] font-mono tracking-widest text-[#d4ff00] uppercase block">
+                                    <span className="text-[10px] font-mono tracking-widest text-accent uppercase block">
                                         OPS PORTAL
                                     </span>
                                 </div>
@@ -348,7 +348,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                         className={cn(
                                                             "rounded-xl text-xs transition-colors py-2 px-3",
                                                             item.active
-                                                                ? "bg-[#181b24] text-[#d4ff00] font-semibold border border-white/10"
+                                                                ? "bg-[#181b24] text-accent font-semibold border border-white/10"
                                                                 : "text-neutral-400 hover:text-white hover:bg-white/5"
                                                         )}
                                                     >
@@ -361,7 +361,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                 className={cn(
                                                                     "w-4 h-4",
                                                                     item.active
-                                                                        ? "text-[#d4ff00]"
+                                                                        ? "text-accent"
                                                                         : "text-neutral-500 group-hover:text-white"
                                                                 )}
                                                             />
@@ -372,7 +372,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                 <span
                                                                     className={cn(
                                                                         "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[10px] font-mono font-bold tracking-tight shadow-xs",
-                                                                        ("badgeColor" in item && item.badgeColor) || "bg-[#d4ff00] text-black"
+                                                                        ("badgeColor" in item && item.badgeColor) || "bg-accent text-black"
                                                                     )}
                                                                 >
                                                                     {item.badge}
@@ -432,7 +432,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             <div className="flex items-center gap-3">
                                 <SidebarTrigger className="text-neutral-400 hover:text-white hover:bg-white/10" />
                                 <div className="h-4 w-px bg-white/10" />
-                                <Terminal className="w-4 h-4 text-[#d4ff00]" />
+                                <Terminal className="w-4 h-4 text-accent" />
                                 <span className="text-xs font-mono uppercase tracking-widest text-neutral-400">
                                     OPS // {title || "SYSTEM ACTIVE"}
                                 </span>

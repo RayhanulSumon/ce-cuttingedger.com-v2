@@ -140,7 +140,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                 description="Inject and manage Google Tag Manager, GA4, Microsoft Clarity, Meta pixels, and verification meta tags without codebase deployments."
                 badge="MARKETING & SEO SELF-SERVE"
                 actions={
-                    <Button onClick={openCreate} className="gap-2 bg-[#d4ff00] text-black font-bold hover:bg-[#bfe600]">
+                    <Button onClick={openCreate} className="gap-2 bg-accent text-black font-bold hover:bg-accent-hover">
                         <Plus className="w-4 h-4" />
                         <span>Add Tracking Script</span>
                     </Button>
@@ -149,10 +149,10 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 
             {/* Modal / Inline Drawer Form */}
             {isCreating && (
-                <div className="mb-8 p-6 sm:p-8 rounded-3xl bg-[#12141c] border border-[#d4ff00]/40 shadow-2xl space-y-6">
+                <div className="mb-8 p-6 sm:p-8 rounded-3xl bg-[#12141c] border border-accent/40 shadow-2xl space-y-6">
                     <div className="flex items-center justify-between pb-4 border-b border-white/10">
                         <div className="flex items-center gap-2">
-                            <Code2 className="w-5 h-5 text-[#d4ff00]" />
+                            <Code2 className="w-5 h-5 text-accent" />
                             <h2 className="text-lg font-display font-bold text-white">
                                 {editingScript ? `Edit: ${editingScript.name}` : "Configure New Tracking Script"}
                             </h2>
@@ -208,7 +208,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                                 <select
                                     value={data.type}
                                     onChange={(e) => setData("type", e.target.value as any)}
-                                    className="w-full px-4 py-2.5 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                    className="w-full px-4 py-2.5 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent"
                                 >
                                     <option value="tag_manager">Tag Manager (GTM / Tealium)</option>
                                     <option value="analytics">Analytics (GA4 / Clarity / Plausible)</option>
@@ -225,7 +225,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                                 <select
                                     value={data.placement}
                                     onChange={(e) => setData("placement", e.target.value as any)}
-                                    className="w-full px-4 py-2.5 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                    className="w-full px-4 py-2.5 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent"
                                 >
                                     <option value="head">&lt;head&gt; (Standard for tags and verification)</option>
                                     <option value="body_start">Start of &lt;body&gt; (GTM noscript)</option>
@@ -255,7 +255,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                                     type="checkbox"
                                     checked={data.is_active}
                                     onChange={(e) => setData("is_active", e.target.checked)}
-                                    className="w-4 h-4 rounded accent-[#d4ff00]"
+                                    className="w-4 h-4 rounded accent-accent"
                                 />
                                 <span className="text-neutral-300">Active (Injected into HTML on live site)</span>
                             </label>
@@ -264,7 +264,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                                 <Button type="button" variant="outline" onClick={closeForm}>
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={processing} className="bg-[#d4ff00] text-black font-bold hover:bg-[#bfe600]">
+                                <Button type="submit" disabled={processing} className="bg-accent text-black font-bold hover:bg-accent-hover">
                                     {processing ? "Persisting..." : editingScript ? "Update Script" : "Save & Activate"}
                                 </Button>
                             </div>
@@ -297,7 +297,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
                                 <tr key={script.id} className="hover:bg-white/[0.02] transition-colors">
                                     <td className="py-4 px-6 font-bold text-white">
                                         <div className="flex items-center gap-2">
-                                            <Code2 className="w-4 h-4 text-[#d4ff00]" />
+                                            <Code2 className="w-4 h-4 text-accent" />
                                             <span>{script.name}</span>
                                         </div>
                                     </td>

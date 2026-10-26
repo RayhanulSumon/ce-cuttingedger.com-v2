@@ -79,23 +79,23 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
     }
 
     return (
-        <div className="my-2.5 p-4 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/40 shadow-2xl backdrop-blur-md text-left space-y-3">
+        <div className="my-2.5 p-4 rounded-2xl bg-accent/10 border border-accent/40 shadow-2xl backdrop-blur-md text-left space-y-3">
             <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-[#d4ff00] text-black">
+                    <span className="p-1.5 rounded-lg bg-accent text-black">
                         <Sparkles className="w-4 h-4" />
                     </span>
                     <div>
                         <h4 className="text-sm font-bold text-white tracking-tight">
                             {card.title || '100% Free Trial Activated'}
                         </h4>
-                        <span className="text-[10px] text-[#d4ff00] font-mono uppercase tracking-wider block">
+                        <span className="text-[10px] text-accent font-mono uppercase tracking-wider block">
                             Zero Cost • No Credit Card Required
                         </span>
                     </div>
                 </div>
 
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-[#d4ff00]/20 text-[#d4ff00] border border-[#d4ff00]/30 shrink-0">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-accent/20 text-accent border border-accent/30 shrink-0">
                     {card.status || 'In Production Queue'}
                 </span>
             </div>
@@ -131,7 +131,7 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                     <span className="text-white/40 text-[10px] uppercase">Total Billing</span>
-                    <span className="font-bold text-[#d4ff00] text-sm">$0.00 USD (FREE)</span>
+                    <span className="font-bold text-accent text-sm">$0.00 USD (FREE)</span>
                 </div>
                 <div className="flex items-center justify-between text-white/70">
                     <span className="text-white/40 text-[10px] uppercase">Turnaround SLA</span>
@@ -149,15 +149,15 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
                 </span>
                 <div className="space-y-1">
                     <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
                         <span>100% Hand-Drawn Pen Tool Vector Clipping Paths</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
                         <span>Layered Master PSD with Clipping Mask & Alpha Channel</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
                         <span>High-Resolution Transparent Web PNG</span>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
             {/* Delivery Destination Section */}
             {confirmedEmail ? (
                 <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2 text-xs text-white/90 font-mono">
-                    <CheckCircle2 className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
                     <div>
                         <span className="text-[10px] text-white/40 uppercase block">Delivery Destination</span>
                         <span className="text-[#00f5ff] font-semibold">{confirmedEmail}</span>

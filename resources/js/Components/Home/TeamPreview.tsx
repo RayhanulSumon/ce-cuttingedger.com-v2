@@ -75,13 +75,13 @@ export function TeamPreview({ members }: TeamPreviewProps) {
             className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[30rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[30rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ 05 // LEADERSHIP VANGUARD ]</span>
                         </div>
@@ -92,7 +92,7 @@ export function TeamPreview({ members }: TeamPreviewProps) {
 
                     <Link
                         href="/team"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
                     >
                         <span>Meet All Collective (12+)</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -110,7 +110,7 @@ export function TeamPreview({ members }: TeamPreviewProps) {
                         >
                             {/* Left: Since Year (hidden on mobile, shown inline with role) */}
                             <div className="hidden sm:block sm:w-1/4">
-                                <span className="font-mono text-xs sm:text-sm text-neutral-500 group-hover:text-[#d4ff00] transition-colors uppercase tracking-widest">
+                                <span className="font-mono text-xs sm:text-sm text-neutral-500 group-hover:text-accent transition-colors uppercase tracking-widest">
                                     Since {member.since_year || '2009'}
                                 </span>
                             </div>
@@ -142,7 +142,7 @@ export function TeamPreview({ members }: TeamPreviewProps) {
                                         </span>
                                     </div>
                                 </div>
-                                <ArrowUpRight className="w-4 h-4 text-neutral-500 group-hover:text-[#d4ff00] transition-colors" />
+                                <ArrowUpRight className="w-4 h-4 text-neutral-500 group-hover:text-accent transition-colors" />
                             </div>
                         </Link>
                     ))}
@@ -178,7 +178,7 @@ export function TeamPreview({ members }: TeamPreviewProps) {
                             {/* Subtle dark gradient overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                             <div className="absolute bottom-4 left-4 right-4 text-center">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-semibold">
+                                <span className="font-mono text-xs uppercase tracking-widest text-accent font-semibold">
                                     View Full Dossier &rarr;
                                 </span>
                             </div>

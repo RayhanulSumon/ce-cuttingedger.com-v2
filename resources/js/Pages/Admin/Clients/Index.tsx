@@ -258,7 +258,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
+                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>
@@ -365,7 +365,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
+                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>

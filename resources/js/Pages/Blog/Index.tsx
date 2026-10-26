@@ -40,8 +40,8 @@ export default function Index({
             {/* HERO BANNER SECTION (MATCHING /pricing PageHero GRADIENT EFFECT) */}
             <section className="relative pt-28 sm:pt-32 pb-10 sm:pb-12 bg-[#0a0b0e] border-b border-white/10 overflow-hidden text-center select-none">
                 {/* Ambient Background Aura (Exact /pricing PageHero styling) */}
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-[140px] pointer-events-none" />
-                <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-[#d4ff00]/5 rounded-full blur-[140px] pointer-events-none" />
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[140px] pointer-events-none" />
+                <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-[140px] pointer-events-none" />
 
                 <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-wider uppercase font-display">
@@ -51,7 +51,7 @@ export default function Index({
                     <nav aria-label="Breadcrumb" className="mt-2.5 flex items-center justify-center gap-1.5 text-sm sm:text-base font-medium">
                         <Link
                             href="/"
-                            className="text-[#d4ff00] hover:underline transition-all cursor-pointer font-medium"
+                            className="text-accent hover:underline transition-all cursor-pointer font-medium"
                         >
                             Home
                         </Link>
@@ -73,7 +73,7 @@ export default function Index({
                             type="button"
                             onClick={() => handleCategoryFilter('all')}
                             className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${activeCategory === 'all'
-                                    ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
+                                    ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
                                     : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                 }`}
                         >
@@ -89,7 +89,7 @@ export default function Index({
                                 type="button"
                                 onClick={() => handleCategoryFilter(cat.slug)}
                                 className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${activeCategory === cat.slug
-                                        ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
+                                        ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
                                         : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                     }`}
                             >
@@ -107,7 +107,7 @@ export default function Index({
                     {subcategories.length > 0 && (
                         <div className="flex items-center gap-2 pt-2 border-t border-white/5 overflow-x-auto scrollbar-none">
                             <span className="text-[11px] font-mono text-neutral-500 uppercase flex items-center gap-1 shrink-0">
-                                <CornerDownRight className="w-3 h-3 text-[#d4ff00]" />
+                                <CornerDownRight className="w-3 h-3 text-accent" />
                                 Subtopics:
                             </span>
                             <button
@@ -126,7 +126,7 @@ export default function Index({
                                     type="button"
                                     onClick={() => handleCategoryFilter(activeCategory, sub.slug)}
                                     className={`px-3 py-1 rounded text-xs font-mono transition-all cursor-pointer ${activeSubcategory === sub.slug
-                                            ? 'bg-[#d4ff00]/20 text-[#d4ff00] border border-[#d4ff00]/30 font-bold'
+                                            ? 'bg-accent/20 text-accent border border-accent/30 font-bold'
                                             : 'text-neutral-400 hover:text-white border border-white/5'
                                         }`}
                                 >
@@ -154,7 +154,7 @@ export default function Index({
                             {blogs.map((blog) => (
                                 <article
                                     key={blog.id || blog.slug}
-                                    className="group relative rounded-2xl bg-gradient-to-b from-[#12141d] to-[#0c0e16] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-[#d4ff00]/50 hover:shadow-[0_16px_36px_rgba(0,0,0,0.65),0_0_28px_rgba(212,255,0,0.08)] transition-all duration-300 hover:-translate-y-1.5"
+                                    className="group relative rounded-2xl bg-gradient-to-b from-[#12141d] to-[#0c0e16] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-accent/50 hover:shadow-[0_16px_36px_rgba(0,0,0,0.65),0_0_28px_rgba(251, 183, 24, 0.08)] transition-all duration-300 hover:-translate-y-1.5"
                                 >
                                     <div>
                                         {/* Media Frame (Slimmer 16:9 Cinematic Aspect) */}
@@ -173,7 +173,7 @@ export default function Index({
 
                                             {/* Badges Overlay */}
                                             <div className="absolute top-2.5 left-2.5 flex flex-wrap items-center gap-1.5">
-                                                <span className="bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/15 text-[10px] font-mono text-[#d4ff00] font-medium tracking-wide">
+                                                <span className="bg-black/75 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/15 text-[10px] font-mono text-accent font-medium tracking-wide">
                                                     {blog.category?.name || 'Blog'}
                                                 </span>
                                                 {blog.subcategory && (
@@ -185,8 +185,8 @@ export default function Index({
 
                                             {blog.is_featured && (
                                                 <div className="absolute top-2.5 right-2.5">
-                                                    <span className="bg-[#d4ff00]/15 backdrop-blur-md border border-[#d4ff00]/40 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold text-[#d4ff00] tracking-wider flex items-center gap-1">
-                                                        <Sparkles className="w-2.5 h-2.5 text-[#d4ff00]" />
+                                                    <span className="bg-accent/15 backdrop-blur-md border border-accent/40 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold text-accent tracking-wider flex items-center gap-1">
+                                                        <Sparkles className="w-2.5 h-2.5 text-accent" />
                                                         FEATURED
                                                     </span>
                                                 </div>
@@ -200,7 +200,7 @@ export default function Index({
                                                 {blog.reading_time ? (
                                                     <>
                                                         <span className="flex items-center gap-1.5 text-neutral-300">
-                                                            <Clock className="w-3 h-3 text-[#d4ff00]" />
+                                                            <Clock className="w-3 h-3 text-accent" />
                                                             {blog.reading_time} min read
                                                         </span>
                                                         <span className="text-neutral-600">•</span>
@@ -217,7 +217,7 @@ export default function Index({
                                             </div>
 
                                             {/* Title */}
-                                            <h3 className="text-base sm:text-lg font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors leading-snug line-clamp-2">
+                                            <h3 className="text-base sm:text-lg font-display font-bold text-white group-hover:text-accent transition-colors leading-snug line-clamp-2">
                                                 <Link href={`/blog/${blog.slug}`}>
                                                     {blog.title}
                                                 </Link>
@@ -252,10 +252,10 @@ export default function Index({
                                                     <img
                                                         src={blog.author.avatar}
                                                         alt={blog.author.name}
-                                                        className="w-5 h-5 rounded-full object-cover border border-[#d4ff00]/40"
+                                                        className="w-5 h-5 rounded-full object-cover border border-accent/40"
                                                     />
                                                 ) : (
-                                                    <span className="w-5 h-5 rounded-full bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30 flex items-center justify-center text-[9px] font-mono font-bold">
+                                                    <span className="w-5 h-5 rounded-full bg-accent/10 text-accent border border-accent/30 flex items-center justify-center text-[9px] font-mono font-bold">
                                                         {blog.author.name.charAt(0)}
                                                     </span>
                                                 )}
@@ -271,7 +271,7 @@ export default function Index({
 
                                         <Link
                                             href={`/blog/${blog.slug}`}
-                                            className="inline-flex items-center gap-1 text-xs font-mono font-bold text-[#d4ff00] group-hover:text-white transition-colors"
+                                            className="inline-flex items-center gap-1 text-xs font-mono font-bold text-accent group-hover:text-white transition-colors"
                                         >
                                             <span>Read</span>
                                             <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

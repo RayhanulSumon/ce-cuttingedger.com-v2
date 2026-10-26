@@ -67,7 +67,7 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
                             className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5 text-xs font-mono"
                         >
                             <span className="text-neutral-300 text-[11px]">{svc.name}</span>
-                            <span className="font-bold text-[#d4ff00] text-xs">{svc.rate}</span>
+                            <span className="font-bold text-accent text-xs">{svc.rate}</span>
                         </div>
                     ))}
                 </div>
@@ -88,7 +88,7 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
                     onClick={() => onSendPrompt?.('Show Pricing Calculator')}
                     className="flex-1 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer transition-colors border border-white/10"
                 >
-                    <Calculator className="w-3.5 h-3.5 text-[#d4ff00]" />
+                    <Calculator className="w-3.5 h-3.5 text-accent" />
                     <span>Volume Calculator</span>
                 </button>
             </div>

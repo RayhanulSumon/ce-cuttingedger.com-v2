@@ -47,9 +47,9 @@
             gap: 0.5rem;
             padding: 0.35rem 1rem;
             border-radius: 9999px;
-            background: rgba(212, 255, 0, 0.1);
-            border: 1px solid rgba(212, 255, 0, 0.3);
-            color: #d4ff00;
+            background: rgba(251, 183, 24, 0.1);
+            border: 1px solid rgba(251, 183, 24, 0.3);
+            color: #fbb718;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
             letter-spacing: 0.1em;
@@ -89,7 +89,7 @@
             align-items: center;
         }
         .btn-primary {
-            background-color: #d4ff00;
+            background-color: #fbb718;
             color: #000000;
             font-weight: 800;
             font-size: 0.8rem;
@@ -101,8 +101,8 @@
             transition: all 0.2s ease;
         }
         .btn-primary:hover {
-            background-color: #c2eb00;
-            box-shadow: 0 0 25px rgba(212, 255, 0, 0.35);
+            background-color: #e5a513;
+            box-shadow: 0 0 25px rgba(251, 183, 24, 0.35);
         }
         .btn-secondary {
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -117,8 +117,8 @@
             transition: all 0.2s ease;
         }
         .btn-secondary:hover {
-            border-color: #d4ff00;
-            color: #d4ff00;
+            border-color: #fbb718;
+            color: #fbb718;
         }
     </style>
 </head>

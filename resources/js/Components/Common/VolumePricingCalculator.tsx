@@ -318,20 +318,20 @@ export function VolumePricingCalculator() {
             className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0d] border-t border-white/10 overflow-hidden"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-accent/5 rounded-full blur-[220px] pointer-events-none" />
             <div className="absolute bottom-10 right-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
                 <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent mb-4">
                         <Calculator className="w-3.5 h-3.5" />
                         <span>[ LIVE PRODUCTION RATE ESTIMATOR ]</span>
                     </div>
 
                     <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08] sm:leading-[1.05]">
                         Calculate Your Rate <br />
-                        <span className="text-[#d4ff00]">Down to the Penny.</span>
+                        <span className="text-accent">Down to the Penny.</span>
                     </h2>
 
                     <p className="mt-3.5 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
@@ -357,8 +357,8 @@ export function VolumePricingCalculator() {
                             onClick={selectComboPlan1}
                             className={`px-3.5 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
                                 hasSameFlowFreeFinish
-                                    ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
-                                    : 'bg-[#d4ff00]/10 text-[#d4ff00] hover:bg-[#d4ff00]/20 border border-[#d4ff00]/30'
+                                    ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
+                                    : 'bg-accent/10 text-accent hover:bg-accent/20 border border-accent/30'
                             }`}
                         >
                             <Gift className="w-3 h-3" />
@@ -375,7 +375,7 @@ export function VolumePricingCalculator() {
                         <div className="space-y-3.5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-accent/15 text-accent font-mono text-xs font-bold flex items-center justify-center">
                                         1
                                     </span>
                                     <label className="text-sm font-semibold text-white tracking-wide">
@@ -393,7 +393,7 @@ export function VolumePricingCalculator() {
                                         onClick={() => setCategoryFilter('all')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === 'all'
-                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                ? 'bg-accent text-black font-bold shadow-sm'
                                                 : 'text-neutral-400 hover:text-white'
                                         }`}
                                     >
@@ -404,7 +404,7 @@ export function VolumePricingCalculator() {
                                         onClick={() => setCategoryFilter('2d')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === '2d'
-                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                ? 'bg-accent text-black font-bold shadow-sm'
                                                 : 'text-neutral-400 hover:text-white'
                                         }`}
                                     >
@@ -415,7 +415,7 @@ export function VolumePricingCalculator() {
                                         onClick={() => setCategoryFilter('specialty')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === 'specialty'
-                                                ? 'bg-[#d4ff00] text-black font-bold shadow-sm'
+                                                ? 'bg-accent text-black font-bold shadow-sm'
                                                 : 'text-neutral-400 hover:text-white'
                                         }`}
                                     >
@@ -437,7 +437,7 @@ export function VolumePricingCalculator() {
                                             onClick={() => handleToggleService(svc.id)}
                                             className={`group px-3 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer select-none relative flex items-center justify-between gap-2.5 ${
                                                 isSelected
-                                                    ? 'border-[#d4ff00] bg-[#d4ff00]/10 text-white shadow-[0_0_15px_rgba(212,255,0,0.12)] ring-1 ring-[#d4ff00]/40'
+                                                    ? 'border-accent bg-accent/10 text-white shadow-[0_0_15px_rgba(251, 183, 24, 0.12)] ring-1 ring-accent/40'
                                                     : 'border-white/[0.08] bg-white/[0.02] text-neutral-300 hover:border-white/20 hover:bg-white/[0.05]'
                                             }`}
                                         >
@@ -445,7 +445,7 @@ export function VolumePricingCalculator() {
                                                 <div
                                                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                                                         isSelected
-                                                            ? 'bg-[#d4ff00] text-black shadow-sm'
+                                                            ? 'bg-accent text-black shadow-sm'
                                                             : 'bg-white/5 text-neutral-400 group-hover:text-white border border-white/10'
                                                     }`}
                                                 >
@@ -466,7 +466,7 @@ export function VolumePricingCalculator() {
                                             <div
                                                 className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-all ${
                                                     isSelected
-                                                        ? 'bg-[#d4ff00] text-black shadow-sm'
+                                                        ? 'bg-accent text-black shadow-sm'
                                                         : 'border border-white/20 bg-white/5'
                                                 }`}
                                             >
@@ -479,12 +479,12 @@ export function VolumePricingCalculator() {
 
                             {/* COMBO PERKS BANNER */}
                             {hasSameFlowFreeFinish && (
-                                <div className="p-3 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/25 flex items-center gap-3 animate-in fade-in">
-                                    <div className="w-7 h-7 rounded-lg bg-[#d4ff00] text-black flex items-center justify-center shrink-0">
+                                <div className="p-3 rounded-xl bg-accent/10 border border-accent/25 flex items-center gap-3 animate-in fade-in">
+                                    <div className="w-7 h-7 rounded-lg bg-accent text-black flex items-center justify-center shrink-0">
                                         <Gift className="w-4 h-4" />
                                     </div>
                                     <div className="text-xs leading-tight min-w-0">
-                                        <span className="font-semibold text-[#d4ff00] block">
+                                        <span className="font-semibold text-accent block">
                                             Combo Deal Active: Free Natural Shadow & Resize
                                         </span>
                                         <span className="text-neutral-300 block text-[11px] mt-0.5">
@@ -499,7 +499,7 @@ export function VolumePricingCalculator() {
                         <div className="space-y-3 pt-4 border-t border-white/[0.08]">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-accent/15 text-accent font-mono text-xs font-bold flex items-center justify-center">
                                         2
                                     </span>
                                     <label className="text-sm font-semibold text-white tracking-wide">
@@ -549,9 +549,9 @@ export function VolumePricingCalculator() {
                                         step={primaryService.stepQty}
                                         value={quantity}
                                         onChange={(e) => setQuantity(Number(e.target.value))}
-                                        className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#d4ff00] relative z-10"
+                                        className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent relative z-10"
                                         style={{
-                                            background: `linear-gradient(to right, #d4ff00 0%, #d4ff00 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
+                                            background: `linear-gradient(to right, #fbb718 0%, #fbb718 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
                                         }}
                                     />
                                 </div>
@@ -572,7 +572,7 @@ export function VolumePricingCalculator() {
                                         onClick={() => setQuantity(preset)}
                                         className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer select-none ${
                                             quantity === preset
-                                                ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_10px_rgba(212,255,0,0.3)]'
+                                                ? 'bg-accent text-black font-bold shadow-[0_0_10px_rgba(251, 183, 24, 0.3)]'
                                                 : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                         }`}
                                     >
@@ -586,14 +586,14 @@ export function VolumePricingCalculator() {
                         <div className="space-y-2.5 pt-4 border-t border-white/[0.08]">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#d4ff00]/15 text-[#d4ff00] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-accent/15 text-accent font-mono text-xs font-bold flex items-center justify-center">
                                         3
                                     </span>
                                     <label className="text-sm font-semibold text-white tracking-wide">
                                         Turnaround Speed
                                     </label>
                                 </div>
-                                <span className="text-xs font-mono text-[#d4ff00] font-medium">
+                                <span className="text-xs font-mono text-accent font-medium">
                                     {speedLabel}
                                 </span>
                             </div>
@@ -615,7 +615,7 @@ export function VolumePricingCalculator() {
                                             }}
                                             className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer select-none ${
                                                 active
-                                                    ? 'bg-[#d4ff00] text-black font-bold shadow-md'
+                                                    ? 'bg-accent text-black font-bold shadow-md'
                                                     : 'text-neutral-400 hover:text-white hover:bg-white/5 font-medium'
                                             }`}
                                         >
@@ -633,19 +633,19 @@ export function VolumePricingCalculator() {
                     </div>
 
                     {/* Right Column: Instant Live Estimate Card */}
-                    <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl border-2 border-[#d4ff00] bg-[#10121a]/95 backdrop-blur-2xl p-4 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(212,255,0,0.12)] relative overflow-hidden">
+                    <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl border-2 border-accent bg-[#10121a]/95 backdrop-blur-2xl p-4 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(251, 183, 24, 0.12)] relative overflow-hidden">
                         {/* Glow orb */}
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-[#d4ff00]/10 rounded-full blur-[70px] pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-accent/10 rounded-full blur-[70px] pointer-events-none" />
 
                         <div className="space-y-6 relative z-10">
                             {/* Live Badge */}
                             <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold flex items-center gap-1.5">
-                                    <Clock className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold flex items-center gap-1.5">
+                                    <Clock className="w-3.5 h-3.5 text-accent" />
                                     <span>INSTANT LIVE ESTIMATE</span>
                                 </span>
                                 {discountTier.percent > 0 && (
-                                    <span className="px-2.5 py-0.5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/30 text-[#d4ff00] font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-accent/10 border border-accent/30 text-accent font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
                                         <Tag className="w-3 h-3" />
                                         <span>{discountTier.label}</span>
                                     </span>
@@ -668,7 +668,7 @@ export function VolumePricingCalculator() {
                                     <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block">
                                         Effective Unit Cost
                                     </span>
-                                    <div className="text-xl sm:text-2xl font-mono font-bold text-[#d4ff00] mt-0.5 tabular-nums">
+                                    <div className="text-xl sm:text-2xl font-mono font-bold text-accent mt-0.5 tabular-nums">
                                         ${calculation.unitPrice}
                                         <span className="text-xs text-neutral-400 font-normal"> / {primaryService.unitNameSingular.toLowerCase()}</span>
                                     </div>
@@ -699,19 +699,19 @@ export function VolumePricingCalculator() {
                             {/* Features Checklist */}
                             <ul className="space-y-2.5 text-xs font-mono text-neutral-300">
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                    <Check className="w-4 h-4 text-accent shrink-0" />
                                     <span>Guaranteed Delivery SLA: <strong>{speedLabel}</strong></span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                    <Check className="w-4 h-4 text-accent shrink-0" />
                                     <span>Free Unlimited Revisions until 100% Approved</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                    <Check className="w-4 h-4 text-accent shrink-0" />
                                     <span>Senior QA Double-Inspection Included</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <ShieldCheck className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                    <ShieldCheck className="w-4 h-4 text-accent shrink-0" />
                                     <span>Enterprise Encrypted TLS Cloud Storage</span>
                                 </li>
                             </ul>
@@ -721,7 +721,7 @@ export function VolumePricingCalculator() {
                         <div className="pt-6 mt-6 border-t border-white/10 relative z-10 space-y-2">
                             <a
                                 href="#trial-uploader-section"
-                                className="w-full py-4 px-6 rounded-2xl bg-[#d4ff00] text-black font-display font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#c2eb00] hover:shadow-[0_0_25px_rgba(212,255,0,0.5)] transition-all duration-300 cursor-pointer select-none"
+                                className="w-full py-4 px-6 rounded-2xl bg-accent text-black font-display font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-accent-hover hover:shadow-[0_0_25px_rgba(251, 183, 24, 0.5)] transition-all duration-300 cursor-pointer select-none"
                             >
                                 <span>Lock This Rate & Try 3 Free</span>
                                 <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />

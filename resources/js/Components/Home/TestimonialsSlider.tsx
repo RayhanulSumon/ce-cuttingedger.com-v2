@@ -44,7 +44,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-14 pb-6 border-b border-white/10 gap-6">
                     <div>
-                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-3">
+                        <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-3">
                             [ 06 // CLIENT ENDORSEMENTS ]
                         </span>
                         <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-tight">
@@ -58,7 +58,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                             type="button"
                             onClick={prevSlide}
                             aria-label="Previous testimonial"
-                            className="p-2.5 sm:p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
+                            className="p-2.5 sm:p-3.5 rounded-full border border-white/10 hover:border-accent hover:text-accent text-neutral-300 transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
@@ -66,7 +66,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                             type="button"
                             onClick={nextSlide}
                             aria-label="Next testimonial"
-                            className="p-2.5 sm:p-3.5 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] text-neutral-300 transition-colors"
+                            className="p-2.5 sm:p-3.5 rounded-full border border-white/10 hover:border-accent hover:text-accent text-neutral-300 transition-colors"
                         >
                             <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
@@ -82,7 +82,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                         {/* Rating Stars */}
                         <div className="flex items-center gap-1">
                             {[...Array(current.rating || 5)].map((_, i) => (
-                                <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#d4ff00] text-[#d4ff00]" />
+                                <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-accent text-accent" />
                             ))}
                         </div>
 
@@ -93,7 +93,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
 
                     {/* Quote */}
                     <div className="relative mb-8 sm:mb-10">
-                        <Quote className="w-8 h-8 sm:w-12 sm:h-12 text-[#d4ff00]/20 absolute -top-4 -left-2 sm:-top-6 sm:-left-4 -z-10" />
+                        <Quote className="w-8 h-8 sm:w-12 sm:h-12 text-accent/20 absolute -top-4 -left-2 sm:-top-6 sm:-left-4 -z-10" />
                         <blockquote className="text-base sm:text-2xl lg:text-3xl font-display font-medium text-white leading-relaxed break-words">
                             "{current.quote}"
                         </blockquote>
@@ -106,7 +106,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                                 <img
                                     src={current.avatar}
                                     alt={current.client_name}
-                                    className="w-12 h-12 rounded-full object-cover border border-[#d4ff00]/40"
+                                    className="w-12 h-12 rounded-full object-cover border border-accent/40"
                                 />
                             )}
                             <div>
@@ -114,7 +114,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                                     {current.client_name}
                                 </h4>
                                 <p className="font-mono text-xs text-neutral-400">
-                                    {current.client_role} · <span className="text-[#d4ff00]">{current.client_company}</span>
+                                    {current.client_role} · <span className="text-accent">{current.client_company}</span>
                                 </p>
                             </div>
                         </div>
@@ -129,7 +129,7 @@ export function TestimonialsSlider({ testimonials }: TestimonialsSliderProps) {
                                     aria-label={`Go to slide ${dotIdx + 1}`}
                                     className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                                         dotIdx === currentIndex
-                                            ? 'w-8 bg-[#d4ff00]'
+                                            ? 'w-8 bg-accent'
                                             : 'bg-white/20 hover:bg-white/40'
                                     }`}
                                 />

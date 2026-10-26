@@ -84,7 +84,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                     <div className="text-xs text-white font-medium">
                         {m.service_interest || "General Consultation"}
                     </div>
-                    <div className="text-[11px] font-mono text-[#d4ff00]">
+                    <div className="text-[11px] font-mono text-accent">
                         {m.budget || "Budget Unspecified"}
                     </div>
                 </div>
@@ -197,7 +197,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                             </div>
                             <div>
                                 <span className="text-neutral-500 block">BUDGET TIER</span>
-                                <span className="text-[#d4ff00] block mt-0.5">
+                                <span className="text-accent block mt-0.5">
                                     {selectedMessage?.budget || "Not provided"}
                                 </span>
                             </div>
@@ -229,7 +229,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                         <div className="flex items-center justify-between pt-2 border-t border-white/10">
                             <a
                                 href={`mailto:${selectedMessage?.email}?subject=Cutting Edger // Response to Inquiry`}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#d4ff00] text-black text-xs font-semibold hover:bg-[#bde600]"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-black text-xs font-semibold hover:bg-[#bde600]"
                             >
                                 <Mail className="w-3.5 h-3.5" />
                                 <span>Reply via Work Email</span>

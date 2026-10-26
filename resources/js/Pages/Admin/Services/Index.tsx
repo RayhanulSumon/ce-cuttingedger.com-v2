@@ -63,7 +63,7 @@ export default function ServicesIndex({
         subtitle: "",
         description: "",
         icon: "Layers",
-        accent_color: "#d4ff00",
+        accent_color: "#fbb718",
         sort_order: 0,
     });
 
@@ -74,7 +74,7 @@ export default function ServicesIndex({
         subtitle: "",
         description: "",
         icon: "Layers",
-        accent_color: "#d4ff00",
+        accent_color: "#fbb718",
         sort_order: 0,
     });
 
@@ -97,7 +97,7 @@ export default function ServicesIndex({
             subtitle: service.subtitle,
             description: service.description,
             icon: service.icon || "Layers",
-            accent_color: service.accent_color || "#d4ff00",
+            accent_color: service.accent_color || "#fbb718",
             sort_order: service.sort_order,
         });
     };
@@ -128,9 +128,9 @@ export default function ServicesIndex({
                     <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-black shrink-0"
                         style={{
-                            backgroundColor: `${s.accent_color || "#d4ff00"}20`,
-                            color: s.accent_color || "#d4ff00",
-                            border: `1px solid ${s.accent_color || "#d4ff00"}40`,
+                            backgroundColor: `${s.accent_color || "#fbb718"}20`,
+                            color: s.accent_color || "#fbb718",
+                            border: `1px solid ${s.accent_color || "#fbb718"}40`,
                         }}
                     >
                         {s.icon?.substring(0, 2).toUpperCase()}
@@ -149,11 +149,11 @@ export default function ServicesIndex({
             cell: (s: any) =>
                 s.parent ? (
                     <div className="flex items-center gap-1.5 font-mono text-xs text-neutral-300">
-                        <span className="text-[#d4ff00]">↳</span>
+                        <span className="text-accent">↳</span>
                         <span className="font-semibold">{s.parent.title}</span>
                     </div>
                 ) : (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30 whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-accent/10 text-accent border border-accent/30 whitespace-nowrap">
                         ★ CORE PILLAR
                     </span>
                 ),
@@ -172,10 +172,10 @@ export default function ServicesIndex({
                 <div className="flex items-center gap-2">
                     <span
                         className="w-3.5 h-3.5 rounded-full border border-white/20"
-                        style={{ backgroundColor: s.accent_color || "#d4ff00" }}
+                        style={{ backgroundColor: s.accent_color || "#fbb718" }}
                     />
                     <span className="font-mono text-xs text-neutral-300">
-                        {s.accent_color || "#d4ff00"}
+                        {s.accent_color || "#fbb718"}
                     </span>
                 </div>
             ),
@@ -248,7 +248,7 @@ export default function ServicesIndex({
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.04] border border-white/10">
-                            <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold block">
+                            <label className="text-xs font-mono uppercase text-accent font-bold block">
                                 Service Parent Pillar (Hierarchy)
                             </label>
                             <p className="text-[11px] text-neutral-400">
@@ -326,7 +326,7 @@ export default function ServicesIndex({
                                     onChange={(e) =>
                                         createForm.setData("accent_color", e.target.value)
                                     }
-                                    placeholder="#d4ff00"
+                                    placeholder="#fbb718"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -408,7 +408,7 @@ export default function ServicesIndex({
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.04] border border-white/10">
-                            <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold block">
+                            <label className="text-xs font-mono uppercase text-accent font-bold block">
                                 Service Parent Pillar (Hierarchy)
                             </label>
                             <p className="text-[11px] text-neutral-400">

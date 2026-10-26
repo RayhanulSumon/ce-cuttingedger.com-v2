@@ -54,22 +54,22 @@ export default function Dashboard({
             <div className="space-y-10">
                 {/* KPI Metrics Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
                                 Live Projects
                             </span>
-                            <FolderKanban className="w-4 h-4 text-[#d4ff00]" />
+                            <FolderKanban className="w-4 h-4 text-accent" />
                         </div>
                         <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                             {stats.total_projects}
                         </div>
-                        <span className="text-xs font-mono text-[#d4ff00] block">
+                        <span className="text-xs font-mono text-accent block">
                             Flagship 2D/3D builds
                         </span>
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
                                 Capabilities
@@ -84,7 +84,7 @@ export default function Dashboard({
                         </span>
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
                                 New Inquiries
@@ -99,7 +99,7 @@ export default function Dashboard({
                         </span>
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
                                 Subscribers
@@ -130,17 +130,17 @@ export default function Dashboard({
                         </span>
                     </Link>
 
-                    <Link href="/admin/chat-sessions" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#d4ff00]/40 transition-colors">
+                    <Link href="/admin/chat-sessions" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
                         <div className="flex items-center justify-between text-neutral-400">
                             <span className="font-mono text-xs uppercase tracking-wider">
                                 Chat Leads
                             </span>
-                            <MessageSquareText className="w-4 h-4 text-[#d4ff00]" />
+                            <MessageSquareText className="w-4 h-4 text-accent" />
                         </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-[#d4ff00] tracking-tight">
+                        <div className="text-3xl sm:text-4xl font-extrabold text-accent tracking-tight">
                             {stats.total_chat_leads ?? 0}
                         </div>
-                        <span className="text-xs font-mono text-[#d4ff00] flex items-center gap-1">
+                        <span className="text-xs font-mono text-accent flex items-center gap-1">
                             <span>View Transcripts</span>
                             <ArrowUpRight className="w-3 h-3" />
                         </span>
@@ -153,14 +153,14 @@ export default function Dashboard({
                     <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                         <div className="flex items-center justify-between pb-4 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-[#d4ff00]" />
+                                <Mail className="w-4 h-4 text-accent" />
                                 <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                                     Recent Inquiries Inbox
                                 </h2>
                             </div>
                             <Link
                                 href="/admin/messages"
-                                className="text-xs font-mono text-[#d4ff00] hover:underline flex items-center gap-1"
+                                className="text-xs font-mono text-accent hover:underline flex items-center gap-1"
                             >
                                 <span>View all</span>
                                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -180,7 +180,7 @@ export default function Dashboard({
                                             </div>
                                             <div className="text-xs text-neutral-400 font-mono">
                                                 {inq.company || inq.email} •{" "}
-                                                <span className="text-[#d4ff00]">
+                                                <span className="text-accent">
                                                     {inq.budget || "Custom"}
                                                 </span>
                                             </div>
@@ -208,14 +208,14 @@ export default function Dashboard({
                     <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                         <div className="flex items-center justify-between pb-4 border-b border-white/10">
                             <div className="flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-[#d4ff00]" />
+                                <Sparkles className="w-4 h-4 text-accent" />
                                 <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                                     Featured Flagships
                                 </h2>
                             </div>
                             <Link
                                 href="/admin/projects"
-                                className="text-xs font-mono text-[#d4ff00] hover:underline flex items-center gap-1"
+                                className="text-xs font-mono text-accent hover:underline flex items-center gap-1"
                             >
                                 <span>Curate</span>
                                 <ArrowUpRight className="w-3.5 h-3.5" />

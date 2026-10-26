@@ -290,7 +290,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             category: '3D Spatial Shaders',
             year: '2026',
             color: 'from-purple-950/60 via-[#10121a] to-black',
-            accent: '#d4ff00',
+            accent: '#fbb718',
             tag: '3D Real-Time WebGL',
             preview: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
         },
@@ -337,7 +337,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
         >
             {/* AMBIENT BACKGROUND GLOWS */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-0 w-[36rem] h-[36rem] bg-[#d4ff00]/10 rounded-full blur-[170px]" />
+                <div className="absolute top-1/4 left-0 w-[36rem] h-[36rem] bg-accent/10 rounded-full blur-[170px]" />
                 <div className="absolute top-1/3 right-10 w-[40rem] h-[40rem] bg-indigo-600/15 rounded-full blur-[190px]" />
             </div>
 
@@ -353,7 +353,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                             opacity: 0,
                             transform: 'translate3d(-9999px, -9999px, 0)',
                         }}
-                        className="pointer-events-none absolute w-[240px] sm:w-[250px] h-[215px] sm:h-[225px] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_20px_rgba(212,255,0,0.1)] border border-white/20 will-change-transform bg-neutral-900"
+                        className="pointer-events-none absolute w-[240px] sm:w-[250px] h-[215px] sm:h-[225px] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_20px_rgba(251,183,24,0.1)] border border-white/20 will-change-transform bg-neutral-900"
                     >
                         <img
                             src={item.image}
@@ -361,7 +361,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                             className="w-full h-full object-cover object-center scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-3.5">
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-[#d4ff00]">
+                            <span className="font-mono text-[10px] uppercase tracking-widest text-accent">
                                 {item.category}
                             </span>
                             <span className="font-display text-sm font-bold text-white tracking-wide">
@@ -379,7 +379,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                     <div className="lg:col-span-7 space-y-4 sm:space-y-6 lg:space-y-4 xl:space-y-6 2xl:space-y-7">
                         {/* Eyebrow Status Badge */}
                         <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs font-mono text-neutral-300">
-                            <span className="w-2 h-2 rounded-full bg-[#d4ff00] animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                             <span className="uppercase tracking-widest">
                                 AVAILABLE FOR COMMISSIONS // 2026 ARCHITECTURE
                             </span>
@@ -391,7 +391,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 ARE YOU <br />
                                 LOOKING FOR <br />
                                 <span className="flex items-baseline flex-wrap gap-x-3 text-white">
-                                    <span className="overflow-hidden min-h-[1.2em] h-[1.25em] inline-block relative text-[#d4ff00] max-w-full">
+                                    <span className="overflow-hidden min-h-[1.2em] h-[1.25em] inline-block relative text-accent max-w-full">
                                         <AnimatePresence mode="wait">
                                             <motion.span
                                                 key={rotatingWords[currentWordIndex]}
@@ -408,7 +408,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 </span>
                             </h1>
 
-                            <p className="text-sm sm:text-base lg:text-sm xl:text-base 2xl:text-lg text-neutral-400 max-w-xl font-normal leading-relaxed pt-0.5">
+                            <p className="text-sm sm:text-base lg:text-sm xl:text-base 2xl:text-lg text-neutral-300 max-w-xl font-['Roboto',_sans-serif] font-black leading-relaxed pt-0.5 tracking-wide">
                                 CuttingEdger delivers surgical 2D photo editing and photorealistic 3D product CGI for high-growth e-commerce brands, fashion houses, and advertising agencies worldwide.
                             </p>
                         </div>
@@ -439,7 +439,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 <span className="text-[10px] sm:text-xs font-mono text-neutral-400 uppercase tracking-wider">Daily Images</span>
                             </div>
                             <div>
-                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-xl sm:text-2xl xl:text-3xl text-[#d4ff00]">99.8%</span>
+                                <span className="block font-['Clash_Display',_'Syne',_sans-serif] font-bold text-xl sm:text-2xl xl:text-3xl text-accent">99.8%</span>
                                 <span className="text-[10px] sm:text-xs font-mono text-neutral-400 uppercase tracking-wider">First-Pass QA</span>
                             </div>
                             <div>
@@ -491,7 +491,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                         {/* Bottom Information Section */}
                                         <div className="relative z-10 p-4 sm:p-5 xl:p-6 space-y-2 sm:space-y-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-8 sm:pt-10 xl:pt-12">
                                             <div className="flex items-center justify-between">
-                                                <span className="font-mono text-[11px] sm:text-xs uppercase tracking-widest text-[#d4ff00] font-semibold">
+                                                <span className="font-mono text-[11px] sm:text-xs uppercase tracking-widest text-accent font-semibold">
                                                     {card.category}
                                                 </span>
                                                 <span className="text-[10px] font-mono uppercase text-neutral-400">
@@ -506,9 +506,9 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                             {/* Shuffle Trigger Footer */}
                                             <div className="pt-2 sm:pt-3 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-mono">
                                                 <span className="text-neutral-400">Click to shuffle</span>
-                                                <div className="flex items-center gap-1.5 text-white font-semibold group-hover:text-[#d4ff00] transition-colors">
+                                                <div className="flex items-center gap-1.5 text-white font-semibold group-hover:text-accent transition-colors">
                                                     <span>Next Reel</span>
-                                                    <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                                    <ArrowUpRight className="w-3.5 h-3.5 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                                 </div>
                                             </div>
                                         </div>
@@ -523,14 +523,14 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             {/* Scroll Indicator */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 lg:pt-3 xl:pt-6 flex items-center justify-between text-xs font-mono text-neutral-500 relative z-20">
                 <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#d4ff00]" />
+                    <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="uppercase tracking-widest text-[11px] sm:text-xs">SCROLL TO REVEAL</span>
                 </div>
                 <button
                     type="button"
                     onClick={scrollToWork}
                     aria-label="Scroll down"
-                    className="p-1.5 sm:p-2 rounded-full border border-white/10 hover:border-[#d4ff00] hover:text-[#d4ff00] transition-colors cursor-pointer"
+                    className="p-1.5 sm:p-2 rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors cursor-pointer"
                 >
                     <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
                 </button>

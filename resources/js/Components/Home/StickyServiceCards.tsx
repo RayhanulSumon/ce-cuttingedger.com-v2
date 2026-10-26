@@ -156,7 +156,7 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
             {/* Card Bottom Bar: Unobstructed Image with Title & CTA */}
             <div className="absolute bottom-4 sm:bottom-8 inset-x-4 sm:inset-x-8 lg:inset-x-10 z-30 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 pointer-events-none">
                 <div className="space-y-1.5 sm:space-y-2 max-w-xl">
-                    <span className="px-3 sm:px-5 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono font-bold text-[#d4ff00] uppercase tracking-wider shadow-lg inline-block">
+                    <span className="px-3 sm:px-5 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono font-bold text-accent uppercase tracking-wider shadow-lg inline-block">
                         Discipline 0{item.id}
                     </span>
                     <h3 className="text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
@@ -169,7 +169,7 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
 
                 {/* Direct Action Pill */}
                 <div className="pointer-events-auto shrink-0">
-                    <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-[#c2eb00] group-hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all">
+                    <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-accent-hover group-hover:shadow-[0_0_20px_rgba(251,183,24,0.4)] transition-all">
                         <span>Explore Discipline</span>
                         <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
                     </span>
@@ -190,13 +190,13 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                     scale: isHovered ? 1 : 0.7,
                 }}
                 transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(212,255,0,0.18)] will-change-transform select-none"
+                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(251,183,24,0.18)] will-change-transform select-none"
             >
-                <span className="w-2 h-2 rounded-full bg-[#d4ff00] shadow-[0_0_8px_#d4ff00] shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_#fbb718] shrink-0" />
                 <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
                     Explore Service
                 </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
             </motion.div>
         </motion.article>
     );
@@ -333,19 +333,19 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
             className="relative py-12 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
         >
             {/* Ambient Background Glow */}
-            <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
+            <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-accent/5 rounded-full blur-[220px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 pb-6 border-b border-white/10 gap-6">
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 <span>[ 01 // CORE DISCIPLINES & SERVICES ]</span>
                             </div>
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-400">
-                                <span className="text-[#d4ff00] font-semibold">0{activeIndex + 1}</span>
+                                <span className="text-accent font-semibold">0{activeIndex + 1}</span>
                                 <span>/</span>
                                 <span>04</span>
                             </div>
@@ -358,7 +358,7 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
 
                     <Link
                         href="/services"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-[#d4ff00] hover:border-[#d4ff00] transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
                     >
                         <span>View All Services ({services?.length || '6+'})</span>
                         <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -376,11 +376,11 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                                 onClick={() => scrollToCard(idx)}
                                 className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all duration-300 whitespace-nowrap cursor-pointer flex items-center gap-2 border ${
                                     isActive
-                                        ? 'bg-[#d4ff00] text-black font-bold border-[#d4ff00] shadow-[0_0_20px_rgba(212,255,0,0.3)]'
+                                        ? 'bg-accent text-black font-bold border-accent shadow-[0_0_20px_rgba(251,183,24,0.3)]'
                                         : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border-white/10'
                                 }`}
                             >
-                                <span className={isActive ? 'text-black font-extrabold' : 'text-[#d4ff00]'}>
+                                <span className={isActive ? 'text-black font-extrabold' : 'text-accent'}>
                                     0{idx + 1}.
                                 </span>
                                 <span>{card.title}</span>

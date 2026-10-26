@@ -191,7 +191,7 @@ export default function ConsultationsIndex({
             cell: (row) => (
                 <div className="space-y-0.5">
                     <div className="font-semibold text-white flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <User className="w-3.5 h-3.5 text-accent" />
                         <span>{row.name}</span>
                     </div>
                     <div className="text-xs text-neutral-400 flex items-center gap-1.5 font-mono">
@@ -240,7 +240,7 @@ export default function ConsultationsIndex({
             cell: (row) => (
                 <div className="space-y-0.5 font-mono text-xs">
                     <div className="text-white font-semibold flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <Calendar className="w-3.5 h-3.5 text-accent" />
                         <span>{row.scheduled_at_formatted}</span>
                     </div>
                     <div className="text-[10px] text-neutral-500">
@@ -283,9 +283,9 @@ export default function ConsultationsIndex({
                             {row.status === "pending" && (
                                 <DropdownMenuItem
                                     onClick={() => updateStatus(row, "confirmed")}
-                                    className="cursor-pointer gap-2 text-[#d4ff00] focus:text-[#d4ff00] font-semibold"
+                                    className="cursor-pointer gap-2 text-accent focus:text-accent font-semibold"
                                 >
-                                    <CheckCircle2 className="w-4 h-4 text-[#d4ff00]" />
+                                    <CheckCircle2 className="w-4 h-4 text-accent" />
                                     <span>Confirm & Acknowledge</span>
                                 </DropdownMenuItem>
                             )}
@@ -364,11 +364,11 @@ export default function ConsultationsIndex({
                             {stats.pending}
                         </div>
                     </div>
-                    <div className="bg-[#12141a] border border-[#d4ff00]/30 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#d4ff00] block mb-1">
+                    <div className="bg-[#12141a] border border-accent/30 rounded-2xl p-4">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent block mb-1">
                             Upcoming Calls
                         </span>
-                        <div className="text-2xl font-bold font-mono text-[#d4ff00]">
+                        <div className="text-2xl font-bold font-mono text-accent">
                             {stats.upcoming}
                         </div>
                     </div>
@@ -406,7 +406,7 @@ export default function ConsultationsIndex({
                     <DialogContent className="max-w-lg bg-[#0b0c10] border border-white/10 text-white">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2">
-                                <CalendarCheck2 className="w-5 h-5 text-[#d4ff00]" />
+                                <CalendarCheck2 className="w-5 h-5 text-accent" />
                                 <span>Consultation Booking Details</span>
                             </DialogTitle>
                             <DialogDescription className="text-neutral-400">
@@ -431,7 +431,7 @@ export default function ConsultationsIndex({
                                     </div>
                                     <div>
                                         <span className="text-neutral-500 block text-[10px]">STATUS</span>
-                                        <span className="uppercase text-[#d4ff00] font-bold">{selectedConsultation.status}</span>
+                                        <span className="uppercase text-accent font-bold">{selectedConsultation.status}</span>
                                     </div>
                                 </div>
 
@@ -459,7 +459,7 @@ export default function ConsultationsIndex({
                                         <Button
                                             size="sm"
                                             onClick={() => updateStatus(selectedConsultation, "confirmed")}
-                                            className="bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold text-xs gap-1.5"
+                                            className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold text-xs gap-1.5"
                                         >
                                             <CheckCircle2 className="w-3.5 h-3.5" />
                                             <span>Confirm & Acknowledge</span>

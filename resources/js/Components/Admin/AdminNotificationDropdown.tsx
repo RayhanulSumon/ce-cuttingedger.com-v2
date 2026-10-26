@@ -176,7 +176,7 @@ export function AdminNotificationDropdown() {
         }
         if (type.includes("lead")) {
             return (
-                <div className="w-8 h-8 rounded-lg bg-[#d4ff00]/10 border border-[#d4ff00]/30 text-[#d4ff00] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 text-accent flex items-center justify-center shrink-0">
                     <Sparkles className="w-4 h-4" />
                 </div>
             );
@@ -205,7 +205,7 @@ export function AdminNotificationDropdown() {
                 >
                     <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[#d4ff00] text-black font-mono font-bold text-[10px] shadow-sm animate-pulse">
+                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-accent text-black font-mono font-bold text-[10px] shadow-sm animate-pulse">
                             {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                     )}
@@ -222,7 +222,7 @@ export function AdminNotificationDropdown() {
                     <div className="flex items-center gap-2">
                         <span className="font-bold text-sm text-white">Notifications</span>
                         {unreadCount > 0 ? (
-                            <span className="px-1.5 py-0.2 rounded-full bg-[#d4ff00]/15 text-[#d4ff00] text-[10px] font-mono font-bold border border-[#d4ff00]/30">
+                            <span className="px-1.5 py-0.2 rounded-full bg-accent/15 text-accent text-[10px] font-mono font-bold border border-accent/30">
                                 {unreadCount} new
                             </span>
                         ) : (
@@ -239,7 +239,7 @@ export function AdminNotificationDropdown() {
                                 className="h-7 px-2 text-[11px] font-mono text-neutral-400 hover:text-white hover:bg-white/5 gap-1"
                                 title="Mark all as read"
                             >
-                                <CheckCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                <CheckCheck className="w-3.5 h-3.5 text-accent" />
                                 <span>Mark read</span>
                             </Button>
                         )}
@@ -278,7 +278,7 @@ export function AdminNotificationDropdown() {
                                     "p-3.5 px-4 flex items-start gap-3 transition-colors cursor-pointer group relative",
                                     n.is_read
                                         ? "bg-transparent hover:bg-white/5 text-neutral-400"
-                                        : "bg-[#d4ff00]/5 hover:bg-[#d4ff00]/10 text-white"
+                                        : "bg-accent/5 hover:bg-accent/10 text-white"
                                 )}
                             >
                                 {/* Left icon */}
@@ -291,7 +291,7 @@ export function AdminNotificationDropdown() {
                                             {n.title}
                                         </span>
                                         {!n.is_read && (
-                                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00] shrink-0" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
                                         )}
                                     </div>
                                     <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
@@ -332,7 +332,7 @@ export function AdminNotificationDropdown() {
                                 setIsOpen(false);
                                 router.visit("/admin/consultations");
                             }}
-                            className="text-[#d4ff00] hover:underline"
+                            className="text-accent hover:underline"
                         >
                             View Bookings →
                         </button>

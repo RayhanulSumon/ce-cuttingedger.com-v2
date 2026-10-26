@@ -113,10 +113,10 @@ export function RichContentEditor({
     ];
 
     return (
-        <div className="border border-white/10 rounded-md overflow-hidden bg-[#0c0d12] focus-within:border-[#d4ff00] transition-colors">
+        <div className="border border-white/10 rounded-md overflow-hidden bg-[#0c0d12] focus-within:border-accent transition-colors">
             {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-1 p-2 bg-[#12131a] border-b border-white/10">
-                <span className="text-[10px] font-mono font-bold text-[#d4ff00] uppercase tracking-wider px-2 py-0.5 border border-[#d4ff00]/30 rounded bg-[#d4ff00]/10 mr-1">
+                <span className="text-[10px] font-mono font-bold text-accent uppercase tracking-wider px-2 py-0.5 border border-accent/30 rounded bg-accent/10 mr-1">
                     RICH EDITOR
                 </span>
                 {tools.map((t, idx) => (
@@ -152,7 +152,7 @@ export function RichContentEditor({
                         {value.trim() ? value.trim().split(/\s+/).length : 0} words
                     </span>
                     <span>{value.length} chars</span>
-                    <span className="text-[#d4ff00]">
+                    <span className="text-accent">
                         ~{Math.max(1, Math.ceil((value.trim() ? value.trim().split(/\s+/).length : 0) / 200))} min read
                     </span>
                 </div>
