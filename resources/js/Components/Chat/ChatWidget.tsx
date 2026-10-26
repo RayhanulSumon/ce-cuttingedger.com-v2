@@ -914,6 +914,39 @@ export function ChatWidget() {
                                                             </div>
                                                         );
                                                     }
+                                                    if (card.type === 'compact_slot_proposal') {
+                                                        return (
+                                                            <div key={cIdx} className="my-2 p-3.5 rounded-2xl bg-[#151720] border border-[#00f5ff]/30 shadow-xl text-left">
+                                                                <div className="flex items-center gap-2 mb-2">
+                                                                    <span className="p-1.5 rounded-lg bg-[#00f5ff]/20 text-[#00f5ff] border border-[#00f5ff]/30">
+                                                                        <Calendar className="w-4 h-4" />
+                                                                    </span>
+                                                                    <div>
+                                                                        <h4 className="text-xs font-bold text-white tracking-tight">{card.date_label} at {card.selected_time} UTC</h4>
+                                                                        <span className="text-[10px] text-[#00f5ff] font-mono">15-min Technical Intake Call</span>
+                                                                    </div>
+                                                                </div>
+                                                                <p className="text-[11px] text-white/80 mb-2.5 leading-relaxed">{card.message}</p>
+                                                                <div className="flex items-center gap-2">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleBookSlot({ slot_datetime: card.slot_datetime, notes: card.requested_time })}
+                                                                        className="flex-1 py-2 px-3 rounded-xl bg-[#00f5ff] hover:bg-[#00d0db] text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#00f5ff]/20"
+                                                                    >
+                                                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                                                        <span>Confirm {card.selected_time}</span>
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleSendMessage('Show full calendar with all dates')}
+                                                                        className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-mono transition-all border border-white/10 cursor-pointer"
+                                                                    >
+                                                                        All Times
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
                                                     if (card.type === 'calendar_slot_picker') {
                                                         return (
                                                             <CalendarSlotPicker

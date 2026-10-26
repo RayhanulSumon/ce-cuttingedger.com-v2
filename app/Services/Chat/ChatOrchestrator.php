@@ -4,6 +4,7 @@ namespace App\Services\Chat;
 
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
+use App\Services\Chat\Tools\CalendarBookingTool;
 
 class ChatOrchestrator
 {
@@ -105,6 +106,19 @@ class ChatOrchestrator
             }
         }
 
+        // Auto-safeguard: If the client asked to book a specific day/time (e.g. "book me tomorrow 11am")
+        // but no booking card was generated, automatically execute checkSpecificSlot so they get a compact 1-click confirm card!
+        if (empty($toolCards) && preg_match('/\b(book|schedule|reserve|call me|appointment)\b/i', $userText)) {
+            $isSpecific = preg_match('/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b/i', $userText);
+            if ($isSpecific) {
+                $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, 'UTC', $session);
+                $toolCards[] = $proposal;
+                if (empty($assistantContent) || $assistantContent === "We're ready to take on your project!") {
+                    $assistantContent = $proposal['message'];
+                }
+            }
+        }
+
         // 3. Fallback to HybridIntentEngine if Ollama was unavailable or returned nothing
         if ($engineUsed === 'fallback' || empty($assistantContent)) {
             $engineUsed = 'fallback';
@@ -162,7 +176,7 @@ Studio Production Disciplines & Pricing:
 
 Human Chat Guidelines:
 1. UNDERSTAND CONTEXT: Pay close attention to what the client specifically asks. If they ask for "all pricing" or "single readable format", give them a clean, direct pricing breakdown right in text. Never show a single-item calculator when they asked for all rates.
-2. SCHEDULING: If they specify a time like "tomorrow 10 am", acknowledge and confirm that exact time ("I've set aside tomorrow at 10:00 AM UTC for our technical lead").
+2. SCHEDULING: If they specify a time like "tomorrow 11am", call check_specific_time_slot so they get an instant 1-click confirmation button. Do not dump the full multi-day widget. Offer the closest available studio slot (10:00 AM or 11:30 AM) and ask for their email/name to finalize.
 3. CONCISE & NATURAL: 1 to 3 short sentences maximum. Direct answer first. Never use robotic filler words like "Certainly!", "I'd be happy to assist", "As an AI language model", or "Feel free to ask". Talk like a real studio lead ("Sure thing", "Got it", "Here's the full breakdown", "We can deliver that in 24 hours").
 PROMPT;
 

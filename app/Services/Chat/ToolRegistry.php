@@ -20,6 +20,7 @@ class ToolRegistry
     {
         return [
             PriceCalculatorTool::schema(),
+            CalendarBookingTool::checkSpecificSlotSchema(),
             CalendarBookingTool::checkSlotsSchema(),
             CalendarBookingTool::bookAppointmentSchema(),
             CalendarBookingTool::rescheduleAppointmentSchema(),
@@ -47,6 +48,7 @@ class ToolRegistry
 
         // Booking / Calendar queries
         if (preg_match('/\b(call|meeting|book|schedule|appointment|calendar|slot|reschedule)\b/i', $text)) {
+            $tools[] = CalendarBookingTool::checkSpecificSlotSchema();
             $tools[] = CalendarBookingTool::checkSlotsSchema();
             $tools[] = CalendarBookingTool::bookAppointmentSchema();
         }
@@ -73,6 +75,7 @@ class ToolRegistry
     public function execute(string $toolName, array $arguments, ?ChatSession $session = null): array
     {
         return match ($toolName) {
+            'check_specific_time_slot' => (new CalendarBookingTool)->checkSpecificSlot($arguments['requested_time'] ?? '', $arguments['timezone'] ?? 'UTC', $session),
             'calculate_image_price' => (new PriceCalculatorTool)->execute($arguments),
             'check_available_calendar_slots' => (new CalendarBookingTool)->getAvailableSlots($arguments['timezone'] ?? 'UTC', $session, (bool) ($arguments['is_reschedule'] ?? false)),
             'book_calendar_appointment' => (new CalendarBookingTool)->book($arguments, $session),

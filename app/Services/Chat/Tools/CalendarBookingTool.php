@@ -97,6 +97,36 @@ class CalendarBookingTool
     }
 
     /**
+     * Get tool definition schema for checking a specific day/time slot without dumping full widget.
+     *
+     * @return array<string, mixed>
+     */
+    public static function checkSpecificSlotSchema(): array
+    {
+        return [
+            'type' => 'function',
+            'function' => [
+                'name' => 'check_specific_time_slot',
+                'description' => 'Check if a specific time slot requested by the client (e.g. "tomorrow 11am", "tomorrow at 10am", "Friday 2pm") is open, or find the closest open slot without displaying the full multi-day widget.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'requested_time' => [
+                            'type' => 'string',
+                            'description' => 'The specific time requested by the client, e.g. "tomorrow 11am", "tomorrow 10am", "Wednesday 2pm"',
+                        ],
+                        'timezone' => [
+                            'type' => 'string',
+                            'description' => 'Client timezone, defaults to UTC',
+                        ],
+                    ],
+                    'required' => ['requested_time'],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Get tool definition schema for checking current appointment status.
      *
      * @return array<string, mixed>
@@ -216,6 +246,83 @@ class CalendarBookingTool
             'is_reschedule' => $isReschedule,
             'existing_booking' => $existingBooking,
             'days' => $days,
+        ];
+    }
+
+    /**
+     * Check a specific day/time slot requested by user and return a compact proposal without dumping the full multi-day widget.
+     *
+     * @return array<string, mixed>
+     */
+    public function checkSpecificSlot(string $requestedTime, string $clientTimezone = 'UTC', ?ChatSession $session = null): array
+    {
+        $targetDate = Carbon::now($clientTimezone);
+        if (str_contains(strtolower($requestedTime), 'tomorrow')) {
+            $targetDate = $targetDate->addDay();
+        } elseif (preg_match('/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i', $requestedTime, $dayMatch)) {
+            $targetDate = Carbon::parse("next {$dayMatch[1]}", $clientTimezone);
+        }
+
+        if ($targetDate->isWeekend()) {
+            $targetDate = Carbon::parse('next monday', $clientTimezone);
+        }
+
+        $dateKey = $targetDate->format('Y-m-d');
+        $dateLabel = $targetDate->format('l, F j');
+
+        $standardTimes = ['10:00 AM', '11:30 AM', '02:00 PM', '03:30 PM', '05:00 PM'];
+
+        $bookedSlots = ChatConsultation::whereDate('scheduled_at', $dateKey)
+            ->where('status', '!=', 'cancelled')
+            ->pluck('scheduled_at')
+            ->map(fn ($dt) => $dt->format('g:i A'))
+            ->toArray();
+
+        $closestTime = null;
+        $isExact = false;
+
+        if (preg_match('/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b/i', $requestedTime, $m)) {
+            $hour = (int) $m[1];
+            $minute = ! empty($m[2]) ? (int) $m[2] : 0;
+            $meridiem = ! empty($m[3]) ? strtoupper($m[3]) : ($hour < 8 || $hour === 12 ? 'PM' : 'AM');
+            if ($meridiem === 'AM' && $hour === 12) {
+                $hour = 0;
+            }
+
+            $requestedMinutes = ($meridiem === 'PM' && $hour < 12 ? $hour + 12 : $hour) * 60 + $minute;
+            $minDiff = 9999;
+            foreach ($standardTimes as $st) {
+                $stCarbon = Carbon::parse("{$dateKey} {$st}", $clientTimezone);
+                $stMinutes = $stCarbon->hour * 60 + $stCarbon->minute;
+                $diff = abs($stMinutes - $requestedMinutes);
+                if ($diff < $minDiff && ! in_array($st, $bookedSlots, true)) {
+                    $minDiff = $diff;
+                    $closestTime = $st;
+                }
+            }
+
+            if ($closestTime) {
+                $isExact = ($minDiff === 0);
+            }
+        }
+
+        if (! $closestTime) {
+            $open = array_values(array_diff($standardTimes, $bookedSlots));
+            $closestTime = $open[0] ?? '10:00 AM';
+        }
+
+        $slotCarbon = Carbon::parse("{$dateKey} {$closestTime}", $clientTimezone);
+
+        return [
+            'type' => 'compact_slot_proposal',
+            'date_label' => $dateLabel,
+            'requested_time' => $requestedTime,
+            'selected_time' => $closestTime,
+            'slot_datetime' => $slotCarbon->toIso8601String(),
+            'is_exact' => $isExact,
+            'message' => $isExact
+                ? "{$dateLabel} at {$closestTime} UTC is available! Click below to confirm or reply with your email to lock it in:"
+                : "For {$requestedTime}, our closest available slot on {$dateLabel} is **{$closestTime} UTC**. Click below to confirm or select another time:",
         ];
     }
 
