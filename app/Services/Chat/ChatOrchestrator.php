@@ -55,17 +55,8 @@ class ChatOrchestrator
         $suggestedReplies = [];
         $toolCallsData = null;
 
-        // 2. Fast-Path: High-confidence instant queries (greetings, operator takeover, cloud links, email capture)
-        // These answer in <30ms without needing CPU token generation
-        if ($this->isInstantQuery($userText) && empty($attachments) && empty($imagesBase64)) {
-            $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
-            $assistantContent = $fallbackResult['content'];
-            $toolCards = $fallbackResult['tool_cards'];
-            $suggestedReplies = $fallbackResult['suggested_replies'];
-            $engineUsed = 'fast_path';
-        }
-        // 3. Otherwise, route conversational & bespoke queries to Ollama AI
-        elseif ($this->ollama->isAvailable()) {
+        // 2. Primary: Route conversational & bespoke queries to Ollama AI
+        if ($this->ollama->isAvailable()) {
             $history = $this->buildMessageHistory($session);
             $toolDefinitions = $this->tools->getRelevantDefinitions($userText);
 
@@ -211,40 +202,5 @@ PROMPT;
     {
         // Keep conversation natural and human; tool cards provide their own interactive actions
         return [];
-    }
-
-    /**
-     * Check if query has a high-confidence instant answer to bypass heavy CPU inference.
-     */
-    protected function isInstantQuery(string $text): bool
-    {
-        $clean = strtolower(trim($text));
-
-        // International & Banglish greetings
-        if (preg_match('/^(hi|hello|hey|good\s*(morning|afternoon|evening)|howdy|greetings|hola|buenos\s*dias|buenas\s*tardes|bonjour|salut|hallo|guten\s*(tag|morgen)|ciao|buongiorno|namaste|salaam|কেমন\s*আছেন|হ্যালো|হাই|নমস্কার|সালাম|مرحبا|أهلا|السلام\s*عليكم|kemon\s*(acho|asen|achen|acchen)|ki\s*(obostha|khobor)|bhalo\s*(achi|acho|achen)|valo\s*(achi|acho|achen))[!.? ]*$/iu', $clean)) {
-            return true;
-        }
-
-        // Capability & Speciality Inquiries ("what can you do?", "what is your speciality?", "what do you do?")
-        if (preg_match('/\b(what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|are\s*your\s*services)|tell\s*me\s*about\s*your\s*(services|speciali[tz]y)|your\s*(capabilities|speciali[tz]y|expertise))\b/i', $clean)) {
-            return true;
-        }
-
-        // Request live human operator
-        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|representative|humano|operador|mensch|humain|মানুষ)\b/iu', $clean)) {
-            return true;
-        }
-
-        // Cloud Drive link
-        if (preg_match('/(https?:\/\/[^\s]+)/i', $text) && (str_contains($clean, 'drive') || str_contains($clean, 'dropbox') || str_contains($clean, 'wetransfer') || str_contains($clean, 'onedrive') || str_contains($clean, 'box.com'))) {
-            return true;
-        }
-
-        // Reset
-        if (in_array($clean, ['reset', 'clear', '/reset', 'new chat', 'fresh chat', 'clear chat', 'start fresh', 'start over', 'restart chat'])) {
-            return true;
-        }
-
-        return false;
     }
 }
