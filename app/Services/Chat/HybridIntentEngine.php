@@ -1126,8 +1126,28 @@ class HybridIntentEngine
             ];
         }
 
+        // 5.4. Social Pleasantries: "How are you?"
+        if (preg_match('/\b(how\s*are\s*you|how\'?s\s*it\s*going|how\s*are\s*things|how\s*r\s*u|how\s*do\s*you\s*do)\b/i', $text)) {
+            $pleasantries = [
+                'Doing great, thanks for asking! The studio is bustling with client photo batches today. How are you doing, and what kind of images are you working on?',
+                'Doing very well, thank you! Ready to help you with your editing projects. How are things on your end?',
+                'All good here in the studio! How are you doing today? Let me know if you need clipping paths, ghost mannequins, or high-end retouching.',
+            ];
+
+            return [
+                'content' => $pleasantries[array_rand($pleasantries)],
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Calculate Pricing',
+                    'Turnaround SLAs',
+                    'Claim 3 Free Sample Edits',
+                    'Talk to a live specialist',
+                ],
+            ];
+        }
+
         // 5.5. Natural Greetings & Pleasantries
-        if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|how\s*are\s*you|what\'?s\s*up|greetings)[\s!.]*$/i', $text) ||
+        if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|what\'?s\s*up|greetings)[\s!?.]*$/i', $text) ||
             $text === 'hi' || $text === 'hello' || $text === 'hey') {
             $greetings = [
                 'Hey! Welcome to CuttingEdger. What kind of images or retouching are you working on today?',
