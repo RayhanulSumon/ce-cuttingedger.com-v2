@@ -418,6 +418,16 @@ class ChatController extends Controller
      */
     public function bookSlot(Request $request): JsonResponse
     {
+        $session = $this->sessionManager->resolve($request);
+
+        // Auto-populate from session lead info or authenticated user if not provided in request
+        if (! $request->filled('name')) {
+            $request->merge(['name' => $session->lead_name ?: ($request->user()?->name ?: 'Guest Specialist')]);
+        }
+        if (! $request->filled('email') && ($session->lead_email || $request->user()?->email)) {
+            $request->merge(['email' => $session->lead_email ?: $request->user()?->email]);
+        }
+
         $validated = $request->validate([
             'slot_datetime' => 'required|string',
             'name' => 'required|string|max:120',
@@ -428,8 +438,6 @@ class ChatController extends Controller
             'consultation_id' => 'nullable|integer',
             'is_reschedule' => 'nullable|boolean',
         ]);
-
-        $session = $this->sessionManager->resolve($request);
 
         // Spam & Disposable Email Guard for Calendar Appointments
         $spamGuard = app(EmailAndSpamGuard::class);

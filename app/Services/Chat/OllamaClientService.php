@@ -83,6 +83,8 @@ class OllamaClientService
             'options' => [
                 'temperature' => $this->temperature,
                 'num_ctx' => 2048,
+                'num_predict' => (int) config('chat.llm.max_tokens', 280),
+                'num_thread' => (int) env('OLLAMA_NUM_THREADS', 8),
             ],
         ];
 
