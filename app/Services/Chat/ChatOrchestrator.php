@@ -93,35 +93,53 @@ class ChatOrchestrator
 
         $clientTimezone = $session->metadata['timezone'] ?? 'UTC';
 
-        // Auto-safeguard for existing appointment inquiries: e.g. "when will be my schedule date and time?", "when is my meeting", "what is my schedule"
-        $isCheckingExisting = preg_match('/\b(when|what|check|show|tell me|my|current)\b/i', $userText) && preg_match('/\b(sched\w*|appoint\w*|meet\w*|call\w*|book\w*|slot\w*)\b/i', $userText);
-
-        if ($isCheckingExisting && empty($toolCards)) {
-            $appointmentCard = (new CalendarBookingTool)->checkAppointment([], $session);
-            if (! empty($appointmentCard) && ($appointmentCard['type'] ?? '') === 'appointment_status_card') {
-                $toolCards[] = $appointmentCard;
-                if (empty($assistantContent)) {
-                    $assistantContent = "Your consultation is confirmed for **{$appointmentCard['datetime_formatted']}**! Our senior production specialist will meet with you over Google Meet.";
-                }
-            }
-        }
-        // Auto-safeguard: If the client asked to book, schedule, or meet (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am")
-        // but no booking card was generated, automatically execute checkSpecificSlot so they get the compact 1-click booking card!
-        elseif (empty($toolCards) && ! $isCheckingExisting && preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText)) {
-            $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, $clientTimezone, $session);
-            $toolCards[] = $proposal;
-            if (empty($assistantContent) || str_contains(strtolower($assistantContent), 'feel free to ask') || str_contains(strtolower($assistantContent), 'make your project a success')) {
-                $assistantContent = $proposal['message'];
-            }
-        }
-
         // 3. Fallback to HybridIntentEngine if Ollama was unavailable or returned nothing
         if ($engineUsed === 'fallback' || empty($assistantContent)) {
             $engineUsed = 'fallback';
             $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
             $assistantContent = $fallbackResult['content'];
-            $toolCards = array_merge($toolCards, $fallbackResult['tool_cards']);
+            $toolCards = $fallbackResult['tool_cards'];
             $suggestedReplies = $fallbackResult['suggested_replies'];
+        }
+
+        // 4. Booking & Scheduling Handler:
+        // Ensure at most ONE calendar card is shown, and if the user ALREADY has an upcoming booking,
+        // remind them of their scheduled time and provide the Reschedule button!
+        $isBookingOrScheduleQuery = preg_match('/\b(book\w*|sched\w*|sced\w*|sked\w*|calend\w*|appoint\w*|apoint\w*|reserv\w*|call me|agend\w*|cita\w*|termin\w*|বুকিং)\b/iu', $userText);
+
+        if ($isBookingOrScheduleQuery) {
+            $isExplicitReschedule = preg_match('/\b(resched\w*|change\s*(time|date|slot)|different\s*(time|date|slot)|move\s*(call|meeting|time))\b/i', $userText);
+
+            $existingBooking = ChatConsultation::where('chat_session_id', $session->id)
+                ->orWhere(function ($q) use ($session) {
+                    if ($session->lead_email) {
+                        $q->where('email', $session->lead_email);
+                    }
+                })
+                ->where('scheduled_at', '>=', now()->subMinutes(15))
+                ->whereNotIn('status', ['cancelled', 'completed'])
+                ->latest('scheduled_at')
+                ->first();
+
+            if ($existingBooking && ! $isExplicitReschedule) {
+                // Client already has an active upcoming consultation!
+                // Remind them of their scheduled time with Reschedule option instead of opening a duplicate booking card
+                $statusCard = (new CalendarBookingTool)->checkAppointment([], $session);
+                $toolCards = [$statusCard];
+                $assistantContent = "You already have a confirmed consultation scheduled for **{$statusCard['datetime_formatted']}**! Our senior production specialist will meet with you over Google Meet. If you need a different time, click **Reschedule Slot** below:";
+            } else {
+                // Client has no active booking OR requested to reschedule: show exactly one booking proposal card
+                $wantsFull = preg_match('/\b(all\s*(times?|dates?|days?)|full\s*calendar|every\s*slot)\b/i', $userText);
+                if ($wantsFull) {
+                    $toolCards = [(new CalendarBookingTool)->getAvailableSlots($clientTimezone, $session, $isExplicitReschedule)];
+                } else {
+                    $proposal = (new CalendarBookingTool)->checkSpecificSlot($userText, $clientTimezone, $session);
+                    $toolCards = [$proposal];
+                    if (empty($assistantContent) || str_contains(strtolower($assistantContent), 'feel free to ask') || str_contains(strtolower($assistantContent), 'make your project a success')) {
+                        $assistantContent = $proposal['message'];
+                    }
+                }
+            }
         }
 
         // 4. Save Assistant response in database

@@ -80,7 +80,7 @@ class ChatFlowTest extends TestCase
         $response->assertStatus(200);
         $toolCards = $response->json('message.tool_cards');
         $this->assertNotEmpty($toolCards);
-        $this->assertSame('calendar_slot_picker', $toolCards[0]['type']);
+        $this->assertContains($toolCards[0]['type'], ['calendar_slot_picker', 'compact_slot_proposal']);
     }
 
     public function test_books_consultation_slot(): void
