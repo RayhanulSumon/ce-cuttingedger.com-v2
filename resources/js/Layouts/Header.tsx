@@ -95,20 +95,6 @@ export function Header({
         };
     }, []);
 
-    useEffect(() => {
-        const updateHeaderHeight = () => {
-            if (headerRef.current && isScrolled) {
-                const height = headerRef.current.getBoundingClientRect().height;
-                if (height > 0) {
-                    document.documentElement.style.setProperty('--header-height', `${height}px`);
-                }
-            }
-        };
-
-        updateHeaderHeight();
-        const timer = setTimeout(updateHeaderHeight, 320);
-        return () => clearTimeout(timer);
-    }, [isScrolled]);
 
     interface NavItem {
         label: string;

@@ -195,20 +195,20 @@ function ShowcaseRow({
     const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
     const [isHovered, setIsHovered] = useState(false);
 
-    // Scroll progress for the row: drives slide-in & rotation physics
+    // Scroll progress for the row: drives dynamic slide-in & rotation physics
     const { scrollYProgress } = useScroll({
         target: rowRef,
-        offset: ['start end', 'center center'],
+        offset: ['start 0.95', 'center 0.55'],
     });
 
-    // In Agntix:
-    // item-1 (image on right) starts at x: 400, rotate: 10deg -> slides to 0, 0deg
-    // item-2 (image on left) starts at x: -400, rotate: -10deg -> slides to 0, 0deg
-    const initialX = isEven ? -360 : 360;
-    const initialRot = isEven ? -10 : 10;
+    // Dynamic Agntix signature entrance: dramatic slide and rotation as row enters viewport
+    const initialX = isEven ? -240 : 240;
+    const initialRot = isEven ? -7 : 7;
 
     const scrollX = useTransform(scrollYProgress, [0, 1], [initialX, 0]);
     const scrollRotate = useTransform(scrollYProgress, [0, 1], [initialRot, 0]);
+    const scrollScale = useTransform(scrollYProgress, [0, 1], [0.94, 1]);
+    const scrollOpacity = useTransform(scrollYProgress, [0, 0.35], [0.3, 1]);
 
     // Interactive mouse 3D tilt
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -288,8 +288,11 @@ function ShowcaseRow({
                     style={{
                         x: scrollX,
                         rotate: scrollRotate,
+                        scale: scrollScale,
+                        opacity: scrollOpacity,
+                        transform: 'translateZ(0)',
                     }}
-                    className="w-full will-change-transform"
+                    className="w-full will-change-transform [backface-visibility:hidden]"
                 >
                     <motion.div
                         onMouseMove={handleMouseMove}

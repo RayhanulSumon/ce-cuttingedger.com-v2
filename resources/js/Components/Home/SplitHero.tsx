@@ -116,8 +116,13 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
         },
     ];
 
+    const isScrollingRef = useRef<boolean>(false);
+    const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const lastClientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
     // Spawns and animates the next image in the sequence using Agntix's exact physics
     const showNextImage = useCallback(() => {
+        if (isScrollingRef.current) return;
         zIndexCounterRef.current += 1;
         const idx = cardIndexRef.current;
         cardIndexRef.current = (cardIndexRef.current + 1) % gallery.length;
@@ -177,33 +182,62 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
         };
     }, [gallery.length]);
 
+    // Track active scrolling to prevent trail card flickering while scrolling
+    useEffect(() => {
+        let scrollTimeout: ReturnType<typeof setTimeout>;
+        const onScroll = () => {
+            isScrollingRef.current = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrollingRef.current = false;
+                if (heroRef.current && isInsideRef.current) {
+                    const rect = heroRef.current.getBoundingClientRect();
+                    const x = clientPosRef.current.x - rect.left;
+                    const y = clientPosRef.current.y - rect.top;
+                    mousePosRef.current = { x, y };
+                    cacheMousePosRef.current = { x, y };
+                    lastMousePosRef.current = { x, y };
+                    lastClientPosRef.current = { ...clientPosRef.current };
+                }
+            }, 100);
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            clearTimeout(scrollTimeout);
+        };
+    }, []);
+
     // Independent requestAnimationFrame render loop with linear interpolation (lerp)
     useEffect(() => {
         let animationFrameId: number;
         const lerp = (a: number, b: number, n: number) => (1 - n) * a + n * b;
 
         const render = () => {
-            if (isInsideRef.current) {
-                // Smoothly interpolate between cached mouse position and current mouse position (0.1 lerp)
+            if (isInsideRef.current && !isScrollingRef.current) {
+                // Smoothly interpolate between cached mouse position and current mouse position (0.15 lerp)
                 cacheMousePosRef.current.x = lerp(
                     cacheMousePosRef.current.x || mousePosRef.current.x,
                     mousePosRef.current.x,
-                    0.1
+                    0.15
                 );
                 cacheMousePosRef.current.y = lerp(
                     cacheMousePosRef.current.y || mousePosRef.current.y,
                     mousePosRef.current.y,
-                    0.1
+                    0.15
                 );
 
-                // Calculate distance between current cursor position and last triggered position
+                // Calculate distance based strictly on physical SCREEN movement (clientX/Y)
+                // This guarantees zero false triggers when the window scrolls!
                 const dist = Math.hypot(
-                    mousePosRef.current.x - lastMousePosRef.current.x,
-                    mousePosRef.current.y - lastMousePosRef.current.y
+                    clientPosRef.current.x - lastClientPosRef.current.x,
+                    clientPosRef.current.y - lastClientPosRef.current.y
                 );
 
                 // Distance threshold (75px) to show the next image in the trail
                 if (dist > 75) {
+                    lastClientPosRef.current = { ...clientPosRef.current };
                     lastMousePosRef.current = { ...mousePosRef.current };
                     showNextImage();
                 }
@@ -226,6 +260,8 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
         mousePosRef.current = { x, y };
         cacheMousePosRef.current = { x, y };
         lastMousePosRef.current = { x, y };
+        clientPosRef.current = { x: e.clientX, y: e.clientY };
+        lastClientPosRef.current = { x: e.clientX, y: e.clientY };
     }, []);
 
     const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -237,8 +273,10 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             isInsideRef.current = true;
             cacheMousePosRef.current = { x, y };
             lastMousePosRef.current = { x, y };
+            lastClientPosRef.current = { x: e.clientX, y: e.clientY };
         }
         mousePosRef.current = { x, y };
+        clientPosRef.current = { x: e.clientX, y: e.clientY };
     }, []);
 
     const handleMouseLeave = useCallback(() => {
