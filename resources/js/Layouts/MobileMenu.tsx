@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Link } from '@inertiajs/react';
-import { X, ArrowUpRight } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { X, ArrowUpRight, LogIn, UserPlus, User } from 'lucide-react';
 import { ThemeToggle } from '@/Components/ui/ThemeToggle';
 import { SiteSettings } from '@/types/models';
+import { PageProps } from '@/types';
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -12,6 +13,8 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileMenuProps) {
+    const { auth } = usePage<PageProps & { auth?: { user?: { name: string; email: string; role?: string } | null } }>().props;
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -88,8 +91,50 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                 </ul>
             </nav>
 
+            {/* Account / Auth Navigation Bar */}
+            <div className="py-4 border-t border-white/10">
+                {auth?.user ? (
+                    <Link
+                        href="/admin"
+                        onClick={onClose}
+                        className="w-full py-3 px-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-neutral-200 hover:text-white text-xs font-mono flex items-center justify-center gap-2 transition-colors"
+                    >
+                        <User className="w-4 h-4 text-accent" />
+                        <span>Command Clearance ({auth.user.name?.split(' ')[0]})</span>
+                    </Link>
+                ) : (
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                        <Link
+                            href="/login"
+                            onClick={onClose}
+                            className="py-3 px-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-neutral-200 hover:text-white text-xs font-mono flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <LogIn className="w-4 h-4 text-neutral-400" />
+                            <span>Sign In</span>
+                        </Link>
+                        <a
+                            href="/#free-trial"
+                            onClick={(e) => {
+                                onClose();
+                                if (window.location.pathname === '/') {
+                                    e.preventDefault();
+                                    const el = document.getElementById('free-trial');
+                                    if (el) {
+                                        el.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }
+                            }}
+                            className="py-3 px-4 rounded-2xl border border-accent/30 bg-accent/10 hover:bg-accent/20 text-accent hover:text-white text-xs font-mono flex items-center justify-center gap-2 transition-colors font-medium"
+                        >
+                            <UserPlus className="w-4 h-4 text-accent" />
+                            <span>Sign Up</span>
+                        </a>
+                    </div>
+                )}
+            </div>
+
             {/* Bottom Actions */}
-            <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
                     <span className="font-mono text-xs uppercase text-neutral-400 block mb-1">Direct Line</span>
                     <a

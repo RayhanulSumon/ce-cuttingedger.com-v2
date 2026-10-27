@@ -16,6 +16,9 @@ import {
     BookOpen,
     CheckCircle2,
     ArrowRight,
+    LogIn,
+    UserPlus,
+    User,
 } from 'lucide-react';
 import { ThemeToggle } from '@/Components/ui/ThemeToggle';
 import { SiteSettings } from '@/types/models';
@@ -59,7 +62,7 @@ export function Header({
     settings,
 }: HeaderProps) {
     const { url } = usePage();
-    const { services_nav = [] } = usePage<PageProps>().props;
+    const { services_nav = [], auth } = usePage<PageProps & { auth?: { user?: { id: number; name: string; email: string; role?: string } | null } }>().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const headerRef = React.useRef<HTMLElement>(null);
@@ -317,7 +320,43 @@ export function Header({
                     <div className="flex items-center gap-2 xl:gap-3 shrink-0">
                         <ThemeToggle />
 
-
+                        {/* User Sign In / Sign Up or Portal Access */}
+                        {auth?.user ? (
+                            <Link
+                                href="/admin"
+                                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 xl:px-3.5 xl:py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 text-xs font-mono text-neutral-200 hover:text-white transition-all shrink-0"
+                                title="Go to Command Clearance Portal"
+                            >
+                                <User className="w-3.5 h-3.5 text-accent shrink-0" />
+                                <span className="max-w-[90px] truncate">{auth.user.name?.split(' ')[0] || 'Portal'}</span>
+                            </Link>
+                        ) : (
+                            <div className="hidden sm:flex items-center gap-1 xl:gap-1.5 font-mono text-xs shrink-0">
+                                <Link
+                                    href="/login"
+                                    className="px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-full text-neutral-300 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all flex items-center gap-1.5 shrink-0"
+                                >
+                                    <LogIn className="w-3.5 h-3.5 text-neutral-400" />
+                                    <span>Sign In</span>
+                                </Link>
+                                <a
+                                    href="/#free-trial"
+                                    onClick={(e) => {
+                                        if (window.location.pathname === '/') {
+                                            e.preventDefault();
+                                            const el = document.getElementById('free-trial');
+                                            if (el) {
+                                                el.scrollIntoView({ behavior: 'smooth' });
+                                            }
+                                        }
+                                    }}
+                                    className="px-3 py-1.5 xl:px-3.5 xl:py-2 rounded-full text-accent hover:text-white bg-accent/10 hover:bg-accent/20 border border-accent/25 hover:border-accent/50 transition-all flex items-center gap-1.5 shrink-0 font-medium"
+                                >
+                                    <UserPlus className="w-3.5 h-3.5" />
+                                    <span>Sign Up</span>
+                                </a>
+                            </div>
+                        )}
 
                         {/* Book Discovery Call via Dedicated On-Site Calendar Modal */}
                         <button
