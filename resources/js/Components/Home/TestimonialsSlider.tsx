@@ -93,10 +93,10 @@ export function TestimonialsSlider({ testimonials = [] }: TestimonialsSliderProp
 
     const current = items[currentIndex];
 
-    // Smooth direction-aware sliding animation
+    // Ultra-smooth, snappy sliding animation with zero lag
     const slideVariants = {
         enter: (dir: number) => ({
-            x: dir > 0 ? 50 : -50,
+            x: dir > 0 ? 40 : -40,
             opacity: 0,
             scale: 0.98,
         }),
@@ -105,18 +105,17 @@ export function TestimonialsSlider({ testimonials = [] }: TestimonialsSliderProp
             opacity: 1,
             scale: 1,
             transition: {
-                x: { type: 'spring', stiffness: 360, damping: 26 },
-                opacity: { duration: 0.25 },
-                scale: { duration: 0.25 },
+                x: { type: 'spring', stiffness: 420, damping: 32 },
+                opacity: { duration: 0.18 },
+                scale: { duration: 0.18 },
             },
         },
         exit: (dir: number) => ({
-            x: dir > 0 ? -50 : 50,
+            x: dir > 0 ? -40 : 40,
             opacity: 0,
             scale: 0.98,
             transition: {
-                x: { type: 'spring', stiffness: 360, damping: 26 },
-                opacity: { duration: 0.2 },
+                opacity: { duration: 0.12 },
             },
         }),
     };
@@ -213,7 +212,7 @@ export function TestimonialsSlider({ testimonials = [] }: TestimonialsSliderProp
                     <div className="relative min-h-[140px] sm:min-h-[160px] lg:min-h-[140px] flex items-center mb-8 sm:mb-12">
                         <Quote className="w-10 h-10 sm:w-16 sm:h-16 text-accent/15 absolute -top-4 -left-2 sm:-top-8 sm:-left-6 pointer-events-none" />
 
-                        <AnimatePresence mode="wait" custom={direction}>
+                        <AnimatePresence mode="popLayout" custom={direction} initial={false}>
                             <motion.blockquote
                                 key={current.id || currentIndex}
                                 custom={direction}
@@ -221,7 +220,7 @@ export function TestimonialsSlider({ testimonials = [] }: TestimonialsSliderProp
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                className="text-lg sm:text-2xl lg:text-[28px] font-display font-medium text-white/95 leading-relaxed tracking-tight break-words relative z-10"
+                                className="w-full text-lg sm:text-2xl lg:text-[28px] font-display font-medium text-white/95 leading-relaxed tracking-tight break-words relative z-10"
                             >
                                 "{current.quote}"
                             </motion.blockquote>
