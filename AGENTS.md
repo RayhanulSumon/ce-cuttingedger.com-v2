@@ -204,3 +204,57 @@ When working on Octane-specific features (concurrency, shared tables, memory, dr
 - IMPORTANT: Activate `inertia-react-development` when working with Inertia React client-side patterns.
 
 </laravel-boost-guidelines>
+
+# Live Windows Server Infrastructure & Deployment Reference
+
+## Server Specifications
+- **Host / OS**: HP-Server (Windows Server 64-bit)
+- **Hardware**: Intel Xeon CPU, 128 GB RAM, High-Speed NVMe/SSD Storage
+- **Web Server / Reverse Proxy**: Apache 2.4.58 (Win64) with OpenSSL 3.1.3 (via XAMPP)
+- **Primary Domain**: `dev.cuttingedger.app` (Port 443 HTTPS via Cloudflare proxy, with HTTP/3, TLS 1.3, 0-RTT)
+- **Project Location**: `C:\xampp\htdocs\laravel\cuttingedger`
+
+## Multi-PHP Version Architecture
+- **XAMPP Default PHP**: `C:\xampp\php` (PHP 8.2.12) — Dedicated exclusively to `payroll.cuttingedger.app` and `panel.cuttingedger.app`.
+- **CuttingEdger PHP**: `C:\php84` (PHP 8.4 Thread Safe) — Standalone PHP 8.4 installation dedicated to `dev.cuttingedger.app`.
+- **Isolation Rule**: NEVER set PHP 8.4 globally in Windows Machine PATH if it affects XAMPP's PHP 8.2 payroll sites. In terminal sessions, prepend `C:\php84` temporarily: `$env:PATH = "C:\php84;" + $env:PATH`.
+
+## Services & Ports (24/7 Windows Services via NSSM)
+1. **`CuttingEdger-Dev`** (Application Server):
+   - **Engine**: Laravel Octane with RoadRunner (`rr.exe` v2024.3.5)
+   - **Port**: `127.0.0.1:8080`
+   - **Workers**: 16 concurrent workers running in RAM
+   - **Binary**: `C:\xampp\htdocs\laravel\cuttingedger\rr.exe`
+   - **Parameters**: `serve -c .rr.yaml`
+2. **`CuttingEdger-Reverb`** (WebSocket Server):
+   - **Engine**: Laravel Reverb WebSocket Server
+   - **Port**: `127.0.0.1:8081`
+   - **Command**: `C:\php84\php.exe artisan reverb:start --host=127.0.0.1 --port=8081`
+
+## Apache Configuration (`C:\xampp\apache\conf\extra\httpd-ssl.conf`)
+- Static assets (`/build/`, `/images/`, `/favicon.ico`, `/robots.txt`) are excluded from proxying and served directly by Apache (`DocumentRoot "C:/xampp/htdocs/laravel/cuttingedger/public"`).
+- WebSockets (`/app/`) are proxied to Reverb on `ws://127.0.0.1:8081/app/`.
+- Dynamic page requests (`/`) are proxied to Octane on `http://127.0.0.1:8080/`.
+- Requires `mod_proxy_wstunnel` enabled in `httpd.conf`.
+
+## Live Deployment & Update Workflow
+Whenever changes are pushed to `origin/main`, execute this exact sequence in PowerShell (Admin) on the server:
+```powershell
+cd C:\xampp\htdocs\laravel\cuttingedger
+
+# 1. Stop service so Windows unlocks rr.exe before git updates
+C:\nssm\nssm-2.24\win64\nssm.exe stop CuttingEdger-Dev
+
+# 2. Pull latest code
+git pull
+
+# 3. Install dependencies using PHP 8.4
+$env:PATH = "C:\php84;" + $env:PATH
+composer install --ignore-platform-reqs
+npm.cmd run build
+php artisan package:discover
+
+# 4. Restart services
+C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Dev
+C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Reverb
+```
