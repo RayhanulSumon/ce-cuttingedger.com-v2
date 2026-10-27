@@ -79,52 +79,58 @@ export function TeamPreview({ members }: TeamPreviewProps) {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-white/10 gap-6">
-                    <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>[ 05 // LEADERSHIP VANGUARD ]</span>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-6 border-b border-white/10 gap-5">
+                    <div className="space-y-2 max-w-3xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-mono uppercase tracking-[0.2em] text-accent font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                            <span>Studio Craft Leadership</span>
                         </div>
-                        <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
-                            Passionate Minds Behind the Studio
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight leading-tight">
+                            The Team Behind <span className="text-accent">Your Catalogs</span>
                         </h2>
+                        <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed whitespace-normal sm:whitespace-nowrap">
+                            Veteran art directors, colorists, and CGI supervisors managing daily catalog output.
+                        </p>
                     </div>
 
                     <Link
                         href="/team"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
+                        className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.04] border border-white/10 text-xs font-mono uppercase tracking-wider text-neutral-300 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto cursor-pointer"
                     >
-                        <span>Meet All Collective (12+)</span>
-                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <span>Meet All Team (12+)</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Link>
                 </div>
 
                 {/* AGNTIX DESIGN STUDIO EDITORIAL TEAM LIST (container-1750) */}
-                <div className="divide-y divide-white/10 relative">
+                <div 
+                    onMouseLeave={() => setHoveredMember(null)}
+                    className="divide-y divide-white/10 relative"
+                >
                     {displayMembers.slice(0, 5).map((member) => (
                         <Link
                             key={member.id || member.slug}
                             href={`/team/${member.slug}`}
                             onMouseEnter={() => setHoveredMember(member)}
-                            className="group py-5 sm:py-8 lg:py-9 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-colors duration-300 cursor-pointer block relative"
+                            className="group py-6 sm:py-7 lg:py-8 px-3 sm:px-5 -mx-3 sm:-mx-5 rounded-2xl hover:bg-white/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-all duration-300 cursor-pointer block relative"
                         >
-                            {/* Left: Since Year (hidden on mobile, shown inline with role) */}
-                            <div className="hidden sm:block sm:w-1/4">
-                                <span className="font-mono text-xs sm:text-sm text-neutral-500 group-hover:text-accent transition-colors uppercase tracking-widest">
-                                    Since {member.since_year || '2009'}
+                            {/* Left: Since Year */}
+                            <div className="hidden sm:block sm:w-[18%] md:w-[20%] shrink-0 text-left">
+                                <span className="font-mono text-xs text-neutral-500 group-hover:text-accent transition-colors uppercase tracking-widest">
+                                    Since {member.since_year || '2019'}
                                 </span>
                             </div>
 
-                            {/* Center: Large Condensed Name (Agntix des-team-title) */}
-                            <div className="sm:w-2/4 text-left sm:text-center">
-                                <h3 className="font-['Antonio',_'Bebas_Neue',_'Syne',_sans-serif] text-3xl sm:text-5xl md:text-6xl lg:text-[84px] xl:text-[96px] font-bold uppercase tracking-tight text-neutral-300 group-hover:text-white transition-all duration-300 group-hover:scale-[1.02] inline-block leading-none break-words">
+                            {/* Center: Condensed Name (Balanced scale to stay on a single line) */}
+                            <div className="flex-1 px-2 sm:px-4 text-left sm:text-center min-w-0">
+                                <h3 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[50px] xl:text-[58px] font-black uppercase tracking-[-0.03em] text-neutral-200 group-hover:text-white transition-all duration-300 sm:whitespace-nowrap overflow-hidden text-ellipsis sm:overflow-visible inline-block leading-none">
                                     {member.name}
                                 </h3>
                             </div>
 
                             {/* Right: Role / Title + Mobile Mini Profile Preview */}
-                            <div className="sm:w-1/4 flex items-center justify-between sm:justify-end gap-3">
-                                <div className="flex items-center gap-3">
+                            <div className="sm:w-[26%] md:w-[28%] shrink-0 flex items-center justify-between sm:justify-end gap-3 text-right">
+                                <div className="flex items-center gap-3 min-w-0">
                                     {/* Mobile Avatar Thumb */}
                                     <div className="sm:hidden w-8 h-8 rounded-full overflow-hidden border border-white/20 shrink-0">
                                         <img
@@ -133,16 +139,16 @@ export function TeamPreview({ members }: TeamPreviewProps) {
                                             className="w-full h-full object-cover grayscale contrast-125"
                                         />
                                     </div>
-                                    <div className="flex flex-col sm:block">
-                                        <span className="font-mono text-xs sm:text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors uppercase tracking-wider">
+                                    <div className="flex flex-col sm:block min-w-0">
+                                        <span className="font-mono text-xs sm:text-xs text-neutral-400 group-hover:text-neutral-200 transition-colors uppercase tracking-wider block text-left sm:text-right leading-snug">
                                             {member.role}
                                         </span>
                                         <span className="sm:hidden font-mono text-[10px] text-neutral-500 uppercase tracking-widest">
-                                            Since {member.since_year || '2009'}
+                                            Since {member.since_year || '2019'}
                                         </span>
                                     </div>
                                 </div>
-                                <ArrowUpRight className="w-4 h-4 text-neutral-500 group-hover:text-accent transition-colors" />
+                                <ArrowUpRight className="w-4 h-4 text-neutral-500 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0" />
                             </div>
                         </Link>
                     ))}
