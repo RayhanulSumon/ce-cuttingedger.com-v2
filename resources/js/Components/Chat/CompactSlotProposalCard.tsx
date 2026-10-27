@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, CheckCircle2, Loader2, ArrowRight, Mail, User } from 'lucide-react';
+import { Calendar, Clock, CheckCircle2, Loader2, Mail, User } from 'lucide-react';
 
 export interface CompactSlotProposalCardProps {
     card: {
@@ -8,6 +8,7 @@ export interface CompactSlotProposalCardProps {
         requested_time?: string;
         selected_time: string;
         slot_datetime: string;
+        available_slots?: Array<{ time: string; iso: string }>;
         is_exact?: boolean;
         message: string;
     };
@@ -31,6 +32,8 @@ export function CompactSlotProposalCard({
 }: CompactSlotProposalCardProps) {
     const [name, setName] = useState(initialName);
     const [email, setEmail] = useState(initialEmail);
+    const [selectedTime, setSelectedTime] = useState(card.selected_time);
+    const [selectedIso, setSelectedIso] = useState(card.slot_datetime);
     const [showForm, setShowForm] = useState(!initialEmail);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export function CompactSlotProposalCard({
         }
 
         if (!email.trim() || !email.includes('@')) {
-            setError('Please enter a valid work or corporate email.');
+            setError('Please enter a valid work or business email.');
             setShowForm(true);
             return;
         }
@@ -56,7 +59,7 @@ export function CompactSlotProposalCard({
 
         try {
             await onBookSlot({
-                slot_datetime: card.slot_datetime,
+                slot_datetime: selectedIso || card.slot_datetime,
                 name: name.trim(),
                 email: email.trim(),
                 notes: card.requested_time ? `Requested: ${card.requested_time}` : undefined,
@@ -75,7 +78,7 @@ export function CompactSlotProposalCard({
                 <div className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                     <span className="text-xs font-semibold font-mono">
-                        Session Confirmed for {card.date_label} at {card.selected_time} UTC!
+                        Session Confirmed for {card.date_label} at {selectedTime}!
                     </span>
                 </div>
             </div>
@@ -83,10 +86,10 @@ export function CompactSlotProposalCard({
     }
 
     const formatHeaderTime = () => {
-        if (!card.slot_datetime) return `${card.date_label} at ${card.selected_time} UTC`;
+        if (!selectedIso) return `${card.date_label} at ${selectedTime}`;
         try {
-            const d = new Date(card.slot_datetime);
-            if (isNaN(d.getTime())) return `${card.date_label} at ${card.selected_time} UTC`;
+            const d = new Date(selectedIso);
+            if (isNaN(d.getTime())) return `${card.date_label} at ${selectedTime}`;
             const userLocale = navigator.language || 'en-US';
             const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const localFormatted = new Intl.DateTimeFormat(userLocale, {
@@ -97,9 +100,9 @@ export function CompactSlotProposalCard({
                 minute: '2-digit',
                 hour12: true,
             }).format(d);
-            return `${localFormatted} (${userTz}) • ${card.selected_time} UTC`;
+            return `${localFormatted} (${userTz}) • ${selectedTime} UTC`;
         } catch {
-            return `${card.date_label} at ${card.selected_time} UTC`;
+            return `${card.date_label} at ${selectedTime}`;
         }
     };
 
@@ -118,7 +121,38 @@ export function CompactSlotProposalCard({
                 </div>
             </div>
 
-            <p className="text-[11px] text-white/80 mb-3 leading-relaxed">{card.message}</p>
+            <p className="text-[11px] text-white/80 mb-2.5 leading-relaxed">{card.message}</p>
+
+            {/* Quick Slot Selector Chips */}
+            {card.available_slots && card.available_slots.length > 0 && (
+                <div className="my-2.5 p-2 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5">
+                    <span className="text-[10px] text-white/50 uppercase font-mono tracking-wider block">
+                        Available Times for {card.date_label}:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                        {card.available_slots.map((slot) => {
+                            const isSelected = selectedTime === slot.time;
+                            return (
+                                <button
+                                    key={slot.time}
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedTime(slot.time);
+                                        setSelectedIso(slot.iso);
+                                    }}
+                                    className={`px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                                        isSelected
+                                            ? 'bg-[#00f5ff] text-black font-bold shadow-md shadow-[#00f5ff]/20 scale-[1.02]'
+                                            : 'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white border border-white/10'
+                                    }`}
+                                >
+                                    {slot.time}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             {/* Error banner */}
             {error && (
@@ -172,14 +206,14 @@ export function CompactSlotProposalCard({
                             ) : (
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                             )}
-                            <span>Confirm & Book {card.selected_time}</span>
+                            <span>Confirm & Book {selectedTime}</span>
                         </button>
                         <button
                             type="button"
                             onClick={onShowAllTimes}
                             className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-mono transition-all border border-white/10 cursor-pointer"
                         >
-                            All Times
+                            All Dates
                         </button>
                     </div>
                 </form>
@@ -196,14 +230,14 @@ export function CompactSlotProposalCard({
                         ) : (
                             <CheckCircle2 className="w-3.5 h-3.5" />
                         )}
-                        <span>Confirm {card.selected_time}</span>
+                        <span>Confirm {selectedTime}</span>
                     </button>
                     <button
                         type="button"
                         onClick={onShowAllTimes}
                         className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-mono transition-all border border-white/10 cursor-pointer"
                     >
-                        All Times
+                        All Dates
                     </button>
                 </div>
             )}

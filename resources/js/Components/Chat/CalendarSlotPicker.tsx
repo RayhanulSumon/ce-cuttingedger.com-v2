@@ -83,11 +83,11 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
     return (
         <div className={`my-2 p-4 rounded-2xl border shadow-2xl backdrop-blur-md text-left transition-all ${
             isReschedule
-                ? 'bg-[#12141a]/95 border-[#d4ff00]/40'
+                ? 'bg-[#12141a]/95 border-accent/40'
                 : 'bg-[#12141a]/95 border-[#00f5ff]/30'
         }`}>
             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
-                <span className={`p-1.5 rounded-lg ${isReschedule ? 'bg-[#d4ff00]/15 text-[#d4ff00]' : 'bg-[#00f5ff]/10 text-[#00f5ff]'}`}>
+                <span className={`p-1.5 rounded-lg ${isReschedule ? 'bg-accent/15 text-accent' : 'bg-[#00f5ff]/10 text-[#00f5ff]'}`}>
                     {isReschedule ? <CalendarClock className="w-4 h-4" /> : <Calendar className="w-4 h-4" />}
                 </span>
                 <div>
@@ -100,10 +100,10 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
 
             {/* Existing booking notice if rescheduling */}
             {isReschedule && existing?.current_time_formatted && (
-                <div className="mb-3 p-2.5 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/20 flex items-start gap-2 text-xs font-mono">
-                    <RefreshCw className="w-3.5 h-3.5 text-[#d4ff00] shrink-0 mt-0.5" />
+                <div className="mb-3 p-2.5 rounded-xl bg-accent/10 border border-accent/20 flex items-start gap-2 text-xs font-mono">
+                    <RefreshCw className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                     <div className="text-white/80">
-                        <span className="text-[#d4ff00] font-bold block">Rescheduling Current Booking</span>
+                        <span className="text-accent font-bold block">Rescheduling Current Booking</span>
                         <span>Currently booked for: {existing.current_time_formatted}</span>
                     </div>
                 </div>
@@ -122,7 +122,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                         className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium whitespace-nowrap transition-all cursor-pointer ${
                             selectedDayIndex === idx
                                 ? isReschedule
-                                    ? 'bg-[#d4ff00] text-black font-bold shadow-md'
+                                    ? 'bg-accent text-black font-bold shadow-md'
                                     : 'bg-[#00f5ff] text-black shadow-md'
                                 : 'bg-white/5 text-white/70 hover:bg-white/10'
                         }`}
@@ -143,7 +143,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                             onClick={() => setSelectedSlot(slot)}
                             className={`py-2 px-1 text-center rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1 cursor-pointer ${
                                 isSelected
-                                    ? 'bg-[#d4ff00] text-black font-bold shadow-md scale-102'
+                                    ? 'bg-accent text-black font-bold shadow-md scale-102'
                                     : 'bg-white/5 text-white hover:bg-white/10 border border-white/5'
                             }`}
                         >
@@ -157,7 +157,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
             {/* Selected Slot Form */}
             {selectedSlot && (
                 <form onSubmit={handleSubmit} className="mt-3 p-3 rounded-xl bg-black/40 border border-white/10 space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <div className="text-[11px] font-mono text-[#d4ff00] flex items-center gap-1 pb-1">
+                    <div className="text-[11px] font-mono text-accent flex items-center gap-1 pb-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>
                             {isReschedule ? 'New Slot:' : 'Selected:'} {activeDay.label} at {selectedSlot.time}
@@ -206,7 +206,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                         disabled={isSubmitting}
                         className={`w-full py-2 px-3 rounded-lg text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer ${
                             isReschedule
-                                ? 'bg-[#d4ff00] hover:bg-[#c2eb00]'
+                                ? 'bg-accent hover:bg-accent-hover'
                                 : 'bg-[#00f5ff] hover:bg-[#00d8e6]'
                         }`}
                     >

@@ -6,6 +6,11 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { AppLayout } from '@/Layouts/AppLayout';
+import { configureEcho } from '@laravel/echo-react';
+
+configureEcho({
+    broadcaster: 'reverb',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'CuttingEdger';
 
@@ -35,7 +40,7 @@ createInertiaApp({
         }
     },
     progress: {
-        color: '#d4ff00',
+        color: '#fbb718',
         showSpinner: false,
     },
 });

@@ -6,7 +6,7 @@ import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
 import { StickyServiceCards } from '@/Components/Home/StickyServiceCards';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
-import { VolumePricingCalculator } from '@/Components/Common/VolumePricingCalculator';
+import { PricingCardsSection } from '@/Components/Pricing/PricingCardsSection';
 import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
 import { RecentWorkShowcase } from '@/Components/Home/RecentWorkShowcase';
@@ -53,8 +53,8 @@ export default function Home({
             {/* 6. Free Trial & Instant Batch Uploader Wizard */}
             <FreeTrialDropzone />
 
-            {/* 7. Interactive Volume Price Estimator */}
-            <VolumePricingCalculator />
+            {/* 7. 3-Card Bespoke Production Tiers (Request for Pricing) */}
+            <PricingCardsSection />
 
             {/* 8. Dual Counter-Scrolling Client Marquees */}
             <ClientMarquees clients={clients} />

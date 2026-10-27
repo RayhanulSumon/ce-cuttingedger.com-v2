@@ -52,7 +52,7 @@ export default function About({ leadership = [] }: AboutProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <div className="lg:col-span-5 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                            <span className="font-mono text-xs uppercase tracking-widest text-accent">
                                 [ OUR CONVICTION ]
                             </span>
                             <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white leading-tight">
@@ -76,7 +76,7 @@ export default function About({ leadership = [] }: AboutProps) {
             <section className="py-28 bg-[#0a0b0e]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-accent">
                             [ FOUNDATIONAL PILLARS ]
                         </span>
                         <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white">
@@ -90,10 +90,10 @@ export default function About({ leadership = [] }: AboutProps) {
                             return (
                                 <div
                                     key={i}
-                                    className="p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-[#d4ff00]/40 transition-colors flex flex-col justify-between group"
+                                    className="p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-accent/40 transition-colors flex flex-col justify-between group"
                                 >
                                     <div>
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-[#d4ff00] group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-accent group-hover:scale-110 transition-transform">
                                             <IconComponent className="w-6 h-6" />
                                         </div>
                                         <h3 className="text-xl font-display font-bold text-white mb-3">
@@ -118,7 +118,7 @@ export default function About({ leadership = [] }: AboutProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
                         <div>
-                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] block mb-2">
+                            <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-2">
                                 [ STUDIO LEADERSHIP ]
                             </span>
                             <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
@@ -127,7 +127,7 @@ export default function About({ leadership = [] }: AboutProps) {
                         </div>
                         <Link
                             href="/team"
-                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#d4ff00] hover:text-white transition-colors"
+                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent hover:text-white transition-colors"
                         >
                             <span>View Full Collective</span>
                             <ArrowUpRight className="w-4 h-4" />
@@ -139,7 +139,7 @@ export default function About({ leadership = [] }: AboutProps) {
                             <Link
                                 key={member.id}
                                 href={`/team/${member.slug}`}
-                                className="group rounded-2xl bg-[#12141c] border border-white/10 overflow-hidden hover:border-[#d4ff00]/40 transition-colors"
+                                className="group rounded-2xl bg-[#12141c] border border-white/10 overflow-hidden hover:border-accent/40 transition-colors"
                             >
                                 <div className="aspect-[4/5] bg-neutral-900 overflow-hidden">
                                     <img
@@ -149,7 +149,7 @@ export default function About({ leadership = [] }: AboutProps) {
                                     />
                                 </div>
                                 <div className="p-4 space-y-1">
-                                    <h4 className="font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors">
+                                    <h4 className="font-display font-bold text-white group-hover:text-accent transition-colors">
                                         {member.name}
                                     </h4>
                                     <p className="text-xs font-mono text-neutral-400">

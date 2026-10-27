@@ -56,19 +56,19 @@ export function BookingConfirmedCard({ card, onReschedule }: BookingConfirmedCar
     return (
         <div className={`my-2.5 p-4 rounded-2xl border shadow-xl backdrop-blur-md text-left transition-all ${
             isRescheduled
-                ? 'bg-[#d4ff00]/10 border-[#d4ff00]/40 shadow-[#d4ff00]/5'
+                ? 'bg-accent/10 border-accent/40 shadow-[#fbb718]/5'
                 : 'bg-[#00f5ff]/10 border-[#00f5ff]/40 shadow-[#00f5ff]/5'
         }`}>
             <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                    <span className={`p-1.5 rounded-lg text-black ${isRescheduled ? 'bg-[#d4ff00]' : 'bg-[#00f5ff]'}`}>
+                    <span className={`p-1.5 rounded-lg text-black ${isRescheduled ? 'bg-accent' : 'bg-[#00f5ff]'}`}>
                         {isRescheduled ? <RefreshCw className="w-4 h-4" /> : <CalendarCheck2 className="w-4 h-4" />}
                     </span>
                     <div>
                         <h4 className="text-sm font-bold text-white tracking-tight">
                             {isRescheduled ? 'Consultation Rescheduled' : 'Consultation Confirmed'}
                         </h4>
-                        <span className={`text-[10px] font-mono uppercase tracking-wider ${isRescheduled ? 'text-[#d4ff00]' : 'text-[#00f5ff]'}`}>
+                        <span className={`text-[10px] font-mono uppercase tracking-wider ${isRescheduled ? 'text-accent' : 'text-[#00f5ff]'}`}>
                             15-Min Technical Intake Call
                         </span>
                     </div>
@@ -76,7 +76,7 @@ export function BookingConfirmedCard({ card, onReschedule }: BookingConfirmedCar
 
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
                     isRescheduled
-                        ? 'bg-[#d4ff00]/20 text-[#d4ff00] border border-[#d4ff00]/30'
+                        ? 'bg-accent/20 text-accent border border-accent/30'
                         : 'bg-[#00f5ff]/20 text-[#00f5ff] border border-[#00f5ff]/30'
                 }`}>
                     {card.status || (isRescheduled ? 'Rescheduled' : 'Confirmed')}

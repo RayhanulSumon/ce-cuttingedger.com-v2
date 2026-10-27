@@ -80,7 +80,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 {/* 1. Brand Identity */}
                 <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                     <div className="flex items-center gap-2 pb-4 border-b border-white/10">
-                        <Globe className="w-4 h-4 text-[#d4ff00]" />
+                        <Globe className="w-4 h-4 text-accent" />
                         <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                             Identity & Global Agency Metadata
                         </h2>
@@ -125,7 +125,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 {/* 2. SEO & Crawl Governance (Doc §3.3 & §3.11) */}
                 <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                     <div className="flex items-center gap-2 pb-4 border-b border-white/10">
-                        <Search className="w-4 h-4 text-[#d4ff00]" />
+                        <Search className="w-4 h-4 text-accent" />
                         <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                             Search Engine Optimization & Crawler Rules
                         </h2>
@@ -171,7 +171,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     robots.txt Direct Editor
                                 </label>
-                                <span className="text-[11px] font-mono text-[#d4ff00]">
+                                <span className="text-[11px] font-mono text-accent">
                                     Live at /robots.txt
                                 </span>
                             </div>
@@ -196,7 +196,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 {/* 3. Lead Conversion & Discovery Calls (Doc §4.1 & §4.4) */}
                 <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                     <div className="flex items-center gap-2 pb-4 border-b border-white/10">
-                        <Calendar className="w-4 h-4 text-[#d4ff00]" />
+                        <Calendar className="w-4 h-4 text-accent" />
                         <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                             Lead Capture & Booking Integrations
                         </h2>
@@ -229,7 +229,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 {/* 4. Contact Endpoints & Social Links */}
                 <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
                     <div className="flex items-center gap-2 pb-4 border-b border-white/10">
-                        <Terminal className="w-4 h-4 text-[#d4ff00]" />
+                        <Terminal className="w-4 h-4 text-accent" />
                         <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
                             Studio Coordinates & Organization Schema
                         </h2>
@@ -342,7 +342,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     <Button
                         type="submit"
                         disabled={processing}
-                        className="gap-2 px-8 h-12 text-sm font-display font-bold uppercase tracking-wider bg-[#d4ff00] text-black hover:bg-[#bfe600]"
+                        className="gap-2 px-8 h-12 text-sm font-display font-bold uppercase tracking-wider bg-accent text-black hover:bg-accent-hover"
                     >
                         <Save className="w-4 h-4" />
                         <span>{processing ? "Saving..." : "Save Configuration"}</span>

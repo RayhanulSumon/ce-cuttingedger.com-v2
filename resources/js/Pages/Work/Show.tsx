@@ -68,7 +68,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         </div>
                         <div>
                             <span className="text-neutral-500 uppercase block mb-1">Discipline</span>
-                            <span className="text-[#d4ff00] font-medium text-sm">{project.category?.name || 'Production'}</span>
+                            <span className="text-accent font-medium text-sm">{project.category?.name || 'Production'}</span>
                         </div>
                         <div>
                             <span className="text-neutral-500 uppercase block mb-1">Year & Timeline</span>
@@ -81,10 +81,10 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                     href={project.live_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-white hover:text-[#d4ff00] inline-flex items-center gap-1 font-medium text-sm transition-colors"
+                                    className="text-white hover:text-accent inline-flex items-center gap-1 font-medium text-sm transition-colors"
                                 >
                                     <span>Visit Client Website</span>
-                                    <ArrowUpRight className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
                                 </a>
                             ) : (
                                 <span className="text-neutral-500">Private Enterprise Retainer</span>
@@ -114,7 +114,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             {project.metrics.map((metric, i) => (
                                 <div key={i} className="p-8 rounded-2xl bg-[#12141c] border border-white/10 text-center space-y-2">
-                                    <p className="font-display font-black text-4xl sm:text-5xl text-[#d4ff00]">
+                                    <p className="font-display font-black text-4xl sm:text-5xl text-accent">
                                         {metric.value}
                                     </p>
                                     <p className="text-xs font-mono uppercase tracking-widest text-neutral-300 font-bold">
@@ -145,7 +145,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
 
                     {/* Work Done */}
                     <div className="p-8 sm:p-10 rounded-3xl bg-[#12141c] border border-white/10 space-y-4">
-                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                        <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                             [ 02. EXECUTION & WORK COMPLETED ]
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-display font-bold text-white">
@@ -164,7 +164,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {project.deliverables.map((deliv, idx) => (
                                         <div key={idx} className="flex items-center gap-2 text-xs font-mono text-neutral-200">
-                                            <CheckCircle2 className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
                                             <span>{deliv}</span>
                                         </div>
                                     ))}
@@ -211,8 +211,8 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                     )}
 
                     {/* Call to Action Card */}
-                    <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#12141c] to-[#0a0b0e] border border-[#d4ff00]/40 text-center space-y-6 shadow-2xl">
-                        <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                    <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#12141c] to-[#0a0b0e] border border-accent/40 text-center space-y-6 shadow-2xl">
+                        <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                             [ ACHIEVE SIMILAR RESULTS FOR YOUR CATALOG ]
                         </span>
                         <h3 className="text-3xl sm:text-4xl font-display font-bold text-white">
@@ -224,7 +224,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                             <Link
                                 href="/#free-trial"
-                                className="px-8 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all shadow-lg flex items-center gap-2"
+                                className="px-8 py-3.5 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all shadow-lg flex items-center gap-2"
                             >
                                 <Sparkles className="w-4 h-4" />
                                 <span>Request Free 3-Asset Pilot</span>
@@ -234,7 +234,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                 onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
                                 className="px-8 py-3.5 rounded-xl border border-white/20 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
                             >
-                                <Calendar className="w-4 h-4 text-[#d4ff00]" />
+                                <Calendar className="w-4 h-4 text-accent" />
                                 <span>Book 15-Min Discovery Call</span>
                             </button>
                         </div>

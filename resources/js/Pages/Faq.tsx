@@ -48,7 +48,7 @@ export default function FaqPage({ faqs = [], categories = [] }: FaqPageProps) {
                                 onClick={() => setSelectedCat(cat)}
                                 className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                                     selectedCat === cat
-                                        ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
+                                        ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
                                         : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                 }`}
                             >
@@ -73,7 +73,7 @@ export default function FaqPage({ faqs = [], categories = [] }: FaqPageProps) {
 
                     {/* Inquiry Prompt */}
                     <div className="mt-20 p-8 sm:p-12 rounded-3xl bg-[#12141c] border border-white/10 text-center space-y-4">
-                        <div className="w-12 h-12 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/40 text-[#d4ff00] flex items-center justify-center mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/40 text-accent flex items-center justify-center mx-auto">
                             <HelpCircle className="w-6 h-6" />
                         </div>
                         <h3 className="text-2xl font-display font-bold text-white">
@@ -85,7 +85,7 @@ export default function FaqPage({ faqs = [], categories = [] }: FaqPageProps) {
                         <div className="pt-2">
                             <Link
                                 href="/contact"
-                                className="inline-flex items-center gap-2 font-display font-bold text-xs uppercase tracking-widest text-black bg-[#d4ff00] hover:bg-[#c2eb00] px-6 py-3.5 rounded-full transition-colors"
+                                className="inline-flex items-center gap-2 font-display font-bold text-xs uppercase tracking-widest text-black bg-accent hover:bg-accent-hover px-6 py-3.5 rounded-full transition-colors"
                             >
                                 <span>Direct Inquiry Channel</span>
                                 <ArrowUpRight className="w-4 h-4" />

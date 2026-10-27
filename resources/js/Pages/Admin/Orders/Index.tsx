@@ -203,7 +203,7 @@ export default function OrdersIndex({
                 );
             case "completed":
                 return (
-                    <Badge className="bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30">
+                    <Badge className="bg-accent/10 text-accent border border-accent/30">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                     </Badge>
                 );
@@ -247,7 +247,7 @@ export default function OrdersIndex({
             cell: (row) => (
                 <div className="flex flex-col gap-0.5 font-mono">
                     <span className="font-bold text-white tracking-wider flex items-center gap-1.5">
-                        <ShoppingBag className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <ShoppingBag className="w-3.5 h-3.5 text-accent" />
                         {row.order_number}
                     </span>
                     <span className="text-[10px] text-white/50">{row.created_at_formatted}</span>
@@ -309,7 +309,7 @@ export default function OrdersIndex({
                                 +{row.uploaded_count - row.quantity} extra
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-[#d4ff00] bg-[#d4ff00]/10 px-1.5 py-0.5 rounded border border-[#d4ff00]/20 w-fit">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded border border-accent/20 w-fit">
                                 <CheckCircle2 className="w-2.5 h-2.5 shrink-0" /> Complete
                             </span>
                         )}
@@ -322,7 +322,7 @@ export default function OrdersIndex({
             accessorKey: "total_price",
             cell: (row) => (
                 <div className="flex flex-col gap-1 font-mono text-xs">
-                    <span className="font-bold text-[#d4ff00]">${row.total_price.toFixed(2)}</span>
+                    <span className="font-bold text-accent">${row.total_price.toFixed(2)}</span>
                     <div>{getPaymentBadge(row.payment_status)}</div>
                 </div>
             ),
@@ -352,7 +352,7 @@ export default function OrdersIndex({
                     <a
                         href={`/admin/orders/${row.id}/download-zip`}
                         title="Download All Files (ZIP)"
-                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-[#d4ff00]/10 border border-[#d4ff00]/30 hover:bg-[#d4ff00]/20 text-[#d4ff00] text-xs font-mono transition-colors"
+                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-accent/10 border border-accent/30 hover:bg-accent/20 text-accent text-xs font-mono transition-colors"
                     >
                         <Download className="w-3.5 h-3.5 mr-1" /> ZIP
                     </a>
@@ -378,7 +378,7 @@ export default function OrdersIndex({
                                 onClick={() => handleUpdateStatus(row.id, "completed")}
                                 className="hover:bg-white/10 cursor-pointer"
                             >
-                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-[#d4ff00]" /> Mark Completed
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent" /> Mark Completed
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => handleDelete(row)}
@@ -451,12 +451,12 @@ export default function OrdersIndex({
                         className={cn(
                             "p-3 rounded-xl border text-left transition-all cursor-pointer",
                             currentStatus === "completed"
-                                ? "bg-[#d4ff00]/15 border-[#d4ff00]/40 shadow-md"
+                                ? "bg-accent/15 border-accent/40 shadow-md"
                                 : "bg-[#12141a] border-white/10 hover:border-white/20"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-[#d4ff00]/70 block">Completed</span>
-                        <span className="text-xl font-bold font-mono text-[#d4ff00]">{stats.completed}</span>
+                        <span className="text-[10px] font-mono uppercase text-accent/70 block">Completed</span>
+                        <span className="text-xl font-bold font-mono text-accent">{stats.completed}</span>
                     </button>
 
                     <div className="p-3 rounded-xl border border-white/10 bg-[#12141a] text-left">
@@ -482,7 +482,7 @@ export default function OrdersIndex({
                 <DialogContent className="max-w-2xl bg-[#0f1117] border-white/15 text-white max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-base font-bold">
-                            <ShoppingBag className="w-4 h-4 text-[#d4ff00]" />
+                            <ShoppingBag className="w-4 h-4 text-accent" />
                             <span>Order #{selectedOrder?.order_number}</span>
                         </DialogTitle>
                         <DialogDescription className="text-xs text-white/60 font-mono">
@@ -512,7 +512,7 @@ export default function OrdersIndex({
                                 </div>
                                 <div>
                                     <span className="text-[10px] text-white/40 uppercase block">Complexity</span>
-                                    <span className="text-[#d4ff00] font-bold capitalize">{selectedOrder.complexity}</span>
+                                    <span className="text-accent font-bold capitalize">{selectedOrder.complexity}</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] text-white/40 uppercase block">Turnaround SLA</span>
@@ -547,7 +547,7 @@ export default function OrdersIndex({
 
                                 <a
                                     href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                    className="px-3 py-1.5 rounded-lg bg-[#d4ff00] text-black font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-[#b8dd00] transition-colors"
+                                    className="px-3 py-1.5 rounded-lg bg-accent text-black font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-[#b8dd00] transition-colors"
                                 >
                                     <Download className="w-3.5 h-3.5" />
                                     <span>Download All (ZIP)</span>
@@ -565,7 +565,7 @@ export default function OrdersIndex({
                                 </div>
                                 <div className="text-right">
                                     <span className="text-white/50 block text-[10px]">Total Order Amount</span>
-                                    <span className="text-base font-bold text-[#d4ff00]">${selectedOrder.total_price.toFixed(2)} USD</span>
+                                    <span className="text-base font-bold text-accent">${selectedOrder.total_price.toFixed(2)} USD</span>
                                 </div>
                             </div>
 
@@ -611,7 +611,7 @@ export default function OrdersIndex({
                                     </span>
                                     <a
                                         href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                        className="text-[10px] font-mono text-[#d4ff00] hover:underline flex items-center gap-1"
+                                        className="text-[10px] font-mono text-accent hover:underline flex items-center gap-1"
                                     >
                                         <Download className="w-3 h-3" /> Download All ({selectedOrder.images.length})
                                     </a>
@@ -646,7 +646,7 @@ export default function OrdersIndex({
                                                         download
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-1 hover:text-[#d4ff00] text-white/60"
+                                                        className="p-1 hover:text-accent text-white/60"
                                                         title="Download File"
                                                     >
                                                         <Download className="w-3 h-3" />
@@ -667,7 +667,7 @@ export default function OrdersIndex({
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
                                     placeholder="Add notes on progress, retouch crew assigned, or delivery links..."
-                                    className="w-full h-20 bg-white/5 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                    className="w-full h-20 bg-white/5 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-accent transition-colors"
                                 />
                             </div>
 
@@ -691,7 +691,7 @@ export default function OrdersIndex({
                                         size="sm"
                                         onClick={() => handleUpdateStatus(selectedOrder.id, "completed", "paid", adminNote)}
                                         disabled={isUpdatingStatus}
-                                        className="bg-[#d4ff00]/10 border-[#d4ff00]/30 text-[#d4ff00] hover:bg-[#d4ff00]/20 font-mono text-xs"
+                                        className="bg-accent/10 border-accent/30 text-accent hover:bg-accent/20 font-mono text-xs"
                                     >
                                         <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Mark Delivered & Paid
                                     </Button>
@@ -730,7 +730,7 @@ export default function OrdersIndex({
                                     download
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1 rounded bg-[#d4ff00] text-black font-semibold flex items-center gap-1"
+                                    className="px-3 py-1 rounded bg-accent text-black font-semibold flex items-center gap-1"
                                 >
                                     <Download className="w-3 h-3" /> Download High-Res
                                 </a>

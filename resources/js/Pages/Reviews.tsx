@@ -39,9 +39,9 @@ export default function Reviews({ testimonials = [], clients = [] }: ReviewsProp
                     {/* Score Summary Box */}
                     <div className="p-8 sm:p-12 rounded-3xl bg-[#12141c] border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
                         <div className="flex items-center gap-6">
-                            <div className="w-24 h-24 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex flex-col items-center justify-center text-center shrink-0">
-                                <span className="font-display text-4xl font-black text-[#d4ff00]">4.9</span>
-                                <div className="flex text-[#d4ff00] mt-1">
+                            <div className="w-24 h-24 rounded-2xl bg-accent/10 border border-accent/30 flex flex-col items-center justify-center text-center shrink-0">
+                                <span className="font-display text-4xl font-black text-accent">4.9</span>
+                                <div className="flex text-accent mt-1">
                                     {[...Array(5)].map((_, i) => (
                                         <Star key={i} className="w-3 h-3 fill-current" />
                                     ))}
@@ -60,7 +60,7 @@ export default function Reviews({ testimonials = [], clients = [] }: ReviewsProp
                         <div className="flex items-center gap-3 shrink-0">
                             <Link
                                 href="/#free-trial"
-                                className="px-6 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all shadow-lg flex items-center gap-2"
+                                className="px-6 py-3.5 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all shadow-lg flex items-center gap-2"
                             >
                                 <span>Request 3-Asset Pilot</span>
                                 <ArrowRight className="w-4 h-4" />
@@ -73,11 +73,11 @@ export default function Reviews({ testimonials = [], clients = [] }: ReviewsProp
                         {testimonials.map((t) => (
                             <div
                                 key={t.id}
-                                className="p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-[#d4ff00]/40 transition-all space-y-5 flex flex-col justify-between"
+                                className="p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-accent/40 transition-all space-y-5 flex flex-col justify-between"
                             >
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex text-[#d4ff00]">
+                                        <div className="flex text-accent">
                                             {[...Array(t.rating || 5)].map((_, i) => (
                                                 <Star key={i} className="w-3.5 h-3.5 fill-current" />
                                             ))}

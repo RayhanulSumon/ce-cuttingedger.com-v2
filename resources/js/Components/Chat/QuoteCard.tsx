@@ -74,7 +74,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
             {/* Header: Compact Service Dropdown & Turnaround */}
             <div className="flex items-center justify-between gap-2 border-b border-white/5 pb-2">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <div className="p-1.5 rounded-lg bg-[#d4ff00]/10 text-[#d4ff00] shrink-0">
+                    <div className="p-1.5 rounded-lg bg-accent/10 text-accent shrink-0">
                         <Tag className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -82,7 +82,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                             <select
                                 value={serviceKey}
                                 onChange={(e) => setServiceKey(e.target.value)}
-                                className="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-2 py-1 pr-6 text-xs font-bold text-white focus:outline-none focus:border-[#d4ff00] cursor-pointer appearance-none transition-colors"
+                                className="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-2 py-1 pr-6 text-xs font-bold text-white focus:outline-none focus:border-accent cursor-pointer appearance-none transition-colors"
                             >
                                 {Object.entries(SERVICE_OPTIONS).map(([key, item]) => (
                                     <option key={key} value={key} className="bg-[#14161f] text-white">
@@ -98,7 +98,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                     </div>
                 </div>
                 {isFreeTrial && (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#d4ff00] text-black shrink-0 self-start mt-1">
+                    <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent text-black shrink-0 self-start mt-1">
                         <Sparkles className="w-2.5 h-2.5" /> Free ($0)
                     </span>
                 )}
@@ -121,11 +121,11 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                                 onClick={() => setComplexity(c.key)}
                                 className={`px-2 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer border ${
                                     active
-                                        ? 'bg-[#d4ff00] text-black font-bold border-[#d4ff00]'
+                                        ? 'bg-accent text-black font-bold border-accent'
                                         : 'bg-white/5 text-white/70 border-white/5 hover:bg-white/10'
                                 }`}
                             >
-                                {c.label} <span className={active ? 'text-black/80 font-normal' : 'text-[#d4ff00]'}>${c.price.toFixed(2)}</span>
+                                {c.label} <span className={active ? 'text-black/80 font-normal' : 'text-accent'}>${c.price.toFixed(2)}</span>
                             </button>
                         );
                     })}
@@ -165,7 +165,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                 <div>
                     <span className="text-[10px] text-white/50 block font-mono">Estimate:</span>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-base font-bold text-[#d4ff00] font-mono">${totalPrice}</span>
+                        <span className="text-base font-bold text-accent font-mono">${totalPrice}</span>
                         <span className="text-[10px] text-white/50 font-mono">
                             {isFreeTrial ? 'USD (Free)' : `($${unitPrice.toFixed(2)}/img)`}
                         </span>
@@ -176,7 +176,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                     <button
                         type="button"
                         onClick={() => onSelectReply('Claim 3 Free Sample Edits')}
-                        className="py-1.5 px-3 rounded-xl bg-[#d4ff00] hover:bg-[#bce600] text-black font-semibold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                        className="py-1.5 px-3 rounded-xl bg-accent hover:bg-[#bce600] text-black font-semibold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
                     >
                         <span>Test 3 Free</span>
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -185,7 +185,7 @@ export function QuoteCard({ card, onSelectReply, onUploadClick }: QuoteCardProps
                     <button
                         type="button"
                         onClick={() => onSelectReply(`Proceed with order for ${quantity} ${currentService.title} images (${complexity} complexity, $${totalPrice})`)}
-                        className="py-1.5 px-3 rounded-xl bg-[#d4ff00] hover:bg-[#bce600] text-black font-semibold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                        className="py-1.5 px-3 rounded-xl bg-accent hover:bg-[#bce600] text-black font-semibold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
                     >
                         <span>Proceed to Order</span>
                         <ArrowRight className="w-3.5 h-3.5" />

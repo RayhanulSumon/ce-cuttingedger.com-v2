@@ -107,7 +107,7 @@ export function SeoManager({
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                    <Search className="w-4 h-4 text-[#d4ff00]" />
+                    <Search className="w-4 h-4 text-accent" />
                     <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
                         DYNAMIC SEO & OPEN GRAPH SUITE
                     </span>
@@ -127,7 +127,7 @@ export function SeoManager({
                 <button
                     type="button"
                     onClick={handleAutoGenerate}
-                    className="flex items-center gap-1.5 text-xs font-mono text-[#d4ff00] hover:text-[#b8dd00] bg-[#d4ff00]/10 border border-[#d4ff00]/30 px-2.5 py-1 rounded transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-xs font-mono text-accent hover:text-[#b8dd00] bg-accent/10 border border-accent/30 px-2.5 py-1 rounded transition-colors cursor-pointer"
                 >
                     <Sparkles className="w-3.5 h-3.5" />
                     Auto-Fill From Post
@@ -172,7 +172,7 @@ export function SeoManager({
                         placeholder={fallbackTitle || "Optimal length: 50-60 characters"}
                         value={data.meta_title || ""}
                         onChange={(e) => onChange("meta_title", e.target.value)}
-                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                        className="bg-[#12131a] border-white/10 focus:border-accent"
                     />
                 </div>
 
@@ -184,7 +184,7 @@ export function SeoManager({
                         placeholder="design engineering, spatial ui, reactive motion"
                         value={data.meta_keywords || ""}
                         onChange={(e) => onChange("meta_keywords", e.target.value)}
-                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                        className="bg-[#12131a] border-white/10 focus:border-accent"
                     />
                 </div>
             </div>
@@ -210,7 +210,7 @@ export function SeoManager({
                     placeholder={fallbackDescription || "Concise and compelling summary for Google and social previews (110-160 characters)"}
                     value={data.meta_description || ""}
                     onChange={(e) => onChange("meta_description", e.target.value)}
-                    className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                    className="bg-[#12131a] border-white/10 focus:border-accent"
                 />
             </div>
 
@@ -218,7 +218,7 @@ export function SeoManager({
             <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between">
                     <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                        <Bot className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <Bot className="w-3.5 h-3.5 text-accent" />
                         <span>Robots Directives</span>
                     </label>
                     <span className="text-[10px] font-mono text-neutral-500">
@@ -229,7 +229,7 @@ export function SeoManager({
                     value={data.robots || "index, follow"}
                     onValueChange={(val) => onChange("robots", val)}
                 >
-                    <SelectTrigger className="h-10 bg-[#12131a] border-white/10 hover:border-white/20 focus:border-[#d4ff00] text-white">
+                    <SelectTrigger className="h-10 bg-[#12131a] border-white/10 hover:border-white/20 focus:border-accent text-white">
                         <SelectValue placeholder="Select robots rule">
                             {(data.robots || "index, follow") === "noindex, nofollow" ? (
                                 <div className="flex items-center gap-2">

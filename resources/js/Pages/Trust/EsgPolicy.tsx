@@ -42,10 +42,10 @@ export default function EsgPolicy() {
 
                         {/* Social */}
                         <div className="p-8 rounded-3xl bg-[#12141c] border border-white/10 space-y-4">
-                            <div className="w-10 h-10 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                                 <Users className="w-5 h-5" />
                             </div>
-                            <span className="font-mono text-xs text-[#d4ff00] uppercase font-bold tracking-wider">
+                            <span className="font-mono text-xs text-accent uppercase font-bold tracking-wider">
                                 [ SOCIAL EQUITY ]
                             </span>
                             <h3 className="text-xl font-display font-bold text-white">Fair Living Wages & Well-being</h3>
@@ -72,31 +72,31 @@ export default function EsgPolicy() {
                     {/* Quantitative Commitments */}
                     <div className="p-8 sm:p-12 rounded-3xl bg-[#12141c] border border-white/10 space-y-8">
                         <div className="flex items-center gap-3 pb-6 border-b border-white/10">
-                            <Globe2 className="w-6 h-6 text-[#d4ff00]" />
+                            <Globe2 className="w-6 h-6 text-accent" />
                             <h2 className="text-2xl font-display font-bold text-white">Our 2026 Sustainability Benchmarks</h2>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 text-center">
-                                <span className="font-display text-3xl font-extrabold text-[#d4ff00]">78%</span>
+                                <span className="font-display text-3xl font-extrabold text-accent">78%</span>
                                 <p className="text-xs font-bold text-white">Photoshoot Carbon Reduction</p>
                                 <p className="text-[11px] text-neutral-400">Via CGI virtual product twins vs physical set shipping.</p>
                             </div>
 
                             <div className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 text-center">
-                                <span className="font-display text-3xl font-extrabold text-[#d4ff00]">100%</span>
+                                <span className="font-display text-3xl font-extrabold text-accent">100%</span>
                                 <p className="text-xs font-bold text-white">Renewable Cloud Compute</p>
                                 <p className="text-[11px] text-neutral-400">Render farms hosted in carbon-neutral AWS & GCP regions.</p>
                             </div>
 
                             <div className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 text-center">
-                                <span className="font-display text-3xl font-extrabold text-[#d4ff00]">44%</span>
+                                <span className="font-display text-3xl font-extrabold text-accent">44%</span>
                                 <p className="text-xs font-bold text-white">Female Technical Leadership</p>
                                 <p className="text-[11px] text-neutral-400">Leading QC, Art Direction, and 3D modeling teams.</p>
                             </div>
 
                             <div className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 text-center">
-                                <span className="font-display text-3xl font-extrabold text-[#d4ff00]">Zero</span>
+                                <span className="font-display text-3xl font-extrabold text-accent">Zero</span>
                                 <p className="text-xs font-bold text-white">Paper Production Policy</p>
                                 <p className="text-[11px] text-neutral-400">100% digital paperless proofing, invoicing, and asset dispatch.</p>
                             </div>

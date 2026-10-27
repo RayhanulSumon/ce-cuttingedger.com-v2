@@ -59,7 +59,7 @@ export function ServicesList({ services }: ServicesListProps) {
 
             {/* TOP HEADER (Exact match to Agntix Design Studio) */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center mb-16 sm:mb-20">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent mb-4">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>[ 02 // CAPABILITIES & DISCIPLINES ]</span>
                 </div>
@@ -93,14 +93,14 @@ export function ServicesList({ services }: ServicesListProps) {
                 <button
                     type="button"
                     onClick={() => setIsDrawerOpen((prev) => !prev)}
-                    className="absolute bg-[#090a0d] px-6 sm:px-8 py-2.5 rounded-full border border-white/15 hover:border-[#d4ff00] text-neutral-300 hover:text-[#d4ff00] text-xs sm:text-sm font-sans transition-all duration-300 inline-flex items-center gap-2.5 cursor-pointer shadow-lg group hover:shadow-[0_0_20px_rgba(212,255,0,0.25)] select-none"
+                    className="absolute bg-[#090a0d] px-6 sm:px-8 py-2.5 rounded-full border border-white/15 hover:border-accent text-neutral-300 hover:text-accent text-xs sm:text-sm font-sans transition-all duration-300 inline-flex items-center gap-2.5 cursor-pointer shadow-lg group hover:shadow-[0_0_20px_rgba(251, 183, 24, 0.25)] select-none"
                     aria-expanded={isDrawerOpen}
                     aria-controls="services-tray"
                 >
                     <span className="tracking-wide">Click to view Services</span>
                     <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
-                            isDrawerOpen ? 'rotate-180 text-[#d4ff00]' : 'text-neutral-400 group-hover:text-[#d4ff00]'
+                            isDrawerOpen ? 'rotate-180 text-accent' : 'text-neutral-400 group-hover:text-accent'
                         }`}
                     />
                 </button>
@@ -176,19 +176,19 @@ export function ServicesList({ services }: ServicesListProps) {
                                 return (
                                     <article
                                         key={service.id || service.slug}
-                                        className="p-8 sm:p-10 rounded-3xl bg-[#11131a] border border-white/10 hover:border-[#d4ff00]/40 transition-all duration-300 flex flex-col justify-between group shadow-xl"
+                                        className="p-8 sm:p-10 rounded-3xl bg-[#11131a] border border-white/10 hover:border-accent/40 transition-all duration-300 flex flex-col justify-between group shadow-xl"
                                     >
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 group-hover:text-[#d4ff00] transition-colors">
+                                                <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 group-hover:text-accent transition-colors">
                                                     [ {padIndex} // DISCIPLINE ]
                                                 </span>
-                                                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#d4ff00] group-hover:bg-[#d4ff00] group-hover:text-black transition-colors">
+                                                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-colors">
                                                     <IconComponent className="w-5 h-5" />
                                                 </div>
                                             </div>
 
-                                            <h4 className="text-3xl sm:text-4xl font-['Antonio',_'Bebas_Neue',_sans-serif] uppercase font-bold text-white group-hover:text-[#d4ff00] transition-colors">
+                                            <h4 className="text-3xl sm:text-4xl font-['Antonio',_'Bebas_Neue',_sans-serif] uppercase font-bold text-white group-hover:text-accent transition-colors">
                                                 {service.title}
                                             </h4>
 
@@ -219,7 +219,7 @@ export function ServicesList({ services }: ServicesListProps) {
                                             </span>
                                             <Link
                                                 href={`/services/${service.slug}`}
-                                                className="inline-flex items-center gap-2 font-['Antonio',_'Bebas_Neue',_sans-serif] text-sm uppercase tracking-wider font-bold text-black bg-[#d4ff00] hover:bg-[#c2eb00] px-5 py-2.5 rounded-full transition-all duration-300 shadow-md hover:shadow-[0_0_18px_rgba(212,255,0,0.4)]"
+                                                className="inline-flex items-center gap-2 font-['Antonio',_'Bebas_Neue',_sans-serif] text-sm uppercase tracking-wider font-bold text-black bg-accent hover:bg-accent-hover px-5 py-2.5 rounded-full transition-all duration-300 shadow-md hover:shadow-[0_0_18px_rgba(251, 183, 24, 0.4)]"
                                             >
                                                 <span>Deep Dive</span>
                                                 <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
@@ -253,7 +253,7 @@ export function ServicesList({ services }: ServicesListProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
                 {/* Floating minimal capsule tag */}
-                <div className="absolute bottom-8 right-8 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
+                <div className="absolute bottom-8 right-8 z-10 hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono uppercase tracking-widest text-accent">
                     <span>[ SPATIAL VISIONS // ARCHIVED ]</span>
                 </div>
             </div>

@@ -128,20 +128,20 @@ export function BeforeAfterShowcase() {
             className="relative py-16 sm:py-20 lg:py-24 bg-[#0a0b0f] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 right-10 w-[35rem] h-[35rem] bg-[#d4ff00]/5 rounded-full blur-[200px] pointer-events-none" />
-            <div className="absolute bottom-10 left-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[180px] pointer-events-none" />
+            <div className="absolute top-1/2 right-10 w-[35rem] h-[35rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
+            <div className="absolute bottom-10 left-10 w-[30rem] h-[30rem] bg-accent/5 rounded-full blur-[180px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#d4ff00] mb-4">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent mb-4">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>[ SURGICAL CRAFT DEMO ]</span>
                         </div>
-                        <h2 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.04]">
+                        <h2 className="text-2xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08] sm:leading-[1.04]">
                             See The Difference <br />
-                            <span className="text-[#d4ff00]">Pixel By Pixel.</span>
+                            <span className="text-accent">Pixel By Pixel.</span>
                         </h2>
                     </div>
 
@@ -160,7 +160,7 @@ export function BeforeAfterShowcase() {
                                 onClick={() => setActiveTab(item.id)}
                                 className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-mono text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap transition-all duration-300 cursor-pointer ${
                                     isActive
-                                        ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_20px_rgba(212,255,0,0.3)]'
+                                        ? 'bg-accent text-black font-bold shadow-[0_0_20px_rgba(251,183,24,0.3)]'
                                         : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5'
                                 }`}
                             >
@@ -187,11 +187,11 @@ export function BeforeAfterShowcase() {
 
                     {/* Right Column: Discipline Specs & Highlights */}
                     <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-                        <div className="inline-block px-3 py-1 rounded-md bg-white/5 text-xs font-mono uppercase tracking-widest text-[#d4ff00] border border-white/10">
+                        <div className="inline-block px-3 py-1 rounded-md bg-white/5 text-xs font-mono uppercase tracking-widest text-accent border border-white/10">
                             {activeItem.serviceCategory}
                         </div>
 
-                        <h3 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                        <h3 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight break-words">
                             {activeItem.headline}
                         </h3>
 
@@ -206,7 +206,7 @@ export function BeforeAfterShowcase() {
                             <ul className="space-y-2.5">
                                 {activeItem.highlights.map((point, index) => (
                                     <li key={index} className="flex items-center gap-3 text-xs sm:text-sm text-neutral-300 font-sans">
-                                        <CheckCircle2 className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                        <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
                                         <span>{point}</span>
                                     </li>
                                 ))}
@@ -216,7 +216,7 @@ export function BeforeAfterShowcase() {
                         <div className="pt-4">
                             <a
                                 href="#trial-uploader-section"
-                                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#c2eb00] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] transition-all duration-300 cursor-pointer"
+                                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(251,183,24,0.4)] transition-all duration-300 cursor-pointer"
                             >
                                 <span>Test This On Your Images</span>
                                 <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />

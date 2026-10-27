@@ -13,9 +13,10 @@
     --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'Space Grotesk', monospace;
 
-    --color-accent: #d4ff00;
-    --color-accent-hover: #bde600;
-    --color-accent-dim: rgba(212, 255, 0, 0.15);
+    --color-accent: #fbb718;
+    --color-accent-hover: #e5a513;
+    --color-accent-dim: rgba(251, 183, 24, 0.15);
+    --color-accent-glow: rgba(251, 183, 24, 0.28);
     --color-dark-bg: #0a0b0e;
     --color-dark-surface: #12141a;
     --color-dark-elevated: #1a1d26;
@@ -33,8 +34,10 @@
     --text-primary: #0a0c10;
     --text-secondary: #4a5264;
     --text-muted: #838d9e;
-    --accent: #b0d600;
-    --accent-glow: rgba(176, 214, 0, 0.25);
+    --accent: #fbb718;
+    --accent-hover: #e5a513;
+    --accent-dim: rgba(251, 183, 24, 0.15);
+    --accent-glow: rgba(251, 183, 24, 0.25);
     --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
     --sidebar: hsl(0 0% 98%);
     --sidebar-foreground: hsl(240 5.3% 26.1%);
@@ -61,8 +64,10 @@ html.dark {
     --text-primary: #f5f6f9;
     --text-secondary: #9aa1b2;
     --text-muted: #5e6578;
-    --accent: #d4ff00;
-    --accent-glow: rgba(212, 255, 0, 0.28);
+    --accent: #fbb718;
+    --accent-hover: #e5a513;
+    --accent-dim: rgba(251, 183, 24, 0.15);
+    --accent-glow: rgba(251, 183, 24, 0.28);
     --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 

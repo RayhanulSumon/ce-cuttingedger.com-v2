@@ -8,7 +8,7 @@ const badgeVariants = cva(
         variants: {
             variant: {
                 default:
-                    "border-transparent bg-[#d4ff00] text-black hover:bg-[#bde600]",
+                    "border-transparent bg-accent text-black hover:bg-[#bde600]",
                 secondary:
                     "border-transparent bg-white/10 text-neutral-200 hover:bg-white/20",
                 destructive:
@@ -17,7 +17,7 @@ const badgeVariants = cva(
                 success:
                     "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
                 accent:
-                    "border-[#d4ff00]/40 bg-[#d4ff00]/10 text-[#d4ff00]",
+                    "border-accent/40 bg-accent/10 text-accent",
             },
         },
         defaultVariants: {

@@ -80,7 +80,7 @@ export default function Show({
                                 <Link
                                     key={child.id || child.slug}
                                     href={`/services/${service.slug}/${child.slug}`}
-                                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-[#d4ff00] hover:text-black border border-white/10 text-neutral-300 transition-all"
+                                    className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-accent hover:text-black border border-white/10 text-neutral-300 transition-all"
                                 >
                                     {child.title}
                                 </Link>
@@ -107,8 +107,8 @@ export default function Show({
                             </div>
 
                             {/* Solution */}
-                            <div className="p-8 rounded-3xl bg-[#12141c] border border-[#d4ff00]/30 space-y-3">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                            <div className="p-8 rounded-3xl bg-[#12141c] border border-accent/30 space-y-3">
+                                <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                                     [ THE CUTTING EDGER RESOLUTION ]
                                 </span>
                                 <h3 className="text-2xl font-display font-bold text-white">Our Method</h3>
@@ -128,7 +128,7 @@ export default function Show({
                         {/* Main Description & Features */}
                         <div className="lg:col-span-7 space-y-8">
                             <div className="space-y-4">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                                <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                                     [ DISCIPLINE ARCHITECTURE ]
                                 </span>
                                 <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white">
@@ -146,8 +146,8 @@ export default function Show({
                                 <div className="space-y-3">
                                     {service.features?.map((feat, i) => (
                                         <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                                            <div className="w-5 h-5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00] text-black flex items-center justify-center shrink-0 mt-0.5">
-                                                <Check className="w-3 h-3 text-[#d4ff00]" />
+                                            <div className="w-5 h-5 rounded-full bg-accent/10 border border-accent text-black flex items-center justify-center shrink-0 mt-0.5">
+                                                <Check className="w-3 h-3 text-accent" />
                                             </div>
                                             <span className="text-neutral-200 text-sm font-medium">{feat}</span>
                                         </div>
@@ -165,7 +165,7 @@ export default function Show({
                                 <ul className="space-y-3">
                                     {service.deliverables?.map((deliv, i) => (
                                         <li key={i} className="flex items-center gap-2 text-sm text-neutral-300 font-mono">
-                                            <span className="text-[#d4ff00] font-bold">→</span>
+                                            <span className="text-accent font-bold">→</span>
                                             <span>{deliv}</span>
                                         </li>
                                     ))}
@@ -174,7 +174,7 @@ export default function Show({
                                 <div className="pt-6 border-t border-white/10 space-y-3">
                                     <Link
                                         href="/#free-trial"
-                                        className="w-full bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider py-4 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-[#bfe600] transition-colors shadow-lg"
+                                        className="w-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider py-4 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-accent-hover transition-colors shadow-lg"
                                     >
                                         <Sparkles className="w-4 h-4" />
                                         <span>Test 3 Free Sample Assets</span>
@@ -185,7 +185,7 @@ export default function Show({
                                         onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
                                         className="w-full border border-white/15 text-white hover:bg-white/5 font-mono text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                                     >
-                                        <Calendar className="w-4 h-4 text-[#d4ff00]" />
+                                        <Calendar className="w-4 h-4 text-accent" />
                                         <span>Book a 15-Min Discovery Call</span>
                                     </button>
                                 </div>
@@ -201,7 +201,7 @@ export default function Show({
                                         <Link
                                             key={s.id || s.slug}
                                             href={`/services/${s.slug}`}
-                                            className="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/5 text-xs text-neutral-300 hover:text-[#d4ff00] transition-colors"
+                                            className="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/5 text-xs text-neutral-300 hover:text-accent transition-colors"
                                         >
                                             <span className="font-mono">{s.title}</span>
                                             <ArrowRight className="w-3.5 h-3.5" />
@@ -219,7 +219,7 @@ export default function Show({
                 <section className="py-20 bg-[#07080a] border-b border-white/10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
                         <div className="text-center max-w-xl mx-auto space-y-2">
-                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                            <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                                 [ SYSTEMATIC PIPELINE ]
                             </span>
                             <h2 className="text-3xl font-display font-bold text-white">
@@ -230,7 +230,7 @@ export default function Show({
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {service.process_steps.map((step, idx) => (
                                 <div key={idx} className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3">
-                                    <span className="font-display text-3xl font-extrabold text-[#d4ff00]">
+                                    <span className="font-display text-3xl font-extrabold text-accent">
                                         {step.step}
                                     </span>
                                     <h3 className="font-display font-bold text-base text-white">{step.title}</h3>
@@ -247,7 +247,7 @@ export default function Show({
                 <section className="py-20 bg-[#0c0d12]">
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
                         <div className="text-center space-y-2">
-                            <span className="font-mono text-xs uppercase tracking-widest text-[#d4ff00] font-bold">
+                            <span className="font-mono text-xs uppercase tracking-widest text-accent font-bold">
                                 [ FREQUENTLY ASKED QUESTIONS ]
                             </span>
                             <h2 className="text-3xl font-display font-bold text-white">
@@ -262,7 +262,7 @@ export default function Show({
                                     className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-2"
                                 >
                                     <h3 className="text-base font-display font-bold text-white flex items-center gap-2">
-                                        <HelpCircle className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                        <HelpCircle className="w-4 h-4 text-accent shrink-0" />
                                         <span>{faq.question}</span>
                                     </h3>
                                     <p className="text-neutral-300 text-xs leading-relaxed pl-6">

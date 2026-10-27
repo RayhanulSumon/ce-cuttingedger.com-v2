@@ -86,7 +86,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                         </div>
                     </div>
                     <div className="text-right">
-                        <span className="text-[11px] font-mono font-bold text-[#d4ff00] block">
+                        <span className="text-[11px] font-mono font-bold text-accent block">
                             {card.starting_rate}
                         </span>
                         <span className="text-[10px] text-white/50 font-mono flex items-center gap-1 justify-end">
@@ -106,12 +106,12 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
                     {card.features && card.features.length > 0 && (
                         <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5">
-                            <span className="text-[10px] text-[#d4ff00] uppercase tracking-wider block font-bold">
+                            <span className="text-[10px] text-accent uppercase tracking-wider block font-bold">
                                 Key Highlights
                             </span>
                             {card.features.map((feat, i) => (
                                 <div key={i} className="flex items-start gap-1.5 text-white/80 text-[11px]">
-                                    <CheckCircle2 className="w-3 h-3 text-[#d4ff00] shrink-0 mt-0.5" />
+                                    <CheckCircle2 className="w-3 h-3 text-accent shrink-0 mt-0.5" />
                                     <span>{feat}</span>
                                 </div>
                             ))}
@@ -138,7 +138,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                     <button
                         type="button"
                         onClick={() => onSendPrompt?.(`Calculate volume price for ${card.title}`)}
-                        className="flex-1 py-2 px-3 rounded-xl bg-[#d4ff00] hover:bg-[#c2eb00] text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                        className="flex-1 py-2 px-3 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
                     >
                         <Calculator className="w-3.5 h-3.5" />
                         <span>Get Instant Quote</span>
@@ -163,7 +163,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
         <div className="my-2.5 p-3.5 sm:p-4 rounded-2xl bg-[#12141a]/95 border border-white/15 shadow-2xl backdrop-blur-md text-left space-y-3">
             <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-[#d4ff00]/15 text-[#d4ff00]">
+                    <span className="p-1.5 rounded-lg bg-accent/15 text-accent">
                         <Layers className="w-4 h-4" />
                     </span>
                     <div>
@@ -194,7 +194,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     <div
                                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-black font-bold"
-                                        style={{ backgroundColor: s.accent_color || '#d4ff00' }}
+                                        style={{ backgroundColor: s.accent_color || '#fbb718' }}
                                     >
                                         {getServiceIcon(s.icon, s.slug)}
                                     </div>
@@ -223,7 +223,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                     <button
                                         type="button"
                                         onClick={() => onSendPrompt?.(`Get quote for ${s.title}`)}
-                                        className="py-1 px-2 rounded-lg bg-[#d4ff00] hover:bg-[#c2eb00] text-black text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
+                                        className="py-1 px-2 rounded-lg bg-accent hover:bg-accent-hover text-black text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
                                     >
                                         <span>Quote</span>
                                         <ArrowRight className="w-3 h-3" />
@@ -238,13 +238,13 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
 
                                     {s.features && s.features.length > 0 && (
                                         <div className="space-y-1">
-                                            <span className="text-[9px] font-mono uppercase tracking-wider text-[#d4ff00] font-semibold">
+                                            <span className="text-[9px] font-mono uppercase tracking-wider text-accent font-semibold">
                                                 Technical Highlights
                                             </span>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-white/80 font-mono">
                                                 {s.features.map((f, fIdx) => (
                                                     <div key={fIdx} className="flex items-center gap-1.5">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                                                         <span>{f}</span>
                                                     </div>
                                                 ))}
@@ -277,8 +277,8 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
             </div>
 
             {/* Trial Banner */}
-            <div className="p-2.5 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/25 flex items-center gap-2 text-[11px] font-mono text-white/80">
-                <Shield className="w-3.5 h-3.5 text-[#d4ff00] shrink-0" />
+            <div className="p-2.5 rounded-xl bg-accent/10 border border-accent/25 flex items-center gap-2 text-[11px] font-mono text-white/80">
+                <Shield className="w-3.5 h-3.5 text-accent shrink-0" />
                 <span>{card.trial_banner || 'All services include 3 Free Sample Edits with zero upfront billing.'}</span>
             </div>
         </div>

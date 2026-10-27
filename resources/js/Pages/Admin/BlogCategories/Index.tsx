@@ -109,7 +109,7 @@ export default function BlogCategoriesIndex({
                 <div className="flex items-center gap-2">
                     {c.parent_id ? (
                         <div className="flex items-center gap-1.5 text-neutral-400 pl-4 font-mono text-xs">
-                            <CornerDownRight className="w-3.5 h-3.5 text-[#d4ff00]" />
+                            <CornerDownRight className="w-3.5 h-3.5 text-accent" />
                             <span className="text-white font-medium">{c.name}</span>
                             <span className="text-[10px] text-neutral-500 uppercase px-1.5 py-0.5 rounded bg-white/5 border border-white/5">
                                 Subcategory of {c.parent?.name}
@@ -117,10 +117,10 @@ export default function BlogCategoriesIndex({
                         </div>
                     ) : (
                         <div className="flex items-center gap-2 font-medium text-white">
-                            <Tag className="w-3.5 h-3.5 text-[#d4ff00]" />
+                            <Tag className="w-3.5 h-3.5 text-accent" />
                             <span>{c.name}</span>
                             {c.subcategories && c.subcategories.length > 0 && (
-                                <Badge variant="outline" className="text-[10px] font-mono text-[#d4ff00] border-[#d4ff00]/30 bg-[#d4ff00]/5">
+                                <Badge variant="outline" className="text-[10px] font-mono text-accent border-accent/30 bg-accent/5">
                                     {c.subcategories.length} subcategories
                                 </Badge>
                             )}
@@ -151,7 +151,7 @@ export default function BlogCategoriesIndex({
             key: "blogs_count",
             header: "ARTICLES",
             cell: (c) => (
-                <span className="text-xs font-mono text-[#d4ff00]">
+                <span className="text-xs font-mono text-accent">
                     {c.blogs_count ?? 0} Published
                 </span>
             ),
@@ -178,7 +178,7 @@ export default function BlogCategoriesIndex({
                         >
                             <DropdownMenuItem
                                 onClick={() => openEdit(c)}
-                                className="cursor-pointer text-xs focus:bg-[#d4ff00] focus:text-black"
+                                className="cursor-pointer text-xs focus:bg-accent focus:text-black"
                             >
                                 <Edit className="mr-2 h-3.5 w-3.5" />
                                 Edit
@@ -220,7 +220,7 @@ export default function BlogCategoriesIndex({
                     <DialogContent className="sm:max-w-xl bg-[#0c0d12] border-white/10 text-white shadow-2xl">
                         <DialogHeader>
                             <DialogTitle className="text-xl font-bold font-mono tracking-tight text-white flex items-center gap-2">
-                                <FolderTree className="w-5 h-5 text-[#d4ff00]" />
+                                <FolderTree className="w-5 h-5 text-accent" />
                                 REGISTER BLOG CATEGORY
                             </DialogTitle>
                             <DialogDescription className="text-neutral-400 text-xs font-mono">
@@ -240,7 +240,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             createForm.setData("name", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                        className="bg-[#12131a] border-white/10 focus:border-accent"
                                         required
                                     />
                                     {createForm.errors.name && (
@@ -260,7 +260,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             createForm.setData("slug", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                        className="bg-[#12131a] border-white/10 focus:border-accent"
                                     />
                                     {createForm.errors.slug && (
                                         <p className="text-rose-400 text-xs font-mono">
@@ -279,7 +279,7 @@ export default function BlogCategoriesIndex({
                                     onChange={(e) =>
                                         createForm.setData("parent_id", e.target.value)
                                     }
-                                    className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-[#d4ff00] focus:outline-none"
+                                    className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-accent focus:outline-none"
                                 >
                                     <option value="">None (Primary Root Category)</option>
                                     {parentCategories.map((p) => (
@@ -301,7 +301,7 @@ export default function BlogCategoriesIndex({
                                     onChange={(e) =>
                                         createForm.setData("description", e.target.value)
                                     }
-                                    className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                    className="bg-[#12131a] border-white/10 focus:border-accent"
                                 />
                             </div>
 
@@ -317,7 +317,7 @@ export default function BlogCategoriesIndex({
                                 <Button
                                     type="submit"
                                     disabled={createForm.processing}
-                                    className="bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold"
+                                    className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold"
                                 >
                                     {createForm.processing ? "Saving..." : "Create Category"}
                                 </Button>
@@ -334,7 +334,7 @@ export default function BlogCategoriesIndex({
                     <DialogContent className="sm:max-w-xl bg-[#0c0d12] border-white/10 text-white shadow-2xl">
                         <DialogHeader>
                             <DialogTitle className="text-xl font-bold font-mono tracking-tight text-white flex items-center gap-2">
-                                <Edit className="w-5 h-5 text-[#d4ff00]" />
+                                <Edit className="w-5 h-5 text-accent" />
                                 EDIT BLOG CATEGORY
                             </DialogTitle>
                             <DialogDescription className="text-neutral-400 text-xs font-mono">
@@ -354,7 +354,7 @@ export default function BlogCategoriesIndex({
                                             onChange={(e) =>
                                                 editForm.setData("name", e.target.value)
                                             }
-                                            className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                            className="bg-[#12131a] border-white/10 focus:border-accent"
                                             required
                                         />
                                     </div>
@@ -368,7 +368,7 @@ export default function BlogCategoriesIndex({
                                             onChange={(e) =>
                                                 editForm.setData("slug", e.target.value)
                                             }
-                                            className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                            className="bg-[#12131a] border-white/10 focus:border-accent"
                                             required
                                         />
                                     </div>
@@ -383,7 +383,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             editForm.setData("parent_id", e.target.value)
                                         }
-                                        className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-[#d4ff00] focus:outline-none"
+                                        className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-accent focus:outline-none"
                                     >
                                         <option value="">None (Primary Root Category)</option>
                                         {parentCategories
@@ -406,7 +406,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             editForm.setData("description", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-[#d4ff00]"
+                                        className="bg-[#12131a] border-white/10 focus:border-accent"
                                     />
                                 </div>
 
@@ -422,7 +422,7 @@ export default function BlogCategoriesIndex({
                                     <Button
                                         type="submit"
                                         disabled={editForm.processing}
-                                        className="bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold"
+                                        className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold"
                                     >
                                         {editForm.processing ? "Updating..." : "Commit Update"}
                                     </Button>

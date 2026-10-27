@@ -174,7 +174,7 @@ export default function FreeTrialsIndex({
                 );
             case "completed":
                 return (
-                    <Badge className="bg-[#d4ff00]/10 text-[#d4ff00] border border-[#d4ff00]/30">
+                    <Badge className="bg-accent/10 text-accent border border-accent/30">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Delivered / Done
                     </Badge>
                 );
@@ -196,7 +196,7 @@ export default function FreeTrialsIndex({
             render: (trial) => (
                 <div>
                     <div className="font-mono text-xs font-bold text-white flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#d4ff00]" />
+                        <Sparkles className="w-3.5 h-3.5 text-accent" />
                         <span>TRIAL #{trial.id}</span>
                     </div>
                     <span className="text-[11px] text-white/50 font-mono">
@@ -315,7 +315,7 @@ export default function FreeTrialsIndex({
                                 onClick={() => handleUpdateStatus(trial.id, "completed")}
                                 className="text-xs hover:bg-white/10 cursor-pointer"
                             >
-                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-[#d4ff00]" />
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent" />
                                 <span>Mark as Completed</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -397,12 +397,12 @@ export default function FreeTrialsIndex({
                         className={cn(
                             "p-3 rounded-xl border text-left transition-all cursor-pointer",
                             currentStatus === "completed"
-                                ? "bg-[#d4ff00]/15 border-[#d4ff00]/40 shadow-md"
+                                ? "bg-accent/15 border-accent/40 shadow-md"
                                 : "bg-[#12141a] border-white/10 hover:border-white/20"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-[#d4ff00]/70 block">Completed</span>
-                        <span className="text-xl font-bold font-mono text-[#d4ff00]">{stats.completed}</span>
+                        <span className="text-[10px] font-mono uppercase text-accent/70 block">Completed</span>
+                        <span className="text-xl font-bold font-mono text-accent">{stats.completed}</span>
                     </button>
 
                     <button
@@ -435,7 +435,7 @@ export default function FreeTrialsIndex({
                 <DialogContent className="max-w-2xl bg-[#0f1117] border-white/15 text-white max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-base font-bold">
-                            <Sparkles className="w-4 h-4 text-[#d4ff00]" />
+                            <Sparkles className="w-4 h-4 text-accent" />
                             <span>Process Free Trial Order #{selectedTrial?.id}</span>
                         </DialogTitle>
                         <DialogDescription className="text-xs text-white/60 font-mono">
@@ -465,7 +465,7 @@ export default function FreeTrialsIndex({
                                 </div>
                                 <div>
                                     <span className="text-[10px] text-white/40 uppercase block">Images Count</span>
-                                    <span className="text-[#d4ff00] font-bold">{selectedTrial.images_count} submitted</span>
+                                    <span className="text-accent font-bold">{selectedTrial.images_count} submitted</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] text-white/40 uppercase block">Current Status</span>
@@ -511,7 +511,7 @@ export default function FreeTrialsIndex({
                                                         download={`trial-${selectedTrial.id}-img-${i + 1}`}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-1 rounded hover:bg-white/10 text-[#d4ff00] transition-colors cursor-pointer"
+                                                        className="p-1 rounded hover:bg-white/10 text-accent transition-colors cursor-pointer"
                                                         title="Download File"
                                                     >
                                                         <Download className="w-3.5 h-3.5" />
@@ -533,7 +533,7 @@ export default function FreeTrialsIndex({
                                     onChange={(e) => setAdminNote(e.target.value)}
                                     placeholder="Add notes e.g., 'Retouching finished by Team Alpha. Master PSD sent to client inbox.'"
                                     rows={3}
-                                    className="w-full p-2.5 rounded-xl bg-white/5 border border-white/15 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#d4ff00] font-mono"
+                                    className="w-full p-2.5 rounded-xl bg-white/5 border border-white/15 text-xs text-white placeholder-white/30 focus:outline-none focus:border-accent font-mono"
                                 />
                             </div>
 
@@ -557,7 +557,7 @@ export default function FreeTrialsIndex({
                                         size="sm"
                                         onClick={() => handleUpdateStatus(selectedTrial.id, "completed", adminNote)}
                                         disabled={isUpdatingStatus}
-                                        className="h-8 text-xs bg-[#d4ff00] hover:bg-[#c2eb00] text-black font-semibold cursor-pointer"
+                                        className="h-8 text-xs bg-accent hover:bg-accent-hover text-black font-semibold cursor-pointer"
                                     >
                                         <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
                                         <span>Complete & Sent</span>
@@ -596,7 +596,7 @@ export default function FreeTrialsIndex({
                                 target="_blank"
                                 rel="noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="py-1 px-3 rounded-lg bg-[#d4ff00] text-black font-mono text-xs font-semibold flex items-center gap-1.5"
+                                className="py-1 px-3 rounded-lg bg-accent text-black font-mono text-xs font-semibold flex items-center gap-1.5"
                             >
                                 <Download className="w-3.5 h-3.5" />
                                 <span>Download Full Resolution</span>

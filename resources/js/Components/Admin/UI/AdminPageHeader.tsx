@@ -34,7 +34,7 @@ export function AdminPageHeader({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-white/10 mb-8">
             <div className="space-y-1">
                 {eyebrow && (
-                    <div className="font-mono text-xs uppercase tracking-widest text-[#d4ff00]">
+                    <div className="font-mono text-xs uppercase tracking-widest text-accent">
                         {eyebrow}
                     </div>
                 )}
@@ -43,7 +43,7 @@ export function AdminPageHeader({
                         {title}
                     </h1>
                     {badge && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/30 text-[#d4ff00] font-mono text-xs font-semibold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-accent/10 border border-accent/30 text-accent font-mono text-xs font-semibold">
                             {badge}
                         </span>
                     )}
@@ -59,13 +59,13 @@ export function AdminPageHeader({
                 {finalActionLabel && (
                     actionHref ? (
                         <Link href={actionHref}>
-                            <Button className="gap-2 bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold">
+                            <Button className="gap-2 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold">
                                 <Plus className="w-4 h-4" />
                                 <span>{finalActionLabel}</span>
                             </Button>
                         </Link>
                     ) : (
-                        <Button onClick={finalActionClick} className="gap-2 bg-[#d4ff00] hover:bg-[#b8dd00] text-black font-mono font-bold cursor-pointer">
+                        <Button onClick={finalActionClick} className="gap-2 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold cursor-pointer">
                             <Plus className="w-4 h-4" />
                             <span>{finalActionLabel}</span>
                         </Button>

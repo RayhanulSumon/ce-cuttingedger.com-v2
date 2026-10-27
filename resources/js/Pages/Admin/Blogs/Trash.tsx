@@ -77,13 +77,13 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         <div className="font-medium text-white leading-snug break-words">
                             <span>{b.title}</span>
                             {b.is_featured && (
-                                <Badge className="bg-[#d4ff00]/20 text-[#d4ff00] border border-[#d4ff00]/30 text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
+                                <Badge className="bg-accent/20 text-accent border border-accent/30 text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
                                     FEATURED
                                 </Badge>
                             )}
                         </div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-mono text-neutral-400">
-                            <span className="text-[#d4ff00]">
+                            <span className="text-accent">
                                 {b.category?.name || "General"}
                             </span>
                             {b.subcategory && (
@@ -225,7 +225,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                                 </p>
                                 <p className="text-neutral-300 bg-white/5 p-2.5 rounded border border-white/10">
                                     This article will be immediately reinstated to its exact previous stage:{" "}
-                                    <span className="text-[#d4ff00] font-bold uppercase">
+                                    <span className="text-accent font-bold uppercase">
                                         {blogToRestore?.status || "published"}
                                     </span>
                                     {blogToRestore?.status === "published"

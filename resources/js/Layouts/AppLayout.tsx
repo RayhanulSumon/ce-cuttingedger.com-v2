@@ -31,11 +31,16 @@ export function AppLayout({ children }: AppLayoutProps) {
         initializeAttribution();
     }, []);
 
-    // Global listener for dedicated Discovery Call calendar modal
+    // Global listener for dedicated Discovery Call calendar modal & Contact SlideOver
     useEffect(() => {
         const handleOpenDiscovery = () => setIsDiscoveryCallOpen(true);
+        const handleOpenContact = () => setIsContactOpen(true);
         window.addEventListener('ce:open-discovery-call', handleOpenDiscovery);
-        return () => window.removeEventListener('ce:open-discovery-call', handleOpenDiscovery);
+        window.addEventListener('ce:open-contact', handleOpenContact);
+        return () => {
+            window.removeEventListener('ce:open-discovery-call', handleOpenDiscovery);
+            window.removeEventListener('ce:open-contact', handleOpenContact);
+        };
     }, []);
 
     // Gracefully handle flash messages via modern dark Sonner toast (suppressed on Thank You page)
@@ -53,11 +58,11 @@ export function AppLayout({ children }: AppLayoutProps) {
     }, [flash, url]);
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#0a0b0e] text-[#f4f5f8] relative selection:bg-[#d4ff00] selection:text-black">
+        <div className="min-h-screen flex flex-col bg-[#0a0b0e] text-[#f4f5f8] relative selection:bg-accent selection:text-black">
             {/* Accessibility: Skip Link */}
             <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-[1000] px-4 py-2 bg-[#d4ff00] text-black font-mono font-bold rounded-md shadow-lg"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-[1000] px-4 py-2 bg-accent text-black font-mono font-bold rounded-md shadow-lg"
             >
                 Skip to main content
             </a>

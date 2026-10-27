@@ -20,9 +20,9 @@ export function useSmoothScroll() {
         // Initialize single global Lenis instance
         if (!globalLenis) {
             globalLenis = new Lenis({
-                lerp: 0.09, // Silky organic fluid inertia
+                lerp: 0.1, // Silky organic fluid inertia without lag
                 wheelMultiplier: 1.0, // Natural 1:1 mouse wheel response
-                touchMultiplier: 1.5,
+                touchMultiplier: 1.0, // Natural 1:1 touch/trackpad response
                 autoRaf: true, // Let Lenis manage its synchronized high-precision RAF loop
                 autoResize: true,
             });

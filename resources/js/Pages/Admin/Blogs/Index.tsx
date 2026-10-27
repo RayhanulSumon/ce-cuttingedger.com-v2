@@ -73,18 +73,18 @@ export default function BlogsIndex({
                         <div className="font-medium text-white leading-snug break-words">
                             <Link
                                 href={route("admin.blogs.edit", b.id)}
-                                className="hover:text-[#d4ff00] transition-colors"
+                                className="hover:text-accent transition-colors"
                             >
                                 {b.title}
                             </Link>
                             {b.is_featured && (
-                                <Badge className="bg-[#d4ff00] text-black text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
+                                <Badge className="bg-accent text-black text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
                                     FEATURED
                                 </Badge>
                             )}
                         </div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-mono text-neutral-400">
-                            <span className="text-[#d4ff00]">
+                            <span className="text-accent">
                                 {b.category?.name || "General"}
                             </span>
                             {b.subcategory && (
@@ -200,7 +200,7 @@ export default function BlogsIndex({
                         >
                             <DropdownMenuItem
                                 asChild
-                                className="cursor-pointer text-xs focus:bg-[#d4ff00] focus:text-black"
+                                className="cursor-pointer text-xs focus:bg-accent focus:text-black"
                             >
                                 <Link
                                     href={route("admin.blogs.edit", b.id)}

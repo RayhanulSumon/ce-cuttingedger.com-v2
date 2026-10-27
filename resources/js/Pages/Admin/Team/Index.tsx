@@ -178,7 +178,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 rel="noopener noreferrer"
                                 className="gap-2 cursor-pointer"
                             >
-                                <ExternalLink className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                <ExternalLink className="w-3.5 h-3.5 text-accent" />
                                 <span>View Live Single Page</span>
                             </a>
                         </DropdownMenuItem>

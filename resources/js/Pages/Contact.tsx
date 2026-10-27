@@ -136,7 +136,7 @@ export default function Contact() {
 
             <section className="relative py-16 sm:py-24 bg-[#07080a] min-h-[90vh] flex items-center overflow-hidden">
                 {/* Subtle Ambient Radial Lighting */}
-                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[22rem] bg-[#d4ff00]/5 rounded-full blur-[220px] pointer-events-none" />
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[22rem] bg-accent/5 rounded-full blur-[220px] pointer-events-none" />
 
                 <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
@@ -144,11 +144,11 @@ export default function Contact() {
                         {/* LEFT: Clean Minimalist Context */}
                         <div className="lg:col-span-5 space-y-8 pt-2">
                             <div className="space-y-3">
-                                <span className="text-xs font-mono text-[#d4ff00] font-bold uppercase tracking-widest">
+                                <span className="text-xs font-mono text-accent font-bold uppercase tracking-widest">
                                     Get In Touch
                                 </span>
                                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-[1.15]">
-                                    Let’s scale your <span className="text-[#d4ff00]">product imagery.</span>
+                                    Let’s scale your <span className="text-accent">product imagery.</span>
                                 </h1>
                                 <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-md">
                                     Whether ramping up for a seasonal catalog drop, standardizing multi-category color specs, or setting up dedicated studio bandwidth, our directors respond within 24 business hours.
@@ -159,10 +159,10 @@ export default function Contact() {
                             <div className="space-y-4 pt-2 border-t border-white/10">
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center gap-3">
-                                        <Mail className="w-4 h-4 text-[#d4ff00]" />
+                                        <Mail className="w-4 h-4 text-accent" />
                                         <a
                                             href={`mailto:${contactEmail}`}
-                                            className="text-white hover:text-[#d4ff00] font-mono transition-colors text-xs sm:text-sm"
+                                            className="text-white hover:text-accent font-mono transition-colors text-xs sm:text-sm"
                                         >
                                             {contactEmail}
                                         </a>
@@ -173,7 +173,7 @@ export default function Contact() {
                                         className="text-xs font-mono text-neutral-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
                                     >
                                         {copiedEmail ? (
-                                            <span className="text-[#d4ff00] flex items-center gap-1">
+                                            <span className="text-accent flex items-center gap-1">
                                                 <Check className="w-3.5 h-3.5" /> Copied
                                             </span>
                                         ) : (
@@ -185,7 +185,7 @@ export default function Contact() {
                                 </div>
 
                                 <div className="flex items-center gap-3 text-sm">
-                                    <Phone className="w-4 h-4 text-[#d4ff00]" />
+                                    <Phone className="w-4 h-4 text-accent" />
                                     <span className="text-neutral-300 font-mono text-xs sm:text-sm">
                                         +1 (409) 995-2565
                                     </span>
@@ -204,7 +204,7 @@ export default function Contact() {
                                 <button
                                     type="button"
                                     onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                    className="inline-flex items-center gap-2 text-xs font-mono text-[#d4ff00] hover:text-white hover:underline transition-all cursor-pointer font-bold"
+                                    className="inline-flex items-center gap-2 text-xs font-mono text-accent hover:text-white hover:underline transition-all cursor-pointer font-bold"
                                 >
                                     <Calendar className="w-4 h-4" />
                                     <span>Prefer a live screen-share? Book 15-min call →</span>
@@ -214,15 +214,15 @@ export default function Contact() {
                             {/* Trust Proof */}
                             <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-neutral-400">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                                     <span>24-Hour Production SLA</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                                     <span>Protected under Mutual Non-Disclosure Agreement</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                                     <span>Dedicated senior retoucher team</span>
                                 </div>
                             </div>
@@ -245,10 +245,10 @@ export default function Contact() {
 
                                 {/* Clean In-page Success Banner */}
                                 {flash?.success && (
-                                    <div className="p-4 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-start gap-3.5 text-white animate-in fade-in duration-300">
-                                        <CheckCircle2 className="w-5 h-5 text-[#d4ff00] shrink-0 mt-0.5" />
+                                    <div className="p-4 rounded-2xl bg-accent/10 border border-accent/30 flex items-start gap-3.5 text-white animate-in fade-in duration-300">
+                                        <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                                         <div className="space-y-1">
-                                            <p className="text-sm font-bold text-[#d4ff00]">Inquiry Transmitted Successfully</p>
+                                            <p className="text-sm font-bold text-accent">Inquiry Transmitted Successfully</p>
                                             <p className="text-xs text-neutral-300 leading-relaxed">{flash.success}</p>
                                         </div>
                                     </div>
@@ -273,7 +273,7 @@ export default function Contact() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="text-xs text-neutral-300 font-medium">
-                                            Your Name <span className="text-[#d4ff00]">*</span>
+                                            Your Name <span className="text-accent">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -281,14 +281,14 @@ export default function Contact() {
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
                                             placeholder="Alex Mercer"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors"
                                         />
                                         {errors.name && <p className="text-xs text-rose-400 font-mono">{errors.name}</p>}
                                     </div>
 
                                     <div className="space-y-1.5">
                                         <label className="text-xs text-neutral-300 font-medium">
-                                            Work Email <span className="text-[#d4ff00]">*</span>
+                                            Work Email <span className="text-accent">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -296,7 +296,7 @@ export default function Contact() {
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
                                             placeholder="alex@company.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors"
                                         />
                                         {errors.email && <p className="text-xs text-rose-400 font-mono">{errors.email}</p>}
                                     </div>
@@ -313,7 +313,7 @@ export default function Contact() {
                                             value={data.company}
                                             onChange={(e) => setData('company', e.target.value)}
                                             placeholder="Acme Footwear"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors"
                                         />
                                     </div>
 
@@ -326,7 +326,7 @@ export default function Contact() {
                                             value={data.website}
                                             onChange={(e) => setData('website', e.target.value)}
                                             placeholder="https://acme.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors"
                                         />
                                     </div>
                                 </div>
@@ -346,7 +346,7 @@ export default function Contact() {
                                                     onClick={() => setData('service_interest', srv)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer border ${
                                                         active
-                                                            ? 'bg-[#d4ff00]/15 border-[#d4ff00] text-[#d4ff00] font-bold'
+                                                            ? 'bg-accent/15 border-accent text-accent font-bold'
                                                             : 'bg-white/[0.02] border-white/10 text-neutral-300 hover:border-white/20 hover:text-white'
                                                     }`}
                                                 >
@@ -360,7 +360,7 @@ export default function Contact() {
                                 {/* Message */}
                                 <div className="space-y-1.5">
                                     <label className="text-xs text-neutral-300 font-medium">
-                                        Project Scope & Timeline <span className="text-[#d4ff00]">*</span>
+                                        Project Scope & Timeline <span className="text-accent">*</span>
                                     </label>
                                     <textarea
                                         required
@@ -368,7 +368,7 @@ export default function Contact() {
                                         value={data.message}
                                         onChange={(e) => setData('message', e.target.value)}
                                         placeholder="Briefly describe your image volume, desired background specs, or turnaround deadline..."
-                                        className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00] transition-colors leading-relaxed"
+                                        className="w-full px-3.5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors leading-relaxed"
                                     />
                                     {errors.message && <p className="text-xs text-rose-400 font-mono">{errors.message}</p>}
                                 </div>
@@ -385,20 +385,20 @@ export default function Contact() {
                                                 value={data.captcha_answer}
                                                 onChange={(e) => setData('captcha_answer', e.target.value)}
                                                 placeholder="Answer"
-                                                className="w-16 px-2.5 py-1 bg-white/[0.04] border border-white/10 rounded-lg text-xs text-center text-white focus:outline-none focus:border-[#d4ff00]"
+                                                className="w-16 px-2.5 py-1 bg-white/[0.04] border border-white/10 rounded-lg text-xs text-center text-white focus:outline-none focus:border-accent"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={refreshCaptcha}
                                                 title="New Challenge"
-                                                className="p-1 text-neutral-500 hover:text-[#d4ff00] transition-colors cursor-pointer"
+                                                className="p-1 text-neutral-500 hover:text-accent transition-colors cursor-pointer"
                                             >
                                                 <RotateCw className="w-3 h-3" />
                                             </button>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-mono">
-                                            <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                                             <span>Mutual NDA</span>
                                         </div>
                                     )}
@@ -406,7 +406,7 @@ export default function Contact() {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="px-6 py-2.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
                                     >
                                         {processing ? (
                                             <>

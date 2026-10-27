@@ -54,7 +54,7 @@ export default function Index({
                             onClick={() => handleFilter('all')}
                             className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                                 activeCategory === 'all'
-                                    ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
+                                    ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
                                     : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                             }`}
                         >
@@ -68,7 +68,7 @@ export default function Index({
                                 onClick={() => handleFilter(cat.slug)}
                                 className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                                     activeCategory === cat.slug
-                                        ? 'bg-[#d4ff00] text-black font-bold shadow-[0_0_15px_rgba(212,255,0,0.3)]'
+                                        ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
                                         : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/5'
                                 }`}
                             >
@@ -86,7 +86,7 @@ export default function Index({
                         {projects.map((project, idx) => (
                             <article
                                 key={project.id || project.slug}
-                                className="group p-6 sm:p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-[#d4ff00]/40 transition-all shadow-xl flex flex-col justify-between"
+                                className="group p-6 sm:p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-accent/40 transition-all shadow-xl flex flex-col justify-between"
                             >
                                 <div className="space-y-4">
                                     {/* Cover Image Container */}
@@ -113,12 +113,12 @@ export default function Index({
                                         </div>
 
                                         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white/90">
-                                            <span className="font-bold text-[#d4ff00]">{project.client_name}</span>
+                                            <span className="font-bold text-accent">{project.client_name}</span>
                                             <span>{project.year}</span>
                                         </div>
                                     </div>
 
-                                    <h2 className="text-2xl font-display font-bold text-white group-hover:text-[#d4ff00] transition-colors">
+                                    <h2 className="text-2xl font-display font-bold text-white group-hover:text-accent transition-colors">
                                         <Link href={`/case-studies/${project.slug}`}>
                                             {project.title}
                                         </Link>
@@ -133,7 +133,7 @@ export default function Index({
                                         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
                                             {project.metrics.slice(0, 3).map((m, i) => (
                                                 <div key={i} className="text-center p-2 rounded-xl bg-white/[0.02]">
-                                                    <p className="font-display font-black text-sm text-[#d4ff00]">{m.value}</p>
+                                                    <p className="font-display font-black text-sm text-accent">{m.value}</p>
                                                     <p className="text-[10px] font-mono text-neutral-400 truncate">{m.label}</p>
                                                 </div>
                                             ))}
@@ -145,7 +145,7 @@ export default function Index({
                                     <span className="text-neutral-400">{project.category?.name || 'Production'}</span>
                                     <Link
                                         href={`/case-studies/${project.slug}`}
-                                        className="text-[#d4ff00] font-bold inline-flex items-center gap-1 group-hover:underline"
+                                        className="text-accent font-bold inline-flex items-center gap-1 group-hover:underline"
                                     >
                                         <span>Read Full Study</span>
                                         <ArrowUpRight className="w-3.5 h-3.5" />

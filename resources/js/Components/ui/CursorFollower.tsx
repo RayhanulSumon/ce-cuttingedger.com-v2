@@ -75,11 +75,11 @@ export function CursorFollower() {
             <div
                 className={`fixed top-0 left-0 rounded-full flex items-center justify-center font-display text-[10px] font-bold tracking-widest uppercase transition-all duration-150 ease-out ${
                     label 
-                        ? 'w-20 h-20 bg-[#d4ff00] text-black shadow-lg shadow-[#d4ff00]/40 scale-100'
+                        ? 'w-20 h-20 bg-accent text-black shadow-lg shadow-[#fbb718]/40 scale-100'
                         : isHovered
-                        ? 'w-12 h-12 border-2 border-[#d4ff00] bg-[#d4ff00]/10 backdrop-blur-[2px] scale-110'
+                        ? 'w-12 h-12 border-2 border-accent bg-accent/10 backdrop-blur-[2px] scale-110'
                         : isClicking
-                        ? 'w-7 h-7 border border-[#d4ff00] bg-[#d4ff00]/30 scale-90'
+                        ? 'w-7 h-7 border border-accent bg-accent/30 scale-90'
                         : 'w-8 h-8 border border-white/20 dark:border-white/30'
                 }`}
                 style={{
@@ -92,7 +92,7 @@ export function CursorFollower() {
             {/* Sharp Center Pointer Dot */}
             {!label && (
                 <div
-                    className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-[#d4ff00] transition-transform duration-75 ease-out"
+                    className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-accent transition-transform duration-75 ease-out"
                     style={{
                         transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
                     }}

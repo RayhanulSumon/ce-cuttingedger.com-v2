@@ -246,7 +246,7 @@ export default function RedirectsIndex({
                         </Button>
                         <Button
                             onClick={openCreateModal}
-                            className="bg-[#d4ff00] text-black hover:bg-[#c2eb00] font-semibold text-xs shadow-lg shadow-[#d4ff00]/10"
+                            className="bg-accent text-black hover:bg-accent-hover font-semibold text-xs shadow-lg shadow-[#fbb718]/10"
                         >
                             <Plus className="w-4 h-4 mr-1.5" />
                             New Redirect
@@ -259,7 +259,7 @@ export default function RedirectsIndex({
                     <div className="p-5 rounded-xl border border-white/10 bg-neutral-900/50 backdrop-blur-sm">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-mono uppercase tracking-wider text-neutral-400">Total Active Rules</span>
-                            <ArrowLeftRight className="w-4 h-4 text-[#d4ff00]" />
+                            <ArrowLeftRight className="w-4 h-4 text-accent" />
                         </div>
                         <div className="text-3xl font-bold text-white mt-2 font-mono">
                             {stats.total_redirects.toLocaleString()}
@@ -298,7 +298,7 @@ export default function RedirectsIndex({
                             onClick={() => setActiveTab("rules")}
                             className={`px-4 py-2 rounded-lg text-xs font-mono font-semibold transition-all ${
                                 activeTab === "rules"
-                                    ? "bg-[#d4ff00] text-black shadow-md shadow-[#d4ff00]/10"
+                                    ? "bg-accent text-black shadow-md shadow-[#fbb718]/10"
                                     : "text-neutral-400 hover:text-white hover:bg-white/5"
                             }`}
                         >
@@ -453,7 +453,7 @@ export default function RedirectsIndex({
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                         className={`px-3 py-1.5 rounded text-xs font-mono ${
                                             link.active
-                                                ? "bg-[#d4ff00] text-black font-bold"
+                                                ? "bg-accent text-black font-bold"
                                                 : link.url
                                                 ? "text-neutral-400 hover:text-white hover:bg-white/5"
                                                 : "text-neutral-600 cursor-not-allowed"
@@ -507,7 +507,7 @@ export default function RedirectsIndex({
                                                     <Button
                                                         size="sm"
                                                         onClick={() => openResolveModal(log)}
-                                                        className="h-7 text-xs bg-[#d4ff00] text-black hover:bg-[#c2eb00] font-semibold"
+                                                        className="h-7 text-xs bg-accent text-black hover:bg-accent-hover font-semibold"
                                                     >
                                                         <ArrowLeftRight className="w-3 h-3 mr-1" />
                                                         Resolve with 301
@@ -604,7 +604,7 @@ export default function RedirectsIndex({
                                             type="checkbox"
                                             checked={ruleForm.data.is_regex}
                                             onChange={(e) => ruleForm.setData("is_regex", e.target.checked)}
-                                            className="rounded border-white/20 text-[#d4ff00] focus:ring-0"
+                                            className="rounded border-white/20 text-accent focus:ring-0"
                                         />
                                         <span className="text-xs text-neutral-300">Regex Pattern</span>
                                     </label>
@@ -630,7 +630,7 @@ export default function RedirectsIndex({
                                 <Button
                                     type="submit"
                                     disabled={ruleForm.processing}
-                                    className="bg-[#d4ff00] text-black hover:bg-[#c2eb00] text-xs font-semibold"
+                                    className="bg-accent text-black hover:bg-accent-hover text-xs font-semibold"
                                 >
                                     {editingRule ? "Update Rule" : "Create Redirect"}
                                 </Button>
@@ -647,7 +647,7 @@ export default function RedirectsIndex({
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div>
                                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                                    <ArrowLeftRight className="w-4 h-4 text-[#d4ff00]" />
+                                    <ArrowLeftRight className="w-4 h-4 text-accent" />
                                     Resolve 404 to 301 Redirect
                                 </h2>
                                 <p className="text-xs text-neutral-400 mt-1">
@@ -693,7 +693,7 @@ export default function RedirectsIndex({
                                 <Button
                                     type="submit"
                                     disabled={resolveForm.processing}
-                                    className="bg-[#d4ff00] text-black hover:bg-[#c2eb00] text-xs font-semibold"
+                                    className="bg-accent text-black hover:bg-accent-hover text-xs font-semibold"
                                 >
                                     Save 301 Redirect
                                 </Button>
@@ -710,7 +710,7 @@ export default function RedirectsIndex({
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div>
                                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                                    <Upload className="w-4 h-4 text-[#d4ff00]" />
+                                    <Upload className="w-4 h-4 text-accent" />
                                     Bulk Import Redirects
                                 </h2>
                                 <p className="text-xs text-neutral-400 mt-1">
@@ -732,7 +732,7 @@ export default function RedirectsIndex({
                                     type="file"
                                     accept=".csv,.txt"
                                     onChange={(e) => importForm.setData("csv_file", e.target.files?.[0] || null)}
-                                    className="block w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#d4ff00] file:text-black hover:file:bg-[#c2eb00] cursor-pointer"
+                                    className="block w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-black hover:file:bg-[#c2eb00] cursor-pointer"
                                 />
                             </div>
 
@@ -749,7 +749,7 @@ export default function RedirectsIndex({
                                 <Button
                                     type="submit"
                                     disabled={!importForm.data.csv_file || importForm.processing}
-                                    className="bg-[#d4ff00] text-black hover:bg-[#c2eb00] text-xs font-semibold"
+                                    className="bg-accent text-black hover:bg-accent-hover text-xs font-semibold"
                                 >
                                     Upload & Ingest
                                 </Button>

@@ -195,13 +195,13 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                 {/* Header Strip */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
                     <div className="flex items-center gap-2">
-                        <div className="p-2 rounded-xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 text-[#d4ff00]">
+                        <div className="p-2 rounded-xl bg-accent/10 border border-accent/30 text-accent">
                             <Video className="w-4 h-4" />
                         </div>
                         <div>
                             <h3 className="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
                                 <span>Schedule a Visual Performance Discovery Call</span>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#d4ff00]/15 text-[#d4ff00] border border-[#d4ff00]/30 font-semibold">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-accent/15 text-accent border border-accent/30 font-semibold">
                                     15-Min Live Screen Share
                                 </span>
                             </h3>
@@ -235,7 +235,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                     Consultation Call Confirmed!
                                 </h4>
                                 <p className="text-xs text-neutral-300 max-w-md mx-auto">
-                                    We have reserved your slot for <span className="text-[#d4ff00] font-mono font-semibold">{confirmedBooking.datetime_formatted}</span>. A calendar invitation with screen-share details has been queued for <span className="text-white font-mono">{confirmedBooking.email}</span>.
+                                    We have reserved your slot for <span className="text-accent font-mono font-semibold">{confirmedBooking.datetime_formatted}</span>. A calendar invitation with screen-share details has been queued for <span className="text-white font-mono">{confirmedBooking.email}</span>.
                                 </p>
                             </div>
 
@@ -258,7 +258,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="px-8 py-3 rounded-xl bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] transition-colors"
+                                    className="px-8 py-3 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors"
                                 >
                                     Done
                                 </button>
@@ -277,7 +277,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                             {/* Slot Selection */}
                             <div className="space-y-2.5">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold flex items-center gap-1.5">
+                                    <label className="text-xs font-mono uppercase text-accent font-bold flex items-center gap-1.5">
                                         <Calendar className="w-3.5 h-3.5" />
                                         <span>1. Select Preferred Date & Time</span>
                                     </label>
@@ -288,7 +288,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
 
                                 {isLoadingSlots ? (
                                     <div className="p-8 text-center text-xs text-neutral-400 font-mono flex items-center justify-center gap-2">
-                                        <Loader2 className="w-4 h-4 animate-spin text-[#d4ff00]" />
+                                        <Loader2 className="w-4 h-4 animate-spin text-accent" />
                                         <span>Loading live calendar availability...</span>
                                     </div>
                                 ) : (
@@ -309,7 +309,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                                         }}
                                                         className={`px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-all shrink-0 cursor-pointer ${
                                                             isSelected
-                                                                ? 'bg-[#d4ff00] text-black font-bold shadow-md shadow-[#d4ff00]/10'
+                                                                ? 'bg-accent text-black font-bold shadow-md shadow-[#fbb718]/10'
                                                                 : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5'
                                                         }`}
                                                     >
@@ -330,7 +330,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                                         onClick={() => setSelectedSlot(slot)}
                                                         className={`px-3 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                                             isSlotSelected
-                                                                ? 'bg-[#d4ff00]/15 text-[#d4ff00] border-2 border-[#d4ff00] font-bold shadow-sm'
+                                                                ? 'bg-accent/15 text-accent border-2 border-accent font-bold shadow-sm'
                                                                 : 'bg-white/[0.04] text-neutral-300 hover:bg-white/10 hover:text-white border border-white/10'
                                                         }`}
                                                     >
@@ -346,7 +346,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
 
                             {/* Contact Details Grid */}
                             <div className="space-y-3 pt-2 border-t border-white/10">
-                                <label className="text-xs font-mono uppercase text-[#d4ff00] font-bold block">
+                                <label className="text-xs font-mono uppercase text-accent font-bold block">
                                     2. Your Information & Brief
                                 </label>
 
@@ -361,7 +361,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="e.g. Sarah Jenkins"
                                             required
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-[#d4ff00]"
+                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
                                         />
                                     </div>
 
@@ -375,7 +375,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="sarah@brand.com"
                                             required
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-[#d4ff00]"
+                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
                                         />
                                     </div>
                                 </div>
@@ -390,7 +390,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
                                             placeholder="+1 (555) 000-0000"
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-[#d4ff00]"
+                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
                                         />
                                     </div>
 
@@ -401,7 +401,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                         <select
                                             value={service}
                                             onChange={(e) => setService(e.target.value)}
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-[#d4ff00]"
+                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
                                         >
                                             <option value="Catalog Optimization & Retouching">1. Catalog Optimization & Retouching</option>
                                             <option value="Color Standardization">2. Color Standardization & Multi-Colorways</option>
@@ -421,7 +421,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                         onChange={(e) => setNotes(e.target.value)}
                                         placeholder="e.g. We have ~2,500 apparel SKUs per month requiring ghost mannequin and delta-E matching..."
                                         rows={2}
-                                        className="w-full rounded-xl bg-neutral-900 border border-white/10 text-xs p-3 text-white focus:outline-none focus:border-[#d4ff00] resize-none"
+                                        className="w-full rounded-xl bg-neutral-900 border border-white/10 text-xs p-3 text-white focus:outline-none focus:border-accent resize-none"
                                     />
                                 </div>
                             </div>
@@ -429,7 +429,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                             {/* Trust & Submit */}
                             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
                                 <div className="flex items-center gap-1.5 text-[11px] text-neutral-400 font-mono">
-                                    <Shield className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <Shield className="w-3.5 h-3.5 text-accent" />
                                     <span>Protected under Strict Mutual NDA</span>
                                 </div>
 
@@ -444,7 +444,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !selectedSlot}
-                                        className="px-6 py-2.5 rounded-xl bg-[#d4ff00] text-black font-semibold text-xs uppercase tracking-wider hover:bg-[#c2eb00] transition-colors flex items-center gap-2 shadow-lg shadow-[#d4ff00]/15 disabled:opacity-50 cursor-pointer"
+                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors flex items-center gap-2 shadow-lg shadow-[#fbb718]/15 disabled:opacity-50 cursor-pointer"
                                     >
                                         {isSubmitting ? (
                                             <>

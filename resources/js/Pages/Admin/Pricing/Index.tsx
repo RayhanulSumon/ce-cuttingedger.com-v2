@@ -120,7 +120,7 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
             header: "INVESTMENT",
             cell: (p) => (
                 <div className="font-mono text-xs">
-                    <span className="text-[#d4ff00] font-bold">{p.price}</span>{" "}
+                    <span className="text-accent font-bold">{p.price}</span>{" "}
                     <span className="text-neutral-500">/{p.billing_cycle}</span>
                 </div>
             ),

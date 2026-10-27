@@ -194,18 +194,18 @@ export function FreeTrialDropzone() {
             className="relative py-20 sm:py-28 bg-[#07080a] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting Sheen */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-[#d4ff00]/5 rounded-full blur-[240px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-accent/5 rounded-full blur-[240px] pointer-events-none" />
 
-            <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="w-full max-w-4xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/25 text-xs font-mono uppercase tracking-widest text-[#d4ff00]">
+                <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/25 text-xs font-mono uppercase tracking-widest text-accent">
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Zero Risk · Free 3-Asset Enterprise Pilot</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-                        TEST OUR CRAFT ON <span className="text-[#d4ff00]">YOUR RAW FILES.</span>
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
+                        TEST OUR CRAFT ON <span className="text-accent">YOUR RAW FILES.</span>
                     </h2>
 
                     <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
@@ -213,18 +213,18 @@ export function FreeTrialDropzone() {
                     </p>
 
                     {/* Multi-Step Indicator */}
-                    <div className="flex items-center justify-center gap-3 pt-3 font-mono text-xs">
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 pt-3 font-mono text-xs">
                         <button
                             type="button"
                             onClick={() => setStep(1)}
                             className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
                                 step === 1
-                                    ? 'bg-[#d4ff00]/15 border-[#d4ff00] text-[#d4ff00] font-bold'
+                                    ? 'bg-accent/15 border-accent text-accent font-bold'
                                     : 'border-white/10 text-neutral-400 hover:text-white'
                             }`}
                         >
                             <span>01. Sample Uploads</span>
-                            {selectedFiles.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-[#d4ff00]" />}
+                            {selectedFiles.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
                         </button>
                         <span className="text-neutral-600">→</span>
                         <button
@@ -234,7 +234,7 @@ export function FreeTrialDropzone() {
                             }}
                             className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
                                 step === 2
-                                    ? 'bg-[#d4ff00]/15 border-[#d4ff00] text-[#d4ff00] font-bold'
+                                    ? 'bg-accent/15 border-accent text-accent font-bold'
                                     : 'border-white/10 text-neutral-400'
                             }`}
                         >
@@ -246,7 +246,7 @@ export function FreeTrialDropzone() {
                 {/* Form Card */}
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-[#0f1117] border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl"
+                    className="bg-[#0f1117] border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl"
                 >
                     {/* Honeypot */}
                     <input
@@ -277,7 +277,7 @@ export function FreeTrialDropzone() {
                                 onClick={() => fileInputRef.current?.click()}
                                 className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-4 ${
                                     isDragOver
-                                        ? 'border-[#d4ff00] bg-[#d4ff00]/10 scale-[0.99]'
+                                        ? 'border-accent bg-accent/10 scale-[0.99]'
                                         : 'border-white/15 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04]'
                                 }`}
                             >
@@ -290,13 +290,13 @@ export function FreeTrialDropzone() {
                                     className="hidden"
                                 />
 
-                                <div className="w-16 h-16 rounded-2xl bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00]">
+                                <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
                                     <UploadCloud className="w-8 h-8" />
                                 </div>
 
                                 <div className="space-y-1">
                                     <p className="text-white font-display font-bold text-base sm:text-lg">
-                                        Drop your raw photos here, or <span className="text-[#d4ff00] underline">browse files</span>
+                                        Drop your raw photos here, or <span className="text-accent underline">browse files</span>
                                     </p>
                                     <p className="text-neutral-400 text-xs font-mono">
                                         Upload up to 3 test files (Max 25MB each). Formats: PSD, TIFF, RAW, JPG, PNG, ZIP.
@@ -318,7 +318,7 @@ export function FreeTrialDropzone() {
                                                 className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2 text-xs"
                                             >
                                                 <div className="flex items-center gap-2 truncate">
-                                                    <FileImage className="w-4 h-4 text-[#d4ff00] shrink-0" />
+                                                    <FileImage className="w-4 h-4 text-accent shrink-0" />
                                                     <span className="text-white truncate font-mono text-[11px]">{file.name}</span>
                                                 </div>
                                                 <button
@@ -339,14 +339,14 @@ export function FreeTrialDropzone() {
 
                             <div className="flex items-center justify-between pt-4 border-t border-white/10">
                                 <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                                    <Lock className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                    <Lock className="w-3.5 h-3.5 text-accent" />
                                     <span>Protected under Mutual Non-Disclosure</span>
                                 </div>
 
                                 <button
                                     type="button"
                                     onClick={() => setStep(2)}
-                                    className="px-6 py-3 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center gap-2 shadow-lg"
+                                    className="px-6 py-3 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all flex items-center gap-2 shadow-lg"
                                 >
                                     <span>Next: Brand Coordinates</span>
                                     <ArrowRight className="w-4 h-4" />
@@ -376,7 +376,7 @@ export function FreeTrialDropzone() {
                                     <div className="flex flex-wrap items-center gap-2.5 pt-2 border-t border-amber-500/20">
                                         <Link
                                             href="/pricing"
-                                            className="px-4 py-2 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all"
+                                            className="px-4 py-2 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all"
                                         >
                                             Explore Production Pricing ($0.49/img)
                                         </Link>
@@ -401,7 +401,7 @@ export function FreeTrialDropzone() {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="Alex Mercer"
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                     />
                                     {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
                                 </div>
@@ -416,7 +416,7 @@ export function FreeTrialDropzone() {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         placeholder="alex@company.com"
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                     />
                                     {(errors.email || errors.trial_exhausted) && (
                                         <p className="text-xs text-red-400 font-mono">
@@ -427,7 +427,7 @@ export function FreeTrialDropzone() {
 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
-                                        <Building2 className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <Building2 className="w-3.5 h-3.5 text-accent" />
                                         <span>Company Name</span>
                                     </label>
                                     <input
@@ -435,13 +435,13 @@ export function FreeTrialDropzone() {
                                         value={data.company}
                                         onChange={(e) => setData('company', e.target.value)}
                                         placeholder="Acme Footwear Co."
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
-                                        <Briefcase className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <Briefcase className="w-3.5 h-3.5 text-accent" />
                                         <span>Your Role</span>
                                     </label>
                                     <input
@@ -449,13 +449,13 @@ export function FreeTrialDropzone() {
                                         value={data.role}
                                         onChange={(e) => setData('role', e.target.value)}
                                         placeholder="Head of Visual Production / Founder"
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
-                                        <Globe className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <Globe className="w-3.5 h-3.5 text-accent" />
                                         <span>Store / Website URL</span>
                                     </label>
                                     <input
@@ -463,19 +463,19 @@ export function FreeTrialDropzone() {
                                         value={data.website}
                                         onChange={(e) => setData('website', e.target.value)}
                                         placeholder="https://acme.com"
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-mono uppercase text-neutral-300 font-bold flex items-center gap-1.5">
-                                        <ShoppingBag className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                        <ShoppingBag className="w-3.5 h-3.5 text-accent" />
                                         <span>Primary Platform</span>
                                     </label>
                                     <select
                                         value={data.platform}
                                         onChange={(e) => setData('platform', e.target.value)}
-                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent"
                                     >
                                         {PLATFORMS.map((p) => (
                                             <option key={p} value={p}>{p}</option>
@@ -490,7 +490,7 @@ export function FreeTrialDropzone() {
                                     <select
                                         value={data.service}
                                         onChange={(e) => setData('service', e.target.value)}
-                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent"
                                     >
                                         {SERVICE_PILLARS.map((s) => (
                                             <option key={s} value={s}>{s}</option>
@@ -505,7 +505,7 @@ export function FreeTrialDropzone() {
                                     <select
                                         value={data.monthly_volume}
                                         onChange={(e) => setData('monthly_volume', e.target.value)}
-                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-full px-4 py-3 bg-[#161822] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent"
                                     >
                                         {VOLUME_TIERS.map((v) => (
                                             <option key={v} value={v}>{v}</option>
@@ -523,7 +523,7 @@ export function FreeTrialDropzone() {
                                     value={data.instructions}
                                     onChange={(e) => setData('instructions', e.target.value)}
                                     placeholder="e.g. Pure white 255 background, subtle contact shadow, preserve natural fabric texture, crop 1000x1000."
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-[#d4ff00]"
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-accent"
                                 />
                             </div>
 
@@ -532,13 +532,13 @@ export function FreeTrialDropzone() {
                                 <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-4">
                                     <div className="space-y-0.5">
                                         <span className="text-xs font-mono text-neutral-300 font-bold flex items-center gap-1.5">
-                                            <ShieldCheck className="w-3.5 h-3.5 text-[#d4ff00]" />
+                                            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                                             <span>Security Verification: What is {captchaQuestion} ?</span>
                                             <button
                                                 type="button"
                                                 onClick={refreshCaptcha}
                                                 title="Generate new question"
-                                                className="p-1 text-neutral-500 hover:text-[#d4ff00] transition-colors"
+                                                className="p-1 text-neutral-500 hover:text-accent transition-colors"
                                             >
                                                 <RotateCw className="w-3 h-3" />
                                             </button>
@@ -551,7 +551,7 @@ export function FreeTrialDropzone() {
                                         value={data.captcha_answer}
                                         onChange={(e) => setData('captcha_answer', e.target.value)}
                                         placeholder="Answer"
-                                        className="w-24 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-center text-white focus:outline-none focus:border-[#d4ff00]"
+                                        className="w-24 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-center text-white focus:outline-none focus:border-accent"
                                     />
                                 </div>
                             )}
@@ -575,7 +575,7 @@ export function FreeTrialDropzone() {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="px-8 py-3.5 rounded-xl bg-[#d4ff00] text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#bfe600] transition-all flex items-center gap-2 shadow-xl disabled:opacity-50"
+                                    className="px-8 py-3.5 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover transition-all flex items-center gap-2 shadow-xl disabled:opacity-50"
                                 >
                                     {processing ? (
                                         <>

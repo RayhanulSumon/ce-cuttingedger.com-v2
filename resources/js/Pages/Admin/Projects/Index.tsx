@@ -420,7 +420,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         {/* B2B Case Study Narrative (§6.2 Outline) */}
                         <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-wider text-[#d4ff00] font-bold block">
+                            <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold block">
                                 Case Study Narrative (Challenge, Execution & Outcome)
                             </span>
 
@@ -688,7 +688,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                     onChange={(e) =>
                                         editForm.setData("category_id", e.target.value)
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#d4ff00]"
+                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
                                 >
                                     <option value="">Uncategorized</option>
                                     {categories.map((c) => (
@@ -744,7 +744,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         {/* B2B Case Study Narrative (§6.2 Outline) */}
                         <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-wider text-[#d4ff00] font-bold block">
+                            <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold block">
                                 Case Study Narrative (Challenge, Execution & Outcome)
                             </span>
 

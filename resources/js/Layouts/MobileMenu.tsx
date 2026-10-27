@@ -50,7 +50,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                     className="font-display font-extrabold text-2xl tracking-tighter flex items-center gap-1"
                 >
                     <span>CUTTING</span>
-                    <span className="text-[#d4ff00]">EDGER.</span>
+                    <span className="text-accent">EDGER.</span>
                 </Link>
 
                 <div className="flex items-center gap-4">
@@ -59,7 +59,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                         type="button"
                         onClick={onClose}
                         aria-label="Close mobile navigation"
-                        className="p-3 rounded-full border border-white/20 text-neutral-300 hover:text-[#d4ff00] hover:border-[#d4ff00] transition-colors"
+                        className="p-3 rounded-full border border-white/20 text-neutral-300 hover:text-accent hover:border-accent transition-colors"
                     >
                         <X className="w-6 h-6" />
                     </button>
@@ -74,12 +74,12 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                             <Link
                                 href={item.href}
                                 onClick={onClose}
-                                className="group flex items-baseline justify-between py-2 border-b border-white/5 hover:border-[#d4ff00]/40 transition-colors"
+                                className="group flex items-baseline justify-between py-2 border-b border-white/5 hover:border-accent/40 transition-colors"
                             >
-                                <span className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-neutral-300 group-hover:text-[#d4ff00] group-hover:translate-x-3 transition-all duration-300">
+                                <span className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-neutral-300 group-hover:text-accent group-hover:translate-x-3 transition-all duration-300">
                                     {item.label}
                                 </span>
-                                <span className="font-mono text-xs sm:text-sm text-neutral-500 group-hover:text-[#d4ff00]">
+                                <span className="font-mono text-xs sm:text-sm text-neutral-500 group-hover:text-accent">
                                     ({item.count})
                                 </span>
                             </Link>
@@ -94,7 +94,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                     <span className="font-mono text-xs uppercase text-neutral-400 block mb-1">Direct Line</span>
                     <a
                         href={`mailto:${settings?.contact_email || 'hello@cuttingedger.com'}`}
-                        className="text-sm font-semibold hover:text-[#d4ff00] transition-colors"
+                        className="text-sm font-semibold hover:text-accent transition-colors"
                     >
                         {settings?.contact_email || 'hello@cuttingedger.com'}
                     </a>
@@ -106,7 +106,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                         onClose();
                         onOpenContact();
                     }}
-                    className="bg-[#d4ff00] text-black px-6 py-3.5 rounded-full font-display font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#c2eb00] transition-colors"
+                    className="bg-accent text-black px-6 py-3.5 rounded-full font-display font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-accent-hover transition-colors"
                 >
                     <span>Initiate Project</span>
                     <ArrowUpRight className="w-4 h-4" />
