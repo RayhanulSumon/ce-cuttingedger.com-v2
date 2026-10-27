@@ -6,12 +6,7 @@ import {
     ShieldCheck,
     Calendar,
     ArrowUpRight,
-    CheckCircle2,
     Sparkles,
-    FileText,
-    Clock,
-    FolderSync,
-    BadgeCheck,
 } from 'lucide-react';
 
 export function EnterpriseSolutionsSection() {
@@ -22,167 +17,129 @@ export function EnterpriseSolutionsSection() {
     const pillars = [
         {
             icon: Users,
-            badge: 'Dedicated Pod Model',
+            badge: 'Dedicated Pods',
             title: 'Dedicated Artist Squads',
             description:
-                'Get a dedicated squad of certified Photoshop artists trained exclusively on your brand guidelines, lighting ratios, and custom PSD action sets. Zero aesthetic drift.',
-            metrics: ['Named Senior QA Lead', 'Consistent artist allocation', 'Custom stylebook calibration'],
+                'Photoshop artists calibrated exclusively to your brand guidelines, lighting ratios, and custom PSD action sets.',
+            tags: ['Named Senior QA Lead', 'Zero Style Drift', 'Dedicated Allocation'],
         },
         {
             icon: Cpu,
-            badge: 'Headless Workflow',
-            title: 'Automated Hotfolder & API Pipeline',
+            badge: 'Headless Flow',
+            title: 'Automated Pipeline & API',
             description:
-                'Skip manual uploads. Seamlessly sync assets via automated SFTP hotfolders, AWS S3 buckets, Asana, Dropbox, or connect directly through our REST API & Webhooks.',
-            metrics: ['Automated file routing', 'Custom metadata retention', 'Raw & TIFF batch support'],
+                'Hands-free asset synchronization via automated SFTP hotfolders, AWS S3 buckets, or our direct REST API.',
+            tags: ['SFTP / S3 Hotfolders', 'REST API & Webhooks', 'Raw & TIFF Batches'],
         },
         {
             icon: Zap,
-            badge: 'Guaranteed Capacity',
-            title: 'Ultra-Fast Rush SLAs & High Capacity',
+            badge: '24/7 Production',
+            title: 'Guaranteed Rush SLAs',
             description:
-                'Round-the-clock 24/7 production across global time zones. Scale up to 10,000+ assets daily with guaranteed 6h or 12h turnaround SLAs even during peak retail seasons.',
-            metrics: ['Sub-6h rush SLA on demand', 'Overnight delivery guarantee', 'Peak season surge capacity'],
+                'Round-the-clock shifts across global timezones with sub-6h priority delivery during peak seasonal launches.',
+            tags: ['Sub-6h Emergency SLA', '10K+ Daily Volume', 'Overnight Delivery'],
         },
         {
             icon: ShieldCheck,
             badge: 'Enterprise Compliance',
-            title: 'Strict Security, NDA & Net-30 Invoicing',
+            title: 'Security & Corporate Terms',
             description:
-                'Enterprise-grade security with bilateral NDAs, encrypted TLS asset storage, dedicated account director, and monthly consolidated Net-30 billing terms for corporate accounts.',
-            metrics: ['Strict mutual NDA executed', 'Enterprise TLS cloud vault', 'Net-30 corporate invoicing'],
+                'Enterprise-grade security with bilateral NDAs, encrypted cloud vaults, and consolidated Net-30 monthly billing.',
+            tags: ['Strict Mutual NDA', 'Encrypted TLS Vault', 'Net-30 Corporate Terms'],
         },
     ];
 
     return (
-        <section className="py-20 sm:py-28 bg-[#0a0b0e] relative overflow-hidden border-t border-white/10">
+        <section className="py-16 sm:py-20 bg-[#090a0e] relative overflow-hidden border-t border-white/10">
             {/* Ambient Backlight */}
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[55rem] h-[25rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[50rem] h-[20rem] bg-accent/[0.03] rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Section Header */}
-                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>[ ENTERPRISE & VOLUME PARTNERSHIPS ]</span>
+                {/* Simplified, Clean Section Header */}
+                <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 space-y-2.5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[11px] font-mono uppercase tracking-[0.18em] text-accent font-semibold">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Enterprise Capacity</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-white tracking-tight leading-[1.1]">
-                        Engineered for High-Volume <br />
-                        <span className="text-accent">Brands, Studios & Global Retailers.</span>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
+                        Enterprise & <span className="text-accent">Volume Partnerships</span>
                     </h2>
 
-                    <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
-                        Processing thousands of product images monthly? We integrate dedicated retouching pods directly into your production pipeline with custom SLAs and corporate billing.
+                    <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed">
+                        Dedicated retouching pods, custom rush SLAs, and direct pipeline integrations for high-volume catalogs.
                     </p>
                 </div>
 
-                {/* 4 Strategic Enterprise Pillars */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-12">
+                {/* 4 Clean, Concise Enterprise Pillars */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-10 sm:mb-12">
                     {pillars.map((pillar, idx) => {
                         const Icon = pillar.icon;
                         return (
                             <div
                                 key={idx}
-                                className="group rounded-3xl border border-white/10 bg-[#0e1017]/90 backdrop-blur-xl p-8 hover:border-accent/40 transition-all duration-300 relative flex flex-col justify-between hover:shadow-[0_0_30px_rgba(251,183,24,0.08)]"
+                                className="group rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0f1118]/90 hover:bg-[#131520] hover:border-accent/40 transition-all duration-300 p-6 sm:p-7 relative flex flex-col justify-between hover:shadow-[0_15px_40px_rgba(245,166,35,0.08)]"
                             >
-                                <div>
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-colors duration-300">
-                                            <Icon className="w-6 h-6" />
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-colors duration-300">
+                                            <Icon className="w-5 h-5" />
                                         </div>
-                                        <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono uppercase tracking-wider text-neutral-400">
+                                        <span className="px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/10 text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-medium">
                                             {pillar.badge}
                                         </span>
                                     </div>
 
-                                    <h3 className="text-xl font-display font-bold text-white mb-3">
+                                    <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-accent transition-colors">
                                         {pillar.title}
                                     </h3>
 
-                                    <p className="text-sm text-neutral-400 leading-relaxed mb-6 font-sans">
+                                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans">
                                         {pillar.description}
                                     </p>
                                 </div>
 
-                                <ul className="space-y-2.5 pt-4 border-t border-white/10">
-                                    {pillar.metrics.map((metric, i) => (
-                                        <li key={i} className="flex items-center gap-2.5 text-xs font-mono text-neutral-300">
-                                            <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
-                                            <span>{metric}</span>
-                                        </li>
+                                {/* Scannable Feature Chips */}
+                                <div className="flex flex-wrap items-center gap-2 pt-5 mt-4 border-t border-white/5">
+                                    {pillar.tags.map((tag, i) => (
+                                        <span
+                                            key={i}
+                                            className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/5 text-[11px] font-mono text-neutral-300"
+                                        >
+                                            {tag}
+                                        </span>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* High-Impact Enterprise CTA Banner Card */}
-                <div className="rounded-3xl border-2 border-accent bg-gradient-to-br from-[#12141e] via-[#0d0f16] to-[#0a0b0e] p-8 sm:p-12 relative overflow-hidden shadow-[0_0_50px_rgba(251,183,24,0.12)]">
-                    {/* Decorative Background Elements */}
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-accent/10 rounded-full blur-[90px] pointer-events-none" />
-
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                        {/* Left Info Column */}
-                        <div className="lg:col-span-7 space-y-4">
-                            <span className="text-xs font-mono uppercase tracking-widest text-accent font-bold flex items-center gap-2">
-                                <BadgeCheck className="w-4 h-4" />
-                                <span>TAILORED B2B CONTRACTS & DISCOVERY SESSIONS</span>
+                {/* Streamlined, High-Impact Enterprise Action Banner */}
+                <div className="rounded-2xl sm:rounded-3xl border border-accent/40 bg-gradient-to-r from-[#12141e] via-[#0d0f16] to-[#12141e] p-6 sm:p-8 relative overflow-hidden shadow-[0_15px_50px_rgba(245,166,35,0.08)]">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+                        <div className="space-y-1.5 text-center lg:text-left">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-accent font-bold">
+                                [ Tailored B2B Consultation ]
                             </span>
-
-                            <h3 className="text-2xl sm:text-4xl font-display font-black text-white tracking-tight leading-snug">
-                                Need a Custom Enterprise SLA or Tailored Retainer?
+                            <h3 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">
+                                Need a custom volume contract or dedicated SLA?
                             </h3>
-
-                            <p className="text-sm text-neutral-300 font-sans leading-relaxed max-w-xl">
-                                Schedule a 15-minute consultation with our Enterprise Production Director. We will evaluate your volume, test sample workflows, and structure a custom package tailored to your exact release schedule.
+                            <p className="text-xs sm:text-sm text-neutral-400 max-w-xl">
+                                Speak directly with our production director to calibrate a custom pilot around your exact drop schedule.
                             </p>
-
-                            {/* Trust Metrics Pill Row */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-                                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-center">
-                                    <div className="text-lg font-mono font-bold text-accent">50K+</div>
-                                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Monthly Capacity</div>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-center">
-                                    <div className="text-lg font-mono font-bold text-white">&lt; 6 Hours</div>
-                                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Emergency Rush</div>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-center">
-                                    <div className="text-lg font-mono font-bold text-white">100%</div>
-                                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Hand Pen Paths</div>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 text-center">
-                                    <div className="text-lg font-mono font-bold text-white">Net-30</div>
-                                    <div className="text-[10px] font-mono text-neutral-400 uppercase">Monthly Terms</div>
-                                </div>
-                            </div>
                         </div>
 
-                        {/* Right Action Column */}
-                        <div className="lg:col-span-5 flex flex-col gap-3.5 lg:items-end justify-center">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
                             <button
                                 type="button"
                                 onClick={handleOpenDiscoveryCall}
-                                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-accent text-black font-display font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 hover:bg-accent-hover hover:shadow-[0_0_30px_rgba(251,183,24,0.4)] transition-all cursor-pointer select-none"
+                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#ffb834] hover:shadow-[0_0_25px_rgba(245,166,35,0.35)] transition-all cursor-pointer"
                             >
-                                <Calendar className="w-4 h-4 stroke-[2.5]" />
+                                <Calendar className="w-4 h-4" />
                                 <span>Book 15-Min Discovery Call</span>
-                                <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                                <ArrowUpRight className="w-3.5 h-3.5" />
                             </button>
-
-                            <a
-                                href="#trial-uploader-section"
-                                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-white/5 border border-white/15 text-white font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-white/10 hover:border-white/30 transition-all cursor-pointer select-none text-center"
-                            >
-                                <FileText className="w-3.5 h-3.5 text-accent" />
-                                <span>Test Our Quality (Free 3-Asset Pilot)</span>
-                            </a>
-
-                            <p className="text-[11px] font-mono text-neutral-400 text-center lg:text-right mt-1">
-                                Strict mutual NDA signed before production begins.
-                            </p>
                         </div>
                     </div>
                 </div>
