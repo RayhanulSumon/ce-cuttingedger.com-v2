@@ -198,18 +198,18 @@ export function FreeTrialDropzone() {
 
             <div className="w-full max-w-4xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
-                <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/25 text-xs font-mono uppercase tracking-widest text-accent">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Zero Risk · Free 3-Asset Enterprise Pilot</span>
+                <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Free 3-Asset Test Pilot</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
-                        TEST OUR CRAFT ON <span className="text-accent">YOUR RAW FILES.</span>
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight whitespace-normal sm:whitespace-nowrap">
+                        Test our craft on <span className="text-accent">your raw files.</span>
                     </h2>
 
-                    <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-                        Upload up to 3 of your most challenging raw product images. Our senior artisans will return billboard-grade retouched master files in under 24 hours. No credit card required.
+                    <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
+                        Upload up to 3 test files. Receive retouched master files in under 24 hours with zero commitment.
                     </p>
 
                     {/* Multi-Step Indicator */}

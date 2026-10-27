@@ -1,16 +1,19 @@
 import React from 'react';
-import { Check, Sparkles, ArrowUpRight, Zap, ShieldCheck, Clock, Layers } from 'lucide-react';
+import { Check, ArrowUpRight, ShieldCheck, Zap, Sparkles, Layers, Clock } from 'lucide-react';
 
 interface PricingTier {
     id: string;
     name: string;
     badge: string;
     description: string;
+    pricingLabel: string;
+    pricingSubtext: string;
     sla: string;
     capacity: string;
     popular?: boolean;
     buttonText: string;
-    features: string[];
+    icon: React.ComponentType<{ className?: string }>;
+    features: { bold: string; text: string }[];
 }
 
 export function PricingCardsSection() {
@@ -18,61 +21,56 @@ export function PricingCardsSection() {
         {
             id: 'starter',
             name: 'Essential Studio',
-            badge: 'STANDARD CATALOG PREP',
-            description:
-                'Engineered for emerging e-commerce brands, Amazon/Shopify sellers, and boutique catalogs requiring spotless product cutouts and rapid turnarounds.',
-            sla: '24-Hour Standard SLA',
-            capacity: 'Up to 500 images / day',
-            buttonText: 'Request For Pricing',
+            badge: 'Catalog Prep',
+            icon: Layers,
+            description: 'Spotless product cutouts, vector clipping paths, and clean catalog delivery.',
+            pricingLabel: 'Per-Asset Volume Quote',
+            pricingSubtext: 'No monthly minimum • Pay as you go',
+            sla: '24h Standard SLA',
+            capacity: 'Up to 500 assets/day',
+            buttonText: 'Request Volume Quote',
             features: [
-                '100% Hand-drawn pen vector clipping paths',
-                'Pure white (RGB 255, 255, 255) & transparent alpha cutouts',
-                'Basic dust, speck & scratch micro-cleaning',
-                'Natural drop shadow & studio reflection sculpting',
-                'Standard web RGB optimization & format exports',
-                '3-Stage human QA inspection before delivery',
-                'Unlimited free revisions until complete satisfaction',
+                { bold: '100% Hand-drawn', text: 'pen clipping paths & alpha masks' },
+                { bold: 'Pure white (RGB 255)', text: '& transparent format exports' },
+                { bold: 'Natural drop shadows', text: '& studio reflection sculpting' },
+                { bold: '3-Stage human QA', text: 'with unlimited free revisions' },
             ],
         },
         {
             id: 'pro',
             name: 'Pro Commercial',
-            badge: 'HIGH-VELOCITY RETAIL',
+            badge: 'High-Velocity Retail',
             popular: true,
-            description:
-                'Tailored for established fashion brands, high-volume apparel retailers, and creative agencies requiring master retouching and dedicated daily capacity.',
-            sla: '12–18 Hour Rush SLA',
-            capacity: '500 to 3,000+ images / day',
-            buttonText: 'Request For Pricing',
+            icon: Sparkles,
+            description: 'Master retouching for fashion, apparel brands, and fast-moving creative agencies.',
+            pricingLabel: 'Studio Monthly Retainer',
+            pricingSubtext: 'Guaranteed daily throughput • Priority rush',
+            sla: '12–18h Rush SLA',
+            capacity: '500 to 3,000+ assets/day',
+            buttonText: 'Request Retainer Quote',
             features: [
-                'Everything included in Essential Studio',
-                '3D Invisible ghost mannequin neckline jointing & symmetry',
-                'High-end fashion skin retouching (frequency separation)',
-                'Macro jewelry facet polish & specular highlight tuning',
-                'Multi-channel multipath masking & component isolation',
-                'Complex fabric colorway swaps & pantone matching',
-                'Dedicated Senior Art Director & project coordinator',
-                'Direct Slack / Microsoft Teams communication channel',
+                { bold: 'Everything in Essential', text: 'included as standard' },
+                { bold: '3D Ghost mannequin', text: 'neckline jointing & symmetry' },
+                { bold: 'Frequency separation', text: 'high-end skin & apparel retouching' },
+                { bold: 'Colorway swaps', text: '& delta-E fabric swatch matching' },
             ],
         },
         {
             id: 'enterprise',
             name: 'Enterprise Vanguard',
-            badge: 'BESPOKE 24/7 PARTNERSHIP',
-            description:
-                'Bespoke production infrastructure for global luxury houses, international e-commerce marketplaces, and CGI 3D digital asset creation pipelines.',
-            sla: 'Under 6-Hour Priority Sprint SLA',
-            capacity: 'Unlimited Dedicated Capacity',
-            buttonText: 'Request Custom Quote',
+            badge: 'Bespoke 24/7',
+            icon: ShieldCheck,
+            description: 'Dedicated infrastructure for global retailers, marketplaces, and 3D CGI pipelines.',
+            pricingLabel: 'Custom Enterprise Contract',
+            pricingSubtext: 'Dedicated artist squad • Executive SLA',
+            sla: 'Sub-6h Priority SLA',
+            capacity: 'Unlimited dedicated shifts',
+            buttonText: 'Contact Enterprise',
             features: [
-                'Everything in Pro Commercial included',
-                '3D CAD-to-photorealistic CGI rendering & PBR texturing',
-                'Automated SFTP / AWS S3 hot-folder batch processing',
-                'Direct API integration for automated asset handoff',
-                '24/7/365 round-the-clock artist shifts across global hubs',
-                'Enterprise-grade NDA, SOC2 storage & encrypted transfers',
-                'Custom automated naming conventions & metadata tags',
-                'Executive SLA guarantee with dedicated account director',
+                { bold: 'Everything in Pro Commercial', text: 'included' },
+                { bold: '3D CAD-to-photorealistic', text: 'CGI & 8K PBR rendering' },
+                { bold: 'Automated SFTP / S3', text: '& direct API pipeline integration' },
+                { bold: 'Dedicated 24/7 squad', text: 'synchronized across global timezones' },
             ],
         },
     ];
@@ -88,67 +86,66 @@ export function PricingCardsSection() {
     };
 
     return (
-        <section id="pricing-plans-section" className="relative py-20 sm:py-28 bg-[#08090d] border-t border-white/10 select-none overflow-hidden">
-            {/* Ambient Lighting Accents */}
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70rem] h-[35rem] bg-accent/5 rounded-full blur-[240px] pointer-events-none" />
-            <div className="absolute bottom-0 right-10 w-[30rem] h-[30rem] bg-accent/4 rounded-full blur-[200px] pointer-events-none" />
+        <section
+            id="pricing-plans-section"
+            className="relative py-20 sm:py-24 bg-[#08090d] border-t border-white/[0.06] select-none overflow-hidden"
+        >
+            {/* Ambient Lighting */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[25rem] bg-accent/[0.04] rounded-full blur-[180px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
-                {/* Header */}
-                <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>[ BESPOKE PRODUCTION TIERS ]</span>
+                {/* Minimalist Centered Header */}
+                <div className="text-center max-w-4xl mx-auto mb-14 sm:mb-18 space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
+                        <span>Production Capacity</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08]">
-                        Scalable Production. <br />
-                        <span className="text-accent">Predictable Value.</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight whitespace-normal sm:whitespace-nowrap">
+                        Bespoke <span className="text-accent">Production Tiers</span>
                     </h2>
 
-                    <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
-                        No rigid per-click fees or hidden charges. Every brand receives a bespoke volume quote tailored to your exact SKU complexity, turnaround SLA, and monthly throughput.
+                    <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed max-w-2xl mx-auto">
+                        Tailored capacity and SLAs engineered for high-volume catalogs and creative agencies.
                     </p>
                 </div>
 
-                {/* 3 Tier Cards Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-8 items-stretch">
+                {/* 3 Minimalist Tier Cards */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                     {tiers.map((tier) => {
                         const isFeatured = tier.popular;
+                        const Icon = tier.icon;
 
                         return (
                             <div
                                 key={tier.id}
-                                className={`relative rounded-3xl p-7 sm:p-9 flex flex-col justify-between transition-all duration-300 ${
+                                className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 ${
                                     isFeatured
-                                        ? 'bg-[#10121a] border-2 border-accent shadow-[0_0_50px_rgba(251,183,24,0.15)] lg:-translate-y-2'
-                                        : 'bg-[#0e0f15] border border-white/10 hover:border-white/20'
+                                        ? 'bg-gradient-to-b from-[#141724] to-[#0e1017] border-2 border-accent/50 shadow-[0_0_40px_rgba(251,183,24,0.12)]'
+                                        : 'bg-gradient-to-b from-[#11131a] to-[#0c0d12] border border-white/[0.08] hover:border-white/20'
                                 }`}
                             >
-                                {/* Featured Ribbon Pill */}
+                                {/* Featured Ribbon */}
                                 {isFeatured && (
                                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
-                                        <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-accent text-black text-[11px] font-mono uppercase tracking-widest font-black shadow-lg">
+                                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-accent text-black text-[10px] font-mono uppercase tracking-widest font-black shadow-lg">
                                             <Zap className="w-3 h-3 fill-black text-black" />
-                                            <span>MOST REQUESTED TIER</span>
+                                            <span>Most Requested Tier</span>
                                         </span>
                                     </div>
                                 )}
 
                                 <div>
-                                    {/* Eyebrow Badge */}
-                                    <div className="mb-4">
-                                        <span
-                                            className={`text-[11px] font-mono uppercase tracking-wider font-semibold ${
-                                                isFeatured ? 'text-accent' : 'text-neutral-400'
-                                            }`}
-                                        >
+                                    {/* Header: Icon + Badge + Title */}
+                                    <div className="flex items-center justify-between gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-accent">
+                                            <Icon className="w-5 h-5" />
+                                        </div>
+                                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/[0.06]">
                                             {tier.badge}
                                         </span>
                                     </div>
 
-                                    {/* Tier Title */}
-                                    <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
+                                    <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
                                         {tier.name}
                                     </h3>
 
@@ -156,69 +153,65 @@ export function PricingCardsSection() {
                                         {tier.description}
                                     </p>
 
-                                    {/* Quote Request Price Box (No Dollar Amount) */}
-                                    <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 mb-6 space-y-1">
-                                        <div className="text-xs font-mono text-neutral-400 uppercase tracking-widest">
-                                            Volume Pricing
+                                    {/* Distinct Engagement & Billing Model */}
+                                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] mb-5">
+                                        <div className="text-sm sm:text-base font-display font-bold text-white">
+                                            {tier.pricingLabel}
                                         </div>
-                                        <div className="text-xl sm:text-2xl font-display font-extrabold text-white">
-                                            Custom Volume Quote
-                                        </div>
-                                        <div className="text-[11px] font-sans text-neutral-400">
-                                            Tailored rates based on batch volume &amp; asset complexity
+                                        <div className="text-[11px] font-sans text-neutral-400 mt-0.5">
+                                            {tier.pricingSubtext}
                                         </div>
                                     </div>
 
-                                    {/* SLA & Capacity Highlights */}
-                                    <div className="grid grid-cols-2 gap-3 mb-6 pb-6 border-b border-white/10 text-left">
-                                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                                            <div className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-mono uppercase tracking-wider">
-                                                <Clock className="w-3 h-3 text-accent" />
-                                                <span>Speed</span>
-                                            </div>
-                                            <div className="text-xs sm:text-[13px] font-semibold text-white">
+                                    {/* High-Contrast 2-Column SLA & Capacity Spec Bar */}
+                                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-black/30 border border-white/[0.05] mb-6 text-xs font-mono">
+                                        <div>
+                                            <span className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-0.5">
+                                                Turnaround SLA
+                                            </span>
+                                            <span className="text-white font-bold">
                                                 {tier.sla}
-                                            </div>
+                                            </span>
                                         </div>
-
-                                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                                            <div className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-mono uppercase tracking-wider">
-                                                <Layers className="w-3 h-3 text-accent" />
-                                                <span>Capacity</span>
-                                            </div>
-                                            <div className="text-xs sm:text-[13px] font-semibold text-white">
+                                        <div className="border-l border-white/[0.07] pl-3">
+                                            <span className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-0.5">
+                                                Throughput
+                                            </span>
+                                            <span className="text-white font-bold">
                                                 {tier.capacity}
-                                            </div>
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {/* Feature Checklist */}
-                                    <div className="space-y-3 mb-8">
-                                        <div className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-semibold mb-2">
-                                            Deliverables &amp; Guarantees:
-                                        </div>
+                                    {/* Scannable Feature List with Bold Keywords */}
+                                    <div className="space-y-2.5 mb-6">
                                         {tier.features.map((feature, idx) => (
-                                            <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-neutral-300 font-sans leading-snug">
-                                                <Check className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                                                <span>{feature}</span>
+                                            <div
+                                                key={idx}
+                                                className="flex items-start gap-2.5 text-xs sm:text-[13px] text-neutral-300 font-sans leading-snug"
+                                            >
+                                                <Check className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                                                <span>
+                                                    <strong className="text-white font-medium">{feature.bold}</strong> {feature.text}
+                                                </span>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
                                 {/* Action Button */}
-                                <div className="pt-2">
+                                <div className="pt-3">
                                     <button
                                         type="button"
                                         onClick={() => handleOpenContact(tier.name)}
-                                        className={`w-full py-4 px-6 rounded-2xl font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
+                                        className={`group w-full py-3.5 px-5 rounded-xl font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                                             isFeatured
-                                                ? 'bg-accent text-black hover:bg-accent-hover shadow-[0_0_30px_rgba(251,183,24,0.35)]'
-                                                : 'bg-white/10 text-white hover:bg-accent hover:text-black hover:shadow-[0_0_25px_rgba(251,183,24,0.3)]'
+                                                ? 'bg-accent text-black hover:bg-white shadow-[0_4px_20px_rgba(251,183,24,0.3)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
+                                                : 'bg-white/[0.05] hover:bg-white hover:text-black text-white border border-white/10 hover:border-white'
                                         }`}
                                     >
                                         <span>{tier.buttonText}</span>
-                                        <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                                     </button>
                                 </div>
                             </div>
@@ -226,30 +219,32 @@ export function PricingCardsSection() {
                     })}
                 </div>
 
-                {/* Bottom Trust Assurance Strip */}
-                <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
-                            <ShieldCheck className="w-6 h-6 text-accent" />
+                {/* Minimalist Bottom Assurance Strip */}
+                <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center text-accent shrink-0">
+                            <ShieldCheck className="w-4 h-4 text-accent" />
                         </div>
                         <div>
-                            <h4 className="text-base sm:text-lg font-display font-bold text-white">
+                            <h4 className="text-xs sm:text-sm font-display font-bold text-white">
                                 Risk-Free Proof Of Concept Pilot
                             </h4>
-                            <p className="text-xs sm:text-sm text-neutral-400 font-sans">
-                                Test our surgical accuracy on 3 of your real production files before signing any agreement.
+                            <p className="text-[11px] sm:text-xs text-neutral-400 font-sans">
+                                Test our turnaround and precision on 3 of your actual production files with zero commitment.
                             </p>
                         </div>
                     </div>
 
                     <a
-                        href="#trial-uploader-section"
-                        className="px-6 py-3 rounded-full border border-white/20 bg-white/5 hover:bg-accent hover:text-black hover:border-accent text-xs font-mono uppercase tracking-wider text-white font-bold transition-all duration-300 shrink-0 cursor-pointer"
+                        href="#free-trial"
+                        className="px-4 py-2 rounded-xl bg-white/5 hover:bg-accent hover:text-black border border-white/10 hover:border-accent text-xs font-mono uppercase tracking-wider text-white font-semibold transition-all duration-300 shrink-0 cursor-pointer"
                     >
-                        Upload 3 Test Images Free
+                        Try 3 Files Free →
                     </a>
                 </div>
             </div>
         </section>
     );
 }
+
+
