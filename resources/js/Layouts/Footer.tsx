@@ -323,30 +323,24 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                 </div>
 
                 {/* MIDDLE SECTION: GIANT INTERACTIVE "CONTACT US" */}
-                <div className="relative z-10 w-full px-2 sm:px-4 py-12 sm:py-16 flex flex-col items-center justify-center text-center my-auto">
-                    <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent font-bold mb-6 select-none">
+                <div className="relative z-10 w-full px-2 sm:px-4 py-10 sm:py-16 md:py-20 flex flex-col items-center justify-center text-center my-auto">
+                    <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent font-bold mb-4 sm:mb-6 select-none">
                         READY TO ELEVATE YOUR CATALOG CRAFT & VELOCITY?
                     </span>
 
                     <Link
                         href="/contact"
-                        onClick={(e) => {
-                            if (onOpenContact) {
-                                e.preventDefault();
-                                onOpenContact();
-                            }
-                        }}
                         onPointerLeave={() => setHoveredIndex(null)}
-                        className="cursor-pointer group flex items-start justify-center select-none w-full max-w-[98%] mx-auto"
-                        title="Click to get in touch"
+                        className="cursor-pointer group flex items-center justify-center select-none w-full max-w-[98%] mx-auto focus:outline-none"
+                        title="Navigate to Contact Page"
                     >
-                        <div className="flex items-center justify-center flex-nowrap w-full overflow-hidden py-4 sm:py-6">
+                        <div className="flex items-center justify-center flex-nowrap w-full overflow-visible py-4 sm:py-8">
                             {letters.map((char, index) => {
                                 if (char === ' ') {
                                     return (
                                         <span
                                             key={`space-${index}`}
-                                            className="w-[1.8vw] sm:w-[2.2vw] lg:w-[2.6vw] inline-block pointer-events-none"
+                                            className="w-[2.4vw] sm:w-[2.8vw] lg:w-[3.2vw] inline-block pointer-events-none"
                                         />
                                     );
                                 }
@@ -365,17 +359,17 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                                             setHoveredIndex((prev) => (prev === index ? null : prev));
                                         }}
                                         animate={{
-                                            scaleY: isHovered ? 1.2 : 1,
-                                            y: isHovered ? '2%' : '0%',
+                                            scaleY: isHovered ? 1.15 : 1,
+                                            y: isHovered ? '-2%' : '0%',
                                         }}
                                         transition={{
                                             duration: 0.2,
                                             ease: [0.39, 0.575, 0.565, 1],
                                         }}
                                         style={{
-                                            transformOrigin: 'center center',
+                                            transformOrigin: 'center bottom',
                                         }}
-                                        className="inline-block font-display font-black uppercase text-[6.5vw] sm:text-[7vw] md:text-[7.5vw] lg:text-[8vw] xl:text-[8.5vw] leading-none text-[#f9f4e8] tracking-[-0.03em] will-change-transform select-none cursor-pointer hover:text-white"
+                                        className="inline-block font-display font-black uppercase text-[9vw] sm:text-[10.5vw] md:text-[11.5vw] lg:text-[12.5vw] xl:text-[13.5vw] leading-none text-[#f9f4e8] tracking-[-0.04em] will-change-transform select-none cursor-pointer group-hover:text-white transition-colors"
                                     >
                                         {char}
                                     </motion.span>

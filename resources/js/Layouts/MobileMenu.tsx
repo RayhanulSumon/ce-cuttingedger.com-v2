@@ -100,17 +100,14 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                     </a>
                 </div>
 
-                <button
-                    type="button"
-                    onClick={() => {
-                        onClose();
-                        onOpenContact();
-                    }}
+                <Link
+                    href="/contact"
+                    onClick={onClose}
                     className="bg-accent text-black px-6 py-3.5 rounded-full font-display font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-accent-hover transition-colors"
                 >
                     <span>Initiate Project</span>
                     <ArrowUpRight className="w-4 h-4" />
-                </button>
+                </Link>
             </div>
         </div>
     );

@@ -86,7 +86,6 @@ export function AppLayout({ children }: AppLayoutProps) {
             {/* Persistent Footer */}
             <Footer
                 settings={settings}
-                onOpenContact={() => setIsContactOpen(true)}
             />
 
             {/* Dedicated Discovery Call Calendar Modal */}
