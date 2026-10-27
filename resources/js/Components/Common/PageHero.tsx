@@ -10,6 +10,8 @@ interface PageHeroProps {
     backUrl?: string;
     backLabel?: string;
     containerMaxWidth?: string;
+    compact?: boolean;
+    children?: React.ReactNode;
 }
 
 export function PageHero({
@@ -20,15 +22,21 @@ export function PageHero({
     backUrl,
     backLabel,
     containerMaxWidth,
+    compact = false,
+    children,
 }: PageHeroProps) {
     return (
-        <section className="relative pt-36 pb-20 bg-[#0a0b0e] border-b border-white/10 overflow-hidden">
+        <section
+            className={`relative ${
+                compact ? 'pt-28 pb-10 sm:pt-32 sm:pb-12' : 'pt-36 pb-20'
+            } bg-[#0a0b0e] border-b border-white/10 overflow-hidden`}
+        >
             {/* Ambient Background Aura */}
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[140px] pointer-events-none" />
 
             <div className={`${containerMaxWidth || 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8 relative z-10`}>
                 {backUrl && (
-                    <div className="mb-8">
+                    <div className="mb-6">
                         <Link
                             href={backUrl}
                             className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-neutral-400 hover:text-accent transition-colors"
@@ -39,22 +47,34 @@ export function PageHero({
                     </div>
                 )}
 
-                <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-4">
+                <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-3">
                     [ {eyebrow} ]
                 </span>
 
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-[1.05] max-w-4xl">
+                <h1
+                    className={`${
+                        compact
+                            ? 'text-3xl sm:text-4xl lg:text-[44px]'
+                            : 'text-4xl sm:text-6xl lg:text-7xl'
+                    } font-display font-extrabold text-white tracking-tight leading-[1.12] max-w-4xl`}
+                >
                     {title}{' '}
                     {highlight && (
-                        <span className="text-accent underline decoration-accent/40 underline-offset-8">
+                        <span className="text-accent">
                             {highlight}
                         </span>
                     )}
                 </h1>
 
-                <p className="mt-6 text-lg sm:text-xl text-neutral-400 max-w-2xl font-normal leading-relaxed">
+                <p
+                    className={`${
+                        compact ? 'mt-3 sm:mt-4 text-sm sm:text-base' : 'mt-6 text-lg sm:text-xl'
+                    } text-neutral-400 max-w-2xl font-normal leading-relaxed`}
+                >
                     {description}
                 </p>
+
+                {children && <div className="mt-6">{children}</div>}
             </div>
         </section>
     );

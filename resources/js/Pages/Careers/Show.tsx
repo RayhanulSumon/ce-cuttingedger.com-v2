@@ -19,6 +19,7 @@ export default function Show({ job }: CareerShowProps) {
             />
 
             <PageHero
+                compact={true}
                 eyebrow={`CAREERS // ${job.department}`}
                 title={job.title}
                 description={job.overview}
