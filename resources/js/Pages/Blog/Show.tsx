@@ -81,7 +81,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
                     href={linkUrl}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
-                    className="text-accent underline decoration-[#fbb718]/40 hover:decoration-[#fbb718] underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
+                    className="text-accent underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
                 >
                     <span>{linkText}</span>
                     {isExternal && <ExternalLink className="w-3 h-3 inline-block" />}
@@ -240,7 +240,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
             {/* EDITORIAL HERO SECTION */}
             <header className="relative pt-24 sm:pt-28 pb-8 sm:pb-10 bg-[#0a0b0e] border-b border-white/10 overflow-hidden">
                 {/* Ambient Kinetic Glows */}
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[320px] bg-gradient-to-b from-[#fbb718]/15 via-[#fbb718]/5 to-transparent rounded-full blur-[110px] pointer-events-none" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[320px] bg-gradient-to-b from-accent/15 via-accent/5 to-transparent rounded-full blur-[110px] pointer-events-none" />
                 <div className="absolute top-1/4 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(251, 183, 24, 0.06),rgba(255,255,255,0))] pointer-events-none" />
 
@@ -282,9 +282,9 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                         {blog.category && (
                             <Link
                                 href={`/blog?category=${blog.category.slug}`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black transition-all shadow-[0_0_12px_rgba(251, 183, 24, 0.15)] group"
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black transition-all shadow-[0_0_12px_rgba(245,166,35,0.15)] group"
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_#fbb718] group-hover:bg-black transition-colors" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--color-accent)] group-hover:bg-black transition-colors" />
                                 <span>{blog.category.name}</span>
                             </Link>
                         )}
@@ -309,7 +309,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                     {/* Executive Synopsis Callout */}
                     {blog.excerpt && (
-                        <div className="relative mt-4 sm:mt-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#fbb718]/[0.08] via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/10 backdrop-blur-md shadow-md max-w-3xl">
+                        <div className="relative mt-4 sm:mt-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-accent/[0.08] via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/10 backdrop-blur-md shadow-md max-w-3xl">
                             <span className="text-[9px] font-mono text-accent uppercase tracking-widest block mb-1 font-bold flex items-center gap-1.5">
                                 <Quote className="w-2.5 h-2.5 rotate-180 inline-block text-accent" />
                                 EXECUTIVE SYNOPSIS
@@ -449,7 +449,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                             {blog.cover_image && (
                                 <div className="relative group">
                                     <div
-                                        className="absolute -inset-1 bg-gradient-to-r from-[#fbb718]/15 via-cyan-500/10 to-[#fbb718]/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
+                                        className="absolute -inset-1 bg-gradient-to-r from-accent/15 via-cyan-500/10 to-accent/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
                                     />
                                     <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] border border-white/15 bg-neutral-950 shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
                                         <img
@@ -543,7 +543,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                         return (
                                             <blockquote
                                                 key={idx}
-                                                className="relative my-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#fbb718]/10 via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/5"
+                                                className="relative my-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-accent/10 via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/5"
                                             >
                                                 <Quote className="w-8 h-8 text-accent/40 absolute top-4 right-4 pointer-events-none" />
                                                 <p className="font-display italic text-lg sm:text-xl text-neutral-100 leading-relaxed">
@@ -582,7 +582,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                         key={itemIdx}
                                                         className="flex items-start gap-3 text-neutral-300"
                                                     >
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0 shadow-[0_0_6px_#fbb718]" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0 shadow-[0_0_6px_var(--color-accent)]" />
                                                         <span className="flex-1">
                                                             {renderInlineFormatting(item)}
                                                         </span>
@@ -874,7 +874,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
             {/* CONTINUED READING / EXPLORATION STRIP */}
             <section className="py-16 sm:py-20 bg-[#07080b] border-t border-white/10 relative overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-gradient-to-r from-[#fbb718]/10 to-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-gradient-to-r from-accent/10 to-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
 
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-300">

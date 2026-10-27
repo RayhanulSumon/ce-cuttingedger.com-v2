@@ -75,7 +75,7 @@ export function CursorFollower() {
             <div
                 className={`fixed top-0 left-0 rounded-full flex items-center justify-center font-display text-[10px] font-bold tracking-widest uppercase transition-all duration-150 ease-out ${
                     label 
-                        ? 'w-20 h-20 bg-accent text-black shadow-lg shadow-[#fbb718]/40 scale-100'
+                        ? 'w-20 h-20 bg-accent text-black shadow-lg shadow-accent/40 scale-100'
                         : isHovered
                         ? 'w-12 h-12 border-2 border-accent bg-accent/10 backdrop-blur-[2px] scale-110'
                         : isClicking

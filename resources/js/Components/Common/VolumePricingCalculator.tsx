@@ -551,7 +551,7 @@ export function VolumePricingCalculator() {
                                         onChange={(e) => setQuantity(Number(e.target.value))}
                                         className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent relative z-10"
                                         style={{
-                                            background: `linear-gradient(to right, #fbb718 0%, #fbb718 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
+                                            background: `linear-gradient(to right, #f5a623 0%, #f5a623 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
                                         }}
                                     />
                                 </div>

@@ -28,7 +28,7 @@ export default function Login() {
                 <div className="w-full max-w-md relative z-10 space-y-8">
                     {/* Brand header */}
                     <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent text-black font-black text-xl font-mono shadow-xl shadow-[#fbb718]/10">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent text-black font-black text-xl font-mono shadow-xl shadow-accent/10">
                             CE
                         </div>
                         <div>
@@ -58,7 +58,7 @@ export default function Login() {
                                     placeholder="admin@cuttingedger.com"
                                     required
                                     autoFocus
-                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-[#fbb718]"
+                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-accent"
                                 />
                                 {errors.email && (
                                     <p className="text-xs text-rose-400 font-mono">
@@ -80,7 +80,7 @@ export default function Login() {
                                     onChange={(e) => setData("password", e.target.value)}
                                     placeholder="••••••••••••"
                                     required
-                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-[#fbb718]"
+                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-accent"
                                 />
                                 {errors.password && (
                                     <p className="text-xs text-rose-400 font-mono">

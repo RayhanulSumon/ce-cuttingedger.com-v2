@@ -290,7 +290,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             category: '3D Spatial Shaders',
             year: '2026',
             color: 'from-purple-950/60 via-[#10121a] to-black',
-            accent: '#fbb718',
+            accent: '#f5a623',
             tag: '3D Real-Time WebGL',
             preview: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
         },
@@ -399,7 +399,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                                 animate={{ y: 0, opacity: 1 }}
                                                 exit={{ y: -35, opacity: 0 }}
                                                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                                                className="inline-block whitespace-nowrap"
+                                                className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-[#ffe484] via-accent to-[#e59812] drop-shadow-[0_2px_14px_rgba(245,166,35,0.25)]"
                                             >
                                                 {rotatingWords[currentWordIndex]}
                                             </motion.span>

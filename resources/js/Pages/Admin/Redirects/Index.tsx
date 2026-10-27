@@ -246,7 +246,7 @@ export default function RedirectsIndex({
                         </Button>
                         <Button
                             onClick={openCreateModal}
-                            className="bg-accent text-black hover:bg-accent-hover font-semibold text-xs shadow-lg shadow-[#fbb718]/10"
+                            className="bg-accent text-black hover:bg-accent-hover font-semibold text-xs shadow-lg shadow-accent/10"
                         >
                             <Plus className="w-4 h-4 mr-1.5" />
                             New Redirect
@@ -298,7 +298,7 @@ export default function RedirectsIndex({
                             onClick={() => setActiveTab("rules")}
                             className={`px-4 py-2 rounded-lg text-xs font-mono font-semibold transition-all ${
                                 activeTab === "rules"
-                                    ? "bg-accent text-black shadow-md shadow-[#fbb718]/10"
+                                    ? "bg-accent text-black shadow-md shadow-accent/10"
                                     : "text-neutral-400 hover:text-white hover:bg-white/5"
                             }`}
                         >

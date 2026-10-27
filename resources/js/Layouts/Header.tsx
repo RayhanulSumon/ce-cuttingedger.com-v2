@@ -162,7 +162,7 @@ export function Header({
                     {/* Brand Logo with authentic Cutting Edger emblem */}
                     <Link
                         href="/"
-                        className="group shrink-0 flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fbb718] rounded-lg"
+                        className="group shrink-0 flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
                     >
                         <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-accent/60 group-hover:bg-accent/10 transition-all duration-300">
                             <img
@@ -215,7 +215,7 @@ export function Header({
                                             <div className="absolute top-full -left-20 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                                 <div className="rounded-3xl p-6 sm:p-7 bg-[#0b0d13]/98 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative overflow-hidden">
                                                     {/* Subtle top ambient glowing line */}
-                                                    <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#fbb718]/40 to-transparent pointer-events-none" />
+                                                    <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/40 to-transparent pointer-events-none" />
 
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                                                         {servicesList.map((pillar, pIdx) => {
@@ -336,7 +336,7 @@ export function Header({
                                     window.dispatchEvent(new CustomEvent('ce:open-discovery-call'));
                                 }
                             }}
-                            className="hidden md:inline-flex items-center gap-1.5 xl:gap-2 px-3.5 py-2 xl:px-5 xl:py-2.5 rounded-full bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(251,183,24,0.4)] transition-all duration-300 cursor-pointer select-none shrink-0 whitespace-nowrap"
+                            className="hidden md:inline-flex items-center gap-1.5 xl:gap-2 px-3.5 py-2 xl:px-5 xl:py-2.5 rounded-full bg-gradient-to-b from-[#fcd34d] via-accent to-[#e09214] text-black font-bold text-xs uppercase tracking-wider shadow-[inset_0_1px_1px_rgba(255,255,255,0.45),0_4px_16px_rgba(245,166,35,0.25)] hover:brightness-105 hover:shadow-[0_4px_24px_rgba(245,166,35,0.4)] transition-all duration-300 cursor-pointer select-none shrink-0 whitespace-nowrap"
                         >
                             <Calendar className="w-3.5 h-3.5 text-black stroke-[2.5] shrink-0" />
                             <span>Discovery Call</span>

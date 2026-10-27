@@ -56,7 +56,7 @@ export function BookingConfirmedCard({ card, onReschedule }: BookingConfirmedCar
     return (
         <div className={`my-2.5 p-4 rounded-2xl border shadow-xl backdrop-blur-md text-left transition-all ${
             isRescheduled
-                ? 'bg-accent/10 border-accent/40 shadow-[#fbb718]/5'
+                ? 'bg-accent/10 border-accent/40 shadow-accent/5'
                 : 'bg-[#00f5ff]/10 border-[#00f5ff]/40 shadow-[#00f5ff]/5'
         }`}>
             <div className="flex items-start justify-between gap-2 mb-2">

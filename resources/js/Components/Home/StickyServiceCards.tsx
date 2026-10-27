@@ -190,9 +190,9 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                     scale: isHovered ? 1 : 0.7,
                 }}
                 transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(251,183,24,0.18)] will-change-transform select-none"
+                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(245,166,35,0.18)] will-change-transform select-none"
             >
-                <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_#fbb718] shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_#f5a623] shrink-0" />
                 <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
                     Explore Service
                 </span>

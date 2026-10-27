@@ -790,7 +790,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         </div>
                                         <div className="space-y-0.5">
                                             <p className="text-xs font-medium text-white group-hover:text-accent transition-colors">
-                                                <span className="font-bold underline decoration-[#fbb718]/60 underline-offset-2">
+                                                <span className="font-bold underline decoration-accent/60 underline-offset-2">
                                                     Click to upload
                                                 </span>{" "}
                                                 or drag & drop

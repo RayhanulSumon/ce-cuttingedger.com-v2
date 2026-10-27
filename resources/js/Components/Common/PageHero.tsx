@@ -46,7 +46,7 @@ export function PageHero({
                 <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-[1.05] max-w-4xl">
                     {title}{' '}
                     {highlight && (
-                        <span className="text-accent underline decoration-[#fbb718]/40 underline-offset-8">
+                        <span className="text-accent underline decoration-accent/40 underline-offset-8">
                             {highlight}
                         </span>
                     )}

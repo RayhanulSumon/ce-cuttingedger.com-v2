@@ -57,7 +57,7 @@
         @endphp
         {!! $headScripts !!}
     </head>
-    <body class="bg-[#0b0c0e] text-[#f4f5f8] antialiased selection:bg-[#fbb718] selection:text-black transition-colors duration-300">
+    <body class="bg-[#0b0c0e] text-[#f4f5f8] antialiased selection:bg-[#f5a623] selection:text-black transition-colors duration-300">
         <!-- Injected Body Start Tracking Scripts (GTM noscript, etc.) -->
         @php
             try {

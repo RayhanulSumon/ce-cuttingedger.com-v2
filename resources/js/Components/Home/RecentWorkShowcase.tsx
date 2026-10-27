@@ -62,7 +62,7 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
             deliverables: ['Design Architecture', 'Biometric App', 'High-Frequency UX'],
             image: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=1200&q=85',
             slug: 'kashtech-doyel',
-            accent: '#fbb718',
+            accent: '#f5a623',
         },
         {
             id: 3,

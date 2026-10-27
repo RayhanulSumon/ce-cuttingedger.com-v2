@@ -309,7 +309,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                                         }}
                                                         className={`px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-all shrink-0 cursor-pointer ${
                                                             isSelected
-                                                                ? 'bg-accent text-black font-bold shadow-md shadow-[#fbb718]/10'
+                                                                ? 'bg-accent text-black font-bold shadow-md shadow-accent/10'
                                                                 : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5'
                                                         }`}
                                                     >
@@ -444,7 +444,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !selectedSlot}
-                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors flex items-center gap-2 shadow-lg shadow-[#fbb718]/15 disabled:opacity-50 cursor-pointer"
+                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors flex items-center gap-2 shadow-lg shadow-accent/15 disabled:opacity-50 cursor-pointer"
                                     >
                                         {isSubmitting ? (
                                             <>

@@ -194,7 +194,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     <div
                                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-black font-bold"
-                                        style={{ backgroundColor: s.accent_color || '#fbb718' }}
+                                        style={{ backgroundColor: s.accent_color || '#f5a623' }}
                                     >
                                         {getServiceIcon(s.icon, s.slug)}
                                     </div>

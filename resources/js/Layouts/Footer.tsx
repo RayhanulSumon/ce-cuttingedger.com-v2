@@ -85,7 +85,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                 className="relative bg-[#07080b] text-white border-t border-white/10 select-none overflow-hidden w-full"
             >
                 {/* Subtle ambient top glow spanning full width */}
-                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#fbb718]/40 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/40 to-transparent pointer-events-none" />
 
                 <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 pt-16 sm:pt-20 pb-12">
                     {/* Top Multi-Column Grid */}
@@ -94,7 +94,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         <div className="lg:col-span-4 space-y-6">
                             <Link
                                 href="/"
-                                className="group inline-flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-[#fbb718] rounded-lg"
+                                className="group inline-flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
                             >
                                 <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-accent/60 group-hover:bg-accent/10 transition-all duration-300">
                                     <img

@@ -63,7 +63,7 @@ export default function ServicesIndex({
         subtitle: "",
         description: "",
         icon: "Layers",
-        accent_color: "#fbb718",
+        accent_color: "#f5a623",
         sort_order: 0,
     });
 
@@ -74,7 +74,7 @@ export default function ServicesIndex({
         subtitle: "",
         description: "",
         icon: "Layers",
-        accent_color: "#fbb718",
+        accent_color: "#f5a623",
         sort_order: 0,
     });
 
@@ -97,7 +97,7 @@ export default function ServicesIndex({
             subtitle: service.subtitle,
             description: service.description,
             icon: service.icon || "Layers",
-            accent_color: service.accent_color || "#fbb718",
+            accent_color: service.accent_color || "#f5a623",
             sort_order: service.sort_order,
         });
     };
@@ -128,9 +128,9 @@ export default function ServicesIndex({
                     <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-black shrink-0"
                         style={{
-                            backgroundColor: `${s.accent_color || "#fbb718"}20`,
-                            color: s.accent_color || "#fbb718",
-                            border: `1px solid ${s.accent_color || "#fbb718"}40`,
+                            backgroundColor: `${s.accent_color || "#f5a623"}20`,
+                            color: s.accent_color || "#f5a623",
+                            border: `1px solid ${s.accent_color || "#f5a623"}40`,
                         }}
                     >
                         {s.icon?.substring(0, 2).toUpperCase()}
@@ -172,10 +172,10 @@ export default function ServicesIndex({
                 <div className="flex items-center gap-2">
                     <span
                         className="w-3.5 h-3.5 rounded-full border border-white/20"
-                        style={{ backgroundColor: s.accent_color || "#fbb718" }}
+                        style={{ backgroundColor: s.accent_color || "#f5a623" }}
                     />
                     <span className="font-mono text-xs text-neutral-300">
-                        {s.accent_color || "#fbb718"}
+                        {s.accent_color || "#f5a623"}
                     </span>
                 </div>
             ),
@@ -326,7 +326,7 @@ export default function ServicesIndex({
                                     onChange={(e) =>
                                         createForm.setData("accent_color", e.target.value)
                                     }
-                                    placeholder="#fbb718"
+                                    placeholder="#f5a623"
                                 />
                             </div>
                             <div className="space-y-1.5">
