@@ -44,47 +44,47 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
     const defaultItems: ShowcaseProjectItem[] = [
         {
             id: 1,
-            title: 'automap',
-            subtitle: 'Research, UX, UI Design',
-            category: 'Spatial Telemetry & Autonomous Mobility',
+            title: 'Automotive 3D Studio',
+            subtitle: '3D CGI Modeling & Lighting Calibration',
+            category: 'High-polygon vehicle staging and lighting calibration',
             year: '2026',
-            deliverables: ['Spatial OS', 'Real-Time Telemetry', '3D WebGL Interface'],
+            deliverables: ['3D WebGL', 'Lighting Shaders', 'Virtual Rigging'],
             image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=85',
-            slug: 'automap',
-            accent: '#00f5ff',
+            slug: 'automotive-3d',
+            accent: '#f5a623',
         },
         {
             id: 2,
-            title: 'kashtech\ndoyel',
-            subtitle: 'Fintech Protocol, UX, UI Design',
-            category: 'Algorithmic Financial Infrastructure',
+            title: 'Nordic Luxury Outerwear',
+            subtitle: 'Ghost Mannequin & Color Matching',
+            category: 'High-volume apparel retouching and joint harmonization',
             year: '2025',
-            deliverables: ['Design Architecture', 'Biometric App', 'High-Frequency UX'],
+            deliverables: ['Ghost Mannequin', 'Symmetry Alignment', 'Fabric Texture'],
             image: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=1200&q=85',
-            slug: 'kashtech-doyel',
+            slug: 'nordic-luxury',
             accent: '#f5a623',
         },
         {
             id: 3,
-            title: 'rebrand',
-            subtitle: 'Brand Strategy, Visual Identity',
-            category: 'Luxury Acoustic & Spatial Computing',
+            title: 'High-Sheen Audio Hardware',
+            subtitle: 'Swatch Matching & Reflection Clean-up',
+            category: 'Micro-retouching across brushed metallic finishes',
             year: '2025',
-            deliverables: ['Generative Identity', 'Packaging System', 'Sound Architecture'],
+            deliverables: ['Color Swatches', 'Reflection Control', 'Clipping Paths'],
             image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=85',
-            slug: 'rebrand',
-            accent: '#ff5e36',
+            slug: 'audio-hardware',
+            accent: '#f5a623',
         },
         {
             id: 4,
-            title: 'vortex\nspatial',
-            subtitle: 'WebGL Shaders, 3D Direction',
-            category: 'Autonomous Deep Ocean Telemetry',
+            title: 'Precision Watchmaking',
+            subtitle: 'Macro Focus Stacking & Dust Removal',
+            category: 'Sub-pixel artifact eradication for luxury timepieces',
             year: '2026',
-            deliverables: ['GPU Shaders', 'Volumetric Shaders', 'Interactive Canvas'],
+            deliverables: ['Macro Retouching', 'Focus Stacking', 'Alpha Masking'],
             image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=85',
-            slug: 'vortex-spatial',
-            accent: '#a855f7',
+            slug: 'precision-watchmaking',
+            accent: '#f5a623',
         },
     ];
 
@@ -116,57 +116,30 @@ export function RecentWorkShowcase({ projects }: RecentWorkShowcaseProps) {
             <div className="absolute bottom-1/4 left-0 w-[50rem] h-[50rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 w-full">
-                {/* SECTION HEADER: AGNTIX RECENT WORK WITH KINETIC SCROLL & LIGHTNING K */}
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 sm:mb-20 lg:mb-24 gap-6 sm:gap-8">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#00f5ff] mb-4 sm:mb-6">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>[ 02 // RECENT COMMISSIONS ]</span>
+                {/* SECTION HEADER */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 sm:mb-18 lg:mb-20 gap-6 sm:gap-8 pb-8 border-b border-white/10">
+                    <div className="space-y-3 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-mono uppercase tracking-[0.2em] text-accent font-semibold">
+                            <Sparkles className="w-3 h-3" />
+                            <span>Featured Case Studies</span>
                         </div>
 
-                        {/* Title with kinetic horizontal scroll & customized lightning 'K' - Responsive on mobile */}
-                        <div className="overflow-hidden sm:overflow-visible select-none max-w-full">
-                            <h2 className="text-[2.25rem] xs:text-4xl sm:text-6xl md:text-7xl lg:text-[7rem] xl:text-[8.5rem] font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1] sm:leading-[0.88]">
-                                <motion.span
-                                    style={{ x: recentX }}
-                                    className="block whitespace-nowrap will-change-transform text-white/90"
-                                >
-                                    RECENT
-                                </motion.span>
-                                <span className="inline-flex items-center whitespace-nowrap text-[#e0eeee]">
-                                    <span>WOR</span>
-                                    {/* Stylized Brutalist Lightning K */}
-                                    <span className="inline-flex items-center relative text-white">
-                                        <svg
-                                            viewBox="0 0 78 95"
-                                            fill="currentColor"
-                                            className="inline-block h-[0.84em] w-auto align-baseline fill-current text-white -ml-0.5"
-                                            aria-label="K"
-                                        >
-                                            {/* Vertical stem */}
-                                            <rect x="0" y="0" width="18" height="95" />
-                                            {/* Top diagonal arm */}
-                                            <polygon points="18,48 55,0 78,0 35,52" />
-                                            {/* Lightning bottom zag arm */}
-                                            <polygon points="32,48 76,55 58,68 78,95 56,95 40,74 24,76 18,52" />
-                                        </svg>
-                                    </span>
-                                </span>
-                            </h2>
-                        </div>
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold uppercase text-white tracking-tight leading-none">
+                            Recent <span className="text-accent">Work</span>
+                        </h2>
 
-                        <p className="text-sm sm:text-xl lg:text-2xl text-neutral-400 font-medium max-w-sm mt-4 sm:mt-8 leading-snug tracking-tight">
-                            In the creative wilderness, clients find our work truly beloved.
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-sans leading-relaxed">
+                            Selected high-volume catalog retouching, color standardization, and 3D CGI deployments for global brands.
                         </p>
                     </div>
 
-                    <div className="lg:pb-4">
+                    <div className="lg:pb-1">
                         <Link
                             href="/work"
-                            className="inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-white/20 text-xs sm:text-sm font-mono uppercase tracking-widest text-white hover:bg-white hover:text-black hover:border-white transition-all duration-300 group shadow-lg"
+                            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-white/15 bg-white/[0.04] text-xs font-mono uppercase tracking-wider text-white hover:bg-accent hover:text-black hover:border-accent transition-all duration-300 group shadow-md shrink-0 cursor-pointer"
                         >
-                            <span>Explore work</span>
-                            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                            <span>Explore All Work</span>
+                            <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </Link>
                     </div>
                 </div>
@@ -239,52 +212,52 @@ function ShowcaseRow({
             ref={rowRef}
             className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-14 items-center"
         >
-            {/* CONTENT BLOCK - Proper responsive padding & font size */}
+            {/* CONTENT BLOCK - Balanced editorial proportions */}
             <div
                 className={`order-2 ${
                     isEven
-                        ? 'lg:col-span-5 lg:order-2 lg:pl-8'
-                        : 'lg:col-span-5 lg:order-1 lg:pr-8'
-                } space-y-4 sm:space-y-6 px-1 sm:px-0`}
+                        ? 'lg:col-span-5 lg:order-2 lg:pl-6 xl:pl-8'
+                        : 'lg:col-span-5 lg:order-1 lg:pr-6 xl:pr-8'
+                } space-y-4 sm:space-y-5 px-1 sm:px-0`}
             >
                 <div className="space-y-2 sm:space-y-3">
-                    <span className="font-mono text-[11px] sm:text-xs text-neutral-400 uppercase tracking-widest block">
+                    <span className="font-mono text-[11px] sm:text-xs text-accent uppercase tracking-widest block font-semibold">
                         [ Case Study 0{index + 1} // {item.year} ]
                     </span>
 
-                    <h3 className="text-2xl sm:text-4xl md:text-5xl lg:text-[4.5rem] xl:text-[5rem] font-['Antonio',_'Bebas_Neue',_sans-serif] font-normal text-[#e0eeee] hover:text-white transition-colors lowercase leading-[1.05] sm:leading-[0.9] tracking-tight whitespace-pre-line break-words">
-                        <Link href={`/work/${item.slug}`}>{item.title}</Link>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white hover:text-accent transition-colors capitalize leading-tight tracking-tight">
+                        <Link href={`/work/${item.slug}`}>{item.title.replace(/\n/g, ' ')}</Link>
                     </h3>
 
-                    <p className="text-base sm:text-xl lg:text-2xl font-medium text-neutral-300 tracking-tight pt-0.5 sm:pt-1">
+                    <p className="text-sm sm:text-base font-semibold text-neutral-300 tracking-tight">
                         {item.subtitle}
                     </p>
 
-                    <p className="text-xs sm:text-sm text-neutral-400 font-normal leading-relaxed max-w-md pt-1 sm:pt-2">
-                        {item.category}. Engineered with precision architecture and kinetic interactivity.
+                    <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed max-w-md pt-0.5">
+                        {item.category}. Engineered with precision architecture and catalog consistency.
                     </p>
                 </div>
 
                 {/* Deliverables tags */}
-                <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2 pb-2 sm:pb-4">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 pb-1">
                     {item.deliverables.map((deliv, dIdx) => (
                         <span
                             key={dIdx}
-                            className="px-2.5 sm:px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-300"
+                            className="px-2.5 sm:px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-300"
                         >
                             {deliv}
                         </span>
                     ))}
                 </div>
 
-                {/* Agntix Sky-Bordered Button */}
-                <div className="pt-1 sm:pt-2">
+                {/* Accent Action Button */}
+                <div className="pt-2">
                     <Link
                         href={`/work/${item.slug}`}
-                        className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full border border-sky-400/40 text-xs font-mono uppercase tracking-widest text-sky-300 hover:bg-sky-400 hover:text-black hover:border-sky-400 transition-all duration-300 group"
+                        className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-accent/40 bg-accent/5 text-xs font-mono uppercase tracking-wider text-accent hover:bg-accent hover:text-black hover:border-accent transition-all duration-300 group shadow-sm"
                     >
-                        <span>View project</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <span>View Case Study</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Link>
                 </div>
             </div>
@@ -349,10 +322,10 @@ function ShowcaseRow({
                                     scale: isHovered ? 1 : 0.8,
                                 }}
                                 transition={{ duration: 0.25 }}
-                                className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-mono uppercase tracking-widest text-[#00f5ff] flex items-center gap-2 shadow-2xl"
+                                className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-mono uppercase tracking-widest text-accent flex items-center gap-2 shadow-2xl"
                             >
                                 <span>Explore Case Study</span>
-                                <ArrowUpRight className="w-3.5 h-3.5 text-[#00f5ff]" />
+                                <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
                             </motion.div>
                         </Link>
                     </motion.div>
