@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowDown, ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 
 export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
@@ -16,12 +16,12 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
     // Rotating kinetic agency disciplines
     const rotatingWords = [
-        'IMAGE EDITING',
-        '3D CGI & PRODUCT',
+        'IMAGE RETOUCHING',
+        '3D PRODUCT CGI',
         'GHOST MANNEQUIN',
         'JEWELRY RETOUCH',
         'CLIPPING PATHS',
-        'DESKTOP PUBLISHING',
+        'COLOR MATCHING',
     ];
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
@@ -286,46 +286,35 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
     // 3D & 2D Interactive Work Reel Shuffle Cards
     const reelCards = [
         {
-            title: 'Kinetix OS',
-            category: '3D Spatial Shaders',
-            year: '2026',
-            color: 'from-purple-950/60 via-[#10121a] to-black',
+            title: 'Nordic Outerwear',
+            category: 'Ghost Mannequin & Symmetry',
+            year: 'Fashion',
+            color: 'from-amber-950/60 via-[#10121a] to-black',
             accent: '#f5a623',
-            tag: '3D Real-Time WebGL',
-            preview: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+            tag: 'Ghost Mannequin',
+            preview: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=80',
         },
         {
-            title: 'Hyperion Audio',
-            category: 'Acoustic 3D Renderings',
-            year: '2025',
-            color: 'from-emerald-950/60 via-[#10121a] to-black',
-            accent: '#00f5ff',
+            title: 'Lumina Timepieces',
+            category: 'Fine Jewelry & Macro Retouch',
+            year: 'Luxury',
+            color: 'from-amber-950/60 via-[#10121a] to-black',
+            accent: '#f5a623',
+            tag: 'Macro Retouching',
+            preview: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            title: 'Acoustic Spatial Audio',
+            category: 'Photorealistic 3D CGI',
+            year: '3D CGI',
+            color: 'from-amber-950/60 via-[#10121a] to-black',
+            accent: '#f5a623',
             tag: 'CGI Product Modeling',
             preview: 'https://images.unsplash.com/photo-1546776310-eef45dd6d63c?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            title: 'Vortex Capital',
-            category: '2D Vector Identity',
-            year: '2025',
-            color: 'from-amber-950/60 via-[#10121a] to-black',
-            accent: '#ff9900',
-            tag: 'Brand Architecture',
-            preview: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=800&q=80',
         },
     ];
 
     const [activeCardIndex, setActiveCardIndex] = useState(0);
-
-    const scrollToWork = () => {
-        const workSection = document.getElementById('featured-work');
-        if (workSection) {
-            if (typeof window !== 'undefined' && (window as any).lenis) {
-                (window as any).lenis.scrollTo(workSection, { offset: -30 });
-            } else {
-                workSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    };
 
     return (
         <section
@@ -333,7 +322,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative min-h-[100svh] lg:min-h-[calc(100vh-4.5rem)] xl:min-h-[94vh] pt-24 sm:pt-28 lg:pt-24 xl:pt-28 2xl:pt-32 pb-6 sm:pb-8 lg:pb-6 xl:pb-10 flex flex-col justify-between overflow-hidden bg-[#090a0d] text-white select-none"
+            className="relative min-h-[90svh] lg:min-h-[calc(100vh-4.5rem)] xl:min-h-[92vh] pt-20 sm:pt-24 lg:pt-20 xl:pt-24 pb-8 sm:pb-12 flex flex-col justify-center overflow-hidden bg-[#090a0d] text-white select-none"
         >
             {/* AMBIENT BACKGROUND GLOWS */}
             <div className="absolute inset-0 pointer-events-none">
@@ -381,15 +370,15 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                         <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs font-mono text-neutral-300">
                             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                             <span className="uppercase tracking-widest">
-                                AVAILABLE FOR COMMISSIONS // 2026 ARCHITECTURE
+                                PRODUCTION RETOUCHING & 3D STUDIO • 24H SLA
                             </span>
                         </div>
 
                         {/* Kinetic Main Headline with perfect wrapping and responsive font size */}
                         <div className="space-y-2.5 sm:space-y-3">
                             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-[3.65rem] 2xl:text-[4.5rem] font-['Clash_Display',_'Syne',_'Outfit',_sans-serif] uppercase font-bold text-white tracking-tight leading-[1.08] lg:leading-[1.06]">
-                                ARE YOU <br />
-                                LOOKING FOR <br />
+                                SURGICAL <br />
+                                PRECISION IN <br />
                                 <span className="flex items-baseline flex-wrap gap-x-3 text-white">
                                     <span className="overflow-hidden min-h-[1.2em] h-[1.25em] inline-block relative text-accent max-w-full">
                                         <AnimatePresence mode="wait">
@@ -408,14 +397,14 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 </span>
                             </h1>
 
-                            <p className="text-sm sm:text-base lg:text-sm xl:text-base 2xl:text-lg text-neutral-300 max-w-xl font-['Roboto',_sans-serif] font-black leading-relaxed pt-0.5 tracking-wide">
+                            <p className="text-sm sm:text-base lg:text-sm xl:text-base 2xl:text-lg text-neutral-300 max-w-xl font-sans font-normal leading-relaxed pt-0.5 tracking-normal">
                                 CuttingEdger delivers surgical 2D photo editing and photorealistic 3D product CGI for high-growth e-commerce brands, fashion houses, and advertising agencies worldwide.
                             </p>
                         </div>
 
                         {/* CTAs */}
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
-                            <Button asChild size="lg" className="h-10 sm:h-11 px-5 sm:px-6 text-xs sm:text-sm">
+                            <Button asChild size="lg" className="h-11 sm:h-12 px-6 sm:px-7 text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-accent text-black hover:bg-[#ffb834] shadow-[0_0_20px_rgba(245,166,35,0.35)] transition-all">
                                 <a href="#trial-uploader-section">
                                     Try 3 Images Free
                                     <ArrowUpRight className="w-4 h-4" />
@@ -426,7 +415,7 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                                 variant="secondary"
                                 size="lg"
                                 onClick={onOpenContact}
-                                className="h-10 sm:h-11 px-5 sm:px-6 text-xs sm:text-sm"
+                                className="h-11 sm:h-12 px-6 sm:px-7 text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-white/[0.04] hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all cursor-pointer"
                             >
                                 Instant Volume Quote
                             </Button>
@@ -520,21 +509,6 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
                 </div>
             </div>
 
-            {/* Scroll Indicator */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 lg:pt-3 xl:pt-6 flex items-center justify-between text-xs font-mono text-neutral-500 relative z-20">
-                <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-accent" />
-                    <span className="uppercase tracking-widest text-[11px] sm:text-xs">SCROLL TO REVEAL</span>
-                </div>
-                <button
-                    type="button"
-                    onClick={scrollToWork}
-                    aria-label="Scroll down"
-                    className="p-1.5 sm:p-2 rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors cursor-pointer"
-                >
-                    <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
-                </button>
-            </div>
         </section>
     );
 }
