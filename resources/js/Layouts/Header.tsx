@@ -317,14 +317,7 @@ export function Header({
                     <div className="flex items-center gap-2 xl:gap-3 shrink-0">
                         <ThemeToggle />
 
-                        {/* Free Pilot Lead Magnet Button */}
-                        <Link
-                            href="/#free-trial"
-                            className="hidden xl:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-accent/40 text-accent hover:bg-accent/10 font-mono text-xs uppercase tracking-wider transition-all shrink-0 whitespace-nowrap"
-                        >
-                            <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                            <span>3-Asset Pilot</span>
-                        </Link>
+
 
                         {/* Book Discovery Call via Dedicated On-Site Calendar Modal */}
                         <button

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Sparkles } from 'lucide-react';
-import { Button } from '@/Components/ui/button';
 
 export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
     const heroRef = useRef<HTMLDivElement>(null);
@@ -316,6 +316,20 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
     const [activeCardIndex, setActiveCardIndex] = useState(0);
 
+    const scrollToTrial = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const target = document.getElementById('free-trial');
+        if (target) {
+            if (typeof window !== 'undefined' && (window as any).lenis) {
+                (window as any).lenis.scrollTo(target, { offset: -30 });
+            } else {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else {
+            window.location.href = '/#free-trial';
+        }
+    };
+
     return (
         <section
             ref={heroRef}
@@ -404,21 +418,21 @@ export function SplitHero({ onOpenContact }: { onOpenContact?: () => void }) {
 
                         {/* CTAs */}
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
-                            <Button asChild size="lg" className="h-11 sm:h-12 px-6 sm:px-7 text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-accent text-black hover:bg-[#ffb834] shadow-[0_0_20px_rgba(245,166,35,0.35)] transition-all">
-                                <a href="#trial-uploader-section">
-                                    Try 3 Images Free
-                                    <ArrowUpRight className="w-4 h-4" />
-                                </a>
-                            </Button>
-
-                            <Button
-                                variant="secondary"
-                                size="lg"
-                                onClick={onOpenContact}
-                                className="h-11 sm:h-12 px-6 sm:px-7 text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-white/[0.04] hover:bg-white/10 text-white border border-white/10 hover:border-white/20 transition-all cursor-pointer"
+                            <a
+                                href="#free-trial"
+                                onClick={scrollToTrial}
+                                className="h-11 sm:h-12 px-6 sm:px-7 rounded-xl text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-accent text-black hover:bg-[#ffb834] hover:shadow-[0_0_25px_rgba(245,166,35,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-[0.98]"
                             >
-                                Instant Volume Quote
-                            </Button>
+                                <span>Try 3 Images Free</span>
+                                <ArrowUpRight className="w-4 h-4" />
+                            </a>
+
+                            <Link
+                                href="/contact"
+                                className="h-11 sm:h-12 px-6 sm:px-7 rounded-xl text-xs sm:text-sm font-display font-bold uppercase tracking-wider bg-white/[0.04] hover:bg-white/10 text-white border border-white/10 hover:border-white/25 transition-all flex items-center justify-center cursor-pointer active:scale-[0.98]"
+                            >
+                                <span>Instant Volume Quote</span>
+                            </Link>
                         </div>
 
                         {/* Quick Trust Highlights */}
