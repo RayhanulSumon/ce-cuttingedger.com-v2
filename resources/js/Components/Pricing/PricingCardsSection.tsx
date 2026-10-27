@@ -1,5 +1,5 @@
-import React from 'react';
-import { Check, ArrowUpRight, ShieldCheck, Zap, Sparkles, Layers, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, ArrowUpRight, ShieldCheck, Zap, Sparkles, Layers, Box, Cpu, Eye } from 'lucide-react';
 
 interface PricingTier {
     id: string;
@@ -17,9 +17,12 @@ interface PricingTier {
 }
 
 export function PricingCardsSection() {
-    const tiers: PricingTier[] = [
+    const [activeTab, setActiveTab] = useState<'2d' | '3d'>('2d');
+
+    // 2D Catalog Retouching & Post-Production Tiers
+    const tiers2D: PricingTier[] = [
         {
-            id: 'starter',
+            id: 'starter-2d',
             name: 'Essential Studio',
             badge: 'Catalog Prep',
             icon: Layers,
@@ -37,7 +40,7 @@ export function PricingCardsSection() {
             ],
         },
         {
-            id: 'pro',
+            id: 'pro-2d',
             name: 'Pro Commercial',
             badge: 'High-Velocity Retail',
             popular: true,
@@ -56,11 +59,11 @@ export function PricingCardsSection() {
             ],
         },
         {
-            id: 'enterprise',
+            id: 'enterprise-2d',
             name: 'Enterprise Vanguard',
             badge: 'Bespoke 24/7',
             icon: ShieldCheck,
-            description: 'Dedicated infrastructure for global retailers, marketplaces, and 3D CGI pipelines.',
+            description: 'Dedicated infrastructure for global retailers, marketplaces, and high-volume catalogs.',
             pricingLabel: 'Custom Enterprise Contract',
             pricingSubtext: 'Dedicated artist squad • Executive SLA',
             sla: 'Sub-6h Priority SLA',
@@ -68,12 +71,73 @@ export function PricingCardsSection() {
             buttonText: 'Contact Enterprise',
             features: [
                 { bold: 'Everything in Pro Commercial', text: 'included' },
-                { bold: '3D CAD-to-photorealistic', text: 'CGI & 8K PBR rendering' },
-                { bold: 'Automated SFTP / S3', text: '& direct API pipeline integration' },
                 { bold: 'Dedicated 24/7 squad', text: 'synchronized across global timezones' },
+                { bold: 'Automated SFTP / S3', text: '& direct API pipeline integration' },
+                { bold: 'Guaranteed peak burst', text: 'capacity during seasonal drops' },
             ],
         },
     ];
+
+    // 3D CGI & Spatial Assets Tiers
+    const tiers3D: PricingTier[] = [
+        {
+            id: 'starter-3d',
+            name: '3D Product Modeling',
+            badge: 'CAD & Mesh Topology',
+            icon: Box,
+            description: 'High-fidelity 3D mesh reconstruction from industrial CAD, sketches, or 2D photo references.',
+            pricingLabel: 'Per-Model Volume Quote',
+            pricingSubtext: 'Commercial ownership • Multi-format exports',
+            sla: '48h Initial Turnaround',
+            capacity: 'Up to 50 models/month',
+            buttonText: 'Request 3D Model Quote',
+            features: [
+                { bold: 'Industrial CAD conversion', text: 'from STEP, IGES, Rhino & SolidWorks' },
+                { bold: 'Clean quad topology', text: 'optimized for real-time web & mobile' },
+                { bold: 'Accurate micron scale', text: 'exact dimension matching to spec sheets' },
+                { bold: 'Multi-format exports', text: 'GLTF, USDZ, FBX, OBJ & Blender source' },
+            ],
+        },
+        {
+            id: 'pro-3d',
+            name: 'Photorealistic CGI',
+            badge: 'Virtual Photography',
+            popular: true,
+            icon: Sparkles,
+            description: 'Hyper-realistic virtual studio renders with infinite camera angles and zero physical reshoots.',
+            pricingLabel: 'CGI Catalog Retainer',
+            pricingSubtext: 'Multi-angle batch outputs • Photoreal 8K PBR',
+            sla: '24–48h Render Delivery',
+            capacity: '100 to 500+ renders/month',
+            buttonText: 'Request CGI Quote',
+            features: [
+                { bold: 'Everything in 3D Modeling', text: 'included' },
+                { bold: '8K PBR material maps', text: 'procedural leather, glass, metals & fabrics' },
+                { bold: 'Virtual studio lighting', text: 'cyclorama, architectural & studio HDRI' },
+                { bold: 'Infinite colorway swaps', text: 'instant digital variations on demand' },
+            ],
+        },
+        {
+            id: 'enterprise-3d',
+            name: '3D Configurator & AR',
+            badge: 'Spatial & Web3D',
+            icon: Cpu,
+            description: 'Interactive web 3D product configurators, 360° spin viewers, and Apple Vision / iOS AR spatial assets.',
+            pricingLabel: 'Custom Spatial Contract',
+            pricingSubtext: 'Dedicated 3D pipeline squad • Engine integration',
+            sla: 'Continuous Sprint SLA',
+            capacity: 'Full enterprise integration',
+            buttonText: 'Contact Spatial Team',
+            features: [
+                { bold: 'Everything in Photorealistic CGI', text: 'included' },
+                { bold: 'Interactive 3D viewers', text: 'lightweight WebGL / Three.js / Babylon' },
+                { bold: 'QuickLook & WebXR AR', text: 'instant 1-tap mobile augmented reality' },
+                { bold: 'Headless PIM / CMS', text: 'automated 3D asset syndication' },
+            ],
+        },
+    ];
+
+    const currentTiers = activeTab === '2d' ? tiers2D : tiers3D;
 
     const handleOpenContact = (planName: string) => {
         if (typeof window !== 'undefined') {
@@ -88,30 +152,61 @@ export function PricingCardsSection() {
     return (
         <section
             id="pricing-plans-section"
-            className="relative py-20 sm:py-24 bg-[#08090d] border-t border-white/[0.06] select-none overflow-hidden"
+            className="relative py-16 sm:py-20 bg-[#08090d] border-t border-white/[0.06] select-none overflow-hidden"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[25rem] bg-accent/[0.04] rounded-full blur-[180px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Minimalist Centered Header */}
-                <div className="text-center max-w-4xl mx-auto mb-14 sm:mb-18 space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
-                        <span>Production Capacity</span>
+                <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-12 space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-accent font-semibold">
+                        <span>Production Capacity & SLAs</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight whitespace-normal sm:whitespace-nowrap">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
                         Bespoke <span className="text-accent">Production Tiers</span>
                     </h2>
 
                     <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed max-w-2xl mx-auto">
-                        Tailored capacity and SLAs engineered for high-volume catalogs and creative agencies.
+                        Select between high-volume 2D catalog retouching or full 3D CGI and spatial asset pipelines.
                     </p>
+
+                    {/* Interactive 2D vs 3D Tab Switcher */}
+                    <div className="pt-4 flex items-center justify-center">
+                        <div className="inline-flex p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md shadow-lg">
+                            <button
+                                type="button"
+                                onClick={() => setActiveTab('2d')}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
+                                    activeTab === '2d'
+                                        ? 'bg-accent text-black shadow-[0_0_20px_rgba(245,166,35,0.35)]'
+                                        : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
+                                }`}
+                            >
+                                <Layers className="w-4 h-4" />
+                                <span>2D Retouching (3 Tiers)</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setActiveTab('3d')}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
+                                    activeTab === '3d'
+                                        ? 'bg-accent text-black shadow-[0_0_20px_rgba(245,166,35,0.35)]'
+                                        : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'
+                                }`}
+                            >
+                                <Box className="w-4 h-4" />
+                                <span>3D CGI & Spatial (3 Tiers)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                {/* 3 Minimalist Tier Cards */}
+                {/* 3 Minimalist Tier Cards for Selected Tab */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                    {tiers.map((tier) => {
+                    {currentTiers.map((tier) => {
                         const isFeatured = tier.popular;
                         const Icon = tier.icon;
 
@@ -120,7 +215,7 @@ export function PricingCardsSection() {
                                 key={tier.id}
                                 className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 ${
                                     isFeatured
-                                        ? 'bg-gradient-to-b from-[#141724] to-[#0e1017] border-2 border-accent/50 shadow-[0_0_40px_rgba(251,183,24,0.12)]'
+                                        ? 'bg-gradient-to-b from-[#141724] to-[#0e1017] border-2 border-accent/50 shadow-[0_0_40px_rgba(245,166,35,0.12)]'
                                         : 'bg-gradient-to-b from-[#11131a] to-[#0c0d12] border border-white/[0.08] hover:border-white/20'
                                 }`}
                             >
@@ -206,7 +301,7 @@ export function PricingCardsSection() {
                                         onClick={() => handleOpenContact(tier.name)}
                                         className={`group w-full py-3.5 px-5 rounded-xl font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                                             isFeatured
-                                                ? 'bg-accent text-black hover:bg-white shadow-[0_4px_20px_rgba(251,183,24,0.3)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
+                                                ? 'bg-accent text-black hover:bg-white shadow-[0_4px_20px_rgba(245,166,35,0.3)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
                                                 : 'bg-white/[0.05] hover:bg-white hover:text-black text-white border border-white/10 hover:border-white'
                                         }`}
                                     >
@@ -246,5 +341,3 @@ export function PricingCardsSection() {
         </section>
     );
 }
-
-

@@ -23,9 +23,10 @@ export default function Pricing({ plans = [], faqs = [] }: PricingProps) {
             />
 
             <PageHero
-                eyebrow="HIGH-VOLUME TRANSPARENCY"
-                title="PREDICTABLE RETOUCHING PRICING."
-                highlight="HIGH-SPEED TURNAROUND."
+                compact={true}
+                eyebrow="High-Volume Transparency"
+                title="Predictable retouching pricing."
+                highlight="High-speed turnaround."
                 description="Tailored bespoke volume tiers. No hidden setup fees or contract lock-ins. Free unlimited revisions with 24/7 round-the-clock studio capacity."
             />
 
