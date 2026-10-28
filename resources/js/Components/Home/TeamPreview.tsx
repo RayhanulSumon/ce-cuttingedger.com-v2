@@ -8,51 +8,8 @@ interface TeamPreviewProps {
     members: TeamMember[];
 }
 
-export function TeamPreview({ members }: TeamPreviewProps) {
-    const defaultMembers = [
-        {
-            id: 1,
-            name: 'Logan Dang',
-            slug: 'logan-dang',
-            role: 'CEO Founder',
-            since_year: '2009',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 2,
-            name: 'Rahat Chowhury',
-            slug: 'rahat-chowhury',
-            role: 'Web Designer',
-            since_year: '2004',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 3,
-            name: 'Thomas Finlan',
-            slug: 'thomas-finlan',
-            role: 'Marketing Director',
-            since_year: '2012',
-            avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 4,
-            name: 'Farhan Firoz',
-            slug: 'farhan-firoz',
-            role: 'UI/UX Designer',
-            since_year: '2010',
-            avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 5,
-            name: 'Billy Craft',
-            slug: 'billy-craft',
-            role: 'Motion Designer',
-            since_year: '2016',
-            avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80',
-        },
-    ];
-
-    const displayMembers = members && members.length >= 4 ? members : (defaultMembers as unknown as TeamMember[]);
+export function TeamPreview({ members = [] }: TeamPreviewProps) {
+    const displayMembers = members;
 
     const [hoveredMember, setHoveredMember] = useState<TeamMember | null>(null);
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
