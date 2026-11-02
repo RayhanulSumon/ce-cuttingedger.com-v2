@@ -6,7 +6,7 @@ import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
 import { HomePhotoLight } from "./HomePhotoLight-BJcAsY74.js";
 import { HomeStudioS1 } from "./HomeStudioS1-Dx36h44p.js";
 import { HomeOmniStudio } from "./HomeOmniStudio-KDeToqye.js";
-import { HomeRetouchStudio } from "./HomeRetouchStudio-DjSyVOF0.js";
+import { HomeRetouchStudio } from "./HomeRetouchStudio-CS_JtSwL.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";

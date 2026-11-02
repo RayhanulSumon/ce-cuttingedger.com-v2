@@ -10,17 +10,18 @@ import {
   Clock,
   MoveHorizontal,
   UploadCloud,
-  Maximize2,
   Diamond,
   Car,
   UserCheck,
   Shirt,
   Eye,
   Camera,
-  Flame,
+  Sun,
+  Moon,
   Zap,
-  ArrowUpRight
+  Award
 } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 interface HomeProps {
   clients?: Array<{
@@ -145,6 +146,8 @@ const SERVICES_11: ServiceCard[] = [
 ];
 
 export function HomeRetouchStudio({ clients = [] }: HomeProps) {
+  const { isDark, toggleTheme } = useTheme();
+
   // Hero Interactive Slider
   const [heroSplit, setHeroSplit] = useState(50);
   const [activeHeroSubject, setActiveHeroSubject] = useState(0);
@@ -231,48 +234,83 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
   const currentStudio = SERVICES_11[activeStudioIndex];
 
   return (
-    <div className="min-h-screen bg-[#07080B] text-[#F3F4F6] selection:bg-[#de4a2c] selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className={`min-h-screen transition-colors duration-300 font-sans antialiased overflow-x-hidden selection:bg-[#de4a2c] selection:text-white ${
+      isDark
+        ? 'bg-[#07080B] text-[#F3F4F6]'
+        : 'bg-[#F8F9FA] text-[#111318]'
+    }`}>
       
-      {/* 1. MINIMAL ATELIER HEADER */}
-      <header className="border-b border-white/[0.08] bg-[#07080B]/85 backdrop-blur-xl sticky top-0 z-50 px-6 sm:px-12 py-3 flex items-center justify-between">
+      {/* 1. ATELIER HEADER: WITH WORKING THEME TOGGLE (LIGHT / DARK) */}
+      <header className={`border-b sticky top-0 z-50 px-4 sm:px-8 lg:px-12 py-2.5 flex items-center justify-between transition-colors backdrop-blur-xl ${
+        isDark
+          ? 'bg-[#07080B]/90 border-white/[0.08]'
+          : 'bg-white/90 border-black/[0.08] shadow-sm'
+      }`}>
         <div className="flex items-center gap-3">
           <span className="w-2.5 h-2.5 rounded-full bg-[#de4a2c] animate-pulse" />
-          <Link href="/" className="font-display text-sm sm:text-base font-bold tracking-tight text-white hover:text-neutral-300 transition-colors">
+          <Link href="/" className="font-display text-sm sm:text-base font-bold tracking-tight hover:opacity-80 transition-opacity">
             CUTTING EDGER
           </Link>
-          <span className="text-white/20">/</span>
-          <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 hidden sm:inline">
-            Retouch Atelier
+          <span className={isDark ? 'text-white/20' : 'text-black/20'}>/</span>
+          <span className={`text-xs font-mono uppercase tracking-wider hidden sm:inline ${
+            isDark ? 'text-neutral-400' : 'text-neutral-500'
+          }`}>
+            Retouch Atelier (V8)
           </span>
         </div>
 
-        {/* 11 Services Pill Link */}
+        {/* Navigation Anchors */}
         <div className="hidden md:flex items-center gap-2">
           <a
             href="#parallax-runway"
-            className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-xs font-mono text-neutral-300 transition-colors border border-white/5"
+            className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${
+              isDark
+                ? 'bg-white/5 hover:bg-white/10 text-neutral-300 border-white/5'
+                : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-black/5'
+            }`}
           >
             Parallax Runway
           </a>
           <a
             href="#services-deck"
-            className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-xs font-mono text-neutral-300 transition-colors border border-white/5"
+            className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${
+              isDark
+                ? 'bg-white/5 hover:bg-white/10 text-neutral-300 border-white/5'
+                : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-black/5'
+            }`}
           >
             11 Services
           </a>
           <a
             href="#studio-lab"
-            className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-xs font-mono text-neutral-300 transition-colors border border-white/5"
+            className={`px-3 py-1 rounded-full text-xs font-mono transition-colors border ${
+              isDark
+                ? 'bg-white/5 hover:bg-white/10 text-neutral-300 border-white/5'
+                : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-black/5'
+            }`}
           >
-            Live Lab
+            Studio Lab
           </a>
         </div>
 
-        {/* Quick CTA */}
+        {/* Actions: Direct Working Theme Toggle & CTA */}
         <div className="flex items-center gap-3">
+          {/* Working Theme Switcher Button */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle Light and Dark Mode"
+            className={`p-2 rounded-full border transition-all flex items-center justify-center ${
+              isDark
+                ? 'bg-white/5 border-white/10 text-yellow-400 hover:bg-white/10'
+                : 'bg-neutral-100 border-black/10 text-neutral-800 hover:bg-neutral-200 shadow-sm'
+            }`}
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           <Link
             href="/#free-sample"
-            className="px-4 py-2 rounded-full bg-[#de4a2c] hover:bg-[#c93f24] text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-[#de4a2c]/20"
+            className="px-4 py-1.5 rounded-full bg-[#de4a2c] hover:bg-[#c93f24] text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-md shadow-[#de4a2c]/20"
           >
             <span>Test 3 Free</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -280,44 +318,48 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         </div>
       </header>
 
-      {/* 2. REVOLUTIONARY 3D PARALLAX HERO (IMAGE-FIRST, MINIMAL TEXT) */}
+      {/* 2. REVOLUTIONARY HERO: PROPORTIONED TO FIT THE VIEWPORT BEAUTIFULLY */}
       <section
         ref={heroRef}
         onMouseMove={handleMouseMove}
-        className="relative min-h-[92vh] flex flex-col justify-center px-4 sm:px-8 py-8 max-w-[1520px] mx-auto overflow-hidden"
+        className="relative max-w-[1520px] mx-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-col justify-center overflow-hidden min-h-[calc(100vh-65px)]"
       >
-        {/* Dynamic 60 FPS Mouse Spotlight Glow */}
+        {/* Dynamic 60 FPS Ambient Mouse Glow */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-40 transition-opacity duration-300"
+          className="absolute inset-0 pointer-events-none opacity-30 transition-opacity duration-300"
           style={{
-            background: `radial-gradient(circle 500px at ${mousePos.pctX}% ${mousePos.pctY}%, rgba(222, 74, 44, 0.25) 0%, transparent 70%)`
+            background: `radial-gradient(circle 480px at ${mousePos.pctX}% ${mousePos.pctY}%, rgba(222, 74, 44, 0.3) 0%, transparent 70%)`
           }}
         />
 
-        {/* Floating Background Ambient Watermark */}
+        {/* Ambient Typographic Watermark (Inverse 3D Shift) */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[14vw] font-display font-black text-white/[0.02] tracking-tighter select-none pointer-events-none whitespace-nowrap"
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vw] font-display font-black tracking-tighter select-none pointer-events-none whitespace-nowrap transition-transform duration-100 ${
+            isDark ? 'text-white/[0.02]' : 'text-black/[0.02]'
+          }`}
           style={{
-            transform: `translate(calc(-50% + ${mousePos.x * -40}px), calc(-50% + ${mousePos.y * -30}px))`
+            transform: `translate(calc(-50% + ${mousePos.x * -35}px), calc(-50% + ${mousePos.y * -25}px))`
           }}
         >
           RETOUCH ATELIER
         </div>
 
-        {/* Hero Top Minimal Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 relative z-20">
+        {/* Top Minimal Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 relative z-20">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-mono text-[#de4a2c] font-bold tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>11 Specialized Commercial Services</span>
+              <span>Commercial Image Editing & Finishing</span>
             </div>
-            <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mt-1">
-              Visual Perfection at Scale.
+            <h1 className="font-display text-xl sm:text-3xl font-bold tracking-tight mt-0.5">
+              Visual Perfection at Commerce Velocity
             </h1>
           </div>
 
-          {/* Quick Subject Selectors */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/5 border border-white/10 text-xs font-mono">
+          {/* 4 Hero Showcase Subject Chips */}
+          <div className={`flex items-center gap-1 p-1 rounded-2xl border text-xs font-mono ${
+            isDark ? 'bg-white/5 border-white/10' : 'bg-white border-black/10 shadow-sm'
+          }`}>
             {heroShowcase.map((item, idx) => (
               <button
                 key={item.badge}
@@ -328,7 +370,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
                 className={`px-3 py-1.5 rounded-xl transition-all whitespace-nowrap ${
                   activeHeroSubject === idx
                     ? 'bg-[#de4a2c] text-white font-bold shadow-md'
-                    : 'text-neutral-400 hover:text-white'
+                    : isDark ? 'text-neutral-400 hover:text-white' : 'text-neutral-600 hover:text-black'
                 }`}
               >
                 {item.badge}
@@ -337,22 +379,23 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
           </div>
         </div>
 
-        {/* IMMERSIVE 3D PARALLAX SPLIT STAGE */}
+        {/* THE RESPONSIVE VIEWPORT-FITTING 3D PARALLAX STAGE (Auto scaled to fit standard screens) */}
         <div
           style={{
-            transform: `perspective(1200px) rotateY(${mousePos.x * 5}deg) rotateX(${-mousePos.y * 3.5}deg)`,
+            transform: `perspective(1200px) rotateY(${mousePos.x * 4}deg) rotateX(${-mousePos.y * 3}deg)`,
             transition: 'transform 0.15s ease-out'
           }}
-          className="relative w-full h-[520px] sm:h-[640px] md:h-[700px] xl:h-[740px] rounded-3xl overflow-hidden bg-black select-none border border-white/15 shadow-2xl cursor-ew-resize group z-10"
+          className={`relative w-full h-[460px] sm:h-[520px] md:h-[560px] lg:h-[600px] xl:h-[640px] max-h-[68vh] rounded-3xl overflow-hidden select-none border shadow-2xl cursor-ew-resize group z-10 transition-colors ${
+            isDark
+              ? 'bg-black border-white/15'
+              : 'bg-neutral-100 border-black/10'
+          }`}
           onMouseDown={(e) => handleHeroSplitMove(e.clientX, e.currentTarget)}
           onTouchMove={(e) => {
             if (e.touches[0]) handleHeroSplitMove(e.touches[0].clientX, e.currentTarget);
           }}
         >
-          {/* Dynamic Laser Beam */}
-          <div className="absolute inset-0 pointer-events-none z-30 transition-opacity duration-300" />
-
-          {/* RIGHT LAYER: FINISHED 16-BIT RETOUCHED IMAGE */}
+          {/* RIGHT LAYER: FINISHED 16-BIT RETOUCHED */}
           <div className="absolute inset-0 w-full h-full">
             <img
               src={currentHero.retouched}
@@ -362,13 +405,13 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             />
 
             {/* Finished Badge */}
-            <div className="absolute top-5 right-5 z-20 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md text-white font-mono text-xs font-bold border border-white/20 shadow-2xl flex items-center gap-1.5">
+            <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full bg-black/85 backdrop-blur-md text-white font-mono text-xs font-bold border border-white/20 shadow-2xl flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
               <span>Finished: {currentHero.title}</span>
             </div>
           </div>
 
-          {/* LEFT LAYER: RAW IMAGE (CLIPPED BY SLIDER) */}
+          {/* LEFT LAYER: RAW CAPTURE (CLIPPED BY SLIDER) */}
           <div
             className="absolute inset-0 overflow-hidden z-20"
             style={{ clipPath: `polygon(0 0, ${heroSplit}% 0, ${heroSplit}% 100%, 0 100%)` }}
@@ -382,7 +425,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               />
 
               {/* Raw Badge */}
-              <div className="absolute top-5 left-5 z-20 px-3.5 py-1.5 rounded-full bg-neutral-900/90 backdrop-blur-md text-neutral-300 font-mono text-xs font-bold border border-white/10 shadow-2xl flex items-center gap-1.5">
+              <div className="absolute top-4 left-4 z-20 px-3 py-1.5 rounded-full bg-neutral-900/90 backdrop-blur-md text-neutral-300 font-mono text-xs font-bold border border-white/10 shadow-2xl flex items-center gap-1.5">
                 <Scissors className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Raw Unprocessed Plate</span>
               </div>
@@ -394,107 +437,121 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_20px_rgba(255,255,255,1)] z-30 pointer-events-none"
             style={{ left: `${heroSplit}%` }}
           >
-            <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white text-black shadow-2xl border-2 border-black/20 flex items-center justify-center font-mono text-xs font-bold">
+            <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white text-black shadow-2xl border-2 border-black/20 flex items-center justify-center font-mono text-xs font-bold">
               ⟷
             </div>
           </div>
 
-          {/* Floating Pill at Bottom Center */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md text-white font-mono text-[11px] pointer-events-none shadow-2xl border border-white/10">
-            <span>{currentHero.subtitle} • Drag to compare</span>
+          {/* Bottom Floating Pill */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md text-white font-mono text-[11px] pointer-events-none shadow-2xl border border-white/10">
+            <span>{currentHero.subtitle} • Drag left / right</span>
           </div>
         </div>
 
-        {/* Minimal Controls Bar Below */}
-        <div className="flex items-center justify-between mt-4 px-2 text-xs font-mono text-neutral-400">
+        {/* Minimal Bottom Bar */}
+        <div className={`flex items-center justify-between mt-3 px-1 text-xs font-mono ${
+          isDark ? 'text-neutral-400' : 'text-neutral-600'
+        }`}>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setHeroSplit(0)}
               className={`px-3 py-1 rounded-lg transition-colors ${
-                heroSplit === 0 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                heroSplit === 0
+                  ? 'bg-[#de4a2c] text-white font-bold'
+                  : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
               }`}
             >
-              Finished
+              Finished (100%)
             </button>
             <button
               onClick={() => setHeroSplit(50)}
               className={`px-3 py-1 rounded-lg transition-colors ${
-                heroSplit === 50 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                heroSplit === 50
+                  ? 'bg-[#de4a2c] text-white font-bold'
+                  : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
               }`}
             >
-              50/50
+              50 / 50 Split
             </button>
             <button
               onClick={() => setHeroSplit(100)}
               className={`px-3 py-1 rounded-lg transition-colors ${
-                heroSplit === 100 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                heroSplit === 100
+                  ? 'bg-[#de4a2c] text-white font-bold'
+                  : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
               }`}
             >
-              Raw
+              Raw (100%)
             </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-neutral-500">Split: {heroSplit}%</span>
+            <span className="text-[11px]">Split: {heroSplit}%</span>
             <input
               type="range"
               min="0"
               max="100"
               value={heroSplit}
               onChange={(e) => setHeroSplit(Number(e.target.value))}
-              className="w-24 sm:w-44 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#de4a2c]"
+              className="w-24 sm:w-44 h-1.5 rounded-lg appearance-none cursor-pointer accent-[#de4a2c]"
             />
           </div>
         </div>
       </section>
 
-      {/* 3. DEDICATED TRUE SCROLL PARALLAX RUNWAY */}
-      <section id="parallax-runway" className="py-24 px-4 sm:px-8 max-w-[1520px] mx-auto border-t border-white/[0.08] relative">
+      {/* 3. DEDICATED TRUE SCROLL PARALLAX RUNWAY (DUAL THEME) */}
+      <section id="parallax-runway" className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
+        isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
+      }`}>
         
-        {/* Minimal Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
           <div>
-            <div className="text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider mb-1">
+            <div className="text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
               Multi-Layer Depth
             </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight">
               The Parallax Runway
             </h2>
           </div>
-          <div className="text-xs font-mono text-neutral-500">
-            Scroll to experience dual-speed depth layers
+          <div className={`text-xs font-mono ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+            Scroll to experience 3-speed staggered depth
           </div>
         </div>
 
-        {/* 3 Staggered Parallax Columns Moving at Different Speeds */}
+        {/* 3 Staggered Parallax Columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-start">
           
-          {/* COLUMN 1: Scrolls at normal speed (Speed 1.0) */}
+          {/* COLUMN 1: Speed 1.0 */}
           <div
             className="space-y-6 sm:space-y-8 transition-transform duration-100 ease-out"
-            style={{ transform: `translateY(${scrollY * -0.06}px)` }}
+            style={{ transform: `translateY(${scrollY * -0.05}px)` }}
           >
             {SERVICES_11.slice(0, 4).map((s) => (
               <div
                 key={s.id}
-                className="group relative rounded-3xl overflow-hidden bg-neutral-900 border border-white/10 shadow-2xl hover:border-white/30 transition-all duration-300"
+                className={`group relative rounded-3xl overflow-hidden border shadow-xl transition-all duration-300 ${
+                  isDark
+                    ? 'bg-neutral-900 border-white/10 hover:border-white/30'
+                    : 'bg-white border-black/10 hover:border-black/30'
+                }`}
               >
-                <div className="relative w-full h-[360px] sm:h-[440px] overflow-hidden">
+                <div className="relative w-full h-[340px] sm:h-[400px] overflow-hidden">
                   <img
                     src={s.image}
                     alt={s.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
                 </div>
 
                 <div className="absolute bottom-5 left-5 right-5 z-20 flex items-end justify-between">
                   <div>
                     <div className="text-xs font-mono text-[#de4a2c] font-bold">{s.number}</div>
                     <div className="font-display text-lg font-bold text-white">{s.name}</div>
-                    <div className="text-[11px] font-mono text-neutral-400 mt-0.5">{s.tag}</div>
+                    <div className="text-[11px] font-mono text-neutral-300 mt-0.5">{s.tag}</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10 shrink-0">
+                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/15 shrink-0">
                     {s.turnaround}
                   </span>
                 </div>
@@ -502,32 +559,36 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             ))}
           </div>
 
-          {/* COLUMN 2: Scrolls faster (Speed 1.3 - Dynamic Depth) */}
+          {/* COLUMN 2: Speed 1.25 */}
           <div
-            className="space-y-6 sm:space-y-8 transition-transform duration-100 ease-out md:mt-16"
-            style={{ transform: `translateY(${scrollY * 0.08}px)` }}
+            className="space-y-6 sm:space-y-8 transition-transform duration-100 ease-out md:mt-14"
+            style={{ transform: `translateY(${scrollY * 0.07}px)` }}
           >
             {SERVICES_11.slice(4, 8).map((s) => (
               <div
                 key={s.id}
-                className="group relative rounded-3xl overflow-hidden bg-neutral-900 border border-white/10 shadow-2xl hover:border-white/30 transition-all duration-300"
+                className={`group relative rounded-3xl overflow-hidden border shadow-xl transition-all duration-300 ${
+                  isDark
+                    ? 'bg-neutral-900 border-white/10 hover:border-white/30'
+                    : 'bg-white border-black/10 hover:border-black/30'
+                }`}
               >
-                <div className="relative w-full h-[360px] sm:h-[440px] overflow-hidden">
+                <div className="relative w-full h-[340px] sm:h-[400px] overflow-hidden">
                   <img
                     src={s.image}
                     alt={s.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
                 </div>
 
                 <div className="absolute bottom-5 left-5 right-5 z-20 flex items-end justify-between">
                   <div>
                     <div className="text-xs font-mono text-[#de4a2c] font-bold">{s.number}</div>
                     <div className="font-display text-lg font-bold text-white">{s.name}</div>
-                    <div className="text-[11px] font-mono text-neutral-400 mt-0.5">{s.tag}</div>
+                    <div className="text-[11px] font-mono text-neutral-300 mt-0.5">{s.tag}</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10 shrink-0">
+                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/15 shrink-0">
                     {s.turnaround}
                   </span>
                 </div>
@@ -535,49 +596,53 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             ))}
           </div>
 
-          {/* COLUMN 3: Scrolls slower (Speed 0.7 - Deep Background Plane) */}
+          {/* COLUMN 3: Speed 0.75 */}
           <div
             className="space-y-6 sm:space-y-8 transition-transform duration-100 ease-out md:-mt-8"
-            style={{ transform: `translateY(${scrollY * -0.09}px)` }}
+            style={{ transform: `translateY(${scrollY * -0.08}px)` }}
           >
             {SERVICES_11.slice(8, 11).map((s) => (
               <div
                 key={s.id}
-                className="group relative rounded-3xl overflow-hidden bg-neutral-900 border border-white/10 shadow-2xl hover:border-white/30 transition-all duration-300"
+                className={`group relative rounded-3xl overflow-hidden border shadow-xl transition-all duration-300 ${
+                  isDark
+                    ? 'bg-neutral-900 border-white/10 hover:border-white/30'
+                    : 'bg-white border-black/10 hover:border-black/30'
+                }`}
               >
-                <div className="relative w-full h-[360px] sm:h-[440px] overflow-hidden">
+                <div className="relative w-full h-[340px] sm:h-[400px] overflow-hidden">
                   <img
                     src={s.image}
                     alt={s.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
                 </div>
 
                 <div className="absolute bottom-5 left-5 right-5 z-20 flex items-end justify-between">
                   <div>
                     <div className="text-xs font-mono text-[#de4a2c] font-bold">{s.number}</div>
                     <div className="font-display text-lg font-bold text-white">{s.name}</div>
-                    <div className="text-[11px] font-mono text-neutral-400 mt-0.5">{s.tag}</div>
+                    <div className="text-[11px] font-mono text-neutral-300 mt-0.5">{s.tag}</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10 shrink-0">
+                  <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/15 shrink-0">
                     {s.turnaround}
                   </span>
                 </div>
               </div>
             ))}
 
-            {/* Free Trial Card Inset */}
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-[#de4a2c] to-[#992510] text-white shadow-2xl flex flex-col justify-between h-[360px]">
+            {/* Inset Trial CTA */}
+            <div className="p-8 rounded-3xl bg-gradient-to-br from-[#de4a2c] to-[#992510] text-white shadow-2xl flex flex-col justify-between h-[340px]">
               <div>
                 <span className="text-xs font-mono uppercase tracking-wider bg-black/20 px-3 py-1 rounded-full">
-                  Instant Access
+                  Free Evaluation
                 </span>
                 <h3 className="font-display text-2xl font-bold mt-4">
-                  Test Your Own 3 RAW Images Free
+                  Test Your Own 3 RAW Images
                 </h3>
                 <p className="font-mono text-xs text-white/80 mt-2">
-                  No credit card required. Receive non-destructive proofs in 24 hours.
+                  Receive hand-finished 16-bit proofs in 24 hours. Zero risk.
                 </p>
               </div>
 
@@ -594,21 +659,25 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         </div>
       </section>
 
-      {/* 4. THE 11 SERVICES VISUAL DECK (MINIMAL TEXT, IMAGE CARDS) */}
-      <section id="services-deck" className="py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t border-white/[0.08]">
+      {/* 4. ALL 11 SPECIALIST SERVICES VISUAL TILES */}
+      <section id="services-deck" className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
+        isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
+      }`}>
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
               Service Catalog
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white">
-              All 11 Specialist Disciplines
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight">
+              11 Specialist Disciplines
             </h2>
           </div>
-          <span className="text-xs font-mono text-neutral-500">11 of 11 Active</span>
+          <span className={`text-xs font-mono ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+            Click any tile to inspect in Lab
+          </span>
         </div>
 
-        {/* 11 Service Visual Tiles */}
+        {/* 11 Tiles Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           {SERVICES_11.map((service, idx) => (
             <button
@@ -618,7 +687,11 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
                 const el = document.getElementById('studio-lab');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="group p-3 rounded-2xl bg-neutral-900 border border-white/10 hover:border-[#de4a2c] text-left transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1"
+              className={`group p-3 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 ${
+                isDark
+                  ? 'bg-neutral-900 border-white/10 hover:border-[#de4a2c]'
+                  : 'bg-white border-black/10 hover:border-[#de4a2c] shadow-sm'
+              }`}
             >
               <div className="relative w-full h-36 rounded-xl overflow-hidden bg-black mb-3">
                 <img
@@ -632,10 +705,12 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               </div>
 
               <div>
-                <div className="font-display text-xs font-bold text-white group-hover:text-[#de4a2c] transition-colors truncate">
+                <div className="font-display text-xs font-bold group-hover:text-[#de4a2c] transition-colors truncate">
                   {service.name}
                 </div>
-                <div className="text-[10px] font-mono text-neutral-400 truncate mt-0.5">
+                <div className={`text-[10px] font-mono truncate mt-0.5 ${
+                  isDark ? 'text-neutral-400' : 'text-neutral-500'
+                }`}>
                   {service.tag}
                 </div>
               </div>
@@ -644,8 +719,10 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         </div>
       </section>
 
-      {/* 5. INTERACTIVE LIVE RETOUCH STUDIO (FULL-WIDTH COMPARISON) */}
-      <section id="studio-lab" className="py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t border-white/[0.08]">
+      {/* 5. INTERACTIVE STUDIO LAB (BEFORE/AFTER SLIDER) */}
+      <section id="studio-lab" className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
+        isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
+      }`}>
         
         {/* Lab Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
@@ -653,15 +730,15 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             <div className="text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
               Precision Studio Lab
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white mt-1">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight mt-1">
               {currentStudio.number}. {currentStudio.name}
             </h2>
-            <div className="text-xs font-mono text-neutral-400 mt-1">
-              {currentStudio.tag} • Standard SLA: {currentStudio.turnaround}
+            <div className={`text-xs font-mono mt-1 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+              {currentStudio.tag} • Standard Turnaround: {currentStudio.turnaround}
             </div>
           </div>
 
-          {/* Quick Category Buttons */}
+          {/* Quick Pill Selector */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
             {SERVICES_11.map((s, idx) => (
               <button
@@ -672,8 +749,8 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-mono whitespace-nowrap transition-all ${
                   activeStudioIndex === idx
-                    ? 'bg-white text-black font-bold'
-                    : 'bg-white/5 text-neutral-400 hover:text-white'
+                    ? 'bg-[#de4a2c] text-white font-bold shadow-sm'
+                    : isDark ? 'bg-white/5 text-neutral-400 hover:text-white' : 'bg-neutral-200 text-neutral-700 hover:text-black'
                 }`}
               >
                 {s.number}
@@ -683,9 +760,11 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         </div>
 
         {/* Large Interactive Split Stage */}
-        <div className="relative max-w-5xl mx-auto bg-neutral-900 rounded-3xl border border-white/10 shadow-2xl p-4 sm:p-6">
+        <div className={`relative max-w-5xl mx-auto rounded-3xl border shadow-2xl p-4 sm:p-6 transition-colors ${
+          isDark ? 'bg-neutral-900 border-white/10' : 'bg-white border-black/10'
+        }`}>
           <div
-            className="relative w-full h-[460px] sm:h-[580px] md:h-[650px] rounded-2xl overflow-hidden bg-black select-none border border-white/10 cursor-ew-resize group shadow-inner"
+            className="relative w-full h-[460px] sm:h-[560px] md:h-[620px] rounded-2xl overflow-hidden bg-black select-none border border-black/10 cursor-ew-resize group shadow-inner"
             onMouseDown={(e) => handleStudioSplitMove(e.clientX, e.currentTarget)}
             onTouchMove={(e) => {
               if (e.touches[0]) handleStudioSplitMove(e.touches[0].clientX, e.currentTarget);
@@ -702,7 +781,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
 
               <div className="absolute top-4 right-4 z-20 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md text-white font-mono text-xs font-bold border border-white/20 shadow-xl flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
-                <span>Finished Retouch</span>
+                <span>Finished 16-Bit Retouch</span>
               </div>
             </div>
 
@@ -721,7 +800,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
 
                 <div className="absolute top-4 left-4 z-20 px-3.5 py-1.5 rounded-full bg-neutral-900/90 backdrop-blur-md text-neutral-300 font-mono text-xs font-bold border border-white/10 shadow-xl flex items-center gap-1.5">
                   <Scissors className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Raw Capture</span>
+                  <span>Raw Capture Plate</span>
                 </div>
               </div>
             </div>
@@ -737,17 +816,21 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             </div>
 
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md text-white font-mono text-[11px] pointer-events-none shadow-xl border border-white/10">
-              <span>Drag left / right to inspect seam & edge precision</span>
+              <span>Drag left / right to evaluate pixel precision</span>
             </div>
           </div>
 
           {/* Quick Buttons */}
-          <div className="mt-4 pt-2.5 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <div className={`mt-4 pt-2.5 flex items-center justify-between text-xs font-mono ${
+            isDark ? 'text-neutral-400' : 'text-neutral-600'
+          }`}>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setStudioSplit(0)}
                 className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  studioSplit === 0 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                  studioSplit === 0
+                    ? 'bg-[#de4a2c] text-white font-bold'
+                    : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
                 }`}
               >
                 100% Finished
@@ -755,7 +838,9 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               <button
                 onClick={() => setStudioSplit(50)}
                 className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  studioSplit === 50 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                  studioSplit === 50
+                    ? 'bg-[#de4a2c] text-white font-bold'
+                    : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
                 }`}
               >
                 50 / 50 Split
@@ -763,7 +848,9 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               <button
                 onClick={() => setStudioSplit(100)}
                 className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  studioSplit === 100 ? 'bg-[#de4a2c] text-white font-bold' : 'bg-white/5 hover:bg-white/10 text-neutral-300'
+                  studioSplit === 100
+                    ? 'bg-[#de4a2c] text-white font-bold'
+                    : isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-neutral-200 hover:bg-neutral-300'
                 }`}
               >
                 100% Raw
@@ -771,33 +858,43 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-neutral-500">Split: {studioSplit}%</span>
+              <span className="text-[11px]">Split: {studioSplit}%</span>
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={studioSplit}
                 onChange={(e) => setStudioSplit(Number(e.target.value))}
-                className="w-24 sm:w-44 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#de4a2c]"
+                className="w-24 sm:w-44 h-1.5 rounded-lg appearance-none cursor-pointer accent-[#de4a2c]"
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. MINIMAL ENTERPRISE FREE PILOT CTA */}
-      <section className="py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t border-white/[0.08]">
-        <div className="max-w-3xl mx-auto text-center rounded-3xl bg-neutral-900 border border-white/10 p-8 sm:p-12 shadow-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-xs font-mono text-neutral-300 mb-4 border border-white/10">
+      {/* 6. MINIMAL FREE PILOT CTA */}
+      <section className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
+        isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
+      }`}>
+        <div className={`max-w-3xl mx-auto text-center rounded-3xl border p-8 sm:p-12 shadow-2xl transition-colors ${
+          isDark
+            ? 'bg-neutral-900 border-white/10'
+            : 'bg-white border-black/10 shadow-lg'
+        }`}>
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono mb-4 border ${
+            isDark ? 'bg-white/5 border-white/10 text-neutral-300' : 'bg-neutral-100 border-black/10 text-neutral-700'
+          }`}>
             <Sparkles className="w-3.5 h-3.5 text-[#de4a2c]" />
             <span>Complimentary Pilot Evaluation</span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold mb-3">
             Test 3 Images on Us.
           </h2>
 
-          <p className="font-mono text-xs text-neutral-400 mb-6 max-w-md mx-auto">
+          <p className={`font-mono text-xs mb-6 max-w-md mx-auto ${
+            isDark ? 'text-neutral-400' : 'text-neutral-600'
+          }`}>
             Drop 3 files. Receive hand-finished 16-bit layered proofs within 24 hours. Zero commitment.
           </p>
 
@@ -812,14 +909,16 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
       </section>
 
       {/* 7. MINIMAL FOOTER */}
-      <footer className="border-t border-white/[0.08] py-6 px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-neutral-500 gap-4">
+      <footer className={`border-t py-6 px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between text-xs font-mono gap-4 transition-colors ${
+        isDark ? 'border-white/[0.08] text-neutral-500' : 'border-black/[0.08] text-neutral-500'
+      }`}>
         <div>Cutting Edger • 11 Commercial Image Editing Services • 16-Bit Non-Destructive</div>
         <div className="flex items-center gap-4">
-          <a href="#parallax-runway" className="hover:text-white transition-colors">Parallax Runway</a>
-          <span className="text-white/20">•</span>
-          <a href="#services-deck" className="hover:text-white transition-colors">11 Services</a>
-          <span className="text-white/20">•</span>
-          <a href="#studio-lab" className="hover:text-white transition-colors">Live Lab</a>
+          <a href="#parallax-runway" className="hover:opacity-80 transition-opacity">Parallax Runway</a>
+          <span className="opacity-30">•</span>
+          <a href="#services-deck" className="hover:opacity-80 transition-opacity">11 Services</a>
+          <span className="opacity-30">•</span>
+          <a href="#studio-lab" className="hover:opacity-80 transition-opacity">Live Lab</a>
         </div>
       </footer>
 
