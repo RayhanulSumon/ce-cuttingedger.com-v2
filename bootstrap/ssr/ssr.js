@@ -164,7 +164,12 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 				{
 					label: "08. Image Editing & Retouch (11 Services)",
 					href: "/?v=8",
-					badge: "NEW V8"
+					badge: "V8 RETOUCH"
+				},
+				{
+					label: "09. Arven Lookbook (3s Slider)",
+					href: "/?v=9",
+					badge: "NEW V9"
 				}
 			]
 		},
@@ -1048,7 +1053,7 @@ function MobileMenu({ isOpen, onClose, onOpenContact, settings }) {
 							children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-accent animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "10 Homepage Demos:" })]
 						}), /* @__PURE__ */ jsx("span", {
 							className: "text-accent",
-							children: "01 to 07"
+							children: "01 to 09"
 						})]
 					}), /* @__PURE__ */ jsx("div", {
 						className: "flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none",
@@ -1084,6 +1089,10 @@ function MobileMenu({ isOpen, onClose, onOpenContact, settings }) {
 							{
 								id: "8",
 								name: "08 Retouch"
+							},
+							{
+								id: "9",
+								name: "09 Arven"
 							}
 						].map((d) => /* @__PURE__ */ jsx(Link, {
 							href: `/?v=${d.id}`,
@@ -4544,7 +4553,8 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-CeZROX8y.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-B2zMxnij.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-uacoF8A5.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-JAS2NmbV.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-B5srrl9D.js"),
+			"./Pages/HomeVariants/HomeArvenStudio.tsx": () => import("./assets/HomeArvenStudio-BUgH40-6.js"),
 			"./Pages/HomeVariants/HomeEditorial.tsx": () => import("./assets/HomeEditorial-gndU4Tx7.js"),
 			"./Pages/HomeVariants/HomeOmniStudio.tsx": () => import("./assets/HomeOmniStudio-KDeToqye.js"),
 			"./Pages/HomeVariants/HomeOriginal.tsx": () => import("./assets/HomeOriginal-k4qLB1pA.js"),
@@ -4552,7 +4562,7 @@ createServer((page) => createInertiaApp({
 			"./Pages/HomeVariants/HomePortfolio.tsx": () => import("./assets/HomePortfolio-CLVFgukR.js"),
 			"./Pages/HomeVariants/HomeRetouchStudio.tsx": () => import("./assets/HomeRetouchStudio-BrhNzPpZ.js"),
 			"./Pages/HomeVariants/HomeStudioS1.tsx": () => import("./assets/HomeStudioS1-Dx36h44p.js"),
-			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-DxDS2Tim.js"),
+			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-9CZo3Eo3.js"),
 			"./Pages/HomeVariants/HomeVisual.tsx": () => import("./assets/HomeVisual-FlhyndUS.js"),
 			"./Pages/Legal/CookiePolicy.tsx": () => import("./assets/CookiePolicy-BJOtxyQi.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-D62DHBuM.js"),

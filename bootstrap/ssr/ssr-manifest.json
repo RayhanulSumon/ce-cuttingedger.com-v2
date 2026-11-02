@@ -199,7 +199,10 @@
     "/build/assets/Faq-uacoF8A5.js"
   ],
   "resources/js/Pages/Home.tsx": [
-    "/build/assets/Home-JAS2NmbV.js"
+    "/build/assets/Home-B5srrl9D.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeArvenStudio.tsx": [
+    "/build/assets/HomeArvenStudio-BUgH40-6.js"
   ],
   "resources/js/Pages/HomeVariants/HomeEditorial.tsx": [
     "/build/assets/HomeEditorial-gndU4Tx7.js"
@@ -223,7 +226,7 @@
     "/build/assets/HomeStudioS1-Dx36h44p.js"
   ],
   "resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx": [
-    "/build/assets/HomeVariantSwitcher-DxDS2Tim.js"
+    "/build/assets/HomeVariantSwitcher-9CZo3Eo3.js"
   ],
   "resources/js/Pages/HomeVariants/HomeVisual.tsx": [
     "/build/assets/HomeVisual-FlhyndUS.js"

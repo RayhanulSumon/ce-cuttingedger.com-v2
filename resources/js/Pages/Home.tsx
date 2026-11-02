@@ -9,6 +9,7 @@ import { HomePhotoLight } from './HomeVariants/HomePhotoLight';
 import { HomeStudioS1 } from './HomeVariants/HomeStudioS1';
 import { HomeOmniStudio } from './HomeVariants/HomeOmniStudio';
 import { HomeRetouchStudio } from './HomeVariants/HomeRetouchStudio';
+import { HomeArvenStudio } from './HomeVariants/HomeArvenStudio';
 
 interface HomeProps {
   featuredProjects?: any[];
@@ -27,7 +28,7 @@ interface HomeProps {
 
 export default function Home({ clients = [], variant = '1' }: HomeProps) {
   const { url } = usePage();
-  const valid = ['1', '2', '3', '4', '5', '6', '7', '8'];
+  const valid = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   const getInitialVariant = () => {
     if (variant && valid.includes(variant)) {
@@ -111,6 +112,8 @@ export default function Home({ clients = [], variant = '1' }: HomeProps) {
         return <HomeOmniStudio clients={clients} />;
       case '8':
         return <HomeRetouchStudio clients={clients} />;
+      case '9':
+        return <HomeArvenStudio clients={clients} />;
       case '1':
       default:
         return <HomeOriginal clients={clients} />;

@@ -75,6 +75,15 @@ var HOME_VARIANTS = [
 		accentColor: "#de4a2c",
 		bgTone: "Obsidian Studio #08090C",
 		icon: Scissors
+	},
+	{
+		id: "9",
+		name: "Arven Photography Lookbook",
+		badge: "3S SLIDER",
+		tagline: "Inspired by Gloria Themes Arven: Fullscreen photography showcase hero slider (changes every 3s) + multi-item 3s carousel, centered card stage & editorial portfolio gallery",
+		accentColor: "#de4a2c",
+		bgTone: "Arven Light #FAFAFA",
+		icon: Camera
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {

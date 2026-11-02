@@ -1,4 +1,4 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-DxDS2Tim.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-9CZo3Eo3.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
 import { HomePortfolio } from "./HomePortfolio-CLVFgukR.js";
@@ -7,6 +7,7 @@ import { HomePhotoLight } from "./HomePhotoLight-BJcAsY74.js";
 import { HomeStudioS1 } from "./HomeStudioS1-Dx36h44p.js";
 import { HomeOmniStudio } from "./HomeOmniStudio-KDeToqye.js";
 import { HomeRetouchStudio } from "./HomeRetouchStudio-BrhNzPpZ.js";
+import { HomeArvenStudio } from "./HomeArvenStudio-BUgH40-6.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
@@ -21,7 +22,8 @@ function Home({ clients = [], variant = "1" }) {
 		"5",
 		"6",
 		"7",
-		"8"
+		"8",
+		"9"
 	];
 	const getInitialVariant = () => {
 		if (variant && valid.includes(variant)) return variant;
@@ -76,6 +78,7 @@ function Home({ clients = [], variant = "1" }) {
 			case "6": return /* @__PURE__ */ jsx(HomeStudioS1, { clients });
 			case "7": return /* @__PURE__ */ jsx(HomeOmniStudio, { clients });
 			case "8": return /* @__PURE__ */ jsx(HomeRetouchStudio, { clients });
+			case "9": return /* @__PURE__ */ jsx(HomeArvenStudio, { clients });
 			default: return /* @__PURE__ */ jsx(HomeOriginal, { clients });
 		}
 	};

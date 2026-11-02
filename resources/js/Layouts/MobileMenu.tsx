@@ -78,7 +78,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                             <span>10 Homepage Demos:</span>
                         </span>
-                        <span className="text-accent">01 to 07</span>
+                        <span className="text-accent">01 to 09</span>
                     </div>
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                         {[
@@ -90,6 +90,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                             { id: '6', name: '06 Headshots' },
                             { id: '7', name: '07 3D Try-On' },
                             { id: '8', name: '08 Retouch' },
+                            { id: '9', name: '09 Arven' },
                         ].map((d) => (
                             <Link
                                 key={d.id}
