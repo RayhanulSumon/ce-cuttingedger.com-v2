@@ -299,3 +299,11 @@ select option {
     background-size: 24px 24px;
     background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
