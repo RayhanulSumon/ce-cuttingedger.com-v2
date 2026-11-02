@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import { HomeVariantSwitcher } from './HomeVariants/HomeVariantSwitcher';
 import { HomeOriginal } from './HomeVariants/HomeOriginal';
-import { HomeFigmaRed } from './HomeVariants/HomeFigmaRed';
+import { HomeVisual } from './HomeVariants/HomeVisual';
+import { HomeCinematic } from './HomeVariants/HomeCinematic';
 import { HomeEditorial } from './HomeVariants/HomeEditorial';
-import { HomeTechnical } from './HomeVariants/HomeTechnical';
-import { HomeConversion } from './HomeVariants/HomeConversion';
+import { HomeMetric } from './HomeVariants/HomeMetric';
+import { HomeBold } from './HomeVariants/HomeBold';
 
 interface HomeProps {
   featuredProjects?: any[];
@@ -29,11 +30,11 @@ export default function Home({ clients = [] }: HomeProps) {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const v = params.get('v');
-      if (v && ['1', '2', '3', '4', '5'].includes(v)) {
+      if (v && ['1', '2', '3', '4', '5', '6'].includes(v)) {
         setCurrentVariant(v);
       } else {
         const saved = localStorage.getItem('ce_home_variant');
-        if (saved && ['1', '2', '3', '4', '5'].includes(saved)) {
+        if (saved && ['1', '2', '3', '4', '5', '6'].includes(saved)) {
           setCurrentVariant(saved);
         }
       }
@@ -58,13 +59,15 @@ export default function Home({ clients = [] }: HomeProps) {
   const renderVariantContent = () => {
     switch (currentVariant) {
       case '2':
-        return <HomeFigmaRed clients={clients} />;
+        return <HomeVisual clients={clients} />;
       case '3':
-        return <HomeEditorial clients={clients} />;
+        return <HomeCinematic clients={clients} />;
       case '4':
-        return <HomeTechnical clients={clients} />;
+        return <HomeEditorial clients={clients} />;
       case '5':
-        return <HomeConversion clients={clients} />;
+        return <HomeMetric clients={clients} />;
+      case '6':
+        return <HomeBold clients={clients} />;
       case '1':
       default:
         return <HomeOriginal clients={clients} />;
@@ -77,7 +80,7 @@ export default function Home({ clients = [] }: HomeProps) {
         <title>CuttingEdger — Radical Digital Agency & Post-Production Atelier</title>
         <meta
           name="description"
-          content="Enterprise-grade e-commerce image post-production, hand-crafted clipping paths, and ghost mannequin retouching with #de4a2c brand identity."
+          content="Enterprise-grade e-commerce image post-production, AI headshots, virtual try-on, and ghost mannequin retouching with #de4a2c brand identity."
         />
       </Head>
 

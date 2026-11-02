@@ -1,52 +1,61 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { Check, Flame, Layers, Sliders, Sparkles, Zap } from "lucide-react";
+import { BarChart3, BookOpen, Check, Eye, Film, Sparkles, Zap } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
 	{
 		id: "1",
 		name: "Original Studio",
-		badge: "STUDIO DEFAULT",
-		tagline: "Your full original studio homepage with interactive labs & bento",
+		badge: "DEFAULT",
+		tagline: "Full original studio homepage with interactive lab, split-slider & bento",
 		accentColor: "#10b981",
-		bgTone: "Studio Neutral #F8F9FA",
+		bgTone: "Studio Light #F8F9FA",
 		icon: Sparkles
 	},
 	{
 		id: "2",
-		name: "Figma Vermilion",
-		badge: "FIGMA #DE4A2C",
-		tagline: "Figma prototype edition with #de4a2c brand identity & dark studio",
+		name: "AI Visual Engine",
+		badge: "NEW • 5 SERVICES",
+		tagline: "Image-first illustration of the 5 AI & retouching services with live before/after stages",
 		accentColor: "#de4a2c",
-		bgTone: "Dark Vermilion Luxe",
-		icon: Flame
+		bgTone: "Dark Stage #08090C",
+		icon: Eye
 	},
 	{
 		id: "3",
-		name: "Editorial Atelier",
-		badge: "SSENSE / VOGUE",
-		tagline: "High-fashion editorial layout with serif typography & atelier timeline",
+		name: "Cinematic Noir",
+		badge: "LUXURY DARK",
+		tagline: "Dark obsidian theater with glassmorphism telemetry & ambient #de4a2c glow",
 		accentColor: "#de4a2c",
-		bgTone: "Warm Paper #F6F5F0",
-		icon: Layers
+		bgTone: "Obsidian #07080B",
+		icon: Film
 	},
 	{
 		id: "4",
-		name: "Technical Workbench",
-		badge: "LINEAR / FIGMA TECH",
-		tagline: "Dark blueprint workbench with live HUD specs & SLA telemetry",
+		name: "Editorial Atelier",
+		badge: "SSENSE / VOGUE",
+		tagline: "Warm paper editorial with serif typography, story cards & masthead styling",
 		accentColor: "#de4a2c",
-		bgTone: "Cyber Noir #0A0B0E",
-		icon: Sliders
+		bgTone: "Warm Paper #F7F5F0",
+		icon: BookOpen
 	},
 	{
 		id: "5",
-		name: "Conversion Engine",
-		badge: "SHOPIFY PLUS",
-		tagline: "Instant dropzone hero, ROI comparison & friction-free ordering",
+		name: "Telemetry Metric",
+		badge: "DATA-FORWARD",
+		tagline: "Clean white SaaS layout with live SLA compliance metrics & spec grids",
 		accentColor: "#de4a2c",
-		bgTone: "Clean Pure #FFFFFF",
+		bgTone: "Clean White #FFFFFF",
+		icon: BarChart3
+	},
+	{
+		id: "6",
+		name: "Brutalist Bold",
+		badge: "HIGH IMPACT",
+		tagline: "Massive typography, bold geometric strips, and zero-friction sample claim",
+		accentColor: "#de4a2c",
+		bgTone: "High-Contrast B&W",
 		icon: Zap
 	}
 ];
@@ -73,24 +82,29 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 		"aria-label": "Homepage prototype layout switcher",
 		className: "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[95vw] pointer-events-auto",
 		children: [isExpanded && /* @__PURE__ */ jsxs("div", {
-			className: "w-[560px] max-w-[94vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
+			className: "w-[720px] max-w-[95vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
 			children: [/* @__PURE__ */ jsxs("div", {
 				className: "flex items-center justify-between pb-3 border-b border-white/10 mb-3",
 				children: [/* @__PURE__ */ jsxs("div", {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "Homepage Prototype Gallery"
+						children: "Homepage Prototypes Gallery"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",
-					children: ["Primary Accent: ", /* @__PURE__ */ jsx("code", {
+					children: ["Active: ", /* @__PURE__ */ jsxs("code", {
 						className: "text-[#de4a2c] font-bold",
-						children: "#de4a2c"
+						children: [
+							"0",
+							currentVariantObj.id,
+							" ",
+							currentVariantObj.name
+						]
 					})]
 				})]
 			}), /* @__PURE__ */ jsx("div", {
-				className: "grid grid-cols-1 sm:grid-cols-5 gap-2",
+				className: "grid grid-cols-2 sm:grid-cols-6 gap-2",
 				children: HOME_VARIANTS.map((variant) => {
 					const isCurrent = variant.id === selected;
 					const IconComp = variant.icon;
@@ -118,7 +132,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 								children: variant.name
 							}), /* @__PURE__ */ jsx("div", {
 								className: "text-[9px] font-mono text-neutral-400 mt-1 line-clamp-1",
-								children: variant.bgTone
+								children: variant.badge
 							})] })
 						]
 					}, variant.id);
