@@ -177,7 +177,7 @@ interface HomeProps {
 export default function Home(_props: HomeProps) {
   // 1. Hero Interactive State
   const [heroTabIdx, setHeroTabIdx] = useState(0);
-  const currentHero = HERO_SHOWCASE_PLATES[heroTabIdx];
+  const currentHero = HERO_SHOWCASE_PLATES[heroTabIdx] || HERO_SHOWCASE_PLATES[0];
   const [splitPos, setSplitPos] = useState(50);
   const [isDraggingSplit, setIsDraggingSplit] = useState(false);
   const [heroFinishMode, setHeroFinishMode] = useState<'master' | 'white' | 'tint' | 'raw'>('master');
@@ -253,7 +253,8 @@ export default function Home(_props: HomeProps) {
 
   // Compute Live Playground Filter
   const getPlaygroundFilter = () => {
-    const hue = SKU_SWATCHES[activeSwatchIdx].hue;
+    const currentSwatch = SKU_SWATCHES[activeSwatchIdx] || SKU_SWATCHES[0];
+    const hue = currentSwatch.hue;
     const polishPart = layerPolish
       ? 'brightness(1.06) contrast(1.1) saturate(1.12)'
       : 'brightness(0.84) contrast(0.86) saturate(0.65)';
@@ -333,18 +334,18 @@ export default function Home(_props: HomeProps) {
       ========================================== */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-12">
         {/* Minimalist Header Row */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-7">
-          <div>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-2">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 lg:gap-6 mb-6">
+          <div className="min-w-0">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-1.5">
               CREATIVE DIGITAL POST-PRODUCTION STUDIO
             </span>
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#0F0F12] leading-[1.08]">
+            <h1 className="text-2xl sm:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap">
               Visual Post-Production for Modern Brands.
             </h1>
           </div>
 
           {/* Category Switcher Pills */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap overflow-x-auto pb-1 lg:pb-0">
             {HERO_SHOWCASE_PLATES.map((plate, index) => {
               const active = heroTabIdx === index;
               return (
@@ -354,7 +355,7 @@ export default function Home(_props: HomeProps) {
                     setHeroTabIdx(index);
                     setHeroFinishMode('master');
                   }}
-                  className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all ${
+                  className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                     active
                       ? 'bg-[#0F0F12] text-white shadow-sm'
                       : 'bg-white text-neutral-600 hover:text-[#0F0F12] border border-neutral-200/80'
