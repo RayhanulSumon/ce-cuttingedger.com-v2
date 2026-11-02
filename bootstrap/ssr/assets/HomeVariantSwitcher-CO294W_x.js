@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BookOpen, Camera, Check, Eye, Grid, Sparkles } from "lucide-react";
+import { BookOpen, Camera, Check, Eye, Grid, Shirt, Sparkles, UserCheck } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -17,7 +17,7 @@ var HOME_VARIANTS = [
 		id: "2",
 		name: "AI Visual Engine",
 		badge: "IMAGE FIRST",
-		tagline: "Image-first illustration of the 5 AI & retouching services with live before/after stages",
+		tagline: "Image-first illustration of all 5 services with live before/after stages",
 		accentColor: "#de4a2c",
 		bgTone: "Dark Stage #08090C",
 		icon: Eye
@@ -26,7 +26,7 @@ var HOME_VARIANTS = [
 		id: "3",
 		name: "Portfolio Dark",
 		badge: "DARK MASONRY",
-		tagline: "Filterable case studies gallery with peek raw overlay & full-screen comparison modal",
+		tagline: "Filterable case studies gallery with peek raw overlay & comparison modal",
 		accentColor: "#de4a2c",
 		bgTone: "Obsidian Gallery #07080B",
 		icon: Grid
@@ -44,10 +44,28 @@ var HOME_VARIANTS = [
 		id: "5",
 		name: "Photo Lookbook",
 		badge: "LIGHT LUXE",
-		tagline: "Clean white photo-first portfolio lookbook with live comparison slider modal",
+		tagline: "Clean white photo-first portfolio lookbook with comparison slider modal",
 		accentColor: "#de4a2c",
 		bgTone: "Pure Light #FBFBFA",
 		icon: Camera
+	},
+	{
+		id: "6",
+		name: "S1 Headshots",
+		badge: "HR 20–500 SEATS",
+		tagline: "S1 AI Corporate Headshots: Interactive 6-10 selfie stack to branded executive portraits",
+		accentColor: "#de4a2c",
+		bgTone: "Clean #FAFAF9",
+		icon: UserCheck
+	},
+	{
+		id: "7",
+		name: "Virtual Try-On (S3)",
+		badge: "SELECT & SLIDE FIT",
+		tagline: "S3 Virtual Try-On Studio: Pick any fashion model, select any garment/dress, and check photorealistic drape by sliding",
+		accentColor: "#de4a2c",
+		bgTone: "Studio #FBFBFA",
+		icon: Shirt
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
@@ -71,16 +89,16 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 	const currentVariantObj = HOME_VARIANTS.find((v) => v.id === selected) || HOME_VARIANTS[0];
 	return /* @__PURE__ */ jsxs("aside", {
 		"aria-label": "Homepage prototype layout switcher",
-		className: "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[95vw] pointer-events-auto",
+		className: "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[98vw] pointer-events-auto",
 		children: [isExpanded && /* @__PURE__ */ jsxs("div", {
-			className: "w-[660px] max-w-[95vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
+			className: "w-[880px] max-w-[96vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
 			children: [/* @__PURE__ */ jsxs("div", {
 				className: "flex items-center justify-between pb-3 border-b border-white/10 mb-3",
 				children: [/* @__PURE__ */ jsxs("div", {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "5 Homepage Prototype Layouts"
+						children: "10 Homepage Prototypes (01–10)"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",
@@ -95,7 +113,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					})]
 				})]
 			}), /* @__PURE__ */ jsx("div", {
-				className: "grid grid-cols-1 sm:grid-cols-5 gap-2",
+				className: "grid grid-cols-2 sm:grid-cols-5 gap-2",
 				children: HOME_VARIANTS.map((variant) => {
 					const isCurrent = variant.id === selected;
 					const IconComp = variant.icon;
@@ -109,20 +127,20 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 								children: /* @__PURE__ */ jsx(Check, { className: "w-2.5 h-2.5" })
 							}),
 							/* @__PURE__ */ jsxs("div", {
-								className: "flex items-center gap-1.5 text-neutral-300 mb-2",
+								className: "flex items-center gap-1.5 text-neutral-300 mb-1.5",
 								children: [/* @__PURE__ */ jsx(IconComp, {
 									className: "w-3.5 h-3.5",
 									style: { color: "#de4a2c" }
-								}), /* @__PURE__ */ jsxs("span", {
+								}), /* @__PURE__ */ jsx("span", {
 									className: "text-[10px] font-mono font-bold",
-									children: ["0", variant.id]
+									children: Number(variant.id) < 10 ? `0${variant.id}` : variant.id
 								})]
 							}),
 							/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-								className: "text-xs font-extrabold text-white leading-tight",
+								className: "text-xs font-extrabold text-white leading-tight truncate",
 								children: variant.name
 							}), /* @__PURE__ */ jsx("div", {
-								className: "text-[9px] font-mono text-neutral-400 mt-1 line-clamp-1",
+								className: "text-[9px] font-mono text-neutral-400 mt-0.5 line-clamp-1",
 								children: variant.badge
 							})] })
 						]
@@ -142,28 +160,28 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 						/* @__PURE__ */ jsxs("span", {
 							className: "font-bold text-neutral-200",
 							children: [
-								"Home 0",
-								currentVariantObj.id,
+								"Home ",
+								Number(currentVariantObj.id) < 10 ? `0${currentVariantObj.id}` : currentVariantObj.id,
 								":"
 							]
 						}),
 						/* @__PURE__ */ jsx("span", {
-							className: "text-[#de4a2c] font-semibold hidden sm:inline",
+							className: "text-[#de4a2c] font-semibold hidden sm:inline truncate max-w-[150px]",
 							children: currentVariantObj.name
 						})
 					]
 				}),
 				/* @__PURE__ */ jsx("div", { className: "h-4 w-[1px] bg-white/15" }),
 				/* @__PURE__ */ jsx("div", {
-					className: "flex items-center gap-1",
+					className: "flex items-center gap-1 overflow-x-auto max-w-[55vw] sm:max-w-none scrollbar-none py-0.5",
 					children: HOME_VARIANTS.map((v) => {
 						const isCurrent = v.id === selected;
-						return /* @__PURE__ */ jsxs("button", {
+						return /* @__PURE__ */ jsx("button", {
 							type: "button",
 							onClick: () => handleSelect(v.id),
-							className: `w-7 h-7 rounded-full text-xs font-mono font-bold flex items-center justify-center transition-all ${isCurrent ? "bg-[#de4a2c] text-white shadow-[0_0_12px_rgba(222,74,44,0.6)] scale-105" : "text-neutral-400 hover:text-white hover:bg-white/10"}`,
+							className: `w-7 h-7 shrink-0 rounded-full text-xs font-mono font-bold flex items-center justify-center transition-all ${isCurrent ? "bg-[#de4a2c] text-white shadow-[0_0_12px_rgba(222,74,44,0.6)] scale-105" : "text-neutral-400 hover:text-white hover:bg-white/10"}`,
 							title: `${v.name} - ${v.tagline}`,
-							children: ["0", v.id]
+							children: v.id
 						}, v.id);
 					})
 				})

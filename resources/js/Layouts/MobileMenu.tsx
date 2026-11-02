@@ -70,8 +70,39 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
             </div>
 
             {/* Navigation Links */}
-            <nav className="my-auto py-8">
-                <ul className="space-y-4 sm:space-y-6">
+            <nav className="my-auto py-6">
+                {/* 10 Homepage Demos Mobile Carousel */}
+                <div className="mb-6 p-3 rounded-2xl bg-white/[0.03] border border-white/10">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-2.5">
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                            <span>10 Homepage Demos:</span>
+                        </span>
+                        <span className="text-accent">01 to 07</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                        {[
+                            { id: '1', name: '01 Studio' },
+                            { id: '2', name: '02 AI Visual' },
+                            { id: '3', name: '03 Portfolio' },
+                            { id: '4', name: '04 Editorial' },
+                            { id: '5', name: '05 Lookbook' },
+                            { id: '6', name: '06 Headshots' },
+                            { id: '7', name: '07 Try-On Studio' },
+                        ].map((d) => (
+                            <Link
+                                key={d.id}
+                                href={`/?v=${d.id}`}
+                                onClick={onClose}
+                                className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-accent hover:text-black border border-white/10 text-xs font-mono whitespace-nowrap transition-colors text-neutral-300"
+                            >
+                                {d.name}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                <ul className="space-y-3 sm:space-y-4">
                     {navLinks.map((item, index) => (
                         <li key={item.href} className="overflow-hidden">
                             <Link

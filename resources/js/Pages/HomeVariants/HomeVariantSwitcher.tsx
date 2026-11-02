@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import { Sparkles, Eye, Grid, BookOpen, Camera, Check } from 'lucide-react';
+import {
+  Sparkles,
+  Eye,
+  Grid,
+  BookOpen,
+  Camera,
+  UserCheck,
+  Shirt,
+  ShoppingBag,
+  Sun,
+  Percent,
+  Check
+} from 'lucide-react';
 
 interface HomeVariantSwitcherProps {
   currentVariant: string;
@@ -21,7 +33,7 @@ export const HOME_VARIANTS = [
     id: '2',
     name: 'AI Visual Engine',
     badge: 'IMAGE FIRST',
-    tagline: 'Image-first illustration of the 5 AI & retouching services with live before/after stages',
+    tagline: 'Image-first illustration of all 5 services with live before/after stages',
     accentColor: '#de4a2c',
     bgTone: 'Dark Stage #08090C',
     icon: Eye
@@ -30,7 +42,7 @@ export const HOME_VARIANTS = [
     id: '3',
     name: 'Portfolio Dark',
     badge: 'DARK MASONRY',
-    tagline: 'Filterable case studies gallery with peek raw overlay & full-screen comparison modal',
+    tagline: 'Filterable case studies gallery with peek raw overlay & comparison modal',
     accentColor: '#de4a2c',
     bgTone: 'Obsidian Gallery #07080B',
     icon: Grid
@@ -48,10 +60,28 @@ export const HOME_VARIANTS = [
     id: '5',
     name: 'Photo Lookbook',
     badge: 'LIGHT LUXE',
-    tagline: 'Clean white photo-first portfolio lookbook with live comparison slider modal',
+    tagline: 'Clean white photo-first portfolio lookbook with comparison slider modal',
     accentColor: '#de4a2c',
     bgTone: 'Pure Light #FBFBFA',
     icon: Camera
+  },
+  {
+    id: '6',
+    name: 'S1 Headshots',
+    badge: 'HR 20–500 SEATS',
+    tagline: 'S1 AI Corporate Headshots: Interactive 6-10 selfie stack to branded executive portraits',
+    accentColor: '#de4a2c',
+    bgTone: 'Clean #FAFAF9',
+    icon: UserCheck
+  },
+  {
+    id: '7',
+    name: 'Virtual Try-On (S3)',
+    badge: 'SELECT & SLIDE FIT',
+    tagline: 'S3 Virtual Try-On Studio: Pick any fashion model, select any garment/dress, and check photorealistic drape by sliding',
+    accentColor: '#de4a2c',
+    bgTone: 'Studio #FBFBFA',
+    icon: Shirt
   }
 ];
 
@@ -90,16 +120,16 @@ export function HomeVariantSwitcher({ currentVariant, onVariantChange }: HomeVar
   return (
     <aside
       aria-label="Homepage prototype layout switcher"
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[95vw] pointer-events-auto"
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[98vw] pointer-events-auto"
     >
       {/* Expanded Variant Drawer */}
       {isExpanded && (
-        <div className="w-[660px] max-w-[95vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1">
+        <div className="w-[880px] max-w-[96vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1">
           <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" />
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-300">
-                5 Homepage Prototype Layouts
+                10 Homepage Prototypes (01–10)
               </span>
             </div>
             <span className="text-[10px] font-mono text-neutral-400">
@@ -107,7 +137,7 @@ export function HomeVariantSwitcher({ currentVariant, onVariantChange }: HomeVar
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {HOME_VARIANTS.map((variant) => {
               const isCurrent = variant.id === selected;
               const IconComp = variant.icon;
@@ -127,15 +157,17 @@ export function HomeVariantSwitcher({ currentVariant, onVariantChange }: HomeVar
                       <Check className="w-2.5 h-2.5" />
                     </span>
                   )}
-                  <div className="flex items-center gap-1.5 text-neutral-300 mb-2">
+                  <div className="flex items-center gap-1.5 text-neutral-300 mb-1.5">
                     <IconComp className="w-3.5 h-3.5" style={{ color: '#de4a2c' }} />
-                    <span className="text-[10px] font-mono font-bold">0{variant.id}</span>
+                    <span className="text-[10px] font-mono font-bold">
+                      {Number(variant.id) < 10 ? `0${variant.id}` : variant.id}
+                    </span>
                   </div>
                   <div>
-                    <div className="text-xs font-extrabold text-white leading-tight">
+                    <div className="text-xs font-extrabold text-white leading-tight truncate">
                       {variant.name}
                     </div>
-                    <div className="text-[9px] font-mono text-neutral-400 mt-1 line-clamp-1">
+                    <div className="text-[9px] font-mono text-neutral-400 mt-0.5 line-clamp-1">
                       {variant.badge}
                     </div>
                   </div>
@@ -156,16 +188,16 @@ export function HomeVariantSwitcher({ currentVariant, onVariantChange }: HomeVar
         >
           <span className="w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" />
           <span className="font-bold text-neutral-200">
-            Home 0{currentVariantObj.id}:
+            Home {Number(currentVariantObj.id) < 10 ? `0${currentVariantObj.id}` : currentVariantObj.id}:
           </span>
-          <span className="text-[#de4a2c] font-semibold hidden sm:inline">
+          <span className="text-[#de4a2c] font-semibold hidden sm:inline truncate max-w-[150px]">
             {currentVariantObj.name}
           </span>
         </button>
 
         <div className="h-4 w-[1px] bg-white/15" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto max-w-[55vw] sm:max-w-none scrollbar-none py-0.5">
           {HOME_VARIANTS.map((v) => {
             const isCurrent = v.id === selected;
             return (
@@ -173,14 +205,14 @@ export function HomeVariantSwitcher({ currentVariant, onVariantChange }: HomeVar
                 key={v.id}
                 type="button"
                 onClick={() => handleSelect(v.id)}
-                className={`w-7 h-7 rounded-full text-xs font-mono font-bold flex items-center justify-center transition-all ${
+                className={`w-7 h-7 shrink-0 rounded-full text-xs font-mono font-bold flex items-center justify-center transition-all ${
                   isCurrent
                     ? 'bg-[#de4a2c] text-white shadow-[0_0_12px_rgba(222,74,44,0.6)] scale-105'
                     : 'text-neutral-400 hover:text-white hover:bg-white/10'
                 }`}
                 title={`${v.name} - ${v.tagline}`}
               >
-                0{v.id}
+                {v.id}
               </button>
             );
           })}

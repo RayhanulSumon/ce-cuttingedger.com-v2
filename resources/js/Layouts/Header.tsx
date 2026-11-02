@@ -103,7 +103,7 @@ export function Header({
         label: string;
         href: string;
         isMegaMenu?: boolean;
-        children?: { label: string; href: string }[];
+        children?: { label: string; href: string; badge?: string }[];
     }
 
     const navItems: NavItem[] = [
@@ -116,11 +116,13 @@ export function Header({
             label: 'Home Demos',
             href: '/?v=1',
             children: [
-                { label: '01. Original Studio (Default)', href: '/?v=1' },
-                { label: '02. Figma Prototype (#de4a2c)', href: '/?v=2' },
-                { label: '03. Editorial Atelier', href: '/?v=3' },
-                { label: '04. Technical Workbench', href: '/?v=4' },
-                { label: '05. Conversion Engine', href: '/?v=5' },
+                { label: '01. Original Studio (Default)', href: '/?v=1', badge: 'LAB & BENTO' },
+                { label: '02. AI Visual Engine (5 Services)', href: '/?v=2', badge: 'IMAGE FIRST' },
+                { label: '03. Portfolio Dark (Case Studies)', href: '/?v=3', badge: 'DARK MASONRY' },
+                { label: '04. Editorial Atelier (High Fashion)', href: '/?v=4', badge: 'SSENSE / VOGUE' },
+                { label: '05. Photo Lookbook (Light Mode)', href: '/?v=5', badge: 'LIGHT LUXE' },
+                { label: '06. S1: AI Corporate Headshots', href: '/?v=6', badge: 'HR 20-500 SEATS' },
+                { label: '07. S3: Virtual Try-On Studio', href: '/?v=7', badge: 'SELECT & SLIDE' },
             ],
         },
         {
@@ -323,9 +325,52 @@ export function Header({
                                                     </div>
                                                 </div>
                                             </div>
+                                        ) : item.label === 'Home Demos' ? (
+                                            /* 2-Column Home Demos Dropdown (01-07) */
+                                            <div className="absolute top-full -left-16 w-[560px] max-w-[94vw] pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                                <div className="rounded-2xl p-4 bg-[#0c0d12]/98 border border-white/15 shadow-2xl backdrop-blur-2xl">
+                                                    <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-white/10 text-xs font-mono">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" />
+                                                            <span className="text-white font-bold uppercase tracking-wider text-[11px]">
+                                                                7 Complete Homepage Prototypes
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-[10px] text-neutral-400">
+                                                            Select to load instant live variant
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        {item.children?.map((child, idx) => (
+                                                            <Link
+                                                                key={idx}
+                                                                href={child.href}
+                                                                className="p-2.5 rounded-xl border border-white/5 hover:border-[#de4a2c]/50 bg-white/[0.02] hover:bg-white/[0.06] text-left transition-all group flex flex-col justify-between"
+                                                            >
+                                                                <div className="flex items-center justify-between gap-1 mb-1">
+                                                                    <span className="text-xs font-bold text-white group-hover:text-[#de4a2c] transition-colors leading-tight line-clamp-1">
+                                                                        {child.label}
+                                                                    </span>
+                                                                </div>
+                                                                {child.badge && (
+                                                                    <span className="text-[9px] font-mono text-neutral-400 group-hover:text-neutral-200 uppercase tracking-wider">
+                                                                        {child.badge}
+                                                                    </span>
+                                                                )}
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-neutral-400">
+                                                        <span>Also accessible via the floating dock at screen bottom</span>
+                                                        <span className="text-[#de4a2c] font-bold">7 Live Designs</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         ) : (
                                             /* Standard Dropdown */
-                                            <div className="absolute top-full left-0 w-60 pt-2 z-50">
+                                            <div className="absolute top-full left-0 w-64 pt-2 z-50">
                                                 <div className="rounded-2xl p-2 bg-[#0c0d12]/95 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1">
                                                     {item.children?.map((child, idx) => (
                                                         <Link

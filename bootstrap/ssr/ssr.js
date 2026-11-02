@@ -128,23 +128,38 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 			children: [
 				{
 					label: "01. Original Studio (Default)",
-					href: "/?v=1"
+					href: "/?v=1",
+					badge: "LAB & BENTO"
 				},
 				{
-					label: "02. Figma Prototype (#de4a2c)",
-					href: "/?v=2"
+					label: "02. AI Visual Engine (5 Services)",
+					href: "/?v=2",
+					badge: "IMAGE FIRST"
 				},
 				{
-					label: "03. Editorial Atelier",
-					href: "/?v=3"
+					label: "03. Portfolio Dark (Case Studies)",
+					href: "/?v=3",
+					badge: "DARK MASONRY"
 				},
 				{
-					label: "04. Technical Workbench",
-					href: "/?v=4"
+					label: "04. Editorial Atelier (High Fashion)",
+					href: "/?v=4",
+					badge: "SSENSE / VOGUE"
 				},
 				{
-					label: "05. Conversion Engine",
-					href: "/?v=5"
+					label: "05. Photo Lookbook (Light Mode)",
+					href: "/?v=5",
+					badge: "LIGHT LUXE"
+				},
+				{
+					label: "06. S1: AI Corporate Headshots",
+					href: "/?v=6",
+					badge: "HR 20-500 SEATS"
+				},
+				{
+					label: "07. S3: Virtual Try-On Studio",
+					href: "/?v=7",
+					badge: "SELECT & SLIDE"
 				}
 			]
 		},
@@ -372,8 +387,52 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 											})
 										]
 									})
+								}) : item.label === "Home Demos" ? /* @__PURE__ */ jsx("div", {
+									className: "absolute top-full -left-16 w-[560px] max-w-[94vw] pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150",
+									children: /* @__PURE__ */ jsxs("div", {
+										className: "rounded-2xl p-4 bg-[#0c0d12]/98 border border-white/15 shadow-2xl backdrop-blur-2xl",
+										children: [
+											/* @__PURE__ */ jsxs("div", {
+												className: "flex items-center justify-between pb-2.5 mb-3 border-b border-white/10 text-xs font-mono",
+												children: [/* @__PURE__ */ jsxs("div", {
+													className: "flex items-center gap-2",
+													children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
+														className: "text-white font-bold uppercase tracking-wider text-[11px]",
+														children: "7 Complete Homepage Prototypes"
+													})]
+												}), /* @__PURE__ */ jsx("span", {
+													className: "text-[10px] text-neutral-400",
+													children: "Select to load instant live variant"
+												})]
+											}),
+											/* @__PURE__ */ jsx("div", {
+												className: "grid grid-cols-2 gap-2",
+												children: item.children?.map((child, idx) => /* @__PURE__ */ jsxs(Link, {
+													href: child.href,
+													className: "p-2.5 rounded-xl border border-white/5 hover:border-[#de4a2c]/50 bg-white/[0.02] hover:bg-white/[0.06] text-left transition-all group flex flex-col justify-between",
+													children: [/* @__PURE__ */ jsx("div", {
+														className: "flex items-center justify-between gap-1 mb-1",
+														children: /* @__PURE__ */ jsx("span", {
+															className: "text-xs font-bold text-white group-hover:text-[#de4a2c] transition-colors leading-tight line-clamp-1",
+															children: child.label
+														})
+													}), child.badge && /* @__PURE__ */ jsx("span", {
+														className: "text-[9px] font-mono text-neutral-400 group-hover:text-neutral-200 uppercase tracking-wider",
+														children: child.badge
+													})]
+												}, idx))
+											}),
+											/* @__PURE__ */ jsxs("div", {
+												className: "mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-neutral-400",
+												children: [/* @__PURE__ */ jsx("span", { children: "Also accessible via the floating dock at screen bottom" }), /* @__PURE__ */ jsx("span", {
+													className: "text-[#de4a2c] font-bold",
+													children: "7 Live Designs"
+												})]
+											})
+										]
+									})
 								}) : /* @__PURE__ */ jsx("div", {
-									className: "absolute top-full left-0 w-60 pt-2 z-50",
+									className: "absolute top-full left-0 w-64 pt-2 z-50",
 									children: /* @__PURE__ */ jsx("div", {
 										className: "rounded-2xl p-2 bg-[#0c0d12]/95 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-1",
 										children: item.children?.map((child, idx) => /* @__PURE__ */ jsx(Link, {
@@ -973,10 +1032,59 @@ function MobileMenu({ isOpen, onClose, onOpenContact, settings }) {
 					})]
 				})]
 			}),
-			/* @__PURE__ */ jsx("nav", {
-				className: "my-auto py-8",
-				children: /* @__PURE__ */ jsx("ul", {
-					className: "space-y-4 sm:space-y-6",
+			/* @__PURE__ */ jsxs("nav", {
+				className: "my-auto py-6",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "mb-6 p-3 rounded-2xl bg-white/[0.03] border border-white/10",
+					children: [/* @__PURE__ */ jsxs("div", {
+						className: "flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-2.5",
+						children: [/* @__PURE__ */ jsxs("span", {
+							className: "font-bold text-white flex items-center gap-1.5",
+							children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-accent animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "10 Homepage Demos:" })]
+						}), /* @__PURE__ */ jsx("span", {
+							className: "text-accent",
+							children: "01 to 07"
+						})]
+					}), /* @__PURE__ */ jsx("div", {
+						className: "flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none",
+						children: [
+							{
+								id: "1",
+								name: "01 Studio"
+							},
+							{
+								id: "2",
+								name: "02 AI Visual"
+							},
+							{
+								id: "3",
+								name: "03 Portfolio"
+							},
+							{
+								id: "4",
+								name: "04 Editorial"
+							},
+							{
+								id: "5",
+								name: "05 Lookbook"
+							},
+							{
+								id: "6",
+								name: "06 Headshots"
+							},
+							{
+								id: "7",
+								name: "07 Try-On Studio"
+							}
+						].map((d) => /* @__PURE__ */ jsx(Link, {
+							href: `/?v=${d.id}`,
+							onClick: onClose,
+							className: "px-2.5 py-1 rounded-lg bg-white/5 hover:bg-accent hover:text-black border border-white/10 text-xs font-mono whitespace-nowrap transition-colors text-neutral-300",
+							children: d.name
+						}, d.id))
+					})]
+				}), /* @__PURE__ */ jsx("ul", {
+					className: "space-y-3 sm:space-y-4",
 					children: navLinks.map((item, index) => /* @__PURE__ */ jsx("li", {
 						className: "overflow-hidden",
 						children: /* @__PURE__ */ jsxs(Link, {
@@ -996,7 +1104,7 @@ function MobileMenu({ isOpen, onClose, onOpenContact, settings }) {
 							})]
 						})
 					}, item.href))
-				})
+				})]
 			}),
 			/* @__PURE__ */ jsx("div", {
 				className: "py-4 border-t border-white/10",
@@ -4427,12 +4535,14 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-CeZROX8y.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-B2zMxnij.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-uacoF8A5.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-CdT69oJn.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-Bc5fBQHB.js"),
 			"./Pages/HomeVariants/HomeEditorial.tsx": () => import("./assets/HomeEditorial-gndU4Tx7.js"),
+			"./Pages/HomeVariants/HomeOmniStudio.tsx": () => import("./assets/HomeOmniStudio-JOIFwzri.js"),
 			"./Pages/HomeVariants/HomeOriginal.tsx": () => import("./assets/HomeOriginal-k4qLB1pA.js"),
 			"./Pages/HomeVariants/HomePhotoLight.tsx": () => import("./assets/HomePhotoLight-BJcAsY74.js"),
 			"./Pages/HomeVariants/HomePortfolio.tsx": () => import("./assets/HomePortfolio-CLVFgukR.js"),
-			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-CERBFQj1.js"),
+			"./Pages/HomeVariants/HomeStudioS1.tsx": () => import("./assets/HomeStudioS1-Dx36h44p.js"),
+			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-CO294W_x.js"),
 			"./Pages/HomeVariants/HomeVisual.tsx": () => import("./assets/HomeVisual-FlhyndUS.js"),
 			"./Pages/Legal/CookiePolicy.tsx": () => import("./assets/CookiePolicy-BJOtxyQi.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-D62DHBuM.js"),

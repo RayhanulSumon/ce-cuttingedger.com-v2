@@ -48,6 +48,7 @@ class HomeController extends Controller
             'teamMembers' => $teamMembers,
             'testimonials' => $testimonials,
             'clients' => $clients,
+            'variant' => (string) $request->query('v', '1'),
         ]);
     }
 }
