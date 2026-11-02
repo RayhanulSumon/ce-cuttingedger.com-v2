@@ -1,11 +1,11 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-CO294W_x.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-BFFITeW4.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
 import { HomePortfolio } from "./HomePortfolio-CLVFgukR.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
 import { HomePhotoLight } from "./HomePhotoLight-BJcAsY74.js";
 import { HomeStudioS1 } from "./HomeStudioS1-Dx36h44p.js";
-import { HomeOmniStudio } from "./HomeOmniStudio-JOIFwzri.js";
+import { HomeOmniStudio } from "./HomeOmniStudio-KDeToqye.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";

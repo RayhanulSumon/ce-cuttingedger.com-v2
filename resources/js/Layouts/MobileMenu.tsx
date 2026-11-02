@@ -88,7 +88,7 @@ export function MobileMenu({ isOpen, onClose, onOpenContact, settings }: MobileM
                             { id: '4', name: '04 Editorial' },
                             { id: '5', name: '05 Lookbook' },
                             { id: '6', name: '06 Headshots' },
-                            { id: '7', name: '07 Try-On Studio' },
+                            { id: '7', name: '07 3D Try-On' },
                         ].map((d) => (
                             <Link
                                 key={d.id}

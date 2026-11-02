@@ -122,7 +122,7 @@ export function Header({
                 { label: '04. Editorial Atelier (High Fashion)', href: '/?v=4', badge: 'SSENSE / VOGUE' },
                 { label: '05. Photo Lookbook (Light Mode)', href: '/?v=5', badge: 'LIGHT LUXE' },
                 { label: '06. S1: AI Corporate Headshots', href: '/?v=6', badge: 'HR 20-500 SEATS' },
-                { label: '07. S3: Virtual Try-On Studio', href: '/?v=7', badge: 'SELECT & SLIDE' },
+                { label: '07. 3D Virtual Try-On (Three.js)', href: '/?v=7', badge: '60FPS WEBGL' },
             ],
         },
         {

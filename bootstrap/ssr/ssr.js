@@ -157,9 +157,9 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 					badge: "HR 20-500 SEATS"
 				},
 				{
-					label: "07. S3: Virtual Try-On Studio",
+					label: "07. 3D Virtual Try-On (Three.js)",
 					href: "/?v=7",
-					badge: "SELECT & SLIDE"
+					badge: "60FPS WEBGL"
 				}
 			]
 		},
@@ -1074,7 +1074,7 @@ function MobileMenu({ isOpen, onClose, onOpenContact, settings }) {
 							},
 							{
 								id: "7",
-								name: "07 Try-On Studio"
+								name: "07 3D Try-On"
 							}
 						].map((d) => /* @__PURE__ */ jsx(Link, {
 							href: `/?v=${d.id}`,
@@ -4535,14 +4535,14 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-CeZROX8y.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-B2zMxnij.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-uacoF8A5.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-Bc5fBQHB.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-hD1A7yov.js"),
 			"./Pages/HomeVariants/HomeEditorial.tsx": () => import("./assets/HomeEditorial-gndU4Tx7.js"),
-			"./Pages/HomeVariants/HomeOmniStudio.tsx": () => import("./assets/HomeOmniStudio-JOIFwzri.js"),
+			"./Pages/HomeVariants/HomeOmniStudio.tsx": () => import("./assets/HomeOmniStudio-KDeToqye.js"),
 			"./Pages/HomeVariants/HomeOriginal.tsx": () => import("./assets/HomeOriginal-k4qLB1pA.js"),
 			"./Pages/HomeVariants/HomePhotoLight.tsx": () => import("./assets/HomePhotoLight-BJcAsY74.js"),
 			"./Pages/HomeVariants/HomePortfolio.tsx": () => import("./assets/HomePortfolio-CLVFgukR.js"),
 			"./Pages/HomeVariants/HomeStudioS1.tsx": () => import("./assets/HomeStudioS1-Dx36h44p.js"),
-			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-CO294W_x.js"),
+			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-BFFITeW4.js"),
 			"./Pages/HomeVariants/HomeVisual.tsx": () => import("./assets/HomeVisual-FlhyndUS.js"),
 			"./Pages/Legal/CookiePolicy.tsx": () => import("./assets/CookiePolicy-BJOtxyQi.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-D62DHBuM.js"),

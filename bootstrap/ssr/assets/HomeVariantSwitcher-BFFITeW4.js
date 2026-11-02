@@ -60,11 +60,11 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "7",
-		name: "Virtual Try-On (S3)",
-		badge: "SELECT & SLIDE FIT",
-		tagline: "S3 Virtual Try-On Studio: Pick any fashion model, select any garment/dress, and check photorealistic drape by sliding",
+		name: "3D Virtual Try-On",
+		badge: "60FPS THREE.JS",
+		tagline: "Interactive 3D Virtual Try-On: 360° mouse rotation, Female & Male models, modular Cap / Shirt / Pant / Shoes dress-up with laser fitting animation",
 		accentColor: "#de4a2c",
-		bgTone: "Studio #FBFBFA",
+		bgTone: "3D Studio #FDFDFC",
 		icon: Shirt
 	}
 ];
