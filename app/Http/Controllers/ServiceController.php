@@ -43,7 +43,8 @@ class ServiceController extends Controller
 
             // If this is actually a child accessed without parent prefix, 301 redirect to canonical hierarchy
             if ($service->parent_id && $service->parent) {
-                return redirect()->to("/services/{$service->parent->slug}/{$service->slug}", 301);
+                $queryString = request()->getQueryString() ? '?' . request()->getQueryString() : '';
+                return redirect()->to("/services/{$service->parent->slug}/{$service->slug}{$queryString}", 301);
             }
         }
 

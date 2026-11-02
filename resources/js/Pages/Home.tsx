@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
   ArrowUpRight,
+  ArrowRight,
   SlidersHorizontal,
   Upload,
   CheckCircle2,
@@ -36,7 +37,8 @@ const HERO_SHOWCASE_PLATES = [
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1800&q=85',
     rawFilter: 'brightness(0.78) contrast(0.8) saturate(0.45) sepia(0.15)',
     doneFilter: 'brightness(1.05) contrast(1.1) saturate(1.14) drop-shadow(0 28px 26px rgba(15,15,18,0.22))',
-    tintColor: '#EEF2FF'
+    tintColor: '#EEF2FF',
+    href: '/services/ecommerce-catalog-optimization/clipping-path-service'
   },
   {
     id: 'apparel',
@@ -47,7 +49,8 @@ const HERO_SHOWCASE_PLATES = [
     image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1800&q=85',
     rawFilter: 'brightness(0.75) contrast(0.82) saturate(0.5) sepia(0.12)',
     doneFilter: 'brightness(1.04) contrast(1.08) saturate(1.1)',
-    tintColor: '#EAE6DF'
+    tintColor: '#EAE6DF',
+    href: '/services/ghost-mannequin-service'
   },
   {
     id: 'jewelry',
@@ -58,7 +61,8 @@ const HERO_SHOWCASE_PLATES = [
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1800&q=85',
     rawFilter: 'brightness(0.7) contrast(0.78) grayscale(0.45)',
     doneFilter: 'brightness(1.08) contrast(1.15) saturate(1.08)',
-    tintColor: '#F3F4F6'
+    tintColor: '#F3F4F6',
+    href: '/services/ecommerce-catalog-optimization'
   },
   {
     id: 'hardgoods',
@@ -69,7 +73,8 @@ const HERO_SHOWCASE_PLATES = [
     image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1800&q=85',
     rawFilter: 'brightness(0.76) contrast(0.82) saturate(0.5)',
     doneFilter: 'brightness(1.06) contrast(1.12) saturate(1.1)',
-    tintColor: '#FDF2F8'
+    tintColor: '#FDF2F8',
+    href: '/services/color-standardization'
   }
 ];
 
@@ -95,7 +100,8 @@ const ACCORDION_PANELS = [
     title: 'Precision Clipping',
     metric: '100% Hand-Drawn Pen Tool Paths',
     image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.75) contrast(0.82) saturate(0.45) sepia(0.2)'
+    rawFilter: 'brightness(0.75) contrast(0.82) saturate(0.45) sepia(0.2)',
+    href: '/services/ecommerce-catalog-optimization/clipping-path-service'
   },
   {
     id: 'acc-2',
@@ -103,7 +109,8 @@ const ACCORDION_PANELS = [
     title: '3D Ghost Mannequin',
     metric: 'Symmetrical Drape',
     image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.74) contrast(0.8) saturate(0.5)'
+    rawFilter: 'brightness(0.74) contrast(0.8) saturate(0.5)',
+    href: '/services/ghost-mannequin-service'
   },
   {
     id: 'acc-3',
@@ -111,7 +118,8 @@ const ACCORDION_PANELS = [
     title: 'Fine Jewelry Polish',
     metric: 'Gem & Metal Clarity',
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.72) contrast(0.78) grayscale(0.45)'
+    rawFilter: 'brightness(0.72) contrast(0.78) grayscale(0.45)',
+    href: '/services/ecommerce-catalog-optimization'
   },
   {
     id: 'acc-4',
@@ -119,7 +127,8 @@ const ACCORDION_PANELS = [
     title: 'Multi-SKU Recolor',
     metric: 'Zero Reshoot Needed',
     image: 'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'hue-rotate(140deg) brightness(0.82) saturate(0.75)'
+    rawFilter: 'hue-rotate(140deg) brightness(0.82) saturate(0.75)',
+    href: '/services/apparel-colorway-generation'
   },
   {
     id: 'acc-5',
@@ -127,7 +136,8 @@ const ACCORDION_PANELS = [
     title: 'Cosmetics & Glass',
     metric: 'Specular Highlights',
     image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.75) contrast(0.82) saturate(0.55)'
+    rawFilter: 'brightness(0.75) contrast(0.82) saturate(0.55)',
+    href: '/services/color-standardization'
   }
 ];
 
@@ -143,7 +153,8 @@ const BENTO_PORTFOLIO = [
     title: 'Dynamic Levitation & Floor Shadow',
     turnaround: '6h Express Turnaround',
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85',
-    rawFilter: 'brightness(0.76) contrast(0.82) saturate(0.45) sepia(0.15)'
+    rawFilter: 'brightness(0.76) contrast(0.82) saturate(0.45) sepia(0.15)',
+    href: '/services/ecommerce-catalog-optimization/clipping-path-service'
   },
   {
     id: 'bento-2',
@@ -153,7 +164,8 @@ const BENTO_PORTFOLIO = [
     title: 'Chronograph Anti-Glare Polish',
     turnaround: '12h Studio SLA',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.72) contrast(0.78) saturate(0.4)'
+    rawFilter: 'brightness(0.72) contrast(0.78) saturate(0.4)',
+    href: '/services/ecommerce-catalog-optimization'
   },
   {
     id: 'bento-3',
@@ -163,7 +175,8 @@ const BENTO_PORTFOLIO = [
     title: 'Translucent Glass & Drop Refraction',
     turnaround: '12h Studio SLA',
     image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=85',
-    rawFilter: 'brightness(0.75) contrast(0.8) grayscale(0.45)'
+    rawFilter: 'brightness(0.75) contrast(0.8) grayscale(0.45)',
+    href: '/services/color-standardization'
   },
   {
     id: 'bento-4',
@@ -173,7 +186,8 @@ const BENTO_PORTFOLIO = [
     title: 'Color Grading & Fabric Texture Recovery',
     turnaround: 'Custom Campaign SLA',
     image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1400&q=85',
-    rawFilter: 'brightness(0.74) contrast(0.8) saturate(0.5)'
+    rawFilter: 'brightness(0.74) contrast(0.8) saturate(0.5)',
+    href: '/services/ghost-mannequin-service'
   }
 ];
 
@@ -436,47 +450,55 @@ export default function Home({ clients = [] }: HomeProps) {
       </Head>
 
       {/* ==========================================
-          1. MINIMALIST FLOATING TOP BAR
-      ========================================== */}
-      <div className="sticky top-5 z-50 px-4 sm:px-8 pointer-events-none">
-        <header className="max-w-7xl mx-auto h-16 px-6 rounded-full bg-white/90 backdrop-blur-xl border border-neutral-200/80 shadow-[0_8px_30px_rgba(15,15,18,0.04)] flex items-center justify-between pointer-events-auto">
-          <a
-            href="#"
-            className="text-lg font-extrabold tracking-tight text-[#0F0F12] flex items-center gap-2"
-          >
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-            <span>CuttingEdger.</span>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-neutral-500">
-            <a href="#capabilities" className="hover:text-[#0F0F12] transition-colors">
-              Capabilities
-            </a>
-            <a href="#interactive-studio" className="hover:text-[#0F0F12] transition-colors">
-              Interactive Studio
-            </a>
-            <a href="#portfolio" className="hover:text-[#0F0F12] transition-colors">
-              Portfolio
-            </a>
-            <a href="#free-sample" className="hover:text-[#0F0F12] transition-colors">
-              Free Sample
-            </a>
-          </nav>
-
-          <a
-            href="#free-sample"
-            className="px-5 py-2.5 rounded-full bg-[#0F0F12] text-white text-xs font-bold hover:bg-neutral-800 transition-all flex items-center gap-1.5 shadow-sm"
-          >
-            <span>Start Free Trial</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
-        </header>
-      </div>
-
-      {/* ==========================================
           2. CLEAN ROUNDED VISUAL HERO STAGE
       ========================================== */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-14">
+        {/* 5 Single Page Design Layouts Live Showcase Ribbon */}
+        <div className="mb-8 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-extrabold text-[#0F0F12]">5 Service Single Page Layouts:</span>
+            <span className="text-neutral-500 hidden md:inline">Click to preview:</span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=1"
+              className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>01. Minimalist</span>
+            </Link>
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=2"
+              className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span>02. Editorial</span>
+            </Link>
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=3"
+              className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+              <span>03. Technical</span>
+            </Link>
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=4"
+              className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              <span>04. Conversion</span>
+            </Link>
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=5"
+              className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+              <span>05. Obsidian</span>
+            </Link>
+          </div>
+        </div>
+
         {/* Editorial Centered Hero Header (Apple / Linear Luxury Design) */}
         <div className="text-center max-w-3xl mx-auto mb-9">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/80 mb-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
@@ -503,12 +525,13 @@ export default function Home({ clients = [] }: HomeProps) {
               <span>Get 3 Free Sample Retouches</span>
               <ArrowUpRight className="w-4 h-4" />
             </a>
-            <a
-              href="#interactive-studio"
-              className="px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow"
+            <Link
+              href="/services/ecommerce-catalog-optimization/clipping-path-service?v=1"
+              className="px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-1.5"
             >
-              Test Live Playground ↓
-            </a>
+              <span>Explore 5 Service Layouts</span>
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-600" />
+            </Link>
           </div>
         </div>
 
@@ -582,8 +605,16 @@ export default function Home({ clients = [] }: HomeProps) {
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5">
                 {currentHero.title}
               </h2>
-              <span className="text-xs text-neutral-300 font-medium mt-1 block">
-                {currentHero.metric}
+              <span className="text-xs text-neutral-300 font-medium mt-1 flex flex-wrap items-center gap-2">
+                <span>{currentHero.metric}</span>
+                <span>•</span>
+                <Link
+                  href={currentHero.href}
+                  className="text-emerald-300 hover:text-white font-extrabold underline flex items-center gap-0.5 transition-colors"
+                >
+                  <span>View Single Page</span>
+                  <ArrowUpRight className="w-3 h-3 inline" />
+                </Link>
               </span>
             </div>
 
@@ -694,14 +725,14 @@ export default function Home({ clients = [] }: HomeProps) {
                     </div>
 
                     {isExpanded && (
-                      <a
-                        href="#free-sample"
+                      <Link
+                        href={panel.href}
                         onClick={(e) => e.stopPropagation()}
                         className="w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center hover:bg-emerald-400 transition-colors shrink-0 shadow-md"
-                        title="Try this capability"
+                        title={`Explore ${panel.title} Single Page`}
                       >
                         <ArrowUpRight className="w-4 h-4" />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </div>
@@ -774,7 +805,7 @@ export default function Home({ clients = [] }: HomeProps) {
                           ? 'bg-[#0F0F12] text-white border-[#0F0F12] shadow-xs'
                           : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50'
                       }`}
-                      title={bd.title}
+                      title={bd.label}
                     >
                       <span className={`w-2 h-2 rounded-full ${bd.dotColor}`} />
                       <span className="hidden md:inline">{bd.label}</span>
@@ -1257,8 +1288,19 @@ export default function Home({ clients = [] }: HomeProps) {
                       </span>
                     </div>
 
-                    <div className="w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center group-hover:bg-emerald-400 transition-colors shrink-0 shadow-md">
-                      <Maximize2 className="w-4 h-4" />
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={card.href}
+                        onClick={(e) => e.stopPropagation()}
+                        className="px-3 py-2 rounded-full bg-white/20 hover:bg-emerald-400 text-white hover:text-[#0F0F12] text-xs font-bold transition-all backdrop-blur-md flex items-center gap-1 shadow-sm"
+                        title="View Dedicated Service Page"
+                      >
+                        <span>Single Page</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                      <div className="w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center group-hover:bg-emerald-400 transition-colors shrink-0 shadow-md">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1483,35 +1525,6 @@ export default function Home({ clients = [] }: HomeProps) {
         </div>
       )}
 
-      {/* ==========================================
-          8. MINIMALIST FOOTER
-      ========================================== */}
-      <footer className="py-10 px-4 sm:px-8 border-t border-neutral-200/80">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-neutral-500">
-          <div className="flex items-center gap-2 text-[#0F0F12] font-extrabold">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-            <span>CuttingEdger.com</span>
-          </div>
-          <div className="flex gap-6">
-            <a href="#capabilities" className="hover:text-[#0F0F12] transition-colors">
-              Capabilities
-            </a>
-            <a href="#interactive-studio" className="hover:text-[#0F0F12] transition-colors">
-              Interactive Studio
-            </a>
-            <a href="#portfolio" className="hover:text-[#0F0F12] transition-colors">
-              Portfolio
-            </a>
-            <a href="#free-sample" className="hover:text-[#0F0F12] transition-colors">
-              Free Sample
-            </a>
-          </div>
-          <span>© {new Date().getFullYear()} CuttingEdger Studio</span>
-        </div>
-      </footer>
     </div>
   );
 }
-
-// Override global AppLayout with a Fragment so the landing page renders its own minimalist design
-Home.layout = (page: React.ReactNode) => <>{page}</>;

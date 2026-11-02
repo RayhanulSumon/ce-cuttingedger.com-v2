@@ -123,6 +123,32 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 			isMegaMenu: true
 		},
 		{
+			label: "Design Styles",
+			href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
+			children: [
+				{
+					label: "01. Minimalist Studio",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1"
+				},
+				{
+					label: "02. Editorial Lookbook",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=2"
+				},
+				{
+					label: "03. Technical Specs Lab",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=3"
+				},
+				{
+					label: "04. High-Conversion E-Com",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=4"
+				},
+				{
+					label: "05. Dark Obsidian Craft",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=5"
+				}
+			]
+		},
+		{
 			label: "Case Studies",
 			href: "/case-studies"
 		},
@@ -267,16 +293,52 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 											/* @__PURE__ */ jsxs("div", {
 												className: "mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono bg-white/[0.02] -mx-6 -mb-6 sm:-mx-7 sm:-mb-7 px-6 sm:px-7 py-3.5",
 												children: [/* @__PURE__ */ jsxs("div", {
-													className: "flex items-center gap-2 text-neutral-400 text-[11px]",
-													children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-accent animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "Guaranteed 24h SLA · 100% Hand-Drawn Paths · Strict NDA" })]
+													className: "flex items-center gap-2 overflow-x-auto py-0.5",
+													children: [
+														/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-accent animate-pulse shrink-0" }),
+														/* @__PURE__ */ jsx("span", {
+															className: "text-white text-[11px] font-bold uppercase shrink-0",
+															children: "5 Layout Styles:"
+														}),
+														/* @__PURE__ */ jsxs("div", {
+															className: "flex items-center gap-1 shrink-0",
+															children: [
+																/* @__PURE__ */ jsx(Link, {
+																	href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
+																	className: "px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors",
+																	children: "01 Studio"
+																}),
+																/* @__PURE__ */ jsx(Link, {
+																	href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=2",
+																	className: "px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors",
+																	children: "02 Editorial"
+																}),
+																/* @__PURE__ */ jsx(Link, {
+																	href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=3",
+																	className: "px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors",
+																	children: "03 Technical"
+																}),
+																/* @__PURE__ */ jsx(Link, {
+																	href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=4",
+																	className: "px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors",
+																	children: "04 Conversion"
+																}),
+																/* @__PURE__ */ jsx(Link, {
+																	href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=5",
+																	className: "px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors",
+																	children: "05 Obsidian"
+																})
+															]
+														})
+													]
 												}), /* @__PURE__ */ jsxs("div", {
-													className: "flex items-center gap-4 text-xs font-mono",
+													className: "flex items-center gap-4 text-xs font-mono shrink-0",
 													children: [/* @__PURE__ */ jsxs(Link, {
 														href: "/services",
 														className: "text-neutral-400 hover:text-white flex items-center gap-1 font-semibold transition-colors",
 														children: [/* @__PURE__ */ jsx("span", { children: "All Disciplines" }), /* @__PURE__ */ jsx(ArrowRight, { className: "w-3 h-3" })]
 													}), /* @__PURE__ */ jsx(Link, {
-														href: "/#free-trial",
+														href: "/#free-sample",
 														className: "px-2.5 py-1 rounded-md bg-accent text-black font-bold uppercase text-[10px] tracking-wider hover:bg-accent-hover transition-colors",
 														children: "Free 3-Asset Pilot"
 													})]
@@ -4339,13 +4401,19 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-CeZROX8y.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-B2zMxnij.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-uacoF8A5.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-BYhWq7CW.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-t3sWCBPR.js"),
 			"./Pages/Legal/CookiePolicy.tsx": () => import("./assets/CookiePolicy-BJOtxyQi.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-D62DHBuM.js"),
 			"./Pages/Privacy.tsx": () => import("./assets/Privacy-CJ5wk8_j.js"),
 			"./Pages/Reviews.tsx": () => import("./assets/Reviews-8qZohVkL.js"),
 			"./Pages/Services/Index.tsx": () => import("./assets/Index-Cadezd1t.js"),
-			"./Pages/Services/Show.tsx": () => import("./assets/Show-Dq9J-x56.js"),
+			"./Pages/Services/Show.tsx": () => import("./assets/Show-Dx8tsjm2.js"),
+			"./Pages/Services/Variants/VariantDarkObsidian.tsx": () => import("./assets/VariantDarkObsidian-CestW0eT.js"),
+			"./Pages/Services/Variants/VariantEditorial.tsx": () => import("./assets/VariantEditorial-B51efcam.js"),
+			"./Pages/Services/Variants/VariantHighConversion.tsx": () => import("./assets/VariantHighConversion-2ezNnkUp.js"),
+			"./Pages/Services/Variants/VariantMinimalist.tsx": () => import("./assets/VariantMinimalist-DPJAe2Pq.js"),
+			"./Pages/Services/Variants/VariantSwitcher.tsx": () => import("./assets/VariantSwitcher-8YpK3TN_.js"),
+			"./Pages/Services/Variants/VariantTechnical.tsx": () => import("./assets/VariantTechnical-xusV4Kh6.js"),
 			"./Pages/Team/Index.tsx": () => import("./assets/Index-hvotTPrv.js"),
 			"./Pages/Team/Show.tsx": () => import("./assets/Show-CHjdVEH0.js"),
 			"./Pages/Terms.tsx": () => import("./assets/Terms-qT_auwT-.js"),

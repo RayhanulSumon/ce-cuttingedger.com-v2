@@ -139,6 +139,9 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 
 // Service Pillars Hub and Hierarchical Child Pages
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::get('/design-styles/{variant?}', function (?string $variant = '1') {
+    return redirect()->to("/services/ecommerce-catalog-optimization/clipping-path-service?v={$variant}");
+})->name('design-styles.preview');
 Route::get('/services/{parentSlug}/{childSlug?}', [ServiceController::class, 'show'])->name('services.show');
 
 // Case Studies (Primary SEO Plan URL) & Legacy /work 301

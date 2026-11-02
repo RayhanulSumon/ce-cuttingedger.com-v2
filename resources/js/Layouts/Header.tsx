@@ -113,6 +113,17 @@ export function Header({
             isMegaMenu: true,
         },
         {
+            label: 'Design Styles',
+            href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=1',
+            children: [
+                { label: '01. Minimalist Studio', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=1' },
+                { label: '02. Editorial Lookbook', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=2' },
+                { label: '03. Technical Specs Lab', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=3' },
+                { label: '04. High-Conversion E-Com', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=4' },
+                { label: '05. Dark Obsidian Craft', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=5' },
+            ],
+        },
+        {
             label: 'Case Studies',
             href: '/case-studies',
         },
@@ -272,11 +283,18 @@ export function Header({
 
                                                     {/* Mega Menu Footer Banner */}
                                                     <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono bg-white/[0.02] -mx-6 -mb-6 sm:-mx-7 sm:-mb-7 px-6 sm:px-7 py-3.5">
-                                                        <div className="flex items-center gap-2 text-neutral-400 text-[11px]">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                                                            <span>Guaranteed 24h SLA · 100% Hand-Drawn Paths · Strict NDA</span>
+                                                        <div className="flex items-center gap-2 overflow-x-auto py-0.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shrink-0" />
+                                                            <span className="text-white text-[11px] font-bold uppercase shrink-0">5 Layout Styles:</span>
+                                                            <div className="flex items-center gap-1 shrink-0">
+                                                                <Link href="/services/ecommerce-catalog-optimization/clipping-path-service?v=1" className="px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors">01 Studio</Link>
+                                                                <Link href="/services/ecommerce-catalog-optimization/clipping-path-service?v=2" className="px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors">02 Editorial</Link>
+                                                                <Link href="/services/ecommerce-catalog-optimization/clipping-path-service?v=3" className="px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors">03 Technical</Link>
+                                                                <Link href="/services/ecommerce-catalog-optimization/clipping-path-service?v=4" className="px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors">04 Conversion</Link>
+                                                                <Link href="/services/ecommerce-catalog-optimization/clipping-path-service?v=5" className="px-2 py-0.5 rounded bg-white/5 hover:bg-accent hover:text-black text-[10px] text-neutral-300 transition-colors">05 Obsidian</Link>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-4 text-xs font-mono">
+                                                        <div className="flex items-center gap-4 text-xs font-mono shrink-0">
                                                             <Link
                                                                 href="/services"
                                                                 className="text-neutral-400 hover:text-white flex items-center gap-1 font-semibold transition-colors"
@@ -285,7 +303,7 @@ export function Header({
                                                                 <ArrowRight className="w-3 h-3" />
                                                             </Link>
                                                             <Link
-                                                                href="/#free-trial"
+                                                                href="/#free-sample"
                                                                 className="px-2.5 py-1 rounded-md bg-accent text-black font-bold uppercase text-[10px] tracking-wider hover:bg-accent-hover transition-colors"
                                                             >
                                                                 Free 3-Asset Pilot

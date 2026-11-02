@@ -199,7 +199,7 @@
     "/build/assets/Faq-uacoF8A5.js"
   ],
   "resources/js/Pages/Home.tsx": [
-    "/build/assets/Home-BYhWq7CW.js"
+    "/build/assets/Home-t3sWCBPR.js"
   ],
   "resources/js/Pages/Legal/CookiePolicy.tsx": [
     "/build/assets/CookiePolicy-BJOtxyQi.js"
@@ -217,7 +217,25 @@
     "/build/assets/Index-Cadezd1t.js"
   ],
   "resources/js/Pages/Services/Show.tsx": [
-    "/build/assets/Show-Dq9J-x56.js"
+    "/build/assets/Show-Dx8tsjm2.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantDarkObsidian.tsx": [
+    "/build/assets/VariantDarkObsidian-CestW0eT.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantEditorial.tsx": [
+    "/build/assets/VariantEditorial-B51efcam.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantHighConversion.tsx": [
+    "/build/assets/VariantHighConversion-2ezNnkUp.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantMinimalist.tsx": [
+    "/build/assets/VariantMinimalist-DPJAe2Pq.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantSwitcher.tsx": [
+    "/build/assets/VariantSwitcher-8YpK3TN_.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantTechnical.tsx": [
+    "/build/assets/VariantTechnical-xusV4Kh6.js"
   ],
   "resources/js/Pages/Team/Index.tsx": [
     "/build/assets/Index-hvotTPrv.js"

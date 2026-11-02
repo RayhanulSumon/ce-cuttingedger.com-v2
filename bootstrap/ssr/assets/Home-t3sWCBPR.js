@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Head } from "@inertiajs/react";
-import { ArrowUpRight, Check, CheckCircle2, Eye, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
-import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+import { Head, Link } from "@inertiajs/react";
+import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Eye, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
+import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/Home.tsx
 var HERO_SHOWCASE_PLATES = [
 	{
@@ -13,7 +13,8 @@ var HERO_SHOWCASE_PLATES = [
 		image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1800&q=85",
 		rawFilter: "brightness(0.78) contrast(0.8) saturate(0.45) sepia(0.15)",
 		doneFilter: "brightness(1.05) contrast(1.1) saturate(1.14) drop-shadow(0 28px 26px rgba(15,15,18,0.22))",
-		tintColor: "#EEF2FF"
+		tintColor: "#EEF2FF",
+		href: "/services/ecommerce-catalog-optimization/clipping-path-service"
 	},
 	{
 		id: "apparel",
@@ -24,7 +25,8 @@ var HERO_SHOWCASE_PLATES = [
 		image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1800&q=85",
 		rawFilter: "brightness(0.75) contrast(0.82) saturate(0.5) sepia(0.12)",
 		doneFilter: "brightness(1.04) contrast(1.08) saturate(1.1)",
-		tintColor: "#EAE6DF"
+		tintColor: "#EAE6DF",
+		href: "/services/ghost-mannequin-service"
 	},
 	{
 		id: "jewelry",
@@ -35,7 +37,8 @@ var HERO_SHOWCASE_PLATES = [
 		image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1800&q=85",
 		rawFilter: "brightness(0.7) contrast(0.78) grayscale(0.45)",
 		doneFilter: "brightness(1.08) contrast(1.15) saturate(1.08)",
-		tintColor: "#F3F4F6"
+		tintColor: "#F3F4F6",
+		href: "/services/ecommerce-catalog-optimization"
 	},
 	{
 		id: "hardgoods",
@@ -46,7 +49,8 @@ var HERO_SHOWCASE_PLATES = [
 		image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1800&q=85",
 		rawFilter: "brightness(0.76) contrast(0.82) saturate(0.5)",
 		doneFilter: "brightness(1.06) contrast(1.12) saturate(1.1)",
-		tintColor: "#FDF2F8"
+		tintColor: "#FDF2F8",
+		href: "/services/color-standardization"
 	}
 ];
 var ACCORDION_PANELS = [
@@ -56,7 +60,8 @@ var ACCORDION_PANELS = [
 		title: "Precision Clipping",
 		metric: "100% Hand-Drawn Pen Tool Paths",
 		image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.75) contrast(0.82) saturate(0.45) sepia(0.2)"
+		rawFilter: "brightness(0.75) contrast(0.82) saturate(0.45) sepia(0.2)",
+		href: "/services/ecommerce-catalog-optimization/clipping-path-service"
 	},
 	{
 		id: "acc-2",
@@ -64,7 +69,8 @@ var ACCORDION_PANELS = [
 		title: "3D Ghost Mannequin",
 		metric: "Symmetrical Drape",
 		image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)"
+		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)",
+		href: "/services/ghost-mannequin-service"
 	},
 	{
 		id: "acc-3",
@@ -72,7 +78,8 @@ var ACCORDION_PANELS = [
 		title: "Fine Jewelry Polish",
 		metric: "Gem & Metal Clarity",
 		image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.72) contrast(0.78) grayscale(0.45)"
+		rawFilter: "brightness(0.72) contrast(0.78) grayscale(0.45)",
+		href: "/services/ecommerce-catalog-optimization"
 	},
 	{
 		id: "acc-4",
@@ -80,7 +87,8 @@ var ACCORDION_PANELS = [
 		title: "Multi-SKU Recolor",
 		metric: "Zero Reshoot Needed",
 		image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "hue-rotate(140deg) brightness(0.82) saturate(0.75)"
+		rawFilter: "hue-rotate(140deg) brightness(0.82) saturate(0.75)",
+		href: "/services/apparel-colorway-generation"
 	},
 	{
 		id: "acc-5",
@@ -88,7 +96,8 @@ var ACCORDION_PANELS = [
 		title: "Cosmetics & Glass",
 		metric: "Specular Highlights",
 		image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.75) contrast(0.82) saturate(0.55)"
+		rawFilter: "brightness(0.75) contrast(0.82) saturate(0.55)",
+		href: "/services/color-standardization"
 	}
 ];
 var BENTO_PORTFOLIO = [
@@ -100,7 +109,8 @@ var BENTO_PORTFOLIO = [
 		title: "Dynamic Levitation & Floor Shadow",
 		turnaround: "6h Express Turnaround",
 		image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85",
-		rawFilter: "brightness(0.76) contrast(0.82) saturate(0.45) sepia(0.15)"
+		rawFilter: "brightness(0.76) contrast(0.82) saturate(0.45) sepia(0.15)",
+		href: "/services/ecommerce-catalog-optimization/clipping-path-service"
 	},
 	{
 		id: "bento-2",
@@ -110,7 +120,8 @@ var BENTO_PORTFOLIO = [
 		title: "Chronograph Anti-Glare Polish",
 		turnaround: "12h Studio SLA",
 		image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.72) contrast(0.78) saturate(0.4)"
+		rawFilter: "brightness(0.72) contrast(0.78) saturate(0.4)",
+		href: "/services/ecommerce-catalog-optimization"
 	},
 	{
 		id: "bento-3",
@@ -120,7 +131,8 @@ var BENTO_PORTFOLIO = [
 		title: "Translucent Glass & Drop Refraction",
 		turnaround: "12h Studio SLA",
 		image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=85",
-		rawFilter: "brightness(0.75) contrast(0.8) grayscale(0.45)"
+		rawFilter: "brightness(0.75) contrast(0.8) grayscale(0.45)",
+		href: "/services/color-standardization"
 	},
 	{
 		id: "bento-4",
@@ -130,7 +142,8 @@ var BENTO_PORTFOLIO = [
 		title: "Color Grading & Fabric Texture Recovery",
 		turnaround: "Custom Campaign SLA",
 		image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1400&q=85",
-		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)"
+		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)",
+		href: "/services/ghost-mannequin-service"
 	}
 ];
 var STUDIO_PRODUCTS = [
@@ -407,165 +420,179 @@ function Home({ clients = [] }) {
 				name: "description",
 				content: "Visual post-production for modern brands. 3D ghost mannequin, precision clipping, jewelry polish, cosmetics, and multi-SKU colorways."
 			})] }),
-			/* @__PURE__ */ jsx("div", {
-				className: "sticky top-5 z-50 px-4 sm:px-8 pointer-events-none",
-				children: /* @__PURE__ */ jsxs("header", {
-					className: "max-w-7xl mx-auto h-16 px-6 rounded-full bg-white/90 backdrop-blur-xl border border-neutral-200/80 shadow-[0_8px_30px_rgba(15,15,18,0.04)] flex items-center justify-between pointer-events-auto",
-					children: [
-						/* @__PURE__ */ jsxs("a", {
-							href: "#",
-							className: "text-lg font-extrabold tracking-tight text-[#0F0F12] flex items-center gap-2",
-							children: [/* @__PURE__ */ jsx("span", { className: "w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "CuttingEdger." })]
-						}),
-						/* @__PURE__ */ jsxs("nav", {
-							className: "hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-neutral-500",
-							children: [
-								/* @__PURE__ */ jsx("a", {
-									href: "#capabilities",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Capabilities"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#interactive-studio",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Interactive Studio"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#portfolio",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Portfolio"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#free-sample",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Free Sample"
-								})
-							]
-						}),
-						/* @__PURE__ */ jsxs("a", {
-							href: "#free-sample",
-							className: "px-5 py-2.5 rounded-full bg-[#0F0F12] text-white text-xs font-bold hover:bg-neutral-800 transition-all flex items-center gap-1.5 shadow-sm",
-							children: [/* @__PURE__ */ jsx("span", { children: "Start Free Trial" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })]
-						})
-					]
-				})
-			}),
 			/* @__PURE__ */ jsxs("section", {
 				className: "max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-14",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "text-center max-w-3xl mx-auto mb-9",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/80 mb-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)]",
-							children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), /* @__PURE__ */ jsx("span", {
-								className: "text-[11px] font-extrabold uppercase tracking-widest text-[#0F0F12]",
-								children: "DIGITAL POST-PRODUCTION STUDIO"
-							})]
-						}),
-						/* @__PURE__ */ jsx("h1", {
-							className: "text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#0F0F12] leading-[1.08]",
-							children: "Visual Post-Production for Modern Brands."
-						}),
-						/* @__PURE__ */ jsx("p", {
-							className: "text-xs sm:text-base text-neutral-500 font-medium mt-3.5 max-w-xl mx-auto leading-relaxed",
-							children: "100% hand-drawn pen-tool vector paths, invisible ghost mannequin drape, and colorways with guaranteed 12-hour turnaround."
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex flex-wrap items-center justify-center gap-3 mt-6",
-							children: [/* @__PURE__ */ jsxs("a", {
-								href: "#free-sample",
-								className: "px-6 py-3.5 rounded-full bg-[#0F0F12] text-white text-xs sm:text-sm font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-[0_4px_16px_rgba(15,15,18,0.12)] hover:shadow-[0_8px_24px_rgba(15,15,18,0.2)]",
-								children: [/* @__PURE__ */ jsx("span", { children: "Get 3 Free Sample Retouches" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
-							}), /* @__PURE__ */ jsx("a", {
-								href: "#interactive-studio",
-								className: "px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow",
-								children: "Test Live Playground ↓"
-							})]
-						})
-					]
-				}), /* @__PURE__ */ jsxs("div", {
-					ref: heroStageRef,
-					onMouseDown: (e) => {
-						setIsDraggingSplit(true);
-						updateSplitPosition(e.clientX);
-					},
-					onTouchStart: (e) => {
-						setIsDraggingSplit(true);
-						if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
-					},
-					className: "relative w-full h-[470px] sm:h-[550px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_25px_60px_rgba(15,15,18,0.08)] bg-white",
-					children: [
-						/* @__PURE__ */ jsx("div", {
-							className: "absolute inset-0 bg-[#F4F4F6]",
-							children: /* @__PURE__ */ jsx("img", {
-								src: currentHero.image,
-								alt: currentHero.title,
-								draggable: "false",
-								className: "w-full h-full object-cover object-center transition-all duration-700",
-								style: { filter: currentHero.doneFilter }
-							}, `hero-after-${currentHero.id}`)
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "absolute inset-0 overflow-hidden bg-[#D6D3CD]",
-							style: { clipPath: `inset(0 ${100 - splitPos}% 0 0)` },
-							children: [/* @__PURE__ */ jsx("img", {
-								src: currentHero.image,
-								alt: "Unedited Raw",
-								draggable: "false",
-								className: "w-full h-full object-cover object-center transition-all duration-700",
-								style: { filter: currentHero.rawFilter }
-							}, `hero-before-${currentHero.id}`), /* @__PURE__ */ jsx("span", {
-								className: "absolute top-5 left-5 px-3.5 py-1.5 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-extrabold tracking-wide",
-								children: "RAW CAPTURE"
-							})]
-						}),
-						/* @__PURE__ */ jsx("div", {
-							className: "absolute top-0 bottom-0 z-10 w-0.5 bg-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-none",
-							style: { left: `${splitPos}%` },
-							children: /* @__PURE__ */ jsxs("div", {
-								className: "absolute top-1/2 -translate-x-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-full bg-white text-[#0F0F12] shadow-2xl flex items-center gap-1.5 border border-neutral-200 text-[10px] font-black uppercase tracking-wider whitespace-nowrap",
-								children: [
-									/* @__PURE__ */ jsx("span", { children: "RAW" }),
-									/* @__PURE__ */ jsx("span", {
-										className: "opacity-30",
-										children: "|"
-									}),
-									/* @__PURE__ */ jsx("span", {
-										className: "text-emerald-600 font-extrabold",
-										children: "MASTER"
-									})
-								]
-							})
-						}),
-						/* @__PURE__ */ jsx("div", { className: "absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" }),
-						/* @__PURE__ */ jsxs("div", {
-							onClick: (e) => e.stopPropagation(),
-							onMouseDown: (e) => e.stopPropagation(),
-							className: "absolute bottom-0 inset-x-0 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white z-20",
-							children: [/* @__PURE__ */ jsxs("div", { children: [
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "mb-8 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs",
+						children: [/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-2 shrink-0",
+							children: [
+								/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }),
 								/* @__PURE__ */ jsx("span", {
-									className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block",
-									children: currentHero.badge
-								}),
-								/* @__PURE__ */ jsx("h2", {
-									className: "text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5",
-									children: currentHero.title
+									className: "font-extrabold text-[#0F0F12]",
+									children: "5 Service Single Page Layouts:"
 								}),
 								/* @__PURE__ */ jsx("span", {
-									className: "text-xs text-neutral-300 font-medium mt-1 block",
-									children: currentHero.metric
+									className: "text-neutral-500 hidden md:inline",
+									children: "Click to preview:"
 								})
-							] }), /* @__PURE__ */ jsx("div", {
-								className: "flex items-center gap-1.5 bg-black/50 backdrop-blur-md p-1.5 rounded-full border border-white/20 self-start sm:self-auto",
-								children: HERO_SHOWCASE_PLATES.map((plate, index) => /* @__PURE__ */ jsx("button", {
-									onClick: () => setHeroTabIdx(index),
-									className: `px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${heroTabIdx === index ? "bg-white text-[#0F0F12] shadow-sm" : "text-neutral-300 hover:text-white"}`,
-									children: plate.category
-								}, plate.id))
-							})]
-						})
-					]
-				})]
+							]
+						}), /* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-1.5 flex-wrap justify-center",
+							children: [
+								/* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
+									className: "px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs",
+									children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-emerald-500" }), /* @__PURE__ */ jsx("span", { children: "01. Minimalist" })]
+								}),
+								/* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=2",
+									className: "px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs",
+									children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-amber-500" }), /* @__PURE__ */ jsx("span", { children: "02. Editorial" })]
+								}),
+								/* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=3",
+									className: "px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs",
+									children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-cyan-500" }), /* @__PURE__ */ jsx("span", { children: "03. Technical" })]
+								}),
+								/* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=4",
+									className: "px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs",
+									children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-blue-500" }), /* @__PURE__ */ jsx("span", { children: "04. Conversion" })]
+								}),
+								/* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=5",
+									className: "px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-700 hover:text-white font-bold transition-all text-[11px] flex items-center gap-1.5 shadow-2xs",
+									children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-purple-500" }), /* @__PURE__ */ jsx("span", { children: "05. Obsidian" })]
+								})
+							]
+						})]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "text-center max-w-3xl mx-auto mb-9",
+						children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/80 mb-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)]",
+								children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), /* @__PURE__ */ jsx("span", {
+									className: "text-[11px] font-extrabold uppercase tracking-widest text-[#0F0F12]",
+									children: "DIGITAL POST-PRODUCTION STUDIO"
+								})]
+							}),
+							/* @__PURE__ */ jsx("h1", {
+								className: "text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#0F0F12] leading-[1.08]",
+								children: "Visual Post-Production for Modern Brands."
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: "text-xs sm:text-base text-neutral-500 font-medium mt-3.5 max-w-xl mx-auto leading-relaxed",
+								children: "100% hand-drawn pen-tool vector paths, invisible ghost mannequin drape, and colorways with guaranteed 12-hour turnaround."
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex flex-wrap items-center justify-center gap-3 mt-6",
+								children: [/* @__PURE__ */ jsxs("a", {
+									href: "#free-sample",
+									className: "px-6 py-3.5 rounded-full bg-[#0F0F12] text-white text-xs sm:text-sm font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-[0_4px_16px_rgba(15,15,18,0.12)] hover:shadow-[0_8px_24px_rgba(15,15,18,0.2)]",
+									children: [/* @__PURE__ */ jsx("span", { children: "Get 3 Free Sample Retouches" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
+								}), /* @__PURE__ */ jsxs(Link, {
+									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
+									className: "px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-1.5",
+									children: [/* @__PURE__ */ jsx("span", { children: "Explore 5 Service Layouts" }), /* @__PURE__ */ jsx(ArrowRight, { className: "w-3.5 h-3.5 text-emerald-600" })]
+								})]
+							})
+						]
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						ref: heroStageRef,
+						onMouseDown: (e) => {
+							setIsDraggingSplit(true);
+							updateSplitPosition(e.clientX);
+						},
+						onTouchStart: (e) => {
+							setIsDraggingSplit(true);
+							if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
+						},
+						className: "relative w-full h-[470px] sm:h-[550px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_25px_60px_rgba(15,15,18,0.08)] bg-white",
+						children: [
+							/* @__PURE__ */ jsx("div", {
+								className: "absolute inset-0 bg-[#F4F4F6]",
+								children: /* @__PURE__ */ jsx("img", {
+									src: currentHero.image,
+									alt: currentHero.title,
+									draggable: "false",
+									className: "w-full h-full object-cover object-center transition-all duration-700",
+									style: { filter: currentHero.doneFilter }
+								}, `hero-after-${currentHero.id}`)
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "absolute inset-0 overflow-hidden bg-[#D6D3CD]",
+								style: { clipPath: `inset(0 ${100 - splitPos}% 0 0)` },
+								children: [/* @__PURE__ */ jsx("img", {
+									src: currentHero.image,
+									alt: "Unedited Raw",
+									draggable: "false",
+									className: "w-full h-full object-cover object-center transition-all duration-700",
+									style: { filter: currentHero.rawFilter }
+								}, `hero-before-${currentHero.id}`), /* @__PURE__ */ jsx("span", {
+									className: "absolute top-5 left-5 px-3.5 py-1.5 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-extrabold tracking-wide",
+									children: "RAW CAPTURE"
+								})]
+							}),
+							/* @__PURE__ */ jsx("div", {
+								className: "absolute top-0 bottom-0 z-10 w-0.5 bg-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-none",
+								style: { left: `${splitPos}%` },
+								children: /* @__PURE__ */ jsxs("div", {
+									className: "absolute top-1/2 -translate-x-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-full bg-white text-[#0F0F12] shadow-2xl flex items-center gap-1.5 border border-neutral-200 text-[10px] font-black uppercase tracking-wider whitespace-nowrap",
+									children: [
+										/* @__PURE__ */ jsx("span", { children: "RAW" }),
+										/* @__PURE__ */ jsx("span", {
+											className: "opacity-30",
+											children: "|"
+										}),
+										/* @__PURE__ */ jsx("span", {
+											className: "text-emerald-600 font-extrabold",
+											children: "MASTER"
+										})
+									]
+								})
+							}),
+							/* @__PURE__ */ jsx("div", { className: "absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" }),
+							/* @__PURE__ */ jsxs("div", {
+								onClick: (e) => e.stopPropagation(),
+								onMouseDown: (e) => e.stopPropagation(),
+								className: "absolute bottom-0 inset-x-0 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white z-20",
+								children: [/* @__PURE__ */ jsxs("div", { children: [
+									/* @__PURE__ */ jsx("span", {
+										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block",
+										children: currentHero.badge
+									}),
+									/* @__PURE__ */ jsx("h2", {
+										className: "text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5",
+										children: currentHero.title
+									}),
+									/* @__PURE__ */ jsxs("span", {
+										className: "text-xs text-neutral-300 font-medium mt-1 flex flex-wrap items-center gap-2",
+										children: [
+											/* @__PURE__ */ jsx("span", { children: currentHero.metric }),
+											/* @__PURE__ */ jsx("span", { children: "•" }),
+											/* @__PURE__ */ jsxs(Link, {
+												href: currentHero.href,
+												className: "text-emerald-300 hover:text-white font-extrabold underline flex items-center gap-0.5 transition-colors",
+												children: [/* @__PURE__ */ jsx("span", { children: "View Single Page" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3 h-3 inline" })]
+											})
+										]
+									})
+								] }), /* @__PURE__ */ jsx("div", {
+									className: "flex items-center gap-1.5 bg-black/50 backdrop-blur-md p-1.5 rounded-full border border-white/20 self-start sm:self-auto",
+									children: HERO_SHOWCASE_PLATES.map((plate, index) => /* @__PURE__ */ jsx("button", {
+										onClick: () => setHeroTabIdx(index),
+										className: `px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${heroTabIdx === index ? "bg-white text-[#0F0F12] shadow-sm" : "text-neutral-300 hover:text-white"}`,
+										children: plate.category
+									}, plate.id))
+								})]
+							})
+						]
+					})
+				]
 			}),
 			/* @__PURE__ */ jsx("section", {
 				id: "capabilities",
@@ -625,11 +652,11 @@ function Home({ clients = [] }) {
 												className: "text-xs text-neutral-300 font-medium mt-1 block",
 												children: panel.metric
 											})
-										] }), isExpanded && /* @__PURE__ */ jsx("a", {
-											href: "#free-sample",
+										] }), isExpanded && /* @__PURE__ */ jsx(Link, {
+											href: panel.href,
 											onClick: (e) => e.stopPropagation(),
 											className: "w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center hover:bg-emerald-400 transition-colors shrink-0 shadow-md",
-											title: "Try this capability",
+											title: `Explore ${panel.title} Single Page`,
 											children: /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })
 										})]
 									})
@@ -687,7 +714,7 @@ function Home({ clients = [] }) {
 											type: "button",
 											onClick: () => setActiveStudioBackdrop(bd.id),
 											className: `px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 ${activeStudioBackdrop === bd.id ? "bg-[#0F0F12] text-white border-[#0F0F12] shadow-xs" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"}`,
-											title: bd.title,
+											title: bd.label,
 											children: [/* @__PURE__ */ jsx("span", { className: `w-2 h-2 rounded-full ${bd.dotColor}` }), /* @__PURE__ */ jsx("span", {
 												className: "hidden md:inline",
 												children: bd.label
@@ -1154,9 +1181,18 @@ function Home({ clients = [] }) {
 												className: "text-xs text-neutral-300 font-medium mt-1 block",
 												children: card.turnaround
 											})
-										] }), /* @__PURE__ */ jsx("div", {
-											className: "w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center group-hover:bg-emerald-400 transition-colors shrink-0 shadow-md",
-											children: /* @__PURE__ */ jsx(Maximize2, { className: "w-4 h-4" })
+										] }), /* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-2",
+											children: [/* @__PURE__ */ jsxs(Link, {
+												href: card.href,
+												onClick: (e) => e.stopPropagation(),
+												className: "px-3 py-2 rounded-full bg-white/20 hover:bg-emerald-400 text-white hover:text-[#0F0F12] text-xs font-bold transition-all backdrop-blur-md flex items-center gap-1 shadow-sm",
+												title: "View Dedicated Service Page",
+												children: [/* @__PURE__ */ jsx("span", { children: "Single Page" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })]
+											}), /* @__PURE__ */ jsx("div", {
+												className: "w-10 h-10 rounded-full bg-white text-[#0F0F12] flex items-center justify-center group-hover:bg-emerald-400 transition-colors shrink-0 shadow-md",
+												children: /* @__PURE__ */ jsx(Maximize2, { className: "w-4 h-4" })
+											})]
 										})]
 									})
 								]
@@ -1387,52 +1423,9 @@ function Home({ clients = [] }) {
 						})]
 					})]
 				})
-			}),
-			/* @__PURE__ */ jsx("footer", {
-				className: "py-10 px-4 sm:px-8 border-t border-neutral-200/80",
-				children: /* @__PURE__ */ jsxs("div", {
-					className: "max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-neutral-500",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-2 text-[#0F0F12] font-extrabold",
-							children: [/* @__PURE__ */ jsx("span", { className: "w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" }), /* @__PURE__ */ jsx("span", { children: "CuttingEdger.com" })]
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex gap-6",
-							children: [
-								/* @__PURE__ */ jsx("a", {
-									href: "#capabilities",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Capabilities"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#interactive-studio",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Interactive Studio"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#portfolio",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Portfolio"
-								}),
-								/* @__PURE__ */ jsx("a", {
-									href: "#free-sample",
-									className: "hover:text-[#0F0F12] transition-colors",
-									children: "Free Sample"
-								})
-							]
-						}),
-						/* @__PURE__ */ jsxs("span", { children: [
-							"© ",
-							(/* @__PURE__ */ new Date()).getFullYear(),
-							" CuttingEdger Studio"
-						] })
-					]
-				})
 			})
 		]
 	});
 }
-Home.layout = (page) => /* @__PURE__ */ jsx(Fragment, { children: page });
 //#endregion
 export { Home as default };
