@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BarChart3, BookOpen, Check, Eye, Film, Sparkles, Zap } from "lucide-react";
+import { BookOpen, Check, Eye, Grid, Sparkles, Zap } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -16,7 +16,7 @@ var HOME_VARIANTS = [
 	{
 		id: "2",
 		name: "AI Visual Engine",
-		badge: "NEW • 5 SERVICES",
+		badge: "IMAGE FIRST",
 		tagline: "Image-first illustration of the 5 AI & retouching services with live before/after stages",
 		accentColor: "#de4a2c",
 		bgTone: "Dark Stage #08090C",
@@ -24,12 +24,12 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "3",
-		name: "Cinematic Noir",
-		badge: "LUXURY DARK",
-		tagline: "Dark obsidian theater with glassmorphism telemetry & ambient #de4a2c glow",
+		name: "Portfolio Showcase",
+		badge: "PORTFOLIO MASONRY",
+		tagline: "Filterable case studies gallery with peek raw overlay & full-screen comparison modal",
 		accentColor: "#de4a2c",
-		bgTone: "Obsidian #07080B",
-		icon: Film
+		bgTone: "Obsidian Gallery #07080B",
+		icon: Grid
 	},
 	{
 		id: "4",
@@ -42,15 +42,6 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "5",
-		name: "Telemetry Metric",
-		badge: "DATA-FORWARD",
-		tagline: "Clean white SaaS layout with live SLA compliance metrics & spec grids",
-		accentColor: "#de4a2c",
-		bgTone: "Clean White #FFFFFF",
-		icon: BarChart3
-	},
-	{
-		id: "6",
 		name: "Brutalist Bold",
 		badge: "HIGH IMPACT",
 		tagline: "Massive typography, bold geometric strips, and zero-friction sample claim",
@@ -82,14 +73,14 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 		"aria-label": "Homepage prototype layout switcher",
 		className: "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-[95vw] pointer-events-auto",
 		children: [isExpanded && /* @__PURE__ */ jsxs("div", {
-			className: "w-[720px] max-w-[95vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
+			className: "w-[660px] max-w-[95vw] rounded-2xl p-4 bg-[#0d0e14]/95 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-2 duration-200 text-white mb-1",
 			children: [/* @__PURE__ */ jsxs("div", {
 				className: "flex items-center justify-between pb-3 border-b border-white/10 mb-3",
 				children: [/* @__PURE__ */ jsxs("div", {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "Homepage Prototypes Gallery"
+						children: "5 Homepage Prototype Layouts"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",
@@ -104,7 +95,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					})]
 				})]
 			}), /* @__PURE__ */ jsx("div", {
-				className: "grid grid-cols-2 sm:grid-cols-6 gap-2",
+				className: "grid grid-cols-1 sm:grid-cols-5 gap-2",
 				children: HOME_VARIANTS.map((variant) => {
 					const isCurrent = variant.id === selected;
 					const IconComp = variant.icon;

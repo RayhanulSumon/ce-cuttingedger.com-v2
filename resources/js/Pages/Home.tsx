@@ -3,9 +3,8 @@ import { Head, usePage } from '@inertiajs/react';
 import { HomeVariantSwitcher } from './HomeVariants/HomeVariantSwitcher';
 import { HomeOriginal } from './HomeVariants/HomeOriginal';
 import { HomeVisual } from './HomeVariants/HomeVisual';
-import { HomeCinematic } from './HomeVariants/HomeCinematic';
+import { HomePortfolio } from './HomeVariants/HomePortfolio';
 import { HomeEditorial } from './HomeVariants/HomeEditorial';
-import { HomeMetric } from './HomeVariants/HomeMetric';
 import { HomeBold } from './HomeVariants/HomeBold';
 
 interface HomeProps {
@@ -30,11 +29,11 @@ export default function Home({ clients = [] }: HomeProps) {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const v = params.get('v');
-      if (v && ['1', '2', '3', '4', '5', '6'].includes(v)) {
+      if (v && ['1', '2', '3', '4', '5'].includes(v)) {
         setCurrentVariant(v);
       } else {
         const saved = localStorage.getItem('ce_home_variant');
-        if (saved && ['1', '2', '3', '4', '5', '6'].includes(saved)) {
+        if (saved && ['1', '2', '3', '4', '5'].includes(saved)) {
           setCurrentVariant(saved);
         }
       }
@@ -61,12 +60,10 @@ export default function Home({ clients = [] }: HomeProps) {
       case '2':
         return <HomeVisual clients={clients} />;
       case '3':
-        return <HomeCinematic clients={clients} />;
+        return <HomePortfolio clients={clients} />;
       case '4':
         return <HomeEditorial clients={clients} />;
       case '5':
-        return <HomeMetric clients={clients} />;
-      case '6':
         return <HomeBold clients={clients} />;
       case '1':
       default:

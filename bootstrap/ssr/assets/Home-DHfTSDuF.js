@@ -1,9 +1,8 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-BXQ09SVq.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-rrFchmLJ.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
-import { HomeCinematic } from "./HomeCinematic-0qpuSiOI.js";
+import { HomePortfolio } from "./HomePortfolio-CLVFgukR.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
-import { HomeMetric } from "./HomeMetric-B-oSXoCb.js";
 import { HomeBold } from "./HomeBold-DZBZ4rgK.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
@@ -20,8 +19,7 @@ function Home({ clients = [] }) {
 				"2",
 				"3",
 				"4",
-				"5",
-				"6"
+				"5"
 			].includes(v)) setCurrentVariant(v);
 			else {
 				const saved = localStorage.getItem("ce_home_variant");
@@ -30,8 +28,7 @@ function Home({ clients = [] }) {
 					"2",
 					"3",
 					"4",
-					"5",
-					"6"
+					"5"
 				].includes(saved)) setCurrentVariant(saved);
 			}
 		}
@@ -54,10 +51,9 @@ function Home({ clients = [] }) {
 	const renderVariantContent = () => {
 		switch (currentVariant) {
 			case "2": return /* @__PURE__ */ jsx(HomeVisual, { clients });
-			case "3": return /* @__PURE__ */ jsx(HomeCinematic, { clients });
+			case "3": return /* @__PURE__ */ jsx(HomePortfolio, { clients });
 			case "4": return /* @__PURE__ */ jsx(HomeEditorial, { clients });
-			case "5": return /* @__PURE__ */ jsx(HomeMetric, { clients });
-			case "6": return /* @__PURE__ */ jsx(HomeBold, { clients });
+			case "5": return /* @__PURE__ */ jsx(HomeBold, { clients });
 			default: return /* @__PURE__ */ jsx(HomeOriginal, { clients });
 		}
 	};
