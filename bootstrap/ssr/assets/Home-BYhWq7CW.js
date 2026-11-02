@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Head } from "@inertiajs/react";
-import { ArrowUpRight, Check, CheckCircle2, Maximize2, Palette, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
+import { ArrowUpRight, Check, CheckCircle2, Eye, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/Home.tsx
 var HERO_SHOWCASE_PLATES = [
@@ -133,26 +133,155 @@ var BENTO_PORTFOLIO = [
 		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)"
 	}
 ];
-var SKU_SWATCHES = [
+var STUDIO_PRODUCTS = [
 	{
-		name: "Crimson Original",
-		hue: 0,
-		hex: "#EF4444"
+		id: "footwear",
+		label: "Footwear",
+		badge: "ATHLETIC RUNNER",
+		title: "Performance Multi-Material Sneaker",
+		turnaround: "12h Studio SLA",
+		image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=85",
+		rawFilter: "brightness(0.82) contrast(0.85) saturate(0.6)",
+		swatches: [
+			{
+				name: "Volt Mint",
+				hue: 0,
+				hex: "#10B981",
+				code: "SKU-VLT-01"
+			},
+			{
+				name: "Cobalt Blue",
+				hue: 200,
+				hex: "#2563EB",
+				code: "SKU-CBL-02"
+			},
+			{
+				name: "Crimson Pulse",
+				hue: -120,
+				hex: "#EF4444",
+				code: "SKU-CRM-03"
+			},
+			{
+				name: "Solar Amber",
+				hue: 50,
+				hex: "#F59E0B",
+				code: "SKU-AMB-04"
+			},
+			{
+				name: "Obsidian Noir",
+				hue: 240,
+				hex: "#374151",
+				code: "SKU-OBS-05"
+			}
+		]
 	},
 	{
-		name: "Cobalt Electric",
-		hue: 215,
-		hex: "#2563EB"
+		id: "timepiece",
+		label: "Horology",
+		badge: "LUXURY WATCH",
+		title: "Minimalist Steel Chronograph",
+		turnaround: "12h Studio SLA",
+		image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=85",
+		rawFilter: "brightness(0.78) contrast(0.8) saturate(0.5)",
+		swatches: [
+			{
+				name: "Pure Platinum",
+				hue: 0,
+				hex: "#94A3B8",
+				code: "SKU-PLT-01"
+			},
+			{
+				name: "Midnight Navy",
+				hue: 210,
+				hex: "#1E3A8A",
+				code: "SKU-NVY-02"
+			},
+			{
+				name: "Rose Metallic",
+				hue: -45,
+				hex: "#FB7185",
+				code: "SKU-RSG-03"
+			},
+			{
+				name: "Emerald Sunray",
+				hue: 130,
+				hex: "#047857",
+				code: "SKU-EMR-04"
+			},
+			{
+				name: "Obsidian Black",
+				hue: 0,
+				hex: "#18181B",
+				code: "SKU-OBS-05"
+			}
+		]
 	},
 	{
-		name: "Emerald Volt",
-		hue: 125,
-		hex: "#10B981"
+		id: "fragrance",
+		label: "Cosmetics",
+		badge: "GLASS & LIQUID",
+		title: "Refractive Glass & Gold Atomizer",
+		turnaround: "6h Express Pilot",
+		image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=85",
+		rawFilter: "brightness(0.8) contrast(0.82) saturate(0.55)",
+		swatches: [
+			{
+				name: "Solar Amber",
+				hue: 0,
+				hex: "#F59E0B",
+				code: "SKU-AMB-01"
+			},
+			{
+				name: "Rose Petal",
+				hue: 320,
+				hex: "#EC4899",
+				code: "SKU-ROS-02"
+			},
+			{
+				name: "Glacier Mist",
+				hue: 190,
+				hex: "#06B6D4",
+				code: "SKU-GLC-03"
+			},
+			{
+				name: "Verdant Herbal",
+				hue: 120,
+				hex: "#10B981",
+				code: "SKU-VRD-04"
+			},
+			{
+				name: "Royal Plum",
+				hue: 275,
+				hex: "#8B5CF6",
+				code: "SKU-PLM-05"
+			}
+		]
+	}
+];
+var STUDIO_BACKDROPS = [
+	{
+		id: "transparent",
+		label: "Alpha PNG",
+		bgClass: "checkerboard-subtle",
+		dotColor: "bg-neutral-300"
 	},
 	{
-		name: "Sunset Violet",
-		hue: 285,
-		hex: "#8B5CF6"
+		id: "white",
+		label: "E-Com #FFF",
+		bgClass: "bg-white",
+		dotColor: "bg-white border border-neutral-300"
+	},
+	{
+		id: "gray",
+		label: "Studio Neutral",
+		bgClass: "bg-[#F1F3F5]",
+		dotColor: "bg-neutral-300"
+	},
+	{
+		id: "dark",
+		label: "Charcoal Noir",
+		bgClass: "bg-[#0F0F12]",
+		dotColor: "bg-[#0F0F12]"
 	}
 ];
 function Home({ clients = [] }) {
@@ -164,10 +293,16 @@ function Home({ clients = [] }) {
 	const heroStageRef = useRef(null);
 	const [expandedAccordion, setExpandedAccordion] = useState(1);
 	const [accordionRawMap, setAccordionRawMap] = useState({});
+	const [activeStudioProductIdx, setActiveStudioProductIdx] = useState(0);
+	const [activeStudioBackdrop, setActiveStudioBackdrop] = useState("transparent");
 	const [layerCutout, setLayerCutout] = useState(true);
 	const [layerShadow, setLayerShadow] = useState(true);
+	const [shadowIntensity, setShadowIntensity] = useState(85);
 	const [layerPolish, setLayerPolish] = useState(true);
+	const [polishIntensity, setPolishIntensity] = useState(90);
 	const [activeSwatchIdx, setActiveSwatchIdx] = useState(0);
+	const [showVectorPath, setShowVectorPath] = useState(false);
+	const [isPeekingRaw, setIsPeekingRaw] = useState(false);
 	const [globalRawMode, setGlobalRawMode] = useState(false);
 	const [hoveredBentoId, setHoveredBentoId] = useState(null);
 	const [lightboxItem, setLightboxItem] = useState(null);
@@ -230,8 +365,23 @@ function Home({ clients = [] }) {
 	const handleFileChange = (e) => {
 		if (e.target.files && e.target.files.length > 0) setUploadedFiles((prev) => [...prev, ...Array.from(e.target.files)]);
 	};
+	const currentStudioProduct = STUDIO_PRODUCTS[activeStudioProductIdx] || STUDIO_PRODUCTS[0];
+	const currentStudioSwatch = currentStudioProduct.swatches[activeSwatchIdx] || currentStudioProduct.swatches[0];
 	const getPlaygroundFilter = () => {
-		return `hue-rotate(${(SKU_SWATCHES[activeSwatchIdx] || SKU_SWATCHES[0]).hue}deg) ${layerPolish ? "brightness(1.06) contrast(1.1) saturate(1.12)" : "brightness(0.84) contrast(0.86) saturate(0.65)"} ${layerShadow ? "drop-shadow(0 32px 24px rgba(15,15,18,0.28))" : "drop-shadow(0 2px 4px rgba(15,15,18,0.06))"}`;
+		if (isPeekingRaw) return currentStudioProduct.rawFilter;
+		const hue = currentStudioSwatch.hue;
+		let polishPart = "brightness(1.0) contrast(1.0) saturate(1.0)";
+		if (layerPolish) {
+			const pScale = polishIntensity / 100;
+			polishPart = `brightness(${(1 + .06 * pScale).toFixed(2)}) contrast(${(1 + .12 * pScale).toFixed(2)}) saturate(${(1 + .14 * pScale).toFixed(2)})`;
+		} else polishPart = "brightness(0.85) contrast(0.86) saturate(0.65)";
+		let shadowPart = "";
+		if (layerShadow) {
+			const sScale = shadowIntensity / 100;
+			const blur = Math.round(28 * sScale);
+			shadowPart = `drop-shadow(0 ${Math.round(24 * sScale)}px ${blur}px rgba(15,15,18,${(.28 * sScale).toFixed(2)}))`;
+		}
+		return `hue-rotate(${hue}deg) ${polishPart} ${shadowPart}`.trim();
 	};
 	const volumeTierInfo = useMemo(() => {
 		if (volumeSlider < 100) return {
@@ -495,144 +645,449 @@ function Home({ clients = [] }) {
 				children: /* @__PURE__ */ jsxs("div", {
 					className: "max-w-7xl mx-auto",
 					children: [/* @__PURE__ */ jsxs("div", {
-						className: "flex flex-col sm:flex-row sm:items-end justify-between mb-7 gap-2",
-						children: [/* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("h2", {
+						className: "flex flex-col sm:flex-row sm:items-end justify-between mb-7 gap-3",
+						children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-2 mb-1.5",
+							children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), /* @__PURE__ */ jsx("span", {
+								className: "text-[11px] font-extrabold uppercase tracking-widest text-emerald-600",
+								children: "REAL-TIME POST-PRODUCTION PLAYGROUND"
+							})]
+						}), /* @__PURE__ */ jsx("h2", {
 							className: "text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F0F12]",
 							children: "Interactive Retouching Studio"
-						}) }), /* @__PURE__ */ jsx("p", {
-							className: "text-xs sm:text-sm font-semibold text-neutral-500",
-							children: "Toggle non-destructive studio layers & live SKU colorways in real time"
+						})] }), /* @__PURE__ */ jsx("p", {
+							className: "text-xs sm:text-sm font-medium text-neutral-500 max-w-md",
+							children: "Toggle non-destructive studio layers, test marketplace backdrops, and preview live SKU colorways in real time."
 						})]
 					}), /* @__PURE__ */ jsxs("div", {
 						className: "grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch",
 						children: [/* @__PURE__ */ jsxs("div", {
-							className: `lg:col-span-8 relative h-[420px] sm:h-[460px] rounded-[28px] overflow-hidden border border-neutral-200/80 shadow-sm flex items-center justify-center transition-colors duration-500 ${layerCutout ? "checkerboard-subtle" : "bg-[#D8D5CE]"}`,
-							children: [
-								/* @__PURE__ */ jsx("img", {
-									src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=85",
-									alt: "Interactive Studio Sample",
-									className: `w-full h-full object-cover object-center transition-all duration-500 ${layerCutout ? "mix-blend-multiply scale-90 object-contain" : ""}`,
-									style: { filter: getPlaygroundFilter() }
-								}),
-								/* @__PURE__ */ jsxs("div", {
-									className: "absolute top-4 right-4 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-neutral-200/80 text-xs font-extrabold text-[#0F0F12] shadow-sm",
-									children: ["Active SKU: ", SKU_SWATCHES[activeSwatchIdx].name]
-								}),
-								/* @__PURE__ */ jsxs("div", {
-									className: "absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/75 via-black/25 to-transparent flex items-end justify-between text-white",
-									children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
-										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block",
-										children: "LIVE LAYER PREVIEW"
-									}), /* @__PURE__ */ jsx("h3", {
-										className: "text-xl font-extrabold tracking-tight mt-0.5",
-										children: "Multi-Layer PSD Production Pipeline"
-									})] }), /* @__PURE__ */ jsx("button", {
-										type: "button",
-										onClick: () => {
-											setLayerCutout(false);
-											setLayerShadow(false);
-											setLayerPolish(false);
-											setActiveSwatchIdx(0);
-										},
-										className: "px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#0F0F12] text-xs font-bold backdrop-blur-md transition-colors",
-										children: "Reset to Raw"
-									})]
-								})
-							]
-						}), /* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-4 rounded-[28px] bg-white border border-neutral-200/80 p-6 flex flex-col justify-between shadow-sm",
+							className: "lg:col-span-8 flex flex-col rounded-[28px] bg-white border border-neutral-200/80 shadow-sm overflow-hidden",
 							children: [/* @__PURE__ */ jsxs("div", {
-								className: "space-y-3",
+								className: "px-4 sm:px-6 py-3 border-b border-neutral-200/70 flex flex-wrap items-center justify-between gap-3 bg-white/95 backdrop-blur-md",
 								children: [
-									/* @__PURE__ */ jsx("span", {
-										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 block",
-										children: "STUDIO FINISHING CONTROLS"
-									}),
-									/* @__PURE__ */ jsx("h3", {
-										className: "text-lg font-extrabold text-[#0F0F12]",
-										children: "Customize Post-Production"
-									}),
-									/* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => setLayerCutout(!layerCutout),
-										className: `w-full p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between ${layerCutout ? "bg-[#0F0F12] text-white border-[#0F0F12]" : "bg-[#F8F9FA] text-[#0F0F12] border-neutral-200/80"}`,
-										children: [/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center gap-3",
-											children: [/* @__PURE__ */ jsx(Scissors, { className: "w-4 h-4 text-emerald-400 shrink-0" }), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-												className: "text-xs font-extrabold",
-												children: "Pen-Tool Background Cutout"
-											}), /* @__PURE__ */ jsx("div", {
-												className: "text-[11px] opacity-70",
-												children: "300% zoom vector path"
-											})] })]
-										}), /* @__PURE__ */ jsx("div", {
-											className: `w-5 h-5 rounded-full flex items-center justify-center ${layerCutout ? "bg-emerald-400 text-[#0F0F12]" : "bg-neutral-200"}`,
-											children: layerCutout && /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 stroke-[3]" })
-										})]
-									}),
-									/* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => setLayerShadow(!layerShadow),
-										className: `w-full p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between ${layerShadow ? "bg-[#0F0F12] text-white border-[#0F0F12]" : "bg-[#F8F9FA] text-[#0F0F12] border-neutral-200/80"}`,
-										children: [/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center gap-3",
-											children: [/* @__PURE__ */ jsx(Sun, { className: "w-4 h-4 text-emerald-400 shrink-0" }), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-												className: "text-xs font-extrabold",
-												children: "Natural Floor Shadow"
-											}), /* @__PURE__ */ jsx("div", {
-												className: "text-[11px] opacity-70",
-												children: "Soft grounded studio depth"
-											})] })]
-										}), /* @__PURE__ */ jsx("div", {
-											className: `w-5 h-5 rounded-full flex items-center justify-center ${layerShadow ? "bg-emerald-400 text-[#0F0F12]" : "bg-neutral-200"}`,
-											children: layerShadow && /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 stroke-[3]" })
-										})]
-									}),
-									/* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => setLayerPolish(!layerPolish),
-										className: `w-full p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between ${layerPolish ? "bg-[#0F0F12] text-white border-[#0F0F12]" : "bg-[#F8F9FA] text-[#0F0F12] border-neutral-200/80"}`,
-										children: [/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center gap-3",
-											children: [/* @__PURE__ */ jsx(Wand2, { className: "w-4 h-4 text-emerald-400 shrink-0" }), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-												className: "text-xs font-extrabold",
-												children: "Studio Polish & Contrast"
-											}), /* @__PURE__ */ jsx("div", {
-												className: "text-[11px] opacity-70",
-												children: "Dust, glue & crease removal"
-											})] })]
-										}), /* @__PURE__ */ jsx("div", {
-											className: `w-5 h-5 rounded-full flex items-center justify-center ${layerPolish ? "bg-emerald-400 text-[#0F0F12]" : "bg-neutral-200"}`,
-											children: layerPolish && /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 stroke-[3]" })
-										})]
+									/* @__PURE__ */ jsx("div", {
+										className: "flex items-center gap-1 bg-neutral-100 p-1 rounded-xl",
+										children: STUDIO_PRODUCTS.map((prod, idx) => /* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => {
+												setActiveStudioProductIdx(idx);
+												setActiveSwatchIdx(0);
+											},
+											className: `px-3 py-1 rounded-lg text-xs font-extrabold transition-all ${activeStudioProductIdx === idx ? "bg-[#0F0F12] text-white shadow-xs" : "text-neutral-500 hover:text-[#0F0F12]"}`,
+											children: prod.label
+										}, prod.id))
 									}),
 									/* @__PURE__ */ jsxs("div", {
-										className: "p-3.5 rounded-2xl bg-[#F8F9FA] border border-neutral-200/80",
-										children: [/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center justify-between mb-2.5",
-											children: [/* @__PURE__ */ jsxs("span", {
-												className: "text-xs font-extrabold flex items-center gap-1.5",
-												children: [/* @__PURE__ */ jsx(Palette, { className: "w-3.5 h-3.5 text-emerald-600" }), "Instant SKU Color Match"]
-											}), /* @__PURE__ */ jsx("span", {
-												className: "text-[11px] font-semibold text-neutral-500",
-												children: SKU_SWATCHES[activeSwatchIdx].name
+										className: "flex items-center gap-1.5",
+										children: [/* @__PURE__ */ jsx("span", {
+											className: "hidden sm:inline text-[11px] font-bold text-neutral-400 mr-0.5",
+											children: "Stage:"
+										}), STUDIO_BACKDROPS.map((bd) => /* @__PURE__ */ jsxs("button", {
+											type: "button",
+											onClick: () => setActiveStudioBackdrop(bd.id),
+											className: `px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 ${activeStudioBackdrop === bd.id ? "bg-[#0F0F12] text-white border-[#0F0F12] shadow-xs" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"}`,
+											title: bd.title,
+											children: [/* @__PURE__ */ jsx("span", { className: `w-2 h-2 rounded-full ${bd.dotColor}` }), /* @__PURE__ */ jsx("span", {
+												className: "hidden md:inline",
+												children: bd.label
 											})]
-										}), /* @__PURE__ */ jsx("div", {
-											className: "flex items-center gap-2.5",
-											children: SKU_SWATCHES.map((swatch, idx) => /* @__PURE__ */ jsx("button", {
-												type: "button",
-												onClick: () => setActiveSwatchIdx(idx),
-												className: `h-8 flex-1 rounded-xl transition-all border-2 ${activeSwatchIdx === idx ? "border-[#0F0F12] scale-105 shadow-sm" : "border-transparent opacity-75 hover:opacity-100"}`,
-												style: { backgroundColor: swatch.hex },
-												title: swatch.name
-											}, swatch.name))
+										}, bd.id))]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center gap-1.5",
+										children: [/* @__PURE__ */ jsxs("button", {
+											type: "button",
+											onMouseDown: () => setIsPeekingRaw(true),
+											onMouseUp: () => setIsPeekingRaw(false),
+											onTouchStart: () => setIsPeekingRaw(true),
+											onTouchEnd: () => setIsPeekingRaw(false),
+											onClick: () => setIsPeekingRaw((prev) => !prev),
+											className: `px-3 py-1 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 ${isPeekingRaw ? "bg-amber-500 text-white border-amber-500 shadow-xs" : "bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50"}`,
+											title: "Click or hold to view unretouched RAW exposure",
+											children: [/* @__PURE__ */ jsx(Eye, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", {
+												className: "hidden sm:inline",
+												children: isPeekingRaw ? "Viewing RAW" : "Peek RAW"
+											})]
+										}), /* @__PURE__ */ jsx("button", {
+											type: "button",
+											onClick: () => {
+												setLayerCutout(true);
+												setLayerShadow(true);
+												setLayerPolish(true);
+												setShadowIntensity(85);
+												setPolishIntensity(90);
+												setActiveSwatchIdx(0);
+												setShowVectorPath(false);
+												setIsPeekingRaw(false);
+												setActiveStudioBackdrop("transparent");
+											},
+											className: "w-8 h-8 rounded-lg border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-[#0F0F12] hover:bg-neutral-50 transition-colors",
+											title: "Reset Studio Layers",
+											children: /* @__PURE__ */ jsx(RotateCcw, { className: "w-3.5 h-3.5" })
 										})]
 									})
 								]
-							}), /* @__PURE__ */ jsxs("a", {
-								href: "#free-sample",
-								className: "mt-5 w-full py-3.5 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2",
-								children: [/* @__PURE__ */ jsx("span", { children: "Test With Your Own Product" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: `relative h-[380px] sm:h-[440px] flex items-center justify-center p-6 overflow-hidden transition-colors duration-500 ${isPeekingRaw ? "bg-[#D6D3CD]" : layerCutout ? STUDIO_BACKDROPS.find((b) => b.id === activeStudioBackdrop)?.bgClass || "checkerboard-subtle" : "bg-[#D8D5CE]"}`,
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: "relative max-w-full max-h-full flex items-center justify-center",
+										children: [/* @__PURE__ */ jsx("img", {
+											src: currentStudioProduct.image,
+											alt: currentStudioProduct.title,
+											className: `max-h-[290px] sm:max-h-[340px] w-auto object-contain transition-all duration-300 ${isPeekingRaw ? "scale-95" : layerCutout ? activeStudioBackdrop === "dark" ? "scale-95" : "mix-blend-multiply scale-95" : "scale-100"}`,
+											style: { filter: getPlaygroundFilter() }
+										}), showVectorPath && !isPeekingRaw && /* @__PURE__ */ jsxs("svg", {
+											className: "absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_2px_8px_rgba(6,182,212,0.4)]",
+											viewBox: "0 0 400 300",
+											fill: "none",
+											children: [
+												/* @__PURE__ */ jsx("path", {
+													d: "M 60 170 C 60 120, 110 90, 190 85 C 260 80, 310 115, 340 160 C 355 185, 335 225, 290 230 C 220 235, 120 235, 75 220 C 65 210, 60 190, 60 170 Z",
+													stroke: "#06B6D4",
+													strokeWidth: "1.75",
+													strokeDasharray: "4 3"
+												}),
+												[
+													{
+														cx: 60,
+														cy: 170
+													},
+													{
+														cx: 120,
+														cy: 92
+													},
+													{
+														cx: 190,
+														cy: 85
+													},
+													{
+														cx: 260,
+														cy: 110
+													},
+													{
+														cx: 340,
+														cy: 160
+													},
+													{
+														cx: 330,
+														cy: 215
+													},
+													{
+														cx: 290,
+														cy: 230
+													},
+													{
+														cx: 180,
+														cy: 233
+													},
+													{
+														cx: 75,
+														cy: 220
+													}
+												].map((pt, i) => /* @__PURE__ */ jsxs("g", { children: [/* @__PURE__ */ jsx("circle", {
+													cx: pt.cx,
+													cy: pt.cy,
+													r: "4",
+													fill: "#06B6D4",
+													stroke: "#ffffff",
+													strokeWidth: "1.5"
+												}), /* @__PURE__ */ jsx("circle", {
+													cx: pt.cx,
+													cy: pt.cy,
+													r: "6",
+													fill: "transparent",
+													stroke: "#06B6D4",
+													strokeWidth: "0.75",
+													opacity: "0.6"
+												})] }, i)),
+												/* @__PURE__ */ jsx("line", {
+													x1: "190",
+													y1: "85",
+													x2: "160",
+													y2: "85",
+													stroke: "#06B6D4",
+													strokeWidth: "1"
+												}),
+												/* @__PURE__ */ jsx("line", {
+													x1: "190",
+													y1: "85",
+													x2: "220",
+													y2: "85",
+													stroke: "#06B6D4",
+													strokeWidth: "1"
+												}),
+												/* @__PURE__ */ jsx("circle", {
+													cx: "160",
+													cy: "85",
+													r: "2.5",
+													fill: "#ffffff",
+													stroke: "#06B6D4",
+													strokeWidth: "1"
+												}),
+												/* @__PURE__ */ jsx("circle", {
+													cx: "220",
+													cy: "85",
+													r: "2.5",
+													fill: "#ffffff",
+													stroke: "#06B6D4",
+													strokeWidth: "1"
+												})
+											]
+										})]
+									}),
+									isPeekingRaw && /* @__PURE__ */ jsxs("div", {
+										className: "absolute top-4 inset-x-0 mx-auto w-fit px-4 py-1.5 rounded-full bg-amber-500 text-white text-xs font-extrabold shadow-md flex items-center gap-1.5 animate-pulse",
+										children: [/* @__PURE__ */ jsx(Eye, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", { children: "RAW Unretouched Exposure • All Filters Bypassed" })]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "absolute inset-x-0 bottom-0 px-5 py-3 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-between text-white text-xs pointer-events-none",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-2",
+											children: [
+												/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" }),
+												/* @__PURE__ */ jsx("span", {
+													className: "font-extrabold text-white",
+													children: currentStudioProduct.title
+												}),
+												/* @__PURE__ */ jsxs("span", {
+													className: "hidden sm:inline text-white/70",
+													children: ["• ", currentStudioSwatch.name]
+												})
+											]
+										}), /* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-3 font-mono text-[11px] text-white/80",
+											children: [
+												/* @__PURE__ */ jsx("span", {
+													className: "hidden md:inline",
+													children: "16-Bit ProPhoto RGB"
+												}),
+												/* @__PURE__ */ jsx("span", {
+													className: "hidden sm:inline",
+													children: "300 DPI PSD"
+												}),
+												/* @__PURE__ */ jsx("span", {
+													className: "px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold backdrop-blur-xs",
+													children: layerCutout ? "Vector Isolated" : "Original Background"
+												})
+											]
+										})]
+									})
+								]
+							})]
+						}), /* @__PURE__ */ jsxs("div", {
+							className: "lg:col-span-4 rounded-[28px] bg-white border border-neutral-200/80 p-5 sm:p-6 flex flex-col justify-between shadow-sm space-y-4",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "space-y-3.5",
+								children: [
+									/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center justify-between pb-1 border-b border-neutral-200/60",
+										children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
+											className: "text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 block",
+											children: "STUDIO INSPECTOR"
+										}), /* @__PURE__ */ jsx("h3", {
+											className: "text-base font-extrabold text-[#0F0F12] -mt-0.5",
+											children: "Non-Destructive Layers"
+										})] }), /* @__PURE__ */ jsxs("div", {
+											className: "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[11px] font-bold",
+											children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" }), /* @__PURE__ */ jsxs("span", { children: [[
+												layerCutout,
+												layerShadow,
+												layerPolish
+											].filter(Boolean).length, "/3 Active"] })]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "p-3 rounded-2xl bg-[#F8F9FA] border border-neutral-200/70 transition-all hover:border-neutral-300/80",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center justify-between gap-3",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex items-center gap-3 min-w-0",
+												children: [/* @__PURE__ */ jsx("div", {
+													className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${layerCutout ? "bg-emerald-50 text-emerald-600" : "bg-neutral-200/60 text-neutral-400"}`,
+													children: /* @__PURE__ */ jsx(Scissors, { className: "w-4 h-4" })
+												}), /* @__PURE__ */ jsxs("div", {
+													className: "min-w-0",
+													children: [/* @__PURE__ */ jsx("div", {
+														className: "text-xs font-extrabold text-[#0F0F12] truncate",
+														children: "Pen-Tool Vector Cutout"
+													}), /* @__PURE__ */ jsx("div", {
+														className: "text-[11px] font-medium text-neutral-500",
+														children: "300% zoom hand-drawn path"
+													})]
+												})]
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: () => setLayerCutout(!layerCutout),
+												className: `w-11 h-6 rounded-full transition-colors relative flex items-center px-0.5 shrink-0 ${layerCutout ? "bg-emerald-500" : "bg-neutral-300"}`,
+												"aria-label": "Toggle Pen Tool Cutout",
+												children: /* @__PURE__ */ jsx("div", { className: `w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 transform ${layerCutout ? "translate-x-5" : "translate-x-0"}` })
+											})]
+										}), layerCutout && /* @__PURE__ */ jsxs("div", {
+											className: "mt-2.5 pt-2 border-t border-neutral-200/60 flex items-center justify-between text-[11px]",
+											children: [/* @__PURE__ */ jsx("span", {
+												className: "text-neutral-500 font-medium",
+												children: "Bézier Vector Anchors"
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: () => setShowVectorPath(!showVectorPath),
+												className: `px-2 py-0.5 rounded-md font-bold text-[10px] transition-all ${showVectorPath ? "bg-emerald-100 text-emerald-800 border border-emerald-200" : "bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50"}`,
+												children: showVectorPath ? "Overlay Active" : "Inspect Path"
+											})]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "p-3 rounded-2xl bg-[#F8F9FA] border border-neutral-200/70 transition-all hover:border-neutral-300/80",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center justify-between gap-3",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex items-center gap-3 min-w-0",
+												children: [/* @__PURE__ */ jsx("div", {
+													className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${layerShadow ? "bg-emerald-50 text-emerald-600" : "bg-neutral-200/60 text-neutral-400"}`,
+													children: /* @__PURE__ */ jsx(Sun, { className: "w-4 h-4" })
+												}), /* @__PURE__ */ jsxs("div", {
+													className: "min-w-0",
+													children: [/* @__PURE__ */ jsx("div", {
+														className: "text-xs font-extrabold text-[#0F0F12] truncate",
+														children: "Natural Floor Shadow"
+													}), /* @__PURE__ */ jsx("div", {
+														className: "text-[11px] font-medium text-neutral-500",
+														children: "Dual-pass grounded depth"
+													})]
+												})]
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: () => setLayerShadow(!layerShadow),
+												className: `w-11 h-6 rounded-full transition-colors relative flex items-center px-0.5 shrink-0 ${layerShadow ? "bg-emerald-500" : "bg-neutral-300"}`,
+												"aria-label": "Toggle Floor Shadow",
+												children: /* @__PURE__ */ jsx("div", { className: `w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 transform ${layerShadow ? "translate-x-5" : "translate-x-0"}` })
+											})]
+										}), layerShadow && /* @__PURE__ */ jsxs("div", {
+											className: "mt-2.5 pt-2 border-t border-neutral-200/60 flex items-center gap-2",
+											children: [
+												/* @__PURE__ */ jsx("span", {
+													className: "text-[10px] font-semibold text-neutral-400 uppercase tracking-wider shrink-0",
+													children: "Depth"
+												}),
+												/* @__PURE__ */ jsx("input", {
+													type: "range",
+													min: "20",
+													max: "100",
+													value: shadowIntensity,
+													onChange: (e) => setShadowIntensity(Number(e.target.value)),
+													className: "w-full accent-emerald-500 h-1.5 bg-neutral-200 rounded-lg cursor-pointer"
+												}),
+												/* @__PURE__ */ jsxs("span", {
+													className: "text-[11px] font-mono font-bold text-neutral-600 shrink-0 w-8 text-right",
+													children: [shadowIntensity, "%"]
+												})
+											]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "p-3 rounded-2xl bg-[#F8F9FA] border border-neutral-200/70 transition-all hover:border-neutral-300/80",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center justify-between gap-3",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex items-center gap-3 min-w-0",
+												children: [/* @__PURE__ */ jsx("div", {
+													className: `w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${layerPolish ? "bg-emerald-50 text-emerald-600" : "bg-neutral-200/60 text-neutral-400"}`,
+													children: /* @__PURE__ */ jsx(Wand2, { className: "w-4 h-4" })
+												}), /* @__PURE__ */ jsxs("div", {
+													className: "min-w-0",
+													children: [/* @__PURE__ */ jsx("div", {
+														className: "text-xs font-extrabold text-[#0F0F12] truncate",
+														children: "Studio Polish & Clarity"
+													}), /* @__PURE__ */ jsx("div", {
+														className: "text-[11px] font-medium text-neutral-500",
+														children: "Dust, glue & reflection cleanup"
+													})]
+												})]
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: () => setLayerPolish(!layerPolish),
+												className: `w-11 h-6 rounded-full transition-colors relative flex items-center px-0.5 shrink-0 ${layerPolish ? "bg-emerald-500" : "bg-neutral-300"}`,
+												"aria-label": "Toggle Polish",
+												children: /* @__PURE__ */ jsx("div", { className: `w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 transform ${layerPolish ? "translate-x-5" : "translate-x-0"}` })
+											})]
+										}), layerPolish && /* @__PURE__ */ jsxs("div", {
+											className: "mt-2.5 pt-2 border-t border-neutral-200/60 flex items-center gap-2",
+											children: [
+												/* @__PURE__ */ jsx("span", {
+													className: "text-[10px] font-semibold text-neutral-400 uppercase tracking-wider shrink-0",
+													children: "Clarity"
+												}),
+												/* @__PURE__ */ jsx("input", {
+													type: "range",
+													min: "30",
+													max: "100",
+													value: polishIntensity,
+													onChange: (e) => setPolishIntensity(Number(e.target.value)),
+													className: "w-full accent-emerald-500 h-1.5 bg-neutral-200 rounded-lg cursor-pointer"
+												}),
+												/* @__PURE__ */ jsxs("span", {
+													className: "text-[11px] font-mono font-bold text-neutral-600 shrink-0 w-8 text-right",
+													children: [polishIntensity, "%"]
+												})
+											]
+										})]
+									}),
+									/* @__PURE__ */ jsxs("div", {
+										className: "p-3 rounded-2xl bg-[#F8F9FA] border border-neutral-200/70 transition-all hover:border-neutral-300/80",
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex items-center justify-between mb-2",
+											children: [/* @__PURE__ */ jsxs("div", {
+												className: "flex items-center gap-2",
+												children: [/* @__PURE__ */ jsx("div", {
+													className: "w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0",
+													children: /* @__PURE__ */ jsx(Palette, { className: "w-4 h-4" })
+												}), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
+													className: "text-xs font-extrabold text-[#0F0F12]",
+													children: "Instant SKU Color Match"
+												}), /* @__PURE__ */ jsx("div", {
+													className: "text-[11px] font-medium text-neutral-500",
+													children: "Delta-E calibrated colorways"
+												})] })]
+											}), /* @__PURE__ */ jsx("span", {
+												className: "text-[10px] font-mono font-bold text-neutral-600 bg-white px-2 py-0.5 rounded-md border border-neutral-200/80",
+												children: currentStudioSwatch.code
+											})]
+										}), /* @__PURE__ */ jsxs("div", {
+											className: "flex items-center justify-between gap-2 pt-1",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "flex items-center gap-2",
+												children: currentStudioProduct.swatches.map((swatch, idx) => /* @__PURE__ */ jsx("button", {
+													type: "button",
+													onClick: () => setActiveSwatchIdx(idx),
+													className: `relative w-7 h-7 rounded-full transition-all flex items-center justify-center ${activeSwatchIdx === idx ? "scale-110 ring-2 ring-[#0F0F12] ring-offset-2 shadow-xs" : "hover:scale-105 opacity-80 hover:opacity-100"}`,
+													style: { backgroundColor: swatch.hex },
+													title: `${swatch.name} (${swatch.code})`,
+													children: activeSwatchIdx === idx && /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 text-white stroke-[3] drop-shadow-sm" })
+												}, swatch.code))
+											}), /* @__PURE__ */ jsx("span", {
+												className: "text-xs font-bold text-neutral-700 truncate max-w-[110px]",
+												children: currentStudioSwatch.name
+											})]
+										})]
+									})
+								]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "pt-2 border-t border-neutral-200/60 space-y-2.5",
+								children: [/* @__PURE__ */ jsxs("div", {
+									className: "flex items-center justify-between text-xs text-neutral-500",
+									children: [/* @__PURE__ */ jsx("span", {
+										className: "font-semibold",
+										children: "Turnaround SLA:"
+									}), /* @__PURE__ */ jsx("span", {
+										className: "font-extrabold text-[#0F0F12]",
+										children: currentStudioProduct.turnaround
+									})]
+								}), /* @__PURE__ */ jsxs("a", {
+									href: "#free-sample",
+									className: "w-full py-3.5 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-xs group",
+									children: [/* @__PURE__ */ jsx("span", { children: "Test With Your Own Product" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" })]
+								})]
 							})]
 						})]
 					})]
