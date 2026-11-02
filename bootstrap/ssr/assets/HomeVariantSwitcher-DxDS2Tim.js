@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BookOpen, Camera, Check, Eye, Grid, Shirt, Sparkles, UserCheck } from "lucide-react";
+import { BookOpen, Camera, Check, Eye, Grid, Scissors, Shirt, Sparkles, UserCheck } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -66,6 +66,15 @@ var HOME_VARIANTS = [
 		accentColor: "#de4a2c",
 		bgTone: "3D Studio #FDFDFC",
 		icon: Shirt
+	},
+	{
+		id: "8",
+		name: "Image Editing Retouch",
+		badge: "11 SERVICES",
+		tagline: "11 Specialist Image Editing Services: Background Removal, Jewelry, Automobile, Ghost Mannequin, High-End Model & Shoe Retouch with interactive Before/After Lab",
+		accentColor: "#de4a2c",
+		bgTone: "Obsidian Studio #08090C",
+		icon: Scissors
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {

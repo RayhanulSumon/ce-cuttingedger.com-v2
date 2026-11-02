@@ -8,6 +8,7 @@ import {
   Camera,
   UserCheck,
   Shirt,
+  Scissors,
   ShoppingBag,
   Sun,
   Percent,
@@ -82,6 +83,15 @@ export const HOME_VARIANTS = [
     accentColor: '#de4a2c',
     bgTone: '3D Studio #FDFDFC',
     icon: Shirt
+  },
+  {
+    id: '8',
+    name: 'Image Editing Retouch',
+    badge: '11 SERVICES',
+    tagline: '11 Specialist Image Editing Services: Background Removal, Jewelry, Automobile, Ghost Mannequin, High-End Model & Shoe Retouch with interactive Before/After Lab',
+    accentColor: '#de4a2c',
+    bgTone: 'Obsidian Studio #08090C',
+    icon: Scissors
   }
 ];
 
