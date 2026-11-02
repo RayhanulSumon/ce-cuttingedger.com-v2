@@ -1,7 +1,7 @@
 import { i as useTheme } from "../ssr.js";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Moon, Pause, Play, Scissors, Sliders, Sparkles, Sun } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Moon, MoveHorizontal, Pause, Play, Scissors, Sliders, Sparkles, Sun } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeRetouchStudio.tsx
 var SERVICES_11 = [
@@ -127,7 +127,7 @@ var SERVICES_11 = [
 		category: "Glamour"
 	}
 ];
-function ParallaxMouseCard({ service, isDark, onInspect }) {
+function ParallaxMouseCard({ service, isDark, onInspect, className = "" }) {
 	const cardRef = useRef(null);
 	const [coords, setCoords] = useState({
 		x: .5,
@@ -171,7 +171,7 @@ function ParallaxMouseCard({ service, isDark, onInspect }) {
 			transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) ${isHovered ? "translateY(-10px) scale(1.02)" : "translateY(0) scale(1)"}`,
 			transition: isHovered ? "transform 0.08s ease-out" : "transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1)"
 		},
-		className: `group relative rounded-3xl overflow-hidden border shadow-2xl cursor-pointer will-change-transform ${isDark ? "bg-neutral-900/90 border-white/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.25)]" : "bg-white border-black/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.2)]"}`,
+		className: `group relative rounded-3xl overflow-hidden border shadow-2xl cursor-pointer will-change-transform ${isDark ? "bg-neutral-900/90 border-white/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.25)]" : "bg-white border-black/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.2)]"} ${className}`,
 		children: [
 			/* @__PURE__ */ jsx("div", {
 				className: "absolute inset-0 pointer-events-none z-30 transition-opacity duration-200",
@@ -246,13 +246,24 @@ function ParallaxMouseCard({ service, isDark, onInspect }) {
 		]
 	});
 }
+var CATEGORIES = [
+	"All",
+	"Luxury",
+	"Fashion",
+	"Automotive",
+	"Apparel",
+	"Footwear",
+	"Volume",
+	"Editorial",
+	"Catalog",
+	"Glamour"
+];
 function HomeRetouchStudio({ clients = [] }) {
 	const { isDark, toggleTheme } = useTheme();
 	const [heroSplit, setHeroSplit] = useState(50);
 	const [activeHeroSubject, setActiveHeroSubject] = useState(0);
-	const [isHeroAutoSliding, setIsHeroAutoSliding] = useState(true);
 	const [isUserHoveringHero, setIsUserHoveringHero] = useState(false);
-	const heroAutoSlideAnimRef = useRef(null);
+	useRef(null);
 	const [mousePos, setMousePos] = useState({
 		x: 0,
 		y: 0,
@@ -261,12 +272,17 @@ function HomeRetouchStudio({ clients = [] }) {
 	});
 	const [scrollY, setScrollY] = useState(0);
 	const heroRef = useRef(null);
-	useRef(null);
 	const [activeStudioIndex, setActiveStudioIndex] = useState(0);
 	const [studioSplit, setStudioSplit] = useState(50);
 	const [isAutoSliding, setIsAutoSliding] = useState(true);
 	const [isUserHoveringLab, setIsUserHoveringLab] = useState(false);
 	const autoSlideAnimRef = useRef(null);
+	const horizontalScrollRef = useRef(null);
+	const [horizontalScrollProgress, setHorizontalScrollProgress] = useState(0);
+	const [selectedCategory, setSelectedCategory] = useState("All");
+	const [isMouseDownOnTrack, setIsMouseDownOnTrack] = useState(false);
+	const [dragStartX, setDragStartX] = useState(0);
+	const [dragScrollLeft, setDragScrollLeft] = useState(0);
 	useEffect(() => {
 		let ticking = false;
 		const handleScroll = () => {
@@ -295,23 +311,6 @@ function HomeRetouchStudio({ clients = [] }) {
 			pctY
 		});
 	};
-	useEffect(() => {
-		if (!isHeroAutoSliding || isUserHoveringHero) {
-			if (heroAutoSlideAnimRef.current) cancelAnimationFrame(heroAutoSlideAnimRef.current);
-			return;
-		}
-		let startTime = performance.now();
-		const animateHeroAutoSlide = (currentTime) => {
-			const elapsed = currentTime - startTime;
-			const val = 50 + Math.sin(elapsed / 1300) * 31;
-			setHeroSplit(Math.round(val));
-			heroAutoSlideAnimRef.current = requestAnimationFrame(animateHeroAutoSlide);
-		};
-		heroAutoSlideAnimRef.current = requestAnimationFrame(animateHeroAutoSlide);
-		return () => {
-			if (heroAutoSlideAnimRef.current) cancelAnimationFrame(heroAutoSlideAnimRef.current);
-		};
-	}, [isHeroAutoSliding, isUserHoveringHero]);
 	useEffect(() => {
 		if (!isAutoSliding || isUserHoveringLab) {
 			if (autoSlideAnimRef.current) cancelAnimationFrame(autoSlideAnimRef.current);
@@ -358,6 +357,39 @@ function HomeRetouchStudio({ clients = [] }) {
 		const el = document.getElementById("studio-lab");
 		if (el) el.scrollIntoView({ behavior: "smooth" });
 	};
+	const handleHorizontalScroll = () => {
+		if (!horizontalScrollRef.current) return;
+		const { scrollLeft, scrollWidth, clientWidth } = horizontalScrollRef.current;
+		const maxScroll = scrollWidth - clientWidth;
+		if (maxScroll > 0) setHorizontalScrollProgress(scrollLeft / maxScroll * 100);
+	};
+	const scrollHorizontal = (direction) => {
+		if (!horizontalScrollRef.current) return;
+		const offset = direction === "left" ? -420 : 420;
+		horizontalScrollRef.current.scrollBy({
+			left: offset,
+			behavior: "smooth"
+		});
+	};
+	const handleTrackMouseDown = (e) => {
+		if (!horizontalScrollRef.current) return;
+		setIsMouseDownOnTrack(true);
+		setDragStartX(e.pageX - horizontalScrollRef.current.offsetLeft);
+		setDragScrollLeft(horizontalScrollRef.current.scrollLeft);
+	};
+	const handleTrackMouseLeave = () => {
+		setIsMouseDownOnTrack(false);
+	};
+	const handleTrackMouseUp = () => {
+		setIsMouseDownOnTrack(false);
+	};
+	const handleTrackMouseMove = (e) => {
+		if (!isMouseDownOnTrack || !horizontalScrollRef.current) return;
+		e.preventDefault();
+		const walk = (e.pageX - horizontalScrollRef.current.offsetLeft - dragStartX) * 1.5;
+		horizontalScrollRef.current.scrollLeft = dragScrollLeft - walk;
+	};
+	const filteredServices = selectedCategory === "All" ? SERVICES_11 : SERVICES_11.filter((s) => s.category.toLowerCase() === selectedCategory.toLowerCase());
 	const heroShowcase = [
 		{
 			title: "Jewelry Refraction",
@@ -431,7 +463,7 @@ function HomeRetouchStudio({ clients = [] }) {
 							/* @__PURE__ */ jsx("a", {
 								href: "#services",
 								className: `px-3 py-1 rounded-full text-xs font-mono transition-colors border ${isDark ? "bg-white/5 hover:bg-white/10 text-neutral-300 border-white/5" : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-black/5"}`,
-								children: "11 Services"
+								children: "Horizontal Reel"
 							})
 						]
 					}),
@@ -478,10 +510,13 @@ function HomeRetouchStudio({ clients = [] }) {
 							children: "Visual Perfection at Commerce Velocity"
 						})] }), /* @__PURE__ */ jsxs("div", {
 							className: "flex items-center gap-2 flex-wrap",
-							children: [/* @__PURE__ */ jsxs("button", {
-								onClick: () => setIsHeroAutoSliding(!isHeroAutoSliding),
-								className: `px-3 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${isHeroAutoSliding && !isUserHoveringHero ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm" : "bg-neutral-200 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"}`,
-								children: [isHeroAutoSliding && !isUserHoveringHero ? /* @__PURE__ */ jsx(Pause, { className: "w-3 h-3" }) : /* @__PURE__ */ jsx(Play, { className: "w-3 h-3" }), /* @__PURE__ */ jsx("span", { children: isHeroAutoSliding && !isUserHoveringHero ? "Auto-Scan Active" : "Hover / Manual" })]
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: `px-3 py-1.5 rounded-2xl border text-xs font-mono flex items-center gap-2 ${isDark ? "bg-white/5 border-white/10 text-neutral-300" : "bg-white border-black/10 text-neutral-700 shadow-sm"}`,
+								children: [/* @__PURE__ */ jsx(MoveHorizontal, { className: "w-3.5 h-3.5 text-[#de4a2c]" }), /* @__PURE__ */ jsxs("span", { children: [
+									"Slide with Mouse • ",
+									heroSplit,
+									"%"
+								] })]
 							}), /* @__PURE__ */ jsx("div", {
 								className: `flex items-center gap-1 p-1 rounded-2xl border text-xs font-mono ${isDark ? "bg-white/5 border-white/10" : "bg-white border-black/10 shadow-sm"}`,
 								children: heroShowcase.map((item, idx) => /* @__PURE__ */ jsx("button", {
@@ -568,26 +603,17 @@ function HomeRetouchStudio({ clients = [] }) {
 							className: "flex items-center gap-2",
 							children: [
 								/* @__PURE__ */ jsx("button", {
-									onClick: () => {
-										setIsHeroAutoSliding(false);
-										setHeroSplit(0);
-									},
+									onClick: () => setHeroSplit(0),
 									className: `px-3 py-1 rounded-lg transition-colors ${heroSplit === 0 ? "bg-[#de4a2c] text-white font-bold" : isDark ? "bg-white/5 hover:bg-white/10" : "bg-neutral-200 hover:bg-neutral-300"}`,
 									children: "Finished (100%)"
 								}),
 								/* @__PURE__ */ jsx("button", {
-									onClick: () => {
-										setIsHeroAutoSliding(false);
-										setHeroSplit(50);
-									},
+									onClick: () => setHeroSplit(50),
 									className: `px-3 py-1 rounded-lg transition-colors ${heroSplit === 50 ? "bg-[#de4a2c] text-white font-bold" : isDark ? "bg-white/5 hover:bg-white/10" : "bg-neutral-200 hover:bg-neutral-300"}`,
 									children: "50 / 50 Split"
 								}),
 								/* @__PURE__ */ jsx("button", {
-									onClick: () => {
-										setIsHeroAutoSliding(false);
-										setHeroSplit(100);
-									},
+									onClick: () => setHeroSplit(100),
 									className: `px-3 py-1 rounded-lg transition-colors ${heroSplit === 100 ? "bg-[#de4a2c] text-white font-bold" : isDark ? "bg-white/5 hover:bg-white/10" : "bg-neutral-200 hover:bg-neutral-300"}`,
 									children: "Raw (100%)"
 								})
@@ -874,42 +900,110 @@ function HomeRetouchStudio({ clients = [] }) {
 			/* @__PURE__ */ jsxs("section", {
 				id: "services",
 				className: `py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${isDark ? "border-white/[0.08]" : "border-black/[0.08]"}`,
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "flex items-center justify-between mb-8",
-					children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-						className: "text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider",
-						children: "Service Catalog"
-					}), /* @__PURE__ */ jsx("h2", {
-						className: "font-display text-2xl sm:text-4xl font-bold tracking-tight",
-						children: "11 Specialist Disciplines"
-					})] }), /* @__PURE__ */ jsx("span", {
-						className: `text-xs font-mono ${isDark ? "text-neutral-500" : "text-neutral-400"}`,
-						children: "Click any tile to inspect in Lab"
-					})]
-				}), /* @__PURE__ */ jsx("div", {
-					className: "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4",
-					children: SERVICES_11.map((service, idx) => /* @__PURE__ */ jsxs("button", {
-						onClick: () => scrollToLabWithIndex(idx),
-						className: `group p-3 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1.5 ${isDark ? "bg-neutral-900 border-white/10 hover:border-[#de4a2c]" : "bg-white border-black/10 hover:border-[#de4a2c] shadow-sm"}`,
-						children: [/* @__PURE__ */ jsxs("div", {
-							className: "relative w-full h-36 rounded-xl overflow-hidden bg-black mb-3",
-							children: [/* @__PURE__ */ jsx("img", {
-								src: service.image,
-								alt: service.name,
-								className: "w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
-							}), /* @__PURE__ */ jsx("span", {
-								className: "absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono text-[#de4a2c] font-bold",
-								children: service.number
+				children: [
+					/* @__PURE__ */ jsxs("div", {
+						className: "flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4",
+						children: [/* @__PURE__ */ jsxs("div", { children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-2 text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider",
+								children: [
+									/* @__PURE__ */ jsx(Sparkles, { className: "w-3.5 h-3.5" }),
+									/* @__PURE__ */ jsx("span", { children: "Horizontal 3D Parallax Reel" }),
+									/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-[#10b981] animate-ping" })
+								]
+							}),
+							/* @__PURE__ */ jsx("h2", {
+								className: "font-display text-2xl sm:text-4xl font-bold tracking-tight mt-1",
+								children: "Panoramic Service Gallery"
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: `font-mono text-xs mt-1 max-w-xl ${isDark ? "text-neutral-400" : "text-neutral-600"}`,
+								children: "Slide horizontally across all 11 disciplines. Move your cursor across any card to see interactive 3D perspective tilt, depth parallax and click to peek raw capture plates."
+							})
+						] }), /* @__PURE__ */ jsxs("div", {
+							className: "flex items-center gap-3 shrink-0",
+							children: [/* @__PURE__ */ jsxs("span", {
+								className: `text-xs font-mono hidden sm:inline ${isDark ? "text-neutral-500" : "text-neutral-400"}`,
+								children: [
+									"Drag or use arrows • ",
+									filteredServices.length,
+									" Cards"
+								]
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-2",
+								children: [/* @__PURE__ */ jsx("button", {
+									onClick: () => scrollHorizontal("left"),
+									"aria-label": "Scroll runway left",
+									className: `w-10 h-10 rounded-full border flex items-center justify-center transition-all ${isDark ? "bg-neutral-900 border-white/10 hover:border-[#de4a2c] hover:bg-neutral-800 text-white" : "bg-white border-black/10 hover:border-[#de4a2c] hover:bg-neutral-100 text-black shadow-sm"}`,
+									children: /* @__PURE__ */ jsx(ChevronLeft, { className: "w-5 h-5" })
+								}), /* @__PURE__ */ jsx("button", {
+									onClick: () => scrollHorizontal("right"),
+									"aria-label": "Scroll runway right",
+									className: `w-10 h-10 rounded-full border flex items-center justify-center transition-all ${isDark ? "bg-neutral-900 border-white/10 hover:border-[#de4a2c] hover:bg-neutral-800 text-white" : "bg-white border-black/10 hover:border-[#de4a2c] hover:bg-neutral-100 text-black shadow-sm"}`,
+									children: /* @__PURE__ */ jsx(ChevronRight, { className: "w-5 h-5" })
+								})]
 							})]
-						}), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("div", {
-							className: "font-display text-xs font-bold group-hover:text-[#de4a2c] transition-colors truncate",
-							children: service.name
-						}), /* @__PURE__ */ jsx("div", {
-							className: `text-[10px] font-mono truncate mt-0.5 ${isDark ? "text-neutral-400" : "text-neutral-500"}`,
-							children: service.tag
-						})] })]
-					}, service.id))
-				})]
+						})]
+					}),
+					/* @__PURE__ */ jsx("div", {
+						className: "flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 mb-4",
+						children: CATEGORIES.map((cat) => /* @__PURE__ */ jsx("button", {
+							onClick: () => setSelectedCategory(cat),
+							className: `px-3.5 py-1.5 rounded-full text-xs font-mono font-bold whitespace-nowrap transition-all border ${selectedCategory === cat ? "bg-[#de4a2c] text-white border-[#de4a2c] shadow-md shadow-[#de4a2c]/20" : isDark ? "bg-white/5 border-white/10 text-neutral-400 hover:text-white hover:bg-white/10" : "bg-neutral-100 border-black/10 text-neutral-600 hover:text-black hover:bg-neutral-200 shadow-sm"}`,
+							children: cat
+						}, cat))
+					}),
+					/* @__PURE__ */ jsx("div", {
+						ref: horizontalScrollRef,
+						onScroll: handleHorizontalScroll,
+						onMouseDown: handleTrackMouseDown,
+						onMouseLeave: handleTrackMouseLeave,
+						onMouseUp: handleTrackMouseUp,
+						onMouseMove: handleTrackMouseMove,
+						className: "flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-6 pt-2 px-1 cursor-grab active:cursor-grabbing select-none",
+						children: filteredServices.map((service) => /* @__PURE__ */ jsx(ParallaxMouseCard, {
+							service,
+							isDark,
+							className: "w-[300px] sm:w-[350px] md:w-[380px] shrink-0",
+							onInspect: () => {
+								const idx = SERVICES_11.findIndex((item) => item.id === service.id);
+								scrollToLabWithIndex(idx);
+							}
+						}, service.id))
+					}),
+					/* @__PURE__ */ jsxs("div", {
+						className: "mt-4 flex items-center justify-between text-xs font-mono",
+						children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-2",
+								children: [/* @__PURE__ */ jsx("span", {
+									className: isDark ? "text-neutral-500" : "text-neutral-400",
+									children: "Track Position:"
+								}), /* @__PURE__ */ jsxs("span", {
+									className: "text-[#de4a2c] font-bold",
+									children: [Math.round(horizontalScrollProgress), "%"]
+								})]
+							}),
+							/* @__PURE__ */ jsx("div", {
+								className: `w-48 sm:w-72 h-1.5 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-black/10"}`,
+								children: /* @__PURE__ */ jsx("div", {
+									className: "h-full bg-gradient-to-r from-[#de4a2c] to-[#ff7a59] transition-all duration-150 rounded-full",
+									style: { width: `${Math.max(8, horizontalScrollProgress)}%` }
+								})
+							}),
+							/* @__PURE__ */ jsx("button", {
+								onClick: () => {
+									if (horizontalScrollRef.current) horizontalScrollRef.current.scrollTo({
+										left: 0,
+										behavior: "smooth"
+									});
+								},
+								className: `hover:text-[#de4a2c] transition-colors ${isDark ? "text-neutral-400" : "text-neutral-500"}`,
+								children: "Reset to Start ⟵"
+							})
+						]
+					})
+				]
 			}),
 			/* @__PURE__ */ jsx("section", {
 				className: `py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${isDark ? "border-white/[0.08]" : "border-black/[0.08]"}`,
@@ -962,7 +1056,7 @@ function HomeRetouchStudio({ clients = [] }) {
 						/* @__PURE__ */ jsx("a", {
 							href: "#services",
 							className: "hover:opacity-80 transition-opacity",
-							children: "11 Services"
+							children: "Horizontal Reel"
 						})
 					]
 				})]

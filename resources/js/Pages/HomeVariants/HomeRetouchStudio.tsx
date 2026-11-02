@@ -22,7 +22,9 @@ import {
   Play,
   Pause,
   Award,
-  ArrowUpRight
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -177,9 +179,10 @@ interface ParallaxMouseCardProps {
   service: ServiceCard;
   isDark: boolean;
   onInspect: () => void;
+  className?: string;
 }
 
-function ParallaxMouseCard({ service, isDark, onInspect }: ParallaxMouseCardProps) {
+function ParallaxMouseCard({ service, isDark, onInspect, className = '' }: ParallaxMouseCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [coords, setCoords] = useState({ x: 0.5, y: 0.5 });
   const [isHovered, setIsHovered] = useState(false);
@@ -227,7 +230,7 @@ function ParallaxMouseCard({ service, isDark, onInspect }: ParallaxMouseCardProp
         isDark
           ? 'bg-neutral-900/90 border-white/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.25)]'
           : 'bg-white border-black/10 hover:border-[#de4a2c]/70 hover:shadow-[0_25px_50px_rgba(222,74,44,0.2)]'
-      }`}
+      } ${className}`}
     >
       {/* Dynamic 60 FPS Glare Spotlight following cursor across the card */}
       <div
@@ -322,21 +325,21 @@ function ParallaxMouseCard({ service, isDark, onInspect }: ParallaxMouseCardProp
   );
 }
 
+const CATEGORIES = ['All', 'Luxury', 'Fashion', 'Automotive', 'Apparel', 'Footwear', 'Volume', 'Editorial', 'Catalog', 'Glamour'];
+
 export function HomeRetouchStudio({ clients = [] }: HomeProps) {
   const { isDark, toggleTheme } = useTheme();
 
-  // Hero Interactive Slider with AUTO-SLIDE & MOUSE HOVER STOP
+  // Hero Interactive Slider (Controlled strictly by MOUSE MOVE & DRAG - Zero auto-scroll)
   const [heroSplit, setHeroSplit] = useState(50);
   const [activeHeroSubject, setActiveHeroSubject] = useState(0);
-  const [isHeroAutoSliding, setIsHeroAutoSliding] = useState(true);
   const [isUserHoveringHero, setIsUserHoveringHero] = useState(false);
-  const heroAutoSlideAnimRef = useRef<number | null>(null);
+  const heroMouseAnimRef = useRef<number | null>(null);
 
   // Parallax States
   const [mousePos, setMousePos] = useState({ x: 0, y: 0, pctX: 50, pctY: 50 });
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
-  const animFrameRef = useRef<number | null>(null);
 
   // Big Studio Comparison State with AUTO-SLIDE OSCILLATION
   const [activeStudioIndex, setActiveStudioIndex] = useState(0);
@@ -344,6 +347,14 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const [isUserHoveringLab, setIsUserHoveringLab] = useState(false);
   const autoSlideAnimRef = useRef<number | null>(null);
+
+  // Horizontal Parallax Runway Reel State
+  const horizontalScrollRef = useRef<HTMLDivElement>(null);
+  const [horizontalScrollProgress, setHorizontalScrollProgress] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [isMouseDownOnTrack, setIsMouseDownOnTrack] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragScrollLeft, setDragScrollLeft] = useState(0);
 
   // Scroll listener for real parallax depth (throttled to RAF)
   useEffect(() => {
@@ -372,27 +383,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
     setMousePos({ x, y, pctX, pctY });
   };
 
-  // 60 FPS Smooth Auto-Slide Loop for HERO STAGE (Pauses on hover/mouse move)
-  useEffect(() => {
-    if (!isHeroAutoSliding || isUserHoveringHero) {
-      if (heroAutoSlideAnimRef.current) cancelAnimationFrame(heroAutoSlideAnimRef.current);
-      return;
-    }
 
-    let startTime = performance.now();
-    const animateHeroAutoSlide = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      // Smooth sinusoidal oscillation between 18% and 82%
-      const val = 50 + Math.sin(elapsed / 1300) * 31;
-      setHeroSplit(Math.round(val));
-      heroAutoSlideAnimRef.current = requestAnimationFrame(animateHeroAutoSlide);
-    };
-
-    heroAutoSlideAnimRef.current = requestAnimationFrame(animateHeroAutoSlide);
-    return () => {
-      if (heroAutoSlideAnimRef.current) cancelAnimationFrame(heroAutoSlideAnimRef.current);
-    };
-  }, [isHeroAutoSliding, isUserHoveringHero]);
 
   // 60 FPS Smooth Auto-Slide Loop for "Precision Studio Lab"
   useEffect(() => {
@@ -418,7 +409,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
     };
   }, [isAutoSliding, isUserHoveringLab]);
 
-  // 60 FPS Mouse Movement across Hero Stage (Moves split line directly & tilts 3D perspective)
+  // Silky 60/120 FPS Mouse Movement across Hero Stage (Split line follows mouse strictly)
   const handleHeroStageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clientX = e.clientX;
@@ -447,6 +438,49 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
     const el = document.getElementById('studio-lab');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Horizontal Runway scroll & drag handlers
+  const handleHorizontalScroll = () => {
+    if (!horizontalScrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = horizontalScrollRef.current;
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll > 0) {
+      setHorizontalScrollProgress((scrollLeft / maxScroll) * 100);
+    }
+  };
+
+  const scrollHorizontal = (direction: 'left' | 'right') => {
+    if (!horizontalScrollRef.current) return;
+    const offset = direction === 'left' ? -420 : 420;
+    horizontalScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+  };
+
+  const handleTrackMouseDown = (e: React.MouseEvent) => {
+    if (!horizontalScrollRef.current) return;
+    setIsMouseDownOnTrack(true);
+    setDragStartX(e.pageX - horizontalScrollRef.current.offsetLeft);
+    setDragScrollLeft(horizontalScrollRef.current.scrollLeft);
+  };
+
+  const handleTrackMouseLeave = () => {
+    setIsMouseDownOnTrack(false);
+  };
+
+  const handleTrackMouseUp = () => {
+    setIsMouseDownOnTrack(false);
+  };
+
+  const handleTrackMouseMove = (e: React.MouseEvent) => {
+    if (!isMouseDownOnTrack || !horizontalScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - horizontalScrollRef.current.offsetLeft;
+    const walk = (x - dragStartX) * 1.5;
+    horizontalScrollRef.current.scrollLeft = dragScrollLeft - walk;
+  };
+
+  const filteredServices = selectedCategory === 'All'
+    ? SERVICES_11
+    : SERVICES_11.filter((s) => s.category.toLowerCase() === selectedCategory.toLowerCase());
 
   // Hero showcase subjects
   const heroShowcase = [
@@ -539,7 +573,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
                 : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-black/5'
             }`}
           >
-            11 Services
+            Horizontal Reel
           </a>
         </div>
 
@@ -608,18 +642,13 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Auto-Slide Indicator & Toggle */}
-            <button
-              onClick={() => setIsHeroAutoSliding(!isHeroAutoSliding)}
-              className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all ${
-                isHeroAutoSliding && !isUserHoveringHero
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm'
-                  : 'bg-neutral-200 dark:bg-white/10 text-neutral-600 dark:text-neutral-400'
-              }`}
-            >
-              {isHeroAutoSliding && !isUserHoveringHero ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-              <span>{isHeroAutoSliding && !isUserHoveringHero ? 'Auto-Scan Active' : 'Hover / Manual'}</span>
-            </button>
+            {/* Interactive Mouse Indicator (Zero Auto-Scroll) */}
+            <div className={`px-3 py-1.5 rounded-2xl border text-xs font-mono flex items-center gap-2 ${
+              isDark ? 'bg-white/5 border-white/10 text-neutral-300' : 'bg-white border-black/10 text-neutral-700 shadow-sm'
+            }`}>
+              <MoveHorizontal className="w-3.5 h-3.5 text-[#de4a2c]" />
+              <span>Slide with Mouse • {heroSplit}%</span>
+            </div>
 
             {/* 4 Hero Showcase Subject Chips */}
             <div className={`flex items-center gap-1 p-1 rounded-2xl border text-xs font-mono ${
@@ -733,10 +762,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         }`}>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => {
-                setIsHeroAutoSliding(false);
-                setHeroSplit(0);
-              }}
+              onClick={() => setHeroSplit(0)}
               className={`px-3 py-1 rounded-lg transition-colors ${
                 heroSplit === 0
                   ? 'bg-[#de4a2c] text-white font-bold'
@@ -746,10 +772,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               Finished (100%)
             </button>
             <button
-              onClick={() => {
-                setIsHeroAutoSliding(false);
-                setHeroSplit(50);
-              }}
+              onClick={() => setHeroSplit(50)}
               className={`px-3 py-1 rounded-lg transition-colors ${
                 heroSplit === 50
                   ? 'bg-[#de4a2c] text-white font-bold'
@@ -759,10 +782,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
               50 / 50 Split
             </button>
             <button
-              onClick={() => {
-                setIsHeroAutoSliding(false);
-                setHeroSplit(100);
-              }}
+              onClick={() => setHeroSplit(100)}
               className={`px-3 py-1 rounded-lg transition-colors ${
                 heroSplit === 100
                   ? 'bg-[#de4a2c] text-white font-bold'
@@ -1086,59 +1106,137 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
         </div>
       </section>
 
-      {/* 5. ALL 11 SPECIALIST SERVICES VISUAL TILES */}
-      <section id="services" className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
-        isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
-      }`}>
-        <div className="flex items-center justify-between mb-8">
+      {/* 5. HORIZONTAL 3D PARALLAX RUNWAY / REEL */}
+      <section
+        id="services"
+        className={`py-20 px-4 sm:px-8 max-w-[1520px] mx-auto border-t transition-colors ${
+          isDark ? 'border-white/[0.08]' : 'border-black/[0.08]'
+        }`}
+      >
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
-              Service Catalog
+            <div className="flex items-center gap-2 text-xs font-mono text-[#de4a2c] uppercase font-bold tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Horizontal 3D Parallax Reel</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-ping" />
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight">
-              11 Specialist Disciplines
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight mt-1">
+              Panoramic Service Gallery
             </h2>
+            <p className={`font-mono text-xs mt-1 max-w-xl ${
+              isDark ? 'text-neutral-400' : 'text-neutral-600'
+            }`}>
+              Slide horizontally across all 11 disciplines. Move your cursor across any card to see interactive 3D perspective tilt, depth parallax and click to peek raw capture plates.
+            </p>
           </div>
-          <span className={`text-xs font-mono ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
-            Click any tile to inspect in Lab
-          </span>
+
+          {/* Navigation Controls: Prev / Next + Card Counter */}
+          <div className="flex items-center gap-3 shrink-0">
+            <span className={`text-xs font-mono hidden sm:inline ${
+              isDark ? 'text-neutral-500' : 'text-neutral-400'
+            }`}>
+              Drag or use arrows • {filteredServices.length} Cards
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => scrollHorizontal('left')}
+                aria-label="Scroll runway left"
+                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
+                  isDark
+                    ? 'bg-neutral-900 border-white/10 hover:border-[#de4a2c] hover:bg-neutral-800 text-white'
+                    : 'bg-white border-black/10 hover:border-[#de4a2c] hover:bg-neutral-100 text-black shadow-sm'
+                }`}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => scrollHorizontal('right')}
+                aria-label="Scroll runway right"
+                className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
+                  isDark
+                    ? 'bg-neutral-900 border-white/10 hover:border-[#de4a2c] hover:bg-neutral-800 text-white'
+                    : 'bg-white border-black/10 hover:border-[#de4a2c] hover:bg-neutral-100 text-black shadow-sm'
+                }`}
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* 11 Tiles Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {SERVICES_11.map((service, idx) => (
+        {/* Category Pills Filter */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 mb-4">
+          {CATEGORIES.map((cat) => (
             <button
-              key={service.id}
-              onClick={() => scrollToLabWithIndex(idx)}
-              className={`group p-3 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1.5 ${
-                isDark
-                  ? 'bg-neutral-900 border-white/10 hover:border-[#de4a2c]'
-                  : 'bg-white border-black/10 hover:border-[#de4a2c] shadow-sm'
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold whitespace-nowrap transition-all border ${
+                selectedCategory === cat
+                  ? 'bg-[#de4a2c] text-white border-[#de4a2c] shadow-md shadow-[#de4a2c]/20'
+                  : isDark
+                    ? 'bg-white/5 border-white/10 text-neutral-400 hover:text-white hover:bg-white/10'
+                    : 'bg-neutral-100 border-black/10 text-neutral-600 hover:text-black hover:bg-neutral-200 shadow-sm'
               }`}
             >
-              <div className="relative w-full h-36 rounded-xl overflow-hidden bg-black mb-3">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
-                />
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono text-[#de4a2c] font-bold">
-                  {service.number}
-                </span>
-              </div>
-
-              <div>
-                <div className="font-display text-xs font-bold group-hover:text-[#de4a2c] transition-colors truncate">
-                  {service.name}
-                </div>
-                <div className={`text-[10px] font-mono truncate mt-0.5 ${
-                  isDark ? 'text-neutral-400' : 'text-neutral-500'
-                }`}>
-                  {service.tag}
-                </div>
-              </div>
+              {cat}
             </button>
           ))}
+        </div>
+
+        {/* Smooth Horizontal Carousel Track with Drag & 3D Cards */}
+        <div
+          ref={horizontalScrollRef}
+          onScroll={handleHorizontalScroll}
+          onMouseDown={handleTrackMouseDown}
+          onMouseLeave={handleTrackMouseLeave}
+          onMouseUp={handleTrackMouseUp}
+          onMouseMove={handleTrackMouseMove}
+          className="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-6 pt-2 px-1 cursor-grab active:cursor-grabbing select-none"
+        >
+          {filteredServices.map((service) => (
+            <ParallaxMouseCard
+              key={service.id}
+              service={service}
+              isDark={isDark}
+              className="w-[300px] sm:w-[350px] md:w-[380px] shrink-0"
+              onInspect={() => {
+                const idx = SERVICES_11.findIndex((item) => item.id === service.id);
+                scrollToLabWithIndex(idx);
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Visual Scroll Progress Bar */}
+        <div className="mt-4 flex items-center justify-between text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <span className={isDark ? 'text-neutral-500' : 'text-neutral-400'}>Track Position:</span>
+            <span className="text-[#de4a2c] font-bold">{Math.round(horizontalScrollProgress)}%</span>
+          </div>
+
+          <div className={`w-48 sm:w-72 h-1.5 rounded-full overflow-hidden ${
+            isDark ? 'bg-white/10' : 'bg-black/10'
+          }`}>
+            <div
+              className="h-full bg-gradient-to-r from-[#de4a2c] to-[#ff7a59] transition-all duration-150 rounded-full"
+              style={{ width: `${Math.max(8, horizontalScrollProgress)}%` }}
+            />
+          </div>
+
+          <button
+            onClick={() => {
+              if (horizontalScrollRef.current) {
+                horizontalScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+              }
+            }}
+            className={`hover:text-[#de4a2c] transition-colors ${
+              isDark ? 'text-neutral-400' : 'text-neutral-500'
+            }`}
+          >
+            Reset to Start ⟵
+          </button>
         </div>
       </section>
 
@@ -1188,7 +1286,7 @@ export function HomeRetouchStudio({ clients = [] }: HomeProps) {
           <span className="opacity-30">•</span>
           <a href="#studio-lab" className="hover:opacity-80 transition-opacity">Auto-Slide Lab</a>
           <span className="opacity-30">•</span>
-          <a href="#services" className="hover:opacity-80 transition-opacity">11 Services</a>
+          <a href="#services" className="hover:opacity-80 transition-opacity">Horizontal Reel</a>
         </div>
       </footer>
 
