@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Head } from "@inertiajs/react";
-import { ArrowUpRight, Check, CheckCircle2, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, SlidersHorizontal, Sun, Upload, Wand2, X, ZoomIn } from "lucide-react";
+import { ArrowUpRight, Check, CheckCircle2, Maximize2, Palette, Scissors, ShieldCheck, SlidersHorizontal, Sun, Upload, Wand2, X } from "lucide-react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/Home.tsx
 var HERO_SHOWCASE_PLATES = [
@@ -48,16 +48,6 @@ var HERO_SHOWCASE_PLATES = [
 		doneFilter: "brightness(1.06) contrast(1.12) saturate(1.1)",
 		tintColor: "#FDF2F8"
 	}
-];
-var LUXURY_BRAND_SILHOUETTES = [
-	"BALENCIAGA",
-	"CARTIER",
-	"SSENSE",
-	"FARFETCH",
-	"KITH",
-	"JIL SANDER",
-	"ACNE STUDIOS",
-	"MONCLER"
 ];
 var ACCORDION_PANELS = [
 	{
@@ -172,15 +162,6 @@ function Home({ clients = [] }) {
 	const [isDraggingSplit, setIsDraggingSplit] = useState(false);
 	const [heroFinishMode, setHeroFinishMode] = useState("master");
 	const heroStageRef = useRef(null);
-	const [customHeroImage, setCustomHeroImage] = useState(null);
-	const [isDragOverHero, setIsDragOverHero] = useState(false);
-	const heroUploadInputRef = useRef(null);
-	const [loupeActive, setLoupeActive] = useState(false);
-	const [mouseCoord, setMouseCoord] = useState({
-		x: 0,
-		y: 0,
-		bounded: false
-	});
 	const [expandedAccordion, setExpandedAccordion] = useState(1);
 	const [accordionRawMap, setAccordionRawMap] = useState({});
 	const [layerCutout, setLayerCutout] = useState(true);
@@ -196,7 +177,6 @@ function Home({ clients = [] }) {
 	const [trialSubmitted, setTrialSubmitted] = useState(false);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const fileInputRef = useRef(null);
-	const activeHeroImage = customHeroImage || currentHero.image;
 	useEffect(() => {
 		let frameId;
 		let start = null;
@@ -244,43 +224,6 @@ function Home({ clients = [] }) {
 			window.removeEventListener("touchend", onUp);
 		};
 	}, [isDraggingSplit]);
-	const handleHeroMouseMove = (e) => {
-		if (!heroStageRef.current) return;
-		const rect = heroStageRef.current.getBoundingClientRect();
-		const x = e.clientX - rect.left;
-		const y = e.clientY - rect.top;
-		setMouseCoord({
-			x,
-			y,
-			bounded: true
-		});
-	};
-	const handleHeroMouseLeave = () => {
-		setMouseCoord((prev) => ({
-			...prev,
-			bounded: false
-		}));
-	};
-	const handleHeroDrop = (e) => {
-		e.preventDefault();
-		setIsDragOverHero(false);
-		if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-			const file = e.dataTransfer.files[0];
-			if (file.type.startsWith("image/")) {
-				const url = URL.createObjectURL(file);
-				setCustomHeroImage(url);
-				setUploadedFiles((prev) => [...prev, file]);
-			}
-		}
-	};
-	const handleCustomHeroUpload = (e) => {
-		if (e.target.files && e.target.files[0]) {
-			const file = e.target.files[0];
-			const url = URL.createObjectURL(file);
-			setCustomHeroImage(url);
-			setUploadedFiles((prev) => [...prev, file]);
-		}
-	};
 	const toggleCapabilityPill = (cap) => {
 		setSelectedCapabilities((prev) => prev.includes(cap) ? prev.filter((item) => item !== cap) : [...prev, cap]);
 	};
@@ -358,238 +301,128 @@ function Home({ clients = [] }) {
 				})
 			}),
 			/* @__PURE__ */ jsxs("section", {
-				className: "max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-10",
-				children: [
-					/* @__PURE__ */ jsxs("div", {
-						className: "flex flex-col lg:flex-row lg:items-end justify-between gap-4 lg:gap-6 mb-6",
-						children: [/* @__PURE__ */ jsxs("div", {
-							className: "min-w-0",
-							children: [/* @__PURE__ */ jsx("span", {
-								className: "text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-1.5",
-								children: "CREATIVE DIGITAL POST-PRODUCTION STUDIO"
-							}), /* @__PURE__ */ jsx("h1", {
-								className: "text-2xl sm:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap",
-								children: "Visual Post-Production for Modern Brands."
-							})]
-						}), /* @__PURE__ */ jsx("div", {
-							className: "flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap overflow-x-auto pb-1 lg:pb-0 no-scrollbar",
-							children: HERO_SHOWCASE_PLATES.map((plate, index) => {
-								return /* @__PURE__ */ jsx("button", {
-									onClick: () => {
-										setHeroTabIdx(index);
-										setHeroFinishMode("master");
-										setCustomHeroImage(null);
-									},
-									className: `px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shrink-0 ${heroTabIdx === index ? "bg-[#0F0F12] text-white shadow-sm" : "bg-white text-neutral-600 hover:text-[#0F0F12] border border-neutral-200/80"}`,
-									children: plate.category
-								}, plate.id);
-							})
-						})]
-					}),
-					/* @__PURE__ */ jsxs("div", {
-						ref: heroStageRef,
-						onMouseMove: handleHeroMouseMove,
-						onMouseLeave: handleHeroMouseLeave,
-						onMouseDown: (e) => {
-							setIsDraggingSplit(true);
-							updateSplitPosition(e.clientX);
-						},
-						onTouchStart: (e) => {
-							setIsDraggingSplit(true);
-							if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
-						},
-						onDragOver: (e) => {
-							e.preventDefault();
-							setIsDragOverHero(true);
-						},
-						onDragLeave: () => setIsDragOverHero(false),
-						onDrop: handleHeroDrop,
-						className: `relative w-full h-[470px] sm:h-[550px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_20px_50px_rgba(15,15,18,0.06)] bg-white transition-all ${isDragOverHero ? "ring-4 ring-emerald-400 border-emerald-400" : ""}`,
-						children: [
-							/* @__PURE__ */ jsx("div", {
-								className: `absolute inset-0 transition-colors duration-500 ${heroFinishMode === "checker" ? "checkerboard-subtle" : ""}`,
-								style: { backgroundColor: heroFinishMode === "white" ? "#FFFFFF" : heroFinishMode === "gray" ? "#6B7280" : heroFinishMode === "black" ? "#09090B" : heroFinishMode === "tint" ? currentHero.tintColor : void 0 },
-								children: /* @__PURE__ */ jsx("img", {
-									src: activeHeroImage,
-									alt: currentHero.title,
-									draggable: "false",
-									className: `w-full h-full object-cover object-center transition-all duration-700 ${heroFinishMode === "white" || heroFinishMode === "gray" || heroFinishMode === "black" || heroFinishMode === "checker" || heroFinishMode === "tint" ? "mix-blend-multiply scale-95 object-contain" : ""}`,
-									style: { filter: heroFinishMode === "raw" ? currentHero.rawFilter : currentHero.doneFilter }
-								}, `hero-after-${currentHero.id}-${customHeroImage || "default"}`)
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								className: "absolute inset-0 overflow-hidden bg-[#D6D3CD]",
-								style: { clipPath: `inset(0 ${100 - splitPos}% 0 0)` },
-								children: [/* @__PURE__ */ jsx("img", {
-									src: activeHeroImage,
-									alt: "Unedited Raw",
-									draggable: "false",
-									className: "w-full h-full object-cover object-center transition-all duration-700",
-									style: { filter: currentHero.rawFilter }
-								}, `hero-before-${currentHero.id}-${customHeroImage || "default"}`), /* @__PURE__ */ jsx("span", {
-									className: "absolute top-5 left-5 px-3.5 py-1.5 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-extrabold tracking-wide",
-									children: "RAW CAPTURE"
-								})]
-							}),
-							loupeActive && mouseCoord.bounded && heroStageRef.current && /* @__PURE__ */ jsxs("div", {
-								className: "absolute pointer-events-none z-30 w-48 h-48 rounded-full border-2 border-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden bg-black",
-								style: {
-									left: mouseCoord.x - 96,
-									top: mouseCoord.y - 96
+				className: "max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-12",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6",
+					children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
+						className: "text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-1.5",
+						children: "CREATIVE DIGITAL POST-PRODUCTION STUDIO"
+					}), /* @__PURE__ */ jsx("h1", {
+						className: "text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap",
+						children: "Visual Post-Production for Modern Brands."
+					})] }), /* @__PURE__ */ jsx("div", {
+						className: "inline-flex p-1.5 rounded-full bg-neutral-100 border border-neutral-200/80 shrink-0 self-start lg:self-auto overflow-x-auto no-scrollbar",
+						children: HERO_SHOWCASE_PLATES.map((plate, index) => {
+							return /* @__PURE__ */ jsx("button", {
+								type: "button",
+								onClick: () => {
+									setHeroTabIdx(index);
+									setHeroFinishMode("master");
 								},
-								children: [
-									/* @__PURE__ */ jsx("img", {
-										src: activeHeroImage,
-										alt: "300% Zoom",
-										className: "absolute max-w-none transition-none",
-										style: {
-											width: heroStageRef.current.clientWidth * 3,
-											height: heroStageRef.current.clientHeight * 3,
-											left: -(mouseCoord.x * 3 - 96),
-											top: -(mouseCoord.y * 3 - 96),
-											filter: currentHero.doneFilter
-										}
-									}),
-									/* @__PURE__ */ jsx("div", { className: "absolute inset-0 rounded-full ring-1 ring-inset ring-black/20" }),
-									/* @__PURE__ */ jsx("div", {
-										className: "absolute bottom-2.5 inset-x-0 text-center",
-										children: /* @__PURE__ */ jsx("span", {
-											className: "px-2.5 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-extrabold text-white tracking-widest uppercase",
-											children: "300% Zoom"
-										})
-									})
-								]
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								onClick: (e) => e.stopPropagation(),
-								onMouseDown: (e) => e.stopPropagation(),
-								className: "absolute top-5 right-5 z-20 flex items-center gap-2",
-								children: [
-									/* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => setLoupeActive(!loupeActive),
-										className: `px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-md flex items-center gap-1.5 ${loupeActive ? "bg-emerald-400 text-[#0F0F12]" : "bg-white/95 text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 backdrop-blur-md"}`,
-										title: "Inspect 300% zoom edge accuracy",
-										children: [/* @__PURE__ */ jsx(ZoomIn, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", { children: "300% Loupe" })]
-									}),
-									/* @__PURE__ */ jsx("div", {
-										className: "flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-full shadow-md border border-neutral-200/80",
-										children: [
-											{
-												id: "master",
-												label: "Master"
-											},
-											{
-												id: "white",
-												label: "White"
-											},
-											{
-												id: "gray",
-												label: "50% Gray"
-											},
-											{
-												id: "black",
-												label: "Black"
-											},
-											{
-												id: "checker",
-												label: "PNG"
-											},
-											{
-												id: "raw",
-												label: "Raw"
-											}
-										].map((mode) => /* @__PURE__ */ jsx("button", {
-											type: "button",
-											onClick: () => setHeroFinishMode(mode.id),
-											className: `px-2.5 py-1 rounded-full text-[11px] font-extrabold transition-all ${heroFinishMode === mode.id ? "bg-[#0F0F12] text-white shadow-sm" : "text-neutral-600 hover:text-[#0F0F12]"}`,
-											children: mode.label
-										}, mode.id))
-									}),
-									customHeroImage ? /* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => setCustomHeroImage(null),
-										className: "px-3 py-1.5 rounded-full bg-white/95 text-neutral-700 hover:text-red-600 text-xs font-bold border border-neutral-200/80 shadow-md flex items-center gap-1.5",
-										title: "Reset to studio plate",
-										children: [/* @__PURE__ */ jsx(RotateCcw, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", { children: "Reset" })]
-									}) : /* @__PURE__ */ jsxs("button", {
-										type: "button",
-										onClick: () => heroUploadInputRef.current?.click(),
-										className: "px-3 py-1.5 rounded-full bg-white/95 text-neutral-700 hover:text-[#0F0F12] text-xs font-bold border border-neutral-200/80 shadow-md flex items-center gap-1.5",
-										title: "Drop or upload your own image to test",
-										children: [/* @__PURE__ */ jsx(Upload, { className: "w-3.5 h-3.5 text-emerald-600" }), /* @__PURE__ */ jsx("span", { children: "Test Mine" })]
-									}),
-									/* @__PURE__ */ jsx("input", {
-										ref: heroUploadInputRef,
-										type: "file",
-										accept: "image/*",
-										className: "hidden",
-										onChange: handleCustomHeroUpload
-									})
-								]
-							}),
-							/* @__PURE__ */ jsx("div", {
-								className: "absolute top-0 bottom-0 z-10 w-0.5 bg-white/90 shadow-[0_0_16px_rgba(0,0,0,0.35)] pointer-events-none",
-								style: { left: `${splitPos}%` },
-								children: /* @__PURE__ */ jsx("div", {
-									className: "absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-[#0F0F12] shadow-xl flex items-center justify-center border border-neutral-200",
-									children: /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-4 h-4" })
-								})
-							}),
-							isDragOverHero && /* @__PURE__ */ jsxs("div", {
-								className: "absolute inset-0 z-40 bg-[#0F0F12]/80 backdrop-blur-sm flex flex-col items-center justify-center text-white pointer-events-none",
-								children: [/* @__PURE__ */ jsx(Upload, { className: "w-10 h-10 text-emerald-400 mb-2 animate-bounce" }), /* @__PURE__ */ jsx("span", {
-									className: "text-base font-extrabold",
-									children: "Drop image to preview live"
-								})]
-							}),
-							/* @__PURE__ */ jsx("div", { className: "absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" }),
-							/* @__PURE__ */ jsxs("div", {
-								onClick: (e) => e.stopPropagation(),
-								onMouseDown: (e) => e.stopPropagation(),
-								className: "absolute bottom-0 inset-x-0 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white z-20",
-								children: [/* @__PURE__ */ jsxs("div", { children: [
-									/* @__PURE__ */ jsx("span", {
-										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block",
-										children: customHeroImage ? "CUSTOM TEST ASSET" : currentHero.badge
-									}),
-									/* @__PURE__ */ jsx("h2", {
-										className: "text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5",
-										children: customHeroImage ? "Your Live Product Preview" : currentHero.title
-									}),
-									/* @__PURE__ */ jsxs("span", {
-										className: "text-xs text-neutral-300 font-medium mt-1 block",
-										children: [currentHero.metric, " • Drag split to compare or hover with 300% Loupe"]
-									})
-								] }), /* @__PURE__ */ jsxs("a", {
-									href: "#free-sample",
-									className: "px-5 py-3 rounded-full bg-white text-[#0F0F12] text-xs font-extrabold hover:bg-emerald-400 transition-colors flex items-center gap-2 self-start sm:self-auto shadow-lg",
-									children: [/* @__PURE__ */ jsx("span", { children: "Request Free Sample" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
-								})]
-							})
-						]
-					}),
-					/* @__PURE__ */ jsx("div", {
-						className: "mt-8 pt-6 border-t border-neutral-200/60 overflow-hidden",
-						children: /* @__PURE__ */ jsx("div", {
-							className: "flex items-center justify-between gap-8 opacity-40 hover:opacity-80 transition-opacity duration-300 overflow-x-auto no-scrollbar py-2",
-							children: clients && clients.length > 0 ? clients.map((client) => /* @__PURE__ */ jsx("div", {
-								className: "shrink-0 flex items-center justify-center h-8",
-								children: client.logo_dark ? /* @__PURE__ */ jsx("img", {
-									src: client.logo_dark,
-									alt: client.name,
-									className: "h-6 max-w-[120px] object-contain grayscale"
-								}) : /* @__PURE__ */ jsx("span", {
-									className: "text-xs font-black tracking-widest text-[#0F0F12] uppercase font-mono",
-									children: client.name
-								})
-							}, client.id)) : LUXURY_BRAND_SILHOUETTES.map((brand) => /* @__PURE__ */ jsx("span", {
-								className: "text-xs font-black tracking-[0.25em] text-[#0F0F12] uppercase whitespace-nowrap shrink-0 font-mono",
-								children: brand
-							}, brand))
+								className: `px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${heroTabIdx === index ? "bg-white text-[#0F0F12] shadow-sm" : "text-neutral-500 hover:text-[#0F0F12]"}`,
+								children: plate.category
+							}, plate.id);
 						})
-					})
-				]
+					})]
+				}), /* @__PURE__ */ jsxs("div", {
+					ref: heroStageRef,
+					onMouseDown: (e) => {
+						setIsDraggingSplit(true);
+						updateSplitPosition(e.clientX);
+					},
+					onTouchStart: (e) => {
+						setIsDraggingSplit(true);
+						if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
+					},
+					className: "relative w-full h-[470px] sm:h-[540px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_20px_50px_rgba(15,15,18,0.06)] bg-white",
+					children: [
+						/* @__PURE__ */ jsx("div", {
+							className: `absolute inset-0 transition-colors duration-500 ${heroFinishMode === "white" ? "checkerboard-subtle" : ""}`,
+							style: { backgroundColor: heroFinishMode === "tint" ? currentHero.tintColor : void 0 },
+							children: /* @__PURE__ */ jsx("img", {
+								src: currentHero.image,
+								alt: currentHero.title,
+								draggable: "false",
+								className: `w-full h-full object-cover object-center transition-all duration-700 ${heroFinishMode === "white" || heroFinishMode === "tint" ? "mix-blend-multiply scale-95 object-contain" : ""}`,
+								style: { filter: heroFinishMode === "raw" ? currentHero.rawFilter : currentHero.doneFilter }
+							}, `hero-after-${currentHero.id}`)
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "absolute inset-0 overflow-hidden bg-[#D6D3CD]",
+							style: { clipPath: `inset(0 ${100 - splitPos}% 0 0)` },
+							children: [/* @__PURE__ */ jsx("img", {
+								src: currentHero.image,
+								alt: "Unedited Raw",
+								draggable: "false",
+								className: "w-full h-full object-cover object-center transition-all duration-700",
+								style: { filter: currentHero.rawFilter }
+							}, `hero-before-${currentHero.id}`), /* @__PURE__ */ jsx("span", {
+								className: "absolute top-5 left-5 px-3.5 py-1.5 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-extrabold tracking-wide",
+								children: "RAW CAPTURE"
+							})]
+						}),
+						/* @__PURE__ */ jsx("div", {
+							onClick: (e) => e.stopPropagation(),
+							onMouseDown: (e) => e.stopPropagation(),
+							className: "absolute top-5 right-5 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-full shadow-md border border-neutral-200/80",
+							children: [
+								{
+									id: "master",
+									label: "Studio Master"
+								},
+								{
+									id: "white",
+									label: "Cutout View"
+								},
+								{
+									id: "tint",
+									label: "Editorial Backdrop"
+								},
+								{
+									id: "raw",
+									label: "Full Raw"
+								}
+							].map((mode) => /* @__PURE__ */ jsx("button", {
+								type: "button",
+								onClick: () => setHeroFinishMode(mode.id),
+								className: `px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${heroFinishMode === mode.id ? "bg-[#0F0F12] text-white shadow-sm" : "text-neutral-600 hover:text-[#0F0F12]"}`,
+								children: mode.label
+							}, mode.id))
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "absolute top-0 bottom-0 z-10 w-0.5 bg-white/90 shadow-[0_0_16px_rgba(0,0,0,0.35)] pointer-events-none",
+							style: { left: `${splitPos}%` },
+							children: /* @__PURE__ */ jsx("div", {
+								className: "absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-[#0F0F12] shadow-xl flex items-center justify-center border border-neutral-200",
+								children: /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-4 h-4" })
+							})
+						}),
+						/* @__PURE__ */ jsx("div", { className: "absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" }),
+						/* @__PURE__ */ jsxs("div", {
+							onClick: (e) => e.stopPropagation(),
+							onMouseDown: (e) => e.stopPropagation(),
+							className: "absolute bottom-0 inset-x-0 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white z-20",
+							children: [/* @__PURE__ */ jsxs("div", { children: [
+								/* @__PURE__ */ jsx("span", {
+									className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block",
+									children: currentHero.badge
+								}),
+								/* @__PURE__ */ jsx("h2", {
+									className: "text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5",
+									children: currentHero.title
+								}),
+								/* @__PURE__ */ jsxs("span", {
+									className: "text-xs text-neutral-300 font-medium mt-1 block",
+									children: [currentHero.metric, " • Drag slider to compare RAW vs. Master"]
+								})
+							] }), /* @__PURE__ */ jsxs("a", {
+								href: "#free-sample",
+								className: "px-5 py-3 rounded-full bg-white text-[#0F0F12] text-xs font-extrabold hover:bg-emerald-400 transition-colors flex items-center gap-2 self-start sm:self-auto shadow-lg shrink-0",
+								children: [/* @__PURE__ */ jsx("span", { children: "Request Free Sample" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
+							})]
+						})
+					]
+				})]
 			}),
 			/* @__PURE__ */ jsx("section", {
 				id: "capabilities",

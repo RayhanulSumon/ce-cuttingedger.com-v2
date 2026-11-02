@@ -210,15 +210,6 @@ export default function Home({ clients = [] }: HomeProps) {
   const [heroFinishMode, setHeroFinishMode] = useState<StudioBackdropMode>('master');
   const heroStageRef = useRef<HTMLDivElement>(null);
 
-  // Custom User-Uploaded Image for Live Testing
-  const [customHeroImage, setCustomHeroImage] = useState<string | null>(null);
-  const [isDragOverHero, setIsDragOverHero] = useState(false);
-  const heroUploadInputRef = useRef<HTMLInputElement>(null);
-
-  // 300% Zoom Loupe State
-  const [loupeActive, setLoupeActive] = useState(false);
-  const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0, bounded: false });
-
   // 2. Core Studio Capabilities (5-Panel Accordion State)
   const [expandedAccordion, setExpandedAccordion] = useState(1);
   const [accordionRawMap, setAccordionRawMap] = useState<Record<string, boolean>>({});
@@ -244,9 +235,6 @@ export default function Home({ clients = [] }: HomeProps) {
   const [trialSubmitted, setTrialSubmitted] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Active Hero Image Source
-  const activeHeroImage = customHeroImage || currentHero.image;
 
   // Intro Slider Glide Demo (Visually signals interactivity on load without text)
   useEffect(() => {
@@ -305,42 +293,6 @@ export default function Home({ clients = [] }: HomeProps) {
       window.removeEventListener('touchend', onUp);
     };
   }, [isDraggingSplit]);
-
-  // Track Mouse for 300% Loupe Magnifier
-  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!heroStageRef.current) return;
-    const rect = heroStageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMouseCoord({ x, y, bounded: true });
-  };
-
-  const handleHeroMouseLeave = () => {
-    setMouseCoord((prev) => ({ ...prev, bounded: false }));
-  };
-
-  // Drag & Drop Custom RAW / Product onto Hero
-  const handleHeroDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOverHero(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.startsWith('image/')) {
-        const url = URL.createObjectURL(file);
-        setCustomHeroImage(url);
-        setUploadedFiles((prev) => [...prev, file]);
-      }
-    }
-  };
-
-  const handleCustomHeroUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setCustomHeroImage(url);
-      setUploadedFiles((prev) => [...prev, file]);
-    }
-  };
 
   const toggleCapabilityPill = (cap: string) => {
     setSelectedCapabilities((prev) =>
@@ -441,34 +393,34 @@ export default function Home({ clients = [] }: HomeProps) {
       {/* ==========================================
           2. CLEAN ROUNDED VISUAL HERO STAGE
       ========================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-10">
-        {/* Minimalist Single-Line Header Row */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 lg:gap-6 mb-6">
-          <div className="min-w-0">
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-12">
+        {/* Minimalist Editorial Header Row */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
+          <div>
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-1.5">
               CREATIVE DIGITAL POST-PRODUCTION STUDIO
             </span>
-            <h1 className="text-2xl sm:text-3xl lg:text-[28px] xl:text-[34px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap">
+            <h1 className="text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap">
               Visual Post-Production for Modern Brands.
             </h1>
           </div>
 
-          {/* Category Switcher Pills (Single Line Guaranteed) */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-nowrap overflow-x-auto pb-1 lg:pb-0 no-scrollbar">
+          {/* Unified Luxury Segmented Switcher */}
+          <div className="inline-flex p-1.5 rounded-full bg-neutral-100 border border-neutral-200/80 shrink-0 self-start lg:self-auto overflow-x-auto no-scrollbar">
             {HERO_SHOWCASE_PLATES.map((plate, index) => {
               const active = heroTabIdx === index;
               return (
                 <button
                   key={plate.id}
+                  type="button"
                   onClick={() => {
                     setHeroTabIdx(index);
                     setHeroFinishMode('master');
-                    setCustomHeroImage(null);
                   }}
-                  className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                     active
-                      ? 'bg-[#0F0F12] text-white shadow-sm'
-                      : 'bg-white text-neutral-600 hover:text-[#0F0F12] border border-neutral-200/80'
+                      ? 'bg-white text-[#0F0F12] shadow-sm'
+                      : 'text-neutral-500 hover:text-[#0F0F12]'
                   }`}
                 >
                   {plate.category}
@@ -478,11 +430,9 @@ export default function Home({ clients = [] }: HomeProps) {
           </div>
         </div>
 
-        {/* Expansive Rounded Hero Stage with Drag & Drop + Loupe */}
+        {/* Expansive Rounded Visual Hero Stage */}
         <div
           ref={heroStageRef}
-          onMouseMove={handleHeroMouseMove}
-          onMouseLeave={handleHeroMouseLeave}
           onMouseDown={(e) => {
             setIsDraggingSplit(true);
             updateSplitPosition(e.clientX);
@@ -491,45 +441,24 @@ export default function Home({ clients = [] }: HomeProps) {
             setIsDraggingSplit(true);
             if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
           }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragOverHero(true);
-          }}
-          onDragLeave={() => setIsDragOverHero(false)}
-          onDrop={handleHeroDrop}
-          className={`relative w-full h-[470px] sm:h-[550px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_20px_50px_rgba(15,15,18,0.06)] bg-white transition-all ${
-            isDragOverHero ? 'ring-4 ring-emerald-400 border-emerald-400' : ''
-          }`}
+          className="relative w-full h-[470px] sm:h-[540px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_20px_50px_rgba(15,15,18,0.06)] bg-white"
         >
-          {/* AFTER / STUDIO MASTER LAYER (Customizable Backdrop) */}
+          {/* AFTER / STUDIO MASTER LAYER */}
           <div
             className={`absolute inset-0 transition-colors duration-500 ${
-              heroFinishMode === 'checker' ? 'checkerboard-subtle' : ''
+              heroFinishMode === 'white' ? 'checkerboard-subtle' : ''
             }`}
             style={{
-              backgroundColor:
-                heroFinishMode === 'white'
-                  ? '#FFFFFF'
-                  : heroFinishMode === 'gray'
-                  ? '#6B7280'
-                  : heroFinishMode === 'black'
-                  ? '#09090B'
-                  : heroFinishMode === 'tint'
-                  ? currentHero.tintColor
-                  : undefined
+              backgroundColor: heroFinishMode === 'tint' ? currentHero.tintColor : undefined
             }}
           >
             <img
-              key={`hero-after-${currentHero.id}-${customHeroImage || 'default'}`}
-              src={activeHeroImage}
+              key={`hero-after-${currentHero.id}`}
+              src={currentHero.image}
               alt={currentHero.title}
               draggable="false"
               className={`w-full h-full object-cover object-center transition-all duration-700 ${
-                heroFinishMode === 'white' ||
-                heroFinishMode === 'gray' ||
-                heroFinishMode === 'black' ||
-                heroFinishMode === 'checker' ||
-                heroFinishMode === 'tint'
+                heroFinishMode === 'white' || heroFinishMode === 'tint'
                   ? 'mix-blend-multiply scale-95 object-contain'
                   : ''
               }`}
@@ -546,8 +475,8 @@ export default function Home({ clients = [] }: HomeProps) {
             style={{ clipPath: `inset(0 ${100 - splitPos}% 0 0)` }}
           >
             <img
-              key={`hero-before-${currentHero.id}-${customHeroImage || 'default'}`}
-              src={activeHeroImage}
+              key={`hero-before-${currentHero.id}`}
+              src={currentHero.image}
               alt="Unedited Raw"
               draggable="false"
               className="w-full h-full object-cover object-center transition-all duration-700"
@@ -558,111 +487,31 @@ export default function Home({ clients = [] }: HomeProps) {
             </span>
           </div>
 
-          {/* 300% CIRCULAR ZOOM LOUPE (Magnifies exact cursor coordinates) */}
-          {loupeActive && mouseCoord.bounded && heroStageRef.current && (
-            <div
-              className="absolute pointer-events-none z-30 w-48 h-48 rounded-full border-2 border-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden bg-black"
-              style={{
-                left: mouseCoord.x - 96,
-                top: mouseCoord.y - 96
-              }}
-            >
-              <img
-                src={activeHeroImage}
-                alt="300% Zoom"
-                className="absolute max-w-none transition-none"
-                style={{
-                  width: heroStageRef.current.clientWidth * 3,
-                  height: heroStageRef.current.clientHeight * 3,
-                  left: -(mouseCoord.x * 3 - 96),
-                  top: -(mouseCoord.y * 3 - 96),
-                  filter: currentHero.doneFilter
-                }}
-              />
-              <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-black/20" />
-              <div className="absolute bottom-2.5 inset-x-0 text-center">
-                <span className="px-2.5 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-extrabold text-white tracking-widest uppercase">
-                  300% Zoom
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* TOP CONTROLS ROW: Backdrop Modes + 300% Loupe + Custom Upload */}
+          {/* Top-Right Single Frosted Pill: View Modes */}
           <div
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
-            className="absolute top-5 right-5 z-20 flex items-center gap-2"
+            className="absolute top-5 right-5 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-full shadow-md border border-neutral-200/80"
           >
-            {/* 300% Loupe Toggle */}
-            <button
-              type="button"
-              onClick={() => setLoupeActive(!loupeActive)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-md flex items-center gap-1.5 ${
-                loupeActive
-                  ? 'bg-emerald-400 text-[#0F0F12]'
-                  : 'bg-white/95 text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 backdrop-blur-md'
-              }`}
-              title="Inspect 300% zoom edge accuracy"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-              <span>300% Loupe</span>
-            </button>
-
-            {/* Studio Backdrop Chips & Modes */}
-            <div className="flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-full shadow-md border border-neutral-200/80">
-              {[
-                { id: 'master' as const, label: 'Master' },
-                { id: 'white' as const, label: 'White' },
-                { id: 'gray' as const, label: '50% Gray' },
-                { id: 'black' as const, label: 'Black' },
-                { id: 'checker' as const, label: 'PNG' },
-                { id: 'raw' as const, label: 'Raw' }
-              ].map((mode) => (
-                <button
-                  key={mode.id}
-                  type="button"
-                  onClick={() => setHeroFinishMode(mode.id)}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold transition-all ${
-                    heroFinishMode === mode.id
-                      ? 'bg-[#0F0F12] text-white shadow-sm'
-                      : 'text-neutral-600 hover:text-[#0F0F12]'
-                  }`}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Custom RAW Upload Button / Reset */}
-            {customHeroImage ? (
+            {[
+              { id: 'master' as const, label: 'Studio Master' },
+              { id: 'white' as const, label: 'Cutout View' },
+              { id: 'tint' as const, label: 'Editorial Backdrop' },
+              { id: 'raw' as const, label: 'Full Raw' }
+            ].map((mode) => (
               <button
+                key={mode.id}
                 type="button"
-                onClick={() => setCustomHeroImage(null)}
-                className="px-3 py-1.5 rounded-full bg-white/95 text-neutral-700 hover:text-red-600 text-xs font-bold border border-neutral-200/80 shadow-md flex items-center gap-1.5"
-                title="Reset to studio plate"
+                onClick={() => setHeroFinishMode(mode.id)}
+                className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${
+                  heroFinishMode === mode.id
+                    ? 'bg-[#0F0F12] text-white shadow-sm'
+                    : 'text-neutral-600 hover:text-[#0F0F12]'
+                }`}
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset</span>
+                {mode.label}
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => heroUploadInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-full bg-white/95 text-neutral-700 hover:text-[#0F0F12] text-xs font-bold border border-neutral-200/80 shadow-md flex items-center gap-1.5"
-                title="Drop or upload your own image to test"
-              >
-                <Upload className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Test Mine</span>
-              </button>
-            )}
-            <input
-              ref={heroUploadInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleCustomHeroUpload}
-            />
+            ))}
           </div>
 
           {/* Center Tactile Split Divider */}
@@ -675,14 +524,6 @@ export default function Home({ clients = [] }: HomeProps) {
             </div>
           </div>
 
-          {/* Drag-over overlay feedback */}
-          {isDragOverHero && (
-            <div className="absolute inset-0 z-40 bg-[#0F0F12]/80 backdrop-blur-sm flex flex-col items-center justify-center text-white pointer-events-none">
-              <Upload className="w-10 h-10 text-emerald-400 mb-2 animate-bounce" />
-              <span className="text-base font-extrabold">Drop image to preview live</span>
-            </div>
-          )}
-
           {/* Bottom Gradient & Typography Overlay */}
           <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
@@ -693,55 +534,23 @@ export default function Home({ clients = [] }: HomeProps) {
           >
             <div>
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 block">
-                {customHeroImage ? 'CUSTOM TEST ASSET' : currentHero.badge}
+                {currentHero.badge}
               </span>
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5">
-                {customHeroImage ? 'Your Live Product Preview' : currentHero.title}
+                {currentHero.title}
               </h2>
               <span className="text-xs text-neutral-300 font-medium mt-1 block">
-                {currentHero.metric} • Drag split to compare or hover with 300% Loupe
+                {currentHero.metric} • Drag slider to compare RAW vs. Master
               </span>
             </div>
 
             <a
               href="#free-sample"
-              className="px-5 py-3 rounded-full bg-white text-[#0F0F12] text-xs font-extrabold hover:bg-emerald-400 transition-colors flex items-center gap-2 self-start sm:self-auto shadow-lg"
+              className="px-5 py-3 rounded-full bg-white text-[#0F0F12] text-xs font-extrabold hover:bg-emerald-400 transition-colors flex items-center gap-2 self-start sm:self-auto shadow-lg shrink-0"
             >
               <span>Request Free Sample</span>
               <ArrowUpRight className="w-4 h-4" />
             </a>
-          </div>
-        </div>
-
-        {/* ==========================================
-            SILENT LUXURY CLIENT MARQUEE (NO TEXT NEEDED)
-        ========================================== */}
-        <div className="mt-8 pt-6 border-t border-neutral-200/60 overflow-hidden">
-          <div className="flex items-center justify-between gap-8 opacity-40 hover:opacity-80 transition-opacity duration-300 overflow-x-auto no-scrollbar py-2">
-            {clients && clients.length > 0
-              ? clients.map((client) => (
-                  <div key={client.id} className="shrink-0 flex items-center justify-center h-8">
-                    {client.logo_dark ? (
-                      <img
-                        src={client.logo_dark}
-                        alt={client.name}
-                        className="h-6 max-w-[120px] object-contain grayscale"
-                      />
-                    ) : (
-                      <span className="text-xs font-black tracking-widest text-[#0F0F12] uppercase font-mono">
-                        {client.name}
-                      </span>
-                    )}
-                  </div>
-                ))
-              : LUXURY_BRAND_SILHOUETTES.map((brand) => (
-                  <span
-                    key={brand}
-                    className="text-xs font-black tracking-[0.25em] text-[#0F0F12] uppercase whitespace-nowrap shrink-0 font-mono"
-                  >
-                    {brand}
-                  </span>
-                ))}
           </div>
         </div>
       </section>
