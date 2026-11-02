@@ -26,9 +26,20 @@ import {
 // ==========================================
 const HERO_SHOWCASE_PLATES = [
   {
+    id: 'footwear',
+    category: 'Footwear',
+    badge: 'PRECISION PEN-TOOL PATH',
+    title: 'Multi-Path Cutout & Ground Shadow',
+    metric: '300% Zoom Edge Accuracy • Dynamic Studio Shadow',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1800&q=85',
+    rawFilter: 'brightness(0.78) contrast(0.8) saturate(0.45) sepia(0.15)',
+    doneFilter: 'brightness(1.05) contrast(1.1) saturate(1.14) drop-shadow(0 28px 26px rgba(15,15,18,0.22))',
+    tintColor: '#EEF2FF'
+  },
+  {
     id: 'apparel',
-    category: 'Apparel & Fashion',
-    badge: '3D GHOST MANNEQUIN & EDITORIAL',
+    category: 'Apparel',
+    badge: '3D GHOST MANNEQUIN',
     title: 'Invisible Mannequin & Garment Drape',
     metric: 'Natural Volume • Zero Halo Cutout',
     image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1800&q=85',
@@ -37,19 +48,8 @@ const HERO_SHOWCASE_PLATES = [
     tintColor: '#EAE6DF'
   },
   {
-    id: 'footwear',
-    category: 'Footwear',
-    badge: 'PRECISION PEN-TOOL PATH',
-    title: 'Multi-Path Cutout & Ground Shadow',
-    metric: '300% Zoom Edge Accuracy',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1800&q=85',
-    rawFilter: 'brightness(0.78) contrast(0.8) saturate(0.45) sepia(0.15)',
-    doneFilter: 'brightness(1.05) contrast(1.1) saturate(1.14) drop-shadow(0 28px 26px rgba(15,15,18,0.22))',
-    tintColor: '#EEF2FF'
-  },
-  {
     id: 'jewelry',
-    category: 'Fine Jewelry',
+    category: 'Jewelry',
     badge: 'MACRO FOCUS STACKING',
     title: 'Micro-Dust Removal & Gem Brilliance',
     metric: 'Prong Rebuild • Metal Specular Polish',
@@ -60,10 +60,10 @@ const HERO_SHOWCASE_PLATES = [
   },
   {
     id: 'hardgoods',
-    category: 'Hard Goods & Beauty',
+    category: 'Cosmetics',
     badge: 'SPECULAR & REFLECTION GRADE',
     title: 'Glass Reflection & Label Rebuild',
-    metric: 'Clean Highlights • Color Match',
+    metric: 'Clean Highlights • Exact Color Match',
     image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1800&q=85',
     rawFilter: 'brightness(0.76) contrast(0.82) saturate(0.5)',
     doneFilter: 'brightness(1.06) contrast(1.12) saturate(1.1)',
@@ -393,44 +393,43 @@ export default function Home({ clients = [] }: HomeProps) {
       {/* ==========================================
           2. CLEAN ROUNDED VISUAL HERO STAGE
       ========================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-12">
-        {/* Minimalist Editorial Header Row */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
-          <div>
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 block mb-1.5">
-              CREATIVE DIGITAL POST-PRODUCTION STUDIO
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-14">
+        {/* Editorial Centered Hero Header (Apple / Linear Luxury Design) */}
+        <div className="text-center max-w-3xl mx-auto mb-9">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/80 mb-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0F0F12]">
+              DIGITAL POST-PRODUCTION STUDIO
             </span>
-            <h1 className="text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] font-extrabold tracking-tight text-[#0F0F12] leading-tight lg:whitespace-nowrap">
-              Visual Post-Production for Modern Brands.
-            </h1>
           </div>
 
-          {/* Unified Luxury Segmented Switcher */}
-          <div className="inline-flex p-1.5 rounded-full bg-neutral-100 border border-neutral-200/80 shrink-0 self-start lg:self-auto overflow-x-auto no-scrollbar">
-            {HERO_SHOWCASE_PLATES.map((plate, index) => {
-              const active = heroTabIdx === index;
-              return (
-                <button
-                  key={plate.id}
-                  type="button"
-                  onClick={() => {
-                    setHeroTabIdx(index);
-                    setHeroFinishMode('master');
-                  }}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                    active
-                      ? 'bg-white text-[#0F0F12] shadow-sm'
-                      : 'text-neutral-500 hover:text-[#0F0F12]'
-                  }`}
-                >
-                  {plate.category}
-                </button>
-              );
-            })}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#0F0F12] leading-[1.08]">
+            Visual Post-Production for Modern Brands.
+          </h1>
+
+          <p className="text-xs sm:text-base text-neutral-500 font-medium mt-3.5 max-w-xl mx-auto leading-relaxed">
+            100% hand-drawn pen-tool vector paths, invisible ghost mannequin drape, and colorways with guaranteed 12-hour turnaround.
+          </p>
+
+          {/* Balanced Luxury Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <a
+              href="#free-sample"
+              className="px-6 py-3.5 rounded-full bg-[#0F0F12] text-white text-xs sm:text-sm font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-[0_4px_16px_rgba(15,15,18,0.12)] hover:shadow-[0_8px_24px_rgba(15,15,18,0.2)]"
+            >
+              <span>Get 3 Free Sample Retouches</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+            <a
+              href="#interactive-studio"
+              className="px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow"
+            >
+              Test Live Playground ↓
+            </a>
           </div>
         </div>
 
-        {/* Expansive Rounded Visual Hero Stage */}
+        {/* Cinematic Rounded Visual Hero Stage (Pure Uncluttered Showcase) */}
         <div
           ref={heroStageRef}
           onMouseDown={(e) => {
@@ -441,31 +440,17 @@ export default function Home({ clients = [] }: HomeProps) {
             setIsDraggingSplit(true);
             if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
           }}
-          className="relative w-full h-[470px] sm:h-[540px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_20px_50px_rgba(15,15,18,0.06)] bg-white"
+          className="relative w-full h-[470px] sm:h-[550px] rounded-[32px] overflow-hidden select-none cursor-ew-resize border border-neutral-200/80 shadow-[0_25px_60px_rgba(15,15,18,0.08)] bg-white"
         >
           {/* AFTER / STUDIO MASTER LAYER */}
-          <div
-            className={`absolute inset-0 transition-colors duration-500 ${
-              heroFinishMode === 'white' ? 'checkerboard-subtle' : ''
-            }`}
-            style={{
-              backgroundColor: heroFinishMode === 'tint' ? currentHero.tintColor : undefined
-            }}
-          >
+          <div className="absolute inset-0 bg-[#F4F4F6]">
             <img
               key={`hero-after-${currentHero.id}`}
               src={currentHero.image}
               alt={currentHero.title}
               draggable="false"
-              className={`w-full h-full object-cover object-center transition-all duration-700 ${
-                heroFinishMode === 'white' || heroFinishMode === 'tint'
-                  ? 'mix-blend-multiply scale-95 object-contain'
-                  : ''
-              }`}
-              style={{
-                filter:
-                  heroFinishMode === 'raw' ? currentHero.rawFilter : currentHero.doneFilter
-              }}
+              className="w-full h-full object-cover object-center transition-all duration-700"
+              style={{ filter: currentHero.doneFilter }}
             />
           </div>
 
@@ -487,45 +472,20 @@ export default function Home({ clients = [] }: HomeProps) {
             </span>
           </div>
 
-          {/* Top-Right Single Frosted Pill: View Modes */}
+          {/* Center Tactile Split Divider with RAW | MASTER Badge */}
           <div
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="absolute top-5 right-5 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-full shadow-md border border-neutral-200/80"
-          >
-            {[
-              { id: 'master' as const, label: 'Studio Master' },
-              { id: 'white' as const, label: 'Cutout View' },
-              { id: 'tint' as const, label: 'Editorial Backdrop' },
-              { id: 'raw' as const, label: 'Full Raw' }
-            ].map((mode) => (
-              <button
-                key={mode.id}
-                type="button"
-                onClick={() => setHeroFinishMode(mode.id)}
-                className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${
-                  heroFinishMode === mode.id
-                    ? 'bg-[#0F0F12] text-white shadow-sm'
-                    : 'text-neutral-600 hover:text-[#0F0F12]'
-                }`}
-              >
-                {mode.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Center Tactile Split Divider */}
-          <div
-            className="absolute top-0 bottom-0 z-10 w-0.5 bg-white/90 shadow-[0_0_16px_rgba(0,0,0,0.35)] pointer-events-none"
+            className="absolute top-0 bottom-0 z-10 w-0.5 bg-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-none"
             style={{ left: `${splitPos}%` }}
           >
-            <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white text-[#0F0F12] shadow-xl flex items-center justify-center border border-neutral-200">
-              <SlidersHorizontal className="w-4 h-4" />
+            <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-full bg-white text-[#0F0F12] shadow-2xl flex items-center gap-1.5 border border-neutral-200 text-[10px] font-black uppercase tracking-wider whitespace-nowrap">
+              <span>RAW</span>
+              <span className="opacity-30">|</span>
+              <span className="text-emerald-600 font-extrabold">MASTER</span>
             </div>
           </div>
 
           {/* Bottom Gradient & Typography Overlay */}
-          <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
 
           <div
             onClick={(e) => e.stopPropagation()}
@@ -540,17 +500,26 @@ export default function Home({ clients = [] }: HomeProps) {
                 {currentHero.title}
               </h2>
               <span className="text-xs text-neutral-300 font-medium mt-1 block">
-                {currentHero.metric} • Drag slider to compare RAW vs. Master
+                {currentHero.metric}
               </span>
             </div>
 
-            <a
-              href="#free-sample"
-              className="px-5 py-3 rounded-full bg-white text-[#0F0F12] text-xs font-extrabold hover:bg-emerald-400 transition-colors flex items-center gap-2 self-start sm:self-auto shadow-lg shrink-0"
-            >
-              <span>Request Free Sample</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
+            {/* Discreet Plate Switcher in Bottom Corner */}
+            <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md p-1.5 rounded-full border border-white/20 self-start sm:self-auto">
+              {HERO_SHOWCASE_PLATES.map((plate, index) => (
+                <button
+                  key={plate.id}
+                  onClick={() => setHeroTabIdx(index)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition-all ${
+                    heroTabIdx === index
+                      ? 'bg-white text-[#0F0F12] shadow-sm'
+                      : 'text-neutral-300 hover:text-white'
+                  }`}
+                >
+                  {plate.category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
