@@ -199,7 +199,28 @@
     "/build/assets/Faq-uacoF8A5.js"
   ],
   "resources/js/Pages/Home.tsx": [
-    "/build/assets/Home-t3sWCBPR.js"
+    "/build/assets/Home-CgqQnpWD.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeConversion.tsx": [
+    "/build/assets/HomeConversion-B6mdGchQ.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeEditorial.tsx": [
+    "/build/assets/HomeEditorial-CjQvAxrM.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeFigmaRed.tsx": [
+    "/build/assets/HomeFigmaRed-CAcqEDZV.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeObsidian.tsx": [
+    "/build/assets/HomeObsidian-Ds7rXcQn.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeOriginal.tsx": [
+    "/build/assets/HomeOriginal-k4qLB1pA.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeTechnical.tsx": [
+    "/build/assets/HomeTechnical-DXM_o7uB.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx": [
+    "/build/assets/HomeVariantSwitcher-Agae20FO.js"
   ],
   "resources/js/Pages/Legal/CookiePolicy.tsx": [
     "/build/assets/CookiePolicy-BJOtxyQi.js"

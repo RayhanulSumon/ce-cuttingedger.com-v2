@@ -113,7 +113,18 @@ export function Header({
             isMegaMenu: true,
         },
         {
-            label: 'Design Styles',
+            label: 'Home Demos',
+            href: '/?v=1',
+            children: [
+                { label: '01. Original Studio (Default)', href: '/?v=1' },
+                { label: '02. Figma Prototype (#de4a2c)', href: '/?v=2' },
+                { label: '03. Editorial Atelier', href: '/?v=3' },
+                { label: '04. Technical Workbench', href: '/?v=4' },
+                { label: '05. Conversion Engine', href: '/?v=5' },
+            ],
+        },
+        {
+            label: 'Service Styles',
             href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=1',
             children: [
                 { label: '01. Minimalist Studio', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=1' },

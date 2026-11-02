@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Eye, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
-//#region resources/js/Pages/Home.tsx
+//#region resources/js/Pages/HomeVariants/HomeOriginal.tsx
 var HERO_SHOWCASE_PLATES = [
 	{
 		id: "footwear",
@@ -297,7 +297,7 @@ var STUDIO_BACKDROPS = [
 		dotColor: "bg-[#0F0F12]"
 	}
 ];
-function Home({ clients = [] }) {
+function HomeOriginal({ clients = [] }) {
 	const [heroTabIdx, setHeroTabIdx] = useState(0);
 	const currentHero = HERO_SHOWCASE_PLATES[heroTabIdx] || HERO_SHOWCASE_PLATES[0];
 	const [splitPos, setSplitPos] = useState(50);
@@ -1428,4 +1428,4 @@ function Home({ clients = [] }) {
 	});
 }
 //#endregion
-export { Home as default };
+export { HomeOriginal };

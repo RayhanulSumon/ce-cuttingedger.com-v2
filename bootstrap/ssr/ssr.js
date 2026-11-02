@@ -123,7 +123,33 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 			isMegaMenu: true
 		},
 		{
-			label: "Design Styles",
+			label: "Home Demos",
+			href: "/?v=1",
+			children: [
+				{
+					label: "01. Original Studio (Default)",
+					href: "/?v=1"
+				},
+				{
+					label: "02. Figma Prototype (#de4a2c)",
+					href: "/?v=2"
+				},
+				{
+					label: "03. Editorial Atelier",
+					href: "/?v=3"
+				},
+				{
+					label: "04. Technical Workbench",
+					href: "/?v=4"
+				},
+				{
+					label: "05. Conversion Engine",
+					href: "/?v=5"
+				}
+			]
+		},
+		{
+			label: "Service Styles",
 			href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
 			children: [
 				{
@@ -4401,7 +4427,14 @@ createServer((page) => createInertiaApp({
 			"./Pages/Contact.tsx": () => import("./assets/Contact-CeZROX8y.js"),
 			"./Pages/Errors/404.tsx": () => import("./assets/404-B2zMxnij.js"),
 			"./Pages/Faq.tsx": () => import("./assets/Faq-uacoF8A5.js"),
-			"./Pages/Home.tsx": () => import("./assets/Home-t3sWCBPR.js"),
+			"./Pages/Home.tsx": () => import("./assets/Home-CgqQnpWD.js"),
+			"./Pages/HomeVariants/HomeConversion.tsx": () => import("./assets/HomeConversion-B6mdGchQ.js"),
+			"./Pages/HomeVariants/HomeEditorial.tsx": () => import("./assets/HomeEditorial-CjQvAxrM.js"),
+			"./Pages/HomeVariants/HomeFigmaRed.tsx": () => import("./assets/HomeFigmaRed-CAcqEDZV.js"),
+			"./Pages/HomeVariants/HomeObsidian.tsx": () => import("./assets/HomeObsidian-Ds7rXcQn.js"),
+			"./Pages/HomeVariants/HomeOriginal.tsx": () => import("./assets/HomeOriginal-k4qLB1pA.js"),
+			"./Pages/HomeVariants/HomeTechnical.tsx": () => import("./assets/HomeTechnical-DXM_o7uB.js"),
+			"./Pages/HomeVariants/HomeVariantSwitcher.tsx": () => import("./assets/HomeVariantSwitcher-Agae20FO.js"),
 			"./Pages/Legal/CookiePolicy.tsx": () => import("./assets/CookiePolicy-BJOtxyQi.js"),
 			"./Pages/Pricing.tsx": () => import("./assets/Pricing-D62DHBuM.js"),
 			"./Pages/Privacy.tsx": () => import("./assets/Privacy-CJ5wk8_j.js"),

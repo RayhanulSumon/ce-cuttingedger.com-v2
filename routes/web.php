@@ -139,6 +139,10 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 
 // Service Pillars Hub and Hierarchical Child Pages
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::get('/home-demos/{variant?}', function (?string $variant = '1') {
+    return redirect()->to("/?v={$variant}");
+})->name('home-demos.preview');
+
 Route::get('/design-styles/{variant?}', function (?string $variant = '1') {
     return redirect()->to("/services/ecommerce-catalog-optimization/clipping-path-service?v={$variant}");
 })->name('design-styles.preview');
