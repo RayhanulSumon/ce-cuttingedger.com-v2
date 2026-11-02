@@ -5,7 +5,7 @@ import { HomeOriginal } from './HomeVariants/HomeOriginal';
 import { HomeVisual } from './HomeVariants/HomeVisual';
 import { HomePortfolio } from './HomeVariants/HomePortfolio';
 import { HomeEditorial } from './HomeVariants/HomeEditorial';
-import { HomeBold } from './HomeVariants/HomeBold';
+import { HomePhotoLight } from './HomeVariants/HomePhotoLight';
 
 interface HomeProps {
   featuredProjects?: any[];
@@ -64,7 +64,7 @@ export default function Home({ clients = [] }: HomeProps) {
       case '4':
         return <HomeEditorial clients={clients} />;
       case '5':
-        return <HomeBold clients={clients} />;
+        return <HomePhotoLight clients={clients} />;
       case '1':
       default:
         return <HomeOriginal clients={clients} />;

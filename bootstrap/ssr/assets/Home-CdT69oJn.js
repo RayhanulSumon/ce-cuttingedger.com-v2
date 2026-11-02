@@ -1,9 +1,9 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-rrFchmLJ.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-CERBFQj1.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
 import { HomePortfolio } from "./HomePortfolio-CLVFgukR.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
-import { HomeBold } from "./HomeBold-DZBZ4rgK.js";
+import { HomePhotoLight } from "./HomePhotoLight-BJcAsY74.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
@@ -53,7 +53,7 @@ function Home({ clients = [] }) {
 			case "2": return /* @__PURE__ */ jsx(HomeVisual, { clients });
 			case "3": return /* @__PURE__ */ jsx(HomePortfolio, { clients });
 			case "4": return /* @__PURE__ */ jsx(HomeEditorial, { clients });
-			case "5": return /* @__PURE__ */ jsx(HomeBold, { clients });
+			case "5": return /* @__PURE__ */ jsx(HomePhotoLight, { clients });
 			default: return /* @__PURE__ */ jsx(HomeOriginal, { clients });
 		}
 	};

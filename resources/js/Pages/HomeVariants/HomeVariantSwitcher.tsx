@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import { Sparkles, Eye, Grid, BookOpen, Zap, Check } from 'lucide-react';
+import { Sparkles, Eye, Grid, BookOpen, Camera, Check } from 'lucide-react';
 
 interface HomeVariantSwitcherProps {
   currentVariant: string;
@@ -28,8 +28,8 @@ export const HOME_VARIANTS = [
   },
   {
     id: '3',
-    name: 'Portfolio Showcase',
-    badge: 'PORTFOLIO MASONRY',
+    name: 'Portfolio Dark',
+    badge: 'DARK MASONRY',
     tagline: 'Filterable case studies gallery with peek raw overlay & full-screen comparison modal',
     accentColor: '#de4a2c',
     bgTone: 'Obsidian Gallery #07080B',
@@ -46,12 +46,12 @@ export const HOME_VARIANTS = [
   },
   {
     id: '5',
-    name: 'Brutalist Bold',
-    badge: 'HIGH IMPACT',
-    tagline: 'Massive typography, bold geometric strips, and zero-friction sample claim',
+    name: 'Photo Lookbook',
+    badge: 'LIGHT LUXE',
+    tagline: 'Clean white photo-first portfolio lookbook with live comparison slider modal',
     accentColor: '#de4a2c',
-    bgTone: 'High-Contrast B&W',
-    icon: Zap
+    bgTone: 'Pure Light #FBFBFA',
+    icon: Camera
   }
 ];
 

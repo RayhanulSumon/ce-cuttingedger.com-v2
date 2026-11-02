@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BookOpen, Check, Eye, Grid, Sparkles, Zap } from "lucide-react";
+import { BookOpen, Camera, Check, Eye, Grid, Sparkles } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -24,8 +24,8 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "3",
-		name: "Portfolio Showcase",
-		badge: "PORTFOLIO MASONRY",
+		name: "Portfolio Dark",
+		badge: "DARK MASONRY",
 		tagline: "Filterable case studies gallery with peek raw overlay & full-screen comparison modal",
 		accentColor: "#de4a2c",
 		bgTone: "Obsidian Gallery #07080B",
@@ -42,12 +42,12 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "5",
-		name: "Brutalist Bold",
-		badge: "HIGH IMPACT",
-		tagline: "Massive typography, bold geometric strips, and zero-friction sample claim",
+		name: "Photo Lookbook",
+		badge: "LIGHT LUXE",
+		tagline: "Clean white photo-first portfolio lookbook with live comparison slider modal",
 		accentColor: "#de4a2c",
-		bgTone: "High-Contrast B&W",
-		icon: Zap
+		bgTone: "Pure Light #FBFBFA",
+		icon: Camera
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
