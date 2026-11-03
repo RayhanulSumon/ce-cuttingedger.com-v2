@@ -95,6 +95,10 @@ class AdminChatSessionController extends Controller
             'last_message' => $s->latestMessage?->content ? Str::limit($s->latestMessage->content, 65) : 'No messages yet',
             'last_message_sender' => $s->latestMessage?->sender ?? 'system',
             'last_message_time' => $s->latestMessage?->created_at?->diffForHumans() ?? $s->last_active_at?->diffForHumans() ?? 'Just now',
+            'unread_count' => (int) $s->unread_count,
+            'last_message' => $s->latestMessage?->content ? \Illuminate\Support\Str::limit($s->latestMessage->content, 65) : 'No messages yet',
+            'last_message_sender' => $s->latestMessage?->sender ?? 'system',
+            'last_message_time' => $s->latestMessage?->created_at?->diffForHumans() ?? $s->last_active_at?->diffForHumans() ?? 'Just now',
             'has_consultation' => $s->consultations->isNotEmpty(),
             'last_active_at' => $s->last_active_at?->toISOString(),
             'last_active_formatted' => $s->last_active_at?->diffForHumans() ?? 'Never',
@@ -149,6 +153,20 @@ class AdminChatSessionController extends Controller
                 broadcast(new ChatMessageRead($chatSession->id, $unreadUserMsgIds));
             } catch (\Throwable) {
             }
+        }
+
+        // Mark user messages as read by admin operator
+        $unreadUserMsgIds = $chatSession->messages()
+            ->where('is_read', false)
+            ->where('sender', 'user')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($unreadUserMsgIds)) {
+            $chatSession->messages()->whereIn('id', $unreadUserMsgIds)->update(['is_read' => true]);
+            try {
+                broadcast(new \App\Events\ChatMessageRead($chatSession->id, $unreadUserMsgIds));
+            } catch (\Throwable) {}
         }
 
         $messages = $chatSession->messages()
@@ -322,6 +340,20 @@ class AdminChatSessionController extends Controller
             }
         }
 
+        // Mark user messages as read by admin operator
+        $unreadUserMsgIds = $chatSession->messages()
+            ->where('is_read', false)
+            ->where('sender', 'user')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($unreadUserMsgIds)) {
+            $chatSession->messages()->whereIn('id', $unreadUserMsgIds)->update(['is_read' => true]);
+            try {
+                broadcast(new \App\Events\ChatMessageRead($chatSession->id, $unreadUserMsgIds));
+            } catch (\Throwable) {}
+        }
+
         $afterId = (int) $request->query('after_id', 0);
 
         $query = $chatSession->messages()->orderBy('id', 'asc');
@@ -369,6 +401,24 @@ class AdminChatSessionController extends Controller
             ));
         } catch (\Throwable) {
         }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Broadcast live operator typing indicator to visitor.
+     */
+    public function typing(Request $request, ChatSession $chatSession): JsonResponse
+    {
+        $admin = $request->user();
+        try {
+            broadcast(new \App\Events\ChatUserTyping(
+                $chatSession->id,
+                'operator',
+                $admin?->name ?? 'Live Specialist',
+                (bool) $request->input('is_typing', true)
+            ));
+        } catch (\Throwable) {}
 
         return response()->json(['success' => true]);
     }

@@ -556,3 +556,4 @@ function FloatingChatCard({
         </div>
     );
 }
+

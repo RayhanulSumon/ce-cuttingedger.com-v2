@@ -55,6 +55,9 @@ class ChatOrchestrator
                 broadcast(new LiveChatTakeoverRequested($session, $userText));
             } catch (\Throwable) {
             }
+            try {
+                broadcast(new \App\Events\LiveChatTakeoverRequested($session, $userText));
+            } catch (\Throwable) {}
         }
 
         // If a human operator has taken over this chat session, do not generate bot replies
