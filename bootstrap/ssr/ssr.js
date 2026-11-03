@@ -3422,7 +3422,7 @@ function ChatWidget() {
 		}
 		const readTimer = setTimeout(() => {
 			setIsTypingVisible(true);
-		}, 1e3);
+		}, 1800);
 		return () => {
 			clearTimeout(readTimer);
 		};
@@ -3501,7 +3501,7 @@ function ChatWidget() {
 			if (data.operator_name !== void 0) setOperatorName(data.operator_name);
 			if (data.needs_human !== void 0) setNeedsHuman(Boolean(data.needs_human));
 			const elapsed = Date.now() - startTime;
-			const targetDelay = Math.max(0, 1600 - elapsed);
+			const targetDelay = Math.max(0, 3200 - elapsed);
 			if (targetDelay > 0) await new Promise((resolve) => setTimeout(resolve, targetDelay));
 			setMessages((prev) => {
 				let updated = prev.map((m) => m.id === optimisticId ? {

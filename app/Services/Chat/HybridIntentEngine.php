@@ -95,8 +95,8 @@ TXT;
             ];
         }
 
-        // 0. Detect Human Operator / Live Agent request
-        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative)\b/i', $text)) {
+        // 0. Detect Human Operator / Live Agent request (supports typos like assistent, live support, anyone live)
+        if (preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative|live assist\w*|live support|live desk|anyone live)\b/iu', $text)) {
             if ($session) {
                 $session->requestHuman();
                 try {

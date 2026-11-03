@@ -41,8 +41,10 @@ class ToolRegistry
         $text = strtolower($userText);
         $tools = [];
 
-        // Pricing queries (supports typos like priice, priicng, qoute and multilingual: precio, tarif, preis, cout, etc.)
-        if (preg_match('/\b(pric\w*|prc\w*|cost\w*|quot\w*|qout\w*|rate\w*|how\s*mu[sc]h|dollar|\$|discount\w*|estimat\w*|preci\w*|tarif\w*|preis\w*|coute\w*|prezzo\w*|costo\w*|দাম|খরচ|سعر|أسعار)\b/iu', $text)) {
+        // Only attach PriceCalculatorTool when user specifically asks to calculate or provides image quantity/numbers
+        // General pricing queries ("what is your pricing", "rates") are answered directly in text by the LLM
+        $isSpecificCalculation = preg_match('/\b(calculat\w*|estimat\w*|quote\s*me|how\s*much\s*for|\d+\s*(images?|photos?|pics?|files?|products?|items?))\b/iu', $text);
+        if ($isSpecificCalculation) {
             $tools[] = PriceCalculatorTool::schema();
         }
 

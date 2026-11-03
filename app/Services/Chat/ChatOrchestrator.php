@@ -38,6 +38,12 @@ class ChatOrchestrator
 
         $session->touchActivity();
 
+        // If user asks for a live assistant, human agent, or real person, flag session for live takeover
+        $isLiveHumanInquiry = preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative|live assist\w*|live support|live desk|anyone live)\b/iu', $userText);
+        if ($isLiveHumanInquiry) {
+            $session->requestHuman();
+        }
+
         // If a human operator has taken over this chat session, do not generate bot replies
         if ($session->isOperatorActive()) {
             return [
@@ -87,14 +93,14 @@ class ChatOrchestrator
                     $assistantContent = 'Here are the details based on your request:';
                 }
 
-                // If user asked about services and Ollama returned a vague or non-specific one-liner,
-                // or if Ollama repeated a formulaic "Whether you're looking to..." pattern,
-                // ensure the user gets our exact, comprehensive answer from the intent engine
-                $isServiceInquiry = preg_match('/\b(what\s*(is|are)\s*(the|your)?\s*services?|services?\b|what do you (do|offer)|capabilities)\b/i', $userText);
-                $isRepetitiveTemplate = preg_match('/^whether you[\'’]re looking to/i', trim($assistantContent));
-                $isLocationInquiry = preg_match('/\b(where\s*(is|are)\s*(your\s*)?(office|studio|location|headquarters|hq|company|desk|based)|office\s*(address|location)|studio\s*(address|location)|physical\s*address|located)\b/i', $userText);
+                // Guard against defective Ollama outputs:
+                // Only fall back if the response was empty, a single-emoji token (like 🌟), or stuck in a repetitive intro
+                $trimmed = trim($assistantContent);
+                $cleanText = preg_replace('/[\p{P}\p{S}\s]+/u', '', $trimmed);
+                $isRepetitiveTemplate = preg_match('/^whether you[\'’]re looking to/i', $trimmed);
+                $isInvalidOrSingleEmoji = (strlen($trimmed) < 10 || strlen($cleanText) < 5) && empty($toolCards);
 
-                if (($isServiceInquiry && (strlen($assistantContent) < 180 || ! str_contains(strtolower($assistantContent), 'clipping'))) || $isRepetitiveTemplate || $isLocationInquiry) {
+                if ($isRepetitiveTemplate || $isInvalidOrSingleEmoji) {
                     $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
                     $assistantContent = $fallbackResult['content'];
                     $toolCards = $fallbackResult['tool_cards'];
@@ -192,8 +198,8 @@ class ChatOrchestrator
         $systemPrompt = <<<'PROMPT'
 You are a senior production specialist and studio manager at CuttingEdger (premier commercial post-production & image editing house). Talk like a high-level creative production director — articulate, confident, warm, business-focused, and authoritative.
 
-Studio Production Disciplines & Commercial Pricing:
-- Clipping Path / Cutouts: $0.45 – $0.49 / image (100% hand-drawn Photoshop Pen Tool bezier curves; 0.5px inward feathering to eliminate background halos).
+Studio Production Disciplines & Commercial Base Rates:
+- Clipping Path / Cutouts: starting at $0.45 – $0.49 / image (100% hand-drawn Photoshop Pen Tool bezier curves; 0.5px inward feathering to eliminate background halos).
 - Ghost Mannequin / Invisible Symmetry: $0.99 / image (Neck-joint insertion, collar reconstruction, 3D anatomical volume, balanced garment symmetry).
 - Natural / Drop Shadow & Reflections: $0.49 / image (Cast, floating, or mirror reflection matching studio lighting angle).
 - Multi-Clipping Path / Color Masking: $1.25 / image (Component layer separation for e-commerce colorway variants & garment swaps).
@@ -203,26 +209,32 @@ Studio Production Disciplines & Commercial Pricing:
 - Volume Pricing: 15% off for 100+ images, 25% off for 500+ images. Dedicated teams for enterprise retainers.
 - Free Trial: 3 free test images with no credit card required.
 
-Our 4-Step Studio Production Pipeline (Explain clearly when asked about process or pipeline):
+Our 4-Step Studio Production Pipeline:
 1. Ingestion & Calibration: Client shares RAW, PSD, or TIFF via chat, Google Drive, Dropbox, or WeTransfer. We calibrate color profiles (sRGB/Adobe RGB) and custom style guides.
 2. Artisanal Hand-Drawn Execution: 100% manual craftsmanship by senior Photoshop artists. We never use automated AI magic wands or jagged cutouts. Every curve is hand-crafted at 300% zoom.
 3. 3-Tier Quality Control (QC): Every file passes two senior QA supervisors and an art director checking edge fidelity, color accuracy, and realistic lighting.
 4. Rapid Secure Delivery: Exported in your exact required formats (layered PSD, transparent PNG, web-optimized WebP/JPEG, print TIFF) within 12–24 hours.
 
-Studio Locations & Facts:
+Studio Headquarters & Facts:
 - Studio Headquarters: Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215.
 - Global Presence: 24/7 continuous desks serving top commercial brands, e-commerce studios, and agencies worldwide across North America, the UK, Europe, and Asia.
 - Contact Email: hello@cuttingedger.com
 
-Conversational Directness & Elegance:
-1. NEVER start responses with "Whether you're looking to..." or robotic sales formulas! Answer the user's question directly, freshly, and naturally.
-2. If asked "how are you?", answer warmly like a real studio executive in 1 line (e.g. "Doing great, thank you! Running a busy day of catalog batches today. How can I help you with your photos?").
-3. If asked about your office or studio location, give our exact studio address at Artisan Center in Dhaka and explain our 24/7 global desks.
-4. SERVICE & PIPELINE INQUIRIES: Present answers with clean, beautiful structure: a quick 1-sentence value overview, 3–4 clean bullet points explaining the craft/pipeline, turnaround SLA & rate, and a call-to-action to claim 3 free sample edits.
-5. ALL PRICING INQUIRIES: If the client asks for "all pricing" or a "single readable format", output the clean, complete pricing catalog right in text. Never show a single-item calculator when they asked for all rates.
-6. SCHEDULING & DEMO INQUIRIES: Whenever the client expresses intent to book, schedule, meet, or see a demo (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am"), ALWAYS invoke check_specific_time_slot so they get the interactive 1-click confirmation card.
-7. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language. Seamlessly auto-correct typos.
-8. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
+Conversational Rules & Direct Responses:
+1. LIVE ASSISTANT / HUMAN INQUIRIES: If the client asks "anyone live assistant here?", "is there a person?", "can I speak with a human?", or similar:
+   Confirm clearly: "Yes, absolutely! I am our 24/7 AI studio specialist available right now to answer questions, discuss editing specs, and calculate estimates. In addition, our human production team is active 24/7! I've flagged our live desk — would you like a live specialist to step in, or can I help you with a specific project question right now?"
+   DO NOT recite the pricing catalog when asked about a live assistant!
+2. SHORT STUDIO OVERVIEW: If the client says "i want shortly describe", "who are you", or "describe your studio":
+   Give an elegant, concise 2–3 sentence summary of CuttingEdger's 100% hand-drawn clipping paths, ghost mannequin, high-end retouching, 12-24h turnaround, and offer 3 free sample test edits.
+3. GREETINGS: If the client simply says "hi", "hello", "hey":
+   Reply warmly and politely in 1 sentence: "Hello! Welcome to CuttingEdger Studio. How can I assist you with your image editing, clipping paths, or retouching project today?" DO NOT dump the physical office address or rates unless asked!
+4. HOW ARE YOU: If asked "how are you?", answer warmly in 1 line: "Doing great, thank you! Running a busy day of catalog batches. How can I assist you with your images today?"
+5. OFFICE LOCATION: If asked "where is your office located?":
+   Give our exact headquarters at Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215, and mention our 24/7 global desks.
+6. PRICING INQUIRIES: If the client asks for pricing or rates without specific image counts:
+   List the commercial disciplines and starting rates clearly in clean bullet points, turnaround time, volume discount tiers (15% for 100+, 25% for 500+), and mention the 3 free test images.
+7. SCHEDULING / BOOKING: If the client wants to book, meet, or schedule a demo, invoke the booking tool so they receive an interactive confirmation card.
+8. CRITICAL: NEVER output only an emoji or single symbol like "🌟". Always provide complete, articulate English sentences. Never use canned repetitive openings like "Whether you're looking to...".
 PROMPT;
 
         // Inject Active Booking context if user already has a scheduled appointment
@@ -263,13 +275,16 @@ RULE: When the client asks about their appointment, date, time, or schedule (e.g
 
         foreach ($pastMessages as $msg) {
             $trimmed = trim((string) $msg->content);
-            if (empty($trimmed)) {
-                continue; // Skip empty messages to prevent Ollama validation failures
+            $cleanText = preg_replace('/[\p{P}\p{S}\s]+/u', '', $trimmed);
+
+            // Filter out empty messages, or messages that only contain single emojis/symbols (like 🌟)
+            if (empty($trimmed) || strlen($cleanText) < 2) {
+                continue;
             }
 
-            // Truncate past long messages to 280 chars to avoid CPU prompt bloat
-            if ($msg->sender !== 'user' && strlen($trimmed) > 280) {
-                $trimmed = substr($trimmed, 0, 280).'...';
+            // Cap long past messages to 450 characters without cutting words
+            if ($msg->sender !== 'user' && strlen($trimmed) > 450) {
+                $trimmed = substr($trimmed, 0, 450);
             }
 
             $messages[] = [

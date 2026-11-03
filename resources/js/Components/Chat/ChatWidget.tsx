@@ -262,17 +262,18 @@ export function ChatWidget() {
         return () => clearInterval(pollInterval);
     }, [sessionId, messages, isOpen, isLoading]);
 
-    // Realistic human response pacing: first pause as if reading, then show "CuttingEdger is typing..."
+    // Realistic human response pacing:
+    // First pause ~1800ms as if reading the message, then show "CuttingEdger is typing..."
     useEffect(() => {
         if (!isLoading) {
             setIsTypingVisible(false);
             return;
         }
 
-        // Natural 1000ms delay so user perceives human reading before typing begins
+        // Natural 1800ms delay so user perceives human reading before typing begins
         const readTimer = setTimeout(() => {
             setIsTypingVisible(true);
-        }, 1000);
+        }, 1800);
 
         return () => {
             clearTimeout(readTimer);
@@ -371,9 +372,11 @@ export function ChatWidget() {
             if (data.operator_name !== undefined) setOperatorName(data.operator_name);
             if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
-            // Realistic human response pacing: ensure minimum 1600ms total elapsed so user feels natural read-then-type flow
+            // Realistic human response pacing:
+            // Ensure minimum 3200ms total elapsed (1800ms reading pause + at least 1400ms typing indicator)
+            // so the user experiences an authentic, natural human conversation rhythm
             const elapsed = Date.now() - startTime;
-            const targetDelay = Math.max(0, 1600 - elapsed);
+            const targetDelay = Math.max(0, 3200 - elapsed);
             if (targetDelay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
