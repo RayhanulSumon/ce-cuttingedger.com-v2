@@ -80,11 +80,12 @@ class OllamaClientService
             'model' => $activeModel,
             'messages' => $messages,
             'stream' => false,
+            'keep_alive' => env('OLLAMA_KEEP_ALIVE', '24h'),
             'options' => [
                 'temperature' => $this->temperature,
-                'num_ctx' => 2048,
-                'num_predict' => (int) config('chat.llm.max_tokens', 280),
-                'num_thread' => (int) env('OLLAMA_NUM_THREADS', 8),
+                'num_ctx' => (int) env('OLLAMA_NUM_CTX', 2048),
+                'num_predict' => (int) config('chat.llm.max_tokens', 220),
+                'num_thread' => (int) env('OLLAMA_NUM_THREADS', 12),
             ],
         ];
 
