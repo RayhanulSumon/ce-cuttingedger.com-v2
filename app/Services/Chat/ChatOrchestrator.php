@@ -242,16 +242,27 @@ RULE: When the client asks about their appointment, date, time, or schedule (e.g
             ['role' => 'system', 'content' => $systemPrompt],
         ];
 
+        // Take only last 4 messages to keep CPU prompt evaluation lightning fast (< 1.5s)
         $pastMessages = $session->messages()
             ->latest('id')
-            ->take(10)
+            ->take(4)
             ->get()
             ->reverse();
 
         foreach ($pastMessages as $msg) {
+            $trimmed = trim((string) $msg->content);
+            if (empty($trimmed)) {
+                continue; // Skip empty messages to prevent Ollama validation failures
+            }
+
+            // Truncate past long messages to 280 chars to avoid CPU prompt bloat
+            if ($msg->sender !== 'user' && strlen($trimmed) > 280) {
+                $trimmed = substr($trimmed, 0, 280) . '...';
+            }
+
             $messages[] = [
                 'role' => $msg->sender === 'user' ? 'user' : 'assistant',
-                'content' => $msg->content,
+                'content' => $trimmed,
             ];
         }
 

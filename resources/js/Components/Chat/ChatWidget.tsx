@@ -56,7 +56,6 @@ export function ChatWidget() {
     const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isTypingVisible, setIsTypingVisible] = useState(false);
-    const [typingPhase, setTypingPhase] = useState<'analyzing' | 'checking' | 'composing'>('analyzing');
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -263,30 +262,20 @@ export function ChatWidget() {
         return () => clearInterval(pollInterval);
     }, [sessionId, messages, isOpen, isLoading]);
 
-    // Natural brief pause and progressive status phases during inference
+    // Realistic human response pacing: first pause as if reading, then show "CuttingEdger is typing..."
     useEffect(() => {
         if (!isLoading) {
             setIsTypingVisible(false);
-            setTypingPhase('analyzing');
             return;
         }
 
-        const timer = setTimeout(() => {
+        // Natural 1000ms delay so user perceives human reading before typing begins
+        const readTimer = setTimeout(() => {
             setIsTypingVisible(true);
-        }, 700);
-
-        const phase2Timer = setTimeout(() => {
-            setTypingPhase('checking');
-        }, 3500);
-
-        const phase3Timer = setTimeout(() => {
-            setTypingPhase('composing');
-        }, 8500);
+        }, 1000);
 
         return () => {
-            clearTimeout(timer);
-            clearTimeout(phase2Timer);
-            clearTimeout(phase3Timer);
+            clearTimeout(readTimer);
         };
     }, [isLoading]);
 
@@ -382,9 +371,9 @@ export function ChatWidget() {
             if (data.operator_name !== undefined) setOperatorName(data.operator_name);
             if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
-            // If the server took longer than 600ms, deliver immediately; otherwise pad slightly so it doesn't blink
+            // Realistic human response pacing: ensure minimum 1600ms total elapsed so user feels natural read-then-type flow
             const elapsed = Date.now() - startTime;
-            const targetDelay = Math.max(0, 600 - elapsed);
+            const targetDelay = Math.max(0, 1600 - elapsed);
             if (targetDelay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
@@ -899,6 +888,15 @@ export function ChatWidget() {
                                 const isLatestAssistant =
                                     !isUser && index === messages.length - 1;
 
+                                const textContent = (msg.content || '').trim();
+                                const hasAttachments = msg.attachments && msg.attachments.length > 0;
+                                const hasCards = msg.tool_cards && msg.tool_cards.length > 0;
+
+                                // Prevent rendering ghost empty bubbles if assistant content is blank
+                                if (!isUser && !textContent && !hasAttachments && !hasCards) {
+                                    return null;
+                                }
+
                                 return (
                                     <div
                                         key={msg.id || index}
@@ -912,32 +910,34 @@ export function ChatWidget() {
                                         )}
 
                                         <div className="relative max-w-[88%]">
-                                            <div
-                                                className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
-                                                    isUser
-                                                        ? 'bg-gradient-to-r from-accent to-[#ffe484] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-accent/20 border border-accent/40'
-                                                        : isOperator
-                                                        ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
-                                                        : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
-                                                }`}
-                                            >
-                                                {/* Attached Images */}
-                                                {msg.attachments && msg.attachments.length > 0 && (
-                                                    <div className="mb-2 flex flex-wrap gap-1.5">
-                                                        {msg.attachments.map((url, i) => (
-                                                            <img
-                                                                key={i}
-                                                                src={url}
-                                                                alt="Attached sample"
-                                                                className="w-20 h-20 object-cover rounded-lg border border-white/20 shadow-md"
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                )}
+                                            {(textContent || hasAttachments) && (
+                                                <div
+                                                    className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
+                                                        isUser
+                                                            ? 'bg-gradient-to-r from-accent to-[#ffe484] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-accent/20 border border-accent/40'
+                                                            : isOperator
+                                                            ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
+                                                            : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
+                                                    }`}
+                                                >
+                                                    {/* Attached Images */}
+                                                    {hasAttachments && (
+                                                        <div className="mb-2 flex flex-wrap gap-1.5">
+                                                            {msg.attachments.map((url, i) => (
+                                                                <img
+                                                                    key={i}
+                                                                    src={url}
+                                                                    alt="Attached sample"
+                                                                    className="w-20 h-20 object-cover rounded-lg border border-white/20 shadow-md"
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    )}
 
-                                                {/* Text Content */}
-                                                {renderVisualMessage(msg.content, isUser)}
-                                            </div>
+                                                    {/* Text Content */}
+                                                    {textContent && renderVisualMessage(textContent, isUser)}
+                                                </div>
+                                            )}
 
                                             {/* Edit & Delete controls for user messages */}
                                             {isUser && (
@@ -1157,10 +1157,10 @@ export function ChatWidget() {
                                 );
                             })}
 
-                            {/* Realistic Typing Indicator Bubble with Progressive Status */}
+                            {/* Realistic Human Studio Typing Indicator (Clean & Natural) */}
                             {isTypingVisible && (
-                                <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
-                                    <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-accent/20 to-[#00f5ff]/20 border border-white/15 flex items-center justify-center text-accent shrink-0 mt-0.5">
+                                <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-300">
+                                    <div className="w-6 h-6 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shrink-0 mt-0.5">
                                         <Bot className="w-3.5 h-3.5" />
                                     </div>
                                     <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#151720] border border-white/10 shadow-md flex items-center gap-2.5">
@@ -1169,10 +1169,10 @@ export function ChatWidget() {
                                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
                                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
                                         </div>
-                                        <span className="text-[11px] font-mono text-white/60">
-                                            {typingPhase === 'analyzing' && 'CuttingEdger is analyzing request...'}
-                                            {typingPhase === 'checking' && 'Reviewing studio schedule & specs...'}
-                                            {typingPhase === 'composing' && 'Composing response...'}
+                                        <span className="text-[11px] font-mono text-white/70">
+                                            {chatMode === 'operator'
+                                                ? `${operatorName || 'Live Specialist'} is typing...`
+                                                : 'CuttingEdger is typing...'}
                                         </span>
                                     </div>
                                 </div>
