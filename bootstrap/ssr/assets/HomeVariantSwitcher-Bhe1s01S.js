@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BookOpen, Camera, Check, Eye, Grid, Scissors, Shirt, Sparkles, UserCheck } from "lucide-react";
+import { BookOpen, Camera, Check, Compass, Eye, Grid, Layers, Scissors, Shirt, SlidersHorizontal, Sparkles, UserCheck } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -78,12 +78,66 @@ var HOME_VARIANTS = [
 	},
 	{
 		id: "9",
-		name: "Arven Photography Lookbook",
-		badge: "3S SLIDER",
-		tagline: "Inspired by Gloria Themes Arven: Fullscreen photography showcase hero slider (changes every 3s) + multi-item 3s carousel, centered card stage & editorial portfolio gallery",
+		name: "Lumina Glass Studio",
+		badge: "FROSTED GLASS",
+		tagline: "Lumina Glass Studio: Prismatic optics lens, frosted glassmorphism & live before/after reveal loupe",
 		accentColor: "#de4a2c",
-		bgTone: "Arven Light #FAFAFA",
-		icon: Camera
+		bgTone: "Crystal Ice #F6F8FB",
+		icon: Sparkles
+	},
+	{
+		id: "10",
+		name: "Atelier Editorial",
+		badge: "SSENSE / VOGUE",
+		tagline: "Atelier Editorial: High-fashion warm paper minimalism, oversized serifs, press-to-peek raw & lookbook index",
+		accentColor: "#de4a2c",
+		bgTone: "Warm Paper #FAF9F5",
+		icon: BookOpen
+	},
+	{
+		id: "11",
+		name: "Parallax Horizon",
+		badge: "FILMSTRIP GALLERY",
+		tagline: "Parallax Horizon: Draggable horizontal filmstrip exhibition with scrub slider & multi-column expander",
+		accentColor: "#de4a2c",
+		bgTone: "Silver Mist #F4F5F7",
+		icon: SlidersHorizontal
+	},
+	{
+		id: "12",
+		name: "Bento Atelier",
+		badge: "MODULAR BENTO",
+		tagline: "Bento Atelier: Interactive micro-tool widgets in each bento tile (3D garment switch, selfie split, scene lighting)",
+		accentColor: "#de4a2c",
+		bgTone: "Bento White #F8F9FA",
+		icon: Grid
+	},
+	{
+		id: "13",
+		name: "Architect Blueprint",
+		badge: "RAZOR GRID",
+		tagline: "Architect Blueprint: Bauhaus technical razor grid, coordinate markings, X-Ray vector modes & SLA matrix",
+		accentColor: "#de4a2c",
+		bgTone: "Stark Alabaster #F9FAFB",
+		icon: Compass
+	},
+	{
+		id: "14",
+		name: "Spatial Depth",
+		badge: "3D PERSPECTIVE",
+		tagline: "Spatial Depth: 3D perspective mouse tilt, floating island stages & tactile inspection controls",
+		accentColor: "#de4a2c",
+		bgTone: "Platinum Light #FAFBFD",
+		icon: Layers
+	},
+	{
+		id: "15",
+		name: "Zenith Canvas",
+		badge: "ZEN MINIMALISM",
+		tagline: "Zenith Canvas: Fullscreen minimalist visual storyteller, soundless ambient flow & expandable visual accordion",
+		accentColor: "#de4a2c",
+		bgTone: "Ivory Snow #FDFDFC",
+		icon: Eye
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
@@ -116,7 +170,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "10 Homepage Prototypes (01–10)"
+						children: "15 Homepage Prototypes (01–15)"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",

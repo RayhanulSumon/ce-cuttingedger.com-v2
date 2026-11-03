@@ -199,19 +199,34 @@
     "/build/assets/Faq-uacoF8A5.js"
   ],
   "resources/js/Pages/Home.tsx": [
-    "/build/assets/Home-B5srrl9D.js"
+    "/build/assets/Home-CAd7BxiC.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeArchitectBlueprint.tsx": [
+    "/build/assets/HomeArchitectBlueprint-C5un7YmA.js"
   ],
   "resources/js/Pages/HomeVariants/HomeArvenStudio.tsx": [
     "/build/assets/HomeArvenStudio-BUgH40-6.js"
   ],
+  "resources/js/Pages/HomeVariants/HomeAtelierEditorial.tsx": [
+    "/build/assets/HomeAtelierEditorial-DMqDUVwm.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeBentoAtelier.tsx": [
+    "/build/assets/HomeBentoAtelier-CBRFbgVJ.js"
+  ],
   "resources/js/Pages/HomeVariants/HomeEditorial.tsx": [
     "/build/assets/HomeEditorial-gndU4Tx7.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeLuminaGlass.tsx": [
+    "/build/assets/HomeLuminaGlass-C3UsRXoI.js"
   ],
   "resources/js/Pages/HomeVariants/HomeOmniStudio.tsx": [
     "/build/assets/HomeOmniStudio-KDeToqye.js"
   ],
   "resources/js/Pages/HomeVariants/HomeOriginal.tsx": [
     "/build/assets/HomeOriginal-k4qLB1pA.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeParallaxHorizon.tsx": [
+    "/build/assets/HomeParallaxHorizon-DOMD065g.js"
   ],
   "resources/js/Pages/HomeVariants/HomePhotoLight.tsx": [
     "/build/assets/HomePhotoLight-BJcAsY74.js"
@@ -222,14 +237,20 @@
   "resources/js/Pages/HomeVariants/HomeRetouchStudio.tsx": [
     "/build/assets/HomeRetouchStudio-BrhNzPpZ.js"
   ],
+  "resources/js/Pages/HomeVariants/HomeSpatialDepth.tsx": [
+    "/build/assets/HomeSpatialDepth-B9zcWG7d.js"
+  ],
   "resources/js/Pages/HomeVariants/HomeStudioS1.tsx": [
     "/build/assets/HomeStudioS1-Dx36h44p.js"
   ],
   "resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx": [
-    "/build/assets/HomeVariantSwitcher-9CZo3Eo3.js"
+    "/build/assets/HomeVariantSwitcher-Bhe1s01S.js"
   ],
   "resources/js/Pages/HomeVariants/HomeVisual.tsx": [
     "/build/assets/HomeVisual-FlhyndUS.js"
+  ],
+  "resources/js/Pages/HomeVariants/HomeZenithCanvas.tsx": [
+    "/build/assets/HomeZenithCanvas-CTHI9fcl.js"
   ],
   "resources/js/Pages/Legal/CookiePolicy.tsx": [
     "/build/assets/CookiePolicy-BJOtxyQi.js"
