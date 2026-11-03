@@ -138,6 +138,10 @@ class AdminChatSessionController extends Controller
         } catch (\Throwable) {
         }
 
+        try {
+            broadcast(new \App\Events\ChatMessageSent($announcement));
+        } catch (\Throwable) {}
+
         return response()->json([
             'success' => true,
             'session' => [
@@ -173,6 +177,10 @@ class AdminChatSessionController extends Controller
             broadcast(new ChatMessageSent($announcement));
         } catch (\Throwable) {
         }
+
+        try {
+            broadcast(new \App\Events\ChatMessageSent($announcement));
+        } catch (\Throwable) {}
 
         return response()->json([
             'success' => true,
@@ -216,6 +224,10 @@ class AdminChatSessionController extends Controller
             broadcast(new ChatMessageSent($message));
         } catch (\Throwable) {
         }
+
+        try {
+            broadcast(new \App\Events\ChatMessageSent($message));
+        } catch (\Throwable) {}
 
         $chatSession->touchActivity();
 
