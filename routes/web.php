@@ -211,6 +211,7 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/reset', [ChatController::class, 'reset'])->name('reset');
     Route::post('/message', [ChatController::class, 'message'])->name('message');
     Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
+    Route::post('/read', [ChatController::class, 'markAsRead'])->name('read');
     Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
     Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
     Route::post('/cloud-link', [ChatController::class, 'saveCloudLink'])->name('cloud-link');

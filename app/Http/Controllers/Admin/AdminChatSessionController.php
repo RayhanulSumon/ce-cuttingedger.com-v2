@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\ChatMessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
@@ -132,6 +133,11 @@ class AdminChatSessionController extends Controller
             'content' => "👋 **{$user->name}** (Studio Lead) has joined the chat.",
         ]);
 
+        try {
+            broadcast(new ChatMessageSent($announcement));
+        } catch (\Throwable) {
+        }
+
         return response()->json([
             'success' => true,
             'session' => [
@@ -162,6 +168,11 @@ class AdminChatSessionController extends Controller
             'sender' => 'assistant',
             'content' => "Our specialist stepped away. I'm here to assist with any quotes, questions, or booking needs!",
         ]);
+
+        try {
+            broadcast(new ChatMessageSent($announcement));
+        } catch (\Throwable) {
+        }
 
         return response()->json([
             'success' => true,
@@ -200,6 +211,11 @@ class AdminChatSessionController extends Controller
             'sender' => 'operator',
             'content' => trim($validated['content']),
         ]);
+
+        try {
+            broadcast(new ChatMessageSent($message));
+        } catch (\Throwable) {
+        }
 
         $chatSession->touchActivity();
 

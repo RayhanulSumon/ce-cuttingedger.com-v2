@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, createInertiaApp, router, useForm, usePage } from "@inertiajs/react";
 import createServer from "@inertiajs/react/server";
 import { renderToString } from "react-dom/server";
-import { AlertCircle, AlertTriangle, ArrowRight, ArrowUpRight, BookOpen, Bot, Box, Calculator, Calendar, CalendarCheck2, CalendarClock, CheckCircle2, ChevronDown, ChevronUp, Clock, Cookie, ExternalLink, FileSpreadsheet, Folder, Gem, Image, Layers, Loader2, LogIn, Mail, MapPin, Maximize2, Menu, MessageSquare, Minimize2, Moon, Package, Palette, Paperclip, Pencil, Phone, Plus, RefreshCw, RotateCcw, Scissors, Send, Shield, Shirt, Sparkles, Sun, Tag, Trash2, UploadCloud, User, UserPlus, Video, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, ArrowRight, ArrowUpRight, BookOpen, Bot, Box, Calculator, Calendar, CalendarCheck2, CalendarClock, Check, CheckCheck, CheckCircle2, ChevronDown, ChevronUp, Clock, Cookie, ExternalLink, FileSpreadsheet, Folder, Gem, Image, Layers, Loader2, LogIn, Mail, MapPin, Maximize2, Menu, MessageSquare, Minimize2, Moon, Package, Palette, Paperclip, Pencil, Phone, Plus, RefreshCw, RotateCcw, Scissors, Send, Shield, Shirt, Sparkles, Sun, Tag, Trash2, UploadCloud, User, UserPlus, Video, X } from "lucide-react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import { AnimatePresence, motion } from "framer-motion";
+import { echo } from "@laravel/echo-react";
 import { Toaster, toast } from "sonner";
 import Lenis from "lenis";
 //#region node_modules/laravel-vite-plugin/inertia-helpers/index.js
@@ -3270,6 +3271,7 @@ function ChatWidget() {
 	const [showNudgeBubble, setShowNudgeBubble] = useState(false);
 	const [showQuickMenu, setShowQuickMenu] = useState(false);
 	const [isDragOver, setIsDragOver] = useState(false);
+	const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
 	const messagesEndRef = useRef(null);
 	const scrollContainerRef = useRef(null);
 	const fileInputRef = useRef(null);
@@ -3277,16 +3279,38 @@ function ChatWidget() {
 	useEffect(() => {
 		const el = scrollContainerRef.current;
 		if (!el) return;
-		const stopScrollPropagation = (e) => {
+		const handleWheel = (e) => {
 			e.stopPropagation();
+			el.scrollTop += e.deltaY;
 		};
-		el.addEventListener("wheel", stopScrollPropagation, { passive: false });
-		el.addEventListener("touchmove", stopScrollPropagation, { passive: false });
+		el.addEventListener("wheel", handleWheel, { passive: true });
 		return () => {
-			el.removeEventListener("wheel", stopScrollPropagation);
-			el.removeEventListener("touchmove", stopScrollPropagation);
+			el.removeEventListener("wheel", handleWheel);
 		};
 	}, [isOpen]);
+	const handleScroll = () => {
+		const el = scrollContainerRef.current;
+		if (!el) return;
+		const isScrolledUp = el.scrollHeight - el.scrollTop - el.clientHeight > 120;
+		setShowScrollBottomBtn(isScrolledUp);
+	};
+	const markMessagesAsRead = async () => {
+		if (!sessionId) return;
+		try {
+			await fetch("/api/chat/read", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Requested-With": "XMLHttpRequest",
+					"X-Chat-Session-Id": sessionId
+				}
+			});
+			setUnreadCount(0);
+		} catch {}
+	};
+	useEffect(() => {
+		if (isOpen && sessionId) markMessagesAsRead();
+	}, [isOpen, sessionId]);
 	const initSession = (force = false) => {
 		if (isResetting) return;
 		const storedSession = localStorage.getItem("ce_chat_session_id");
@@ -3322,18 +3346,25 @@ function ChatWidget() {
 	]);
 	const scrollToBottom = (behavior = "smooth") => {
 		if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({
-			top: scrollContainerRef.current.scrollHeight,
+			top: scrollContainerRef.current.scrollHeight + 1e3,
 			behavior
+		});
+		if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({
+			behavior,
+			block: "end"
 		});
 	};
 	useEffect(() => {
 		if (isOpen) {
-			const timer = setTimeout(() => {
-				scrollToBottom("smooth");
-			}, 60);
+			scrollToBottom("smooth");
+			const t1 = setTimeout(() => scrollToBottom("smooth"), 60);
+			const t2 = setTimeout(() => scrollToBottom("smooth"), 180);
 			setUnreadCount(0);
 			setShowNudgeBubble(false);
-			return () => clearTimeout(timer);
+			return () => {
+				clearTimeout(t1);
+				clearTimeout(t2);
+			};
 		}
 	}, [
 		messages,
@@ -3358,6 +3389,65 @@ function ChatWidget() {
 			osc.stop(audioCtx.currentTime + .35);
 		} catch {}
 	};
+	useEffect(() => {
+		if (!sessionId) return;
+		try {
+			const echoInstance = echo();
+			if (!echoInstance) return;
+			const channel = echoInstance.channel(`chat.${sessionId}`);
+			const onMessageSent = (data) => {
+				if (!data || !data.message) return;
+				const newMsg = data.message;
+				if (data.mode) setChatMode(data.mode);
+				if (data.operator_name !== void 0) setOperatorName(data.operator_name);
+				if (data.needs_human !== void 0) setNeedsHuman(Boolean(data.needs_human));
+				setMessages((prev) => {
+					if (prev.some((m) => String(m.id) === String(newMsg.id))) return prev;
+					if (newMsg.sender === "user") {
+						const optIndex = prev.findIndex((p) => String(p.id).startsWith("user-") && p.content.trim() === newMsg.content.trim());
+						if (optIndex !== -1) {
+							const updated = [...prev];
+							updated[optIndex] = {
+								...updated[optIndex],
+								id: newMsg.id,
+								is_read: newMsg.is_read
+							};
+							return updated;
+						}
+					}
+					if (newMsg.sender !== "user") {
+						playNotificationChime();
+						if (!isOpen) {
+							setUnreadCount((c) => c + 1);
+							setNudgeMessage(newMsg.content);
+							setShowNudgeBubble(true);
+						} else markMessagesAsRead();
+					}
+					return [...prev, newMsg];
+				});
+				setTimeout(() => scrollToBottom("smooth"), 50);
+			};
+			const onMessageRead = (data) => {
+				const ids = data.message_ids || [];
+				setMessages((prev) => prev.map((m) => {
+					if (ids.length === 0 || ids.includes(m.id)) return {
+						...m,
+						is_read: true
+					};
+					return m;
+				}));
+			};
+			channel.listen("ChatMessageSent", onMessageSent);
+			channel.listen(".ChatMessageSent", onMessageSent);
+			channel.listen("ChatMessageRead", onMessageRead);
+			channel.listen(".ChatMessageRead", onMessageRead);
+			return () => {
+				echoInstance.leaveChannel(`chat.${sessionId}`);
+			};
+		} catch (err) {
+			console.warn("Reverb WebSocket initialization error, polling remains active fallback", err);
+		}
+	}, [sessionId, isOpen]);
 	useEffect(() => {
 		if (!sessionId) return;
 		const pollInterval = setInterval(async () => {
@@ -3386,7 +3476,8 @@ function ChatWidget() {
 							if (optIndex !== -1) {
 								updated[optIndex] = {
 									...updated[optIndex],
-									id: m.id
+									id: m.id,
+									is_read: m.is_read
 								};
 								hasChanges = true;
 								return;
@@ -3403,11 +3494,11 @@ function ChatWidget() {
 						setUnreadCount((c) => c + brandNew.length);
 						setNudgeMessage(brandNew[brandNew.length - 1].content);
 						setShowNudgeBubble(true);
-					}
+					} else if (isOpen) markMessagesAsRead();
 					return updated;
 				});
 			} catch {}
-		}, 2500);
+		}, 5e3);
 		return () => clearInterval(pollInterval);
 	}, [
 		sessionId,
@@ -3910,15 +4001,12 @@ function ChatWidget() {
 					/* @__PURE__ */ jsxs("div", {
 						ref: scrollContainerRef,
 						"data-lenis-prevent": "true",
-						"data-lenis-prevent-wheel": "true",
-						"data-lenis-prevent-touch": "true",
-						onWheel: (e) => e.stopPropagation(),
-						onTouchMove: (e) => e.stopPropagation(),
+						onScroll: handleScroll,
 						style: {
 							overscrollBehavior: "contain",
 							WebkitOverflowScrolling: "touch"
 						},
-						className: "flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10",
+						className: "flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10 relative",
 						children: [
 							messages.map((msg, index) => {
 								const isUser = msg.sender === "user";
@@ -3942,14 +4030,32 @@ function ChatWidget() {
 											className: "relative max-w-[88%]",
 											children: [(textContent || hasAttachments) && /* @__PURE__ */ jsxs("div", {
 												className: `rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${isUser ? "bg-gradient-to-r from-accent to-[#ffe484] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-accent/20 border border-accent/40" : isOperator ? "bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5" : "bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md"}`,
-												children: [hasAttachments && /* @__PURE__ */ jsx("div", {
-													className: "mb-2 flex flex-wrap gap-1.5",
-													children: msg.attachments.map((url, i) => /* @__PURE__ */ jsx("img", {
-														src: url,
-														alt: "Attached sample",
-														className: "w-20 h-20 object-cover rounded-lg border border-white/20 shadow-md"
-													}, i))
-												}), textContent && renderVisualMessage(textContent, isUser)]
+												children: [
+													hasAttachments && /* @__PURE__ */ jsx("div", {
+														className: "mb-2 flex flex-wrap gap-1.5",
+														children: msg.attachments.map((url, i) => /* @__PURE__ */ jsx("img", {
+															src: url,
+															alt: "Attached sample",
+															className: "w-20 h-20 object-cover rounded-lg border border-white/20 shadow-md"
+														}, i))
+													}),
+													textContent && renderVisualMessage(textContent, isUser),
+													/* @__PURE__ */ jsxs("div", {
+														className: `flex items-center gap-1.5 mt-1 text-[9px] font-mono select-none ${isUser ? "justify-end text-[#0a0c10]/70" : "justify-end text-white/30"}`,
+														children: [msg.created_at && /* @__PURE__ */ jsx("span", { children: new Date(msg.created_at).toLocaleTimeString([], {
+															hour: "2-digit",
+															minute: "2-digit"
+														}) }), isUser && (msg.is_read ? /* @__PURE__ */ jsx("span", {
+															className: "flex items-center text-[#0a0c10] font-bold",
+															title: "Read by Studio Lead",
+															children: /* @__PURE__ */ jsx(CheckCheck, { className: "w-3 h-3 text-[#0a0c10]" })
+														}) : /* @__PURE__ */ jsx("span", {
+															className: "flex items-center text-[#0a0c10]/60",
+															title: "Delivered to Studio",
+															children: /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 text-[#0a0c10]/60" })
+														}))]
+													})
+												]
 											}), isUser && /* @__PURE__ */ jsxs("div", {
 												className: "opacity-0 group-hover:opacity-100 absolute -bottom-5 right-1 flex items-center gap-2 text-[10px] text-white/50 transition-opacity",
 												children: [/* @__PURE__ */ jsxs("button", {
@@ -4135,6 +4241,15 @@ function ChatWidget() {
 									className: "font-mono text-[11px]",
 									children: "Uploading sample photo batch..."
 								})]
+							}),
+							showScrollBottomBtn && /* @__PURE__ */ jsx("div", {
+								className: "sticky bottom-2 left-0 right-0 flex justify-center pointer-events-none z-20 animate-in fade-in zoom-in-95 duration-200",
+								children: /* @__PURE__ */ jsxs("button", {
+									type: "button",
+									onClick: () => scrollToBottom("smooth"),
+									className: "pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#12141a]/95 border border-accent/50 text-accent font-mono text-[10px] font-bold shadow-2xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all cursor-pointer",
+									children: [/* @__PURE__ */ jsx(ChevronDown, { className: "w-3.5 h-3.5 animate-bounce" }), /* @__PURE__ */ jsx("span", { children: "Latest Messages" })]
+								})
 							}),
 							/* @__PURE__ */ jsx("div", { ref: messagesEndRef })
 						]

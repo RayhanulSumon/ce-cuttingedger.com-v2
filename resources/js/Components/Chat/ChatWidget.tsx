@@ -20,12 +20,15 @@ import {
     RotateCcw,
     Copy,
     Check,
+    CheckCheck,
+    ChevronDown,
     UploadCloud,
     FileText,
     HelpCircle,
     Pencil,
     Trash2,
 } from 'lucide-react';
+import { echo } from '@laravel/echo-react';
 import { QuoteCard } from './QuoteCard';
 import { CalendarSlotPicker } from './CalendarSlotPicker';
 import { CompactSlotProposalCard } from './CompactSlotProposalCard';
@@ -42,6 +45,7 @@ interface ChatMessageItem {
     attachments?: string[];
     tool_cards?: any[];
     suggested_replies?: string[];
+    is_read?: boolean;
     created_at?: string;
 }
 
@@ -64,28 +68,63 @@ export function ChatWidget() {
     const [showQuickMenu, setShowQuickMenu] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
 
+    const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const lastActivityRef = useRef<number>(Date.now());
 
-    // Prevent Lenis smooth scroll from intercepting mouse wheel/touch in messages
+    // 1. Direct Mouse Wheel Scroll Handler:
+    // Guarantees mouse wheel always scrolls message list directly, bypassing Lenis or parent page handlers
     useEffect(() => {
         const el = scrollContainerRef.current;
         if (!el) return;
 
-        const stopScrollPropagation = (e: Event) => {
+        const handleWheel = (e: WheelEvent) => {
             e.stopPropagation();
+            el.scrollTop += e.deltaY;
         };
 
-        el.addEventListener('wheel', stopScrollPropagation, { passive: false });
-        el.addEventListener('touchmove', stopScrollPropagation, { passive: false });
+        el.addEventListener('wheel', handleWheel, { passive: true });
 
         return () => {
-            el.removeEventListener('wheel', stopScrollPropagation);
-            el.removeEventListener('touchmove', stopScrollPropagation);
+            el.removeEventListener('wheel', handleWheel);
         };
     }, [isOpen]);
+
+    // Handle user scrolling up/down to show "Scroll to bottom" button
+    const handleScroll = () => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const isScrolledUp = el.scrollHeight - el.scrollTop - el.clientHeight > 120;
+        setShowScrollBottomBtn(isScrolledUp);
+    };
+
+    // Mark unread messages as read on server and locally
+    const markMessagesAsRead = async () => {
+        if (!sessionId) return;
+        try {
+            await fetch('/api/chat/read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-Chat-Session-Id': sessionId,
+                },
+            });
+            setUnreadCount(0);
+        } catch {
+            // Background silent catch
+        }
+    };
+
+    // Auto mark as read when chat dialog is opened
+    useEffect(() => {
+        if (isOpen && sessionId) {
+            markMessagesAsRead();
+        }
+    }, [isOpen, sessionId]);
 
     // 1. Initialize or resume session (lazy loading: only creates DB session on chat open or when resuming)
     const initSession = (force = false) => {
@@ -137,24 +176,30 @@ export function ChatWidget() {
         }
     }, [isOpen, sessionId, isResetting]);
 
-    // 2. Auto-scroll on new messages & typing indicator
+    // 2. Reliable Multi-Stage Auto-Scroll
     const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTo({
-                top: scrollContainerRef.current.scrollHeight,
+                top: scrollContainerRef.current.scrollHeight + 1000,
                 behavior,
             });
+        }
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior, block: 'end' });
         }
     };
 
     useEffect(() => {
         if (isOpen) {
-            const timer = setTimeout(() => {
-                scrollToBottom('smooth');
-            }, 60);
+            scrollToBottom('smooth');
+            const t1 = setTimeout(() => scrollToBottom('smooth'), 60);
+            const t2 = setTimeout(() => scrollToBottom('smooth'), 180);
             setUnreadCount(0);
             setShowNudgeBubble(false);
-            return () => clearTimeout(timer);
+            return () => {
+                clearTimeout(t1);
+                clearTimeout(t2);
+            };
         }
     }, [messages, isOpen, isTypingVisible]);
 
@@ -180,16 +225,92 @@ export function ChatWidget() {
         }
     };
 
-    // 2.5. Live polling for operator replies and state updates
+    // 2.3. Laravel Reverb WebSocket Subscription via Echo
+    useEffect(() => {
+        if (!sessionId) return;
+
+        try {
+            const echoInstance = echo();
+            if (!echoInstance) return;
+
+            const channel = echoInstance.channel(`chat.${sessionId}`);
+
+            const onMessageSent = (data: any) => {
+                if (!data || !data.message) return;
+                const newMsg: ChatMessageItem = data.message;
+
+                if (data.mode) setChatMode(data.mode);
+                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
+                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
+
+                setMessages((prev) => {
+                    // Check if already in messages list
+                    if (prev.some((m) => String(m.id) === String(newMsg.id))) {
+                        return prev;
+                    }
+
+                    // Reconcile optimistic user message
+                    if (newMsg.sender === 'user') {
+                        const optIndex = prev.findIndex(
+                            (p) => String(p.id).startsWith('user-') && p.content.trim() === newMsg.content.trim()
+                        );
+                        if (optIndex !== -1) {
+                            const updated = [...prev];
+                            updated[optIndex] = { ...updated[optIndex], id: newMsg.id, is_read: newMsg.is_read };
+                            return updated;
+                        }
+                    }
+
+                    if (newMsg.sender !== 'user') {
+                        playNotificationChime();
+                        if (!isOpen) {
+                            setUnreadCount((c) => c + 1);
+                            setNudgeMessage(newMsg.content);
+                            setShowNudgeBubble(true);
+                        } else {
+                            markMessagesAsRead();
+                        }
+                    }
+
+                    return [...prev, newMsg];
+                });
+
+                setTimeout(() => scrollToBottom('smooth'), 50);
+            };
+
+            const onMessageRead = (data: any) => {
+                const ids = data.message_ids || [];
+                setMessages((prev) =>
+                    prev.map((m) => {
+                        if (ids.length === 0 || ids.includes(m.id)) {
+                            return { ...m, is_read: true };
+                        }
+                        return m;
+                    })
+                );
+            };
+
+            channel.listen('ChatMessageSent', onMessageSent);
+            channel.listen('.ChatMessageSent', onMessageSent);
+            channel.listen('ChatMessageRead', onMessageRead);
+            channel.listen('.ChatMessageRead', onMessageRead);
+
+            return () => {
+                echoInstance.leaveChannel(`chat.${sessionId}`);
+            };
+        } catch (err) {
+            console.warn('Reverb WebSocket initialization error, polling remains active fallback', err);
+        }
+    }, [sessionId, isOpen]);
+
+    // 2.5. Gentle live polling fallback for state updates and offline recovery
     useEffect(() => {
         if (!sessionId) return;
 
         const pollInterval = setInterval(async () => {
-            // Do not poll while a message send is in flight to prevent race conditions
             if (isLoading) return;
 
             try {
-                // Find highest numeric server message ID (ignore temporary optimistic IDs)
                 const highestId = messages.reduce((max, m) => {
                     const num = typeof m.id === 'number' ? m.id : parseInt(String(m.id), 10);
                     return !isNaN(num) && String(m.id).indexOf('user-') === -1 && num > max ? num : max;
@@ -215,21 +336,17 @@ export function ChatWidget() {
 
                         data.messages.forEach((m: any) => {
                             const strId = String(m.id);
-                            // Skip if already in message list by server ID
                             if (updated.some((p) => String(p.id) === strId)) return;
 
-                            // Reconcile optimistic user message
                             if (m.sender === 'user') {
                                 const optIndex = updated.findIndex(
                                     (p) => String(p.id).startsWith('user-') && p.content.trim() === m.content.trim()
                                 );
                                 if (optIndex !== -1) {
-                                    // Upgrade optimistic ID to the real database ID
-                                    updated[optIndex] = { ...updated[optIndex], id: m.id };
+                                    updated[optIndex] = { ...updated[optIndex], id: m.id, is_read: m.is_read };
                                     hasChanges = true;
                                     return;
                                 }
-                                // If already in updated list by content match, ignore to avoid duplicates
                                 if (updated.some((p) => p.sender === 'user' && p.content.trim() === m.content.trim())) {
                                     return;
                                 }
@@ -250,6 +367,8 @@ export function ChatWidget() {
                             setUnreadCount((c) => c + brandNew.length);
                             setNudgeMessage(brandNew[brandNew.length - 1].content);
                             setShowNudgeBubble(true);
+                        } else if (isOpen) {
+                            markMessagesAsRead();
                         }
                         return updated;
                     });
@@ -257,7 +376,7 @@ export function ChatWidget() {
             } catch {
                 // Background poll silent fallback
             }
-        }, 2500);
+        }, 5000);
 
         return () => clearInterval(pollInterval);
     }, [sessionId, messages, isOpen, isLoading]);
@@ -878,12 +997,9 @@ export function ChatWidget() {
                         <div
                             ref={scrollContainerRef}
                             data-lenis-prevent="true"
-                            data-lenis-prevent-wheel="true"
-                            data-lenis-prevent-touch="true"
-                            onWheel={(e) => e.stopPropagation()}
-                            onTouchMove={(e) => e.stopPropagation()}
+                            onScroll={handleScroll}
                             style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
-                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
+                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10 relative"
                         >
                             {messages.map((msg, index) => {
                                 const isUser = msg.sender === 'user';
@@ -939,6 +1055,28 @@ export function ChatWidget() {
 
                                                     {/* Text Content */}
                                                     {textContent && renderVisualMessage(textContent, isUser)}
+
+                                                    {/* Message Timestamps & Read Status */}
+                                                    <div className={`flex items-center gap-1.5 mt-1 text-[9px] font-mono select-none ${
+                                                        isUser ? 'justify-end text-[#0a0c10]/70' : 'justify-end text-white/30'
+                                                    }`}>
+                                                        {msg.created_at && (
+                                                            <span>
+                                                                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                        )}
+                                                        {isUser && (
+                                                            msg.is_read ? (
+                                                                <span className="flex items-center text-[#0a0c10] font-bold" title="Read by Studio Lead">
+                                                                    <CheckCheck className="w-3 h-3 text-[#0a0c10]" />
+                                                                </span>
+                                                            ) : (
+                                                                <span className="flex items-center text-[#0a0c10]/60" title="Delivered to Studio">
+                                                                    <Check className="w-3 h-3 text-[#0a0c10]/60" />
+                                                                </span>
+                                                            )
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
 
@@ -1185,6 +1323,20 @@ export function ChatWidget() {
                                 <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[#151720] border border-[#00f5ff]/30 text-[#00f5ff] text-xs w-fit">
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     <span className="font-mono text-[11px]">Uploading sample photo batch...</span>
+                                </div>
+                            )}
+
+                            {/* Floating Jump to Bottom Button when scrolled up */}
+                            {showScrollBottomBtn && (
+                                <div className="sticky bottom-2 left-0 right-0 flex justify-center pointer-events-none z-20 animate-in fade-in zoom-in-95 duration-200">
+                                    <button
+                                        type="button"
+                                        onClick={() => scrollToBottom('smooth')}
+                                        className="pointer-events-auto px-3.5 py-1.5 rounded-full bg-[#12141a]/95 border border-accent/50 text-accent font-mono text-[10px] font-bold shadow-2xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                    >
+                                        <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
+                                        <span>Latest Messages</span>
+                                    </button>
                                 </div>
                             )}
 

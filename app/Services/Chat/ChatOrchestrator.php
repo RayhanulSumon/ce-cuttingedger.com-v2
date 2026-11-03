@@ -2,6 +2,7 @@
 
 namespace App\Services\Chat;
 
+use App\Events\ChatMessageSent;
 use App\Models\ChatConsultation;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
@@ -37,6 +38,13 @@ class ChatOrchestrator
         ]);
 
         $session->touchActivity();
+
+        // Broadcast user message via Reverb WebSockets
+        try {
+            broadcast(new ChatMessageSent($userMessage));
+        } catch (\Throwable) {
+            // Reverb broadcast safe fallback
+        }
 
         // If user asks for a live assistant, human agent, or real person, flag session for live takeover
         $isLiveHumanInquiry = preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative|live assist\w*|live support|live desk|anyone live)\b/iu', $userText);
@@ -187,6 +195,13 @@ class ChatOrchestrator
             'tool_results' => ! empty($toolCards) ? $toolCards : null,
             'suggested_replies' => ! empty($suggestedReplies) ? $suggestedReplies : null,
         ]);
+
+        // Broadcast assistant reply via Reverb WebSockets
+        try {
+            broadcast(new ChatMessageSent($assistantMessage));
+        } catch (\Throwable) {
+            // Reverb broadcast safe fallback
+        }
 
         return [
             'session_id' => $session->id,

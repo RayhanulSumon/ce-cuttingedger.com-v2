@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChatMessageRead;
 use App\Models\ChatMessage;
 use App\Models\Order;
 use App\Services\Chat\ChatOrchestrator;
@@ -49,6 +50,7 @@ class ChatController extends Controller
                 'attachments' => $msg->attachments ?? [],
                 'tool_cards' => $msg->tool_results ?? [],
                 'suggested_replies' => $msg->suggested_replies ?? [],
+                'is_read' => (bool) $msg->is_read,
                 'created_at' => $msg->created_at->toISOString(),
             ])
             ->values();
@@ -218,6 +220,7 @@ class ChatController extends Controller
             'attachments' => $msg->attachments ?? [],
             'tool_cards' => $msg->tool_results ?? [],
             'suggested_replies' => $msg->suggested_replies ?? [],
+            'is_read' => (bool) $msg->is_read,
             'created_at' => $msg->created_at->toISOString(),
         ]);
 
@@ -227,6 +230,36 @@ class ChatController extends Controller
             'needs_human' => (bool) $session->needs_human,
             'operator_name' => $session->operator_name,
             'messages' => $messages,
+        ]);
+    }
+
+    /**
+     * Mark unread messages in the session as read.
+     */
+    public function markAsRead(Request $request): JsonResponse
+    {
+        $session = $this->sessionManager->resolve($request, touch: false, createIfMissing: false);
+        if (! $session) {
+            return response()->json(['success' => false]);
+        }
+
+        $unreadIds = $session->messages()
+            ->where('is_read', false)
+            ->where('sender', '!=', 'user')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($unreadIds)) {
+            $session->messages()->whereIn('id', $unreadIds)->update(['is_read' => true]);
+            try {
+                broadcast(new ChatMessageRead($session->id, $unreadIds));
+            } catch (\Throwable) {
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'marked_ids' => $unreadIds,
         ]);
     }
 
