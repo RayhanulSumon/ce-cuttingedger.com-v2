@@ -1,4 +1,4 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-BjlCW0cn.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-B_d5n1eC.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
@@ -16,20 +16,37 @@ function Home({ clients = [], variant = "1" }) {
 	const valid = [
 		"1",
 		"2",
+		"3",
 		"4",
-		"8",
-		"9",
-		"10",
-		"11",
-		"13"
+		"5",
+		"6",
+		"7",
+		"8"
 	];
+	const resolveVariant = (raw) => {
+		if (!raw) return "1";
+		const legacyMap = {
+			"4": "3",
+			"8": "4",
+			"9": "5",
+			"10": "6",
+			"11": "7",
+			"13": "8"
+		};
+		if (valid.includes(raw)) return raw;
+		if (legacyMap[raw]) return legacyMap[raw];
+		return "1";
+	};
 	const getInitialVariant = () => {
-		if (variant && valid.includes(variant)) return variant;
+		if (variant) {
+			const mapped = resolveVariant(variant);
+			if (mapped) return mapped;
+		}
 		if (typeof window !== "undefined") {
 			const v = new URLSearchParams(window.location.search).get("v");
-			if (v && valid.includes(v)) return v;
+			if (v) return resolveVariant(v);
 			const saved = localStorage.getItem("ce_home_variant");
-			if (saved && valid.includes(saved)) return saved;
+			if (saved) return resolveVariant(saved);
 		}
 		return "1";
 	};
@@ -41,25 +58,22 @@ function Home({ clients = [], variant = "1" }) {
 			v = new URLSearchParams(search).get("v");
 		}
 		if (!v && typeof window !== "undefined") v = new URLSearchParams(window.location.search).get("v");
-		if (!v && variant && valid.includes(variant)) v = variant;
-		if (v && valid.includes(v)) {
-			setCurrentVariant(v);
-			if (typeof window !== "undefined") try {
-				localStorage.setItem("ce_home_variant", v);
-			} catch (e) {}
-		} else if (typeof window !== "undefined") {
-			const saved = localStorage.getItem("ce_home_variant");
-			if (saved && valid.includes(saved)) setCurrentVariant(saved);
-		}
+		if (!v && variant) v = variant;
+		const resolved = resolveVariant(v);
+		setCurrentVariant(resolved);
+		if (typeof window !== "undefined") try {
+			localStorage.setItem("ce_home_variant", resolved);
+		} catch (e) {}
 	}, [url, variant]);
 	const handleVariantChange = (id) => {
-		setCurrentVariant(id);
+		const resolved = resolveVariant(id);
+		setCurrentVariant(resolved);
 		if (typeof window !== "undefined") {
 			try {
-				localStorage.setItem("ce_home_variant", id);
+				localStorage.setItem("ce_home_variant", resolved);
 			} catch (e) {}
 			const newUrl = new URL(window.location.href);
-			newUrl.searchParams.set("v", id);
+			newUrl.searchParams.set("v", resolved);
 			window.history.pushState({}, "", newUrl.toString());
 			window.scrollTo({
 				top: 0,
@@ -70,12 +84,12 @@ function Home({ clients = [], variant = "1" }) {
 	const renderVariantContent = () => {
 		switch (currentVariant) {
 			case "2": return /* @__PURE__ */ jsx(HomeVisual, { clients });
-			case "4": return /* @__PURE__ */ jsx(HomeEditorial, { clients });
-			case "8": return /* @__PURE__ */ jsx(HomeRetouchStudio, { clients });
-			case "9": return /* @__PURE__ */ jsx(HomeLuminaGlass, { clients });
-			case "10": return /* @__PURE__ */ jsx(HomeAtelierEditorial, { clients });
-			case "11": return /* @__PURE__ */ jsx(HomeParallaxHorizon, { clients });
-			case "13": return /* @__PURE__ */ jsx(HomeArchitectBlueprint, { clients });
+			case "3": return /* @__PURE__ */ jsx(HomeEditorial, { clients });
+			case "4": return /* @__PURE__ */ jsx(HomeRetouchStudio, { clients });
+			case "5": return /* @__PURE__ */ jsx(HomeLuminaGlass, { clients });
+			case "6": return /* @__PURE__ */ jsx(HomeAtelierEditorial, { clients });
+			case "7": return /* @__PURE__ */ jsx(HomeParallaxHorizon, { clients });
+			case "8": return /* @__PURE__ */ jsx(HomeArchitectBlueprint, { clients });
 			default: return /* @__PURE__ */ jsx(HomeOriginal, { clients });
 		}
 	};

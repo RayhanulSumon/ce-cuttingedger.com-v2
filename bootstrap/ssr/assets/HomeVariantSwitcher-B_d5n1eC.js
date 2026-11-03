@@ -7,7 +7,7 @@ var HOME_VARIANTS = [
 	{
 		id: "1",
 		name: "Original Studio",
-		badge: "DEFAULT",
+		badge: "FLAGSHIP LAB",
 		tagline: "Full original studio homepage with interactive lab, split-slider & bento",
 		accentColor: "#10b981",
 		bgTone: "Studio Light #F8F9FA",
@@ -23,25 +23,25 @@ var HOME_VARIANTS = [
 		icon: Eye
 	},
 	{
-		id: "4",
+		id: "3",
 		name: "Editorial Atelier",
-		badge: "SSENSE / VOGUE",
+		badge: "WARM PAPER",
 		tagline: "Warm paper editorial with serif typography, story cards & masthead styling",
 		accentColor: "#de4a2c",
 		bgTone: "Warm Paper #F7F5F0",
 		icon: BookOpen
 	},
 	{
-		id: "8",
-		name: "Image Editing Retouch",
-		badge: "11 SERVICES",
-		tagline: "11 Specialist Image Editing Services: Background Removal, Jewelry, Automobile, Ghost Mannequin, High-End Model & Shoe Retouch with interactive Before/After Lab",
+		id: "4",
+		name: "Retouch Studio Lab",
+		badge: "11 RETOUCH",
+		tagline: "11 Specialist Image Editing Services: Background Removal, Jewelry, Automobile, Ghost Mannequin & Model Retouch",
 		accentColor: "#de4a2c",
 		bgTone: "Obsidian Studio #08090C",
 		icon: Scissors
 	},
 	{
-		id: "9",
+		id: "5",
 		name: "Lumina Glass Studio",
 		badge: "FROSTED GLASS",
 		tagline: "Lumina Glass Studio: Prismatic optics lens, frosted glassmorphism & live before/after reveal loupe",
@@ -50,16 +50,16 @@ var HOME_VARIANTS = [
 		icon: Sparkles
 	},
 	{
-		id: "10",
-		name: "Atelier Editorial",
-		badge: "VOGUE MASTHEAD",
-		tagline: "Atelier Editorial: High-fashion warm paper minimalism, oversized serifs, press-to-peek raw & lookbook index",
+		id: "6",
+		name: "Vogue Fashion Paper",
+		badge: "EDITORIAL MASTHEAD",
+		tagline: "Vogue Editorial: High-fashion warm paper minimalism, oversized serifs, press-to-peek raw & lookbook index",
 		accentColor: "#de4a2c",
 		bgTone: "Warm Paper #FAF9F5",
 		icon: BookOpen
 	},
 	{
-		id: "11",
+		id: "7",
 		name: "Parallax Horizon",
 		badge: "FILMSTRIP GALLERY",
 		tagline: "Parallax Horizon: Draggable horizontal filmstrip exhibition with scrub slider & multi-column expander",
@@ -68,7 +68,7 @@ var HOME_VARIANTS = [
 		icon: SlidersHorizontal
 	},
 	{
-		id: "13",
+		id: "8",
 		name: "Architect Blueprint",
 		badge: "RAZOR GRID",
 		tagline: "Architect Blueprint: Bauhaus technical razor grid, coordinate markings, X-Ray vector modes & SLA matrix",
@@ -107,7 +107,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "8 Curated Homepage Prototypes (01, 02, 04, 08, 09, 10, 11, 13)"
+						children: "8 Curated Homepage Prototypes (01–08)"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",

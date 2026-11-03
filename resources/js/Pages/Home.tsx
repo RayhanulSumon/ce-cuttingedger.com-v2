@@ -27,18 +27,35 @@ interface HomeProps {
 
 export default function Home({ clients = [], variant = '1' }: HomeProps) {
   const { url } = usePage();
-  const valid = ['1', '2', '4', '8', '9', '10', '11', '13'];
+  const valid = ['1', '2', '3', '4', '5', '6', '7', '8'];
+
+  // Gracefully maps legacy non-sequential IDs (?v=9, ?v=10, etc.) to 1..8
+  const resolveVariant = (raw: string | null | undefined): string => {
+    if (!raw) return '1';
+    const legacyMap: Record<string, string> = {
+      '4': '3',
+      '8': '4',
+      '9': '5',
+      '10': '6',
+      '11': '7',
+      '13': '8'
+    };
+    if (valid.includes(raw)) return raw;
+    if (legacyMap[raw]) return legacyMap[raw];
+    return '1';
+  };
 
   const getInitialVariant = () => {
-    if (variant && valid.includes(variant)) {
-      return variant;
+    if (variant) {
+      const mapped = resolveVariant(variant);
+      if (mapped) return mapped;
     }
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const v = params.get('v');
-      if (v && valid.includes(v)) return v;
+      if (v) return resolveVariant(v);
       const saved = localStorage.getItem('ce_home_variant');
-      if (saved && valid.includes(saved)) return saved;
+      if (saved) return resolveVariant(saved);
     }
     return '1';
   };
@@ -59,37 +76,33 @@ export default function Home({ clients = [], variant = '1' }: HomeProps) {
       v = params.get('v');
     }
 
-    if (!v && variant && valid.includes(variant)) {
+    if (!v && variant) {
       v = variant;
     }
 
-    if (v && valid.includes(v)) {
-      setCurrentVariant(v);
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem('ce_home_variant', v);
-        } catch (e) {
-          // Ignore storage errors
-        }
-      }
-    } else if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('ce_home_variant');
-      if (saved && valid.includes(saved)) {
-        setCurrentVariant(saved);
+    const resolved = resolveVariant(v);
+    setCurrentVariant(resolved);
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ce_home_variant', resolved);
+      } catch (e) {
+        // Ignore storage errors
       }
     }
   }, [url, variant]);
 
   const handleVariantChange = (id: string) => {
-    setCurrentVariant(id);
+    const resolved = resolveVariant(id);
+    setCurrentVariant(resolved);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('ce_home_variant', id);
+        localStorage.setItem('ce_home_variant', resolved);
       } catch (e) {
         // Ignore storage errors
       }
       const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set('v', id);
+      newUrl.searchParams.set('v', resolved);
       window.history.pushState({}, '', newUrl.toString());
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -99,17 +112,17 @@ export default function Home({ clients = [], variant = '1' }: HomeProps) {
     switch (currentVariant) {
       case '2':
         return <HomeVisual clients={clients} />;
-      case '4':
+      case '3':
         return <HomeEditorial clients={clients} />;
-      case '8':
+      case '4':
         return <HomeRetouchStudio clients={clients} />;
-      case '9':
+      case '5':
         return <HomeLuminaGlass clients={clients} />;
-      case '10':
+      case '6':
         return <HomeAtelierEditorial clients={clients} />;
-      case '11':
+      case '7':
         return <HomeParallaxHorizon clients={clients} />;
-      case '13':
+      case '8':
         return <HomeArchitectBlueprint clients={clients} />;
       case '1':
       default:
