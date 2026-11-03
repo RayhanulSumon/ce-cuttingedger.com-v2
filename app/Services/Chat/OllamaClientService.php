@@ -40,9 +40,9 @@ class OllamaClientService
             return false;
         }
 
-        return Cache::remember('ollama_online_status', 15, function (): bool {
+        return Cache::remember('ollama_online_status', 4, function (): bool {
             try {
-                $response = Http::timeout(2)->get("{$this->baseUrl}/api/version");
+                $response = Http::timeout(6)->get("{$this->baseUrl}/api/version");
 
                 return $response->successful();
             } catch (Exception) {
@@ -80,12 +80,12 @@ class OllamaClientService
             'model' => $activeModel,
             'messages' => $messages,
             'stream' => false,
-            'keep_alive' => env('OLLAMA_KEEP_ALIVE', '24h'),
+            'keep_alive' => (string) config('chat.llm.keep_alive', '24h'),
             'options' => [
                 'temperature' => $this->temperature,
-                'num_ctx' => (int) env('OLLAMA_NUM_CTX', 2048),
+                'num_ctx' => (int) config('chat.llm.num_ctx', 2048),
                 'num_predict' => (int) config('chat.llm.max_tokens', 220),
-                'num_thread' => (int) env('OLLAMA_NUM_THREADS', 12),
+                'num_thread' => (int) config('chat.llm.num_threads', 12),
             ],
         ];
 

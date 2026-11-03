@@ -87,7 +87,18 @@ class ChatOrchestrator
                     $assistantContent = 'Here are the details based on your request:';
                 }
 
-                $suggestedReplies = $this->deriveSuggestedReplies($userText, $toolCards);
+                // If user asked about services and Ollama returned a vague or non-specific one-liner,
+                // ensure the user gets our exact, comprehensive service breakdown and accurate pricing
+                $isServiceInquiry = preg_match('/\b(what\s*(is|are)\s*(the|your)?\s*services?|services?\b|what do you (do|offer)|capabilities)\b/i', $userText);
+                if ($isServiceInquiry && (strlen($assistantContent) < 180 || ! str_contains(strtolower($assistantContent), 'clipping'))) {
+                    $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
+                    $assistantContent = $fallbackResult['content'];
+                    $toolCards = $fallbackResult['tool_cards'];
+                    $suggestedReplies = $fallbackResult['suggested_replies'];
+                    $engineUsed = 'fallback';
+                } else {
+                    $suggestedReplies = $this->deriveSuggestedReplies($userText, $toolCards);
+                }
             }
         }
 

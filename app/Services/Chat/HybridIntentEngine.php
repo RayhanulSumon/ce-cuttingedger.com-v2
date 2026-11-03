@@ -35,8 +35,8 @@ class HybridIntentEngine
             ];
         }
 
-        // 0.02 Capability & Speciality Inquiries ("what can you do?", "what is your speciality?", "what are your services?")
-        if (preg_match('/\b(what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|are\s*your\s*services)|tell\s*me\s*about\s*your\s*(services|speciali[tz]y)|your\s*(capabilities|speciali[tz]y|expertise))\b/i', $text)) {
+        // 0.02 Capability & Speciality Inquiries ("what is the service?", "what can you do?", "what is your speciality?", "what are your services?")
+        if (preg_match('/\b(what\s*(is|are)\s*(the|your)?\s*services?|what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|do\s*you\s*offer|service\s*do\s*you\s*have)|tell\s*me\s*(about\s*)?(the\s*|your\s*)?(services?|speciali[tz]y)|(your\s*)?(capabilities|speciali[tz]y|expertise|services\s*list|list\s*of\s*services))\b|^services?$/i', $text)) {
             $specialityContent = <<<'TXT'
 At CuttingEdger, we specialize in high-end commercial post-production and batch e-commerce image editing. Here are our core studio disciplines:
 
