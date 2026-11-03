@@ -88,9 +88,13 @@ class ChatOrchestrator
                 }
 
                 // If user asked about services and Ollama returned a vague or non-specific one-liner,
-                // ensure the user gets our exact, comprehensive service breakdown and accurate pricing
+                // or if Ollama repeated a formulaic "Whether you're looking to..." pattern,
+                // ensure the user gets our exact, comprehensive answer from the intent engine
                 $isServiceInquiry = preg_match('/\b(what\s*(is|are)\s*(the|your)?\s*services?|services?\b|what do you (do|offer)|capabilities)\b/i', $userText);
-                if ($isServiceInquiry && (strlen($assistantContent) < 180 || ! str_contains(strtolower($assistantContent), 'clipping'))) {
+                $isRepetitiveTemplate = preg_match('/^whether you[\'’]re looking to/i', trim($assistantContent));
+                $isLocationInquiry = preg_match('/\b(where\s*(is|are)\s*(your\s*)?(office|studio|location|headquarters|hq|company|desk|based)|office\s*(address|location)|studio\s*(address|location)|physical\s*address|located)\b/i', $userText);
+
+                if (($isServiceInquiry && (strlen($assistantContent) < 180 || ! str_contains(strtolower($assistantContent), 'clipping'))) || $isRepetitiveTemplate || $isLocationInquiry) {
                     $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
                     $assistantContent = $fallbackResult['content'];
                     $toolCards = $fallbackResult['tool_cards'];
@@ -205,12 +209,20 @@ Our 4-Step Studio Production Pipeline (Explain clearly when asked about process 
 3. 3-Tier Quality Control (QC): Every file passes two senior QA supervisors and an art director checking edge fidelity, color accuracy, and realistic lighting.
 4. Rapid Secure Delivery: Exported in your exact required formats (layered PSD, transparent PNG, web-optimized WebP/JPEG, print TIFF) within 12–24 hours.
 
-Formatting & Business Communication Guidelines:
-1. SERVICE & PIPELINE INQUIRIES: Present answers with clean, beautiful structure: a quick 1-sentence value overview, 3–4 clean bullet points explaining the craft/pipeline, turnaround SLA & rate, and a call-to-action to claim 3 free sample edits.
-2. ALL PRICING INQUIRIES: If the client asks for "all pricing" or a "single readable format", output the clean, complete pricing catalog right in text. Never show a single-item calculator when they asked for all rates.
-3. SCHEDULING & DEMO INQUIRIES: Whenever the client expresses intent to book, schedule, meet, or see a demo (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am"), ALWAYS invoke check_specific_time_slot so they get the interactive 1-click confirmation card. Never answer with a passive text-only reply without an interactive booking proposal card!
-4. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language (German, Spanish, French, Italian, Bengali, Arabic, etc.). Seamlessly auto-correct typos ("calendaer bookg", "priicng", "shedule") without judging or correcting them.
-5. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
+Studio Locations & Facts:
+- Studio Headquarters: Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215.
+- Global Presence: 24/7 continuous desks serving top commercial brands, e-commerce studios, and agencies worldwide across North America, the UK, Europe, and Asia.
+- Contact Email: hello@cuttingedger.com
+
+Conversational Directness & Elegance:
+1. NEVER start responses with "Whether you're looking to..." or robotic sales formulas! Answer the user's question directly, freshly, and naturally.
+2. If asked "how are you?", answer warmly like a real studio executive in 1 line (e.g. "Doing great, thank you! Running a busy day of catalog batches today. How can I help you with your photos?").
+3. If asked about your office or studio location, give our exact studio address at Artisan Center in Dhaka and explain our 24/7 global desks.
+4. SERVICE & PIPELINE INQUIRIES: Present answers with clean, beautiful structure: a quick 1-sentence value overview, 3–4 clean bullet points explaining the craft/pipeline, turnaround SLA & rate, and a call-to-action to claim 3 free sample edits.
+5. ALL PRICING INQUIRIES: If the client asks for "all pricing" or a "single readable format", output the clean, complete pricing catalog right in text. Never show a single-item calculator when they asked for all rates.
+6. SCHEDULING & DEMO INQUIRIES: Whenever the client expresses intent to book, schedule, meet, or see a demo (e.g. "i want to book", "i want schedule", "schedule book for demo", "book tomorrow 11am"), ALWAYS invoke check_specific_time_slot so they get the interactive 1-click confirmation card.
+7. MULTILINGUAL & TYPOS: Detect the user's language automatically and respond fluently in their language. Seamlessly auto-correct typos.
+8. TONE & ELEGANCE: Sound like a seasoned studio executive. Never use cliché robotic phrases like "Certainly!", "I would be delighted to assist", or "As an AI language model". Keep formatting clean, prestigious, and readable.
 PROMPT;
 
         // Inject Active Booking context if user already has a scheduled appointment
@@ -257,7 +269,7 @@ RULE: When the client asks about their appointment, date, time, or schedule (e.g
 
             // Truncate past long messages to 280 chars to avoid CPU prompt bloat
             if ($msg->sender !== 'user' && strlen($trimmed) > 280) {
-                $trimmed = substr($trimmed, 0, 280) . '...';
+                $trimmed = substr($trimmed, 0, 280).'...';
             }
 
             $messages[] = [

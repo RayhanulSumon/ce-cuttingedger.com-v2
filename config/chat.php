@@ -12,7 +12,9 @@ return [
         'vision_model' => env('OLLAMA_VISION_MODEL', 'qwen2-vl:7b'),
         'timeout' => (int) env('OLLAMA_TIMEOUT', 60), // Generous ceiling for Xeon CPU token generation
         'max_tokens' => (int) env('OLLAMA_MAX_TOKENS', 1024),
-        'temperature' => (float) env('OLLAMA_TEMPERATURE', 0.4),
+        'temperature' => (float) env('OLLAMA_TEMPERATURE', 0.7),
+        'repeat_penalty' => (float) env('OLLAMA_REPEAT_PENALTY', 1.2),
+        'top_p' => (float) env('OLLAMA_TOP_P', 0.9),
         'enabled' => (bool) env('OLLAMA_ENABLED', true),
         'keep_alive' => env('OLLAMA_KEEP_ALIVE', '24h'),
         'num_threads' => (int) env('OLLAMA_NUM_THREADS', 12),

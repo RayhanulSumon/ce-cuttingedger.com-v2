@@ -35,6 +35,39 @@ class HybridIntentEngine
             ];
         }
 
+        // 0.015 Studio Office Location & Address Inquiries
+        if (preg_match('/\b(where\s*(is|are)\s*(your\s*)?(office|studio|location|headquarters|hq|company|desk|based)|office\s*(address|location)|studio\s*(address|location)|physical\s*address|located)\b/i', $text)) {
+            return [
+                'content' => "Our primary production studio and headquarters are located at:\n\n📍 **Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215**\n\nWe operate 24/7 with distributed production desks serving leading commercial brands, e-commerce studios, and agencies worldwide across North America, Europe, and Asia.\n\nWould you like to schedule a 15-minute consultation call or send a sample batch to test our hand-crafted vector cutouts?",
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'Claim 3 Free Sample Edits',
+                    'Book Consultation Call',
+                    'Calculate Pricing',
+                ],
+            ];
+        }
+
+        // 0.016 Clean Human Greetings ("hello", "hi", "how are you", "good morning")
+        if (preg_match('/^(hi|hello|hey|howdy|good\s*(morning|afternoon|evening)|how\s*(are\s*you|r\s*u|is\s*it\s*going))\b/i', $text) && strlen($text) < 30) {
+            $greetings = [
+                "Hello! Welcome to CuttingEdger Studio. I'm doing great, thank you! How can I help you with your image editing, clipping paths, or retouching project today?",
+                'Hey there! Doing wonderful. Whether you need 100% hand-drawn vector paths, ghost mannequin volume, or high-end beauty retouching, our team is ready. What kind of images are you working on?',
+                'Hello! Good to meet you. Our production desk is active 24/7. How can we assist with your photo catalog or post-production workflow today?',
+            ];
+            $chosenGreeting = $greetings[abs(crc32($session?->id ?? $text)) % count($greetings)];
+
+            return [
+                'content' => $chosenGreeting,
+                'tool_cards' => [],
+                'suggested_replies' => [
+                    'What are your services?',
+                    'Calculate Pricing',
+                    'Claim 3 Free Sample Edits',
+                ],
+            ];
+        }
+
         // 0.02 Capability & Speciality Inquiries ("what is the service?", "what can you do?", "what is your speciality?", "what are your services?")
         if (preg_match('/\b(what\s*(is|are)\s*(the|your)?\s*services?|what\s*(can\s*you\s*do|is\s*your\s*speciali[tz]y|do\s*you\s*do|do\s*you\s*offer|service\s*do\s*you\s*have)|tell\s*me\s*(about\s*)?(the\s*|your\s*)?(services?|speciali[tz]y)|(your\s*)?(capabilities|speciali[tz]y|expertise|services\s*list|list\s*of\s*services))\b|^services?$/i', $text)) {
             $specialityContent = <<<'TXT'
