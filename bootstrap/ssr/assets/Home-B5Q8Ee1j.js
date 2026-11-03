@@ -1,7 +1,7 @@
 import { HomeVariantSwitcher } from "./HomeVariantSwitcher-B_d5n1eC.js";
-import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
+import { HomeOriginal } from "./HomeOriginal-DAgUPxs9.js";
 import { HomeVisual } from "./HomeVisual-CrobnAwW.js";
-import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
+import { HomeEditorial } from "./HomeEditorial-BcfU-Ol9.js";
 import { HomeRetouchStudio } from "./HomeRetouchStudio-BrhNzPpZ.js";
 import { HomeLuminaGlass } from "./HomeLuminaGlass-DActRw7v.js";
 import { HomeAtelierEditorial } from "./HomeAtelierEditorial-DMqDUVwm.js";

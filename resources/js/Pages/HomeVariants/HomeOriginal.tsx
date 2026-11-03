@@ -21,7 +21,11 @@ import {
   Layers,
   FileCode,
   Eye,
-  EyeOff
+  EyeOff,
+  ChevronDown,
+  HelpCircle,
+  Clock,
+  Sparkle
 } from 'lucide-react';
 
 // ==========================================
@@ -192,6 +196,160 @@ const BENTO_PORTFOLIO = [
 ];
 
 // ==========================================
+// 3B. INTERACTIVE PRODUCTION GALLERY ITEMS
+// ==========================================
+interface GalleryItem {
+  id: string;
+  category: 'headshots' | 'fashion' | 'tryon' | 'product' | 'retouch';
+  categoryLabel: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  turnaround: string;
+  beforeImg: string;
+  afterImg: string;
+  specs: string[];
+  rawLabel: string;
+  editedLabel: string;
+  href: string;
+}
+
+const GALLERY_ITEMS: GalleryItem[] = [
+  {
+    id: 'gal-headshot-1',
+    category: 'headshots',
+    categoryLabel: 'AI Corporate Headshots',
+    badge: 'C-SUITE EXECUTIVE',
+    title: 'Executive Studio Portrait From 5 Mobile Selfies',
+    subtitle: 'Casual smartphone photos transformed into high-tier editorial corporate portraits with matching brand lighting.',
+    turnaround: '4h Studio SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85',
+    specs: ['Studio Rim Lighting', 'Tailored Blazer Drape', 'Natural Micro-Skin Texture'],
+    rawLabel: 'Unedited Smartphone Capture',
+    editedLabel: '8K Editorial Studio Master',
+    href: '/services/ecommerce-catalog-optimization'
+  },
+  {
+    id: 'gal-fashion-1',
+    category: 'fashion',
+    categoryLabel: 'AI Fashion Runway',
+    badge: 'HAUTE COUTURE CATWALK',
+    title: 'Runway Lookbook & Volumetric Silk Drape',
+    subtitle: 'Flat-lay ghost mannequin garment converted into a Paris Fashion Week runway model with fluid textile physics.',
+    turnaround: '6h Studio SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85',
+    specs: ['Volumetric Fabric Drape', 'Catwalk Lighting', 'Preserved Seam Stitches'],
+    rawLabel: 'Flat-Lay Mannequin Input',
+    editedLabel: 'High-Fashion Catwalk Render',
+    href: '/services/ghost-mannequin-service'
+  },
+  {
+    id: 'gal-tryon-1',
+    category: 'tryon',
+    categoryLabel: '3D Virtual Try-On',
+    badge: 'DENIM & JACKET FITTING',
+    title: 'Multi-Body Garment Mesh & Wrinkle Simulation',
+    subtitle: 'Flat garment technical packs dynamically simulated onto diverse 3D human silhouettes with real physical tension.',
+    turnaround: '8h Studio SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=1200&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=85',
+    specs: ['Tension & Crease Map', 'Multi-Size Geometry', 'Realistic Drop Shadow'],
+    rawLabel: 'Ghost Cutout Garment',
+    editedLabel: '3D Physics Drape Fit',
+    href: '/services/ghost-mannequin-service'
+  },
+  {
+    id: 'gal-product-1',
+    category: 'product',
+    categoryLabel: 'Product Scene Gen',
+    badge: 'LUXURY FRAGRANCE & CAUSTICS',
+    title: 'Hyper-Real Botanical Wet Plate Environment',
+    subtitle: 'Isolated fragrance bottle composited into a photorealistic botanical studio scene with optical glass caustics.',
+    turnaround: '4h Studio SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85',
+    specs: ['Raytraced Refraction', 'Optical Dispersion', 'Specular Balance'],
+    rawLabel: 'White Cyc Raw Plate',
+    editedLabel: 'Raytraced Botanical Scene',
+    href: '/services/color-standardization'
+  },
+  {
+    id: 'gal-retouch-1',
+    category: 'retouch',
+    categoryLabel: 'Precision Pen Retouch',
+    badge: '100% HAND-DRAWN BÉZIER',
+    title: 'Multi-Material Sneaker & Dynamic Studio Shadow',
+    subtitle: 'Pixel-perfect sub-pixel pen paths isolating mesh, leather, and eyelets with realistic floating ground shadow.',
+    turnaround: '2h Rush SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=70',
+    afterImg: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=95',
+    specs: ['Sub-Pixel Anchor Curves', 'Dedicated Path Layers', 'Multi-Layer PSD'],
+    rawLabel: 'Raw Studio Sensor Capture',
+    editedLabel: 'Vector Cutout & Custom Shadow',
+    href: '/services/ecommerce-catalog-optimization/clipping-path-service'
+  },
+  {
+    id: 'gal-retouch-2',
+    category: 'retouch',
+    categoryLabel: 'Precision Pen Retouch',
+    badge: 'STEEL & SAPPHIRE POLISH',
+    title: 'Anti-Glare Chronograph Micro-Scratch Removal',
+    subtitle: 'Brushed stainless steel bezel restored to flawless factory luster while preserving genuine brushed grain.',
+    turnaround: '6h Studio SLA',
+    beforeImg: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=75',
+    afterImg: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=95',
+    specs: ['Bezel Glare Suppression', 'Preserved Brush Grain', 'Dial Contrast Enhancement'],
+    rawLabel: 'Scratched Unpolished Sample',
+    editedLabel: 'Flawless Sapphire Studio Finish',
+    href: '/services/ecommerce-catalog-optimization'
+  }
+];
+
+// ==========================================
+// 3C. ENTERPRISE FREQUENTLY ASKED QUESTIONS
+// ==========================================
+const FAQ_ITEMS = [
+  {
+    id: 'faq-turnaround',
+    category: 'Turnaround & Volume',
+    question: 'What turnaround SLAs do you guarantee for large-volume e-commerce catalogs?',
+    answer: 'Standard enterprise production runs are delivered within 12 to 24 hours depending on batch volume. For high-urgency editorial launches, runway drops, or daily commercial shoots, our 6-Hour Express Desk operates around the clock with dedicated senior retouchers assigned to your account.'
+  },
+  {
+    id: 'faq-clipping',
+    category: 'Technical Precision',
+    question: 'Are all clipping paths truly 100% hand-drawn with the Photoshop Pen Tool?',
+    answer: 'Yes, without exception. Every single vector clipping path is plotted manually by seasoned digital artists at 300% zoom using Photoshop’s Pen Tool with smooth Bézier anchor points. We never use automated wand tools, quick selection, or AI masks that produce ragged, amateur edges.'
+  },
+  {
+    id: 'faq-security',
+    category: 'Confidentiality & NDA',
+    question: 'How does CuttingEdger safeguard unreleased product lines and proprietary prototypes?',
+    answer: 'We operate under strict bilateral enterprise NDAs. All client assets are transferred via TLS-encrypted connections directly into isolated staging buckets with role-based access control. No client imagery is ever fed into public generative model training pools or shared with third parties.'
+  },
+  {
+    id: 'faq-artdirection',
+    category: 'Color & Grading',
+    question: 'Can your team match our in-house art direction and calibrated LUT profiles?',
+    answer: 'Absolutely. During brand onboarding, we ingest your calibrated color profiles (Display P3, Adobe RGB 1998, sRGB), 3D LUTs, lighting cheat-sheets, and master layer templates to guarantee 100% visual consistency across every single SKU and campaign.'
+  },
+  {
+    id: 'faq-deliverables',
+    category: 'File Formats',
+    question: 'What master layer structures and deliverable formats do you provide?',
+    answer: 'We deliver layered Master PSDs with cleanly labeled non-destructive adjustment groups, alpha masks, and vector paths. We also export calibrated 16-bit TIFFs, transparent PNGs, and compressed WebP / JPEG files formatted to your custom naming conventions and e-commerce CMS requirements.'
+  },
+  {
+    id: 'faq-trial',
+    category: 'Onboarding & Pilot',
+    question: 'How does the complimentary 3-image production test work?',
+    answer: 'Any commercial brand, creative agency, or high-volume e-commerce seller can submit up to 3 RAW images for a free proof. Our team will execute the complete retouching or AI generation workflow according to your guidelines and return production-ready masters within 6 hours—completely free and with zero obligation.'
+  }
+];
+
+// ==========================================
 // 4. STUDIO PRODUCTS & SWATCHES FOR LIVE STUDIO TESTER
 // ==========================================
 const STUDIO_PRODUCTS = [
@@ -300,16 +458,64 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
   const [hoveredBentoId, setHoveredBentoId] = useState<string | null>(null);
   const [lightboxItem, setLightboxItem] = useState<(typeof BENTO_PORTFOLIO)[number] | null>(null);
 
-  // 5. Free Sample Dropzone State
-  const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([
-    'Precision Clipping',
-    '3D Ghost Mannequin'
-  ]);
-  const [selectedTurnaround, setSelectedTurnaround] = useState('12h Express');
-  const [volumeSlider, setVolumeSlider] = useState(250);
-  const [trialSubmitted, setTrialSubmitted] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // 5. Interactive Production Gallery & FAQ State
+  const [activeGalleryCategory, setActiveGalleryCategory] = useState<string>('all');
+  const [galleryRawCards, setGalleryRawCards] = useState<Record<string, boolean>>({});
+  const [galleryLightbox, setGalleryLightbox] = useState<GalleryItem | null>(null);
+  const [lightboxSplitPos, setLightboxSplitPos] = useState<number>(50);
+  const [isDraggingLightboxSplit, setIsDraggingLightboxSplit] = useState(false);
+  const lightboxStageRef = useRef<HTMLDivElement>(null);
+  const [openFaqIds, setOpenFaqIds] = useState<string[]>(['faq-turnaround', 'faq-clipping']);
+
+  const toggleGalleryRaw = (id: string) => {
+    setGalleryRawCards((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const toggleFaq = (id: string) => {
+    setOpenFaqIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  // Lightbox Split Slider Dragging Logic
+  const updateLightboxSplit = (clientX: number) => {
+    if (!lightboxStageRef.current) return;
+    const rect = lightboxStageRef.current.getBoundingClientRect();
+    const x = Math.max(10, Math.min(clientX - rect.left, rect.width - 10));
+    setLightboxSplitPos((x / rect.width) * 100);
+  };
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (isDraggingLightboxSplit) updateLightboxSplit(e.clientX);
+    };
+    const onTouch = (e: TouchEvent) => {
+      if (isDraggingLightboxSplit && e.touches[0]) updateLightboxSplit(e.touches[0].clientX);
+    };
+    const onUp = () => setIsDraggingLightboxSplit(false);
+
+    if (isDraggingLightboxSplit) {
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onTouch);
+      window.addEventListener('mouseup', onUp);
+      window.addEventListener('touchend', onUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('touchmove', onTouch);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchend', onUp);
+    };
+  }, [isDraggingLightboxSplit]);
+
+  // Filtered Gallery Items
+  const filteredGalleryItems = useMemo(() => {
+    if (activeGalleryCategory === 'all') return GALLERY_ITEMS;
+    return GALLERY_ITEMS.filter((item) => item.category === activeGalleryCategory);
+  }, [activeGalleryCategory]);
 
   // Intro Slider Glide Demo (Visually signals interactivity on load without text)
   useEffect(() => {
@@ -369,18 +575,6 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
     };
   }, [isDraggingSplit]);
 
-  const toggleCapabilityPill = (cap: string) => {
-    setSelectedCapabilities((prev) =>
-      prev.includes(cap) ? prev.filter((item) => item !== cap) : [...prev, cap]
-    );
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setUploadedFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
-    }
-  };
-
   // Compute Live Playground Filter
   const currentStudioProduct =
     STUDIO_PRODUCTS[activeStudioProductIdx] || STUDIO_PRODUCTS[0];
@@ -415,29 +609,6 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
 
     return `hue-rotate(${hue}deg) ${polishPart} ${shadowPart}`.trim();
   };
-
-  // Volume slider dynamic tier
-  const volumeTierInfo = useMemo(() => {
-    if (volumeSlider < 100) {
-      return {
-        sla: '6h Rush SLA',
-        badge: '⚡ Express Rush',
-        desc: 'Dedicated Senior Retoucher • Express Pilot'
-      };
-    }
-    if (volumeSlider <= 1000) {
-      return {
-        sla: '12h Express Studio SLA',
-        badge: '⏱️ Studio SLA',
-        desc: 'Multi-Desk Production • Dual-Pass Quality Control'
-      };
-    }
-    return {
-      sla: 'Custom Enterprise SLA',
-      badge: '👑 Enterprise SLA',
-      desc: 'Dedicated Art Director • Automated Slack/FTP API Ingest'
-    };
-  }, [volumeSlider]);
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#0F0F12] antialiased selection:bg-[#0F0F12] selection:text-white">
@@ -519,10 +690,10 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
           {/* Balanced Luxury Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
             <a
-              href="#free-sample"
+              href="#gallery"
               className="px-6 py-3.5 rounded-full bg-[#0F0F12] text-white text-xs sm:text-sm font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-[0_4px_16px_rgba(15,15,18,0.12)] hover:shadow-[0_8px_24px_rgba(15,15,18,0.2)]"
             >
-              <span>Get 3 Free Sample Retouches</span>
+              <span>Explore Production Gallery</span>
               <ArrowUpRight className="w-4 h-4" />
             </a>
             <Link
@@ -1186,10 +1357,10 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
                   <span className="font-extrabold text-[#0F0F12]">{currentStudioProduct.turnaround}</span>
                 </div>
                 <a
-                  href="#free-sample"
+                  href="#gallery"
                   className="w-full py-3.5 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-xs group"
                 >
-                  <span>Test With Your Own Product</span>
+                  <span>Inspect 5 Services In Gallery</span>
                   <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               </div>
@@ -1311,179 +1482,275 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
       </section>
 
       {/* ==========================================
-          6. FREE SAMPLE & VISUAL VOLUME ESTIMATOR
+          6. INTERACTIVE PRODUCTION GALLERY
       ========================================== */}
-      <section id="free-sample" className="py-12 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto rounded-[32px] bg-[#0F0F12] text-white p-7 sm:p-12 border border-neutral-800 shadow-xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Left Column (6 Cols): Interactive Volume Slider & Capabilities */}
-            <div className="lg:col-span-6 space-y-6">
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 block">
-                  COMPLIMENTARY STUDIO TEST
+      <section id="gallery" className="py-16 px-4 sm:px-8 border-t border-neutral-200/80 bg-white">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-9 gap-5">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px] font-extrabold tracking-widest uppercase text-emerald-600">
+                  PRODUCTION ARCHIVE // 05 DISCIPLINES
                 </span>
-                <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight mt-1">
-                  Experience Our Quality With a Free Sample.
-                </h2>
-                <p className="text-neutral-400 text-xs sm:text-sm mt-2 leading-relaxed">
-                  Send us up to 3 RAW product images. We retouch them to your exact brand specifications and return master files within hours.
-                </p>
               </div>
-
-              {/* Interactive Volume & SLA Slider (Replaces heavy text) */}
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400">
-                    ESTIMATED MONTHLY ASSETS
-                  </span>
-                  <span className="text-xs font-black text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
-                    {volumeSlider >= 1000 ? '1,000+ images/mo' : `${volumeSlider} images/mo`}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="20"
-                  max="1200"
-                  step="20"
-                  value={volumeSlider}
-                  onChange={(e) => setVolumeSlider(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-white/10 rounded-lg appearance-none"
-                />
-                <div className="flex items-center justify-between text-[11px] font-bold text-neutral-400 pt-1">
-                  <span className="text-white flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    {volumeTierInfo.badge}: {volumeTierInfo.sla}
-                  </span>
-                  <span className="opacity-75">{volumeTierInfo.desc}</span>
-                </div>
-              </div>
-
-              {/* Select Capabilities */}
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 block mb-2.5">
-                  1. SELECT DESIRED CAPABILITIES
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    'Precision Clipping',
-                    '3D Ghost Mannequin',
-                    'Fine Jewelry Polish',
-                    'Multi-SKU Recolor',
-                    'Cosmetics & Glass'
-                  ].map((cap) => {
-                    const active = selectedCapabilities.includes(cap);
-                    return (
-                      <button
-                        type="button"
-                        key={cap}
-                        onClick={() => toggleCapabilityPill(cap)}
-                        className={`px-4 py-2 rounded-full text-xs font-extrabold transition-all flex items-center gap-1.5 ${
-                          active
-                            ? 'bg-emerald-400 text-[#0F0F12]'
-                            : 'bg-white/10 text-neutral-300 hover:bg-white/15'
-                        }`}
-                      >
-                        {active && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                        <span>{cap}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Format Badges & NDA Shield */}
-              <div className="flex items-center gap-3 pt-1">
-                <span className="text-xs text-neutral-400 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Strict NDA Protection
-                </span>
-                <div className="flex items-center gap-1.5 opacity-60 text-[10px] font-mono uppercase">
-                  {['PSD', 'TIFF', 'CR3', 'NEF', 'PNG'].map((fmt) => (
-                    <span key={fmt} className="px-1.5 py-0.5 rounded bg-white/10">
-                      {fmt}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#0F0F12]">
+                Interactive Production Gallery
+              </h2>
+              <p className="text-neutral-500 text-xs sm:text-sm mt-1.5 max-w-xl leading-relaxed">
+                Experience real before/after fidelity across executive corporate portraits, haute couture runway models, 3D garment physics, and sub-pixel hand clipping.
+              </p>
             </div>
 
-            {/* Right Column (6 Cols): Clean Rounded Upload Dropzone */}
-            <div className="lg:col-span-6">
-              {!trialSubmitted ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setTrialSubmitted(true);
-                  }}
-                  className="rounded-[26px] bg-white/5 border border-white/10 p-6 sm:p-8 space-y-4"
-                >
-                  <label
-                    onClick={() => fileInputRef.current?.click()}
-                    className="block border-2 border-dashed border-white/20 hover:border-emerald-400 rounded-2xl p-7 text-center cursor-pointer transition-colors bg-white/5"
+            {/* Category Filter Pills (no scrollbar) */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {[
+                { id: 'all', label: 'All Works' },
+                { id: 'headshots', label: 'AI Headshots' },
+                { id: 'fashion', label: 'Runway Models' },
+                { id: 'tryon', label: '3D Try-On' },
+                { id: 'product', label: 'Product Scenes' },
+                { id: 'retouch', label: 'Precision Paths' }
+              ].map((cat) => {
+                const isActive = activeGalleryCategory === cat.id;
+                const count = cat.id === 'all'
+                  ? GALLERY_ITEMS.length
+                  : GALLERY_ITEMS.filter((i) => i.category === cat.id).length;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setActiveGalleryCategory(cat.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-[#0F0F12] text-white shadow-sm'
+                        : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-[#0F0F12] border border-neutral-200/80 hover:border-neutral-300'
+                    }`}
                   >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                    <div className="w-11 h-11 rounded-full bg-emerald-400/20 text-emerald-300 flex items-center justify-center mx-auto mb-3">
-                      <Upload className="w-5 h-5" />
-                    </div>
-                    <span className="text-sm font-extrabold text-white block">
-                      {uploadedFiles.length > 0
-                        ? `${uploadedFiles.length} RAW file(s) attached`
-                        : 'Drop RAW files here or click to browse'}
+                    <span>{cat.label}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-neutral-200 text-neutral-600'
+                    }`}>
+                      {count}
                     </span>
-                    <span className="text-xs text-neutral-400 mt-1 block">
-                      Supports PSD, TIFF, CR3, NEF, PNG & JPG • Strict NDA Protection
-                    </span>
-                  </label>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input
-                      type="email"
-                      required
-                      placeholder="Work email address..."
-                      className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-xs sm:text-sm text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-400"
+          {/* Gallery Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGalleryItems.map((item) => {
+              const showRaw = !!galleryRawCards[item.id];
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-[28px] overflow-hidden border border-neutral-200/80 bg-white shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                >
+                  {/* Card Visual Stage */}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
+                    <img
+                      src={showRaw ? item.beforeImg : item.afterImg}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <input
-                      type="text"
-                      placeholder="Brand / Studio URL (optional)"
-                      className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-xs sm:text-sm text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-400"
-                    />
+
+                    {/* Badge Top Left */}
+                    <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10">
+                        {item.badge}
+                      </span>
+                    </div>
+
+                    {/* SLA Badge Top Right */}
+                    <div className="absolute top-3.5 right-3.5 z-10">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-md text-[#0F0F12] shadow-xs flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-emerald-600" />
+                        <span>{item.turnaround}</span>
+                      </span>
+                    </div>
+
+                    {/* Quick Raw Toggle & Inspect Pills at Bottom of Image */}
+                    <div className="absolute inset-x-3.5 bottom-3.5 z-10 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleGalleryRaw(item.id);
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-[11px] font-extrabold transition-all shadow-md backdrop-blur-md flex items-center gap-1.5 cursor-pointer ${
+                          showRaw
+                            ? 'bg-amber-400 text-[#0F0F12]'
+                            : 'bg-white/95 hover:bg-white text-[#0F0F12]'
+                        }`}
+                        title="Toggle RAW unedited input vs studio master"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>{showRaw ? 'Showing: RAW' : 'Showing: MASTER'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGalleryLightbox(item);
+                          setLightboxSplitPos(50);
+                        }}
+                        className="w-8 h-8 rounded-full bg-white/95 hover:bg-white text-[#0F0F12] flex items-center justify-center shadow-md transition-all hover:scale-110 cursor-pointer"
+                        title="Open interactive A/B comparison slider"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-4 rounded-full bg-emerald-400 text-[#0F0F12] font-extrabold text-xs sm:text-sm hover:bg-emerald-300 transition-colors flex items-center justify-center gap-2 shadow-lg"
-                  >
-                    <span>Submit Free Sample Request</span>
-                    <ArrowUpRight className="w-4 h-4" />
-                  </button>
-                </form>
-              ) : (
-                <div className="rounded-[26px] bg-white/5 border border-emerald-400/30 p-8 text-center space-y-3">
-                  <CheckCircle2 className="w-11 h-11 text-emerald-400 mx-auto" />
-                  <h3 className="text-xl font-extrabold">Sample Request Received</h3>
-                  <p className="text-xs sm:text-sm text-neutral-300 max-w-md mx-auto">
-                    Our senior retouching desk has queued your sample for{' '}
-                    <span className="text-emerald-300 font-bold">{volumeTierInfo.sla}</span>{' '}
-                    turnaround.
-                  </p>
+                  {/* Card Content Body */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600">
+                        {item.categoryLabel}
+                      </span>
+                      <h3 className="text-base font-extrabold text-[#0F0F12] mt-1 leading-snug">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-neutral-500 mt-1.5 line-clamp-2 leading-relaxed">
+                        {item.subtitle}
+                      </p>
+
+                      {/* Technical Specs Tags */}
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {item.specs.map((spec, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className="px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-600 text-[10px] font-medium"
+                          >
+                            {spec}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGalleryLightbox(item);
+                          setLightboxSplitPos(50);
+                        }}
+                        className="text-xs font-extrabold text-[#0F0F12] hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Compare A/B Slider</span>
+                        <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-400" />
+                      </button>
+
+                      <Link
+                        href={item.href}
+                        className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-600 hover:text-white flex items-center justify-center transition-all shadow-2xs"
+                        title="View dedicated service"
+                      >
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          7. FREQUENTLY ASKED QUESTIONS (FAQ)
+      ========================================== */}
+      <section id="faq" className="py-16 px-4 sm:px-8 bg-neutral-50/70 border-t border-neutral-200/80">
+        <div className="max-w-4xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[11px] font-extrabold tracking-wider uppercase mb-3">
+              <HelpCircle className="w-3.5 h-3.5 text-emerald-600" />
+              <span>FREQUENTLY ASKED QUESTIONS</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#0F0F12]">
+              Commercial Production & Workflow Answers
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-500 font-medium mt-2 leading-relaxed">
+              Clear technical details on turnarounds, precision Bézier clipping, enterprise NDAs, and our complimentary 3-image trial process.
+            </p>
+          </div>
+
+          {/* FAQ Accordion List */}
+          <div className="space-y-3.5">
+            {FAQ_ITEMS.map((faq) => {
+              const isOpen = openFaqIds.includes(faq.id);
+              return (
+                <div
+                  key={faq.id}
+                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    isOpen
+                      ? 'bg-white border-neutral-300 shadow-md ring-1 ring-black/5'
+                      : 'bg-white border-neutral-200/80 hover:border-neutral-300 hover:bg-neutral-50/50 shadow-2xs'
+                  }`}
+                >
                   <button
                     type="button"
-                    onClick={() => {
-                      setTrialSubmitted(false);
-                      setUploadedFiles([]);
-                    }}
-                    className="text-xs font-extrabold text-emerald-400 underline pt-2"
+                    onClick={() => toggleFaq(faq.id)}
+                    className="w-full text-left p-5 sm:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                    aria-expanded={isOpen}
                   >
-                    Upload another batch
+                    <div className="flex-1 pr-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                          {faq.category}
+                        </span>
+                      </div>
+                      <h3 className="text-sm sm:text-base font-extrabold text-[#0F0F12] leading-snug">
+                        {faq.question}
+                      </h3>
+                    </div>
+
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isOpen
+                          ? 'bg-[#0F0F12] text-white rotate-180'
+                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      }`}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
                   </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 text-xs sm:text-sm text-neutral-600 leading-relaxed border-t border-neutral-100 mt-1">
+                      <p className="pt-3">{faq.answer}</p>
+                    </div>
+                  )}
                 </div>
-              )}
+              );
+            })}
+          </div>
+
+          {/* Direct Technical Inquiry Strip */}
+          <div className="mt-10 p-6 sm:p-8 rounded-[28px] bg-white border border-neutral-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center sm:text-left">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 block">
+                HAVE CUSTOM ART DIRECTION SPECS?
+              </span>
+              <h4 className="text-base sm:text-lg font-extrabold text-[#0F0F12]">
+                Talk Directly With Our Studio Technical Director
+              </h4>
+              <p className="text-xs text-neutral-500">
+                Discuss custom batch integrations, automated FTP/API sync, or calibrated color grading workflows.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/contact"
+                className="px-5 py-3 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-xs"
+              >
+                <span>Schedule Discovery Call</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
@@ -1520,6 +1787,109 @@ export function HomeOriginal({ clients = [] }: HomeProps) {
                 </span>
                 <h3 className="text-2xl font-extrabold mt-0.5">{lightboxItem.title}</h3>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==========================================
+          8. INTERACTIVE A/B SLIDER MODAL FOR GALLERY
+      ========================================== */}
+      {galleryLightbox && (
+        <div
+          onClick={() => setGalleryLightbox(null)}
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-5xl w-full rounded-[28px] overflow-hidden bg-[#0F0F12] text-white border border-neutral-800 shadow-2xl flex flex-col"
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-neutral-800 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">
+                  {galleryLightbox.categoryLabel} // {galleryLightbox.badge}
+                </span>
+                <h3 className="text-base sm:text-lg font-extrabold text-white">
+                  {galleryLightbox.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setGalleryLightbox(null)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Interactive Split Stage */}
+            <div
+              className="relative h-[380px] sm:h-[500px] w-full select-none cursor-ew-resize overflow-hidden bg-black"
+              onMouseDown={() => setIsDraggingLightboxSplit(true)}
+              onTouchStart={() => setIsDraggingLightboxSplit(true)}
+              ref={lightboxStageRef}
+            >
+              {/* After / Master Image (Full Background) */}
+              <img
+                src={galleryLightbox.afterImg}
+                alt={galleryLightbox.title}
+                className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+              />
+
+              {/* Before / Raw Image (Clipped Left Side) */}
+              <div
+                className="absolute inset-y-0 left-0 overflow-hidden pointer-events-none"
+                style={{ width: `${lightboxSplitPos}%` }}
+              >
+                <img
+                  src={galleryLightbox.beforeImg}
+                  alt="Raw Input"
+                  className="absolute inset-y-0 left-0 h-full max-w-none object-cover object-center"
+                  style={{
+                    width: lightboxStageRef.current ? `${lightboxStageRef.current.clientWidth}px` : '100%'
+                  }}
+                />
+              </div>
+
+              {/* Split Slider Handle */}
+              <div
+                className="absolute top-0 bottom-0 z-20 pointer-events-none flex flex-col items-center justify-center"
+                style={{ left: `${lightboxSplitPos}%`, transform: 'translateX(-50%)' }}
+              >
+                <div className="w-0.5 h-full bg-white shadow-[0_0_12px_rgba(0,0,0,0.8)]" />
+                <div className="absolute w-8 h-8 rounded-full bg-white text-[#0F0F12] shadow-xl flex items-center justify-center">
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              {/* Badges */}
+              <div className="absolute top-4 left-4 z-10 pointer-events-none">
+                <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-black/60 backdrop-blur-md text-amber-300 border border-white/10">
+                  {galleryLightbox.rawLabel}
+                </span>
+              </div>
+              <div className="absolute top-4 right-4 z-10 pointer-events-none">
+                <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-black/60 backdrop-blur-md text-emerald-400 border border-white/10">
+                  {galleryLightbox.editedLabel}
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 sm:p-5 bg-neutral-900 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex flex-wrap gap-2 text-xs text-neutral-400">
+                <span className="font-bold text-white">SLA: {galleryLightbox.turnaround}</span>
+                <span>•</span>
+                <span>Specs: {galleryLightbox.specs.join(' • ')}</span>
+              </div>
+              <Link
+                href={galleryLightbox.href}
+                className="px-4 py-2 rounded-full bg-emerald-400 hover:bg-emerald-300 text-[#0F0F12] text-xs font-extrabold transition-colors flex items-center gap-1.5"
+              >
+                <span>View Dedicated Service</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>

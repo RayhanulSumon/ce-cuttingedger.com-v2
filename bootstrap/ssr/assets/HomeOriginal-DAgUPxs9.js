@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
-import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Eye, Maximize2, Palette, RotateCcw, Scissors, ShieldCheck, Sun, Upload, Wand2, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Clock, Eye, HelpCircle, Maximize2, Palette, RotateCcw, Scissors, SlidersHorizontal, Sun, Wand2, X } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeOriginal.tsx
 var HERO_SHOWCASE_PLATES = [
@@ -144,6 +144,160 @@ var BENTO_PORTFOLIO = [
 		image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1400&q=85",
 		rawFilter: "brightness(0.74) contrast(0.8) saturate(0.5)",
 		href: "/services/ghost-mannequin-service"
+	}
+];
+var GALLERY_ITEMS = [
+	{
+		id: "gal-headshot-1",
+		category: "headshots",
+		categoryLabel: "AI Corporate Headshots",
+		badge: "C-SUITE EXECUTIVE",
+		title: "Executive Studio Portrait From 5 Mobile Selfies",
+		subtitle: "Casual smartphone photos transformed into high-tier editorial corporate portraits with matching brand lighting.",
+		turnaround: "4h Studio SLA",
+		beforeImg: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
+		afterImg: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85",
+		specs: [
+			"Studio Rim Lighting",
+			"Tailored Blazer Drape",
+			"Natural Micro-Skin Texture"
+		],
+		rawLabel: "Unedited Smartphone Capture",
+		editedLabel: "8K Editorial Studio Master",
+		href: "/services/ecommerce-catalog-optimization"
+	},
+	{
+		id: "gal-fashion-1",
+		category: "fashion",
+		categoryLabel: "AI Fashion Runway",
+		badge: "HAUTE COUTURE CATWALK",
+		title: "Runway Lookbook & Volumetric Silk Drape",
+		subtitle: "Flat-lay ghost mannequin garment converted into a Paris Fashion Week runway model with fluid textile physics.",
+		turnaround: "6h Studio SLA",
+		beforeImg: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=80",
+		afterImg: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85",
+		specs: [
+			"Volumetric Fabric Drape",
+			"Catwalk Lighting",
+			"Preserved Seam Stitches"
+		],
+		rawLabel: "Flat-Lay Mannequin Input",
+		editedLabel: "High-Fashion Catwalk Render",
+		href: "/services/ghost-mannequin-service"
+	},
+	{
+		id: "gal-tryon-1",
+		category: "tryon",
+		categoryLabel: "3D Virtual Try-On",
+		badge: "DENIM & JACKET FITTING",
+		title: "Multi-Body Garment Mesh & Wrinkle Simulation",
+		subtitle: "Flat garment technical packs dynamically simulated onto diverse 3D human silhouettes with real physical tension.",
+		turnaround: "8h Studio SLA",
+		beforeImg: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=1200&q=80",
+		afterImg: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=85",
+		specs: [
+			"Tension & Crease Map",
+			"Multi-Size Geometry",
+			"Realistic Drop Shadow"
+		],
+		rawLabel: "Ghost Cutout Garment",
+		editedLabel: "3D Physics Drape Fit",
+		href: "/services/ghost-mannequin-service"
+	},
+	{
+		id: "gal-product-1",
+		category: "product",
+		categoryLabel: "Product Scene Gen",
+		badge: "LUXURY FRAGRANCE & CAUSTICS",
+		title: "Hyper-Real Botanical Wet Plate Environment",
+		subtitle: "Isolated fragrance bottle composited into a photorealistic botanical studio scene with optical glass caustics.",
+		turnaround: "4h Studio SLA",
+		beforeImg: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1200&q=80",
+		afterImg: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=85",
+		specs: [
+			"Raytraced Refraction",
+			"Optical Dispersion",
+			"Specular Balance"
+		],
+		rawLabel: "White Cyc Raw Plate",
+		editedLabel: "Raytraced Botanical Scene",
+		href: "/services/color-standardization"
+	},
+	{
+		id: "gal-retouch-1",
+		category: "retouch",
+		categoryLabel: "Precision Pen Retouch",
+		badge: "100% HAND-DRAWN BÉZIER",
+		title: "Multi-Material Sneaker & Dynamic Studio Shadow",
+		subtitle: "Pixel-perfect sub-pixel pen paths isolating mesh, leather, and eyelets with realistic floating ground shadow.",
+		turnaround: "2h Rush SLA",
+		beforeImg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=70",
+		afterImg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=95",
+		specs: [
+			"Sub-Pixel Anchor Curves",
+			"Dedicated Path Layers",
+			"Multi-Layer PSD"
+		],
+		rawLabel: "Raw Studio Sensor Capture",
+		editedLabel: "Vector Cutout & Custom Shadow",
+		href: "/services/ecommerce-catalog-optimization/clipping-path-service"
+	},
+	{
+		id: "gal-retouch-2",
+		category: "retouch",
+		categoryLabel: "Precision Pen Retouch",
+		badge: "STEEL & SAPPHIRE POLISH",
+		title: "Anti-Glare Chronograph Micro-Scratch Removal",
+		subtitle: "Brushed stainless steel bezel restored to flawless factory luster while preserving genuine brushed grain.",
+		turnaround: "6h Studio SLA",
+		beforeImg: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=75",
+		afterImg: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=95",
+		specs: [
+			"Bezel Glare Suppression",
+			"Preserved Brush Grain",
+			"Dial Contrast Enhancement"
+		],
+		rawLabel: "Scratched Unpolished Sample",
+		editedLabel: "Flawless Sapphire Studio Finish",
+		href: "/services/ecommerce-catalog-optimization"
+	}
+];
+var FAQ_ITEMS = [
+	{
+		id: "faq-turnaround",
+		category: "Turnaround & Volume",
+		question: "What turnaround SLAs do you guarantee for large-volume e-commerce catalogs?",
+		answer: "Standard enterprise production runs are delivered within 12 to 24 hours depending on batch volume. For high-urgency editorial launches, runway drops, or daily commercial shoots, our 6-Hour Express Desk operates around the clock with dedicated senior retouchers assigned to your account."
+	},
+	{
+		id: "faq-clipping",
+		category: "Technical Precision",
+		question: "Are all clipping paths truly 100% hand-drawn with the Photoshop Pen Tool?",
+		answer: "Yes, without exception. Every single vector clipping path is plotted manually by seasoned digital artists at 300% zoom using Photoshop’s Pen Tool with smooth Bézier anchor points. We never use automated wand tools, quick selection, or AI masks that produce ragged, amateur edges."
+	},
+	{
+		id: "faq-security",
+		category: "Confidentiality & NDA",
+		question: "How does CuttingEdger safeguard unreleased product lines and proprietary prototypes?",
+		answer: "We operate under strict bilateral enterprise NDAs. All client assets are transferred via TLS-encrypted connections directly into isolated staging buckets with role-based access control. No client imagery is ever fed into public generative model training pools or shared with third parties."
+	},
+	{
+		id: "faq-artdirection",
+		category: "Color & Grading",
+		question: "Can your team match our in-house art direction and calibrated LUT profiles?",
+		answer: "Absolutely. During brand onboarding, we ingest your calibrated color profiles (Display P3, Adobe RGB 1998, sRGB), 3D LUTs, lighting cheat-sheets, and master layer templates to guarantee 100% visual consistency across every single SKU and campaign."
+	},
+	{
+		id: "faq-deliverables",
+		category: "File Formats",
+		question: "What master layer structures and deliverable formats do you provide?",
+		answer: "We deliver layered Master PSDs with cleanly labeled non-destructive adjustment groups, alpha masks, and vector paths. We also export calibrated 16-bit TIFFs, transparent PNGs, and compressed WebP / JPEG files formatted to your custom naming conventions and e-commerce CMS requirements."
+	},
+	{
+		id: "faq-trial",
+		category: "Onboarding & Pilot",
+		question: "How does the complimentary 3-image production test work?",
+		answer: "Any commercial brand, creative agency, or high-volume e-commerce seller can submit up to 3 RAW images for a free proof. Our team will execute the complete retouching or AI generation workflow according to your guidelines and return production-ready masters within 6 hours—completely free and with zero obligation."
 	}
 ];
 var STUDIO_PRODUCTS = [
@@ -319,12 +473,53 @@ function HomeOriginal({ clients = [] }) {
 	const [globalRawMode, setGlobalRawMode] = useState(false);
 	const [hoveredBentoId, setHoveredBentoId] = useState(null);
 	const [lightboxItem, setLightboxItem] = useState(null);
-	const [selectedCapabilities, setSelectedCapabilities] = useState(["Precision Clipping", "3D Ghost Mannequin"]);
-	const [selectedTurnaround, setSelectedTurnaround] = useState("12h Express");
-	const [volumeSlider, setVolumeSlider] = useState(250);
-	const [trialSubmitted, setTrialSubmitted] = useState(false);
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const fileInputRef = useRef(null);
+	const [activeGalleryCategory, setActiveGalleryCategory] = useState("all");
+	const [galleryRawCards, setGalleryRawCards] = useState({});
+	const [galleryLightbox, setGalleryLightbox] = useState(null);
+	const [lightboxSplitPos, setLightboxSplitPos] = useState(50);
+	const [isDraggingLightboxSplit, setIsDraggingLightboxSplit] = useState(false);
+	const lightboxStageRef = useRef(null);
+	const [openFaqIds, setOpenFaqIds] = useState(["faq-turnaround", "faq-clipping"]);
+	const toggleGalleryRaw = (id) => {
+		setGalleryRawCards((prev) => ({
+			...prev,
+			[id]: !prev[id]
+		}));
+	};
+	const toggleFaq = (id) => {
+		setOpenFaqIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]);
+	};
+	const updateLightboxSplit = (clientX) => {
+		if (!lightboxStageRef.current) return;
+		const rect = lightboxStageRef.current.getBoundingClientRect();
+		const x = Math.max(10, Math.min(clientX - rect.left, rect.width - 10));
+		setLightboxSplitPos(x / rect.width * 100);
+	};
+	useEffect(() => {
+		const onMove = (e) => {
+			if (isDraggingLightboxSplit) updateLightboxSplit(e.clientX);
+		};
+		const onTouch = (e) => {
+			if (isDraggingLightboxSplit && e.touches[0]) updateLightboxSplit(e.touches[0].clientX);
+		};
+		const onUp = () => setIsDraggingLightboxSplit(false);
+		if (isDraggingLightboxSplit) {
+			window.addEventListener("mousemove", onMove);
+			window.addEventListener("touchmove", onTouch);
+			window.addEventListener("mouseup", onUp);
+			window.addEventListener("touchend", onUp);
+		}
+		return () => {
+			window.removeEventListener("mousemove", onMove);
+			window.removeEventListener("touchmove", onTouch);
+			window.removeEventListener("mouseup", onUp);
+			window.removeEventListener("touchend", onUp);
+		};
+	}, [isDraggingLightboxSplit]);
+	const filteredGalleryItems = useMemo(() => {
+		if (activeGalleryCategory === "all") return GALLERY_ITEMS;
+		return GALLERY_ITEMS.filter((item) => item.category === activeGalleryCategory);
+	}, [activeGalleryCategory]);
 	useEffect(() => {
 		let frameId;
 		let start = null;
@@ -372,12 +567,6 @@ function HomeOriginal({ clients = [] }) {
 			window.removeEventListener("touchend", onUp);
 		};
 	}, [isDraggingSplit]);
-	const toggleCapabilityPill = (cap) => {
-		setSelectedCapabilities((prev) => prev.includes(cap) ? prev.filter((item) => item !== cap) : [...prev, cap]);
-	};
-	const handleFileChange = (e) => {
-		if (e.target.files && e.target.files.length > 0) setUploadedFiles((prev) => [...prev, ...Array.from(e.target.files)]);
-	};
 	const currentStudioProduct = STUDIO_PRODUCTS[activeStudioProductIdx] || STUDIO_PRODUCTS[0];
 	const currentStudioSwatch = currentStudioProduct.swatches[activeSwatchIdx] || currentStudioProduct.swatches[0];
 	const getPlaygroundFilter = () => {
@@ -396,23 +585,6 @@ function HomeOriginal({ clients = [] }) {
 		}
 		return `hue-rotate(${hue}deg) ${polishPart} ${shadowPart}`.trim();
 	};
-	const volumeTierInfo = useMemo(() => {
-		if (volumeSlider < 100) return {
-			sla: "6h Rush SLA",
-			badge: "⚡ Express Rush",
-			desc: "Dedicated Senior Retoucher • Express Pilot"
-		};
-		if (volumeSlider <= 1e3) return {
-			sla: "12h Express Studio SLA",
-			badge: "⏱️ Studio SLA",
-			desc: "Multi-Desk Production • Dual-Pass Quality Control"
-		};
-		return {
-			sla: "Custom Enterprise SLA",
-			badge: "👑 Enterprise SLA",
-			desc: "Dedicated Art Director • Automated Slack/FTP API Ingest"
-		};
-	}, [volumeSlider]);
 	return /* @__PURE__ */ jsxs("div", {
 		className: "min-h-screen bg-[#F8F9FA] text-[#0F0F12] antialiased selection:bg-[#0F0F12] selection:text-white",
 		children: [
@@ -490,9 +662,9 @@ function HomeOriginal({ clients = [] }) {
 							/* @__PURE__ */ jsxs("div", {
 								className: "flex flex-wrap items-center justify-center gap-3 mt-6",
 								children: [/* @__PURE__ */ jsxs("a", {
-									href: "#free-sample",
+									href: "#gallery",
 									className: "px-6 py-3.5 rounded-full bg-[#0F0F12] text-white text-xs sm:text-sm font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-[0_4px_16px_rgba(15,15,18,0.12)] hover:shadow-[0_8px_24px_rgba(15,15,18,0.2)]",
-									children: [/* @__PURE__ */ jsx("span", { children: "Get 3 Free Sample Retouches" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
+									children: [/* @__PURE__ */ jsx("span", { children: "Explore Production Gallery" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
 								}), /* @__PURE__ */ jsxs(Link, {
 									href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
 									className: "px-5 py-3.5 rounded-full bg-white text-neutral-700 hover:text-[#0F0F12] border border-neutral-200/80 text-xs sm:text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-1.5",
@@ -1111,9 +1283,9 @@ function HomeOriginal({ clients = [] }) {
 										children: currentStudioProduct.turnaround
 									})]
 								}), /* @__PURE__ */ jsxs("a", {
-									href: "#free-sample",
+									href: "#gallery",
 									className: "w-full py-3.5 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-xs group",
-									children: [/* @__PURE__ */ jsx("span", { children: "Test With Your Own Product" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" })]
+									children: [/* @__PURE__ */ jsx("span", { children: "Inspect 5 Services In Gallery" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" })]
 								})]
 							})]
 						})]
@@ -1202,196 +1374,253 @@ function HomeOriginal({ clients = [] }) {
 				})
 			}),
 			/* @__PURE__ */ jsx("section", {
-				id: "free-sample",
-				className: "py-12 px-4 sm:px-8",
-				children: /* @__PURE__ */ jsx("div", {
-					className: "max-w-7xl mx-auto rounded-[32px] bg-[#0F0F12] text-white p-7 sm:p-12 border border-neutral-800 shadow-xl",
-					children: /* @__PURE__ */ jsxs("div", {
-						className: "grid grid-cols-1 lg:grid-cols-12 gap-10 items-center",
-						children: [/* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-6 space-y-6",
+				id: "gallery",
+				className: "py-16 px-4 sm:px-8 border-t border-neutral-200/80 bg-white",
+				children: /* @__PURE__ */ jsxs("div", {
+					className: "max-w-7xl mx-auto",
+					children: [/* @__PURE__ */ jsxs("div", {
+						className: "flex flex-col md:flex-row md:items-end justify-between mb-9 gap-5",
+						children: [/* @__PURE__ */ jsxs("div", { children: [
+							/* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-2 mb-2",
+								children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), /* @__PURE__ */ jsx("span", {
+									className: "text-[11px] font-extrabold tracking-widest uppercase text-emerald-600",
+									children: "PRODUCTION ARCHIVE // 05 DISCIPLINES"
+								})]
+							}),
+							/* @__PURE__ */ jsx("h2", {
+								className: "text-2xl sm:text-4xl font-extrabold tracking-tight text-[#0F0F12]",
+								children: "Interactive Production Gallery"
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: "text-neutral-500 text-xs sm:text-sm mt-1.5 max-w-xl leading-relaxed",
+								children: "Experience real before/after fidelity across executive corporate portraits, haute couture runway models, 3D garment physics, and sub-pixel hand clipping."
+							})
+						] }), /* @__PURE__ */ jsx("div", {
+							className: "flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 							children: [
-								/* @__PURE__ */ jsxs("div", { children: [
-									/* @__PURE__ */ jsx("span", {
-										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 block",
-										children: "COMPLIMENTARY STUDIO TEST"
-									}),
-									/* @__PURE__ */ jsx("h2", {
-										className: "text-2xl sm:text-4xl font-extrabold tracking-tight mt-1",
-										children: "Experience Our Quality With a Free Sample."
-									}),
-									/* @__PURE__ */ jsx("p", {
-										className: "text-neutral-400 text-xs sm:text-sm mt-2 leading-relaxed",
-										children: "Send us up to 3 RAW product images. We retouch them to your exact brand specifications and return master files within hours."
-									})
-								] }),
-								/* @__PURE__ */ jsxs("div", {
-									className: "p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3",
+								{
+									id: "all",
+									label: "All Works"
+								},
+								{
+									id: "headshots",
+									label: "AI Headshots"
+								},
+								{
+									id: "fashion",
+									label: "Runway Models"
+								},
+								{
+									id: "tryon",
+									label: "3D Try-On"
+								},
+								{
+									id: "product",
+									label: "Product Scenes"
+								},
+								{
+									id: "retouch",
+									label: "Precision Paths"
+								}
+							].map((cat) => {
+								const isActive = activeGalleryCategory === cat.id;
+								const count = cat.id === "all" ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((i) => i.category === cat.id).length;
+								return /* @__PURE__ */ jsxs("button", {
+									type: "button",
+									onClick: () => setActiveGalleryCategory(cat.id),
+									className: `px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${isActive ? "bg-[#0F0F12] text-white shadow-sm" : "bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-[#0F0F12] border border-neutral-200/80 hover:border-neutral-300"}`,
+									children: [/* @__PURE__ */ jsx("span", { children: cat.label }), /* @__PURE__ */ jsx("span", {
+										className: `text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? "bg-white/20 text-white" : "bg-neutral-200 text-neutral-600"}`,
+										children: count
+									})]
+								}, cat.id);
+							})
+						})]
+					}), /* @__PURE__ */ jsx("div", {
+						className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+						children: filteredGalleryItems.map((item) => {
+							const showRaw = !!galleryRawCards[item.id];
+							return /* @__PURE__ */ jsxs("div", {
+								className: "rounded-[28px] overflow-hidden border border-neutral-200/80 bg-white shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group",
+								children: [/* @__PURE__ */ jsxs("div", {
+									className: "relative aspect-[4/3] overflow-hidden bg-neutral-100",
 									children: [
-										/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center justify-between",
-											children: [/* @__PURE__ */ jsx("span", {
-												className: "text-[11px] font-extrabold uppercase tracking-wider text-neutral-400",
-												children: "ESTIMATED MONTHLY ASSETS"
-											}), /* @__PURE__ */ jsx("span", {
-												className: "text-xs font-black text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full",
-												children: volumeSlider >= 1e3 ? "1,000+ images/mo" : `${volumeSlider} images/mo`
-											})]
+										/* @__PURE__ */ jsx("img", {
+											src: showRaw ? item.beforeImg : item.afterImg,
+											alt: item.title,
+											className: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 										}),
-										/* @__PURE__ */ jsx("input", {
-											type: "range",
-											min: "20",
-											max: "1200",
-											step: "20",
-											value: volumeSlider,
-											onChange: (e) => setVolumeSlider(Number(e.target.value)),
-											className: "w-full accent-emerald-400 cursor-pointer h-2 bg-white/10 rounded-lg appearance-none"
+										/* @__PURE__ */ jsx("div", {
+											className: "absolute top-3.5 left-3.5 z-10 flex items-center gap-2",
+											children: /* @__PURE__ */ jsx("span", {
+												className: "px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10",
+												children: item.badge
+											})
+										}),
+										/* @__PURE__ */ jsx("div", {
+											className: "absolute top-3.5 right-3.5 z-10",
+											children: /* @__PURE__ */ jsxs("span", {
+												className: "px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/90 backdrop-blur-md text-[#0F0F12] shadow-xs flex items-center gap-1",
+												children: [/* @__PURE__ */ jsx(Clock, { className: "w-3 h-3 text-emerald-600" }), /* @__PURE__ */ jsx("span", { children: item.turnaround })]
+											})
 										}),
 										/* @__PURE__ */ jsxs("div", {
-											className: "flex items-center justify-between text-[11px] font-bold text-neutral-400 pt-1",
-											children: [/* @__PURE__ */ jsxs("span", {
-												className: "text-white flex items-center gap-1.5",
-												children: [
-													/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-emerald-400" }),
-													volumeTierInfo.badge,
-													": ",
-													volumeTierInfo.sla
-												]
-											}), /* @__PURE__ */ jsx("span", {
-												className: "opacity-75",
-												children: volumeTierInfo.desc
+											className: "absolute inset-x-3.5 bottom-3.5 z-10 flex items-center justify-between",
+											children: [/* @__PURE__ */ jsxs("button", {
+												type: "button",
+												onClick: (e) => {
+													e.stopPropagation();
+													toggleGalleryRaw(item.id);
+												},
+												className: `px-3 py-1.5 rounded-full text-[11px] font-extrabold transition-all shadow-md backdrop-blur-md flex items-center gap-1.5 cursor-pointer ${showRaw ? "bg-amber-400 text-[#0F0F12]" : "bg-white/95 hover:bg-white text-[#0F0F12]"}`,
+												title: "Toggle RAW unedited input vs studio master",
+												children: [/* @__PURE__ */ jsx(Eye, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", { children: showRaw ? "Showing: RAW" : "Showing: MASTER" })]
+											}), /* @__PURE__ */ jsx("button", {
+												type: "button",
+												onClick: () => {
+													setGalleryLightbox(item);
+													setLightboxSplitPos(50);
+												},
+												className: "w-8 h-8 rounded-full bg-white/95 hover:bg-white text-[#0F0F12] flex items-center justify-center shadow-md transition-all hover:scale-110 cursor-pointer",
+												title: "Open interactive A/B comparison slider",
+												children: /* @__PURE__ */ jsx(Maximize2, { className: "w-3.5 h-3.5" })
 											})]
 										})
 									]
-								}),
-								/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("span", {
-									className: "text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 block mb-2.5",
-									children: "1. SELECT DESIRED CAPABILITIES"
-								}), /* @__PURE__ */ jsx("div", {
-									className: "flex flex-wrap gap-2",
-									children: [
-										"Precision Clipping",
-										"3D Ghost Mannequin",
-										"Fine Jewelry Polish",
-										"Multi-SKU Recolor",
-										"Cosmetics & Glass"
-									].map((cap) => {
-										const active = selectedCapabilities.includes(cap);
-										return /* @__PURE__ */ jsxs("button", {
+								}), /* @__PURE__ */ jsxs("div", {
+									className: "p-5 flex-1 flex flex-col justify-between",
+									children: [/* @__PURE__ */ jsxs("div", { children: [
+										/* @__PURE__ */ jsx("span", {
+											className: "text-[10px] font-extrabold uppercase tracking-widest text-emerald-600",
+											children: item.categoryLabel
+										}),
+										/* @__PURE__ */ jsx("h3", {
+											className: "text-base font-extrabold text-[#0F0F12] mt-1 leading-snug",
+											children: item.title
+										}),
+										/* @__PURE__ */ jsx("p", {
+											className: "text-xs text-neutral-500 mt-1.5 line-clamp-2 leading-relaxed",
+											children: item.subtitle
+										}),
+										/* @__PURE__ */ jsx("div", {
+											className: "flex flex-wrap gap-1.5 mt-3",
+											children: item.specs.map((spec, sIdx) => /* @__PURE__ */ jsx("span", {
+												className: "px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-600 text-[10px] font-medium",
+												children: spec
+											}, sIdx))
+										})
+									] }), /* @__PURE__ */ jsxs("div", {
+										className: "pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between",
+										children: [/* @__PURE__ */ jsxs("button", {
 											type: "button",
-											onClick: () => toggleCapabilityPill(cap),
-											className: `px-4 py-2 rounded-full text-xs font-extrabold transition-all flex items-center gap-1.5 ${active ? "bg-emerald-400 text-[#0F0F12]" : "bg-white/10 text-neutral-300 hover:bg-white/15"}`,
-											children: [active && /* @__PURE__ */ jsx(Check, { className: "w-3.5 h-3.5 stroke-[3]" }), /* @__PURE__ */ jsx("span", { children: cap })]
-										}, cap);
-									})
-								})] }),
-								/* @__PURE__ */ jsxs("div", {
-									className: "flex items-center gap-3 pt-1",
-									children: [/* @__PURE__ */ jsxs("span", {
-										className: "text-xs text-neutral-400 flex items-center gap-1.5",
-										children: [/* @__PURE__ */ jsx(ShieldCheck, { className: "w-4 h-4 text-emerald-400" }), "Strict NDA Protection"]
-									}), /* @__PURE__ */ jsx("div", {
-										className: "flex items-center gap-1.5 opacity-60 text-[10px] font-mono uppercase",
-										children: [
-											"PSD",
-											"TIFF",
-											"CR3",
-											"NEF",
-											"PNG"
-										].map((fmt) => /* @__PURE__ */ jsx("span", {
-											className: "px-1.5 py-0.5 rounded bg-white/10",
-											children: fmt
-										}, fmt))
+											onClick: () => {
+												setGalleryLightbox(item);
+												setLightboxSplitPos(50);
+											},
+											className: "text-xs font-extrabold text-[#0F0F12] hover:text-emerald-600 transition-colors flex items-center gap-1 cursor-pointer",
+											children: [/* @__PURE__ */ jsx("span", { children: "Compare A/B Slider" }), /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-3.5 h-3.5 text-neutral-400" })]
+										}), /* @__PURE__ */ jsx(Link, {
+											href: item.href,
+											className: "w-7 h-7 rounded-full bg-neutral-100 hover:bg-[#0F0F12] text-neutral-600 hover:text-white flex items-center justify-center transition-all shadow-2xs",
+											title: "View dedicated service",
+											children: /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })
+										})]
 									})]
+								})]
+							}, item.id);
+						})
+					})]
+				})
+			}),
+			/* @__PURE__ */ jsx("section", {
+				id: "faq",
+				className: "py-16 px-4 sm:px-8 bg-neutral-50/70 border-t border-neutral-200/80",
+				children: /* @__PURE__ */ jsxs("div", {
+					className: "max-w-4xl mx-auto",
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "text-center max-w-2xl mx-auto mb-12",
+							children: [
+								/* @__PURE__ */ jsxs("div", {
+									className: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[11px] font-extrabold tracking-wider uppercase mb-3",
+									children: [/* @__PURE__ */ jsx(HelpCircle, { className: "w-3.5 h-3.5 text-emerald-600" }), /* @__PURE__ */ jsx("span", { children: "FREQUENTLY ASKED QUESTIONS" })]
+								}),
+								/* @__PURE__ */ jsx("h2", {
+									className: "text-2xl sm:text-4xl font-extrabold tracking-tight text-[#0F0F12]",
+									children: "Commercial Production & Workflow Answers"
+								}),
+								/* @__PURE__ */ jsx("p", {
+									className: "text-xs sm:text-sm text-neutral-500 font-medium mt-2 leading-relaxed",
+									children: "Clear technical details on turnarounds, precision Bézier clipping, enterprise NDAs, and our complimentary 3-image trial process."
 								})
 							]
-						}), /* @__PURE__ */ jsx("div", {
-							className: "lg:col-span-6",
-							children: !trialSubmitted ? /* @__PURE__ */ jsxs("form", {
-								onSubmit: (e) => {
-									e.preventDefault();
-									setTrialSubmitted(true);
-								},
-								className: "rounded-[26px] bg-white/5 border border-white/10 p-6 sm:p-8 space-y-4",
-								children: [
-									/* @__PURE__ */ jsxs("label", {
-										onClick: () => fileInputRef.current?.click(),
-										className: "block border-2 border-dashed border-white/20 hover:border-emerald-400 rounded-2xl p-7 text-center cursor-pointer transition-colors bg-white/5",
-										children: [
-											/* @__PURE__ */ jsx("input", {
-												ref: fileInputRef,
-												type: "file",
-												multiple: true,
-												className: "hidden",
-												onChange: handleFileChange
-											}),
-											/* @__PURE__ */ jsx("div", {
-												className: "w-11 h-11 rounded-full bg-emerald-400/20 text-emerald-300 flex items-center justify-center mx-auto mb-3",
-												children: /* @__PURE__ */ jsx(Upload, { className: "w-5 h-5" })
-											}),
-											/* @__PURE__ */ jsx("span", {
-												className: "text-sm font-extrabold text-white block",
-												children: uploadedFiles.length > 0 ? `${uploadedFiles.length} RAW file(s) attached` : "Drop RAW files here or click to browse"
-											}),
-											/* @__PURE__ */ jsx("span", {
-												className: "text-xs text-neutral-400 mt-1 block",
-												children: "Supports PSD, TIFF, CR3, NEF, PNG & JPG • Strict NDA Protection"
-											})
-										]
-									}),
-									/* @__PURE__ */ jsxs("div", {
-										className: "grid grid-cols-1 sm:grid-cols-2 gap-3",
-										children: [/* @__PURE__ */ jsx("input", {
-											type: "email",
-											required: true,
-											placeholder: "Work email address...",
-											className: "w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-xs sm:text-sm text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-400"
-										}), /* @__PURE__ */ jsx("input", {
-											type: "text",
-											placeholder: "Brand / Studio URL (optional)",
-											className: "w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-xs sm:text-sm text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-400"
-										})]
-									}),
-									/* @__PURE__ */ jsxs("button", {
-										type: "submit",
-										className: "w-full py-4 rounded-full bg-emerald-400 text-[#0F0F12] font-extrabold text-xs sm:text-sm hover:bg-emerald-300 transition-colors flex items-center justify-center gap-2 shadow-lg",
-										children: [/* @__PURE__ */ jsx("span", { children: "Submit Free Sample Request" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-4 h-4" })]
-									})
-								]
-							}) : /* @__PURE__ */ jsxs("div", {
-								className: "rounded-[26px] bg-white/5 border border-emerald-400/30 p-8 text-center space-y-3",
-								children: [
-									/* @__PURE__ */ jsx(CheckCircle2, { className: "w-11 h-11 text-emerald-400 mx-auto" }),
-									/* @__PURE__ */ jsx("h3", {
-										className: "text-xl font-extrabold",
-										children: "Sample Request Received"
-									}),
-									/* @__PURE__ */ jsxs("p", {
-										className: "text-xs sm:text-sm text-neutral-300 max-w-md mx-auto",
-										children: [
-											"Our senior retouching desk has queued your sample for",
-											" ",
-											/* @__PURE__ */ jsx("span", {
-												className: "text-emerald-300 font-bold",
-												children: volumeTierInfo.sla
-											}),
-											" ",
-											"turnaround."
-										]
-									}),
-									/* @__PURE__ */ jsx("button", {
+						}),
+						/* @__PURE__ */ jsx("div", {
+							className: "space-y-3.5",
+							children: FAQ_ITEMS.map((faq) => {
+								const isOpen = openFaqIds.includes(faq.id);
+								return /* @__PURE__ */ jsxs("div", {
+									className: `rounded-2xl border transition-all duration-200 overflow-hidden ${isOpen ? "bg-white border-neutral-300 shadow-md ring-1 ring-black/5" : "bg-white border-neutral-200/80 hover:border-neutral-300 hover:bg-neutral-50/50 shadow-2xs"}`,
+									children: [/* @__PURE__ */ jsxs("button", {
 										type: "button",
-										onClick: () => {
-											setTrialSubmitted(false);
-											setUploadedFiles([]);
-										},
-										className: "text-xs font-extrabold text-emerald-400 underline pt-2",
-										children: "Upload another batch"
+										onClick: () => toggleFaq(faq.id),
+										className: "w-full text-left p-5 sm:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer focus:outline-none",
+										"aria-expanded": isOpen,
+										children: [/* @__PURE__ */ jsxs("div", {
+											className: "flex-1 pr-2",
+											children: [/* @__PURE__ */ jsx("div", {
+												className: "flex items-center gap-2 mb-1",
+												children: /* @__PURE__ */ jsx("span", {
+													className: "text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md",
+													children: faq.category
+												})
+											}), /* @__PURE__ */ jsx("h3", {
+												className: "text-sm sm:text-base font-extrabold text-[#0F0F12] leading-snug",
+												children: faq.question
+											})]
+										}), /* @__PURE__ */ jsx("div", {
+											className: `w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${isOpen ? "bg-[#0F0F12] text-white rotate-180" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"}`,
+											children: /* @__PURE__ */ jsx(ChevronDown, { className: "w-4 h-4" })
+										})]
+									}), isOpen && /* @__PURE__ */ jsx("div", {
+										className: "px-5 pb-5 sm:px-6 sm:pb-6 pt-0 text-xs sm:text-sm text-neutral-600 leading-relaxed border-t border-neutral-100 mt-1",
+										children: /* @__PURE__ */ jsx("p", {
+											className: "pt-3",
+											children: faq.answer
+										})
+									})]
+								}, faq.id);
+							})
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "mt-10 p-6 sm:p-8 rounded-[28px] bg-white border border-neutral-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "space-y-1 text-center sm:text-left",
+								children: [
+									/* @__PURE__ */ jsx("span", {
+										className: "text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 block",
+										children: "HAVE CUSTOM ART DIRECTION SPECS?"
+									}),
+									/* @__PURE__ */ jsx("h4", {
+										className: "text-base sm:text-lg font-extrabold text-[#0F0F12]",
+										children: "Talk Directly With Our Studio Technical Director"
+									}),
+									/* @__PURE__ */ jsx("p", {
+										className: "text-xs text-neutral-500",
+										children: "Discuss custom batch integrations, automated FTP/API sync, or calibrated color grading workflows."
 									})
 								]
-							})
-						})]
-					})
+							}), /* @__PURE__ */ jsx("div", {
+								className: "flex items-center gap-3 shrink-0",
+								children: /* @__PURE__ */ jsxs(Link, {
+									href: "/contact",
+									className: "px-5 py-3 rounded-full bg-[#0F0F12] text-white text-xs font-extrabold hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-xs",
+									children: [/* @__PURE__ */ jsx("span", { children: "Schedule Discovery Call" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })]
+								})
+							})]
+						})
+					]
 				})
 			}),
 			lightboxItem && /* @__PURE__ */ jsx("div", {
@@ -1422,6 +1651,101 @@ function HomeOriginal({ clients = [] }) {
 							})]
 						})]
 					})]
+				})
+			}),
+			galleryLightbox && /* @__PURE__ */ jsx("div", {
+				onClick: () => setGalleryLightbox(null),
+				className: "fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6",
+				children: /* @__PURE__ */ jsxs("div", {
+					onClick: (e) => e.stopPropagation(),
+					className: "relative max-w-5xl w-full rounded-[28px] overflow-hidden bg-[#0F0F12] text-white border border-neutral-800 shadow-2xl flex flex-col",
+					children: [
+						/* @__PURE__ */ jsxs("div", {
+							className: "px-6 py-4 border-b border-neutral-800 flex items-center justify-between",
+							children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("span", {
+								className: "text-[10px] font-extrabold uppercase tracking-wider text-emerald-400",
+								children: [
+									galleryLightbox.categoryLabel,
+									" // ",
+									galleryLightbox.badge
+								]
+							}), /* @__PURE__ */ jsx("h3", {
+								className: "text-base sm:text-lg font-extrabold text-white",
+								children: galleryLightbox.title
+							})] }), /* @__PURE__ */ jsx("button", {
+								type: "button",
+								onClick: () => setGalleryLightbox(null),
+								className: "w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer",
+								children: /* @__PURE__ */ jsx(X, { className: "w-4 h-4" })
+							})]
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "relative h-[380px] sm:h-[500px] w-full select-none cursor-ew-resize overflow-hidden bg-black",
+							onMouseDown: () => setIsDraggingLightboxSplit(true),
+							onTouchStart: () => setIsDraggingLightboxSplit(true),
+							ref: lightboxStageRef,
+							children: [
+								/* @__PURE__ */ jsx("img", {
+									src: galleryLightbox.afterImg,
+									alt: galleryLightbox.title,
+									className: "absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+								}),
+								/* @__PURE__ */ jsx("div", {
+									className: "absolute inset-y-0 left-0 overflow-hidden pointer-events-none",
+									style: { width: `${lightboxSplitPos}%` },
+									children: /* @__PURE__ */ jsx("img", {
+										src: galleryLightbox.beforeImg,
+										alt: "Raw Input",
+										className: "absolute inset-y-0 left-0 h-full max-w-none object-cover object-center",
+										style: { width: lightboxStageRef.current ? `${lightboxStageRef.current.clientWidth}px` : "100%" }
+									})
+								}),
+								/* @__PURE__ */ jsxs("div", {
+									className: "absolute top-0 bottom-0 z-20 pointer-events-none flex flex-col items-center justify-center",
+									style: {
+										left: `${lightboxSplitPos}%`,
+										transform: "translateX(-50%)"
+									},
+									children: [/* @__PURE__ */ jsx("div", { className: "w-0.5 h-full bg-white shadow-[0_0_12px_rgba(0,0,0,0.8)]" }), /* @__PURE__ */ jsx("div", {
+										className: "absolute w-8 h-8 rounded-full bg-white text-[#0F0F12] shadow-xl flex items-center justify-center",
+										children: /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-3.5 h-3.5" })
+									})]
+								}),
+								/* @__PURE__ */ jsx("div", {
+									className: "absolute top-4 left-4 z-10 pointer-events-none",
+									children: /* @__PURE__ */ jsx("span", {
+										className: "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-black/60 backdrop-blur-md text-amber-300 border border-white/10",
+										children: galleryLightbox.rawLabel
+									})
+								}),
+								/* @__PURE__ */ jsx("div", {
+									className: "absolute top-4 right-4 z-10 pointer-events-none",
+									children: /* @__PURE__ */ jsx("span", {
+										className: "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-black/60 backdrop-blur-md text-emerald-400 border border-white/10",
+										children: galleryLightbox.editedLabel
+									})
+								})
+							]
+						}),
+						/* @__PURE__ */ jsxs("div", {
+							className: "p-4 sm:p-5 bg-neutral-900 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-4",
+							children: [/* @__PURE__ */ jsxs("div", {
+								className: "flex flex-wrap gap-2 text-xs text-neutral-400",
+								children: [
+									/* @__PURE__ */ jsxs("span", {
+										className: "font-bold text-white",
+										children: ["SLA: ", galleryLightbox.turnaround]
+									}),
+									/* @__PURE__ */ jsx("span", { children: "•" }),
+									/* @__PURE__ */ jsxs("span", { children: ["Specs: ", galleryLightbox.specs.join(" • ")] })
+								]
+							}), /* @__PURE__ */ jsxs(Link, {
+								href: galleryLightbox.href,
+								className: "px-4 py-2 rounded-full bg-emerald-400 hover:bg-emerald-300 text-[#0F0F12] text-xs font-extrabold transition-colors flex items-center gap-1.5",
+								children: [/* @__PURE__ */ jsx("span", { children: "View Dedicated Service" }), /* @__PURE__ */ jsx(ArrowUpRight, { className: "w-3.5 h-3.5" })]
+							})]
+						})
+					]
 				})
 			})
 		]
