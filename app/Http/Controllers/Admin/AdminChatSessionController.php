@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\ChatMessageRead;
 use App\Events\ChatMessageSent;
+use App\Events\ChatUserTyping;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
@@ -10,6 +12,7 @@ use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,22 +23,59 @@ class AdminChatSessionController extends Controller
      */
     public function index(Request $request): Response
     {
+        // Auto-release idle operator sessions (> 5 minutes inactive without reply)
+        ChatSession::where('mode', 'operator')
+            ->where('last_active_at', '<', now()->subMinutes(5))
+            ->update([
+                'mode' => 'bot',
+                'operator_id' => null,
+                'operator_name' => null,
+            ]);
+
         // Acknowledge unread chat leads when admin opens the transcripts & leads page
         ContactMessage::where('inquiry_type', 'chat_lead')
             ->where('status', 'new')
             ->update(['status' => 'read']);
 
         $status = $request->query('status');
+        $search = trim((string) $request->query('search', ''));
+        $initialSessionId = $request->query('id');
 
-        $query = ChatSession::withCount('messages')
-            ->with(['consultations'])
+        $query = ChatSession::withCount([
+            'messages',
+            'messages as unread_count' => function ($q) {
+                $q->where('sender', 'user')->where('is_read', false);
+            },
+        ])
+            ->with(['latestMessage', 'consultations'])
             ->orderBy('last_active_at', 'desc');
 
-        if ($status && in_array($status, ['converted', 'active', 'idle', 'abandoned'], true)) {
-            $query->where('status', $status);
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('lead_name', 'like', "%{$search}%")
+                    ->orWhere('lead_email', 'like', "%{$search}%")
+                    ->orWhere('ip_address', 'like', "%{$search}%")
+                    ->orWhereHas('messages', function ($mq) use ($search) {
+                        $mq->where('content', 'like', "%{$search}%");
+                    });
+            });
         }
 
-        $sessions = $query->paginate(20)->through(fn (ChatSession $s) => [
+        if ($status && in_array($status, ['needs_human', 'operator', 'bot', 'converted', 'active', 'idle', 'abandoned'], true)) {
+            if ($status === 'needs_human') {
+                $query->where('needs_human', true);
+            } elseif ($status === 'operator') {
+                $query->where('mode', 'operator');
+            } elseif ($status === 'bot') {
+                $query->where('mode', 'bot')->where('needs_human', false);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+
+        $currentUserId = $request->user()?->id;
+
+        $sessions = $query->paginate(35)->through(fn (ChatSession $s) => [
             'id' => $s->id,
             'lead_name' => $s->lead_name ?: 'Anonymous Visitor',
             'lead_email' => $s->lead_email,
@@ -46,9 +86,15 @@ class AdminChatSessionController extends Controller
             'status' => $s->status,
             'mode' => $s->mode ?? 'bot',
             'needs_human' => (bool) $s->needs_human,
+            'operator_id' => $s->operator_id,
             'operator_name' => $s->operator_name,
+            'is_assigned_to_me' => $s->operator_id && $s->operator_id === $currentUserId,
             'ip_address' => $s->ip_address,
             'messages_count' => $s->messages_count,
+            'unread_count' => (int) $s->unread_count,
+            'last_message' => $s->latestMessage?->content ? Str::limit($s->latestMessage->content, 65) : 'No messages yet',
+            'last_message_sender' => $s->latestMessage?->sender ?? 'system',
+            'last_message_time' => $s->latestMessage?->created_at?->diffForHumans() ?? $s->last_active_at?->diffForHumans() ?? 'Just now',
             'has_consultation' => $s->consultations->isNotEmpty(),
             'last_active_at' => $s->last_active_at?->toISOString(),
             'last_active_formatted' => $s->last_active_at?->diffForHumans() ?? 'Never',
@@ -68,6 +114,12 @@ class AdminChatSessionController extends Controller
             'sessions' => $sessions,
             'stats' => $stats,
             'currentStatus' => $status,
+            'initialSessionId' => $initialSessionId,
+            'currentAdmin' => [
+                'id' => $request->user()?->id,
+                'name' => $request->user()?->name,
+                'email' => $request->user()?->email,
+            ],
         ]);
     }
 
@@ -84,6 +136,21 @@ class AdminChatSessionController extends Controller
                 ->update(['status' => 'read']);
         }
 
+        // Mark user messages as read by admin operator
+        $unreadUserMsgIds = $chatSession->messages()
+            ->where('is_read', false)
+            ->where('sender', 'user')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($unreadUserMsgIds)) {
+            $chatSession->messages()->whereIn('id', $unreadUserMsgIds)->update(['is_read' => true]);
+            try {
+                broadcast(new ChatMessageRead($chatSession->id, $unreadUserMsgIds));
+            } catch (\Throwable) {
+            }
+        }
+
         $messages = $chatSession->messages()
             ->orderBy('created_at', 'asc')
             ->get()
@@ -94,8 +161,9 @@ class AdminChatSessionController extends Controller
                 'attachments' => $m->attachments ?? [],
                 'tool_calls' => $m->tool_calls ?? [],
                 'tool_results' => $m->tool_results ?? [],
+                'is_read' => (bool) $m->is_read,
                 'created_at' => $m->created_at->toISOString(),
-                'created_at_formatted' => $m->created_at->format('M j, g:i A'),
+                'created_at_formatted' => $m->created_at->format('g:i A'),
             ]);
 
         return response()->json([
@@ -138,10 +206,6 @@ class AdminChatSessionController extends Controller
         } catch (\Throwable) {
         }
 
-        try {
-            broadcast(new \App\Events\ChatMessageSent($announcement));
-        } catch (\Throwable) {}
-
         return response()->json([
             'success' => true,
             'session' => [
@@ -177,10 +241,6 @@ class AdminChatSessionController extends Controller
             broadcast(new ChatMessageSent($announcement));
         } catch (\Throwable) {
         }
-
-        try {
-            broadcast(new \App\Events\ChatMessageSent($announcement));
-        } catch (\Throwable) {}
 
         return response()->json([
             'success' => true,
@@ -225,10 +285,6 @@ class AdminChatSessionController extends Controller
         } catch (\Throwable) {
         }
 
-        try {
-            broadcast(new \App\Events\ChatMessageSent($message));
-        } catch (\Throwable) {}
-
         $chatSession->touchActivity();
 
         return response()->json([
@@ -251,6 +307,21 @@ class AdminChatSessionController extends Controller
      */
     public function poll(Request $request, ChatSession $chatSession): JsonResponse
     {
+        // Mark user messages as read by admin operator
+        $unreadUserMsgIds = $chatSession->messages()
+            ->where('is_read', false)
+            ->where('sender', 'user')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($unreadUserMsgIds)) {
+            $chatSession->messages()->whereIn('id', $unreadUserMsgIds)->update(['is_read' => true]);
+            try {
+                broadcast(new ChatMessageRead($chatSession->id, $unreadUserMsgIds));
+            } catch (\Throwable) {
+            }
+        }
+
         $afterId = (int) $request->query('after_id', 0);
 
         $query = $chatSession->messages()->orderBy('id', 'asc');
@@ -265,6 +336,7 @@ class AdminChatSessionController extends Controller
             'attachments' => $m->attachments ?? [],
             'tool_calls' => $m->tool_calls ?? [],
             'tool_results' => $m->tool_results ?? [],
+            'is_read' => (bool) $m->is_read,
             'created_at' => $m->created_at->toISOString(),
             'created_at_formatted' => $m->created_at->format('M j, g:i A'),
         ]);
@@ -280,6 +352,25 @@ class AdminChatSessionController extends Controller
             ],
             'messages' => $messages,
         ]);
+    }
+
+    /**
+     * Broadcast live operator typing indicator to visitor.
+     */
+    public function typing(Request $request, ChatSession $chatSession): JsonResponse
+    {
+        $admin = $request->user();
+        try {
+            broadcast(new ChatUserTyping(
+                $chatSession->id,
+                'operator',
+                $admin?->name ?? 'Live Specialist',
+                (bool) $request->input('is_typing', true)
+            ));
+        } catch (\Throwable) {
+        }
+
+        return response()->json(['success' => true]);
     }
 
     /**

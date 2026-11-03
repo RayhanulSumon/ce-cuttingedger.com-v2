@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ChatMessageRead;
+use App\Events\ChatUserTyping;
 use App\Models\ChatMessage;
 use App\Models\Order;
 use App\Services\Chat\ChatOrchestrator;
@@ -261,6 +262,30 @@ class ChatController extends Controller
             'success' => true,
             'marked_ids' => $unreadIds,
         ]);
+    }
+
+    /**
+     * Broadcast client typing status.
+     */
+    public function typing(Request $request): JsonResponse
+    {
+        $session = $this->sessionManager->resolve($request, touch: true, createIfMissing: false);
+        if (! $session) {
+            return response()->json(['success' => false]);
+        }
+
+        $isTyping = $request->boolean('is_typing', true);
+        try {
+            broadcast(new ChatUserTyping(
+                $session->id,
+                'user',
+                $session->lead_name ?: 'Client',
+                $isTyping
+            ));
+        } catch (\Throwable) {
+        }
+
+        return response()->json(['success' => true]);
     }
 
     /**

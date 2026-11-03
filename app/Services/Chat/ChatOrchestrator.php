@@ -3,6 +3,7 @@
 namespace App\Services\Chat;
 
 use App\Events\ChatMessageSent;
+use App\Events\LiveChatTakeoverRequested;
 use App\Models\ChatConsultation;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
@@ -50,6 +51,10 @@ class ChatOrchestrator
         $isLiveHumanInquiry = preg_match('/\b(human|agent|operator|person|support team|real person|speak to someone|talk to someone|talk to a person|representative|live assist\w*|live support|live desk|anyone live)\b/iu', $userText);
         if ($isLiveHumanInquiry) {
             $session->requestHuman();
+            try {
+                broadcast(new LiveChatTakeoverRequested($session, $userText));
+            } catch (\Throwable) {
+            }
         }
 
         // If a human operator has taken over this chat session, do not generate bot replies
@@ -104,26 +109,33 @@ class ChatOrchestrator
                 // Guard against defective Ollama outputs:
                 $trimmed = trim($assistantContent);
                 $cleanText = preg_replace('/[\p{P}\p{S}\s]+/u', '', $trimmed);
-                $isRepetitiveTemplate = preg_match('/^(whether|as an ai)/i', $trimmed);
-                $isInvalidOrSingleEmoji = (strlen($trimmed) < 10 || strlen($cleanText) < 5) && empty($toolCards);
 
-                // Anti-Echo: Check if this response repeats a recent assistant message
-                $isDuplicateResponse = false;
-                $recentAssistantMessages = $session->messages()
-                    ->where('sender', 'assistant')
-                    ->latest('id')
-                    ->take(3)
-                    ->pluck('content');
-
-                foreach ($recentAssistantMessages as $pastContent) {
-                    similar_text(strtolower($trimmed), strtolower(trim((string) $pastContent)), $similarityPercent);
-                    if ($similarityPercent > 65) {
-                        $isDuplicateResponse = true;
-                        break;
+                // If Ollama output begins with repetitive formulaic filler like "Whether it's about...", strip it to the main response
+                if (preg_match('/^whether\s+[^.!?]+[.!?]\s*/i', $trimmed, $fillerMatches)) {
+                    $cleaned = trim(substr($trimmed, strlen($fillerMatches[0])));
+                    if (strlen($cleaned) > 20) {
+                        $trimmed = $cleaned;
+                        $assistantContent = $cleaned;
                     }
                 }
 
-                if ($isRepetitiveTemplate || $isInvalidOrSingleEmoji || $isDuplicateResponse) {
+                $isInvalidOrEmpty = (strlen($trimmed) < 10 || strlen($cleanText) < 5) && empty($toolCards);
+
+                // Anti-Echo: Check if this response exactly repeats the immediate last assistant message
+                $isDuplicateResponse = false;
+                $lastAssistantMsg = $session->messages()
+                    ->where('sender', 'assistant')
+                    ->latest('id')
+                    ->value('content');
+
+                if ($lastAssistantMsg) {
+                    similar_text(strtolower($trimmed), strtolower(trim((string) $lastAssistantMsg)), $similarityPercent);
+                    if ($similarityPercent > 85) {
+                        $isDuplicateResponse = true;
+                    }
+                }
+
+                if ($isInvalidOrEmpty || $isDuplicateResponse) {
                     $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
                     $assistantContent = $fallbackResult['content'];
                     $toolCards = $fallbackResult['tool_cards'];
@@ -251,11 +263,18 @@ Studio Headquarters & Facts:
 - Contact Email: hello@cuttingedger.com
 
 Conversational Rules & Direct Responses:
+0. CRITICAL ANTI-FILLER CONSTRAINT: NEVER begin your message with "Whether", "Whether you need", "Whether it's about", "Whether you are looking", "As an AI", or similar corporate canned boilerplate. Jump directly into answering the client with warmth and intelligence!
 1. LIVE ASSISTANT / HUMAN INQUIRIES: If the client asks "anyone live assistant here?", "is there a person?", "can I speak with a human?", or similar:
    Confirm clearly: "Yes, absolutely! I am our 24/7 AI studio specialist available right now to answer questions, discuss editing specs, and calculate estimates. In addition, our human production team is active 24/7! I've flagged our live desk — would you like a live specialist to step in, or can I help you with a specific project question right now?"
    DO NOT recite the pricing catalog when asked about a live assistant!
-2. SHORT STUDIO OVERVIEW: If the client says "i want shortly describe", "who are you", or "describe your studio":
-   Give an elegant, concise 2–3 sentence summary of CuttingEdger's 100% hand-drawn clipping paths, ghost mannequin, high-end retouching, 12-24h turnaround, and offer 3 free sample test edits.
+2. SHORT SERVICES INQUIRY: If the client asks "what is your services give me short", "what do you offer", "what can you do", "list services", or "describe your studio":
+   Provide this clean, concise overview:
+   • Clipping Path / Cutouts ($0.45 – $0.49/img, 100% hand-drawn Photoshop Pen Tool curves)
+   • Ghost Mannequin / Invisible Symmetry ($0.99/img, 3D garment volume & neck joints)
+   • Multi-Clipping Path / Color Masking ($1.25/img, layer separation for e-commerce colorways)
+   • High-End Fashion & Beauty Retouching ($1.99 – $3.99/img, micro frequency separation)
+   • Fine Jewelry & Macro Retouching ($2.49 – $4.99/img, 500% dust removal & metal polishing)
+   Turnaround: Standard 12–24h, Express rush 6h. We offer 3 Free Sample Edits to test our quality!
 3. GREETINGS: If the client simply says "hi", "hello", "hey":
    Reply warmly and politely in 1 sentence: "Hello! Welcome to CuttingEdger Studio. How can I assist you with your image editing, clipping paths, or retouching project today?" DO NOT dump the physical office address or rates unless asked!
 4. HOW ARE YOU: If asked "how are you?", answer warmly in 1 line: "Doing great, thank you! Running a busy day of catalog batches. How can I assist you with your images today?"

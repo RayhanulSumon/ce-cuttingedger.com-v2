@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
 import { Toaster, toast } from "@/Components/ui/sonner";
 import { AdminNotificationDropdown } from "@/Components/Admin/AdminNotificationDropdown";
+import { AdminFloatingChatDock } from "@/Components/Admin/AdminFloatingChatDock";
 import {
     Sidebar,
     SidebarContent,
@@ -452,6 +453,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
                         {/* Main Page Children */}
                         <div className="p-8 flex-1">{children}</div>
+
+                        {/* Global Floating Multi-Chat Dock & Live Alerts */}
+                        <AdminFloatingChatDock />
                     </SidebarInset>
                 </div>
             </SidebarProvider>

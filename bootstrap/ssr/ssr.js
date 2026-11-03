@@ -3264,6 +3264,8 @@ function ChatWidget() {
 	const [needsHuman, setNeedsHuman] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isTypingVisible, setIsTypingVisible] = useState(false);
+	const [isOperatorTyping, setIsOperatorTyping] = useState(false);
+	const [operatorTypingName, setOperatorTypingName] = useState("Live Specialist");
 	const [isResetting, setIsResetting] = useState(false);
 	const [isUploading, setIsUploading] = useState(false);
 	const [unreadCount, setUnreadCount] = useState(0);
@@ -3276,6 +3278,8 @@ function ChatWidget() {
 	const scrollContainerRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const lastActivityRef = useRef(Date.now());
+	const operatorTypingTimeoutRef = useRef(null);
+	const lastVisitorTypingSentRef = useRef(0);
 	useEffect(() => {
 		const el = scrollContainerRef.current;
 		if (!el) return;
@@ -3437,10 +3441,22 @@ function ChatWidget() {
 					return m;
 				}));
 			};
+			const onUserTyping = (data) => {
+				if (data.sender === "operator" && data.is_typing) {
+					setIsOperatorTyping(true);
+					if (data.name) setOperatorTypingName(data.name);
+					if (operatorTypingTimeoutRef.current) clearTimeout(operatorTypingTimeoutRef.current);
+					operatorTypingTimeoutRef.current = setTimeout(() => {
+						setIsOperatorTyping(false);
+					}, 3500);
+				} else if (data.sender === "operator" && !data.is_typing) setIsOperatorTyping(false);
+			};
 			channel.listen("ChatMessageSent", onMessageSent);
 			channel.listen(".ChatMessageSent", onMessageSent);
 			channel.listen("ChatMessageRead", onMessageRead);
 			channel.listen(".ChatMessageRead", onMessageRead);
+			channel.listen("ChatUserTyping", onUserTyping);
+			channel.listen(".ChatUserTyping", onUserTyping);
 			return () => {
 				echoInstance.leaveChannel(`chat.${sessionId}`);
 			};
@@ -3513,7 +3529,7 @@ function ChatWidget() {
 		}
 		const readTimer = setTimeout(() => {
 			setIsTypingVisible(true);
-		}, 1800);
+		}, 400);
 		return () => {
 			clearTimeout(readTimer);
 		};
@@ -3547,6 +3563,22 @@ function ChatWidget() {
 			clearInterval(interval);
 		};
 	}, [sessionId, isOpen]);
+	const handleInputChange = (e) => {
+		setInputText(e.target.value);
+		const now = Date.now();
+		if (sessionId && now - lastVisitorTypingSentRef.current > 1500) {
+			lastVisitorTypingSentRef.current = now;
+			fetch("/api/chat/typing", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"X-Requested-With": "XMLHttpRequest",
+					"X-Chat-Session-Id": sessionId
+				},
+				body: JSON.stringify({ is_typing: true })
+			}).catch(() => {});
+		}
+	};
 	const handleSendMessage = async (textToSend) => {
 		const text = (textToSend || inputText).trim();
 		if (!text || isLoading) return;
@@ -3592,7 +3624,7 @@ function ChatWidget() {
 			if (data.operator_name !== void 0) setOperatorName(data.operator_name);
 			if (data.needs_human !== void 0) setNeedsHuman(Boolean(data.needs_human));
 			const elapsed = Date.now() - startTime;
-			const targetDelay = Math.max(0, 3200 - elapsed);
+			const targetDelay = Math.max(0, 1200 - elapsed);
 			if (targetDelay > 0) await new Promise((resolve) => setTimeout(resolve, targetDelay));
 			setMessages((prev) => {
 				let updated = prev.map((m) => m.id === optimisticId ? {
@@ -4215,6 +4247,26 @@ function ChatWidget() {
 									]
 								}, msg.id || index);
 							}),
+							isOperatorTyping && /* @__PURE__ */ jsxs("div", {
+								className: "flex items-start gap-2 max-w-[85%] animate-in fade-in duration-300",
+								children: [/* @__PURE__ */ jsx("div", {
+									className: "w-6 h-6 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5",
+									children: /* @__PURE__ */ jsx(User, { className: "w-3.5 h-3.5" })
+								}), /* @__PURE__ */ jsxs("div", {
+									className: "rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#101924] border border-cyan-500/25 shadow-md flex items-center gap-2.5",
+									children: [/* @__PURE__ */ jsxs("div", {
+										className: "flex items-center gap-1",
+										children: [
+											/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.3s]" }),
+											/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.15s]" }),
+											/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" })
+										]
+									}), /* @__PURE__ */ jsxs("span", {
+										className: "text-[11px] font-mono text-cyan-300",
+										children: [operatorTypingName || "Live Specialist", " is typing..."]
+									})]
+								})]
+							}),
 							isTypingVisible && /* @__PURE__ */ jsxs("div", {
 								className: "flex items-start gap-2 max-w-[85%] animate-in fade-in duration-300",
 								children: [/* @__PURE__ */ jsx("div", {
@@ -4231,7 +4283,7 @@ function ChatWidget() {
 										]
 									}), /* @__PURE__ */ jsx("span", {
 										className: "text-[11px] font-mono text-white/70",
-										children: chatMode === "operator" ? `${operatorName || "Live Specialist"} is typing...` : "CuttingEdger is typing..."
+										children: "CuttingEdger is typing..."
 									})]
 								})]
 							}),
@@ -4352,7 +4404,7 @@ function ChatWidget() {
 									/* @__PURE__ */ jsx("input", {
 										type: "text",
 										value: inputText,
-										onChange: (e) => setInputText(e.target.value),
+										onChange: handleInputChange,
 										placeholder: "Ask a question, pricing, turnaround, or edits...",
 										className: "flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-accent transition-colors"
 									}),
@@ -4655,32 +4707,32 @@ createServer((page) => createInertiaApp({
 	resolve: async (name) => {
 		const resolvedPageModule = await resolvePageComponent(`./Pages/${name}.tsx`, /* #__PURE__ */ Object.assign({
 			"./Pages/About.tsx": () => import("./assets/About-DwL7ED37.js"),
-			"./Pages/Admin/BlogCategories/Index.tsx": () => import("./assets/Index-CO4iKG20.js"),
+			"./Pages/Admin/BlogCategories/Index.tsx": () => import("./assets/Index-C9w8VSdp.js"),
 			"./Pages/Admin/Blogs/BlogForm.tsx": () => import("./assets/BlogForm-D7XPwDB7.js"),
-			"./Pages/Admin/Blogs/Create.tsx": () => import("./assets/Create-BuXbfyCk.js"),
-			"./Pages/Admin/Blogs/Edit.tsx": () => import("./assets/Edit-BqFrSogq.js"),
-			"./Pages/Admin/Blogs/Index.tsx": () => import("./assets/Index-CY4A5K1b.js"),
-			"./Pages/Admin/Blogs/Trash.tsx": () => import("./assets/Trash-BJjFUROJ.js"),
-			"./Pages/Admin/Careers/Index.tsx": () => import("./assets/Index-DrU_y6i1.js"),
-			"./Pages/Admin/ChatSessions/Index.tsx": () => import("./assets/Index-CZ0RjO44.js"),
-			"./Pages/Admin/Clients/Index.tsx": () => import("./assets/Index-CXcmUq1t.js"),
-			"./Pages/Admin/Consultations/Index.tsx": () => import("./assets/Index-DE-R36Y5.js"),
-			"./Pages/Admin/Dashboard.tsx": () => import("./assets/Dashboard-CsHgu96n.js"),
-			"./Pages/Admin/Faqs/Index.tsx": () => import("./assets/Index-B4G48Fou.js"),
-			"./Pages/Admin/FreeTrials/Index.tsx": () => import("./assets/Index-B-xT9QQQ.js"),
+			"./Pages/Admin/Blogs/Create.tsx": () => import("./assets/Create-CPpsLuYT.js"),
+			"./Pages/Admin/Blogs/Edit.tsx": () => import("./assets/Edit-vsThhkPt.js"),
+			"./Pages/Admin/Blogs/Index.tsx": () => import("./assets/Index--mbYFYh7.js"),
+			"./Pages/Admin/Blogs/Trash.tsx": () => import("./assets/Trash-D7ZScNJv.js"),
+			"./Pages/Admin/Careers/Index.tsx": () => import("./assets/Index-EdyyD1Re.js"),
+			"./Pages/Admin/ChatSessions/Index.tsx": () => import("./assets/Index-wNU8zFME.js"),
+			"./Pages/Admin/Clients/Index.tsx": () => import("./assets/Index-eYaxgeM7.js"),
+			"./Pages/Admin/Consultations/Index.tsx": () => import("./assets/Index-Cx9AsEnz.js"),
+			"./Pages/Admin/Dashboard.tsx": () => import("./assets/Dashboard-BVI653a2.js"),
+			"./Pages/Admin/Faqs/Index.tsx": () => import("./assets/Index-D4UWyv_b.js"),
+			"./Pages/Admin/FreeTrials/Index.tsx": () => import("./assets/Index-BQQC0F6g.js"),
 			"./Pages/Admin/Login.tsx": () => import("./assets/Login-gsizN08-.js"),
-			"./Pages/Admin/Messages/Index.tsx": () => import("./assets/Index-COJRVxwP.js"),
-			"./Pages/Admin/Orders/Index.tsx": () => import("./assets/Index-CLUG717_.js"),
-			"./Pages/Admin/Pricing/Index.tsx": () => import("./assets/Index-DyShMPc4.js"),
-			"./Pages/Admin/Projects/Index.tsx": () => import("./assets/Index-B3CNV7zR.js"),
-			"./Pages/Admin/Redirects/Index.tsx": () => import("./assets/Index-B8cty8wD.js"),
-			"./Pages/Admin/Services/Index.tsx": () => import("./assets/Index-CahHP2n6.js"),
-			"./Pages/Admin/Settings/Index.tsx": () => import("./assets/Index-hgBjH2QO.js"),
-			"./Pages/Admin/Subscribers/Index.tsx": () => import("./assets/Index-Dxy6puqS.js"),
-			"./Pages/Admin/Team/Index.tsx": () => import("./assets/Index-CZmgQVsa.js"),
-			"./Pages/Admin/Testimonials/Index.tsx": () => import("./assets/Index-Dm8-m0ql.js"),
-			"./Pages/Admin/TrackingScripts/Index.tsx": () => import("./assets/Index-DCO0kPlM.js"),
-			"./Pages/Admin/Users/Index.tsx": () => import("./assets/Index-BStdypmZ.js"),
+			"./Pages/Admin/Messages/Index.tsx": () => import("./assets/Index-BH8GLCqO.js"),
+			"./Pages/Admin/Orders/Index.tsx": () => import("./assets/Index-Dmh3szKl.js"),
+			"./Pages/Admin/Pricing/Index.tsx": () => import("./assets/Index-z2D_4ZiD.js"),
+			"./Pages/Admin/Projects/Index.tsx": () => import("./assets/Index-BAat_Lp8.js"),
+			"./Pages/Admin/Redirects/Index.tsx": () => import("./assets/Index-B-FE-qql.js"),
+			"./Pages/Admin/Services/Index.tsx": () => import("./assets/Index-Dkkt3oIK.js"),
+			"./Pages/Admin/Settings/Index.tsx": () => import("./assets/Index-Crwr4Tm_.js"),
+			"./Pages/Admin/Subscribers/Index.tsx": () => import("./assets/Index-CigkJ5Jx.js"),
+			"./Pages/Admin/Team/Index.tsx": () => import("./assets/Index-D2PV_Xra.js"),
+			"./Pages/Admin/Testimonials/Index.tsx": () => import("./assets/Index-a7VcZI4Q.js"),
+			"./Pages/Admin/TrackingScripts/Index.tsx": () => import("./assets/Index-DC94Vpv7.js"),
+			"./Pages/Admin/Users/Index.tsx": () => import("./assets/Index-Bojw3uw8.js"),
 			"./Pages/Blog/Index.tsx": () => import("./assets/Index-CT1ltXy_.js"),
 			"./Pages/Blog/Show.tsx": () => import("./assets/Show-Bz1J7ejG.js"),
 			"./Pages/Careers/Index.tsx": () => import("./assets/Index-CnNOlIuz.js"),

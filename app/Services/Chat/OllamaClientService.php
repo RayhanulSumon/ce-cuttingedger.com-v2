@@ -82,12 +82,12 @@ class OllamaClientService
             'stream' => false,
             'keep_alive' => (string) config('chat.llm.keep_alive', '24h'),
             'options' => [
-                'temperature' => (float) config('chat.llm.temperature', 0.7),
-                'repeat_penalty' => (float) config('chat.llm.repeat_penalty', 1.35),
-                'repeat_last_n' => (int) config('chat.llm.repeat_last_n', 256),
+                'temperature' => (float) config('chat.llm.temperature', 0.65),
+                'repeat_penalty' => (float) config('chat.llm.repeat_penalty', 1.12),
+                'repeat_last_n' => (int) config('chat.llm.repeat_last_n', 128),
                 'top_p' => (float) config('chat.llm.top_p', 0.9),
-                'num_ctx' => (int) config('chat.llm.num_ctx', 2048),
-                'num_predict' => (int) config('chat.llm.max_tokens', 220),
+                'num_ctx' => (int) config('chat.llm.num_ctx', 3072),
+                'num_predict' => (int) config('chat.llm.max_tokens', 768),
                 'num_thread' => (int) config('chat.llm.num_threads', 12),
             ],
         ];

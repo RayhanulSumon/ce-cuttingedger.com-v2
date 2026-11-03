@@ -1,13 +1,16 @@
 {
   "node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
+  "resources/js/Components/Admin/AdminFloatingChatDock.tsx": [
+    "/build/assets/AdminLayout-B_omIhRP.js"
+  ],
   "resources/js/Components/Admin/AdminNotificationDropdown.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/Admin/UI/AdminDataTable.tsx": [
-    "/build/assets/alert-dialog-DsbEgc5R.js"
+    "/build/assets/AdminDataTable-DkjiIkNz.js"
   ],
   "resources/js/Components/Admin/UI/AdminPageHeader.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminPageHeader-BLzCfjWe.js"
   ],
   "resources/js/Components/Admin/UI/RichContentEditor.tsx": [
     "/build/assets/BlogForm-D7XPwDB7.js"
@@ -46,7 +49,7 @@
   ],
   "resources/js/Components/ui/ThemeToggle.tsx": [],
   "resources/js/Components/ui/alert-dialog.tsx": [
-    "/build/assets/alert-dialog-DsbEgc5R.js"
+    "/build/assets/alert-dialog-D8hTrlnh.js"
   ],
   "resources/js/Components/ui/badge.tsx": [
     "/build/assets/badge-BgjwAGBP.js"
@@ -58,7 +61,7 @@
     "/build/assets/dialog-C4D4ccTI.js"
   ],
   "resources/js/Components/ui/dropdown-menu.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/ui/input.tsx": [
     "/build/assets/input-lL3MBuxn.js"
@@ -67,16 +70,16 @@
     "/build/assets/select-DJUEkoYA.js"
   ],
   "resources/js/Components/ui/separator.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/ui/sheet.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/ui/sidebar.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/ui/skeleton.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Components/ui/sonner.tsx": [],
   "resources/js/Components/ui/switch.tsx": [
@@ -86,10 +89,10 @@
     "/build/assets/textarea-DNOgnKpG.js"
   ],
   "resources/js/Components/ui/tooltip.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Layouts/Admin/AdminLayout.tsx": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/Layouts/AppLayout.tsx": [],
   "resources/js/Layouts/Footer.tsx": [],
@@ -100,82 +103,82 @@
     "/build/assets/About-DwL7ED37.js"
   ],
   "resources/js/Pages/Admin/BlogCategories/Index.tsx": [
-    "/build/assets/Index-CO4iKG20.js"
+    "/build/assets/Index-C9w8VSdp.js"
   ],
   "resources/js/Pages/Admin/Blogs/BlogForm.tsx": [
     "/build/assets/BlogForm-D7XPwDB7.js"
   ],
   "resources/js/Pages/Admin/Blogs/Create.tsx": [
-    "/build/assets/Create-BuXbfyCk.js"
+    "/build/assets/Create-CPpsLuYT.js"
   ],
   "resources/js/Pages/Admin/Blogs/Edit.tsx": [
-    "/build/assets/Edit-BqFrSogq.js"
+    "/build/assets/Edit-vsThhkPt.js"
   ],
   "resources/js/Pages/Admin/Blogs/Index.tsx": [
-    "/build/assets/Index-CY4A5K1b.js"
+    "/build/assets/Index--mbYFYh7.js"
   ],
   "resources/js/Pages/Admin/Blogs/Trash.tsx": [
-    "/build/assets/Trash-BJjFUROJ.js"
+    "/build/assets/Trash-D7ZScNJv.js"
   ],
   "resources/js/Pages/Admin/Careers/Index.tsx": [
-    "/build/assets/Index-DrU_y6i1.js"
+    "/build/assets/Index-EdyyD1Re.js"
   ],
   "resources/js/Pages/Admin/ChatSessions/Index.tsx": [
-    "/build/assets/Index-CZ0RjO44.js"
+    "/build/assets/Index-wNU8zFME.js"
   ],
   "resources/js/Pages/Admin/Clients/Index.tsx": [
-    "/build/assets/Index-CXcmUq1t.js"
+    "/build/assets/Index-eYaxgeM7.js"
   ],
   "resources/js/Pages/Admin/Consultations/Index.tsx": [
-    "/build/assets/Index-DE-R36Y5.js"
+    "/build/assets/Index-Cx9AsEnz.js"
   ],
   "resources/js/Pages/Admin/Dashboard.tsx": [
-    "/build/assets/Dashboard-CsHgu96n.js"
+    "/build/assets/Dashboard-BVI653a2.js"
   ],
   "resources/js/Pages/Admin/Faqs/Index.tsx": [
-    "/build/assets/Index-B4G48Fou.js"
+    "/build/assets/Index-D4UWyv_b.js"
   ],
   "resources/js/Pages/Admin/FreeTrials/Index.tsx": [
-    "/build/assets/Index-B-xT9QQQ.js"
+    "/build/assets/Index-BQQC0F6g.js"
   ],
   "resources/js/Pages/Admin/Login.tsx": [
     "/build/assets/Login-gsizN08-.js"
   ],
   "resources/js/Pages/Admin/Messages/Index.tsx": [
-    "/build/assets/Index-COJRVxwP.js"
+    "/build/assets/Index-BH8GLCqO.js"
   ],
   "resources/js/Pages/Admin/Orders/Index.tsx": [
-    "/build/assets/Index-CLUG717_.js"
+    "/build/assets/Index-Dmh3szKl.js"
   ],
   "resources/js/Pages/Admin/Pricing/Index.tsx": [
-    "/build/assets/Index-DyShMPc4.js"
+    "/build/assets/Index-z2D_4ZiD.js"
   ],
   "resources/js/Pages/Admin/Projects/Index.tsx": [
-    "/build/assets/Index-B3CNV7zR.js"
+    "/build/assets/Index-BAat_Lp8.js"
   ],
   "resources/js/Pages/Admin/Redirects/Index.tsx": [
-    "/build/assets/Index-B8cty8wD.js"
+    "/build/assets/Index-B-FE-qql.js"
   ],
   "resources/js/Pages/Admin/Services/Index.tsx": [
-    "/build/assets/Index-CahHP2n6.js"
+    "/build/assets/Index-Dkkt3oIK.js"
   ],
   "resources/js/Pages/Admin/Settings/Index.tsx": [
-    "/build/assets/Index-hgBjH2QO.js"
+    "/build/assets/Index-Crwr4Tm_.js"
   ],
   "resources/js/Pages/Admin/Subscribers/Index.tsx": [
-    "/build/assets/Index-Dxy6puqS.js"
+    "/build/assets/Index-CigkJ5Jx.js"
   ],
   "resources/js/Pages/Admin/Team/Index.tsx": [
-    "/build/assets/Index-CZmgQVsa.js"
+    "/build/assets/Index-D2PV_Xra.js"
   ],
   "resources/js/Pages/Admin/Testimonials/Index.tsx": [
-    "/build/assets/Index-Dm8-m0ql.js"
+    "/build/assets/Index-a7VcZI4Q.js"
   ],
   "resources/js/Pages/Admin/TrackingScripts/Index.tsx": [
-    "/build/assets/Index-DCO0kPlM.js"
+    "/build/assets/Index-DC94Vpv7.js"
   ],
   "resources/js/Pages/Admin/Users/Index.tsx": [
-    "/build/assets/Index-BStdypmZ.js"
+    "/build/assets/Index-Bojw3uw8.js"
   ],
   "resources/js/Pages/Blog/Index.tsx": [
     "/build/assets/Index-CT1ltXy_.js"
@@ -307,7 +310,7 @@
     "/build/assets/Show-Bsj1mT-O.js"
   ],
   "resources/js/hooks/use-mobile.ts": [
-    "/build/assets/AdminPageHeader-BF3p_UDa.js"
+    "/build/assets/AdminLayout-B_omIhRP.js"
   ],
   "resources/js/hooks/useSmoothScroll.ts": [],
   "resources/js/hooks/useTheme.ts": [],

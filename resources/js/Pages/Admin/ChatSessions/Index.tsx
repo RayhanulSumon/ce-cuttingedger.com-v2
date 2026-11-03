@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { router } from "@inertiajs/react";
 import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
-import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
-import { AdminDataTable, Column } from "@/Components/Admin/UI/AdminDataTable";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from "@/Components/ui/dialog";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -23,42 +14,54 @@ import {
     AlertDialogAction,
 } from "@/Components/ui/alert-dialog";
 import {
-    MessageSquareText,
-    Eye,
-    Trash2,
-    User,
-    Mail,
-    Phone,
-    Calendar,
-    Tag,
-    Clock,
-    Sparkles,
-    Bot,
-    ExternalLink,
-    Paperclip,
-    Shield,
-    Loader2,
-    CheckCircle2,
-    Radio,
+    MessageSquare,
+    Search,
     Send,
+    Bot,
+    User,
+    Check,
+    CheckCheck,
+    ExternalLink,
+    Maximize2,
+    Trash2,
+    Radio,
+    Clock,
+    Shield,
+    Sparkles,
+    Calendar,
+    Paperclip,
+    ArrowDown,
+    RefreshCw,
     UserCheck,
     AlertTriangle,
+    Mail,
+    Phone,
+    MapPin,
+    Building2,
 } from "lucide-react";
+import { echo } from "@laravel/echo-react";
+import { cn } from "@/lib/utils";
 
 interface ChatSessionItem {
     id: string;
     lead_name: string;
-    lead_email?: string;
-    lead_phone?: string;
-    company?: string;
-    service_interest?: string;
-    estimated_price?: string;
+    lead_email?: string | null;
+    lead_phone?: string | null;
+    company?: string | null;
+    service_interest?: string | null;
+    estimated_price?: string | null;
     status: "active" | "idle" | "converted" | "abandoned";
     mode?: "bot" | "operator";
     needs_human?: boolean;
-    operator_name?: string;
-    ip_address?: string;
+    operator_id?: number | null;
+    operator_name?: string | null;
+    is_assigned_to_me?: boolean;
+    ip_address?: string | null;
     messages_count: number;
+    unread_count?: number;
+    last_message?: string;
+    last_message_sender?: string;
+    last_message_time?: string;
     has_consultation: boolean;
     last_active_at?: string;
     last_active_formatted: string;
@@ -66,12 +69,14 @@ interface ChatSessionItem {
 }
 
 interface TranscriptMessage {
-    id: number;
+    id: number | string;
     sender: "user" | "assistant" | "system" | "operator";
     content: string;
-    attachments: string[];
+    attachments?: string[];
     tool_calls?: any[];
     tool_results?: any[];
+    is_read?: boolean;
+    created_at?: string;
     created_at_formatted: string;
 }
 
@@ -80,6 +85,7 @@ interface ChatSessionsIndexProps {
         data: ChatSessionItem[];
         current_page: number;
         last_page: number;
+        total: number;
     };
     stats: {
         total_sessions: number;
@@ -90,728 +96,851 @@ interface ChatSessionsIndexProps {
         operator_active?: number;
     };
     currentStatus?: string;
+    initialSessionId?: string;
+    currentAdmin?: {
+        id: number;
+        name: string;
+        email: string;
+    };
 }
+
+const QUICK_REPLIES = [
+    "👋 Hello! Welcome to CuttingEdger Studio. How can I assist you with your images today?",
+    "💰 Our commercial base rates: Hand-drawn Clipping Paths from $0.45/image, Ghost Mannequin from $0.99, and Retouching from $1.99.",
+    "🎁 You can test our quality right now with 3 Free Sample Edits with zero commitment!",
+    "⏱️ Our turnaround SLA is standard 12–24 hours, with an express rush option of 6 hours.",
+    "📅 Would you like to schedule a quick 15-minute technical consultation call with our team?",
+];
 
 export default function ChatSessionsIndex({
     sessions,
     stats,
     currentStatus,
+    initialSessionId,
+    currentAdmin,
 }: ChatSessionsIndexProps) {
-    const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-    const [transcript, setTranscript] = useState<{
-        session: any;
-        messages: TranscriptMessage[];
-    } | null>(null);
+    const sessionList = sessions.data || [];
+    const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+        initialSessionId || (sessionList.length > 0 ? sessionList[0].id : null)
+    );
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filterTab, setFilterTab] = useState<"all" | "needs_human" | "operator" | "bot">(
+        (currentStatus as any) || "all"
+    );
+
+    const [activeSession, setActiveSession] = useState<ChatSessionItem | null>(null);
+    const [messages, setMessages] = useState<TranscriptMessage[]>([]);
     const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
     const [replyText, setReplyText] = useState("");
-    const [isSendingReply, setIsSendingReply] = useState(false);
-    const [isTogglingTakeover, setIsTogglingTakeover] = useState(false);
-    const [sessionToDelete, setSessionToDelete] = useState<ChatSessionItem | null>(null);
-    const [bulkDeleteType, setBulkDeleteType] = useState<"empty" | "all" | null>(null);
+    const [isSending, setIsSending] = useState(false);
+    const [isUserTyping, setIsUserTyping] = useState(false);
+    const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
+    const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 
-    // Synthesized Web Audio chime for live incoming visitor messages
-    const playAdminChime = () => {
-        try {
-            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-            if (!AudioContextClass) return;
-            const ctx = new AudioContextClass();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-            osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.12); // G5
-            gain.gain.setValueAtTime(0.12, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.35);
-        } catch {
-            // Audio context not allowed or supported
-        }
-    };
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastTypingSentRef = useRef<number>(0);
 
-    // Live Polling while transcript modal is open
+    // Filter sessions locally or by tab
+    const filteredSessions = sessionList.filter((s) => {
+        if (filterTab === "needs_human" && !s.needs_human) return false;
+        if (filterTab === "operator" && s.mode !== "operator") return false;
+        if (filterTab === "bot" && (s.mode === "operator" || s.needs_human)) return false;
+
+        if (!searchQuery.trim()) return true;
+        const q = searchQuery.toLowerCase();
+        return (
+            (s.lead_name && s.lead_name.toLowerCase().includes(q)) ||
+            (s.lead_email && s.lead_email.toLowerCase().includes(q)) ||
+            (s.ip_address && s.ip_address.toLowerCase().includes(q)) ||
+            (s.last_message && s.last_message.toLowerCase().includes(q))
+        );
+    });
+
+    // Update activeSession object when selectedSessionId changes
     useEffect(() => {
-        if (!activeSessionId) return;
+        if (!selectedSessionId) {
+            setActiveSession(null);
+            setMessages([]);
+            return;
+        }
+        const item = sessionList.find((s) => s.id === selectedSessionId);
+        if (item) {
+            setActiveSession(item);
+        }
+        loadTranscript(selectedSessionId);
+    }, [selectedSessionId, sessionList]);
 
-        const interval = setInterval(async () => {
-            try {
-                const highestId = transcript?.messages?.reduce((max, m) => (m.id > max ? m.id : max), 0) || 0;
-                const res = await fetch(`/admin/chat-sessions/${activeSessionId}/poll?after_id=${highestId}`, {
-                    headers: { Accept: "application/json" },
-                });
-                const data = await res.json();
-
-                if (data.session) {
-                    setTranscript((prev) => {
-                        if (!prev) return prev;
-                        return {
-                            ...prev,
-                            session: {
-                                ...prev.session,
-                                ...data.session,
-                            },
-                        };
-                    });
-                }
-
-                if (data.messages && data.messages.length > 0) {
-                    playAdminChime();
-                    setTranscript((prev) => {
-                        if (!prev) return prev;
-                        const existingIds = new Set(prev.messages.map((m) => m.id));
-                        const newOnes = data.messages.filter((m: any) => !existingIds.has(m.id));
-                        if (newOnes.length === 0) return prev;
-                        return {
-                            ...prev,
-                            messages: [...prev.messages, ...newOnes],
-                        };
-                    });
-                }
-            } catch {
-                // Background poll silent fallback
-            }
-        }, 2500);
-
-        return () => clearInterval(interval);
-    }, [activeSessionId, transcript]);
-
-    const openTranscript = async (session: ChatSessionItem) => {
-        setActiveSessionId(session.id);
+    // Load full message transcript from server
+    const loadTranscript = async (sessionId: string) => {
         setIsLoadingTranscript(true);
-        setReplyText("");
         try {
-            const res = await fetch(route("admin.chat-sessions.show", session.id), {
+            const res = await fetch(`/admin/chat-sessions/${sessionId}`, {
                 headers: {
                     Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
                 },
             });
             const data = await res.json();
-            setTranscript(data);
+            if (data.session) {
+                setActiveSession((prev) => ({
+                    ...(prev || {}),
+                    id: data.session.id,
+                    lead_name: data.session.lead_name || "Anonymous Visitor",
+                    lead_email: data.session.lead_email,
+                    lead_phone: data.session.lead_phone,
+                    company: data.session.company,
+                    mode: data.session.mode,
+                    needs_human: Boolean(data.session.needs_human),
+                    operator_id: data.session.operator_id,
+                    operator_name: data.session.operator_name,
+                    is_assigned_to_me: data.session.operator_id === currentAdmin?.id,
+                    status: data.session.status,
+                    ip_address: data.session.ip_address,
+                    messages_count: (data.messages || []).length,
+                    has_consultation: prev?.has_consultation ?? false,
+                    last_active_formatted: prev?.last_active_formatted ?? "Just now",
+                    created_at: prev?.created_at ?? new Date().toISOString(),
+                }));
+            }
+            if (data.messages) {
+                setMessages(data.messages);
+            }
         } catch (err) {
-            console.error("Error loading transcript:", err);
+            console.error("Failed to load chat transcript", err);
         } finally {
             setIsLoadingTranscript(false);
+            setTimeout(() => scrollToBottom("auto"), 60);
         }
     };
 
-    const handleTakeover = async () => {
-        if (!activeSessionId || isTogglingTakeover) return;
-        setIsTogglingTakeover(true);
+    // Auto-scroll handler
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+        messagesEndRef.current?.scrollIntoView({ behavior });
+    };
+
+    // Native mouse wheel scroll handler on the message container
+    useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const handleWheel = (e: WheelEvent) => {
+            e.stopPropagation();
+            el.scrollTop += e.deltaY;
+        };
+        el.addEventListener("wheel", handleWheel, { passive: true });
+        return () => el.removeEventListener("wheel", handleWheel);
+    }, [selectedSessionId]);
+
+    const handleScroll = () => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const isUp = el.scrollHeight - el.scrollTop - el.clientHeight > 140;
+        setShowScrollBottomBtn(isUp);
+    };
+
+    // Echo WebSocket listener for the selected session
+    useEffect(() => {
+        if (!selectedSessionId) return;
+
         try {
-            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "";
-            const res = await fetch(`/admin/chat-sessions/${activeSessionId}/takeover`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken,
-                    Accept: "application/json",
-                },
-            });
-            const data = await res.json();
-            if (data.session) {
-                setTranscript((prev) => {
-                    if (!prev) return prev;
-                    return {
-                        ...prev,
-                        session: { ...prev.session, ...data.session },
-                        messages: data.announcement ? [...prev.messages, data.announcement] : prev.messages,
-                    };
+            const echoInstance = echo();
+            if (!echoInstance) return;
+
+            const channel = echoInstance.channel(`chat.${selectedSessionId}`);
+
+            const onMessageSent = (data: any) => {
+                const newMsg = data.message || data;
+                setMessages((prev) => {
+                    if (prev.some((m) => String(m.id) === String(newMsg.id))) return prev;
+                    return [...prev, newMsg];
                 });
-            }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setIsTogglingTakeover(false);
-        }
-    };
+                scrollToBottom("smooth");
+            };
 
-    const handleRelease = async () => {
-        if (!activeSessionId || isTogglingTakeover) return;
-        setIsTogglingTakeover(true);
+            const onMessageRead = (data: any) => {
+                const ids = data.message_ids || [];
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        ids.length === 0 || ids.includes(m.id) ? { ...m, is_read: true } : m
+                    )
+                );
+            };
+
+            const onUserTyping = (data: any) => {
+                if (data.sender === "user" && data.is_typing) {
+                    setIsUserTyping(true);
+                    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+                    typingTimeoutRef.current = setTimeout(() => setIsUserTyping(false), 3500);
+                } else if (data.sender === "user" && !data.is_typing) {
+                    setIsUserTyping(false);
+                }
+            };
+
+            channel.listen("ChatMessageSent", onMessageSent);
+            channel.listen(".ChatMessageSent", onMessageSent);
+            channel.listen("ChatMessageRead", onMessageRead);
+            channel.listen(".ChatMessageRead", onMessageRead);
+            channel.listen("ChatUserTyping", onUserTyping);
+            channel.listen(".ChatUserTyping", onUserTyping);
+
+            return () => {
+                echoInstance.leaveChannel(`chat.${selectedSessionId}`);
+            };
+        } catch (err) {
+            console.warn("Reverb WebSocket connection", err);
+        }
+    }, [selectedSessionId]);
+
+    // Send operator reply
+    const handleSendReply = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        const text = replyText.trim();
+        if (!text || isSending || !selectedSessionId) return;
+
+        setIsSending(true);
+        setReplyText("");
+
         try {
-            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "";
-            const res = await fetch(`/admin/chat-sessions/${activeSessionId}/release`, {
+            const res = await fetch(`/admin/chat-sessions/${selectedSessionId}/reply`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken,
                     Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN":
+                        (document.querySelector('meta[name="csrf-token"]') as any)?.content || "",
                 },
-            });
-            const data = await res.json();
-            if (data.session) {
-                setTranscript((prev) => {
-                    if (!prev) return prev;
-                    return {
-                        ...prev,
-                        session: { ...prev.session, ...data.session },
-                        messages: data.announcement ? [...prev.messages, data.announcement] : prev.messages,
-                    };
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setIsTogglingTakeover(false);
-        }
-    };
-
-    const handleSendReply = async () => {
-        if (!activeSessionId || !replyText.trim() || isSendingReply) return;
-        setIsSendingReply(true);
-        try {
-            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "";
-            const res = await fetch(`/admin/chat-sessions/${activeSessionId}/reply`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken,
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({ content: replyText.trim() }),
+                body: JSON.stringify({ content: text }),
             });
             const data = await res.json();
             if (data.message) {
-                setTranscript((prev) => {
-                    if (!prev) return prev;
-                    return {
-                        ...prev,
-                        session: {
-                            ...prev.session,
-                            mode: "operator",
-                        },
-                        messages: [...prev.messages, data.message],
-                    };
+                setMessages((prev) => {
+                    if (prev.some((m) => String(m.id) === String(data.message.id))) return prev;
+                    return [...prev, data.message];
                 });
-                setReplyText("");
+                setActiveSession((prev) =>
+                    prev
+                        ? {
+                              ...prev,
+                              mode: "operator",
+                              operator_name: currentAdmin?.name || "Super Admin",
+                              is_assigned_to_me: true,
+                          }
+                        : null
+                );
+                scrollToBottom("smooth");
             }
         } catch (err) {
-            console.error(err);
+            console.error("Failed to send operator reply", err);
         } finally {
-            setIsSendingReply(false);
+            setIsSending(false);
         }
     };
 
-    const handleDelete = () => {
-        if (!sessionToDelete) return;
-        router.delete(route("admin.chat-sessions.destroy", sessionToDelete.id), {
-            preserveScroll: true,
-            onSuccess: () => setSessionToDelete(null),
-        });
-    };
+    // Operator typing trigger
+    const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setReplyText(e.target.value);
+        if (!selectedSessionId) return;
 
-    const handleBulkDelete = () => {
-        if (!bulkDeleteType) return;
-        router.delete(route("admin.chat-sessions.destroy-all"), {
-            data: { type: bulkDeleteType },
-            preserveScroll: true,
-            onSuccess: () => setBulkDeleteType(null),
-        });
-    };
-
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "converted":
-                return <Badge variant="accent" className="font-mono">LEAD CONVERTED</Badge>;
-            case "active":
-                return <Badge variant="success" className="font-mono">ACTIVE</Badge>;
-            case "idle":
-                return <Badge variant="secondary" className="font-mono">IDLE</Badge>;
-            case "abandoned":
-                return <Badge variant="destructive" className="font-mono">ABANDONED</Badge>;
-            default:
-                return <Badge variant="outline">{status}</Badge>;
+        const now = Date.now();
+        if (now - lastTypingSentRef.current > 1500) {
+            lastTypingSentRef.current = now;
+            fetch(`/admin/chat-sessions/${selectedSessionId}/typing`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN":
+                        (document.querySelector('meta[name="csrf-token"]') as any)?.content || "",
+                },
+                body: JSON.stringify({ is_typing: true }),
+            }).catch(() => {});
         }
     };
 
-    const columns: Column<ChatSessionItem>[] = [
-        {
-            header: "Client / Visitor",
-            accessorKey: "lead_name",
-            cell: (row) => (
-                <div className="space-y-0.5">
-                    <div className="font-semibold text-white flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-accent" />
-                        <span>{row.lead_name}</span>
-                        {row.has_consultation && (
-                            <span className="text-[9px] font-mono font-bold bg-[#00f5ff]/20 text-[#00f5ff] px-1.5 py-0.2 rounded">
-                                CALL BOOKED
-                            </span>
-                        )}
-                    </div>
-                    <div className="text-xs text-neutral-400 font-mono flex items-center gap-1.5">
-                        <Mail className="w-3 h-3 text-neutral-500" />
-                        <span>{row.lead_email || "Not shared yet"}</span>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            header: "Phone / WhatsApp",
-            accessorKey: "lead_phone",
-            cell: (row) => (
-                <span className="text-xs font-mono text-neutral-300">
-                    {row.lead_phone || <span className="text-neutral-600">—</span>}
-                </span>
-            ),
-        },
-        {
-            header: "Quote Estimate",
-            accessorKey: "estimated_price",
-            cell: (row) => (
-                <div className="font-mono text-xs">
-                    {row.estimated_price ? (
-                        <span className="font-bold text-accent">
-                            ${row.estimated_price}
-                        </span>
-                    ) : (
-                        <span className="text-neutral-600">—</span>
-                    )}
-                </div>
-            ),
-        },
-        {
-            header: "Messages",
-            accessorKey: "messages_count",
-            cell: (row) => (
-                <span className="font-mono text-xs text-neutral-300">
-                    {row.messages_count} msgs
-                </span>
-            ),
-        },
-        {
-            header: "Mode & Status",
-            accessorKey: "status",
-            cell: (row) => (
-                <div className="flex flex-col gap-1 items-start">
-                    {row.needs_human && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse">
-                            <AlertTriangle className="w-2.5 h-2.5" />
-                            NEEDS HUMAN
-                        </span>
-                    )}
-                    {row.mode === "operator" ? (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#00f5ff]/20 text-[#00f5ff] border border-[#00f5ff]/30">
-                            <Radio className="w-2.5 h-2.5 animate-pulse" />
-                            OPERATOR LIVE
-                        </span>
-                    ) : (
-                        getStatusBadge(row.status)
-                    )}
-                </div>
-            ),
-        },
-        {
-            header: "Last Active",
-            accessorKey: "last_active_at",
-            cell: (row) => (
-                <div className="text-xs font-mono text-neutral-400">
-                    {row.last_active_formatted}
-                </div>
-            ),
-        },
-        {
-            header: "Actions",
-            id: "actions",
-            cell: (row) => (
-                <div className="flex items-center justify-end gap-1">
-                    <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => openTranscript(row)}
-                        className={`h-8 px-2.5 text-xs font-mono gap-1.5 transition-all cursor-pointer ${
-                            row.needs_human
-                                ? "bg-rose-500 text-white hover:bg-rose-600 animate-pulse font-bold"
-                                : row.mode === "operator"
-                                ? "bg-[#00f5ff] text-black hover:bg-[#00d0db] font-bold"
-                                : "bg-white/10 hover:bg-accent hover:text-black text-white"
-                        }`}
-                        title="Open Live Chat Console & Take Over"
-                    >
-                        {row.needs_human ? (
-                            <>
-                                <Radio className="w-3.5 h-3.5" />
-                                <span>Join Live</span>
-                            </>
-                        ) : (
-                            <>
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>{row.mode === "operator" ? "Live Chat" : "Transcript"}</span>
-                            </>
-                        )}
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSessionToDelete(row)}
-                        className="h-8 w-8 p-0 text-neutral-500 hover:text-rose-400 cursor-pointer"
-                        title="Delete transcript"
-                    >
-                        <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
-                </div>
-            ),
-        },
-    ];
+    // Takeover chat
+    const handleTakeover = async () => {
+        if (!selectedSessionId) return;
+        try {
+            const res = await fetch(`/admin/chat-sessions/${selectedSessionId}/takeover`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN":
+                        (document.querySelector('meta[name="csrf-token"]') as any)?.content || "",
+                },
+            });
+            const data = await res.json();
+            if (data.session) {
+                setActiveSession((prev) =>
+                    prev
+                        ? {
+                              ...prev,
+                              mode: "operator",
+                              needs_human: false,
+                              operator_name: data.session.operator_name,
+                              is_assigned_to_me: true,
+                          }
+                        : null
+                );
+            }
+            if (data.announcement) {
+                setMessages((prev) => [...prev, data.announcement]);
+                scrollToBottom("smooth");
+            }
+        } catch (err) {
+            console.error("Failed to takeover chat", err);
+        }
+    };
+
+    // Release to bot
+    const handleRelease = async () => {
+        if (!selectedSessionId) return;
+        try {
+            const res = await fetch(`/admin/chat-sessions/${selectedSessionId}/release`, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN":
+                        (document.querySelector('meta[name="csrf-token"]') as any)?.content || "",
+                },
+            });
+            const data = await res.json();
+            if (data.session) {
+                setActiveSession((prev) =>
+                    prev
+                        ? {
+                              ...prev,
+                              mode: "bot",
+                              needs_human: false,
+                              operator_name: null,
+                              is_assigned_to_me: false,
+                          }
+                        : null
+                );
+            }
+            if (data.announcement) {
+                setMessages((prev) => [...prev, data.announcement]);
+                scrollToBottom("smooth");
+            }
+        } catch (err) {
+            console.error("Failed to release chat", err);
+        }
+    };
+
+    // Pop into Floating Multi-Chat Dock
+    const handlePopToFloating = () => {
+        if (!activeSession) return;
+        window.dispatchEvent(
+            new CustomEvent("open-admin-floating-chat", {
+                detail: {
+                    sessionId: activeSession.id,
+                    leadName: activeSession.lead_name,
+                },
+            })
+        );
+    };
+
+    // Delete session
+    const handleDeleteSession = () => {
+        if (!deleteSessionId) return;
+        router.delete(`/admin/chat-sessions/${deleteSessionId}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeleteSessionId(null);
+                if (selectedSessionId === deleteSessionId) {
+                    const remaining = sessionList.filter((s) => s.id !== deleteSessionId);
+                    setSelectedSessionId(remaining.length > 0 ? remaining[0].id : null);
+                }
+            },
+        });
+    };
 
     return (
-        <AdminLayout>
-            <div className="space-y-6">
-                <AdminPageHeader
-                    title="Live Chat Sessions & Transcripts"
-                    description="Monitor real-time visitor inquiries, captured leads, image quote calculations, and live human operator takeover."
-                >
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.post(route("admin.chat-sessions.mark-all-read"), {}, { preserveScroll: true })}
-                            className="border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs gap-1.5 h-9"
-                            title="Mark all new chat leads as acknowledged / read"
-                        >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Mark Leads Read</span>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setBulkDeleteType("empty")}
-                            className="border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs gap-1.5 h-9"
-                            title="Delete all empty sessions with 0 messages"
-                        >
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>Clear 0-Msg Sessions</span>
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => setBulkDeleteType("all")}
-                            className="bg-rose-500/20 border border-rose-500/30 hover:bg-rose-600 text-rose-300 hover:text-white font-mono text-xs gap-1.5 h-9"
-                            title="Delete all visitor chat sessions and transcripts"
-                        >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>Delete All</span>
-                        </Button>
+        <AdminLayout title="Messenger & Live Studio Console">
+            {/* Top Stat Pills */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-[#0f111a] border border-white/10 flex items-center justify-between">
+                    <div>
+                        <div className="text-[11px] font-mono uppercase text-neutral-400">Total Conversations</div>
+                        <div className="text-xl font-bold text-white mt-0.5">{stats.total_sessions}</div>
                     </div>
-                </AdminPageHeader>
-
-                {/* KPI Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-[#12141a] border border-white/5 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
-                            Total Visitor Chats
-                        </span>
-                        <div className="text-2xl font-bold font-mono text-white">
-                            {stats.total_sessions}
-                        </div>
-                    </div>
-                    <div className="bg-[#12141a] border border-accent/30 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent block mb-1">
-                            Captured Leads
-                        </span>
-                        <div className="text-2xl font-bold font-mono text-accent">
-                            {stats.captured_leads}
-                        </div>
-                    </div>
-                    <div className={`rounded-2xl p-4 border transition-all ${
-                        (stats.needs_human ?? 0) > 0
-                            ? "bg-rose-500/10 border-rose-500/40 shadow-lg shadow-rose-500/10"
-                            : "bg-[#12141a] border-white/5"
-                    }`}>
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400 block mb-1 flex items-center gap-1.5">
-                            {(stats.needs_human ?? 0) > 0 && <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />}
-                            Needs Human Specialist
-                        </span>
-                        <div className={`text-2xl font-bold font-mono ${(stats.needs_human ?? 0) > 0 ? "text-rose-400" : "text-neutral-400"}`}>
-                            {stats.needs_human ?? 0}
-                        </div>
-                    </div>
-                    <div className="bg-[#12141a] border border-[#00f5ff]/20 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#00f5ff] block mb-1">
-                            Live Operator Active
-                        </span>
-                        <div className="text-2xl font-bold font-mono text-[#00f5ff]">
-                            {stats.operator_active ?? 0}
-                        </div>
+                    <div className="p-2 rounded-lg bg-white/5 text-neutral-400">
+                        <MessageSquare className="w-4 h-4" />
                     </div>
                 </div>
 
-                {/* Main Table */}
-                <AdminDataTable
-                    data={sessions.data}
-                    columns={columns}
-                    searchPlaceholder="Search visitor name, email, or company..."
-                    searchKey="lead_name"
-                />
+                <div className="p-3 rounded-xl bg-[#0f111a] border border-white/10 flex items-center justify-between">
+                    <div>
+                        <div className="text-[11px] font-mono uppercase text-neutral-400">Captured Leads</div>
+                        <div className="text-xl font-bold text-amber-400 mt-0.5">{stats.captured_leads}</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                        <Sparkles className="w-4 h-4" />
+                    </div>
+                </div>
 
-                {/* Full Live Operator Console Modal */}
-                <Dialog
-                    open={!!activeSessionId}
-                    onOpenChange={(open) => {
-                        if (!open) {
-                            setActiveSessionId(null);
-                            setTranscript(null);
-                            setReplyText("");
-                        }
-                    }}
-                >
-                    <DialogContent className="max-w-3xl bg-[#0b0c10] border border-white/10 text-white max-h-[90vh] flex flex-col p-0 overflow-hidden shadow-2xl">
-                        {/* Header with Live Takeover Controls */}
-                        <div className="p-4 border-b border-white/10 bg-[#12141a] flex flex-wrap items-center justify-between gap-3 shrink-0">
-                            <div>
-                                <DialogTitle className="flex items-center gap-2 text-sm">
-                                    <MessageSquareText className="w-4 h-4 text-accent" />
-                                    <span>Live Client Chat Console</span>
-                                    {transcript?.session?.needs_human && (
-                                        <Badge variant="destructive" className="font-mono text-[10px] animate-pulse">
-                                            NEEDS OPERATOR
-                                        </Badge>
-                                    )}
-                                    {transcript?.session?.mode === "operator" && (
-                                        <Badge variant="accent" className="font-mono text-[10px] bg-[#00f5ff]/20 text-[#00f5ff] border-[#00f5ff]/30">
-                                            OPERATOR ACTIVE ({transcript.session.operator_name || 'You'})
-                                        </Badge>
-                                    )}
-                                </DialogTitle>
-                                <DialogDescription className="text-xs text-neutral-400 font-mono mt-0.5">
-                                    {transcript?.session?.lead_email
-                                        ? `Lead: ${transcript.session.lead_email} (${transcript.session.lead_name || 'Visitor'})`
-                                        : `Anonymous Visitor • IP: ${transcript?.session?.ip_address || 'Unknown'}`}
-                                </DialogDescription>
-                            </div>
+                <div className="p-3 rounded-xl bg-[#0f111a] border border-white/10 flex items-center justify-between">
+                    <div>
+                        <div className="text-[11px] font-mono uppercase text-neutral-400">Needs Human</div>
+                        <div className="text-xl font-bold text-rose-400 mt-0.5">{stats.needs_human || 0}</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
+                        <Radio className="w-4 h-4 animate-pulse" />
+                    </div>
+                </div>
 
-                            {/* Takeover Control Buttons */}
-                            <div className="flex items-center gap-2">
-                                {transcript?.session?.mode === "operator" ? (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={handleRelease}
-                                        disabled={isTogglingTakeover}
-                                        className="h-8 px-3 text-xs font-mono border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 cursor-pointer"
-                                        title="Hand chat back to automated assistant"
-                                    >
-                                        <Bot className="w-3.5 h-3.5 mr-1 text-accent" />
-                                        <span>Release to Bot</span>
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="default"
-                                        size="sm"
-                                        onClick={handleTakeover}
-                                        disabled={isTogglingTakeover}
-                                        className="h-8 px-3 text-xs font-mono bg-[#00f5ff] hover:bg-[#00d0db] text-black font-bold cursor-pointer"
-                                        title="Take over this conversation and chat live"
-                                    >
-                                        <Radio className="w-3.5 h-3.5 mr-1" />
-                                        <span>Take Over Chat</span>
-                                    </Button>
-                                )}
-                            </div>
+                <div className="p-3 rounded-xl bg-[#0f111a] border border-white/10 flex items-center justify-between">
+                    <div>
+                        <div className="text-[11px] font-mono uppercase text-neutral-400">Live Operators</div>
+                        <div className="text-xl font-bold text-cyan-400 mt-0.5">{stats.operator_active || 0}</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
+                        <UserCheck className="w-4 h-4" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Messenger 2-Pane Container */}
+            <div className="h-[calc(100vh-190px)] min-h-[580px] flex rounded-2xl border border-white/10 bg-[#0b0c13] overflow-hidden shadow-2xl">
+                {/* LEFT PANE: Conversation List */}
+                <div className="w-80 md:w-96 flex flex-col border-r border-white/10 bg-[#0c0e15] shrink-0">
+                    {/* Search & Tabs */}
+                    <div className="p-3 border-b border-white/10 space-y-2.5 bg-[#0e1018]">
+                        <div className="relative">
+                            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-2.5" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search visitor, email, or message..."
+                                className="w-full pl-8 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-accent transition-colors"
+                            />
                         </div>
 
-                        {/* Transcript Dialogue Scroll Container */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-3.5 scrollbar-thin scrollbar-thumb-white/10 min-h-[340px]">
-                            {isLoadingTranscript ? (
-                                <div className="flex items-center justify-center py-20 text-neutral-400 gap-2 font-mono text-xs">
-                                    <Loader2 className="w-4 h-4 animate-spin text-accent" />
-                                    <span>Loading conversation stream...</span>
-                                </div>
-                            ) : transcript?.messages && transcript.messages.length > 0 ? (
-                                transcript.messages.map((m) => {
-                                    const isUser = m.sender === "user";
-                                    const isOperator = m.sender === "operator";
+                        {/* Filter Tabs */}
+                        <div className="flex items-center gap-1 p-0.5 rounded-lg bg-black/40 border border-white/5 text-[11px]">
+                            <button
+                                onClick={() => setFilterTab("all")}
+                                className={cn(
+                                    "flex-1 py-1 rounded-md font-medium transition-colors text-center cursor-pointer",
+                                    filterTab === "all"
+                                        ? "bg-white/15 text-white font-semibold"
+                                        : "text-neutral-400 hover:text-white"
+                                )}
+                            >
+                                All ({sessionList.length})
+                            </button>
+                            <button
+                                onClick={() => setFilterTab("needs_human")}
+                                className={cn(
+                                    "flex-1 py-1 rounded-md font-medium transition-colors text-center flex items-center justify-center gap-1 cursor-pointer",
+                                    filterTab === "needs_human"
+                                        ? "bg-rose-500/20 text-rose-300 font-semibold"
+                                        : "text-neutral-400 hover:text-rose-300"
+                                )}
+                            >
+                                <span>🚨</span>
+                                <span>Human ({stats.needs_human || 0})</span>
+                            </button>
+                            <button
+                                onClick={() => setFilterTab("operator")}
+                                className={cn(
+                                    "flex-1 py-1 rounded-md font-medium transition-colors text-center cursor-pointer",
+                                    filterTab === "operator"
+                                        ? "bg-cyan-500/20 text-cyan-300 font-semibold"
+                                        : "text-neutral-400 hover:text-cyan-300"
+                                )}
+                            >
+                                Live ({stats.operator_active || 0})
+                            </button>
+                        </div>
+                    </div>
 
-                                    return (
-                                        <div
-                                            key={m.id}
-                                            className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
-                                        >
-                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-neutral-500 font-mono">
-                                                {isUser ? (
-                                                    <>
-                                                        <span>{m.created_at_formatted}</span>
-                                                        <span className="text-white font-semibold">Client</span>
-                                                    </>
-                                                ) : isOperator ? (
-                                                    <>
-                                                        <span className="text-[#00f5ff] font-semibold flex items-center gap-1">
-                                                            <UserCheck className="w-3 h-3 text-[#00f5ff]" />
-                                                            Operator ({transcript.session?.operator_name || 'You'})
-                                                        </span>
-                                                        <span>{m.created_at_formatted}</span>
-                                                    </>
+                    {/* Scrollable Conversation Items */}
+                    <div className="flex-1 overflow-y-auto divide-y divide-white/5">
+                        {filteredSessions.length === 0 ? (
+                            <div className="p-8 text-center text-xs text-neutral-500 font-mono">
+                                No conversations found matching filters.
+                            </div>
+                        ) : (
+                            filteredSessions.map((s) => {
+                                const isSelected = s.id === selectedSessionId;
+                                const isNeedsHuman = s.needs_human;
+                                const isLive = s.mode === "operator";
+
+                                return (
+                                    <button
+                                        key={s.id}
+                                        onClick={() => setSelectedSessionId(s.id)}
+                                        className={cn(
+                                            "w-full text-left p-3.5 transition-all flex items-start gap-3 cursor-pointer group relative",
+                                            isSelected
+                                                ? "bg-accent/10 border-l-4 border-accent text-white"
+                                                : "hover:bg-white/5 text-neutral-300"
+                                        )}
+                                    >
+                                        {/* Avatar with Status Dot */}
+                                        <div className="relative shrink-0 mt-0.5">
+                                            <div
+                                                className={cn(
+                                                    "w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shadow-md",
+                                                    isNeedsHuman
+                                                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                                                        : isLive
+                                                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                                                        : "bg-white/10 text-neutral-300 border border-white/10"
+                                                )}
+                                            >
+                                                {s.lead_name ? s.lead_name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                                            </div>
+                                            <span
+                                                className={cn(
+                                                    "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#0c0e15]",
+                                                    isNeedsHuman
+                                                        ? "bg-rose-500 animate-pulse"
+                                                        : isLive
+                                                        ? "bg-cyan-400 animate-pulse"
+                                                        : "bg-emerald-500"
+                                                )}
+                                            />
+                                        </div>
+
+                                        {/* Content Preview */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between gap-1">
+                                                <span className="text-xs font-bold text-white truncate">
+                                                    {s.lead_name || "Anonymous Visitor"}
+                                                </span>
+                                                <span className="text-[10px] font-mono text-neutral-400 shrink-0">
+                                                    {s.last_message_time || s.last_active_formatted}
+                                                </span>
+                                            </div>
+
+                                            <div className="text-[11px] text-neutral-400 truncate mt-0.5 font-normal">
+                                                {s.last_message ? (
+                                                    <span>{s.last_message}</span>
                                                 ) : (
-                                                    <>
-                                                        <span className="text-accent font-semibold">Assistant Bot</span>
-                                                        <span>{m.created_at_formatted}</span>
-                                                    </>
+                                                    <span className="italic text-neutral-500">No messages yet</span>
                                                 )}
                                             </div>
 
-                                            <div
-                                                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
-                                                    isUser
-                                                        ? "bg-accent text-black font-medium rounded-br-xs"
-                                                        : isOperator
-                                                        ? "bg-[#0e1b29] text-white border border-[#00f5ff]/40 rounded-bl-xs shadow-md shadow-[#00f5ff]/5"
-                                                        : "bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs"
-                                                }`}
-                                            >
-                                                {/* Attachments */}
-                                                {m.attachments && m.attachments.length > 0 && (
-                                                    <div className="mb-2 flex flex-wrap gap-1.5">
-                                                        {m.attachments.map((url, i) => (
-                                                            <a
-                                                                key={i}
-                                                                href={url}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className="relative group/att block"
-                                                            >
-                                                                <img
-                                                                    src={url}
-                                                                    alt="Uploaded attachment"
-                                                                    className="w-16 h-16 object-cover rounded-lg border border-white/20"
-                                                                />
-                                                                <span className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity rounded-lg">
-                                                                    <ExternalLink className="w-3.5 h-3.5 text-white" />
-                                                                </span>
-                                                            </a>
-                                                        ))}
-                                                    </div>
+                                            {/* Badges */}
+                                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                                {isNeedsHuman && (
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[9px] font-mono font-bold animate-pulse">
+                                                        🚨 NEEDS HUMAN
+                                                    </span>
                                                 )}
-
-                                                <p className="whitespace-pre-wrap">{m.content}</p>
-
-                                                {/* Tool results / Quote details */}
-                                                {m.tool_results && m.tool_results.length > 0 && (
-                                                    <div className="mt-2 pt-2 border-t border-white/10 space-y-1 font-mono text-[11px]">
-                                                        {m.tool_results.map((res: any, rIdx: number) => (
-                                                            <div key={rIdx} className="bg-black/30 p-2 rounded-lg border border-white/5">
-                                                                <span className="text-accent block text-[10px] uppercase font-bold">
-                                                                    Tool Executed: {res.type}
-                                                                </span>
-                                                                {res.service_name && (
-                                                                    <div>Service: {res.service_name} • {res.quantity} imgs • ${res.total_price} USD</div>
-                                                                )}
-                                                                {res.datetime_formatted && (
-                                                                    <div>Booked for: {res.datetime_formatted}</div>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                {isLive && (
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[9px] font-mono font-bold">
+                                                        ⚡ LIVE: {s.operator_name || "Operator"}
+                                                    </span>
                                                 )}
+                                                {s.is_assigned_to_me && (
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-emerald-500/20 text-emerald-300 text-[9px] font-mono font-bold">
+                                                        You
+                                                    </span>
+                                                )}
+                                                {s.unread_count && s.unread_count > 0 ? (
+                                                    <span className="ml-auto px-1.5 py-0.2 rounded-full bg-accent text-black text-[10px] font-bold font-mono">
+                                                        {s.unread_count} new
+                                                    </span>
+                                                ) : null}
                                             </div>
                                         </div>
-                                    );
-                                })
-                            ) : (
-                                <p className="text-center text-neutral-500 py-12 text-xs font-mono">
-                                    No transcript messages recorded for this session.
-                                </p>
-                            )}
-                        </div>
+                                    </button>
+                                );
+                            })
+                        )}
+                    </div>
+                </div>
 
-                        {/* Live Operator Reply Input Bar */}
-                        <div className="p-3 border-t border-white/10 bg-[#12141a] shrink-0">
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSendReply();
-                                }}
-                                className="flex items-center gap-2"
-                            >
-                                <input
-                                    type="text"
-                                    value={replyText}
-                                    onChange={(e) => setReplyText(e.target.value)}
-                                    placeholder={
-                                        transcript?.session?.mode === "operator"
-                                            ? "Type live message to client... (Press Enter to send)"
-                                            : "Type message to take over and reply directly..."
-                                    }
-                                    disabled={isSendingReply}
-                                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#00f5ff] transition-colors font-mono"
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={!replyText.trim() || isSendingReply}
-                                    className="h-9 px-4 bg-[#00f5ff] hover:bg-[#00d0db] text-black font-mono font-bold text-xs gap-1.5 cursor-pointer disabled:opacity-40"
-                                >
-                                    {isSendingReply ? (
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                {/* RIGHT PANE: Full Conversation Workspace */}
+                <div className="flex-1 flex flex-col bg-[#08090e] min-w-0">
+                    {!activeSession ? (
+                        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-neutral-500">
+                            <MessageSquare className="w-12 h-12 text-white/10 mb-3" />
+                            <div className="text-sm font-semibold text-neutral-300">Select a Conversation</div>
+                            <div className="text-xs text-neutral-500 max-w-sm mt-1">
+                                Choose a visitor session from the left pane to view full transcripts, take over live, or reply in real time.
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Conversation Header */}
+                            <div className="p-3.5 border-b border-white/10 bg-[#0f111a] flex items-center justify-between shrink-0">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 text-accent flex items-center justify-center font-bold text-sm shrink-0">
+                                        {activeSession.lead_name ? activeSession.lead_name.charAt(0).toUpperCase() : "V"}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-bold text-white truncate">
+                                                {activeSession.lead_name || "Anonymous Visitor"}
+                                            </span>
+                                            {activeSession.needs_human && (
+                                                <Badge variant="destructive" className="text-[10px] py-0 px-1.5 animate-pulse">
+                                                    Needs Human
+                                                </Badge>
+                                            )}
+                                            {activeSession.mode === "operator" && (
+                                                <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-cyan-400 border-cyan-400/40 bg-cyan-950/40">
+                                                    Live: {activeSession.operator_name || "Specialist"}
+                                                </Badge>
+                                            )}
+                                        </div>
+
+                                        <div className="flex items-center gap-3 text-[11px] text-neutral-400 font-mono mt-0.5 truncate">
+                                            {activeSession.lead_email && (
+                                                <span className="flex items-center gap-1">
+                                                    <Mail className="w-3 h-3 text-neutral-500" />
+                                                    {activeSession.lead_email}
+                                                </span>
+                                            )}
+                                            {activeSession.ip_address && (
+                                                <span className="flex items-center gap-1">
+                                                    <MapPin className="w-3 h-3 text-neutral-500" />
+                                                    {activeSession.ip_address}
+                                                </span>
+                                            )}
+                                            <span>• {messages.length} messages</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Header Action Buttons */}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    {activeSession.mode === "operator" ? (
+                                        <Button
+                                            onClick={handleRelease}
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-xs h-8 border-cyan-500/40 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-950/40 cursor-pointer"
+                                        >
+                                            <Bot className="w-3.5 h-3.5 mr-1.5" />
+                                            Release to Bot
+                                        </Button>
                                     ) : (
-                                        <>
-                                            <Send className="w-3.5 h-3.5" />
-                                            <span>Send</span>
-                                        </>
+                                        <Button
+                                            onClick={handleTakeover}
+                                            size="sm"
+                                            className="text-xs h-8 bg-amber-500 hover:bg-amber-400 text-black font-bold shadow-md shadow-amber-500/20 cursor-pointer"
+                                        >
+                                            <Radio className="w-3.5 h-3.5 mr-1.5 animate-pulse" />
+                                            Take Over Live
+                                        </Button>
                                     )}
-                                </Button>
-                            </form>
-                        </div>
-                    </DialogContent>
-                </Dialog>
 
-                {/* Delete Confirmation Alert */}
-                <AlertDialog
-                    open={!!sessionToDelete}
-                    onOpenChange={(open) => !open && setSessionToDelete(null)}
-                >
-                    <AlertDialogContent className="bg-[#0b0c10] border border-white/10 text-white">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">Delete Chat Transcript?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400">
-                                This will permanently remove this visitor session and all conversation logs.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-                                Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                                onClick={handleDelete}
-                                className="bg-rose-500 hover:bg-rose-600 text-white"
-                            >
-                                Delete Transcript
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                                    <Button
+                                        onClick={handlePopToFloating}
+                                        variant="outline"
+                                        size="sm"
+                                        title="Pop into dockable floating window"
+                                        className="text-xs h-8 border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 cursor-pointer"
+                                    >
+                                        <Maximize2 className="w-3.5 h-3.5 mr-1" />
+                                        <span>Dock</span>
+                                    </Button>
 
-                {/* Bulk Delete Confirmation Alert */}
-                <AlertDialog
-                    open={!!bulkDeleteType}
-                    onOpenChange={(open) => !open && setBulkDeleteType(null)}
-                >
-                    <AlertDialogContent className="bg-[#0b0c10] border border-white/10 text-white">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white flex items-center gap-2">
-                                <Trash2 className="w-5 h-5 text-rose-400" />
-                                {bulkDeleteType === "empty" ? "Clear Empty Visitor Sessions?" : "Delete All Chat Transcripts?"}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400">
-                                {bulkDeleteType === "empty"
-                                    ? "This will delete all visitor chat sessions that have 0 messages and no captured email leads, cleaning up phantom rows."
-                                    : "Are you sure you want to delete ALL chat sessions? All visitor conversations, leads, and transcripts will be permanently purged."}
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-                                Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                                onClick={handleBulkDelete}
-                                className="bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold"
+                                    <Button
+                                        onClick={() => setDeleteSessionId(activeSession.id)}
+                                        variant="ghost"
+                                        size="sm"
+                                        title="Delete chat session"
+                                        className="h-8 w-8 p-0 text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Scrollable Message Feed */}
+                            <div
+                                ref={scrollContainerRef}
+                                onScroll={handleScroll}
+                                className="flex-1 overflow-y-auto p-4 space-y-3 relative"
                             >
-                                {bulkDeleteType === "empty" ? "Clear Empty Sessions" : "Yes, Delete All"}
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                                {isLoadingTranscript ? (
+                                    <div className="h-full flex items-center justify-center text-xs text-neutral-400 font-mono">
+                                        Loading conversation transcript...
+                                    </div>
+                                ) : messages.length === 0 ? (
+                                    <div className="h-full flex items-center justify-center text-xs text-neutral-500 font-mono">
+                                        No messages in this chat session yet.
+                                    </div>
+                                ) : (
+                                    messages.map((m) => {
+                                        const isUser = m.sender === "user";
+                                        const isOperator = m.sender === "operator";
+
+                                        return (
+                                            <div
+                                                key={m.id}
+                                                className={cn(
+                                                    "flex flex-col max-w-[78%]",
+                                                    isUser ? "ml-auto items-end" : "mr-auto items-start"
+                                                )}
+                                            >
+                                                {/* Sender Header Label */}
+                                                <div className="text-[10px] font-mono text-neutral-400 mb-1 px-1 flex items-center gap-1.5">
+                                                    <span>
+                                                        {isUser
+                                                            ? "Client (Visitor)"
+                                                            : isOperator
+                                                            ? `Operator (${activeSession.operator_name || "Live Specialist"})`
+                                                            : "CuttingEdger AI Bot"}
+                                                    </span>
+                                                    <span>•</span>
+                                                    <span>{m.created_at_formatted}</span>
+                                                </div>
+
+                                                {/* Chat Bubble */}
+                                                <div
+                                                    className={cn(
+                                                        "p-3.5 rounded-2xl text-xs leading-relaxed break-words shadow-sm",
+                                                        isUser
+                                                            ? "bg-gradient-to-r from-amber-500/20 to-amber-600/15 border border-amber-500/30 text-amber-50 rounded-tr-xs"
+                                                            : isOperator
+                                                            ? "bg-gradient-to-r from-cyan-950/60 to-cyan-900/30 border border-cyan-500/30 text-cyan-50 rounded-tl-xs"
+                                                            : "bg-[#151722] text-neutral-200 border border-white/10 rounded-tl-xs"
+                                                    )}
+                                                >
+                                                    <div className="whitespace-pre-wrap">{m.content}</div>
+
+                                                    {/* Tool Cards summary if present */}
+                                                    {m.tool_results && m.tool_results.length > 0 && (
+                                                        <div className="mt-2 pt-2 border-t border-white/10 text-[11px] text-accent font-mono">
+                                                            📋 Embedded Tool Card: {m.tool_results[0].tool_type || "Interactive Card"}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Read Receipt */}
+                                                {isUser && (
+                                                    <div className="flex items-center gap-1 text-[10px] text-neutral-500 mt-0.5 px-1 font-mono">
+                                                        <span>
+                                                            {m.is_read ? (
+                                                                <span className="text-cyan-400 flex items-center gap-0.5">
+                                                                    <CheckCheck className="w-3.5 h-3.5" /> Read
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-neutral-500 flex items-center gap-0.5">
+                                                                    <Check className="w-3 h-3" /> Delivered
+                                                                </span>
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })
+                                )}
+
+                                {/* Real-Time User Typing Indicator */}
+                                {isUserTyping && (
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs w-fit font-mono animate-in fade-in duration-200">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                                        <span>Client is typing...</span>
+                                        <span className="flex gap-1 ml-0.5">
+                                            <span className="w-1 h-1 rounded-full bg-amber-400 animate-bounce" />
+                                            <span className="w-1 h-1 rounded-full bg-amber-400 animate-bounce [animation-delay:150ms]" />
+                                            <span className="w-1 h-1 rounded-full bg-amber-400 animate-bounce [animation-delay:300ms]" />
+                                        </span>
+                                    </div>
+                                )}
+
+                                <div ref={messagesEndRef} />
+
+                                {/* Floating Jump to Bottom Button */}
+                                {showScrollBottomBtn && (
+                                    <button
+                                        onClick={() => scrollToBottom("smooth")}
+                                        className="sticky bottom-2 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-accent text-black font-bold text-xs shadow-xl flex items-center gap-1.5 hover:bg-accent-hover transition-all cursor-pointer"
+                                    >
+                                        <ArrowDown className="w-3.5 h-3.5" />
+                                        <span>Jump to latest</span>
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Operator Reply & Canned Responses Area */}
+                            <div className="p-3 border-t border-white/10 bg-[#0e1018] shrink-0 space-y-2">
+                                {/* Canned Responses Quick Pills */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
+                                    <span className="text-neutral-500 shrink-0 font-mono text-[10px]">Canned:</span>
+                                    {QUICK_REPLIES.map((reply, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setReplyText(reply)}
+                                            className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-neutral-300 hover:text-white transition-colors truncate max-w-[200px] shrink-0 cursor-pointer"
+                                            title={reply}
+                                        >
+                                            {reply}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Textarea & Send Button */}
+                                <form onSubmit={handleSendReply} className="flex items-end gap-2">
+                                    <textarea
+                                        value={replyText}
+                                        onChange={handleTextareaChange}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendReply();
+                                            }
+                                        }}
+                                        rows={2}
+                                        placeholder={`Reply to ${activeSession.lead_name || "visitor"}... (Enter to send, Shift+Enter for newline)`}
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 transition-colors resize-none"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        disabled={!replyText.trim() || isSending}
+                                        className="h-10 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold disabled:opacity-30 transition-all cursor-pointer shadow-md shadow-cyan-500/20"
+                                    >
+                                        <Send className="w-4 h-4 mr-1.5" />
+                                        <span>Send</span>
+                                    </Button>
+                                </form>
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
+
+            {/* Delete Session Confirmation Dialog */}
+            <AlertDialog
+                open={!!deleteSessionId}
+                onOpenChange={(open) => !open && setDeleteSessionId(null)}
+            >
+                <AlertDialogContent className="bg-[#12141f] border border-white/10 text-white">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Chat Session?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-neutral-400 text-xs">
+                            This action will permanently delete this conversation and all associated visitor messages.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDeleteSession}
+                            className="bg-rose-500 hover:bg-rose-600 text-white font-bold"
+                        >
+                            Delete Transcript
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AdminLayout>
     );
 }

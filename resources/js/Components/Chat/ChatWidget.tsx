@@ -60,6 +60,8 @@ export function ChatWidget() {
     const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isTypingVisible, setIsTypingVisible] = useState(false);
+    const [isOperatorTyping, setIsOperatorTyping] = useState(false);
+    const [operatorTypingName, setOperatorTypingName] = useState('Live Specialist');
     const [isResetting, setIsResetting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -74,6 +76,8 @@ export function ChatWidget() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const lastActivityRef = useRef<number>(Date.now());
+    const operatorTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastVisitorTypingSentRef = useRef<number>(0);
 
     // 1. Direct Mouse Wheel Scroll Handler:
     // Guarantees mouse wheel always scrolls message list directly, bypassing Lenis or parent page handlers
@@ -290,10 +294,25 @@ export function ChatWidget() {
                 );
             };
 
+            const onUserTyping = (data: any) => {
+                if (data.sender === 'operator' && data.is_typing) {
+                    setIsOperatorTyping(true);
+                    if (data.name) setOperatorTypingName(data.name);
+                    if (operatorTypingTimeoutRef.current) clearTimeout(operatorTypingTimeoutRef.current);
+                    operatorTypingTimeoutRef.current = setTimeout(() => {
+                        setIsOperatorTyping(false);
+                    }, 3500);
+                } else if (data.sender === 'operator' && !data.is_typing) {
+                    setIsOperatorTyping(false);
+                }
+            };
+
             channel.listen('ChatMessageSent', onMessageSent);
             channel.listen('.ChatMessageSent', onMessageSent);
             channel.listen('ChatMessageRead', onMessageRead);
             channel.listen('.ChatMessageRead', onMessageRead);
+            channel.listen('ChatUserTyping', onUserTyping);
+            channel.listen('.ChatUserTyping', onUserTyping);
 
             return () => {
                 echoInstance.leaveChannel(`chat.${sessionId}`);
@@ -382,17 +401,16 @@ export function ChatWidget() {
     }, [sessionId, messages, isOpen, isLoading]);
 
     // Realistic human response pacing:
-    // First pause ~1800ms as if reading the message, then show "CuttingEdger is typing..."
+    // First brief pause ~400ms as if reading the message, then show "CuttingEdger is typing..."
     useEffect(() => {
         if (!isLoading) {
             setIsTypingVisible(false);
             return;
         }
 
-        // Natural 1800ms delay so user perceives human reading before typing begins
         const readTimer = setTimeout(() => {
             setIsTypingVisible(true);
-        }, 1800);
+        }, 400);
 
         return () => {
             clearTimeout(readTimer);
@@ -441,6 +459,24 @@ export function ChatWidget() {
             clearInterval(interval);
         };
     }, [sessionId, isOpen]);
+
+    // Handle visitor typing debounced trigger
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputText(e.target.value);
+        const now = Date.now();
+        if (sessionId && now - lastVisitorTypingSentRef.current > 1500) {
+            lastVisitorTypingSentRef.current = now;
+            fetch('/api/chat/typing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-Chat-Session-Id': sessionId,
+                },
+                body: JSON.stringify({ is_typing: true }),
+            }).catch(() => {});
+        }
+    };
 
     // 4. Send Message Handler
     const handleSendMessage = async (textToSend?: string) => {
@@ -492,10 +528,10 @@ export function ChatWidget() {
             if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
 
             // Realistic human response pacing:
-            // Ensure minimum 3200ms total elapsed (1800ms reading pause + at least 1400ms typing indicator)
-            // so the user experiences an authentic, natural human conversation rhythm
+            // Ensure minimum 1200ms total elapsed (400ms reading pause + typing indicator)
+            // so the user experiences an authentic, natural conversation rhythm without sluggish delay
             const elapsed = Date.now() - startTime;
-            const targetDelay = Math.max(0, 3200 - elapsed);
+            const targetDelay = Math.max(0, 1200 - elapsed);
             if (targetDelay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, targetDelay));
             }
@@ -1298,6 +1334,25 @@ export function ChatWidget() {
                                 );
                             })}
 
+                            {/* Live Operator Typing Indicator */}
+                            {isOperatorTyping && (
+                                <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-300">
+                                    <div className="w-6 h-6 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5">
+                                        <User className="w-3.5 h-3.5" />
+                                    </div>
+                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#101924] border border-cyan-500/25 shadow-md flex items-center gap-2.5">
+                                        <div className="flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" />
+                                        </div>
+                                        <span className="text-[11px] font-mono text-cyan-300">
+                                            {operatorTypingName || 'Live Specialist'} is typing...
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Realistic Human Studio Typing Indicator (Clean & Natural) */}
                             {isTypingVisible && (
                                 <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-300">
@@ -1311,9 +1366,7 @@ export function ChatWidget() {
                                             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
                                         </div>
                                         <span className="text-[11px] font-mono text-white/70">
-                                            {chatMode === 'operator'
-                                                ? `${operatorName || 'Live Specialist'} is typing...`
-                                                : 'CuttingEdger is typing...'}
+                                            CuttingEdger is typing...
                                         </span>
                                     </div>
                                 </div>
@@ -1455,7 +1508,7 @@ export function ChatWidget() {
                                 <input
                                     type="text"
                                     value={inputText}
-                                    onChange={(e) => setInputText(e.target.value)}
+                                    onChange={handleInputChange}
                                     placeholder="Ask a question, pricing, turnaround, or edits..."
                                     className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-accent transition-colors"
                                 />

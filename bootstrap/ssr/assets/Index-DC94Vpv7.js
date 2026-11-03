@@ -1,5 +1,6 @@
-import { n as AdminLayout, t as AdminPageHeader } from "./AdminPageHeader-BF3p_UDa.js";
+import { t as AdminLayout } from "./AdminLayout-B_omIhRP.js";
 import { n as Button, t as Input } from "./input-lL3MBuxn.js";
+import { t as AdminPageHeader } from "./AdminPageHeader-BLzCfjWe.js";
 import { t as Textarea } from "./textarea-DNOgnKpG.js";
 import { useState } from "react";
 import { router, useForm } from "@inertiajs/react";

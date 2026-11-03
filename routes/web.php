@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::post('chat-sessions/{chatSession}/takeover', [AdminChatSessionController::class, 'takeover'])->name('chat-sessions.takeover');
     Route::post('chat-sessions/{chatSession}/release', [AdminChatSessionController::class, 'release'])->name('chat-sessions.release');
     Route::post('chat-sessions/{chatSession}/reply', [AdminChatSessionController::class, 'reply'])->name('chat-sessions.reply');
+    Route::post('chat-sessions/{chatSession}/typing', [AdminChatSessionController::class, 'typing'])->name('chat-sessions.typing');
     Route::get('chat-sessions/{chatSession}/poll', [AdminChatSessionController::class, 'poll'])->name('chat-sessions.poll');
     Route::get('chat sessions', fn () => redirect('/admin/chat-sessions'));
     Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
@@ -212,6 +213,7 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/message', [ChatController::class, 'message'])->name('message');
     Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
     Route::post('/read', [ChatController::class, 'markAsRead'])->name('read');
+    Route::post('/typing', [ChatController::class, 'typing'])->name('typing');
     Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
     Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
     Route::post('/cloud-link', [ChatController::class, 'saveCloudLink'])->name('cloud-link');

@@ -2,10 +2,11 @@ import { n as Toaster, r as toast } from "../ssr.js";
 import { t as cn$1 } from "./utils-BVTyW6jK.js";
 import { n as Button } from "./input-lL3MBuxn.js";
 import * as React$1 from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { ArrowLeftRight, Bell, Briefcase, Building2, CalendarCheck2, Check, CheckCheck, CheckCircle2, ChevronRight, Code2, CreditCard, ExternalLink, FolderKanban, HelpCircle, Layers, LayoutDashboard, LogOut, Mail, MessageSquareQuote, MessageSquareText, Newspaper, PanelLeftIcon, Plus, Send, Settings, Shield, ShoppingBag, Sparkles, Tag, Terminal, Trash2, Users, X, XIcon } from "lucide-react";
-import { jsx, jsxs } from "react/jsx-runtime";
+import { ArrowLeftRight, Bell, Briefcase, Building2, CalendarCheck2, Check, CheckCheck, CheckCircle2, ChevronRight, Code2, CreditCard, ExternalLink, FolderKanban, HelpCircle, Layers, LayoutDashboard, LogOut, Mail, Maximize2, MessageSquareQuote, MessageSquareText, Minus, Newspaper, PanelLeftIcon, Radio, Send, Settings, Shield, ShoppingBag, Sparkles, Tag, Terminal, Trash2, Users, X, XIcon } from "lucide-react";
+import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+import { echo } from "@laravel/echo-react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
@@ -300,6 +301,407 @@ function AdminNotificationDropdown() {
 				})
 			]
 		})]
+	});
+}
+//#endregion
+//#region resources/js/Components/Admin/AdminFloatingChatDock.tsx
+function playAlertChime() {
+	try {
+		const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+		if (!AudioContextClass) return;
+		const ctx = new AudioContextClass();
+		const osc = ctx.createOscillator();
+		const gain = ctx.createGain();
+		osc.type = "sine";
+		osc.frequency.setValueAtTime(440, ctx.currentTime);
+		osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + .12);
+		osc.frequency.exponentialRampToValueAtTime(1174.66, ctx.currentTime + .25);
+		gain.gain.setValueAtTime(.12, ctx.currentTime);
+		gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5);
+		osc.connect(gain);
+		gain.connect(ctx.destination);
+		osc.start();
+		osc.stop(ctx.currentTime + .5);
+	} catch {}
+}
+function AdminFloatingChatDock() {
+	const [floatingChats, setFloatingChats] = useState([]);
+	const [bannerAlert, setBannerAlert] = useState(null);
+	useEffect(() => {
+		try {
+			const echoInstance = echo();
+			if (!echoInstance) return;
+			const channel = echoInstance.channel("admin-notifications");
+			const handleTakeover = (data) => {
+				playAlertChime();
+				setBannerAlert({
+					sessionId: data.session_id,
+					leadName: data.lead_name || "Anonymous Visitor",
+					userText: data.user_text || "Requested to speak with a human specialist.",
+					ipAddress: data.ip_address,
+					adminUrl: data.admin_url
+				});
+			};
+			channel.listen("LiveChatTakeoverRequested", handleTakeover);
+			channel.listen(".LiveChatTakeoverRequested", handleTakeover);
+			channel.listen("chat.takeover_requested", handleTakeover);
+			channel.listen(".chat.takeover_requested", handleTakeover);
+			return () => {
+				echoInstance.leaveChannel("admin-notifications");
+			};
+		} catch {}
+	}, []);
+	useEffect(() => {
+		const handleOpenEvent = (e) => {
+			const { sessionId, leadName } = e.detail || {};
+			if (!sessionId) return;
+			openFloatingChat(sessionId, leadName || "Visitor");
+		};
+		window.addEventListener("open-admin-floating-chat", handleOpenEvent);
+		return () => window.removeEventListener("open-admin-floating-chat", handleOpenEvent);
+	}, []);
+	const openFloatingChat = (sessionId, leadName) => {
+		setFloatingChats((prev) => {
+			if (prev.find((c) => c.sessionId === sessionId)) return prev.map((c) => c.sessionId === sessionId ? {
+				...c,
+				isMinimized: false
+			} : c);
+			return [...prev.length >= 3 ? prev.slice(1) : prev, {
+				sessionId,
+				leadName,
+				isMinimized: false
+			}];
+		});
+	};
+	const closeFloatingChat = (sessionId) => {
+		setFloatingChats((prev) => prev.filter((c) => c.sessionId !== sessionId));
+	};
+	const toggleMinimize = (sessionId) => {
+		setFloatingChats((prev) => prev.map((c) => c.sessionId === sessionId ? {
+			...c,
+			isMinimized: !c.isMinimized
+		} : c));
+	};
+	return /* @__PURE__ */ jsxs(Fragment, { children: [bannerAlert && /* @__PURE__ */ jsxs("div", {
+		className: "fixed top-18 right-6 z-50 w-96 rounded-2xl bg-[#141724] border border-amber-500/50 shadow-2xl p-4 text-white animate-in slide-in-from-top-4 duration-300",
+		children: [
+			/* @__PURE__ */ jsxs("div", {
+				className: "flex items-start justify-between gap-3",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "flex items-center gap-2.5",
+					children: [/* @__PURE__ */ jsxs("span", {
+						className: "relative flex h-3 w-3",
+						children: [/* @__PURE__ */ jsx("span", { className: "animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" }), /* @__PURE__ */ jsx("span", { className: "relative inline-flex rounded-full h-3 w-3 bg-amber-500" })]
+					}), /* @__PURE__ */ jsx("span", {
+						className: "text-xs font-mono font-bold uppercase tracking-wider text-amber-400",
+						children: "🚨 Live Chat Takeover Requested"
+					})]
+				}), /* @__PURE__ */ jsx("button", {
+					onClick: () => setBannerAlert(null),
+					className: "text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/10",
+					children: /* @__PURE__ */ jsx(X, { className: "w-3.5 h-3.5" })
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "mt-2.5 bg-black/40 rounded-xl p-2.5 border border-white/5",
+				children: [/* @__PURE__ */ jsx("div", {
+					className: "text-xs font-semibold text-white truncate",
+					children: bannerAlert.leadName
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "text-[11px] text-neutral-300 mt-0.5 line-clamp-2 italic",
+					children: [
+						"\"",
+						bannerAlert.userText,
+						"\""
+					]
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				className: "mt-3 flex items-center gap-2",
+				children: [/* @__PURE__ */ jsxs("button", {
+					onClick: () => {
+						openFloatingChat(bannerAlert.sessionId, bannerAlert.leadName);
+						setBannerAlert(null);
+					},
+					className: "flex-1 py-1.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-1.5 cursor-pointer",
+					children: [/* @__PURE__ */ jsx(Radio, { className: "w-3.5 h-3.5 animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "Join Live Chat" })]
+				}), /* @__PURE__ */ jsxs(Link, {
+					href: `/admin/chat-sessions?id=${bannerAlert.sessionId}`,
+					onClick: () => setBannerAlert(null),
+					className: "py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-medium transition-colors flex items-center gap-1",
+					children: [/* @__PURE__ */ jsx("span", { children: "Open" }), /* @__PURE__ */ jsx(ExternalLink, { className: "w-3 h-3" })]
+				})]
+			})
+		]
+	}), /* @__PURE__ */ jsx("div", {
+		className: "fixed bottom-3 right-6 z-50 flex items-end gap-3 pointer-events-none",
+		children: floatingChats.map((chat) => /* @__PURE__ */ jsx("div", {
+			className: "pointer-events-auto",
+			children: /* @__PURE__ */ jsx(FloatingChatCard, {
+				sessionId: chat.sessionId,
+				leadName: chat.leadName,
+				isMinimized: chat.isMinimized,
+				onToggleMinimize: () => toggleMinimize(chat.sessionId),
+				onClose: () => closeFloatingChat(chat.sessionId)
+			})
+		}, chat.sessionId))
+	})] });
+}
+function FloatingChatCard({ sessionId, leadName, isMinimized, onToggleMinimize, onClose }) {
+	const [messages, setMessages] = useState([]);
+	const [chatMode, setChatMode] = useState("bot");
+	const [operatorName, setOperatorName] = useState(null);
+	const [inputText, setInputText] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [isUserTyping, setIsUserTyping] = useState(false);
+	const [unreadCount, setUnreadCount] = useState(0);
+	const messagesEndRef = useRef(null);
+	const scrollContainerRef = useRef(null);
+	const typingTimeoutRef = useRef(null);
+	const lastTypingSentRef = useRef(0);
+	useEffect(() => {
+		fetch(`/admin/chat-sessions/${sessionId}`, { headers: {
+			Accept: "application/json",
+			"X-Requested-With": "XMLHttpRequest"
+		} }).then((res) => res.json()).then((data) => {
+			if (data.session) {
+				setChatMode(data.session.mode || "bot");
+				setOperatorName(data.session.operator_name || null);
+			}
+			if (data.messages) setMessages(data.messages);
+		}).catch(() => {});
+	}, [sessionId]);
+	useEffect(() => {
+		const el = scrollContainerRef.current;
+		if (!el) return;
+		const handleWheel = (e) => {
+			e.stopPropagation();
+			el.scrollTop += e.deltaY;
+		};
+		el.addEventListener("wheel", handleWheel, { passive: true });
+		return () => el.removeEventListener("wheel", handleWheel);
+	}, [isMinimized]);
+	useEffect(() => {
+		try {
+			const echoInstance = echo();
+			if (!echoInstance) return;
+			const channel = echoInstance.channel(`chat.${sessionId}`);
+			const onMessage = (data) => {
+				const newMsg = data.message || data;
+				setMessages((prev) => {
+					if (prev.some((m) => String(m.id) === String(newMsg.id))) return prev;
+					return [...prev, newMsg];
+				});
+				if (isMinimized && newMsg.sender === "user") {
+					setUnreadCount((c) => c + 1);
+					playAlertChime();
+				}
+			};
+			const onRead = (data) => {
+				const ids = data.message_ids || [];
+				setMessages((prev) => prev.map((m) => ids.length === 0 || ids.includes(m.id) ? {
+					...m,
+					is_read: true
+				} : m));
+			};
+			const onTyping = (data) => {
+				if (data.sender === "user" && data.is_typing) {
+					setIsUserTyping(true);
+					if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+					typingTimeoutRef.current = setTimeout(() => setIsUserTyping(false), 3500);
+				} else if (data.sender === "user" && !data.is_typing) setIsUserTyping(false);
+			};
+			channel.listen("ChatMessageSent", onMessage);
+			channel.listen(".ChatMessageSent", onMessage);
+			channel.listen("ChatMessageRead", onRead);
+			channel.listen(".ChatMessageRead", onRead);
+			channel.listen("ChatUserTyping", onTyping);
+			channel.listen(".ChatUserTyping", onTyping);
+			return () => {
+				echoInstance.leaveChannel(`chat.${sessionId}`);
+			};
+		} catch {}
+	}, [sessionId, isMinimized]);
+	useEffect(() => {
+		if (!isMinimized) {
+			setUnreadCount(0);
+			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [messages, isMinimized]);
+	const handleSend = async (e) => {
+		if (e) e.preventDefault();
+		const text = inputText.trim();
+		if (!text || isLoading) return;
+		setInputText("");
+		setIsLoading(true);
+		try {
+			const data = await (await fetch(`/admin/chat-sessions/${sessionId}/reply`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-Requested-With": "XMLHttpRequest",
+					"X-CSRF-TOKEN": document.querySelector("meta[name=\"csrf-token\"]")?.content || ""
+				},
+				body: JSON.stringify({ content: text })
+			})).json();
+			if (data.message) {
+				setChatMode("operator");
+				setMessages((prev) => {
+					if (prev.some((m) => String(m.id) === String(data.message.id))) return prev;
+					return [...prev, data.message];
+				});
+			}
+		} catch {} finally {
+			setIsLoading(false);
+		}
+	};
+	const handleTakeoverToggle = async () => {
+		const endpoint = chatMode === "operator" ? `/admin/chat-sessions/${sessionId}/release` : `/admin/chat-sessions/${sessionId}/takeover`;
+		try {
+			const data = await (await fetch(endpoint, {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"X-Requested-With": "XMLHttpRequest",
+					"X-CSRF-TOKEN": document.querySelector("meta[name=\"csrf-token\"]")?.content || ""
+				}
+			})).json();
+			if (data.session) {
+				setChatMode(data.session.mode);
+				setOperatorName(data.session.operator_name || null);
+			}
+			if (data.announcement) setMessages((prev) => [...prev, data.announcement]);
+		} catch {}
+	};
+	const handleInputChange = (e) => {
+		setInputText(e.target.value);
+		const now = Date.now();
+		if (now - lastTypingSentRef.current > 1500) {
+			lastTypingSentRef.current = now;
+			fetch(`/admin/chat-sessions/${sessionId}/typing`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+					"X-Requested-With": "XMLHttpRequest",
+					"X-CSRF-TOKEN": document.querySelector("meta[name=\"csrf-token\"]")?.content || ""
+				},
+				body: JSON.stringify({ is_typing: true })
+			}).catch(() => {});
+		}
+	};
+	if (isMinimized) return /* @__PURE__ */ jsxs("button", {
+		onClick: onToggleMinimize,
+		className: "flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#141724] border border-cyan-500/40 shadow-xl text-white hover:bg-[#1a1e30] transition-all cursor-pointer",
+		children: [
+			/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-cyan-400 animate-pulse" }),
+			/* @__PURE__ */ jsx("span", {
+				className: "text-xs font-semibold max-w-[120px] truncate",
+				children: leadName
+			}),
+			unreadCount > 0 && /* @__PURE__ */ jsx("span", {
+				className: "px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[10px] font-bold",
+				children: unreadCount
+			})
+		]
+	});
+	return /* @__PURE__ */ jsxs("div", {
+		className: "w-84 sm:w-90 h-[460px] rounded-2xl bg-[#0e1017] border border-white/15 shadow-2xl flex flex-col overflow-hidden text-white animate-in slide-in-from-bottom-4 duration-200",
+		children: [
+			/* @__PURE__ */ jsxs("div", {
+				className: "p-3 bg-[#141722] border-b border-white/10 flex items-center justify-between shrink-0",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "flex items-center gap-2 min-w-0",
+					children: [/* @__PURE__ */ jsx("span", { className: cn$1("w-2 h-2 rounded-full shrink-0", chatMode === "operator" ? "bg-cyan-400 animate-pulse" : "bg-neutral-500") }), /* @__PURE__ */ jsxs("div", {
+						className: "min-w-0",
+						children: [/* @__PURE__ */ jsx("div", {
+							className: "text-xs font-bold text-white truncate",
+							children: leadName
+						}), /* @__PURE__ */ jsx("div", {
+							className: "text-[10px] font-mono text-neutral-400",
+							children: chatMode === "operator" ? `Live (${operatorName || "You"})` : "AI Bot"
+						})]
+					})]
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "flex items-center gap-1 shrink-0",
+					children: [
+						/* @__PURE__ */ jsx("button", {
+							onClick: handleTakeoverToggle,
+							title: chatMode === "operator" ? "Release to Bot" : "Take Over Chat",
+							className: cn$1("px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer", chatMode === "operator" ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25" : "bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"),
+							children: chatMode === "operator" ? "Release" : "Takeover"
+						}),
+						/* @__PURE__ */ jsx(Link, {
+							href: `/admin/chat-sessions?id=${sessionId}`,
+							title: "Open Full Messenger",
+							className: "p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white",
+							children: /* @__PURE__ */ jsx(Maximize2, { className: "w-3.5 h-3.5" })
+						}),
+						/* @__PURE__ */ jsx("button", {
+							onClick: onToggleMinimize,
+							title: "Minimize",
+							className: "p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white",
+							children: /* @__PURE__ */ jsx(Minus, { className: "w-3.5 h-3.5" })
+						}),
+						/* @__PURE__ */ jsx("button", {
+							onClick: onClose,
+							title: "Close",
+							className: "p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white",
+							children: /* @__PURE__ */ jsx(X, { className: "w-3.5 h-3.5" })
+						})
+					]
+				})]
+			}),
+			/* @__PURE__ */ jsxs("div", {
+				ref: scrollContainerRef,
+				className: "flex-1 overflow-y-auto p-3 space-y-2.5 bg-[#090a0f] text-xs",
+				children: [
+					messages.map((m) => {
+						const isUser = m.sender === "user";
+						const isOperator = m.sender === "operator";
+						return /* @__PURE__ */ jsxs("div", {
+							className: cn$1("flex flex-col max-w-[85%]", isUser ? "ml-auto items-end" : "mr-auto items-start"),
+							children: [/* @__PURE__ */ jsx("div", {
+								className: cn$1("p-2.5 rounded-2xl text-[12px] leading-relaxed break-words shadow-xs", isUser ? "bg-amber-500/20 text-amber-50 border border-amber-500/30 rounded-tr-xs" : isOperator ? "bg-cyan-950/70 text-cyan-50 border border-cyan-500/30 rounded-tl-xs" : "bg-[#161822] text-neutral-200 border border-white/10 rounded-tl-xs"),
+								children: m.content
+							}), /* @__PURE__ */ jsxs("div", {
+								className: "flex items-center gap-1 text-[9px] text-neutral-500 mt-0.5 px-1 font-mono",
+								children: [/* @__PURE__ */ jsx("span", { children: m.created_at_formatted || "" }), isUser && /* @__PURE__ */ jsx("span", { children: m.is_read ? /* @__PURE__ */ jsx(CheckCheck, { className: "w-3 h-3 text-cyan-400 inline" }) : /* @__PURE__ */ jsx(Check, { className: "w-3 h-3 text-neutral-500 inline" }) })]
+							})]
+						}, m.id);
+					}),
+					isUserTyping && /* @__PURE__ */ jsxs("div", {
+						className: "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] w-fit font-mono",
+						children: [/* @__PURE__ */ jsx("span", { children: "Client is typing" }), /* @__PURE__ */ jsxs("span", {
+							className: "flex gap-0.5",
+							children: [
+								/* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-amber-400 animate-bounce" }),
+								/* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-amber-400 animate-bounce [animation-delay:150ms]" }),
+								/* @__PURE__ */ jsx("span", { className: "w-1 h-1 rounded-full bg-amber-400 animate-bounce [animation-delay:300ms]" })
+							]
+						})]
+					}),
+					/* @__PURE__ */ jsx("div", { ref: messagesEndRef })
+				]
+			}),
+			/* @__PURE__ */ jsxs("form", {
+				onSubmit: handleSend,
+				className: "p-2.5 bg-[#141722] border-t border-white/10 flex items-center gap-2",
+				children: [/* @__PURE__ */ jsx("input", {
+					type: "text",
+					value: inputText,
+					onChange: handleInputChange,
+					placeholder: "Type live message...",
+					className: "flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 transition-colors"
+				}), /* @__PURE__ */ jsx("button", {
+					type: "submit",
+					disabled: !inputText.trim() || isLoading,
+					className: "p-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold disabled:opacity-30 transition-all cursor-pointer",
+					children: /* @__PURE__ */ jsx(Send, { className: "w-3.5 h-3.5" })
+				})]
+			})
+		]
 	});
 }
 //#endregion
@@ -979,55 +1381,12 @@ function AdminLayout({ children, title }) {
 					/* @__PURE__ */ jsx("div", {
 						className: "p-8 flex-1",
 						children
-					})
+					}),
+					/* @__PURE__ */ jsx(AdminFloatingChatDock, {})
 				]
 			})]
 		})
 	}) });
 }
 //#endregion
-//#region resources/js/Components/Admin/UI/AdminPageHeader.tsx
-function AdminPageHeader({ title, description, badge, eyebrow, actionLabel, actionHref, onActionClick, createLabel, onCreate, children }) {
-	const finalActionLabel = actionLabel || createLabel;
-	return /* @__PURE__ */ jsxs("div", {
-		className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-white/10 mb-8",
-		children: [/* @__PURE__ */ jsxs("div", {
-			className: "space-y-1",
-			children: [
-				eyebrow && /* @__PURE__ */ jsx("div", {
-					className: "font-mono text-xs uppercase tracking-widest text-accent",
-					children: eyebrow
-				}),
-				/* @__PURE__ */ jsxs("div", {
-					className: "flex items-center gap-3",
-					children: [/* @__PURE__ */ jsx("h1", {
-						className: "text-2xl sm:text-3xl font-bold text-white tracking-tight",
-						children: title
-					}), badge && /* @__PURE__ */ jsx("span", {
-						className: "px-2.5 py-0.5 rounded-full bg-accent/10 border border-accent/30 text-accent font-mono text-xs font-semibold",
-						children: badge
-					})]
-				}),
-				description && /* @__PURE__ */ jsx("p", {
-					className: "text-sm text-neutral-400",
-					children: description
-				})
-			]
-		}), /* @__PURE__ */ jsxs("div", {
-			className: "flex items-center gap-3",
-			children: [children, finalActionLabel && (actionHref ? /* @__PURE__ */ jsx(Link, {
-				href: actionHref,
-				children: /* @__PURE__ */ jsxs(Button, {
-					className: "gap-2 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold",
-					children: [/* @__PURE__ */ jsx(Plus, { className: "w-4 h-4" }), /* @__PURE__ */ jsx("span", { children: finalActionLabel })]
-				})
-			}) : /* @__PURE__ */ jsxs(Button, {
-				onClick: onActionClick || onCreate,
-				className: "gap-2 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold cursor-pointer",
-				children: [/* @__PURE__ */ jsx(Plus, { className: "w-4 h-4" }), /* @__PURE__ */ jsx("span", { children: finalActionLabel })]
-			}))]
-		})]
-	});
-}
-//#endregion
-export { DropdownMenuItem as a, DropdownMenuContent as i, AdminLayout as n, DropdownMenuTrigger as o, DropdownMenu as r, AdminPageHeader as t };
+export { DropdownMenuTrigger as a, DropdownMenuItem as i, DropdownMenu as n, DropdownMenuContent as r, AdminLayout as t };
