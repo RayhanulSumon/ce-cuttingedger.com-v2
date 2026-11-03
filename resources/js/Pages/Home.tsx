@@ -3,6 +3,8 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { SplitHero } from '@/Components/Home/SplitHero';
 import { IntroBand } from '@/Components/Home/IntroBand';
 import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
+import { AwardsShowcase } from '@/Components/Home/AwardsShowcase';
+import { VideoShowcase } from '@/Components/Home/VideoShowcase';
 import { StickyServiceCards } from '@/Components/Home/StickyServiceCards';
 import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
@@ -11,6 +13,7 @@ import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
 import { RecentWorkShowcase } from '@/Components/Home/RecentWorkShowcase';
 import { TestimonialsSlider } from '@/Components/Home/TestimonialsSlider';
+import { HomeFaqSection } from '@/Components/Home/HomeFaqSection';
 import { Project, Service, TeamMember, Testimonial, Client } from '@/types/models';
 
 interface HomeProps {
@@ -44,29 +47,38 @@ export default function Home({
             {/* 3. Interactive Before/After Craft Comparison Slider */}
             <BeforeAfterShowcase />
 
-            {/* 4. Core Services Sticky Stacked Cards */}
+            {/* 4. Verified Industry Recognitions & Awards (Dark Luxury) */}
+            <AwardsShowcase />
+
+            {/* 5. Short-Form & Spatial 3D Video Showcase (Dark Luxury) */}
+            <VideoShowcase />
+
+            {/* 6. Core Services Sticky Stacked Cards */}
             <StickyServiceCards services={services} />
 
-            {/* 5. Animated Daily Production Stats Grid */}
+            {/* 7. Animated Daily Production Stats Grid */}
             <StatsGrid />
 
-            {/* 6. Free Trial & Instant Batch Uploader Wizard */}
+            {/* 8. Free Trial & Instant Batch Uploader Wizard */}
             <FreeTrialDropzone />
 
-            {/* 7. 3-Card Bespoke Production Tiers (Request for Pricing) */}
+            {/* 9. 3-Card Bespoke Production Tiers (Request for Pricing) */}
             <PricingCardsSection />
 
-            {/* 8. Dual Counter-Scrolling Client Marquees */}
+            {/* 10. Dual Counter-Scrolling Client Marquees */}
             <ClientMarquees clients={clients} />
 
-            {/* 8. Leadership Team */}
+            {/* 11. Leadership Team */}
             <TeamPreview members={teamMembers} />
 
-            {/* 9. Recent Work Kinetic Parallax Showcase */}
+            {/* 12. Recent Work Kinetic Parallax Showcase */}
             <RecentWorkShowcase projects={featuredProjects} />
 
-            {/* 10. Accessible Testimonials Slider */}
+            {/* 13. Accessible Testimonials Slider */}
             <TestimonialsSlider testimonials={testimonials} />
+
+            {/* 14. Homepage FAQ Accordion ("Frequent questions.") */}
+            <HomeFaqSection />
         </>
     );
 }
