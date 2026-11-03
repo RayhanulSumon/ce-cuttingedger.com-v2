@@ -178,24 +178,54 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 			href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
 			children: [
 				{
-					label: "01. Minimalist Studio",
-					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1"
+					label: "01. Glassmorphic Pure",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=1",
+					badge: "FROSTED LOUPE"
 				},
 				{
 					label: "02. Editorial Lookbook",
-					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=2"
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=2",
+					badge: "SSENSE ATELIER"
 				},
 				{
-					label: "03. Technical Specs Lab",
-					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=3"
+					label: "03. Parallax Horizon",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=3",
+					badge: "KINETIC DEPTH"
 				},
 				{
-					label: "04. High-Conversion E-Com",
-					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=4"
+					label: "04. Cinematic Visual Slider",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=4",
+					badge: "VISUAL CAROUSEL"
 				},
 				{
 					label: "05. Dark Obsidian Craft",
-					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=5"
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=5",
+					badge: "OBSIDIAN VELVET"
+				},
+				{
+					label: "06. Visual Bento Atelier",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=6",
+					badge: "LIVE BACKDROP"
+				},
+				{
+					label: "07. Interactive Split Canvas",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=7",
+					badge: "0-100% SLIDER"
+				},
+				{
+					label: "08. 3D Perspective Gallery",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=8",
+					badge: "3D EXPLODER"
+				},
+				{
+					label: "09. Minimalist Visual Wall",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=9",
+					badge: "EXHIBITION WALL"
+				},
+				{
+					label: "10. Studio Lookbook Stream",
+					href: "/services/ecommerce-catalog-optimization/clipping-path-service?v=10",
+					badge: "COLORWAY RENDER"
 				}
 			]
 		},
@@ -4569,13 +4599,18 @@ createServer((page) => createInertiaApp({
 			"./Pages/Privacy.tsx": () => import("./assets/Privacy-CJ5wk8_j.js"),
 			"./Pages/Reviews.tsx": () => import("./assets/Reviews-8qZohVkL.js"),
 			"./Pages/Services/Index.tsx": () => import("./assets/Index-Cadezd1t.js"),
-			"./Pages/Services/Show.tsx": () => import("./assets/Show-Dx8tsjm2.js"),
+			"./Pages/Services/Show.tsx": () => import("./assets/Show-zTNKW3cL.js"),
+			"./Pages/Services/Variants/VariantBentoAtelier.tsx": () => import("./assets/VariantBentoAtelier-CaqX_if1.js"),
 			"./Pages/Services/Variants/VariantDarkObsidian.tsx": () => import("./assets/VariantDarkObsidian-CestW0eT.js"),
 			"./Pages/Services/Variants/VariantEditorial.tsx": () => import("./assets/VariantEditorial-B51efcam.js"),
-			"./Pages/Services/Variants/VariantHighConversion.tsx": () => import("./assets/VariantHighConversion-2ezNnkUp.js"),
-			"./Pages/Services/Variants/VariantMinimalist.tsx": () => import("./assets/VariantMinimalist-DPJAe2Pq.js"),
-			"./Pages/Services/Variants/VariantSwitcher.tsx": () => import("./assets/VariantSwitcher-8YpK3TN_.js"),
-			"./Pages/Services/Variants/VariantTechnical.tsx": () => import("./assets/VariantTechnical-xusV4Kh6.js"),
+			"./Pages/Services/Variants/VariantGlassmorphic.tsx": () => import("./assets/VariantGlassmorphic-CS6okb78.js"),
+			"./Pages/Services/Variants/VariantLookbookStream.tsx": () => import("./assets/VariantLookbookStream-BzP-XP_2.js"),
+			"./Pages/Services/Variants/VariantParallax.tsx": () => import("./assets/VariantParallax-aZGO3fVB.js"),
+			"./Pages/Services/Variants/VariantPerspective3D.tsx": () => import("./assets/VariantPerspective3D-e4OCOo0N.js"),
+			"./Pages/Services/Variants/VariantSplitCanvas.tsx": () => import("./assets/VariantSplitCanvas-BRHp3AY5.js"),
+			"./Pages/Services/Variants/VariantSwitcher.tsx": () => import("./assets/VariantSwitcher-DZLUvhJc.js"),
+			"./Pages/Services/Variants/VariantVisualSlider.tsx": () => import("./assets/VariantVisualSlider-DnYHR-El.js"),
+			"./Pages/Services/Variants/VariantVisualWall.tsx": () => import("./assets/VariantVisualWall-C1Y-IeCW.js"),
 			"./Pages/Team/Index.tsx": () => import("./assets/Index-hvotTPrv.js"),
 			"./Pages/Team/Show.tsx": () => import("./assets/Show-CHjdVEH0.js"),
 			"./Pages/Terms.tsx": () => import("./assets/Terms-qT_auwT-.js"),

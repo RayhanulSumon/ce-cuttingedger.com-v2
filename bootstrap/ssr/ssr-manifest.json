@@ -247,7 +247,10 @@
     "/build/assets/Index-Cadezd1t.js"
   ],
   "resources/js/Pages/Services/Show.tsx": [
-    "/build/assets/Show-Dx8tsjm2.js"
+    "/build/assets/Show-zTNKW3cL.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantBentoAtelier.tsx": [
+    "/build/assets/VariantBentoAtelier-CaqX_if1.js"
   ],
   "resources/js/Pages/Services/Variants/VariantDarkObsidian.tsx": [
     "/build/assets/VariantDarkObsidian-CestW0eT.js"
@@ -255,17 +258,29 @@
   "resources/js/Pages/Services/Variants/VariantEditorial.tsx": [
     "/build/assets/VariantEditorial-B51efcam.js"
   ],
-  "resources/js/Pages/Services/Variants/VariantHighConversion.tsx": [
-    "/build/assets/VariantHighConversion-2ezNnkUp.js"
+  "resources/js/Pages/Services/Variants/VariantGlassmorphic.tsx": [
+    "/build/assets/VariantGlassmorphic-CS6okb78.js"
   ],
-  "resources/js/Pages/Services/Variants/VariantMinimalist.tsx": [
-    "/build/assets/VariantMinimalist-DPJAe2Pq.js"
+  "resources/js/Pages/Services/Variants/VariantLookbookStream.tsx": [
+    "/build/assets/VariantLookbookStream-BzP-XP_2.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantParallax.tsx": [
+    "/build/assets/VariantParallax-aZGO3fVB.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantPerspective3D.tsx": [
+    "/build/assets/VariantPerspective3D-e4OCOo0N.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantSplitCanvas.tsx": [
+    "/build/assets/VariantSplitCanvas-BRHp3AY5.js"
   ],
   "resources/js/Pages/Services/Variants/VariantSwitcher.tsx": [
-    "/build/assets/VariantSwitcher-8YpK3TN_.js"
+    "/build/assets/VariantSwitcher-DZLUvhJc.js"
   ],
-  "resources/js/Pages/Services/Variants/VariantTechnical.tsx": [
-    "/build/assets/VariantTechnical-xusV4Kh6.js"
+  "resources/js/Pages/Services/Variants/VariantVisualSlider.tsx": [
+    "/build/assets/VariantVisualSlider-DnYHR-El.js"
+  ],
+  "resources/js/Pages/Services/Variants/VariantVisualWall.tsx": [
+    "/build/assets/VariantVisualWall-C1Y-IeCW.js"
   ],
   "resources/js/Pages/Team/Index.tsx": [
     "/build/assets/Index-hvotTPrv.js"

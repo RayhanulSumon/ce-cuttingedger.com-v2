@@ -8,11 +8,18 @@ import {
   ServicePageVariant,
   VARIANT_OPTIONS
 } from './Variants/VariantSwitcher';
-import { VariantMinimalist } from './Variants/VariantMinimalist';
+
+// 10 Curated Image-First Production Variants (Kept #2 and #5)
+import { VariantGlassmorphic } from './Variants/VariantGlassmorphic';
 import { VariantEditorial } from './Variants/VariantEditorial';
-import { VariantTechnical } from './Variants/VariantTechnical';
-import { VariantHighConversion } from './Variants/VariantHighConversion';
+import { VariantParallax } from './Variants/VariantParallax';
+import { VariantVisualSlider } from './Variants/VariantVisualSlider';
 import { VariantDarkObsidian } from './Variants/VariantDarkObsidian';
+import { VariantBentoAtelier } from './Variants/VariantBentoAtelier';
+import { VariantSplitCanvas } from './Variants/VariantSplitCanvas';
+import { VariantPerspective3D } from './Variants/VariantPerspective3D';
+import { VariantVisualWall } from './Variants/VariantVisualWall';
+import { VariantLookbookStream } from './Variants/VariantLookbookStream';
 
 interface ServiceShowProps {
   service: Service & {
@@ -29,14 +36,30 @@ interface ServiceShowProps {
 }
 
 const parseVariantParam = (param: string | null): ServicePageVariant => {
-  if (!param) return 'minimalist';
+  if (!param) return 'glassmorphic';
   const p = param.toLowerCase().trim();
-  if (p === '1' || p === 'minimalist' || p === 'studio') return 'minimalist';
+  if (p === '1' || p === 'glassmorphic' || p === 'lumina' || p === 'minimalist' || p === 'studio')
+    return 'glassmorphic';
   if (p === '2' || p === 'editorial' || p === 'lookbook') return 'editorial';
-  if (p === '3' || p === 'technical' || p === 'lab') return 'technical';
-  if (p === '4' || p === 'conversion' || p === 'ecommerce') return 'conversion';
+  if (p === '3' || p === 'parallax' || p === 'horizon' || p === 'technical' || p === 'lab')
+    return 'parallax';
+  if (
+    p === '4' ||
+    p === 'slider' ||
+    p === 'slider-showcase' ||
+    p === 'cinematic' ||
+    p === 'conversion'
+  )
+    return 'slider-showcase';
   if (p === '5' || p === 'obsidian' || p === 'dark') return 'obsidian';
-  return 'minimalist';
+  if (p === '6' || p === 'bento' || p === 'bento-grid' || p === 'atelier') return 'bento-grid';
+  if (p === '7' || p === 'split' || p === 'split-canvas' || p === 'canvas') return 'split-canvas';
+  if (p === '8' || p === '3d' || p === 'perspective' || p === 'perspective-3d')
+    return 'perspective-3d';
+  if (p === '9' || p === 'wall' || p === 'visual-wall' || p === 'exhibition') return 'visual-wall';
+  if (p === '10' || p === 'stream' || p === 'lookbook-stream' || p === 'runway')
+    return 'lookbook-stream';
+  return 'glassmorphic';
 };
 
 export default function Show({
@@ -49,7 +72,7 @@ export default function Show({
     (settings as any)?.calendly_url || 'https://calendly.com/cuttingedger/discovery-call';
 
   // Read initial variant from query param or localStorage
-  const [variant, setVariant] = useState<ServicePageVariant>('minimalist');
+  const [variant, setVariant] = useState<ServicePageVariant>('glassmorphic');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -112,8 +135,8 @@ export default function Show({
 
       {/* RENDER THE ACTIVE DESIGN VARIANT */}
       <main className="relative transition-all duration-300">
-        {variant === 'minimalist' && (
-          <VariantMinimalist
+        {variant === 'glassmorphic' && (
+          <VariantGlassmorphic
             service={service}
             otherServices={otherServices}
             relatedProjects={relatedProjects}
@@ -130,8 +153,8 @@ export default function Show({
           />
         )}
 
-        {variant === 'technical' && (
-          <VariantTechnical
+        {variant === 'parallax' && (
+          <VariantParallax
             service={service}
             otherServices={otherServices}
             relatedProjects={relatedProjects}
@@ -139,8 +162,8 @@ export default function Show({
           />
         )}
 
-        {variant === 'conversion' && (
-          <VariantHighConversion
+        {variant === 'slider-showcase' && (
+          <VariantVisualSlider
             service={service}
             otherServices={otherServices}
             relatedProjects={relatedProjects}
@@ -150,6 +173,51 @@ export default function Show({
 
         {variant === 'obsidian' && (
           <VariantDarkObsidian
+            service={service}
+            otherServices={otherServices}
+            relatedProjects={relatedProjects}
+            calendlyUrl={calendlyUrl}
+          />
+        )}
+
+        {variant === 'bento-grid' && (
+          <VariantBentoAtelier
+            service={service}
+            otherServices={otherServices}
+            relatedProjects={relatedProjects}
+            calendlyUrl={calendlyUrl}
+          />
+        )}
+
+        {variant === 'split-canvas' && (
+          <VariantSplitCanvas
+            service={service}
+            otherServices={otherServices}
+            relatedProjects={relatedProjects}
+            calendlyUrl={calendlyUrl}
+          />
+        )}
+
+        {variant === 'perspective-3d' && (
+          <VariantPerspective3D
+            service={service}
+            otherServices={otherServices}
+            relatedProjects={relatedProjects}
+            calendlyUrl={calendlyUrl}
+          />
+        )}
+
+        {variant === 'visual-wall' && (
+          <VariantVisualWall
+            service={service}
+            otherServices={otherServices}
+            relatedProjects={relatedProjects}
+            calendlyUrl={calendlyUrl}
+          />
+        )}
+
+        {variant === 'lookbook-stream' && (
+          <VariantLookbookStream
             service={service}
             otherServices={otherServices}
             relatedProjects={relatedProjects}
