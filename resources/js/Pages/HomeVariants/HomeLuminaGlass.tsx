@@ -132,24 +132,24 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
       </div>
 
       {/* Top Glass Floating Header */}
-      <header className="sticky top-4 z-40 max-w-6xl mx-auto px-4">
-        <div className="rounded-full bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.04)] px-5 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-full bg-[#de4a2c] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-[#de4a2c]/20">
+      <header className="sticky top-2 z-40 max-w-6xl mx-auto px-4">
+        <div className="rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.04)] px-4 py-2 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-[#de4a2c] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-[#de4a2c]/20">
               CE
             </span>
             <div className="flex flex-col">
-              <span className="font-extrabold text-sm tracking-tight text-neutral-900 leading-none">
+              <span className="font-extrabold text-xs sm:text-sm tracking-tight text-neutral-900 leading-none">
                 CUTTING EDGER
               </span>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+              <span className="text-[9px] uppercase font-mono tracking-widest text-neutral-400">
                 Lumina Glass Studio
               </span>
             </div>
           </Link>
 
           {/* Quick Service Badges */}
-          <nav className="hidden md:flex items-center gap-1 bg-neutral-100/60 p-1 rounded-full border border-neutral-200/50">
+          <nav className="hidden md:flex items-center gap-1 bg-neutral-100/60 p-0.5 rounded-full border border-neutral-200/50 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {FIVE_SERVICES.map((s, idx) => (
               <button
                 key={s.id}
@@ -168,7 +168,7 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/contact"
-              className="px-4 py-2 rounded-full bg-neutral-900 text-white hover:bg-[#de4a2c] text-xs font-semibold tracking-wide transition-colors shadow-sm"
+              className="px-4 py-1.5 rounded-full bg-neutral-900 text-white hover:bg-[#de4a2c] text-xs font-semibold tracking-wide transition-colors shadow-sm"
             >
               Start Free Trial
             </Link>
@@ -179,33 +179,33 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
       {/* =========================================================
           HERO: OPTICAL LENS STAGE
       ========================================================= */}
-      <section className="relative z-10 pt-12 pb-16 px-4 max-w-6xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-neutral-200/80 shadow-xs mb-4 text-xs font-medium text-neutral-700">
-            <span className="w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" />
-            <span>Interactive Light Stage — Drag & Hover to Reveal Retouch</span>
+      <section className="relative z-10 pt-3 sm:pt-4 pb-8 sm:pb-12 px-4 max-w-6xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto mb-3 sm:mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-neutral-200/80 shadow-xs mb-1.5 text-[10px] font-mono font-bold text-neutral-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#de4a2c] animate-pulse" />
+            <span>05 FROSTED OPTIC DISCIPLINES</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-neutral-950 leading-[1.08] mb-4">
-            Visual Perfection, <br className="hidden sm:inline" />
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-neutral-950 leading-tight">
+            Pure Visual Precision,{' '}
             <span className="bg-gradient-to-r from-neutral-900 via-[#de4a2c] to-amber-600 bg-clip-text text-transparent">
-              Zero Artificial Noise.
+              Zero Artificial Noise
             </span>
           </h1>
 
-          <p className="text-neutral-600 text-base sm:text-lg max-w-xl mx-auto">
-            Explore our 5 core creative disciplines. Hover across the lens below to inspect pixel-perfect vector cutouts, raytraced scenes, and C-suite portraits.
+          <p className="mt-1 text-xs sm:text-sm text-neutral-500 max-w-lg mx-auto">
+            Drag the split-slider to inspect raw captures against master retouch deliverables.
           </p>
         </div>
 
         {/* Master Optical Split Stage */}
-        <div className="rounded-3xl p-3 bg-white/60 backdrop-blur-2xl border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.08)] mb-8">
+        <div className="rounded-3xl p-2.5 sm:p-3 bg-white/60 backdrop-blur-2xl border border-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.06)] mb-4">
           <div
             ref={heroImageContainerRef}
             onMouseMove={handleHeroMouseMove}
             onMouseEnter={() => setIsLensHovered(true)}
             onMouseLeave={() => setIsLensHovered(false)}
-            className="relative h-[440px] sm:h-[560px] rounded-2xl overflow-hidden cursor-crosshair select-none bg-neutral-100"
+            className="relative h-[300px] sm:h-[380px] lg:h-[420px] rounded-2xl overflow-hidden cursor-crosshair select-none bg-neutral-100"
           >
             {/* Background Image: Retouched (Master Result) */}
             <img
@@ -240,8 +240,8 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
               className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 pointer-events-none"
               style={{ left: `${sliderPosition}%` }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white text-neutral-800 shadow-xl flex items-center justify-center font-bold text-xs border border-neutral-200">
-                <SlidersHorizontal className="w-4 h-4 text-[#de4a2c]" />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white text-neutral-800 shadow-xl flex items-center justify-center font-bold text-xs border border-neutral-200">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#de4a2c]" />
               </div>
             </div>
 
@@ -257,8 +257,8 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
             />
 
             {/* Floating Live Inspection Card */}
-            <div className="absolute bottom-5 left-5 right-5 sm:right-auto sm:max-w-md p-4 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-lg z-20 pointer-events-none">
-              <div className="flex items-center justify-between mb-1">
+            <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-sm p-3 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-lg z-20 pointer-events-none">
+              <div className="flex items-center justify-between mb-0.5">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#de4a2c] font-bold">
                   Pillar {activeService.code} // {activeService.tag}
                 </span>
@@ -266,17 +266,17 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
                   {sliderPosition}% Split
                 </span>
               </div>
-              <h3 className="font-bold text-base text-neutral-900 leading-snug">
+              <h3 className="font-bold text-sm text-neutral-900 leading-snug">
                 {activeService.headline}
               </h3>
-              <p className="text-xs text-neutral-600 mt-1 line-clamp-2">
+              <p className="text-[11px] text-neutral-600 mt-0.5 line-clamp-1">
                 {activeService.desc}
               </p>
-              <div className="flex flex-wrap gap-1.5 mt-2.5">
+              <div className="flex flex-wrap gap-1 mt-1.5">
                 {activeService.specs.map((spec, i) => (
                   <span
                     key={i}
-                    className="text-[10px] px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-700 font-medium border border-neutral-200/50"
+                    className="text-[9px] px-1.5 py-0.5 rounded-md bg-neutral-100 text-neutral-700 font-medium border border-neutral-200/50"
                   >
                     {spec}
                   </span>
@@ -286,7 +286,7 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
           </div>
 
           {/* Service Pillar Switcher Dock (Bottom of Hero) */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 mt-2.5 pt-1 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {FIVE_SERVICES.map((s, idx) => {
               const Icon = s.icon;
               const isSelected = activeServiceIdx === idx;
@@ -294,13 +294,13 @@ export function HomeLuminaGlass({ clients = [] }: HomeProps) {
                 <button
                   key={s.id}
                   onClick={() => setActiveServiceIdx(idx)}
-                  className={`p-3 rounded-2xl text-left transition-all relative overflow-hidden border ${
+                  className={`p-2.5 rounded-xl text-left transition-all relative overflow-hidden border ${
                     isSelected
-                      ? 'bg-white shadow-md border-[#de4a2c]/30 ring-2 ring-[#de4a2c]/20'
+                      ? 'bg-white shadow-sm border-[#de4a2c]/30 ring-2 ring-[#de4a2c]/20'
                       : 'bg-white/40 hover:bg-white/70 border-white/60'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between mb-1">
                     <span className="font-mono text-[10px] font-bold text-[#de4a2c]">
                       {s.code}
                     </span>

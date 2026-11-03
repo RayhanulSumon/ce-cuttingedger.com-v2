@@ -128,29 +128,29 @@ function HomeLuminaGlass({ clients = [] }) {
 				]
 			}),
 			/* @__PURE__ */ jsx("header", {
-				className: "sticky top-4 z-40 max-w-6xl mx-auto px-4",
+				className: "sticky top-2 z-40 max-w-6xl mx-auto px-4",
 				children: /* @__PURE__ */ jsxs("div", {
-					className: "rounded-full bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.04)] px-5 py-3 flex items-center justify-between",
+					className: "rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.04)] px-4 py-2 flex items-center justify-between",
 					children: [
 						/* @__PURE__ */ jsxs(Link, {
 							href: "/",
-							className: "flex items-center gap-2.5",
+							className: "flex items-center gap-2",
 							children: [/* @__PURE__ */ jsx("span", {
-								className: "w-8 h-8 rounded-full bg-[#de4a2c] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-[#de4a2c]/20",
+								className: "w-7 h-7 rounded-full bg-[#de4a2c] text-white flex items-center justify-center font-bold text-xs shadow-md shadow-[#de4a2c]/20",
 								children: "CE"
 							}), /* @__PURE__ */ jsxs("div", {
 								className: "flex flex-col",
 								children: [/* @__PURE__ */ jsx("span", {
-									className: "font-extrabold text-sm tracking-tight text-neutral-900 leading-none",
+									className: "font-extrabold text-xs sm:text-sm tracking-tight text-neutral-900 leading-none",
 									children: "CUTTING EDGER"
 								}), /* @__PURE__ */ jsx("span", {
-									className: "text-[10px] uppercase font-mono tracking-widest text-neutral-400",
+									className: "text-[9px] uppercase font-mono tracking-widest text-neutral-400",
 									children: "Lumina Glass Studio"
 								})]
 							})]
 						}),
 						/* @__PURE__ */ jsx("nav", {
-							className: "hidden md:flex items-center gap-1 bg-neutral-100/60 p-1 rounded-full border border-neutral-200/50",
+							className: "hidden md:flex items-center gap-1 bg-neutral-100/60 p-0.5 rounded-full border border-neutral-200/50 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 							children: FIVE_SERVICES.map((s, idx) => /* @__PURE__ */ jsxs("button", {
 								onClick: () => setActiveServiceIdx(idx),
 								className: `px-3 py-1 rounded-full text-xs font-medium transition-all ${activeServiceIdx === idx ? "bg-white text-neutral-900 shadow-sm font-semibold" : "text-neutral-500 hover:text-neutral-900"}`,
@@ -165,7 +165,7 @@ function HomeLuminaGlass({ clients = [] }) {
 							className: "flex items-center gap-3",
 							children: /* @__PURE__ */ jsx(Link, {
 								href: "/contact",
-								className: "px-4 py-2 rounded-full bg-neutral-900 text-white hover:bg-[#de4a2c] text-xs font-semibold tracking-wide transition-colors shadow-sm",
+								className: "px-4 py-1.5 rounded-full bg-neutral-900 text-white hover:bg-[#de4a2c] text-xs font-semibold tracking-wide transition-colors shadow-sm",
 								children: "Start Free Trial"
 							})
 						})
@@ -173,38 +173,38 @@ function HomeLuminaGlass({ clients = [] }) {
 				})
 			}),
 			/* @__PURE__ */ jsxs("section", {
-				className: "relative z-10 pt-12 pb-16 px-4 max-w-6xl mx-auto",
+				className: "relative z-10 pt-3 sm:pt-4 pb-8 sm:pb-12 px-4 max-w-6xl mx-auto",
 				children: [/* @__PURE__ */ jsxs("div", {
-					className: "text-center max-w-3xl mx-auto mb-10",
+					className: "text-center max-w-3xl mx-auto mb-3 sm:mb-4",
 					children: [
 						/* @__PURE__ */ jsxs("div", {
-							className: "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-neutral-200/80 shadow-xs mb-4 text-xs font-medium text-neutral-700",
-							children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "Interactive Light Stage — Drag & Hover to Reveal Retouch" })]
+							className: "inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-neutral-200/80 shadow-xs mb-1.5 text-[10px] font-mono font-bold text-neutral-700",
+							children: [/* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", { children: "05 FROSTED OPTIC DISCIPLINES" })]
 						}),
 						/* @__PURE__ */ jsxs("h1", {
-							className: "text-4xl sm:text-6xl font-extrabold tracking-tight text-neutral-950 leading-[1.08] mb-4",
+							className: "text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-neutral-950 leading-tight",
 							children: [
-								"Visual Perfection, ",
-								/* @__PURE__ */ jsx("br", { className: "hidden sm:inline" }),
+								"Pure Visual Precision,",
+								" ",
 								/* @__PURE__ */ jsx("span", {
 									className: "bg-gradient-to-r from-neutral-900 via-[#de4a2c] to-amber-600 bg-clip-text text-transparent",
-									children: "Zero Artificial Noise."
+									children: "Zero Artificial Noise"
 								})
 							]
 						}),
 						/* @__PURE__ */ jsx("p", {
-							className: "text-neutral-600 text-base sm:text-lg max-w-xl mx-auto",
-							children: "Explore our 5 core creative disciplines. Hover across the lens below to inspect pixel-perfect vector cutouts, raytraced scenes, and C-suite portraits."
+							className: "mt-1 text-xs sm:text-sm text-neutral-500 max-w-lg mx-auto",
+							children: "Drag the split-slider to inspect raw captures against master retouch deliverables."
 						})
 					]
 				}), /* @__PURE__ */ jsxs("div", {
-					className: "rounded-3xl p-3 bg-white/60 backdrop-blur-2xl border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.08)] mb-8",
+					className: "rounded-3xl p-2.5 sm:p-3 bg-white/60 backdrop-blur-2xl border border-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.06)] mb-4",
 					children: [/* @__PURE__ */ jsxs("div", {
 						ref: heroImageContainerRef,
 						onMouseMove: handleHeroMouseMove,
 						onMouseEnter: () => setIsLensHovered(true),
 						onMouseLeave: () => setIsLensHovered(false),
-						className: "relative h-[440px] sm:h-[560px] rounded-2xl overflow-hidden cursor-crosshair select-none bg-neutral-100",
+						className: "relative h-[300px] sm:h-[380px] lg:h-[420px] rounded-2xl overflow-hidden cursor-crosshair select-none bg-neutral-100",
 						children: [
 							/* @__PURE__ */ jsx("img", {
 								src: activeService.afterImg,
@@ -235,8 +235,8 @@ function HomeLuminaGlass({ clients = [] }) {
 								className: "absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 pointer-events-none",
 								style: { left: `${sliderPosition}%` },
 								children: /* @__PURE__ */ jsx("div", {
-									className: "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white text-neutral-800 shadow-xl flex items-center justify-center font-bold text-xs border border-neutral-200",
-									children: /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-4 h-4 text-[#de4a2c]" })
+									className: "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white text-neutral-800 shadow-xl flex items-center justify-center font-bold text-xs border border-neutral-200",
+									children: /* @__PURE__ */ jsx(SlidersHorizontal, { className: "w-3.5 h-3.5 text-[#de4a2c]" })
 								})
 							}),
 							/* @__PURE__ */ jsx("input", {
@@ -249,10 +249,10 @@ function HomeLuminaGlass({ clients = [] }) {
 								"aria-label": "Before after split slider"
 							}),
 							/* @__PURE__ */ jsxs("div", {
-								className: "absolute bottom-5 left-5 right-5 sm:right-auto sm:max-w-md p-4 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-lg z-20 pointer-events-none",
+								className: "absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-sm p-3 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/80 shadow-lg z-20 pointer-events-none",
 								children: [
 									/* @__PURE__ */ jsxs("div", {
-										className: "flex items-center justify-between mb-1",
+										className: "flex items-center justify-between mb-0.5",
 										children: [/* @__PURE__ */ jsxs("span", {
 											className: "text-[10px] font-mono uppercase tracking-wider text-[#de4a2c] font-bold",
 											children: [
@@ -267,17 +267,17 @@ function HomeLuminaGlass({ clients = [] }) {
 										})]
 									}),
 									/* @__PURE__ */ jsx("h3", {
-										className: "font-bold text-base text-neutral-900 leading-snug",
+										className: "font-bold text-sm text-neutral-900 leading-snug",
 										children: activeService.headline
 									}),
 									/* @__PURE__ */ jsx("p", {
-										className: "text-xs text-neutral-600 mt-1 line-clamp-2",
+										className: "text-[11px] text-neutral-600 mt-0.5 line-clamp-1",
 										children: activeService.desc
 									}),
 									/* @__PURE__ */ jsx("div", {
-										className: "flex flex-wrap gap-1.5 mt-2.5",
+										className: "flex flex-wrap gap-1 mt-1.5",
 										children: activeService.specs.map((spec, i) => /* @__PURE__ */ jsx("span", {
-											className: "text-[10px] px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-700 font-medium border border-neutral-200/50",
+											className: "text-[9px] px-1.5 py-0.5 rounded-md bg-neutral-100 text-neutral-700 font-medium border border-neutral-200/50",
 											children: spec
 										}, i))
 									})
@@ -285,16 +285,16 @@ function HomeLuminaGlass({ clients = [] }) {
 							})
 						]
 					}), /* @__PURE__ */ jsx("div", {
-						className: "grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3 pt-1",
+						className: "grid grid-cols-2 sm:grid-cols-5 gap-1.5 mt-2.5 pt-1 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 						children: FIVE_SERVICES.map((s, idx) => {
 							const Icon = s.icon;
 							const isSelected = activeServiceIdx === idx;
 							return /* @__PURE__ */ jsxs("button", {
 								onClick: () => setActiveServiceIdx(idx),
-								className: `p-3 rounded-2xl text-left transition-all relative overflow-hidden border ${isSelected ? "bg-white shadow-md border-[#de4a2c]/30 ring-2 ring-[#de4a2c]/20" : "bg-white/40 hover:bg-white/70 border-white/60"}`,
+								className: `p-2.5 rounded-xl text-left transition-all relative overflow-hidden border ${isSelected ? "bg-white shadow-sm border-[#de4a2c]/30 ring-2 ring-[#de4a2c]/20" : "bg-white/40 hover:bg-white/70 border-white/60"}`,
 								children: [
 									/* @__PURE__ */ jsxs("div", {
-										className: "flex items-center justify-between mb-1.5",
+										className: "flex items-center justify-between mb-1",
 										children: [/* @__PURE__ */ jsx("span", {
 											className: "font-mono text-[10px] font-bold text-[#de4a2c]",
 											children: s.code

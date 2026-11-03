@@ -3,7 +3,7 @@ import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-CrobnAwW.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
 import { HomeRetouchStudio } from "./HomeRetouchStudio-BrhNzPpZ.js";
-import { HomeLuminaGlass } from "./HomeLuminaGlass-C3UsRXoI.js";
+import { HomeLuminaGlass } from "./HomeLuminaGlass-DActRw7v.js";
 import { HomeAtelierEditorial } from "./HomeAtelierEditorial-DMqDUVwm.js";
 import { HomeParallaxHorizon } from "./HomeParallaxHorizon-DOMD065g.js";
 import { HomeArchitectBlueprint } from "./HomeArchitectBlueprint-C5un7YmA.js";
