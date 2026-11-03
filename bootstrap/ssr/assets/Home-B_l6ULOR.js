@@ -1,19 +1,12 @@
-import { HomeVariantSwitcher } from "./HomeVariantSwitcher-Bhe1s01S.js";
+import { HomeVariantSwitcher } from "./HomeVariantSwitcher-BjlCW0cn.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
 import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
-import { HomePortfolio } from "./HomePortfolio-CLVFgukR.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
-import { HomePhotoLight } from "./HomePhotoLight-BJcAsY74.js";
-import { HomeStudioS1 } from "./HomeStudioS1-Dx36h44p.js";
-import { HomeOmniStudio } from "./HomeOmniStudio-KDeToqye.js";
 import { HomeRetouchStudio } from "./HomeRetouchStudio-BrhNzPpZ.js";
 import { HomeLuminaGlass } from "./HomeLuminaGlass-C3UsRXoI.js";
 import { HomeAtelierEditorial } from "./HomeAtelierEditorial-DMqDUVwm.js";
 import { HomeParallaxHorizon } from "./HomeParallaxHorizon-DOMD065g.js";
-import { HomeBentoAtelier } from "./HomeBentoAtelier-CBRFbgVJ.js";
 import { HomeArchitectBlueprint } from "./HomeArchitectBlueprint-C5un7YmA.js";
-import { HomeSpatialDepth } from "./HomeSpatialDepth-B9zcWG7d.js";
-import { HomeZenithCanvas } from "./HomeZenithCanvas-CTHI9fcl.js";
 import { useEffect, useState } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
@@ -23,19 +16,12 @@ function Home({ clients = [], variant = "1" }) {
 	const valid = [
 		"1",
 		"2",
-		"3",
 		"4",
-		"5",
-		"6",
-		"7",
 		"8",
 		"9",
 		"10",
 		"11",
-		"12",
-		"13",
-		"14",
-		"15"
+		"13"
 	];
 	const getInitialVariant = () => {
 		if (variant && valid.includes(variant)) return variant;
@@ -84,19 +70,12 @@ function Home({ clients = [], variant = "1" }) {
 	const renderVariantContent = () => {
 		switch (currentVariant) {
 			case "2": return /* @__PURE__ */ jsx(HomeVisual, { clients });
-			case "3": return /* @__PURE__ */ jsx(HomePortfolio, { clients });
 			case "4": return /* @__PURE__ */ jsx(HomeEditorial, { clients });
-			case "5": return /* @__PURE__ */ jsx(HomePhotoLight, { clients });
-			case "6": return /* @__PURE__ */ jsx(HomeStudioS1, { clients });
-			case "7": return /* @__PURE__ */ jsx(HomeOmniStudio, { clients });
 			case "8": return /* @__PURE__ */ jsx(HomeRetouchStudio, { clients });
 			case "9": return /* @__PURE__ */ jsx(HomeLuminaGlass, { clients });
 			case "10": return /* @__PURE__ */ jsx(HomeAtelierEditorial, { clients });
 			case "11": return /* @__PURE__ */ jsx(HomeParallaxHorizon, { clients });
-			case "12": return /* @__PURE__ */ jsx(HomeBentoAtelier, { clients });
 			case "13": return /* @__PURE__ */ jsx(HomeArchitectBlueprint, { clients });
-			case "14": return /* @__PURE__ */ jsx(HomeSpatialDepth, { clients });
-			case "15": return /* @__PURE__ */ jsx(HomeZenithCanvas, { clients });
 			default: return /* @__PURE__ */ jsx(HomeOriginal, { clients });
 		}
 	};

@@ -3,19 +3,12 @@ import { Head, usePage } from '@inertiajs/react';
 import { HomeVariantSwitcher } from './HomeVariants/HomeVariantSwitcher';
 import { HomeOriginal } from './HomeVariants/HomeOriginal';
 import { HomeVisual } from './HomeVariants/HomeVisual';
-import { HomePortfolio } from './HomeVariants/HomePortfolio';
 import { HomeEditorial } from './HomeVariants/HomeEditorial';
-import { HomePhotoLight } from './HomeVariants/HomePhotoLight';
-import { HomeStudioS1 } from './HomeVariants/HomeStudioS1';
-import { HomeOmniStudio } from './HomeVariants/HomeOmniStudio';
 import { HomeRetouchStudio } from './HomeVariants/HomeRetouchStudio';
 import { HomeLuminaGlass } from './HomeVariants/HomeLuminaGlass';
 import { HomeAtelierEditorial } from './HomeVariants/HomeAtelierEditorial';
 import { HomeParallaxHorizon } from './HomeVariants/HomeParallaxHorizon';
-import { HomeBentoAtelier } from './HomeVariants/HomeBentoAtelier';
 import { HomeArchitectBlueprint } from './HomeVariants/HomeArchitectBlueprint';
-import { HomeSpatialDepth } from './HomeVariants/HomeSpatialDepth';
-import { HomeZenithCanvas } from './HomeVariants/HomeZenithCanvas';
 
 interface HomeProps {
   featuredProjects?: any[];
@@ -34,7 +27,7 @@ interface HomeProps {
 
 export default function Home({ clients = [], variant = '1' }: HomeProps) {
   const { url } = usePage();
-  const valid = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
+  const valid = ['1', '2', '4', '8', '9', '10', '11', '13'];
 
   const getInitialVariant = () => {
     if (variant && valid.includes(variant)) {
@@ -106,16 +99,8 @@ export default function Home({ clients = [], variant = '1' }: HomeProps) {
     switch (currentVariant) {
       case '2':
         return <HomeVisual clients={clients} />;
-      case '3':
-        return <HomePortfolio clients={clients} />;
       case '4':
         return <HomeEditorial clients={clients} />;
-      case '5':
-        return <HomePhotoLight clients={clients} />;
-      case '6':
-        return <HomeStudioS1 clients={clients} />;
-      case '7':
-        return <HomeOmniStudio clients={clients} />;
       case '8':
         return <HomeRetouchStudio clients={clients} />;
       case '9':
@@ -124,14 +109,8 @@ export default function Home({ clients = [], variant = '1' }: HomeProps) {
         return <HomeAtelierEditorial clients={clients} />;
       case '11':
         return <HomeParallaxHorizon clients={clients} />;
-      case '12':
-        return <HomeBentoAtelier clients={clients} />;
       case '13':
         return <HomeArchitectBlueprint clients={clients} />;
-      case '14':
-        return <HomeSpatialDepth clients={clients} />;
-      case '15':
-        return <HomeZenithCanvas clients={clients} />;
       case '1':
       default:
         return <HomeOriginal clients={clients} />;

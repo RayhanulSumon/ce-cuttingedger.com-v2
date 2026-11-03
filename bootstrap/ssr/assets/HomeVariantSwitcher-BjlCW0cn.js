@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
-import { BookOpen, Camera, Check, Compass, Eye, Grid, Layers, Scissors, Shirt, SlidersHorizontal, Sparkles, UserCheck } from "lucide-react";
+import { BookOpen, Check, Compass, Eye, Scissors, SlidersHorizontal, Sparkles } from "lucide-react";
 import { jsx, jsxs } from "react/jsx-runtime";
 //#region resources/js/Pages/HomeVariants/HomeVariantSwitcher.tsx
 var HOME_VARIANTS = [
@@ -23,15 +23,6 @@ var HOME_VARIANTS = [
 		icon: Eye
 	},
 	{
-		id: "3",
-		name: "Portfolio Dark",
-		badge: "DARK MASONRY",
-		tagline: "Filterable case studies gallery with peek raw overlay & comparison modal",
-		accentColor: "#de4a2c",
-		bgTone: "Obsidian Gallery #07080B",
-		icon: Grid
-	},
-	{
 		id: "4",
 		name: "Editorial Atelier",
 		badge: "SSENSE / VOGUE",
@@ -39,33 +30,6 @@ var HOME_VARIANTS = [
 		accentColor: "#de4a2c",
 		bgTone: "Warm Paper #F7F5F0",
 		icon: BookOpen
-	},
-	{
-		id: "5",
-		name: "Photo Lookbook",
-		badge: "LIGHT LUXE",
-		tagline: "Clean white photo-first portfolio lookbook with comparison slider modal",
-		accentColor: "#de4a2c",
-		bgTone: "Pure Light #FBFBFA",
-		icon: Camera
-	},
-	{
-		id: "6",
-		name: "S1 Headshots",
-		badge: "HR 20–500 SEATS",
-		tagline: "S1 AI Corporate Headshots: Interactive 6-10 selfie stack to branded executive portraits",
-		accentColor: "#de4a2c",
-		bgTone: "Clean #FAFAF9",
-		icon: UserCheck
-	},
-	{
-		id: "7",
-		name: "3D Virtual Try-On",
-		badge: "60FPS THREE.JS",
-		tagline: "Interactive 3D Virtual Try-On: 360° mouse rotation, Female & Male models, modular Cap / Shirt / Pant / Shoes dress-up with laser fitting animation",
-		accentColor: "#de4a2c",
-		bgTone: "3D Studio #FDFDFC",
-		icon: Shirt
 	},
 	{
 		id: "8",
@@ -88,7 +52,7 @@ var HOME_VARIANTS = [
 	{
 		id: "10",
 		name: "Atelier Editorial",
-		badge: "SSENSE / VOGUE",
+		badge: "VOGUE MASTHEAD",
 		tagline: "Atelier Editorial: High-fashion warm paper minimalism, oversized serifs, press-to-peek raw & lookbook index",
 		accentColor: "#de4a2c",
 		bgTone: "Warm Paper #FAF9F5",
@@ -104,15 +68,6 @@ var HOME_VARIANTS = [
 		icon: SlidersHorizontal
 	},
 	{
-		id: "12",
-		name: "Bento Atelier",
-		badge: "MODULAR BENTO",
-		tagline: "Bento Atelier: Interactive micro-tool widgets in each bento tile (3D garment switch, selfie split, scene lighting)",
-		accentColor: "#de4a2c",
-		bgTone: "Bento White #F8F9FA",
-		icon: Grid
-	},
-	{
 		id: "13",
 		name: "Architect Blueprint",
 		badge: "RAZOR GRID",
@@ -120,24 +75,6 @@ var HOME_VARIANTS = [
 		accentColor: "#de4a2c",
 		bgTone: "Stark Alabaster #F9FAFB",
 		icon: Compass
-	},
-	{
-		id: "14",
-		name: "Spatial Depth",
-		badge: "3D PERSPECTIVE",
-		tagline: "Spatial Depth: 3D perspective mouse tilt, floating island stages & tactile inspection controls",
-		accentColor: "#de4a2c",
-		bgTone: "Platinum Light #FAFBFD",
-		icon: Layers
-	},
-	{
-		id: "15",
-		name: "Zenith Canvas",
-		badge: "ZEN MINIMALISM",
-		tagline: "Zenith Canvas: Fullscreen minimalist visual storyteller, soundless ambient flow & expandable visual accordion",
-		accentColor: "#de4a2c",
-		bgTone: "Ivory Snow #FDFDFC",
-		icon: Eye
 	}
 ];
 function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
@@ -170,7 +107,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
 						className: "text-xs font-mono font-bold uppercase tracking-wider text-neutral-300",
-						children: "15 Homepage Prototypes (01–15)"
+						children: "8 Curated Homepage Prototypes (01, 02, 04, 08, 09, 10, 11, 13)"
 					})]
 				}), /* @__PURE__ */ jsxs("span", {
 					className: "text-[10px] font-mono text-neutral-400",
@@ -185,7 +122,7 @@ function HomeVariantSwitcher({ currentVariant, onVariantChange }) {
 					})]
 				})]
 			}), /* @__PURE__ */ jsx("div", {
-				className: "grid grid-cols-2 sm:grid-cols-5 gap-2",
+				className: "grid grid-cols-2 sm:grid-cols-4 gap-2.5",
 				children: HOME_VARIANTS.map((variant) => {
 					const isCurrent = variant.id === selected;
 					const IconComp = variant.icon;
