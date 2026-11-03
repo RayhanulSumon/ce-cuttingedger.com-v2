@@ -1,6 +1,6 @@
 import { HomeVariantSwitcher } from "./HomeVariantSwitcher-B_d5n1eC.js";
 import { HomeOriginal } from "./HomeOriginal-k4qLB1pA.js";
-import { HomeVisual } from "./HomeVisual-FlhyndUS.js";
+import { HomeVisual } from "./HomeVisual-CrobnAwW.js";
 import { HomeEditorial } from "./HomeEditorial-gndU4Tx7.js";
 import { HomeRetouchStudio } from "./HomeRetouchStudio-BrhNzPpZ.js";
 import { HomeLuminaGlass } from "./HomeLuminaGlass-C3UsRXoI.js";

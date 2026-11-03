@@ -157,21 +157,21 @@ function HomeVisual({ clients = [] }) {
 			/* @__PURE__ */ jsx("div", {
 				className: "border-b border-white/10 bg-white/[0.02] backdrop-blur-md sticky top-0 z-40",
 				children: /* @__PURE__ */ jsxs("div", {
-					className: "max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between text-xs overflow-x-auto gap-4",
+					className: "max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-xs overflow-x-auto gap-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 					children: [/* @__PURE__ */ jsxs("div", {
 						className: "flex items-center gap-2 shrink-0",
 						children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-[#de4a2c] animate-pulse" }), /* @__PURE__ */ jsx("span", {
-							className: "font-mono font-bold uppercase tracking-wider text-white",
+							className: "font-mono font-bold uppercase tracking-wider text-white text-[11px]",
 							children: "Visual Transformation Engine:"
 						})]
 					}), /* @__PURE__ */ jsx("div", {
-						className: "flex items-center gap-1.5 shrink-0",
+						className: "flex items-center gap-1.5 shrink-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 						children: AI_VISUAL_SERVICES.map((s, idx) => /* @__PURE__ */ jsxs("button", {
 							onClick: () => {
 								setActiveServiceIdx(idx);
 								setSliderPosition(50);
 							},
-							className: `px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 ${activeServiceIdx === idx ? "bg-[#de4a2c] text-white shadow-[0_0_15px_rgba(222,74,44,0.4)]" : "bg-white/[0.04] text-neutral-400 hover:text-white hover:bg-white/[0.08]"}`,
+							className: `px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 ${activeServiceIdx === idx ? "bg-[#de4a2c] text-white shadow-[0_0_15px_rgba(222,74,44,0.4)]" : "bg-white/[0.04] text-neutral-400 hover:text-white hover:bg-white/[0.08]"}`,
 							children: [/* @__PURE__ */ jsx("span", { children: s.code }), /* @__PURE__ */ jsxs("span", {
 								className: "hidden md:inline",
 								children: ["• ", s.badge.split(" ")[0]]
@@ -181,70 +181,73 @@ function HomeVisual({ clients = [] }) {
 				})
 			}),
 			/* @__PURE__ */ jsxs("section", {
-				className: "relative pt-12 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto",
+				className: "relative pt-3 sm:pt-4 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto",
 				children: [
 					/* @__PURE__ */ jsx("div", { className: "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#de4a2c]/15 blur-[160px] pointer-events-none rounded-full" }),
 					/* @__PURE__ */ jsxs("div", {
-						className: "text-center max-w-3xl mx-auto mb-10",
+						className: "text-center max-w-3xl mx-auto mb-3 sm:mb-4",
 						children: [
 							/* @__PURE__ */ jsxs("div", {
-								className: "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 mb-4 backdrop-blur-md",
-								children: [/* @__PURE__ */ jsx(Sparkles, { className: "w-3.5 h-3.5 text-[#de4a2c]" }), /* @__PURE__ */ jsx("span", {
-									className: "text-[11px] font-mono font-bold tracking-widest uppercase text-neutral-300",
-									children: "AI VISUAL GENERATION & PRODUCTION PIPELINE"
+								className: "inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 mb-2 backdrop-blur-md",
+								children: [/* @__PURE__ */ jsx(Sparkles, { className: "w-3 h-3 text-[#de4a2c]" }), /* @__PURE__ */ jsx("span", {
+									className: "text-[10px] font-mono font-bold tracking-widest uppercase text-neutral-300",
+									children: "5 INTERACTIVE VISUAL ENGINES"
 								})]
 							}),
 							/* @__PURE__ */ jsxs("h1", {
-								className: "text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1]",
+								className: "text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight",
 								children: [
-									"Turn Any Product or Selfie Into",
+									"Raw Plates to",
 									" ",
 									/* @__PURE__ */ jsx("span", {
 										className: "text-transparent bg-clip-text bg-gradient-to-r from-[#de4a2c] via-[#ff6b4a] to-amber-300",
-										children: "Flawless Visual Assets"
+										children: "Flawless Visuals"
 									})
 								]
 							}),
 							/* @__PURE__ */ jsx("p", {
-								className: "mt-4 text-sm sm:text-base text-neutral-300 max-w-xl mx-auto leading-relaxed",
-								children: "Experience our 5 core visual services. Compare raw inputs directly against production-grade outputs with interactive visual proof."
+								className: "mt-1 text-xs sm:text-sm text-neutral-400 max-w-lg mx-auto",
+								children: "Drag the split-slider to inspect raw capture vs production-grade output."
 							})
 						]
 					}),
 					/* @__PURE__ */ jsxs("div", {
-						className: "rounded-[32px] p-4 sm:p-6 bg-white/[0.02] border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.8)] backdrop-blur-xl relative",
+						className: "rounded-3xl p-3 sm:p-5 bg-white/[0.02] border border-white/10 shadow-[0_20px_70px_rgba(0,0,0,0.8)] backdrop-blur-xl relative",
 						children: [/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-white/10",
+							className: "flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-white/10",
 							children: [/* @__PURE__ */ jsx("div", {
-								className: "flex items-center gap-2 overflow-x-auto py-1 max-w-full",
+								className: "flex items-center gap-1.5 overflow-x-auto py-0.5 max-w-full scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
 								children: AI_VISUAL_SERVICES.map((serv, idx) => /* @__PURE__ */ jsxs("button", {
 									onClick: () => {
 										setActiveServiceIdx(idx);
 										setSliderPosition(50);
 									},
-									className: `px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeServiceIdx === idx ? "bg-white text-[#08090C] shadow-lg scale-102" : "bg-white/[0.05] text-neutral-300 hover:text-white hover:bg-white/[0.1]"}`,
+									className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${activeServiceIdx === idx ? "bg-white text-[#08090C] shadow-md scale-102" : "bg-white/[0.05] text-neutral-300 hover:text-white hover:bg-white/[0.1]"}`,
 									children: [
-										/* @__PURE__ */ jsx("span", { className: `w-2 h-2 rounded-full ${activeServiceIdx === idx ? "bg-[#de4a2c]" : "bg-neutral-500"}` }),
+										/* @__PURE__ */ jsx("span", { className: `w-1.5 h-1.5 rounded-full ${activeServiceIdx === idx ? "bg-[#de4a2c]" : "bg-neutral-500"}` }),
 										/* @__PURE__ */ jsxs("span", {
 											className: "font-mono font-bold text-[#de4a2c]",
 											children: [serv.code, ":"]
 										}),
-										/* @__PURE__ */ jsx("span", { children: serv.badge })
+										/* @__PURE__ */ jsx("span", {
+											className: "text-[11px] sm:text-xs",
+											children: serv.badge
+										})
 									]
 								}, serv.id))
 							}), /* @__PURE__ */ jsx("div", {
-								className: "text-xs font-mono text-neutral-400 flex items-center gap-2",
+								className: "text-[11px] font-mono text-neutral-400 flex items-center gap-2",
 								children: /* @__PURE__ */ jsx("span", {
 									className: "text-[#de4a2c] font-bold",
 									children: activeService.target
 								})
 							})]
 						}), /* @__PURE__ */ jsxs("div", {
-							className: "mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center",
+							className: "mt-4 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center",
 							children: [/* @__PURE__ */ jsx("div", {
 								className: "lg:col-span-8",
 								children: /* @__PURE__ */ jsxs("div", {
-									className: "relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 h-[380px] sm:h-[480px] select-none group",
+									className: "relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 h-[300px] sm:h-[380px] lg:h-[420px] select-none group",
 									children: [
 										/* @__PURE__ */ jsx("img", {
 											src: activeService.outputVisual.image,
@@ -283,7 +286,7 @@ function HomeVisual({ clients = [] }) {
 											children: activeService.outputVisual.badge
 										}),
 										/* @__PURE__ */ jsxs("div", {
-											className: "absolute bottom-4 inset-x-4 p-3 rounded-2xl bg-black/75 backdrop-blur-xl border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs",
+											className: "absolute bottom-4 inset-x-4 p-2.5 rounded-2xl bg-black/75 backdrop-blur-xl border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs",
 											children: [/* @__PURE__ */ jsxs("div", {
 												className: "flex items-center gap-3",
 												children: [/* @__PURE__ */ jsxs("button", {
@@ -292,7 +295,7 @@ function HomeVisual({ clients = [] }) {
 													onMouseUp: () => setIsHoldingInput(false),
 													onTouchStart: () => setIsHoldingInput(true),
 													onTouchEnd: () => setIsHoldingInput(false),
-													className: `px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all ${isHoldingInput ? "bg-amber-400 text-black" : "bg-white/10 text-white hover:bg-white/20"}`,
+													className: `px-3 py-1 rounded-xl font-bold flex items-center gap-1.5 transition-all ${isHoldingInput ? "bg-amber-400 text-black" : "bg-white/10 text-white hover:bg-white/20"}`,
 													children: [/* @__PURE__ */ jsx(Eye, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ jsx("span", { children: isHoldingInput ? "Viewing Raw Input" : "Hold to View Input" })]
 												}), /* @__PURE__ */ jsxs("div", {
 													className: "hidden sm:flex items-center gap-2 text-neutral-300 font-mono text-[11px]",
@@ -313,22 +316,22 @@ function HomeVisual({ clients = [] }) {
 									]
 								})
 							}), /* @__PURE__ */ jsxs("div", {
-								className: "lg:col-span-4 flex flex-col justify-between space-y-6",
+								className: "lg:col-span-4 flex flex-col justify-between space-y-3 sm:space-y-4",
 								children: [/* @__PURE__ */ jsxs("div", { children: [
 									/* @__PURE__ */ jsx("div", {
 										className: "text-xs font-mono font-bold text-[#de4a2c] uppercase tracking-wider mb-1 flex items-center gap-2",
 										children: /* @__PURE__ */ jsxs("span", { children: ["SERVICE SPECIFICATION // ", activeService.code] })
 									}),
 									/* @__PURE__ */ jsx("h2", {
-										className: "text-2xl sm:text-3xl font-black text-white leading-tight",
+										className: "text-xl sm:text-2xl font-black text-white leading-tight",
 										children: activeService.title
 									}),
 									/* @__PURE__ */ jsx("p", {
-										className: "mt-3 text-xs sm:text-sm text-neutral-300 leading-relaxed",
+										className: "mt-1.5 text-xs text-neutral-300 leading-relaxed line-clamp-2",
 										children: activeService.tagline
 									}),
 									/* @__PURE__ */ jsxs("div", {
-										className: "mt-4 p-3 rounded-xl bg-white/[0.04] border border-white/10 text-xs",
+										className: "mt-2.5 p-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs",
 										children: [/* @__PURE__ */ jsx("div", {
 											className: "text-[10px] font-mono text-neutral-400 uppercase font-bold",
 											children: "Primary Target Audience:"
@@ -338,21 +341,21 @@ function HomeVisual({ clients = [] }) {
 										})]
 									}),
 									/* @__PURE__ */ jsx("div", {
-										className: "mt-4 space-y-2",
+										className: "mt-2.5 space-y-1.5",
 										children: activeService.specs.map((spec, i) => /* @__PURE__ */ jsxs("div", {
 											className: "flex items-center gap-2 text-xs text-neutral-300",
 											children: [/* @__PURE__ */ jsx(CheckCircle2, { className: "w-4 h-4 text-[#de4a2c] shrink-0" }), /* @__PURE__ */ jsx("span", { children: spec })]
 										}, i))
 									})
 								] }), /* @__PURE__ */ jsxs("div", {
-									className: "pt-2 flex flex-col sm:flex-row gap-2",
+									className: "pt-1 flex flex-col sm:flex-row gap-2",
 									children: [/* @__PURE__ */ jsxs("a", {
 										href: "#interactive-grid",
-										className: "flex-1 py-3 px-4 rounded-xl bg-[#de4a2c] hover:bg-[#c2381c] text-white text-xs font-bold text-center transition-colors shadow-md flex items-center justify-center gap-1.5",
+										className: "flex-1 py-2.5 px-4 rounded-xl bg-[#de4a2c] hover:bg-[#c2381c] text-white text-xs font-bold text-center transition-colors shadow-md flex items-center justify-center gap-1.5",
 										children: [/* @__PURE__ */ jsx("span", { children: "Explore All 5 Visuals" }), /* @__PURE__ */ jsx(ArrowRight, { className: "w-3.5 h-3.5" })]
 									}), /* @__PURE__ */ jsx("a", {
 										href: "#sample-upload",
-										className: "py-3 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold text-center transition-colors border border-white/15",
+										className: "py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold text-center transition-colors border border-white/15",
 										children: "Test This Service"
 									})]
 								})]
