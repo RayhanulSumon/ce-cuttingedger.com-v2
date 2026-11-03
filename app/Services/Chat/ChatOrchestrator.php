@@ -94,13 +94,28 @@ class ChatOrchestrator
                 }
 
                 // Guard against defective Ollama outputs:
-                // Only fall back if the response was empty, a single-emoji token (like 🌟), or stuck in a repetitive intro
                 $trimmed = trim($assistantContent);
                 $cleanText = preg_replace('/[\p{P}\p{S}\s]+/u', '', $trimmed);
-                $isRepetitiveTemplate = preg_match('/^whether you[\'’]re looking to/i', $trimmed);
+                $isRepetitiveTemplate = preg_match('/^(whether|as an ai)/i', $trimmed);
                 $isInvalidOrSingleEmoji = (strlen($trimmed) < 10 || strlen($cleanText) < 5) && empty($toolCards);
 
-                if ($isRepetitiveTemplate || $isInvalidOrSingleEmoji) {
+                // Anti-Echo: Check if this response repeats a recent assistant message
+                $isDuplicateResponse = false;
+                $recentAssistantMessages = $session->messages()
+                    ->where('sender', 'assistant')
+                    ->latest('id')
+                    ->take(3)
+                    ->pluck('content');
+
+                foreach ($recentAssistantMessages as $pastContent) {
+                    similar_text(strtolower($trimmed), strtolower(trim((string) $pastContent)), $similarityPercent);
+                    if ($similarityPercent > 65) {
+                        $isDuplicateResponse = true;
+                        break;
+                    }
+                }
+
+                if ($isRepetitiveTemplate || $isInvalidOrSingleEmoji || $isDuplicateResponse) {
                     $fallbackResult = $this->fallbackEngine->process($userText, $attachments, $session);
                     $assistantContent = $fallbackResult['content'];
                     $toolCards = $fallbackResult['tool_cards'];
@@ -234,7 +249,7 @@ Conversational Rules & Direct Responses:
 6. PRICING INQUIRIES: If the client asks for pricing or rates without specific image counts:
    List the commercial disciplines and starting rates clearly in clean bullet points, turnaround time, volume discount tiers (15% for 100+, 25% for 500+), and mention the 3 free test images.
 7. SCHEDULING / BOOKING: If the client wants to book, meet, or schedule a demo, invoke the booking tool so they receive an interactive confirmation card.
-8. CRITICAL: NEVER output only an emoji or single symbol like "🌟". Always provide complete, articulate English sentences. Never use canned repetitive openings like "Whether you're looking to...".
+8. CRITICAL: Always provide complete, articulate English sentences. Directly address the client's latest inquiry without formulaic filler.
 PROMPT;
 
         // Inject Active Booking context if user already has a scheduled appointment
@@ -277,8 +292,8 @@ RULE: When the client asks about their appointment, date, time, or schedule (e.g
             $trimmed = trim((string) $msg->content);
             $cleanText = preg_replace('/[\p{P}\p{S}\s]+/u', '', $trimmed);
 
-            // Filter out empty messages, or messages that only contain single emojis/symbols (like 🌟)
-            if (empty($trimmed) || strlen($cleanText) < 2) {
+            // Filter out empty messages, single emoji messages, or poisoned repetitive messages
+            if (empty($trimmed) || strlen($cleanText) < 2 || ($msg->sender !== 'user' && preg_match('/^whether/i', $trimmed))) {
                 continue;
             }
 
