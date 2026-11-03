@@ -118,11 +118,6 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 	}, []);
 	const navItems = [
 		{
-			label: "Services",
-			href: "/services",
-			isMegaMenu: true
-		},
-		{
 			label: "Home Demos",
 			href: "/?v=1",
 			children: [
@@ -230,6 +225,11 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 			]
 		},
 		{
+			label: "Services",
+			href: "/services",
+			isMegaMenu: true
+		},
+		{
 			label: "Case Studies",
 			href: "/case-studies"
 		},
@@ -330,7 +330,7 @@ function Header({ onOpenContact, onOpenDiscoveryCall, onOpenMobileMenu, settings
 										children: item.label
 									}), hasDropdown && /* @__PURE__ */ jsx(ChevronDown, { className: `w-3 h-3 text-neutral-400 group-hover:text-white transition-transform shrink-0 ${openDropdown === item.label ? "rotate-180 text-accent" : ""}` })]
 								}), hasDropdown && openDropdown === item.label && (item.isMegaMenu ? /* @__PURE__ */ jsx("div", {
-									className: "absolute top-full -left-20 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200",
+									className: "absolute top-full -left-56 lg:-left-72 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200",
 									children: /* @__PURE__ */ jsxs("div", {
 										className: "rounded-3xl p-6 sm:p-7 bg-[#0b0d13]/98 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative overflow-hidden",
 										children: [

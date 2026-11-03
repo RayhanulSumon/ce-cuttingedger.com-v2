@@ -108,11 +108,6 @@ export function Header({
 
     const navItems: NavItem[] = [
         {
-            label: 'Services',
-            href: '/services',
-            isMegaMenu: true,
-        },
-        {
             label: 'Home Demos',
             href: '/?v=1',
             children: [
@@ -142,6 +137,11 @@ export function Header({
                 { label: '09. Minimalist Visual Wall', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=9', badge: 'EXHIBITION WALL' },
                 { label: '10. Studio Lookbook Stream', href: '/services/ecommerce-catalog-optimization/clipping-path-service?v=10', badge: 'COLORWAY RENDER' },
             ],
+        },
+        {
+            label: 'Services',
+            href: '/services',
+            isMegaMenu: true,
         },
         {
             label: 'Case Studies',
@@ -246,7 +246,7 @@ export function Header({
                                     {hasDropdown && openDropdown === item.label && (
                                         item.isMegaMenu ? (
                                             /* Modernized Dynamic Mega Menu for Backend Service Pillars */
-                                            <div className="absolute top-full -left-20 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div className="absolute top-full -left-56 lg:-left-72 w-[1040px] max-w-[96vw] pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                                 <div className="rounded-3xl p-6 sm:p-7 bg-[#0b0d13]/98 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative overflow-hidden">
                                                     {/* Subtle top ambient glowing line */}
                                                     <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/40 to-transparent pointer-events-none" />
