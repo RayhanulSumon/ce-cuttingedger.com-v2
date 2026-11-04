@@ -176,10 +176,10 @@ export function Header({
                         </div>
                         <div className="flex items-baseline tracking-tight">
                             <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-accent transition-colors">
-                                CUTTING
+                                Cutting
                             </span>
-                            <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-accent ml-1">
-                                EDGER
+                            <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-accent">
+                                Edger
                             </span>
                         </div>
                     </Link>

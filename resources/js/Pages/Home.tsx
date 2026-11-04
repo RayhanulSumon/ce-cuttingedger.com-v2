@@ -1,18 +1,14 @@
 import React from 'react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { SplitHero } from '@/Components/Home/SplitHero';
+import { ClientMarquees } from '@/Components/Home/ClientMarquees';
 import { IntroBand } from '@/Components/Home/IntroBand';
-import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
+import { StickyServiceCards } from '@/Components/Home/StickyServiceCards';
 import { AwardsShowcase } from '@/Components/Home/AwardsShowcase';
 import { VideoShowcase } from '@/Components/Home/VideoShowcase';
-import { StickyServiceCards } from '@/Components/Home/StickyServiceCards';
-import { StatsGrid } from '@/Components/Home/StatsGrid';
-import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
-import { PricingCardsSection } from '@/Components/Pricing/PricingCardsSection';
-import { ClientMarquees } from '@/Components/Home/ClientMarquees';
+import { BeforeAfterShowcase } from '@/Components/Home/BeforeAfterShowcase';
 import { TeamPreview } from '@/Components/Home/TeamPreview';
-import { RecentWorkShowcase } from '@/Components/Home/RecentWorkShowcase';
-import { TestimonialsSlider } from '@/Components/Home/TestimonialsSlider';
+import { StatsGrid } from '@/Components/Home/StatsGrid';
 import { HomeFaqSection } from '@/Components/Home/HomeFaqSection';
 import { Project, Service, TeamMember, Testimonial, Client } from '@/types/models';
 
@@ -25,59 +21,43 @@ interface HomeProps {
 }
 
 export default function Home({
-    featuredProjects = [],
     services = [],
     teamMembers = [],
-    testimonials = [],
     clients = [],
 }: HomeProps) {
     return (
         <>
             <SeoHead
-                title="AI-Based 2D Image Retouching & 3D CGI Model Solutions"
-                description="CuttingEdger provides surgical 2D photo editing, invisible ghost mannequin jointing, high-end jewelry retouching, and 3D CGI product modeling for e-commerce brands worldwide."
+                title="Enterprise Visual Production, Accelerated by AI & 3D CGI | CuttingEdger"
+                description="CuttingEdger empowers global luxury brands and corporate agencies with AI-powered visual production, 3D spatial CGI, and high-volume precision retouching."
             />
 
-            {/* 1. Hero Section */}
+            {/* SECTION 1: The Hero Section (Interactive AI & Media Showcase with 4 Clickable Tabs) */}
             <SplitHero />
 
-            {/* 2. Intro Manifesto Band */}
-            <IntroBand />
-
-            {/* 3. Interactive Before/After Craft Comparison Slider */}
-            <BeforeAfterShowcase />
-
-            {/* 4. Verified Industry Recognitions & Awards (Dark Luxury) */}
-            <AwardsShowcase />
-
-            {/* 5. Short-Form & Spatial 3D Video Showcase (Dark Luxury) */}
-            <VideoShowcase />
-
-            {/* 6. Core Services Sticky Stacked Cards */}
-            <StickyServiceCards services={services} />
-
-            {/* 7. Animated Daily Production Stats Grid */}
-            <StatsGrid />
-
-            {/* 8. Free Trial & Instant Batch Uploader Wizard */}
-            <FreeTrialDropzone />
-
-            {/* 9. 3-Card Bespoke Production Tiers (Request for Pricing) */}
-            <PricingCardsSection />
-
-            {/* 10. Dual Counter-Scrolling Client Marquees */}
+            {/* SECTION 2: Trust & Client Logos Bar ("Our Core Capabilities & Tech Stack" 2x5 Dark Grid) */}
             <ClientMarquees clients={clients} />
 
-            {/* 11. Leadership Team */}
+            {/* SECTION 3: Intro Statement & Value Proposition (48% Base Opacity Scroll-Reveal) */}
+            <IntroBand />
+
+            {/* SECTION 4: The AI & B2B Service Grid (4-Card Bento Grid + Layered Stacked Cards) */}
+            <StickyServiceCards services={services} />
+
+            {/* Awards Bar: "JUST A FEW OF OUR AWARDS..." (Matching Reference Layout) */}
+            <AwardsShowcase />
+
+            {/* SECTION 5: Portfolio & Case Study Showcase (Curved ROI Vertical Cards + Interactive Before/After Sliders) */}
+            <VideoShowcase />
+            <BeforeAfterShowcase />
+
+            {/* SECTION 7: Leadership & Team Section ("Executive Leadership & Creative Directors") */}
             <TeamPreview members={teamMembers} />
 
-            {/* 12. Recent Work Kinetic Parallax Showcase */}
-            <RecentWorkShowcase projects={featuredProjects} />
+            {/* SECTION 6: "Why CuttingEdger?" (Studio Metrics Strip + Traditional vs. AI Workflow Comparison) */}
+            <StatsGrid />
 
-            {/* 13. Accessible Testimonials Slider */}
-            <TestimonialsSlider testimonials={testimonials} />
-
-            {/* 14. Homepage FAQ Accordion ("Frequent questions.") */}
+            {/* SECTION 8: FAQ Accordion ("Frequent questions.") — High-Conversion Footer follows in AppLayout */}
             <HomeFaqSection />
         </>
     );

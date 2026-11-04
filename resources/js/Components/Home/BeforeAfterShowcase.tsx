@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { BeforeAfterSlider } from '@/Components/ui/BeforeAfterSlider';
-import { Sparkles, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowUpRight, CheckCircle2, TrendingUp } from 'lucide-react';
 
 interface ShowcaseItem {
     id: string;
     tabName: string;
     serviceCategory: string;
+    roiBadge: string;
     headline: string;
     description: string;
     highlights: string[];
@@ -21,7 +22,8 @@ export function BeforeAfterShowcase() {
             id: 'ghost-mannequin',
             tabName: 'Ghost Mannequin',
             serviceCategory: 'Apparel Post-Production',
-            headline: '3D Hollow Invisible Joint',
+            roiBadge: '65% Faster Catalog Launch • Zero Model Reshoots',
+            headline: '3D Hollow Invisible Joint — 65% Faster SKU Launch',
             description:
                 'We composite flat front and inner neck lining captures into photorealistic 3D hollow volume with symmetrical hem balance, eliminating plastic mannequins and model reshoots.',
             highlights: [
@@ -41,6 +43,7 @@ export function BeforeAfterShowcase() {
             id: 'jewelry',
             tabName: 'Fine Jewelry Retouch',
             serviceCategory: 'Macro Luxury Studio',
+            roiBadge: '+42% Luxury PDP Conversion Lift',
             headline: 'Brilliant Gemstone Facet Fire & Zero Glare',
             description:
                 'Micro-scratch eradication, platinum highlight balancing, and gemstone facet enhancement without losing precious stone fire or natural depth of field.',
@@ -61,6 +64,7 @@ export function BeforeAfterShowcase() {
             id: 'model-retouch',
             tabName: 'High-End Model Retouch',
             serviceCategory: 'Fashion & Editorial',
+            roiBadge: '12h Turnaround • 100% Pore Integrity',
             headline: 'Authentic Skin Texture & Pore Preservation',
             description:
                 'We use non-destructive frequency separation and micro dodge & burn to eliminate blemishes, stray hairs, and color splotches while preserving every authentic skin pore.',
@@ -81,6 +85,7 @@ export function BeforeAfterShowcase() {
             id: 'multipath',
             tabName: 'Multipath Clipping',
             serviceCategory: 'Core Cutout & Prep',
+            roiBadge: '10,000+ Daily Assets • Sub-Pixel Accuracy',
             headline: '100% Hand-Drawn Pen Tool Vector Isolation',
             description:
                 'Surgical vector clipping paths with multi-channel separation for color swaps, individual component isolation, and zero-halo cutout edges.',
@@ -101,6 +106,7 @@ export function BeforeAfterShowcase() {
             id: '3d-cgi',
             tabName: '3D CGI Product Twin',
             serviceCategory: 'CGI & Spatial Asset',
+            roiBadge: '60% Cost Reduction vs. Physical Shoots',
             headline: 'CAD Wireframe to Photorealistic 8K Render',
             description:
                 'Transform engineering CAD blueprints into photorealistic 3D digital twins with realistic PBR materials, custom studio HDRI lighting, and 360-degree spin views.',
@@ -125,7 +131,7 @@ export function BeforeAfterShowcase() {
     return (
         <section
             id="before-after-showcase-section"
-            className="relative py-16 sm:py-20 lg:py-24 bg-[#0a0b0f] border-t border-white/10 overflow-hidden select-none"
+            className="relative py-16 sm:py-20 lg:py-24 bg-[#090a0e] border-t border-white/10 overflow-hidden select-none"
         >
             {/* Ambient Lighting */}
             <div className="absolute top-1/2 right-10 w-[35rem] h-[35rem] bg-accent/5 rounded-full blur-[200px] pointer-events-none" />
@@ -137,16 +143,15 @@ export function BeforeAfterShowcase() {
                     <div>
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent mb-4">
                             <Sparkles className="w-3.5 h-3.5" />
-                            <span>[ SURGICAL CRAFT DEMO ]</span>
+                            <span>[ INTERACTIVE BEFORE / AFTER PRECISION ]</span>
                         </div>
-                        <h2 className="text-2xl sm:text-5xl lg:text-5xl xl:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.08] sm:leading-[1.04]">
-                            See The Difference <br />
-                            <span className="text-accent">Pixel By Pixel.</span>
+                        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-[1.08]">
+                            Inspect Our Craft <span className="text-accent">Pixel By Pixel.</span>
                         </h2>
                     </div>
 
                     <p className="text-sm sm:text-base text-neutral-400 font-sans max-w-md">
-                        Drag the comparison handle across any actual production sample to inspect our hand-drawn vector paths, invisible apparel neck joints, and macro jewelry retouches.
+                        Drag the comparison handle across actual enterprise production deliverables to verify our retouching fidelity and 3D CGI precision.
                     </p>
                 </div>
 
@@ -157,6 +162,7 @@ export function BeforeAfterShowcase() {
                         return (
                             <button
                                 key={item.id}
+                                type="button"
                                 onClick={() => setActiveTab(item.id)}
                                 className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-mono text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap transition-all duration-300 cursor-pointer ${
                                     isActive
@@ -185,13 +191,19 @@ export function BeforeAfterShowcase() {
                         />
                     </div>
 
-                    {/* Right Column: Discipline Specs & Highlights */}
-                    <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-                        <div className="inline-block px-3 py-1 rounded-md bg-white/5 text-xs font-mono uppercase tracking-widest text-accent border border-white/10">
-                            {activeItem.serviceCategory}
+                    {/* Right Column: Discipline Specs & ROI Highlights */}
+                    <div className="lg:col-span-5 xl:col-span-4 space-y-5">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="inline-block px-3 py-1 rounded-md bg-white/5 text-xs font-mono uppercase tracking-widest text-neutral-300 border border-white/10">
+                                {activeItem.serviceCategory}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-accent/15 text-xs font-mono text-accent border border-accent/30 font-semibold">
+                                <TrendingUp className="w-3.5 h-3.5" />
+                                <span>{activeItem.roiBadge}</span>
+                            </span>
                         </div>
 
-                        <h3 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight break-words">
+                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white tracking-tight leading-tight">
                             {activeItem.headline}
                         </h3>
 
@@ -213,12 +225,12 @@ export function BeforeAfterShowcase() {
                             </ul>
                         </div>
 
-                        <div className="pt-4">
+                        <div className="pt-3">
                             <a
-                                href="#trial-uploader-section"
+                                href="#free-trial"
                                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-accent-hover hover:shadow-[0_0_20px_rgba(251,183,24,0.4)] transition-all duration-300 cursor-pointer"
                             >
-                                <span>Test This On Your Images</span>
+                                <span>Request Free 3-Asset Pilot</span>
                                 <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />
                             </a>
                         </div>

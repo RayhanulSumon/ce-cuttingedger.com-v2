@@ -1,78 +1,156 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import {
     motion,
     useScroll,
     useTransform,
-    useMotionValueEvent,
     useMotionValue,
     useSpring,
 } from 'framer-motion';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles, Cpu, Box, Layers, Film, CheckCircle2 } from 'lucide-react';
 import { Service } from '@/types/models';
 
-interface ServiceCardItem {
-    id: number | string;
+interface BentoServicePillar {
+    id: string;
+    number: string;
+    title: string;
+    description: string;
+    metrics: string;
+    highlights: string[];
+    slug: string;
+    icon: React.ComponentType<{ className?: string }>;
+    accentClass: string;
+}
+
+const BENTO_SERVICE_PILLARS: BentoServicePillar[] = [
+    {
+        id: 'ai-visual-production',
+        number: '01',
+        title: 'AI-Powered Visual Production',
+        description:
+            'Generative product shoots, virtual models, and localization at scale.',
+        metrics: '60% Faster Campaign Velocity',
+        highlights: [
+            'Custom Brand-Trained Generative Product Shoots',
+            'Hyper-Realistic Virtual Models & Lookbooks',
+            'Automated Multi-Market Campaign Localization',
+        ],
+        slug: 'virtual-production-cgi',
+        icon: Cpu,
+        accentClass: 'from-amber-500/15 via-transparent to-transparent',
+    },
+    {
+        id: '3d-spatial-cgi',
+        number: '02',
+        title: '3D Spatial CGI & Motion',
+        description:
+            'Photorealistic product renders, packaging visualization, and anamorphic assets.',
+        metrics: '8K PBR Digital Twins',
+        highlights: [
+            'CAD-to-8K Photorealistic Product Renders',
+            '3D Packaging Visualization & Liquid Simulations',
+            'Anamorphic Billboard & WebGL/AR Spatial Assets',
+        ],
+        slug: 'virtual-production-cgi',
+        icon: Box,
+        accentClass: 'from-cyan-500/15 via-transparent to-transparent',
+    },
+    {
+        id: 'high-volume-retouching',
+        number: '03',
+        title: 'High-Volume Retouching & Prep',
+        description:
+            'E-commerce catalogs and digital asset management.',
+        metrics: '10,000+ Assets / Day SLA',
+        highlights: [
+            '100% Hand-Drawn Clipping Paths & Alpha Masking',
+            '3D Invisible Ghost Mannequin & Apparel Symmetry',
+            'Sub-1 Delta-E Swatch Color Standardization',
+        ],
+        slug: 'ecommerce-catalog-optimization',
+        icon: Layers,
+        accentClass: 'from-amber-500/15 via-transparent to-transparent',
+    },
+    {
+        id: 'corporate-campaign-design',
+        number: '04',
+        title: 'Corporate Campaign Design',
+        description:
+            'End-to-end multi-channel visual assets for global brands.',
+        metrics: 'Dedicated 24/6 Enterprise Pods',
+        highlights: [
+            'Omnichannel Key Visuals & Broadcast Brand Films',
+            'Global Retail Rollout & DTP Catalog Mastering',
+            'ISO 27001 Air-Gapped NDA Production Pipeline',
+        ],
+        slug: 'white-label-agency-extension',
+        icon: Film,
+        accentClass: 'from-indigo-500/15 via-transparent to-transparent',
+    },
+];
+
+interface StackedCardItem {
+    id: number;
     title: string;
     slug: string;
     image: string;
     categories: string[];
-    year: string | number;
+    year: number;
     description: string;
+    tintOverlay: string;
 }
 
-const DEFAULT_SERVICES: ServiceCardItem[] = [
+const STACKED_SHOWCASE_CARDS: StackedCardItem[] = [
     {
         id: 1,
-        title: 'E-Commerce Catalog Optimization',
-        slug: 'ecommerce-catalog-optimization',
-        image: '/images/portfolio/portfolio-4.jpg',
-        categories: ['Vector Clipping Path', 'Ghost Mannequin', 'Alpha Masking'],
+        title: 'AI Virtual Model & Luxury Apparel Studio',
+        slug: 'virtual-production-cgi',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85',
+        categories: ['AI Visual Production', 'Virtual Talent', 'Global Localization'],
         year: 2026,
-        description: 'Industrial-scale clipping paths, hand-drawn Bézier curves, multi-channel masking, and ghost mannequin composites for high-volume retailers.',
+        description:
+            'Generative editorial campaigns and surgical skin/fabric retouching delivered in 24 hours without physical location reshoots.',
+        tintOverlay: 'from-[#8a3a12]/80 via-[#3b1808]/45 to-black/90',
     },
     {
         id: 2,
-        title: 'Color Standardization Services',
-        slug: 'color-standardization',
-        image: '/images/portfolio/portfolio-1.jpg',
-        categories: ['Delta-E Swatch Matching', 'Apparel Colorways', 'Pantone Tuning'],
+        title: '3D Spatial Beverage & Liquid CGI',
+        slug: 'virtual-production-cgi',
+        image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1400&q=85',
+        categories: ['3D Spatial CGI', 'Fluid Dynamics', '8K Packaging Render'],
         year: 2026,
-        description: 'Sub-1 Delta-E physical fabric swatch calibration, specular highlight balancing, and multi-colorway batch generation without reshoots.',
+        description:
+            'Photorealistic refractive glassware, condensation physics, and high-speed fluid simulations rendered for global beverage campaigns.',
+        tintOverlay: 'from-[#0d6e7a]/75 via-[#083344]/40 to-black/90',
     },
     {
         id: 3,
-        title: 'White-Label Agency Extension',
-        slug: 'white-label-agency-extension',
-        image: '/images/portfolio/portfolio-2.jpg',
-        categories: ['Strict NDA Bandwidth', '24/7 Overnight Studio', 'Sub-12h SLA'],
+        title: 'High-Volume E-Commerce Catalog Scaling',
+        slug: 'ecommerce-catalog-optimization',
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1400&q=85',
+        categories: ['High-Volume Retouching', 'Ghost Mannequin', 'Macro Jewelry'],
         year: 2026,
-        description: 'Dedicated overnight production bandwidth for advertising agencies and commercial studios under airtight non-disclosure agreements.',
-    },
-    {
-        id: 4,
-        title: 'Virtual Production & CGI Studio',
-        slug: 'virtual-production-cgi',
-        image: '/images/portfolio/portfolio-3.jpg',
-        categories: ['3D Furniture Modeling', 'Photorealistic CGI Renders', '8K AR Ready'],
-        year: 2026,
-        description: 'From CAD blueprints to 8K photorealistic digital twins. PBR material physics, studio lighting environments, and interactive WebGL assets.',
+        description:
+            'Industrial-scale digital prep, hand-drawn vector paths, and macro reflection control for luxury timepieces, jewelry, and apparel.',
+        tintOverlay: 'from-[#785513]/75 via-[#2e2005]/45 to-black/90',
     },
 ];
 
-interface CardViewProps {
-    item: ServiceCardItem;
+function StackedCardView({
+    item,
+    style,
+    zIndex,
+    dimOpacity,
+}: {
+    item: StackedCardItem;
     style: any;
     zIndex: number;
     dimOpacity?: any;
-}
-
-function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
+}) {
     const mouseX = useMotionValue(-100);
     const mouseY = useMotionValue(-100);
     const [isHovered, setIsHovered] = useState(false);
 
-    // High performance GPU spring physics (0 React re-renders on mousemove)
     const springConfig = { damping: 28, stiffness: 350, mass: 0.15 };
     const cursorX = useSpring(mouseX, springConfig);
     const cursorY = useSpring(mouseY, springConfig);
@@ -83,17 +161,6 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
         mouseY.set(e.clientY - rect.top);
     };
 
-    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        mouseX.set(e.clientX - rect.left);
-        mouseY.set(e.clientY - rect.top);
-        setIsHovered(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
     return (
         <motion.article
             style={{
@@ -101,12 +168,16 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                 zIndex,
                 transformOrigin: 'top center',
             }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                mouseX.set(e.clientX - rect.left);
+                mouseY.set(e.clientY - rect.top);
+                setIsHovered(true);
+            }}
+            onMouseLeave={() => setIsHovered(false)}
             onMouseMove={handleMouseMove}
-            className="absolute inset-0 w-full h-full rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/15 bg-neutral-950 shadow-[0_25px_70px_rgba(0,0,0,0.85)] group select-none will-change-transform [transform:translateZ(0)] [backface-visibility:hidden]"
+            className="absolute inset-0 w-full h-full rounded-[24px] sm:rounded-[32px] overflow-hidden border border-white/15 bg-neutral-950 shadow-[0_25px_70px_rgba(0,0,0,0.85)] group select-none will-change-transform"
         >
-            {/* Full-bleed background image */}
             <div className="absolute inset-0 z-0">
                 <img
                     src={item.image}
@@ -114,69 +185,60 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                     loading="lazy"
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                {/* Layered vignette gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/50 pointer-events-none" />
-                
-                {/* Hardware-accelerated dim overlay (replaces expensive CSS filter:brightness) */}
+                <div className={`absolute inset-0 bg-gradient-to-b ${item.tintOverlay} pointer-events-none`} />
                 {dimOpacity && (
                     <motion.div
                         style={{ opacity: dimOpacity }}
-                        className="absolute inset-0 bg-black pointer-events-none transition-opacity"
+                        className="absolute inset-0 bg-black pointer-events-none"
                     />
                 )}
             </div>
 
-            {/* Clickable Card Link to Service */}
             <Link
                 href={`/services/${item.slug}`}
                 className="absolute inset-0 z-20"
-                aria-label={`Explore ${item.title} service`}
+                aria-label={`Explore ${item.title}`}
             />
 
-            {/* Card Top Bar: Frosted Glass Capsule Pills */}
-            <div className="relative z-30 p-4 sm:p-8 lg:p-10 flex items-center justify-between pointer-events-none">
-                {/* Left: Categories */}
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                    {item.categories.map((cat, cIdx) => (
+            {/* Top Capsule Pills matching reference screenshot */}
+            <div className="relative z-30 p-5 sm:p-8 flex items-center justify-between pointer-events-none">
+                <div className="flex flex-wrap items-center gap-2">
+                    {item.categories.map((cat, idx) => (
                         <span
-                            key={cIdx}
-                            className="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono uppercase tracking-wider text-white font-medium shadow-sm group-hover:border-white/40 transition-colors"
+                            key={idx}
+                            className="px-3 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono uppercase tracking-wider text-white font-medium"
                         >
                             {cat}
                         </span>
                     ))}
                 </div>
-
-                {/* Right: Year Tag */}
-                <span className="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono text-white font-semibold shadow-sm">
+                <span className="px-3 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono text-white font-semibold">
                     [{item.year}]
                 </span>
             </div>
 
-            {/* Card Bottom Bar: Unobstructed Image with Title & CTA */}
-            <div className="absolute bottom-4 sm:bottom-8 inset-x-4 sm:inset-x-8 lg:inset-x-10 z-30 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 pointer-events-none">
-                <div className="space-y-1.5 sm:space-y-2 max-w-xl">
-                    <span className="px-3 sm:px-5 py-1 sm:py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-mono font-bold text-accent uppercase tracking-wider shadow-lg inline-block">
-                        Discipline 0{item.id}
+            {/* Bottom Title & CTA */}
+            <div className="absolute bottom-5 sm:bottom-8 inset-x-5 sm:inset-x-8 z-30 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pointer-events-none">
+                <div className="space-y-1.5 max-w-xl">
+                    <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-accent uppercase tracking-wider inline-block">
+                        0{item.id} // PRODUCTION PIPELINE
                     </span>
-                    <h3 className="text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
+                    <h3 className="text-xl sm:text-3xl lg:text-4xl font-display font-extrabold text-white tracking-tight">
                         {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed line-clamp-2">
+                    <p className="text-xs sm:text-sm text-neutral-200 font-sans leading-relaxed line-clamp-2">
                         {item.description}
                     </p>
                 </div>
 
-                {/* Direct Action Pill */}
                 <div className="pointer-events-auto shrink-0">
-                    <span className="inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-accent-hover group-hover:shadow-[0_0_20px_rgba(251,183,24,0.4)] transition-all">
-                        <span>Explore Discipline</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
+                    <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-black font-display font-bold text-xs uppercase tracking-wider group-hover:bg-white transition-all">
+                        <span>Explore Capability</span>
+                        <ArrowUpRight className="w-4 h-4 text-black stroke-[2.5]" />
                     </span>
                 </div>
             </div>
 
-            {/* Hardware-Accelerated Frosted Dark Glass GPU Mouse Follower Pill */}
             <motion.div
                 style={{
                     x: cursorX,
@@ -189,13 +251,11 @@ function CardView({ item, style, zIndex, dimOpacity }: CardViewProps) {
                     opacity: isHovered ? 1 : 0,
                     scale: isHovered ? 1 : 0.7,
                 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white shadow-[0_20px_45px_rgba(0,0,0,0.9),0_0_20px_rgba(245,166,35,0.18)] will-change-transform select-none"
+                transition={{ duration: 0.2 }}
+                className="pointer-events-none absolute top-0 left-0 z-40 hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-white/25 text-white text-xs font-mono uppercase tracking-wider"
             >
-                <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_#f5a623] shrink-0" />
-                <span className="font-['Clash_Display',_'Syne',_sans-serif] text-[11px] uppercase font-semibold tracking-wider text-white whitespace-nowrap">
-                    Explore Service
-                </span>
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span>View Pipeline</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
             </motion.div>
         </motion.article>
@@ -206,196 +266,135 @@ interface StickyServiceCardsProps {
     services?: Service[];
 }
 
-export function StickyServiceCards({ services }: StickyServiceCardsProps) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
+export function StickyServiceCards({ services: _services }: StickyServiceCardsProps) {
+    const stackRef = useRef<HTMLDivElement>(null);
 
-    // Track total scroll progress across the collapsible cards journey
     const { scrollYProgress } = useScroll({
-        target: containerRef,
+        target: stackRef,
         offset: ['start start', 'end end'],
     });
 
-    const progress = scrollYProgress;
+    // Smooth 3-card layered stack matching the reference screenshot
+    const card0Scale = useTransform(scrollYProgress, [0, 0.45, 0.9], [1, 0.93, 0.87]);
+    const card0Y = useTransform(scrollYProgress, [0, 0.45, 0.9], [0, -28, -54]);
+    const card0Dim = useTransform(scrollYProgress, [0, 0.45, 0.9], [0, 0.25, 0.45]);
 
-    // Active Card Pagination Tracker
-    useMotionValueEvent(progress, 'change', (latest) => {
-        if (latest < 0.28) setActiveIndex(0);
-        else if (latest < 0.58) setActiveIndex(1);
-        else if (latest < 0.85) setActiveIndex(2);
-        else setActiveIndex(3);
-    });
+    const card1TranslateY = useTransform(scrollYProgress, [0, 0.1, 0.45], ['88%', '88%', '0%']);
+    const card1Scale = useTransform(scrollYProgress, [0.45, 0.9], [1, 0.94]);
+    const card1Y = useTransform(scrollYProgress, [0.45, 0.9], [0, -26]);
+    const card1Dim = useTransform(scrollYProgress, [0.45, 0.9], [0, 0.25]);
 
-    // Dynamic resolution prioritizing core services
-    const activeCards: ServiceCardItem[] = useMemo(() => {
-        if (!services || services.length === 0) {
-            return DEFAULT_SERVICES;
-        }
-
-        const slugImageMap: Record<string, { image: string; fallbackCategories: string[]; description: string }> = {
-            'high-end-model-retouch': {
-                image: '/images/portfolio/portfolio-1.jpg',
-                fallbackCategories: ['High-End Fashion & Jewelry', 'Model Retouch'],
-                description: 'Micro dodge & burn skin contouring and frequency separation while preserving authentic pores and natural texture.',
-            },
-            'ghost-mannequin': {
-                image: '/images/portfolio/portfolio-2.jpg',
-                fallbackCategories: ['Invisible Mannequin', 'Apparel Retouch'],
-                description: 'Seamless 3D hollow neck and hem joint composites with natural fabric drape and custom drop shadows.',
-            },
-            'jewelry-retouch': {
-                image: '/images/portfolio/portfolio-3.jpg',
-                fallbackCategories: ['Fine Jewelry Retouch', 'Gemstone Polish'],
-                description: 'Macro facet fire sharpening, platinum luster balancing, and zero-glare white background isolation.',
-            },
-            'background-removal': {
-                image: '/images/portfolio/portfolio-4.jpg',
-                fallbackCategories: ['Vector Clipping Path', 'Alpha Masking'],
-                description: 'Hand-drawn pen tool vector paths with multi-channel separation for color swaps and crisp edge isolation.',
-            },
-        };
-
-        const desiredSlugs = ['high-end-model-retouch', 'ghost-mannequin', 'jewelry-retouch', 'background-removal'];
-        const matched = desiredSlugs
-            .map((slug) => services.find((s) => s.slug === slug))
-            .filter((s): s is Service => Boolean(s));
-
-        const pool = matched.length === 4 ? matched : services.slice(0, 4);
-
-        return pool.map((s, i) => {
-            const config = slugImageMap[s.slug] || {
-                image: `/images/portfolio/portfolio-${(i % 4) + 1}.jpg`,
-                fallbackCategories: ['Specialist Discipline'],
-                description: s.description || 'Enterprise visual post-production engineered for maximum marketplace conversion.',
-            };
-            const categories = s.slug === 'high-end-model-retouch'
-                ? ['High-End Fashion & Jewelry']
-                : s.marquee_label
-                ? s.marquee_label.split(' · ').slice(0, 2)
-                : config.fallbackCategories;
-
-            return {
-                id: i + 1,
-                title: s.title,
-                slug: s.slug,
-                image: config.image,
-                categories,
-                year: 2026,
-                description: config.description,
-            };
-        });
-    }, [services]);
-
-    // =========================================================================
-    // SILKY SMOOTH CARD STACK PHYSICS (One After Another On Scroll)
-    // 100% GPU Hardware Accelerated, 0 Dropped Frames, 0 Brightness Filter Jank
-    // =========================================================================
-
-    // Card 0: Starts active, gently scales and recedes as Card 1 arrives
-    const card0Scale = useTransform(progress, [0, 0.08, 0.32, 0.38, 0.62, 0.68, 0.92], [1, 1, 0.92, 0.92, 0.85, 0.85, 0.78]);
-    const card0Y = useTransform(progress, [0, 0.08, 0.32, 0.38, 0.62, 0.68, 0.92], [0, 0, -22, -22, -42, -42, -60]);
-    const card0Dim = useTransform(progress, [0, 0.08, 0.32, 0.62], [0, 0, 0.35, 0.60]);
-
-    // Card 1: Smoothly slides up over Card 0 (0.08 -> 0.32), then scales down as Card 2 arrives
-    const card1TranslateY = useTransform(progress, [0, 0.08, 0.32], ['102%', '102%', '0%']);
-    const card1Scale = useTransform(progress, [0.32, 0.38, 0.62, 0.68, 0.92], [1, 1, 0.92, 0.92, 0.85]);
-    const card1Y = useTransform(progress, [0.32, 0.38, 0.62, 0.68, 0.92], [0, 0, -22, -22, -42]);
-    const card1Dim = useTransform(progress, [0.32, 0.38, 0.62], [0, 0, 0.35]);
-
-    // Card 2: Smoothly slides up over Card 1 (0.38 -> 0.62), then scales down as Card 3 arrives
-    const card2TranslateY = useTransform(progress, [0, 0.38, 0.62], ['102%', '102%', '0%']);
-    const card2Scale = useTransform(progress, [0.62, 0.68, 0.92], [1, 1, 0.92]);
-    const card2Y = useTransform(progress, [0.62, 0.68, 0.92], [0, 0, -22]);
-    const card2Dim = useTransform(progress, [0.62, 0.68, 0.92], [0, 0, 0.35]);
-
-    // Card 3: Final card slides up over Card 2 (0.68 -> 0.92)
-    const card3TranslateY = useTransform(progress, [0, 0.68, 0.92], ['102%', '102%', '0%']);
-
-    // Smooth click-to-scroll to any card
-    const scrollToCard = (index: number) => {
-        if (!containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const scrollTop = window.scrollY + rect.top;
-        const totalHeight = containerRef.current.offsetHeight - window.innerHeight;
-        const targets = [0.02, 0.34, 0.64, 0.94];
-        const targetY = scrollTop + targets[index] * totalHeight;
-
-        if (typeof window !== 'undefined' && (window as any).lenis) {
-            (window as any).lenis.scrollTo(targetY);
-        } else {
-            window.scrollTo({ top: targetY, behavior: 'smooth' });
-        }
-    };
+    const card2TranslateY = useTransform(scrollYProgress, [0, 0.5, 0.88], ['92%', '92%', '0%']);
 
     return (
         <section
-            id="featured-services"
+            id="b2b-service-bento-grid"
             className="relative py-12 sm:py-18 lg:py-22 bg-[#090a0d] border-t border-white/10 select-none"
         >
-            {/* Ambient Background Glow */}
-            <div className="absolute top-1/4 right-0 w-[55rem] h-[55rem] bg-accent/5 rounded-full blur-[220px] pointer-events-none" />
+            {/* Ambient Glow */}
+            <div className="absolute top-1/3 right-0 w-[50rem] h-[50rem] bg-accent/[0.04] rounded-full blur-[220px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-4 xs:px-5 sm:px-6 lg:px-8">
-                {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 pb-6 border-b border-white/10 gap-6">
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-accent">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>[ 01 // CORE DISCIPLINES & SERVICES ]</span>
-                            </div>
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-400">
-                                <span className="text-accent font-semibold">0{activeIndex + 1}</span>
-                                <span>/</span>
-                                <span>04</span>
-                            </div>
+            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8">
+                {/* SECTION 4 PART A: THE 4-CARD AI & B2B SERVICE BENTO GRID */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
+                    <div className="space-y-3 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/25 text-xs font-mono uppercase tracking-[0.18em] text-accent font-semibold">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>ENTERPRISE PRODUCTION CAPABILITIES</span>
                         </div>
-
-                        <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-['Clash_Display',_'Syne',_sans-serif] uppercase font-bold text-white tracking-tight leading-tight">
-                            ENGINEERED FOR IMPACT.
+                        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
+                            AI &amp; B2B Creative <span className="text-accent">Production Grid.</span>
                         </h2>
+                        <p className="text-sm sm:text-base text-neutral-400 font-sans leading-relaxed">
+                            Purpose-built visual pipelines engineered for global luxury houses, high-velocity e-commerce catalogs, and corporate marketing teams.
+                        </p>
                     </div>
 
                     <Link
                         href="/services"
-                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-neutral-300 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shadow-sm shrink-0 self-start sm:self-auto"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.04] border border-white/15 text-xs font-mono uppercase tracking-widest text-neutral-200 hover:text-black hover:bg-accent hover:border-accent transition-all duration-300 shrink-0 self-start md:self-auto"
                     >
-                        <span>View All Services ({services?.length || '6+'})</span>
-                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <span>Explore All Capabilities</span>
+                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Link>
                 </div>
 
-                {/* Interactive Discipline Switcher Pills (Clickable navigation synced with scroll) */}
-                <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 mb-6 sm:mb-8 scrollbar-none">
-                    {activeCards.map((card, idx) => {
-                        const isActive = idx === activeIndex;
+                {/* Clean 4-Card Bento Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-16 sm:mb-24">
+                    {BENTO_SERVICE_PILLARS.map((pillar) => {
+                        const Icon = pillar.icon;
                         return (
-                            <button
-                                key={card.id}
-                                type="button"
-                                onClick={() => scrollToCard(idx)}
-                                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all duration-300 whitespace-nowrap cursor-pointer flex items-center gap-2 border ${
-                                    isActive
-                                        ? 'bg-accent text-black font-bold border-accent shadow-[0_0_20px_rgba(251,183,24,0.3)]'
-                                        : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border-white/10'
-                                }`}
+                            <div
+                                key={pillar.id}
+                                className="group relative rounded-3xl p-6 sm:p-8 lg:p-9 bg-gradient-to-br from-[#12141d] to-[#0b0d13] border border-white/10 hover:border-accent/50 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.65)]"
                             >
-                                <span className={isActive ? 'text-black font-extrabold' : 'text-accent'}>
-                                    0{idx + 1}.
-                                </span>
-                                <span>{card.title}</span>
-                            </button>
+                                <div
+                                    className={`absolute inset-0 bg-gradient-to-br ${pillar.accentClass} opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none`}
+                                />
+
+                                <div className="relative z-10 space-y-5">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-11 h-11 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-black transition-all duration-300">
+                                                <Icon className="w-5 h-5" />
+                                            </div>
+                                            <span className="font-mono text-xs uppercase tracking-widest text-neutral-400">
+                                                [ {pillar.number} // B2B PILLAR ]
+                                            </span>
+                                        </div>
+
+                                        <span className="px-3 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-mono text-accent font-semibold">
+                                            {pillar.metrics}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white group-hover:text-accent transition-colors">
+                                            {pillar.title}
+                                        </h3>
+                                        <p className="text-sm sm:text-base text-neutral-300 font-sans leading-relaxed">
+                                            {pillar.description}
+                                        </p>
+                                    </div>
+
+                                    <ul className="space-y-2 pt-3 border-t border-white/10">
+                                        {pillar.highlights.map((item, i) => (
+                                            <li
+                                                key={i}
+                                                className="flex items-center gap-2.5 text-xs sm:text-sm text-neutral-300 font-sans"
+                                            >
+                                                <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                                    <Link
+                                        href={`/services/${pillar.slug}`}
+                                        className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white group-hover:text-accent font-bold transition-colors"
+                                    >
+                                        <span>Explore Workflow &amp; Specs</span>
+                                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                    </Link>
+                                    <a
+                                        href="#free-trial"
+                                        className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 hover:text-white transition-colors"
+                                    >
+                                        Request Pilot →
+                                    </a>
+                                </div>
+                            </div>
                         );
                     })}
                 </div>
 
-                {/* PINNED COLLAPSIBLE CARDS CONTAINER: STACKS ONE AFTER ANOTHER ON SCROLL */}
-                <div ref={containerRef} className="relative h-[220vh] sm:h-[300vh]">
-                    {/* Sticky Viewport Window */}
-                    <div className="sticky top-16 sm:top-24 h-[60vh] sm:h-[64vh] lg:h-[68vh] min-h-[400px] sm:min-h-[460px] max-h-[660px] w-full rounded-[20px] sm:rounded-[36px] overflow-visible">
-                        {/* Card 0 */}
-                        <CardView
-                            item={activeCards[0]}
+                {/* SECTION 4 PART B: LAYERED STACKED VISUAL SHOWCASE CARDS (Matching Reference Image) */}
+                <div ref={stackRef} className="relative h-[165vh] sm:h-[200vh] max-w-5xl mx-auto">
+                    <div className="sticky top-20 sm:top-24 h-[52vh] sm:h-[58vh] lg:h-[62vh] min-h-[360px] sm:min-h-[420px] max-h-[560px] w-full rounded-[24px] sm:rounded-[32px] overflow-visible">
+                        <StackedCardView
+                            item={STACKED_SHOWCASE_CARDS[0]}
                             zIndex={10}
                             style={{
                                 scale: card0Scale,
@@ -404,7 +403,6 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                             dimOpacity={card0Dim}
                         />
 
-                        {/* Card 1: Slides up over Card 0 */}
                         <motion.div
                             style={{
                                 y: card1TranslateY,
@@ -412,8 +410,8 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                             }}
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
-                            <CardView
-                                item={activeCards[1]}
+                            <StackedCardView
+                                item={STACKED_SHOWCASE_CARDS[1]}
                                 zIndex={20}
                                 style={{
                                     scale: card1Scale,
@@ -423,7 +421,6 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                             />
                         </motion.div>
 
-                        {/* Card 2: Slides up over Card 1 */}
                         <motion.div
                             style={{
                                 y: card2TranslateY,
@@ -431,28 +428,9 @@ export function StickyServiceCards({ services }: StickyServiceCardsProps) {
                             }}
                             className="absolute inset-0 w-full h-full pointer-events-auto"
                         >
-                            <CardView
-                                item={activeCards[2]}
+                            <StackedCardView
+                                item={STACKED_SHOWCASE_CARDS[2]}
                                 zIndex={30}
-                                style={{
-                                    scale: card2Scale,
-                                    y: card2Y,
-                                }}
-                                dimOpacity={card2Dim}
-                            />
-                        </motion.div>
-
-                        {/* Card 3: Slides up over Card 2 */}
-                        <motion.div
-                            style={{
-                                y: card3TranslateY,
-                                zIndex: 40,
-                            }}
-                            className="absolute inset-0 w-full h-full pointer-events-auto"
-                        >
-                            <CardView
-                                item={activeCards[3]}
-                                zIndex={40}
                                 style={{
                                     scale: 1,
                                     y: 0,
