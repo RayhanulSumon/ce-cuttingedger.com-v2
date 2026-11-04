@@ -32,7 +32,7 @@ function InvertLine({ text }: InvertLineProps) {
                     display: 'inline-block',
                     transform: 'translateZ(0)',
                 }}
-                className="will-change-[background-position] font-display font-extrabold text-lg sm:text-2xl md:text-3xl lg:text-[clamp(22px,2.75vw,44px)] tracking-tight leading-snug sm:leading-[1.28] max-w-full px-2 sm:px-0"
+                className="will-change-[background-position] font-display font-extrabold text-lg sm:text-2xl md:text-3xl lg:text-[clamp(22px,2.6vw,40px)] tracking-tight leading-snug sm:leading-[1.28] max-w-full px-2 sm:px-0"
             >
                 {text}
             </motion.span>
@@ -41,6 +41,22 @@ function InvertLine({ text }: InvertLineProps) {
 }
 
 export function IntroBand() {
+    const sectionRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start 0.9', 'end 0.2'],
+    });
+
+    // Parallax-driven background color & ambient radial spotlight transition
+    const bgColor = useTransform(
+        scrollYProgress,
+        [0, 0.5, 1],
+        ['#07080b', '#0d1018', '#090a0d']
+    );
+    const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.04, 0.16, 0.06]);
+    const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.15, 0.95]);
+    const glowY = useTransform(scrollYProgress, [0, 1], ['18%', '-18%']);
+
     const manifestoLines = [
         'With over a decade of excellence in high-end visual production,',
         'CuttingEdger delivers flawless digital prep, precision retouching,',
@@ -50,14 +66,23 @@ export function IntroBand() {
     ];
 
     return (
-        <section
+        <motion.section
+            ref={sectionRef}
             id="intro-value-proposition"
-            className="relative py-20 sm:py-28 lg:py-32 flex flex-col justify-center items-center bg-[#090a0d] overflow-hidden select-none"
+            style={{ backgroundColor: bgColor }}
+            className="relative py-20 sm:py-26 lg:py-30 flex flex-col justify-center items-center overflow-hidden select-none transition-colors"
         >
-            {/* Ambient Backlight Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[30rem] bg-accent/[0.04] rounded-full blur-[200px] pointer-events-none" />
+            {/* Dynamic Parallax Ambient Backlight Glow that shifts with scroll */}
+            <motion.div
+                style={{
+                    opacity: glowOpacity,
+                    scale: glowScale,
+                    y: glowY,
+                }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[58rem] h-[28rem] bg-gradient-to-r from-[#d4a853] via-cyan-500/60 to-[#d4a853] rounded-full blur-[160px] pointer-events-none"
+            />
 
-            <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10 relative z-10">
+            <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10 relative z-10">
                 {/* 5 Lines with 48% minimum base opacity that illuminate to 100% white on scroll */}
                 <div className="flex flex-col items-center w-full space-y-1.5 sm:space-y-2">
                     {manifestoLines.map((line, index) => (
@@ -76,6 +101,6 @@ export function IntroBand() {
                     </Link>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }
