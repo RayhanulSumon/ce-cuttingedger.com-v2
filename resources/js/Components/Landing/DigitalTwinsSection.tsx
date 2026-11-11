@@ -183,15 +183,15 @@ export function DigitalTwinsSection({ active, openDemo, onOverlayChange }: Secti
         return () => cancelAnimationFrame(rafId);
     }, [active, measure, paint]);
 
-    // ── Auto-play: advance one model every AUTO_ADVANCE_MS when active and not hovered/dragged ──
+    // ── Auto-play: advance one model every AUTO_ADVANCE_MS when active and modal is NOT open ──
     useEffect(() => {
         if (!active || modalTwinIdx !== null) {
             return;
         }
         const id = window.setInterval(() => {
             const s = stateRef.current;
-            // Pause while user is hovering or actively dragging
-            if (hoveredRef.current || s.down) {
+            // Only pause if modal is open or user is currently dragging/holding mouse down
+            if (s.down) {
                 return;
             }
             s.target = s.target + 1; // wraps naturally via the paint loop's modular arithmetic
