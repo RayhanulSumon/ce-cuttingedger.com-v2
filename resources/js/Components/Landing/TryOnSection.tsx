@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { Eyebrow, Reveal, SectionProps } from './shared';
+import { useAutoplay } from '@/hooks/useAutoplay';
+import { Eyebrow, PAD_X, Reveal, SectionProps } from './shared';
 import { LOOKS } from './looks';
 
 export function TryOnSection({ active }: SectionProps) {
     const [index, setIndex] = useState(0);
     const [pin, setPin] = useState<number | null>(null);
     const look = LOOKS[index];
+    const [paused, setPaused] = useState(false);
+
+    useAutoplay(() => setIndex((i) => (i + 1) % LOOKS.length), active && !paused, 4200);
 
     return (
         <div className="relative grid h-full w-full grid-cols-1 bg-white pt-20 sm:pt-24 lg:grid-cols-[1fr_380px]">
-            <div className="relative flex min-h-0 flex-col px-6 sm:px-14">
+            <div className={`relative flex min-h-0 flex-col ${PAD_X}`} onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
                 <Reveal active={active}>
                     <Eyebrow>02 / Virtual Try-On</Eyebrow>
                     <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#151413]">

@@ -1,69 +1,134 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
 import { Project } from '@/types/models';
-import { Eyebrow, Reveal, SectionProps } from './shared';
+import { PAD_X, Reveal, SectionProps } from './shared';
 
-const FALLBACK = [
-    { title: 'Apparel Catalog', category: '2D Retouching', image: '/images/portfolio/portfolio-1.jpg', href: '/case-studies' },
-    { title: 'Jewelry Close-ups', category: 'High-end retouch', image: '/images/portfolio/portfolio-2.jpg', href: '/case-studies' },
-    { title: 'Furniture CGI', category: '3D Visualisation', image: '/images/portfolio/portfolio-3.jpg', href: '/case-studies' },
-    { title: 'Campaign Layouts', category: 'DTP', image: '/images/portfolio/portfolio-4.jpg', href: '/case-studies' },
+interface Tile {
+    kind: 'photo' | 'color';
+    image?: string;
+    bg?: string;
+    fg?: string;
+    label?: string;
+    title?: string;
+}
+
+const PHOTOS = [
+    '/images/portfolio/portfolio-1.jpg',
+    '/images/portfolio/portfolio-2.jpg',
+    '/images/portfolio/portfolio-3.jpg',
+    '/images/portfolio/portfolio-4.jpg',
 ];
+
+const COLORS = [
+    { bg: '#ef5d44', fg: '#0f0f0e' },
+    { bg: '#fcdd71', fg: '#0f0f0e' },
+    { bg: '#9fd5f7', fg: '#0f0f0e' },
+    { bg: '#f9f6f1', fg: '#0f0f0e' },
+    { bg: '#151515', fg: '#f9f6f1' },
+];
+
+const CAPTIONS = [
+    { label: '2D', title: 'Retouching' },
+    { label: '3D', title: 'CGI & Twins' },
+    { label: 'DTP', title: 'Catalog layout' },
+    { label: 'Video', title: 'Motion cut-downs' },
+    { label: 'AI', title: 'Virtual try-on' },
+];
+
+/** Builds the three scrolling columns: photos and solid tiles alternate, as in the showcase demo. */
+function buildColumns(photos: string[]): Tile[][] {
+    const photo = (n: number): Tile => ({ kind: 'photo', image: photos[n % photos.length] });
+    const color = (n: number): Tile => ({ kind: 'color', ...COLORS[n % COLORS.length], ...CAPTIONS[n % CAPTIONS.length] });
+
+    return [
+        [photo(0), color(2), color(4), photo(1), color(1)],
+        [color(1), photo(2), color(3), color(0), photo(3)],
+        [color(2), photo(1), color(0), photo(0), color(3)],
+    ];
+}
+
+function TileCard({ tile }: { tile: Tile }) {
+    if (tile.kind === 'photo') {
+        return (
+            <div
+                className="aspect-[0.73] w-full shrink-0 rounded-[18px] bg-[#e2dfd7] bg-cover bg-center sm:rounded-[22px]"
+                style={{ backgroundImage: `url(${tile.image})` }}
+            />
+        );
+    }
+
+    return (
+        <div
+            className="flex aspect-[0.73] w-full shrink-0 flex-col justify-between rounded-[18px] p-4 sm:rounded-[22px] sm:p-5"
+            style={{ backgroundColor: tile.bg, color: tile.fg, boxShadow: tile.bg === '#f9f6f1' ? 'inset 0 0 0 1px #e9e6df' : undefined }}
+        >
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] opacity-70">{tile.label}</span>
+            <span className="text-lg font-black uppercase leading-[0.95] tracking-[-0.03em] sm:text-2xl">{tile.title}</span>
+        </div>
+    );
+}
+
+function Column({ tiles, direction, speed }: { tiles: Tile[]; direction: 'down' | 'up'; speed: number }) {
+    return (
+        <div className="min-w-0 flex-1 overflow-hidden" aria-hidden="true">
+            <div
+                className={`flex flex-col gap-3 pb-3 ${direction === 'down' ? 'landing-col-down' : 'landing-col-up'}`}
+                style={{ ['--landing-col-speed' as string]: `${speed}s` }}
+            >
+                {[...tiles, ...tiles].map((tile, i) => (
+                    <TileCard key={i} tile={tile} />
+                ))}
+            </div>
+        </div>
+    );
+}
 
 interface ShowcaseProps extends SectionProps {
     projects: Project[];
 }
 
-export function ShowcaseSection({ active, projects }: ShowcaseProps) {
-    const items = projects.length
-        ? projects.slice(0, 4).map((p, i) => ({
-              title: p.title,
-              category: p.category?.name ?? p.client_name,
-              image: p.cover_image || FALLBACK[i % 4].image,
-              href: `/case-studies/${p.slug}`,
-          }))
-        : FALLBACK;
-    const [open, setOpen] = useState(0);
+export function ShowcaseSection({ active, openDemo, projects }: ShowcaseProps) {
+    const covers = projects.map((p) => p.cover_image).filter(Boolean);
+    const columns = buildColumns(covers.length >= 2 ? [...covers, ...PHOTOS] : PHOTOS);
 
     return (
-        <div className="flex h-full w-full flex-col bg-[#f5f4ef] px-6 pb-8 pt-24 sm:px-14">
-            <Reveal active={active} className="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                    <Eyebrow>04 / Showcase</Eyebrow>
-                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold uppercase leading-[0.92] tracking-[-0.02em] text-[#0f0f0e]">
-                        Selected work
+        <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-[#f5f4ef] md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
+            <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
+                <Reveal active={active}>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#0f0f0e]/60">04 / Showcase</p>
+                    <h2 className="mt-3 text-[clamp(38px,7.2vw,104px)] font-black uppercase leading-[0.9] tracking-[-0.05em] text-[#0f0f0e]">
+                        What we
+                        <br />
+                        achieved
                     </h2>
-                </div>
-                <Link href="/case-studies" className="inline-flex items-center gap-1 border-b border-[#0f0f0e] pb-1 text-sm font-semibold">
-                    All case studies <ArrowUpRight size={16} />
-                </Link>
-            </Reveal>
-
-            <Reveal active={active} delay={0.15} className="mt-6 flex min-h-0 flex-1 flex-col gap-3 lg:flex-row">
-                {items.map((item, i) => (
-                    <Link
-                        key={item.title + i}
-                        href={item.href}
-                        onMouseEnter={() => setOpen(i)}
-                        onFocus={() => setOpen(i)}
-                        style={{ backgroundImage: `url(${item.image})` }}
-                        className={`group relative min-h-0 overflow-hidden rounded-[22px] bg-[#151515] bg-cover bg-center transition-[flex-grow] duration-700 ease-[cubic-bezier(.22,1,.36,1)] ${
-                            open === i ? 'flex-[4]' : 'flex-[1]'
-                        }`}
-                    >
-                        <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                        <span className="absolute bottom-5 left-5 right-5 text-white">
-                            <span className="block text-[10px] uppercase tracking-[0.25em] opacity-70">{item.category}</span>
-                            <span className="mt-1 block text-xl font-extrabold leading-tight lg:whitespace-nowrap">{item.title}</span>
-                        </span>
-                        <span className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white text-black opacity-0 transition-opacity group-hover:opacity-100">
-                            <ArrowUpRight size={18} />
-                        </span>
+                    <p className="mt-4 max-w-md text-sm leading-relaxed text-[#0f0f0e] sm:text-base md:mt-6 md:text-lg">
+                        Catalogs, campaigns and digital twins delivered for fashion and e-commerce brands, from{' '}
+                        <strong className="font-bold">one-off retouches</strong> to <strong className="font-bold">thousand-SKU programmes</strong>.
+                    </p>
+                </Reveal>
+                <Reveal active={active} delay={0.15} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
+                    <Link href="/case-studies" className="rounded-full bg-[#0f0f0e] px-7 py-3.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5">
+                        View case studies
                     </Link>
-                ))}
-            </Reveal>
+                    <button type="button" onClick={openDemo} className="flex items-center gap-3 text-sm font-bold">
+                        <span className="grid h-8 w-8 place-items-center rounded-full bg-[#0f0f0e] text-white">
+                            <ArrowUpRight size={14} />
+                        </span>
+                        Book a Demo
+                    </button>
+                </Reveal>
+            </div>
+
+            <div className="relative min-h-0 pb-5 pr-5 sm:pr-10 md:pb-0 md:pr-12 lg:pr-16">
+                <div className="flex h-full gap-3 pl-5 sm:pl-10 md:pl-0">
+                    <Column tiles={columns[0]} direction="down" speed={38} />
+                    <Column tiles={columns[1]} direction="up" speed={30} />
+                    <div className="hidden min-w-0 flex-1 sm:flex">
+                        <Column tiles={columns[2]} direction="down" speed={34} />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
-

@@ -32,7 +32,7 @@ export function Menubar({ index, goTo, openDemo }: MenubarProps) {
 
     return (
         <>
-            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 text-sm font-medium transition-colors duration-500 sm:px-14 ${dark ? 'text-white' : 'text-[#1d1d1d]'}`}>
+            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-colors duration-500 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'}`}>
                 <button type="button" onClick={() => go(0)} className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
                     CUTTINGEDGER
                 </button>

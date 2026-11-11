@@ -25,6 +25,10 @@ export const SECTION_INDEX = Object.fromEntries(SECTIONS.map((s, i) => [s.id, i]
     number
 >;
 
+/** Shared gutters so every section lines up with the menubar. */
+export const PAD_X = 'px-5 sm:px-10 lg:px-16';
+export const PAD_Y = 'pt-20 pb-6 sm:pt-24 sm:pb-8';
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Content that re-plays its entrance every time its section becomes active. */

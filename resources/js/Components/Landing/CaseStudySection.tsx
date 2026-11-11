@@ -15,7 +15,7 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
     const linked = projects[index];
 
     return (
-        <div className="flex h-full w-full flex-col bg-white px-6 pb-8 pt-24 sm:px-14">
+        <div data-scrollable className="overflow-y-auto flex h-full w-full flex-col bg-white px-5 pb-8 pt-24 sm:px-10 lg:px-16">
             <Reveal active={active} className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <Eyebrow>06 / Case study</Eyebrow>
@@ -50,7 +50,7 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
                         exit={{ opacity: 0, scale: 0.97 }}
                         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                         style={{ backgroundColor: study.background }}
-                        className="grid h-full overflow-hidden rounded-[28px] text-[#F2F4F8] lg:grid-cols-[1fr_1.1fr]"
+                        className="grid h-full min-h-[460px] overflow-hidden rounded-[28px] text-[#F2F4F8] lg:grid-cols-[1fr_1.1fr]"
                     >
                         <div className="flex flex-col justify-end gap-4 p-6 sm:p-10">
                             <span className="text-xs font-medium uppercase tracking-widest opacity-70">{study.category}</span>
@@ -67,7 +67,7 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
                             </dl>
                             <Link
                                 href={linked ? `/case-studies/${linked.slug}` : '/case-studies'}
-                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-6 py-3 text-sm font-semibold text-[#141A26]"
+                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-5 py-3 text-sm font-semibold text-[#141A26]"
                             >
                                 Read the case study
                             </Link>

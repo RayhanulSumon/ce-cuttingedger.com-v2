@@ -18,7 +18,7 @@ export function RetouchingSection({ active }: SectionProps) {
     }, []);
 
     return (
-        <div className="grid h-full w-full grid-cols-1 items-center gap-8 bg-[#f2f2f1] px-6 pb-8 pt-24 sm:px-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div data-scrollable className="overflow-y-auto grid h-full w-full grid-cols-1 items-center gap-8 bg-[#f2f2f1] px-5 pb-8 pt-24 sm:px-10 lg:px-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
                 <Reveal active={active}>
                     <Eyebrow>03 / Retouching · Artifact remedy</Eyebrow>

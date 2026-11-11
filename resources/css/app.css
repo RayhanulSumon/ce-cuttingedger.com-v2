@@ -288,3 +288,29 @@ select option {
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 }
+
+/* Landing showcase: vertical auto-scrolling tile columns */
+@keyframes landing-col-down {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes landing-col-up {
+    from { transform: translate3d(0, -50%, 0); }
+    to { transform: translate3d(0, 0, 0); }
+}
+
+.landing-col-down {
+    animation: landing-col-down var(--landing-col-speed, 36s) linear infinite;
+}
+
+.landing-col-up {
+    animation: landing-col-up var(--landing-col-speed, 36s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-col-down,
+    .landing-col-up {
+        animation: none;
+    }
+}

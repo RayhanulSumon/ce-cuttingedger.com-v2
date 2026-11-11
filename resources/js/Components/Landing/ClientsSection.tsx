@@ -11,7 +11,7 @@ interface ClientsProps extends SectionProps {
 
 function Logo({ name, src }: { name: string; src?: string }) {
     return (
-        <div className="mx-6 flex h-24 w-56 shrink-0 items-center justify-center rounded-2xl border border-[#1d1d1d]/10 bg-white px-6">
+        <div className="mx-6 flex h-24 w-56 shrink-0 items-center justify-center rounded-2xl border border-[#1d1d1d]/10 bg-white px-5">
             {src ? (
                 <img src={src} alt={name} loading="lazy" className="max-h-12 max-w-full object-contain grayscale" />
             ) : (
@@ -31,7 +31,7 @@ export function ClientsSection({ active, clients }: ClientsProps) {
 
     return (
         <div className="flex h-full w-full flex-col justify-center gap-10 overflow-hidden bg-[#f2f2f1] pt-20">
-            <Reveal active={active} className="px-6 text-center sm:px-14">
+            <Reveal active={active} className="px-5 text-center sm:px-10 lg:px-16">
                 <Eyebrow>05 / Client list</Eyebrow>
                 <h2 className="mx-auto mt-3 max-w-3xl text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#1d1d1d]">
                     Trusted by brands that ship at scale.

@@ -10,7 +10,7 @@ export function FaqSection({ active }: SectionProps) {
     return (
         <div
             data-scrollable
-            className="grid h-full w-full grid-cols-1 gap-8 overflow-y-auto bg-[#f2f2f1] px-6 pb-10 pt-24 sm:px-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:pt-28"
+            className="grid h-full w-full grid-cols-1 gap-8 overflow-y-auto bg-[#f2f2f1] px-5 pb-10 pt-24 sm:px-10 lg:px-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:pt-28"
         >
             <Reveal active={active}>
                 <Eyebrow>08 / FAQ</Eyebrow>
