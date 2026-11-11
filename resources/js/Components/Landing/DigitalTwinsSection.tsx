@@ -444,18 +444,18 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     className="pointer-events-none absolute left-0 top-0 z-30 hidden lg:block"
                 >
                     <div
-                        className={`grid place-items-center border-[#16191f] transition-all duration-200 ease-out ${
+                        className={`grid place-items-center transition-all duration-200 ease-out ${
                             cursorMode === 'hidden'
-                                ? 'h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] opacity-0'
+                                ? 'h-[96px] w-[96px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0'
                                 : cursorMode === 'drag'
-                                  ? 'h-[34px] w-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] bg-white/40 opacity-100 backdrop-blur-xs'
+                                  ? 'h-[42px] w-[100px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2px] border-[#16191f]/40 bg-white/50 opacity-100 backdrop-blur-sm'
                                   : cursorMode === 'view'
-                                    ? 'h-[80px] w-[80px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#16191f]/20 bg-[#16191f] text-white opacity-100 shadow-xl'
-                                    : 'h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] opacity-100'
+                                    ? 'h-[96px] w-[96px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/40 opacity-100 shadow-sm backdrop-blur-md ring-1 ring-white/60'
+                                    : 'h-[42px] w-[42px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2px] border-[#16191f]/50 opacity-100'
                         }`}
                     >
                         {cursorMode === 'view' && (
-                            <span className="font-michroma pl-[0.2em] text-[9px] tracking-[0.22em] text-white">
+                            <span className="select-none text-[11px] font-semibold tracking-[0.18em] text-[#16191f]/80">
                                 VIEW
                             </span>
                         )}
