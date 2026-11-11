@@ -4,6 +4,9 @@ import { Eyebrow, SectionProps } from './shared';
 import { DIGITAL_TWINS, TWIN_FIRST_LOOK, TWIN_Y0, TWIN_Y1 } from './looks';
 import { TwinPresetModal, TwinSpriteCrop } from './TwinPresetModal';
 
+/** Auto-advance interval in ms (paused while hovering or dragging). */
+const AUTO_ADVANCE_MS = 2800;
+
 // Exact depth stops from demo/Digital Twins.html: d = -1 (leaving front-right) to d = 5 (far back-left)
 const KX = [1.2, 0.744, 0.496, 0.346, 0.235, 0.15, 0.085];
 const KF = [1.14, 0.89, 0.777, 0.704, 0.651, 0.616, 0.59];
@@ -20,6 +23,8 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
     const modelRefs = useRef<(HTMLDivElement | null)[]>([]);
     const rollRef = useRef<HTMLSpanElement | null>(null);
     const ringRef = useRef<HTMLDivElement | null>(null);
+    /** true while mouse is inside the stage — pauses auto-advance */
+    const hoveredRef = useRef(false);
 
     const [activeTwinIdx, setActiveTwinIdx] = useState(0);
     const [modalTwinIdx, setModalTwinIdx] = useState<number | null>(null);
@@ -166,56 +171,33 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
         return () => cancelAnimationFrame(rafId);
     }, [active, measure, paint]);
 
-    // Wheel interaction on stage: steps through the 6 looks first, then releases to fullpage at the ends
+    // ── Auto-play: advance one model every AUTO_ADVANCE_MS when active and not hovered/dragged ──
     useEffect(() => {
-        const stage = stageRef.current;
-        if (!stage || !active) {
+        if (!active || modalTwinIdx !== null) {
             return;
         }
-        let wheelTimer = 0;
-
-        const onWheel = (e: WheelEvent) => {
-            if (modalTwinIdx !== null) {
-                return;
-            }
+        const id = window.setInterval(() => {
             const s = stateRef.current;
-            const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-            if (Math.abs(delta) < 8) {
+            // Pause while user is hovering or actively dragging
+            if (hoveredRef.current || s.down) {
                 return;
             }
-
-            const dir = delta > 0 ? 1 : -1;
-            const atEnd = dir > 0 && s.target >= N - 1 - 0.05 && Math.abs(s.p - (N - 1)) < 0.15;
-            const atStart = dir < 0 && s.target <= 0.05 && Math.abs(s.p) < 0.15;
-
-            if (atEnd || atStart) {
-                // Allow useFullpage to transition to the next/previous section
-                return;
-            }
-
-            e.preventDefault();
-            e.stopPropagation();
-            s.target = clamp(s.target + clamp(e.deltaY + e.deltaX, -140, 140) / 360, 0, N - 1);
-            window.clearTimeout(wheelTimer);
-            wheelTimer = window.setTimeout(() => {
-                s.target = clamp(Math.round(s.target), 0, N - 1);
-            }, 140);
-        };
-
-        stage.addEventListener('wheel', onWheel, { passive: false });
-        return () => {
-            stage.removeEventListener('wheel', onWheel);
-            window.clearTimeout(wheelTimer);
-        };
+            s.target = s.target + 1; // wraps naturally via the paint loop's modular arithmetic
+        }, AUTO_ADVANCE_MS);
+        return () => window.clearInterval(id);
     }, [active, modalTwinIdx]);
 
     const stepLook = (delta: number) => {
         const s = stateRef.current;
-        s.target = Math.round(s.target) + delta;
+        // Allow wrapping past bounds — the paint loop's wrap() handles display correctly.
+        // For manual buttons we still clamp so the user doesn't fly far off.
+        const next = Math.round(s.target) + delta;
+        s.target = clamp(next, 0, N - 1);
     };
 
     const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>) => {
         if (e.pointerType === 'mouse') {
+            hoveredRef.current = true;
             const stage = stageRef.current;
             if (stage) {
                 const r = stage.getBoundingClientRect();
@@ -227,6 +209,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
     };
 
     const handlePointerLeave = () => {
+        hoveredRef.current = false;
         stateRef.current.hoveredModel = -1;
         setCursorMode('hidden');
     };
@@ -348,12 +331,28 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                             }}
                             className="group absolute left-0 top-0 origin-top-left will-change-[transform,filter] lg:cursor-none"
                         >
-                            {/* Contact Shadow under model feet (`.m:before` in demo/Digital Twins.html) */}
+                            {/* Contact Shadow under model feet */}
                             <span
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -bottom-[1.6%] left-[8%] right-[8%] h-[3.6%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(70,85,105,0.24),transparent)]"
                             />
                             <TwinSpriteCrop twin={twin} className="relative block h-full w-full" />
+
+                            {/* VIEW POSES badge — fixed at the CENTER of the card, appears on hover */}
+                            <span
+                                aria-hidden="true"
+                                className="font-michroma pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-90 rounded-full bg-[#16191f]/90 px-4 py-2 text-[8px] tracking-[0.2em] text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-200 group-hover:scale-100 group-hover:opacity-100"
+                            >
+                                VIEW POSES
+                            </span>
+
+                            {/* Model first-name label — always visible at bottom of the card */}
+                            <span
+                                aria-hidden="true"
+                                className="font-michroma pointer-events-none absolute -bottom-5 left-1/2 w-max max-w-[140px] -translate-x-1/2 truncate text-center text-[8px] tracking-[0.14em] text-[#16191f]/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            >
+                                {twin.name.split(' — ')[0]}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -438,7 +437,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     </button>
                 </div>
 
-                {/* Custom Follower Cursor Ring / "VIEW" Badge (`.ring` in demo/Digital Twins.html + "VIEW" on model hover) */}
+                {/* Custom Follower Cursor Ring — ring/drag/view modes */}
                 <div
                     ref={ringRef}
                     aria-hidden="true"
@@ -447,16 +446,16 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     <div
                         className={`grid place-items-center border-[#16191f] transition-all duration-200 ease-out ${
                             cursorMode === 'hidden'
-                                ? 'h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 opacity-0'
+                                ? 'h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] opacity-0'
                                 : cursorMode === 'drag'
                                   ? 'h-[34px] w-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] bg-white/40 opacity-100 backdrop-blur-xs'
                                   : cursorMode === 'view'
-                                    ? 'h-[84px] w-[84px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#16191f]/30 bg-[#16191f]/90 text-white opacity-100 shadow-lg backdrop-blur-md'
+                                    ? 'h-[80px] w-[80px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#16191f]/20 bg-[#16191f] text-white opacity-100 shadow-xl'
                                     : 'h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] opacity-100'
                         }`}
                     >
                         {cursorMode === 'view' && (
-                            <span className="font-michroma pl-[0.2em] text-[10px] tracking-[0.22em] text-white">
+                            <span className="font-michroma pl-[0.2em] text-[9px] tracking-[0.22em] text-white">
                                 VIEW
                             </span>
                         )}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Layers, ShoppingBag, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, Copyright, Layers, ShoppingBag, X } from 'lucide-react';
 import {
     DIGITAL_TWINS,
     DigitalTwinModel,
@@ -78,7 +78,7 @@ function PieceSpriteCrop({ box, className = 'h-full w-full' }: { box: [number, n
 
 export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPresetModalProps) {
     const [poseIdx, setPoseIdx] = useState(0);
-    const [actionFeedback, setActionFeedback] = useState<'buy' | 'order' | null>(null);
+    const [actionFeedback, setActionFeedback] = useState<'buy' | 'lifetime' | null>(null);
 
     const isOpen = twinIndex !== null;
     const twin = DIGITAL_TWINS[twinIndex ?? 0] ?? DIGITAL_TWINS[0];
@@ -114,7 +114,7 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
         return null;
     }
 
-    const handlePresetAction = (type: 'buy' | 'order') => {
+    const handlePresetAction = (type: 'buy' | 'lifetime') => {
         setActionFeedback(type);
         window.setTimeout(() => {
             openDemo();
@@ -123,15 +123,23 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
 
     return (
         <div
-            className="absolute inset-0 z-40 flex flex-col bg-[#f4f7fb]/95 backdrop-blur-md lg:grid lg:grid-cols-[minmax(0,1fr)_410px] xl:grid-cols-[minmax(0,1fr)_440px]"
+            className="absolute inset-0 z-[500] flex flex-col bg-[#f4f7fb]/95 backdrop-blur-md lg:grid lg:grid-cols-[minmax(0,1fr)_410px] xl:grid-cols-[minmax(0,1fr)_440px]"
             role="dialog"
             aria-modal="true"
             aria-label={`${twin.name} pose presets`}
             onWheel={(e) => {
-                // Keep wheel scrolling inside the modal so useFullpage does not jump sections.
                 e.stopPropagation();
             }}
         >
+            {/* ── Prominent close button — always visible top-right ── */}
+            <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close pose preset view"
+                className="absolute right-5 top-5 z-50 grid h-11 w-11 place-items-center rounded-full bg-[#16191f] text-white shadow-lg transition-transform duration-300 hover:rotate-90 hover:scale-105 sm:right-8 sm:top-7"
+            >
+                <X size={20} />
+            </button>
             {/* LEFT SIDE: Selected Model + Multi-Pose Photo Gallery */}
             <div
                 data-scrollable
@@ -164,14 +172,6 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
                                 #{item.lookNumber}
                             </button>
                         ))}
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            aria-label="Close pose preset view"
-                            className="ml-2 grid h-10 w-10 place-items-center rounded-full border border-[#16191f]/20 bg-white text-[#16191f] transition-transform duration-300 hover:rotate-90 hover:border-[#16191f]"
-                        >
-                            <X size={18} />
-                        </button>
                     </div>
                 </div>
 
@@ -346,16 +346,17 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
                     </div>
                 </div>
 
-                {/* TWO BUY / ORDER ACTION BUTTONS */}
+                {/* TWO ACTION BUTTONS */}
                 <div className="mt-6 space-y-3 border-t border-[#e6ebf0] pt-5">
                     {actionFeedback && (
                         <p className="rounded-lg bg-emerald-50 px-3 py-2 text-center text-xs font-medium text-emerald-800">
                             {actionFeedback === 'buy'
-                                ? `Preset #${twin.lookNumber} (${activePose.code}) selected — opening checkout request…`
-                                : `Custom preset order for Look #${twin.lookNumber} selected — upload your garments…`}
+                                ? `Preset #${twin.lookNumber} (${activePose.code}) selected — opening checkout…`
+                                : `Lifetime copyright for Look #${twin.lookNumber} — opening checkout…`}
                         </p>
                     )}
 
+                    {/* Button 1: Buy This Preset */}
                     <button
                         type="button"
                         onClick={() => handlePresetAction('buy')}
@@ -371,19 +372,20 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
                         <span className="font-michroma text-sm font-bold">{twin.presetPrice}</span>
                     </button>
 
+                    {/* Button 2: Buy Lifetime Copyright */}
                     <button
                         type="button"
-                        onClick={() => handlePresetAction('order')}
+                        onClick={() => handlePresetAction('lifetime')}
                         className="flex w-full items-center justify-between rounded-xl border-2 border-[#16191f] bg-white px-5 py-3.5 text-left text-[#16191f] transition hover:-translate-y-0.5 hover:bg-[#f1f5fa]"
                     >
                         <span className="flex items-center gap-3">
-                            <Sparkles size={18} className="shrink-0" />
+                            <Copyright size={18} className="shrink-0" />
                             <span>
-                                <span className="block font-michroma text-[11px] tracking-[0.14em]">Order This Preset</span>
-                                <span className="block text-[11px] text-[#5d6572]">Send your garment · Custom twin shoot</span>
+                                <span className="block font-michroma text-[11px] tracking-[0.14em]">Buy Lifetime Copyright</span>
+                                <span className="block text-[11px] text-[#5d6572]">Full commercial rights · Unlimited usage</span>
                             </span>
                         </span>
-                        <span className="font-michroma text-sm font-bold">{twin.customOrderPrice}</span>
+                        <span className="font-michroma text-sm font-bold">{twin.lifetimePrice}</span>
                     </button>
                 </div>
             </aside>

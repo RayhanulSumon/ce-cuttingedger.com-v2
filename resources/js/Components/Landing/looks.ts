@@ -157,6 +157,7 @@ export interface DigitalTwinModel {
     collection: string;
     presetPrice: string;
     customOrderPrice: string;
+    lifetimePrice: string;
     description: string;
     deliverables: string[];
     featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
@@ -246,6 +247,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 15',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Photoreal AI digital twin trained for structured outerwear, feather textures, and fluid satin trousers with 6 pre-lit studio pose rigs.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -265,6 +267,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 16',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Engineered for micro-pleated dresses, metallic waist accents, and soft evening movement across e-commerce and lookbook campaigns.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -284,6 +287,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 17',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Calibrated for satin trench silhouettes, structured leather accessories, and crisp architectural shadows in full-frame studio lighting.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -303,6 +307,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 18',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Designed for billow-sleeve organza, sheer silk blouses, and tie-waist resort trousers with natural skin-to-fabric subsurface scattering.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -322,6 +327,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 19',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Built for longline powder coats, ivory straight-leg tailoring, and clean Scandinavian studio aesthetics with zero reshoot overhead.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -341,6 +347,7 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         collection: 'Spring Summer 2027 · Look 20',
         presetPrice: '$149',
         customOrderPrice: '$290',
+        lifetimePrice: '$490',
         description:
             'Optimized for voluminous ruffle tops, pleated maxi skirts, and wide-stance hero campaign framing across web, print, and lookbooks.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
