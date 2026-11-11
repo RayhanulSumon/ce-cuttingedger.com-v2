@@ -120,8 +120,8 @@ export function ShowcaseSection({ active, openDemo, projects }: ShowcaseProps) {
                 </Reveal>
             </div>
 
-            <div className="relative min-h-0 pb-5 pr-5 sm:pr-10 md:pb-0 md:pr-12 lg:pr-16">
-                <div className="flex h-full gap-3 pl-5 sm:pl-10 md:pl-0">
+            <div className="relative min-h-0 overflow-hidden pb-6 pt-20 pr-6 sm:pr-10 md:pb-8 md:pt-24 md:pr-14 lg:pr-20">
+                <div className="flex h-full gap-3.5 pl-5 sm:pl-10 md:pl-0">
                     <Column tiles={columns[0]} direction="down" speed={38} />
                     <Column tiles={columns[1]} direction="up" speed={30} />
                     <div className="hidden min-w-0 flex-1 sm:flex">

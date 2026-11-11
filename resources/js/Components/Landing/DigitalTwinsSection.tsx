@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Eye } from 'lucide-react';
-import { Eyebrow, SectionProps } from './shared';
+import { Eyebrow, Reveal, SectionProps } from './shared';
 import { DIGITAL_TWINS, TWIN_FIRST_LOOK, TWIN_Y0, TWIN_Y1 } from './looks';
 import { TwinPresetModal, TwinSpriteCrop } from './TwinPresetModal';
 
