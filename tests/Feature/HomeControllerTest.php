@@ -16,7 +16,7 @@ class HomeControllerTest extends TestCase
         $this->seed();
     }
 
-    public function test_renders_flagship_home_page_with_featured_work_and_services(): void
+    public function test_renders_fullscreen_home_page_with_featured_work_and_clients(): void
     {
         $response = $this->get('/');
 
@@ -24,9 +24,7 @@ class HomeControllerTest extends TestCase
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Home')
             ->has('featuredProjects', 4)
-            ->has('services', 4)
-            ->has('teamMembers', 5)
-            ->has('testimonials')
+            ->has('clients')
         );
     }
 }
