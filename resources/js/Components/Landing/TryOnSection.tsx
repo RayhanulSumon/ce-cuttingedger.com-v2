@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Check, Plus } from 'lucide-react';
-import { Eyebrow, SectionProps } from './shared';
+import { Eyebrow, Reveal, SectionProps } from './shared';
 import { LOOKS } from './looks';
 
 const LOOK_COUNT = LOOKS.length; // 6 looks
@@ -387,7 +387,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         zoomed ? 'pointer-events-none opacity-0' : 'opacity-100'
                     }`}
                 >
-                    <div className="flex flex-col gap-1.5">
+                    <Reveal active={active} className="flex flex-col gap-1.5">
                         <Eyebrow>02 / Virtual Try-On</Eyebrow>
                         <h2 className="text-[clamp(28px,3.8vw,46px)] font-normal leading-[1.06] tracking-[-0.02em] text-[#151413]">
                             Try the Look.
@@ -395,7 +395,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         <p className="max-w-[38ch] text-xs leading-[1.55] text-[#66625c]">
                             Six looks, styled head to toe. Tap the front model to view pins, or drag to spin the runway.
                         </p>
-                    </div>
+                    </Reveal>
                 </div>
 
                 {/* 3D Ring Runway Stage (`rw__stage`) */}
@@ -498,6 +498,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         zoomed ? 'pointer-events-none opacity-0' : 'opacity-100'
                     }`}
                 >
+                    <Reveal active={active} delay={0.1} className="flex w-full items-center gap-3 sm:gap-5">
                     <button
                         type="button"
                         onClick={prevLook}
@@ -601,6 +602,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                             <path d="M1 7h24M19 1l6 6-6 6" />
                         </svg>
                     </button>
+                    </Reveal>
                 </div>
 
                 {/* LOOK POPUP / ZOOM MODAL (`rw__lb`) — Opens when clicking the front model */}
@@ -750,6 +752,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                 aria-label="In this look"
                 className="relative flex flex-col border-t border-[#c8c8c8] bg-white lg:border-l lg:border-t-0"
             >
+                <Reveal active={active} delay={0.12} className="flex h-full flex-col">
                 {/* Desktop Panel Header (`rw__panel-head`) */}
                 <div className="hidden items-baseline justify-between gap-3 px-8 pb-4 pt-8 lg:flex">
                     <h3 className="text-[26px] font-normal leading-[1.1] text-[#151413]">In this look</h3>
@@ -869,6 +872,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         );
                     })}
                 </ul>
+                </Reveal>
             </aside>
         </div>
     );

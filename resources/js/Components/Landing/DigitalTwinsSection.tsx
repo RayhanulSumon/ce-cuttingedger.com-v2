@@ -363,82 +363,88 @@ export function DigitalTwinsSection({ active, openDemo, onOverlayChange }: Secti
 
                 {/* Top-Left Intro Block (`.intro` in demo/Digital Twins.html) */}
                 <div className="pointer-events-none absolute left-5 top-20 z-20 max-w-[420px] sm:left-10 sm:top-24 lg:left-14 lg:top-28">
-                    <Eyebrow>01 / Digital Twins · AI Generated Imagery</Eyebrow>
-                    <h2 className="font-michroma mt-2.5 text-[clamp(18px,2vw,26px)] font-normal leading-[1.2] tracking-[0.16em] text-[#16191f]">
-                        Spring Summer 2027
-                    </h2>
-                    <p className="mt-3 hidden text-xs leading-[1.62] tracking-[0.012em] text-[#737b86] sm:block sm:text-sm">
-                        A study in softness and strength. Shoot a garment once — our photoreal AI digital twins wear it
-                        across every studio pose, lighting preset, and lookbook angle. Hover any model and click{' '}
-                        <strong className="font-semibold text-[#16191f]">View</strong> to explore pose presets.
-                    </p>
+                    <Reveal active={active}>
+                        <Eyebrow>01 / Digital Twins · AI Generated Imagery</Eyebrow>
+                        <h2 className="font-michroma mt-2.5 text-[clamp(18px,2vw,26px)] font-normal leading-[1.2] tracking-[0.16em] text-[#16191f]">
+                            Spring Summer 2027
+                        </h2>
+                        <p className="mt-3 hidden text-xs leading-[1.62] tracking-[0.012em] text-[#737b86] sm:block sm:text-sm">
+                            A study in softness and strength. Shoot a garment once — our photoreal AI digital twins wear it
+                            across every studio pose, lighting preset, and lookbook angle. Hover any model and click{' '}
+                            <strong className="font-semibold text-[#16191f]">View</strong> to explore pose presets.
+                        </p>
+                    </Reveal>
                 </div>
 
                 {/* Bottom-Left Rolling Look Counter + View Poses CTA (`.tag` in demo/Digital Twins.html) */}
                 <div className="absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-14">
-                    <div
-                        className="font-michroma pointer-events-none flex items-center gap-3 text-[clamp(22px,2.4vw,34px)] leading-[38px] tracking-[0.14em] text-[#16191f]"
-                        aria-live="polite"
-                    >
-                        <span>Look</span>
-                        <span className="h-[38px] overflow-hidden">
-                            <span ref={rollRef} className="block will-change-transform">
-                                {Array.from({ length: N + 1 }).map((_, idx) => (
-                                    <b key={idx} className="block h-[38px] font-normal">
-                                        {TWIN_FIRST_LOOK + (idx % N)}
-                                    </b>
-                                ))}
+                    <Reveal active={active} delay={0.1}>
+                        <div
+                            className="font-michroma pointer-events-none flex items-center gap-3 text-[clamp(22px,2.4vw,34px)] leading-[38px] tracking-[0.14em] text-[#16191f]"
+                            aria-live="polite"
+                        >
+                            <span>Look</span>
+                            <span className="h-[38px] overflow-hidden">
+                                <span ref={rollRef} className="block will-change-transform">
+                                    {Array.from({ length: N + 1 }).map((_, idx) => (
+                                        <b key={idx} className="block h-[38px] font-normal">
+                                            {TWIN_FIRST_LOOK + (idx % N)}
+                                        </b>
+                                    ))}
+                                </span>
                             </span>
-                        </span>
-                    </div>
+                        </div>
 
-                    <p className="mt-0.5 text-xs font-medium text-[#737b86]">{activeTwin.name}</p>
+                        <p className="mt-0.5 text-xs font-medium text-[#737b86]">{activeTwin.name}</p>
 
-                    <div className="mt-3 flex flex-wrap items-center gap-4">
-                        <button
-                            type="button"
-                            onClick={() => openModal(activeTwinIdx)}
-                            className="font-michroma inline-flex items-center gap-2 border-b border-[#16191f] pb-1 text-[10px] tracking-[0.14em] text-[#16191f] transition hover:opacity-70"
-                        >
-                            <Eye size={13} />
-                            View Pose Presets (6 Poses)
-                        </button>
-                        <button
-                            type="button"
-                            onClick={openDemo}
-                            className="font-michroma inline-block border-b border-[#737b86] pb-1 text-[10px] tracking-[0.14em] text-[#737b86] transition hover:border-[#16191f] hover:text-[#16191f]"
-                        >
-                            Create My Twin
-                        </button>
-                    </div>
+                        <div className="mt-3 flex flex-wrap items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => openModal(activeTwinIdx)}
+                                className="font-michroma inline-flex items-center gap-2 border-b border-[#16191f] pb-1 text-[10px] tracking-[0.14em] text-[#16191f] transition hover:opacity-70"
+                            >
+                                <Eye size={13} />
+                                View Pose Presets (6 Poses)
+                            </button>
+                            <button
+                                type="button"
+                                onClick={openDemo}
+                                className="font-michroma inline-block border-b border-[#737b86] pb-1 text-[10px] tracking-[0.14em] text-[#737b86] transition hover:border-[#16191f] hover:text-[#16191f]"
+                            >
+                                Create My Twin
+                            </button>
+                        </div>
+                    </Reveal>
                 </div>
 
                 {/* Bottom-Right Runway Navigation Controls */}
                 <div className="absolute bottom-6 right-5 z-20 flex items-center gap-2.5 sm:bottom-10 sm:right-10 lg:right-14">
-                    <button
-                        type="button"
-                        onClick={() => stepLook(-1)}
-                        aria-label="Previous digital twin"
-                        className="grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/25 bg-white/80 text-[#16191f] backdrop-blur transition hover:bg-[#16191f] hover:text-white"
-                    >
-                        <ArrowLeft size={18} />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => openModal(activeTwinIdx)}
-                        className="font-michroma hidden h-11 items-center gap-2 rounded-full bg-[#16191f] px-5 text-[10px] tracking-[0.16em] text-white shadow-sm transition hover:bg-black sm:inline-flex"
-                    >
-                        <Eye size={14} />
-                        View Poses
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => stepLook(1)}
-                        aria-label="Next digital twin"
-                        className="grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/25 bg-white/80 text-[#16191f] backdrop-blur transition hover:bg-[#16191f] hover:text-white"
-                    >
-                        <ArrowRight size={18} />
-                    </button>
+                    <Reveal active={active} delay={0.15} className="flex items-center gap-2.5">
+                        <button
+                            type="button"
+                            onClick={() => stepLook(-1)}
+                            aria-label="Previous digital twin"
+                            className="grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/25 bg-white/80 text-[#16191f] backdrop-blur transition hover:bg-[#16191f] hover:text-white"
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => openModal(activeTwinIdx)}
+                            className="font-michroma hidden h-11 items-center gap-2 rounded-full bg-[#16191f] px-5 text-[10px] tracking-[0.16em] text-white shadow-sm transition hover:bg-black sm:inline-flex"
+                        >
+                            <Eye size={14} />
+                            View Poses
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => stepLook(1)}
+                            aria-label="Next digital twin"
+                            className="grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/25 bg-white/80 text-[#16191f] backdrop-blur transition hover:bg-[#16191f] hover:text-white"
+                        >
+                            <ArrowRight size={18} />
+                        </button>
+                    </Reveal>
                 </div>
 
                 {/* Custom Follower Cursor Ring — ring/drag/view modes */}
