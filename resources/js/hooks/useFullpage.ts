@@ -67,6 +67,9 @@ export function useFullpage(count: number, enabled = true) {
         }
 
         const onWheel = (event: WheelEvent) => {
+            if (event.defaultPrevented) {
+                return;
+            }
             const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : 0;
             if (Math.abs(delta) < WHEEL_THRESHOLD) {
                 return;
@@ -80,6 +83,9 @@ export function useFullpage(count: number, enabled = true) {
         };
 
         const onKey = (event: KeyboardEvent) => {
+            if (event.defaultPrevented) {
+                return;
+            }
             const tag = (event.target as HTMLElement)?.tagName;
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
                 return;

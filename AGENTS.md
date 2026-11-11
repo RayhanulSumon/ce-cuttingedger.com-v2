@@ -258,3 +258,10 @@ php artisan package:discover
 C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Dev
 C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Reverb
 ```
+
+## Development Philosophy & Direct-Change Policy
+- **Active Development Site**: This project is under active, ground-up development (`dev.cuttingedger.app`).
+- **Direct Changes Only**: Apply requested architectural, UI, and backend changes directly without hesitation.
+- **No Backward Compatibility Shims**: Do NOT keep legacy fallbacks, deprecated props, unused database/controller payloads, or compatibility wrappers for replaced features.
+- **Remove Unnecessary Code**: Whenever a page, component, or feature is redesigned or replaced, delete all superseded/unused files, dead code, and obsolete styles immediately to keep the codebase fresh, modular, and clean.
+- **Modular Architecture**: Write clean, modular, single-responsibility components and hooks rather than monolithic files.

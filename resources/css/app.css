@@ -308,9 +308,49 @@ select option {
     animation: landing-col-up var(--landing-col-speed, 36s) linear infinite;
 }
 
+@keyframes rw-ring {
+    0% { transform: scale(0.8); opacity: 0.9; }
+    100% { transform: scale(1.7); opacity: 0; }
+}
+
+@keyframes rw-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes rw-breathe {
+    0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
+}
+
+.animate-rw-ring {
+    animation: rw-ring 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.animate-rw-ring-delayed {
+    animation: rw-ring 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) 1.3s infinite;
+}
+
+.animate-rw-fill {
+    animation: rw-fill 5s linear forwards;
+}
+
+.animate-rw-breathe {
+    animation: rw-breathe 9s ease-in-out infinite;
+}
+
+.font-michroma {
+    font-family: 'Michroma', sans-serif;
+    text-transform: uppercase;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .landing-col-down,
-    .landing-col-up {
+    .landing-col-up,
+    .animate-rw-ring,
+    .animate-rw-ring-delayed,
+    .animate-rw-fill,
+    .animate-rw-breathe {
         animation: none;
     }
 }
