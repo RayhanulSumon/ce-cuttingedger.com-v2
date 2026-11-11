@@ -13,7 +13,7 @@ const EASE = [0.4, 0, 0.2, 1] as const;
 function BannerVideo() {
     return (
         <video
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             src={VIDEO_SRC}
             poster={VIDEO_POSTER}
             autoPlay
@@ -21,6 +21,7 @@ function BannerVideo() {
             loop
             playsInline
             preload="auto"
+            style={{ objectPosition: '50% 50%' }}
         />
     );
 }
@@ -70,13 +71,33 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
     const rowRef = useRef<HTMLSpanElement>(null);
     const cuttingRef = useRef<HTMLSpanElement>(null);
     const edgerRef = useRef<HTMLSpanElement>(null);
+    const spacerRef = useRef<HTMLSpanElement>(null);
     const stackRef = useRef<HTMLSpanElement>(null);
     const stackWordRef = useRef<HTMLSpanElement>(null);
     const [mounted, setMounted] = useState(false);
 
-    // Desktop: CUTTING + banner(3.1em) + EDGER + two 0.14em gaps; phones: stacked CUTTING.
-    const rowSize = useFitFontSize(rowRef, [cuttingRef, edgerRef], PILL_EM + GAP_EM * 2, () => window.innerHeight * 0.2);
+    // Desktop: CUTTING + pill + EDGER + invisible-spacer(= CUTTING − EDGER) + 2 gaps.
+    // Total effective word-width = 2 × CUTTING, so pass cuttingRef twice so the
+    // font fitter reserves the right amount of space and CUTTING never overflows.
+    const rowSize = useFitFontSize(rowRef, [cuttingRef, cuttingRef], PILL_EM + GAP_EM * 2, () => window.innerHeight * 0.2);
     const stackSize = useFitFontSize(stackRef, [stackWordRef], 0, () => window.innerHeight * 0.14);
+
+    // After fonts & layout settle, set the right-side spacer width = CUTTING width − EDGER width
+    // so the pill is visually centred on the page regardless of the two words' different lengths.
+    useLayoutEffect(() => {
+        const sync = () => {
+            const cW = cuttingRef.current?.offsetWidth ?? 0;
+            const eW = edgerRef.current?.offsetWidth ?? 0;
+            if (spacerRef.current) {
+                spacerRef.current.style.width = `${Math.max(0, cW - eW)}px`;
+            }
+        };
+        sync();
+        document.fonts?.ready.then(sync);
+        const ro = new ResizeObserver(sync);
+        if (rowRef.current) ro.observe(rowRef.current);
+        return () => ro.disconnect();
+    }, [rowSize]);
 
     // Trigger the same entrance reveal on initial page load/reload as when scrolling back to Hero.
     useEffect(() => {
@@ -102,7 +123,9 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
             </svg>
 
             <h1 className="relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
-                {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line */}
+                {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line.
+                    A hidden right-side spacer balances the extra width of CUTTING vs EDGER
+                    so the video pill lands exactly on the horizontal centre of the viewport. */}
                 <span
                     ref={rowRef}
                     className="hidden w-full items-center justify-center gap-[0.14em] whitespace-nowrap font-extrabold leading-none tracking-[-0.045em] sm:flex"
@@ -133,6 +156,8 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
                     >
                         EDGER
                     </motion.span>
+                    {/* Invisible balance spacer — width = CUTTING − EDGER so pill centres perfectly */}
+                    <span ref={spacerRef} aria-hidden="true" className="shrink-0" style={{ width: 0 }} />
                 </span>
 
                 {/* Phones: stacked */}

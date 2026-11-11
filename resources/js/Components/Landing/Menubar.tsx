@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { PageProps } from '@/types';
 import { CAPABILITY_FALLBACK } from './content';
 import { SECTION_INDEX } from './shared';
@@ -19,7 +19,6 @@ const DARK_SECTIONS = [SECTION_INDEX['book-demo'], SECTION_INDEX.contact];
 
 export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
-    const [capOpen, setCapOpen] = useState(false);
     const [drawer, setDrawer] = useState(false);
     const dark = DARK_SECTIONS.includes(index);
 
@@ -32,95 +31,131 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
         goTo(i);
     };
 
+    const NAV_ITEMS: [string, number][] = [
+        ['Home', SECTION_INDEX.hero],
+        ['Digital Twins', SECTION_INDEX['digital-twins']],
+        ['Try-On', SECTION_INDEX['try-on']],
+        ['Showcase', SECTION_INDEX.showcase],
+        ['Case Study', SECTION_INDEX['case-study']],
+        ['FAQ', SECTION_INDEX.faq],
+    ];
+
     return (
         <>
-            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[colors,opacity] duration-300 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
-                <button type="button" onClick={() => go(0)} className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
-                    CUTTINGEDGER
+            <header
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[colors,opacity] duration-300 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+            >
+                {/* Logo */}
+                <button
+                    type="button"
+                    onClick={() => go(0)}
+                    className="text-base font-extrabold tracking-[-0.04em]"
+                    aria-label="CuttingEdger home"
+                >
+                    CUTTING  EDGER
                 </button>
 
-                <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
-                    <button type="button" onClick={() => go(0)} className="opacity-70 hover:opacity-100">Home</button>
-
-                    <div className="relative" onMouseEnter={() => setCapOpen(true)} onMouseLeave={() => setCapOpen(false)}>
-                        <button type="button" aria-expanded={capOpen} onClick={() => setCapOpen((v) => !v)} className="flex items-center gap-1 opacity-70 hover:opacity-100">
-                            Capabilities <ChevronDown size={14} className={`transition-transform ${capOpen ? 'rotate-180' : ''}`} />
-                        </button>
-                        <AnimatePresence>
-                            {capOpen && (
-                                <motion.ul
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 8 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="absolute left-1/2 top-full min-w-44 -translate-x-1/2 pt-3"
-                                >
-                                    <div className="overflow-hidden rounded-2xl bg-white p-2 text-[#1d1d1d] shadow-2xl">
-                                        {capabilities.map((c) => (
-                                            <li key={c.label}>
-                                                <Link href={c.href} className="block rounded-xl px-4 py-2.5 hover:bg-[#f2f2f1]">{c.label}</Link>
-                                            </li>
-                                        ))}
-                                    </div>
-                                </motion.ul>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    <button type="button" onClick={() => go(SECTION_INDEX.showcase)} className="opacity-70 hover:opacity-100">Showcase</button>
-                    <button type="button" onClick={() => go(SECTION_INDEX['case-study'])} className="opacity-70 hover:opacity-100">Case Study</button>
-                    <button type="button" onClick={() => go(SECTION_INDEX.faq)} className="opacity-70 hover:opacity-100">FAQ</button>
-                </nav>
-
+                {/* Right side: Book a Demo + sidebar toggle */}
                 <div className="flex items-center gap-3">
                     <button
                         type="button"
                         onClick={openDemo}
-                        className={`hidden rounded-full px-5 py-2.5 text-xs font-bold sm:block ${dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white'}`}
+                        className={`rounded-full px-5 py-2.5 text-xs font-bold ${dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white'}`}
                     >
                         Book a Demo
                     </button>
-                    <button type="button" onClick={() => setDrawer(true)} aria-label="Open menu" className="grid h-10 w-10 place-items-center rounded-full bg-[#1b1b1b] text-white md:hidden">
+
+                    {/* Sidebar toggle — always visible on all breakpoints */}
+                    <button
+                        type="button"
+                        onClick={() => setDrawer(true)}
+                        aria-label="Open menu"
+                        className={`grid h-10 w-10 place-items-center rounded-full transition ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#333]'}`}
+                    >
                         <Menu size={18} />
                     </button>
                 </div>
             </header>
 
+            {/* Right-side Sidebar Drawer */}
             <AnimatePresence>
                 {drawer && (
-                    <motion.div
-                        className="fixed inset-0 z-[90] flex flex-col bg-[#141A26] p-8 text-white md:hidden"
-                        initial={{ x: '100%' }}
-                        animate={{ x: 0 }}
-                        exit={{ x: '100%' }}
-                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        <button type="button" onClick={() => setDrawer(false)} aria-label="Close menu" className="ml-auto grid h-10 w-10 place-items-center rounded-full bg-white/10">
-                            <X size={18} />
-                        </button>
-                        <ul className="mt-6 space-y-4 text-3xl font-extrabold tracking-tight">
-                            {[
-                                ['Home', SECTION_INDEX.hero],
-                                ['Digital Twins', SECTION_INDEX['digital-twins']],
-                                ['Try-On', SECTION_INDEX['try-on']],
-                                ['Showcase', SECTION_INDEX.showcase],
-                                ['Case Study', SECTION_INDEX['case-study']],
-                                ['FAQ', SECTION_INDEX.faq],
-                            ].map(([label, i]) => (
-                                <li key={label}>
-                                    <button type="button" onClick={() => go(i as number)}>{label}</button>
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="mt-auto flex flex-wrap gap-4 text-sm text-white/70">
-                            {capabilities.map((c) => (
-                                <Link key={c.label} href={c.href}>{c.label}</Link>
-                            ))}
-                        </div>
-                    </motion.div>
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            className="fixed inset-0 z-[88] bg-black/40 backdrop-blur-sm"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            onClick={() => setDrawer(false)}
+                        />
+
+                        {/* Drawer panel — slides in from the right */}
+                        <motion.aside
+                            className="fixed right-0 top-0 z-[90] flex h-full w-72 flex-col bg-[#141A26] px-8 py-8 text-white shadow-2xl"
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            {/* Close */}
+                            <button
+                                type="button"
+                                onClick={() => setDrawer(false)}
+                                aria-label="Close menu"
+                                className="ml-auto grid h-10 w-10 place-items-center rounded-full bg-white/10 hover:bg-white/20"
+                            >
+                                <X size={18} />
+                            </button>
+
+                            {/* Nav links */}
+                            <nav className="mt-8 flex flex-col gap-1">
+                                {NAV_ITEMS.map(([label, i]) => (
+                                    <button
+                                        key={label}
+                                        type="button"
+                                        onClick={() => go(i)}
+                                        className={`rounded-xl px-4 py-3 text-left text-lg font-semibold tracking-tight transition hover:bg-white/10 ${index === i ? 'text-white' : 'text-white/70'}`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </nav>
+
+                            {/* Capabilities sub-links */}
+                            <div className="mt-6 border-t border-white/10 pt-6">
+                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                                    Capabilities
+                                </p>
+                                <div className="flex flex-col gap-1">
+                                    {capabilities.map((c) => (
+                                        <Link
+                                            key={c.label}
+                                            href={c.href}
+                                            onClick={() => setDrawer(false)}
+                                            className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+                                        >
+                                            {c.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Book Demo CTA */}
+                            <div className="mt-auto pt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => { setDrawer(false); openDemo(); }}
+                                    className="w-full rounded-full bg-white py-3 text-sm font-bold text-[#141A26] transition hover:bg-white/90"
+                                >
+                                    Book a Demo
+                                </button>
+                            </div>
+                        </motion.aside>
+                    </>
                 )}
             </AnimatePresence>
         </>
     );
 }
-
