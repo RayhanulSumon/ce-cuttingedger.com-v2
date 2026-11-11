@@ -338,15 +338,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                             />
                             <TwinSpriteCrop twin={twin} className="relative block h-full w-full" />
 
-                            {/* VIEW POSES badge — fixed at the CENTER of the card, appears on hover */}
-                            <span
-                                aria-hidden="true"
-                                className="font-michroma pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-90 rounded-full bg-[#16191f]/90 px-4 py-2 text-[8px] tracking-[0.2em] text-white opacity-0 shadow-lg backdrop-blur-sm transition-all duration-200 group-hover:scale-100 group-hover:opacity-100"
-                            >
-                                VIEW POSES
-                            </span>
-
-                            {/* Model first-name label — always visible at bottom of the card */}
+                            {/* Model first-name label — fades in on hover */}
                             <span
                                 aria-hidden="true"
                                 className="font-michroma pointer-events-none absolute -bottom-5 left-1/2 w-max max-w-[140px] -translate-x-1/2 truncate text-center text-[8px] tracking-[0.14em] text-[#16191f]/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -441,7 +433,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                 <div
                     ref={ringRef}
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-0 top-0 z-30 hidden lg:block"
+                    className="pointer-events-none absolute left-0 top-0 z-[150] hidden lg:block"
                 >
                     <div
                         className={`grid place-items-center transition-all duration-200 ease-out ${
