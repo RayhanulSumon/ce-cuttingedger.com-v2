@@ -6,6 +6,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,8 +24,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (request()->header('x-forwarded-proto') === 'https' || str_starts_with((string) config('app.url'), 'https://')) {
+        if (request()->isSecure() || request()->header('x-forwarded-proto') === 'https' || (app()->isProduction() && str_starts_with((string) config('app.url'), 'https://'))) {
             URL::forceScheme('https');
+        }
+
+        $requestHost = request()->getHost();
+        $configuredHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+        if ($requestHost !== $configuredHost || filter_var($requestHost, FILTER_VALIDATE_IP) || (int) request()->server('SERVER_PORT') === 8000) {
+            Vite::useHotFile(storage_path('framework/lan-bypass.hot'));
         }
 
         RateLimiter::for('public-contact', function (Request $request) {

@@ -1,5 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Check, Plus } from 'lucide-react';
+import {
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    Plus,
+    RotateCcw,
+    Sparkles,
+    X,
+    ZoomIn,
+    ZoomOut,
+} from 'lucide-react';
 import { Eyebrow, Reveal, SectionProps } from './shared';
 import { LOOKS } from './looks';
 
@@ -16,12 +26,22 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
     const actorRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLSpanElement | null>(null);
     const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
+    const pieceContainerRef = useRef<HTMLDivElement | null>(null);
+    const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
 
     const [index, setIndex] = useState(0);
     const [zoomed, setZoomed] = useState(false);
+    const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
     const [playing, setPlaying] = useState(true);
     const [hotPin, setHotPin] = useState<number | null>(null);
     const [addedPieces, setAddedPieces] = useState<Record<string, boolean>>({});
+    const [modelZoom, setModelZoom] = useState(1);
+
+    // Zoom & pan state for the big dress item preview
+    const [pieceZoom, setPieceZoom] = useState(1);
+    const [piecePan, setPiecePan] = useState({ x: 0, y: 0 });
+    const [isDraggingPiece, setIsDraggingPiece] = useState(false);
+
     const [cursorState, setCursorState] = useState<{
         on: boolean;
         mode: 'drag' | 'view' | 'link';
@@ -245,7 +265,14 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         return () => window.clearTimeout(timer);
     }, [active, playing, zoomed, index, nextLook]);
 
-    // Close zoom popup on Escape
+    // Reset zoom & pan when piece or look changes
+    useEffect(() => {
+        setPieceZoom(1);
+        setPiecePan({ x: 0, y: 0 });
+        setIsDraggingPiece(false);
+    }, [selectedPiece, index]);
+
+    // Close look popup or selected piece on Escape
     useEffect(() => {
         if (!zoomed) {
             return;
@@ -254,13 +281,19 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
             if (e.key === 'Escape') {
                 e.preventDefault();
                 e.stopPropagation();
-                setZoomed(false);
-                setHotPin(null);
+                if (selectedPiece !== null) {
+                    setSelectedPiece(null);
+                } else {
+                    setZoomed(false);
+                    setSelectedPiece(null);
+                    setHotPin(null);
+                    setModelZoom(1);
+                }
             }
         };
         window.addEventListener('keydown', onKey, true);
         return () => window.removeEventListener('keydown', onKey, true);
-    }, [zoomed]);
+    }, [zoomed, selectedPiece]);
 
     const handleStagePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
         const stage = stageRef.current;
@@ -330,19 +363,26 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
 
         if (s.moved < 8) {
             // Click without drag: check if user clicked a model
-            const hit = document
-                .elementsFromPoint(e.clientX, e.clientY)
-                .find((el) => el instanceof HTMLElement && el.dataset.actorIndex !== undefined) as
-                | HTMLElement
-                | undefined;
+            const elements = document.elementsFromPoint(e.clientX, e.clientY);
+            let hitActor: HTMLElement | null = null;
+            for (const el of elements) {
+                if (el instanceof HTMLElement) {
+                    const match = el.dataset.actorIndex !== undefined ? el : el.closest<HTMLElement>('[data-actor-index]');
+                    if (match) {
+                        hitActor = match;
+                        break;
+                    }
+                }
+            }
 
-            if (hit) {
-                const actorIdx = Number(hit.dataset.actorIndex);
-                const isFront = hit.dataset.frontActor === 'true';
+            if (hitActor) {
+                const actorIdx = Number(hitActor.dataset.actorIndex);
+                const isFront = hitActor.dataset.frontActor === 'true';
                 if (isFront) {
                     // Clicking the front model opens the Look Popup / Zoom Modal (`rw__lb`)!
                     setPlaying(false);
                     setZoomed(true);
+                    setSelectedPiece(null);
                 } else {
                     // Clicking a side model in the ring rotates it to the front
                     let diff = ((actorIdx - Math.round(s.target)) % ACTOR_COUNT + ACTOR_COUNT) % ACTOR_COUNT;
@@ -363,12 +403,131 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         }
     };
 
-    const handlePinSelect = (pinIdx: number) => {
+    const handlePinClick = (pinIdx: number) => {
         setHotPin(pinIdx);
+        setSelectedPiece(pinIdx);
         const card = cardRefs.current[pinIdx];
         if (card) {
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
+    };
+
+    const handleSelectPieceFromSidebar = (i: number) => {
+        if (!zoomed) {
+            setPlaying(false);
+            setZoomed(true);
+        }
+        setHotPin(i);
+        setSelectedPiece(i);
+        const card = cardRefs.current[i];
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        }
+    };
+
+    const handlePrevPiece = () => {
+        if (selectedPiece === null) return;
+        const total = currentLook.pieces.length;
+        const prev = (selectedPiece - 1 + total) % total;
+        setSelectedPiece(prev);
+        setHotPin(prev);
+    };
+
+    const handleNextPiece = () => {
+        if (selectedPiece === null) return;
+        const total = currentLook.pieces.length;
+        const next = (selectedPiece + 1) % total;
+        setSelectedPiece(next);
+        setHotPin(next);
+    };
+
+    const handleCloseLook = () => {
+        setZoomed(false);
+        setSelectedPiece(null);
+        setHotPin(null);
+        setModelZoom(1);
+    };
+
+    // Zoom controls for the big dress item
+    const zoomInPiece = () => {
+        setPieceZoom((prev) => Math.min(3.5, Number((prev + 0.5).toFixed(2))));
+    };
+
+    const zoomOutPiece = () => {
+        setPieceZoom((prev) => {
+            const next = Math.max(1, Number((prev - 0.5).toFixed(2)));
+            if (next === 1) {
+                setPiecePan({ x: 0, y: 0 });
+            }
+            return next;
+        });
+    };
+
+    const resetPieceZoom = () => {
+        setPieceZoom(1);
+        setPiecePan({ x: 0, y: 0 });
+    };
+
+    const doubleClickPiece = () => {
+        if (pieceZoom > 1) {
+            resetPieceZoom();
+        } else {
+            setPieceZoom(2);
+        }
+    };
+
+    const handleWheelZoom = (e: React.WheelEvent) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.25 : -0.25;
+        setPieceZoom((prev) => {
+            const next = clamp(Number((prev + delta).toFixed(2)), 1, 3.5);
+            if (next === 1) {
+                setPiecePan({ x: 0, y: 0 });
+            }
+            return next;
+        });
+    };
+
+    const handlePiecePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (pieceZoom <= 1) return;
+        setIsDraggingPiece(true);
+        dragStartRef.current = {
+            x: e.clientX,
+            y: e.clientY,
+            panX: piecePan.x,
+            panY: piecePan.y,
+        };
+        e.currentTarget.setPointerCapture(e.pointerId);
+    };
+
+    const handlePiecePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!isDraggingPiece || pieceZoom <= 1) return;
+        const dx = e.clientX - dragStartRef.current.x;
+        const dy = e.clientY - dragStartRef.current.y;
+        const container = pieceContainerRef.current;
+        const w = container ? container.clientWidth : 400;
+        const h = container ? container.clientHeight : 400;
+        const maxPanX = Math.max(0, (w * (pieceZoom - 1)) / 2);
+        const maxPanY = Math.max(0, (h * (pieceZoom - 1)) / 2);
+        setPiecePan({
+            x: clamp(dragStartRef.current.panX + dx, -maxPanX, maxPanX),
+            y: clamp(dragStartRef.current.panY + dy, -maxPanY, maxPanY),
+        });
+    };
+
+    const handlePiecePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (isDraggingPiece) {
+            setIsDraggingPiece(false);
+            try {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+            } catch {
+                // ignore
+            }
+        }
+    };
+
+    const toggleModelZoom = () => {
+        setModelZoom((prev) => (prev > 1 ? 1 : 1.55));
     };
 
     const toggleAddPiece = (pieceKey: string) => {
@@ -617,8 +776,11 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                     {/* Solid White Stage Backdrop (`rw__lb::before`) */}
                     <div
                         onClick={() => {
-                            setZoomed(false);
-                            setHotPin(null);
+                            if (selectedPiece !== null) {
+                                setSelectedPiece(null);
+                            } else {
+                                handleCloseLook();
+                            }
                         }}
                         className="absolute inset-0 cursor-zoom-out bg-white"
                     />
@@ -627,15 +789,30 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                     <div
                         onClick={(e) => {
                             if (e.target === e.currentTarget) {
-                                setZoomed(false);
-                                setHotPin(null);
+                                if (selectedPiece !== null) {
+                                    setSelectedPiece(null);
+                                } else {
+                                    handleCloseLook();
+                                }
                             }
                         }}
                         className="absolute inset-x-4 bottom-11 top-20 flex cursor-zoom-out items-end justify-center sm:inset-x-12 sm:bottom-12 sm:top-22"
                     >
                         <div
-                            className={`relative h-full aspect-[9/16] max-h-full cursor-default transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                                zoomed ? 'scale-100 translate-y-0' : 'scale-90 translate-y-6'
+                            className={`relative h-full aspect-[9/16] max-h-full cursor-default origin-bottom transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                zoomed ? 'opacity-100' : 'opacity-0 scale-90 translate-y-6'
+                            } ${
+                                selectedPiece !== null
+                                    ? 'lg:-translate-x-[26%] xl:-translate-x-[28%] 2xl:-translate-x-[30%]'
+                                    : 'translate-x-0'
+                            } ${
+                                modelZoom > 1
+                                    ? selectedPiece !== null
+                                        ? 'scale-[1.28] origin-[center_35%]'
+                                        : 'scale-[1.55] origin-[center_35%]'
+                                    : selectedPiece !== null
+                                        ? 'scale-[0.88] lg:scale-[0.92]'
+                                        : 'scale-100'
                             }`}
                         >
                             {/* Contact Shadow */}
@@ -656,6 +833,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 {currentLook.pins.map((pinPos, pinIdx) => {
                                     const pieceItem = currentLook.pieces[pinIdx];
                                     const isHot = hotPin === pinIdx;
+                                    const isSelected = selectedPiece === pinIdx;
                                     return (
                                         <button
                                             key={pinIdx}
@@ -666,14 +844,19 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                             onMouseLeave={() => setHotPin(null)}
                                             onFocus={() => setHotPin(pinIdx)}
                                             onBlur={() => setHotPin(null)}
-                                            onClick={() => handlePinSelect(pinIdx)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handlePinClick(pinIdx);
+                                            }}
                                             className="group absolute -ml-[22px] -mt-[22px] grid h-[44px] w-[44px] cursor-pointer place-items-center"
                                         >
                                             <span
-                                                className={`relative grid h-6 w-6 place-items-center rounded-full text-[11px] font-semibold leading-none shadow-[0_4px_14px_-4px_rgba(0,0,0,0.35)] backdrop-blur-[6px] transition-all duration-300 ${
-                                                    isHot
-                                                        ? 'scale-130 bg-[#0e0e0e] text-white shadow-[0_0_0_6px_rgba(14,14,14,0.22),0_8px_20px_-6px_rgba(0,0,0,0.45)]'
-                                                        : 'bg-white/88 text-[#151413] group-hover:scale-130 group-hover:bg-[#0e0e0e] group-hover:text-white'
+                                                className={`relative grid h-7 w-7 place-items-center rounded-full text-[11px] font-semibold leading-none shadow-[0_4px_14px_-4px_rgba(0,0,0,0.35)] backdrop-blur-[6px] transition-all duration-300 ${
+                                                    isSelected
+                                                        ? 'scale-125 bg-[#0e0e0e] text-white shadow-[0_0_0_6px_rgba(14,14,14,0.22),0_8px_20px_-6px_rgba(0,0,0,0.45)] ring-2 ring-white'
+                                                        : isHot
+                                                            ? 'scale-120 bg-[#0e0e0e] text-white shadow-[0_0_0_5px_rgba(14,14,14,0.18)]'
+                                                            : 'bg-white/90 text-[#151413] group-hover:scale-120 group-hover:bg-[#0e0e0e] group-hover:text-white'
                                                 }`}
                                             >
                                                 <span
@@ -690,8 +873,8 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                             {/* Frosted Glass Tooltip (`rw__pin::after`) */}
                                             {pieceItem && (
                                                 <span
-                                                    className={`pointer-events-none absolute left-[calc(100%-6px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 ${
-                                                        isHot
+                                                    className={`pointer-events-none absolute left-[calc(100%-6px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 ${
+                                                        isSelected || isHot
                                                             ? 'translate-x-0 scale-100 opacity-100'
                                                             : '-translate-x-2 scale-95 opacity-0 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100'
                                                     }`}
@@ -706,6 +889,204 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         </div>
                     </div>
 
+                    {/* BIG DRESS ITEM SHOWCASE (Slides in from right when piece is selected) */}
+                    {selectedPiece !== null && currentLook.pieces[selectedPiece] && (
+                        <div
+                            role="dialog"
+                            aria-label={`Piece details: ${currentLook.pieces[selectedPiece].name}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="pointer-events-auto absolute bottom-8 right-3 top-16 z-30 flex w-[calc(100%-24px)] flex-col rounded-2xl border border-[#151413]/12 bg-white/95 p-4 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all duration-500 sm:right-6 sm:top-18 sm:bottom-12 sm:w-[460px] lg:right-6 lg:top-20 lg:bottom-12 lg:w-[min(50%,520px)] xl:right-8 xl:w-[min(52%,560px)]"
+                        >
+                            {/* Panel Header */}
+                            <div className="flex items-start justify-between gap-3 border-b border-[#151413]/10 pb-3">
+                                <div className="flex min-w-0 flex-col gap-0.5">
+                                    <div className="flex items-center gap-2">
+                                        <span className="rounded-full bg-[#151413] px-2 py-0.5 text-[9px] font-semibold tracking-[0.14em] uppercase text-white">
+                                            Piece {String(selectedPiece + 1).padStart(2, '0')} / {String(currentLook.pieces.length).padStart(2, '0')}
+                                        </span>
+                                        {currentLook.pieces[selectedPiece].tag && (
+                                            <span className="rounded-full border border-[#151413]/25 px-2 py-0.5 text-[9px] font-semibold tracking-[0.12em] uppercase text-[#151413]">
+                                                {currentLook.pieces[selectedPiece].tag}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="mt-1 truncate text-[10px] tracking-[0.16em] uppercase text-[#66625c]">
+                                        {currentLook.pieces[selectedPiece].brand}
+                                    </span>
+                                    <h4 className="truncate text-lg font-medium tracking-tight text-[#151413] lg:text-xl">
+                                        {currentLook.pieces[selectedPiece].name}
+                                    </h4>
+                                </div>
+
+                                <div className="flex shrink-0 items-center gap-1.5">
+                                    {/* Prev / Next piece navigation */}
+                                    <button
+                                        type="button"
+                                        onClick={handlePrevPiece}
+                                        aria-label="Previous piece"
+                                        className="grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-colors hover:bg-[#151413]/5"
+                                    >
+                                        <ChevronLeft size={15} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleNextPiece}
+                                        aria-label="Next piece"
+                                        className="grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-colors hover:bg-[#151413]/5"
+                                    >
+                                        <ChevronRight size={15} />
+                                    </button>
+                                    {/* Close button */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedPiece(null)}
+                                        aria-label="Close piece view"
+                                        className="ml-1 grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-all duration-300 hover:rotate-90 hover:border-[#151413] hover:bg-[#151413]/5"
+                                    >
+                                        <X size={15} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Interactive Big Garment Canvas with Zoom & Pan */}
+                            <div
+                                ref={pieceContainerRef}
+                                onWheel={handleWheelZoom}
+                                onDoubleClick={doubleClickPiece}
+                                onPointerDown={handlePiecePointerDown}
+                                onPointerMove={handlePiecePointerMove}
+                                onPointerUp={handlePiecePointerUp}
+                                onPointerCancel={handlePiecePointerUp}
+                                className="relative my-3 flex flex-1 min-h-[220px] items-center justify-center overflow-hidden rounded-xl border border-[#151413]/8 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,1),rgba(244,244,242,0.85))] select-none touch-none sm:min-h-[260px]"
+                            >
+                                <img
+                                    src={currentLook.pieces[selectedPiece].image}
+                                    alt={currentLook.pieces[selectedPiece].name}
+                                    draggable={false}
+                                    style={{
+                                        transform: `translate3d(${piecePan.x}px, ${piecePan.y}px, 0) scale(${pieceZoom})`,
+                                        transformOrigin: 'center center',
+                                    }}
+                                    className={`max-h-[85%] max-w-[85%] object-contain select-none will-change-transform ${
+                                        isDraggingPiece ? 'cursor-grabbing transition-none' : 'transition-transform duration-200'
+                                    } ${pieceZoom > 1 ? 'cursor-grab' : 'cursor-zoom-in'}`}
+                                />
+
+                                {/* Floating Zoom Bar */}
+                                <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex items-center justify-between">
+                                    <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-[#151413]/15 bg-white/92 px-2 py-1 shadow-md backdrop-blur-md">
+                                        <button
+                                            type="button"
+                                            onClick={zoomOutPiece}
+                                            disabled={pieceZoom <= 1}
+                                            aria-label="Zoom out"
+                                            className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
+                                        >
+                                            <ZoomOut size={13} />
+                                        </button>
+                                        <span className="min-w-[38px] text-center text-[11px] font-semibold tabular-nums text-[#151413]">
+                                            {Math.round(pieceZoom * 100)}%
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={zoomInPiece}
+                                            disabled={pieceZoom >= 3.5}
+                                            aria-label="Zoom in"
+                                            className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
+                                        >
+                                            <ZoomIn size={13} />
+                                        </button>
+                                        {pieceZoom > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={resetPieceZoom}
+                                                aria-label="Reset zoom"
+                                                className="ml-1 flex items-center gap-1 rounded-full bg-[#151413] px-2 py-0.5 text-[9px] font-semibold tracking-wider text-white uppercase transition hover:bg-[#333]"
+                                            >
+                                                <RotateCcw size={10} />
+                                                <span>Reset</span>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <span className="pointer-events-none hidden rounded-full bg-white/85 px-2.5 py-1 text-[9px] font-medium tracking-wide text-[#66625c] backdrop-blur-md sm:inline-block">
+                                        {pieceZoom > 1 ? 'Drag to pan • Scroll to zoom' : 'Double-click or scroll to zoom'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Piece Switcher & Bottom Actions */}
+                            <div className="flex flex-col gap-2.5 pt-1">
+                                {/* Quick Piece Switcher */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                                    {currentLook.pieces.map((p, pIdx) => {
+                                        const isCur = selectedPiece === pIdx;
+                                        return (
+                                            <button
+                                                key={pIdx}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedPiece(pIdx);
+                                                    setHotPin(pIdx);
+                                                }}
+                                                className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all ${
+                                                    isCur
+                                                        ? 'bg-[#151413] text-white shadow-sm'
+                                                        : 'bg-[#151413]/5 text-[#151413] hover:bg-[#151413]/10'
+                                                }`}
+                                            >
+                                                <span
+                                                    className={`grid h-4 w-4 place-items-center rounded-full text-[9px] font-bold ${
+                                                        isCur ? 'bg-white text-[#151413]' : 'bg-[#151413]/15 text-[#151413]'
+                                                    }`}
+                                                >
+                                                    {pIdx + 1}
+                                                </span>
+                                                <span className="max-w-[100px] truncate text-[11px] font-medium sm:max-w-[120px]">
+                                                    {p.name}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="grid grid-cols-2 gap-2 pt-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleAddPiece(`${index}-${selectedPiece}`)}
+                                        className={`flex items-center justify-center gap-1.5 rounded-lg border py-2.5 text-xs font-semibold tracking-[0.06em] uppercase transition-all duration-300 ${
+                                            addedPieces[`${index}-${selectedPiece}`]
+                                                ? 'border-[#0e0e0e] bg-[#0e0e0e] text-white shadow-sm'
+                                                : 'border-[#151413]/25 bg-white text-[#151413] hover:border-[#151413] hover:bg-[#151413]/5'
+                                        }`}
+                                    >
+                                        {addedPieces[`${index}-${selectedPiece}`] ? (
+                                            <>
+                                                <Check size={14} />
+                                                <span>In Look</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Plus size={14} />
+                                                <span>Add to Look</span>
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={openDemo}
+                                        className="flex items-center justify-center gap-1.5 rounded-lg bg-[#0e0e0e] py-2.5 text-xs font-semibold tracking-[0.06em] uppercase text-white shadow-md transition-all duration-300 hover:bg-[#282725]"
+                                    >
+                                        <Sparkles size={13} />
+                                        <span>Try On Twin</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Top Bar (`rw__lb-top`): Look Number + Look Name + Rotating Close Button */}
                     <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-4 px-6 pt-5 sm:px-12 sm:pt-7">
                         <p className="flex flex-col gap-1">
@@ -718,10 +1099,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         </p>
                         <button
                             type="button"
-                            onClick={() => {
-                                setZoomed(false);
-                                setHotPin(null);
-                            }}
+                            onClick={handleCloseLook}
                             aria-label="Close look view"
                             className="pointer-events-auto grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#151413]/22 bg-white/65 text-[#151413] backdrop-blur-md transition-all duration-500 hover:rotate-90 hover:border-[#151413]"
                         >
@@ -740,10 +1118,33 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         </button>
                     </div>
 
-                    {/* Bottom Hint (`rw__lb-hint`) */}
-                    <p className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-[10px] tracking-[0.2em] uppercase text-[#66625c]">
-                        Tap a dot to shop the piece
-                    </p>
+                    {/* Bottom Bar: Model Zoom button + Hint (`rw__lb-hint`) */}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-between px-6 sm:px-12">
+                        <button
+                            type="button"
+                            onClick={toggleModelZoom}
+                            aria-label="Toggle model close-up zoom"
+                            className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-[#151413]/18 bg-white/85 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-sm backdrop-blur-md transition-all hover:border-[#151413] hover:bg-white"
+                        >
+                            {modelZoom > 1 ? (
+                                <>
+                                    <RotateCcw size={12} />
+                                    <span>Fit Model (1x)</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ZoomIn size={12} />
+                                    <span>Zoom Model (1.5x)</span>
+                                </>
+                            )}
+                        </button>
+
+                        <p className="text-[10px] tracking-[0.2em] uppercase text-[#66625c]">
+                            {selectedPiece !== null ? 'Click another dot to switch pieces' : 'Tap a dot to shop the piece'}
+                        </p>
+
+                        <div className="hidden w-[110px] sm:block" />
+                    </div>
                 </div>
             </div>
 
@@ -777,6 +1178,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                 >
                     {currentLook.pieces.map((pieceItem, i) => {
                         const isHot = hotPin === i;
+                        const isSelected = selectedPiece === i && zoomed;
                         const pieceKey = `${index}-${i}`;
                         const isAdded = Boolean(addedPieces[pieceKey]);
 
@@ -788,8 +1190,18 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 }}
                                 onMouseEnter={() => setHotPin(i)}
                                 onMouseLeave={() => setHotPin(null)}
-                                className={`group relative grid shrink-0 grid-cols-[72px_minmax(0,1fr)_40px] items-center gap-x-3.5 py-2 transition-colors sm:grid-cols-[92px_minmax(0,1fr)_44px] lg:flex-1 lg:grid-cols-[106px_minmax(0,1fr)_44px] lg:gap-x-[18px] lg:border-t lg:border-[#c8c8c8] lg:py-4 lg:last:border-b ${
-                                    isHot ? 'bg-[#151413]/[0.03]' : ''
+                                onClick={(e) => {
+                                    if ((e.target as HTMLElement).closest('button[data-add-btn]')) {
+                                        return;
+                                    }
+                                    handleSelectPieceFromSidebar(i);
+                                }}
+                                className={`group relative grid shrink-0 grid-cols-[72px_minmax(0,1fr)_40px] items-center gap-x-3.5 py-2 transition-all cursor-pointer sm:grid-cols-[92px_minmax(0,1fr)_44px] lg:flex-1 lg:grid-cols-[106px_minmax(0,1fr)_44px] lg:gap-x-[18px] lg:border-t lg:border-[#c8c8c8] lg:py-4 lg:last:border-b ${
+                                    isSelected
+                                        ? 'bg-[#151413]/[0.05] lg:pl-2'
+                                        : isHot
+                                            ? 'bg-[#151413]/[0.025]'
+                                            : ''
                                 } min-w-[250px] lg:min-w-0`}
                             >
                                 {/* Optional "New" swinging tag (`rw__tag`) */}
@@ -807,14 +1219,13 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 {/* Product Media Thumbnail (`rw__media` 4/5 aspect ratio + top-right number badge) */}
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        if (!zoomed) {
-                                            setPlaying(false);
-                                            setZoomed(true);
-                                        }
-                                        setHotPin(i);
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSelectPieceFromSidebar(i);
                                     }}
-                                    className="relative block aspect-[4/5] w-full overflow-hidden bg-[#f3f3f3] text-left"
+                                    className={`relative block aspect-[4/5] w-full overflow-hidden bg-[#f3f3f3] text-left transition-all ${
+                                        isSelected ? 'ring-2 ring-[#0e0e0e] shadow-md' : ''
+                                    }`}
                                 >
                                     <img
                                         src={pieceItem.image}
@@ -824,7 +1235,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                     />
                                     <span
                                         className={`absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full text-[10px] font-semibold transition-all duration-300 ${
-                                            isHot
+                                            isSelected || isHot
                                                 ? 'scale-110 bg-[#0e0e0e] text-white'
                                                 : 'bg-white/90 text-[#151413] group-hover:scale-110 group-hover:bg-[#0e0e0e] group-hover:text-white'
                                         }`}
@@ -840,7 +1251,10 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                     </span>
                                     <button
                                         type="button"
-                                        onClick={openDemo}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleSelectPieceFromSidebar(i);
+                                        }}
                                         className="self-start text-left text-[13px] font-medium leading-[1.3] text-[#151413] underline-offset-4 hover:underline"
                                     >
                                         {pieceItem.name}
@@ -850,7 +1264,11 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 {/* Add / Shortlist Action Button (`rw__add`) */}
                                 <button
                                     type="button"
-                                    onClick={() => toggleAddPiece(pieceKey)}
+                                    data-add-btn="true"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleAddPiece(pieceKey);
+                                    }}
                                     aria-label={`Select ${pieceItem.name}`}
                                     className={`grid h-10 w-10 place-items-center rounded-full border transition-all duration-300 ${
                                         isAdded
@@ -865,7 +1283,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 <span
                                     aria-hidden="true"
                                     className={`pointer-events-none absolute inset-x-0 -bottom-px hidden h-px origin-left bg-[#0e0e0e] transition-transform duration-500 lg:block ${
-                                        isHot ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                                        isSelected || isHot ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                                     }`}
                                 />
                             </li>
