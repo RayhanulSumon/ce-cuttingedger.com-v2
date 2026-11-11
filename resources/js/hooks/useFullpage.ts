@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const LOCK_MS = 1000;
+const LOCK_MS = 1100; // matches FullpageStage DURATION (1.05 s) + small buffer
 const WHEEL_THRESHOLD = 24;
 const SWIPE_THRESHOLD = 48;
 
@@ -33,10 +33,13 @@ function innerScrollerCanScroll(target: EventTarget | null, direction: 1 | -1): 
  * @return {{ index: number, goTo: (next: number) => void, next: () => void, prev: () => void }}
  */
 export function useFullpage(count: number, enabled = true) {
-    const [index, setIndex] = useState(0);
+    const [state, setState] = useState({ index: 0, direction: 0 as -1 | 0 | 1 });
     const indexRef = useRef(0);
     const lockedUntil = useRef(0);
     const touchStartY = useRef<number | null>(null);
+
+    // Expose just `index` for compatibility with existing consumers
+    const index = state.index;
 
     const goTo = useCallback(
         (nextIndex: number) => {
@@ -44,9 +47,10 @@ export function useFullpage(count: number, enabled = true) {
             if (clamped === indexRef.current) {
                 return;
             }
+            const dir = clamped > indexRef.current ? 1 : -1;
             indexRef.current = clamped;
             lockedUntil.current = Date.now() + LOCK_MS;
-            setIndex(clamped);
+            setState({ index: clamped, direction: dir as -1 | 1 });
         },
         [count],
     );
@@ -145,6 +149,7 @@ export function useFullpage(count: number, enabled = true) {
 
     return {
         index,
+        direction: state.direction,
         goTo,
         next: () => step(1),
         prev: () => step(-1),

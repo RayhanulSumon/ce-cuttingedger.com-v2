@@ -31,7 +31,12 @@ export const PAD_Y = 'pt-20 pb-6 sm:pt-24 sm:pb-8';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/** Content that re-plays its entrance every time its section becomes active. */
+/** Content that re-plays its entrance every time its section becomes active.
+ *
+ * Uses a spring-like cubic-bezier so the entrance "settles" naturally after
+ * the panel slide completes (~0.82 s). Content waits 0.42 s then springs in
+ * over 0.7 s — perfectly synced with the FullpageStage transition.
+ */
 export function Reveal({
     active,
     delay = 0,
@@ -46,9 +51,17 @@ export function Reveal({
     return (
         <motion.div
             className={className}
-            initial={{ opacity: 0, y: 36 }}
-            animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
-            transition={{ duration: 0.8, ease: EASE, delay: active ? 0.35 + delay : 0 }}
+            initial={{ opacity: 0, y: 28, filter: 'blur(4px)' }}
+            animate={
+                active
+                    ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                    : { opacity: 0, y: 28, filter: 'blur(4px)' }
+            }
+            transition={{
+                duration: active ? 0.7 : 0.25,
+                ease: EASE,
+                delay: active ? 0.42 + delay : 0,
+            }}
         >
             {children}
         </motion.div>

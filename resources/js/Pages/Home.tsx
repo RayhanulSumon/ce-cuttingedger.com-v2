@@ -26,7 +26,7 @@ interface HomeProps {
 
 export default function Home({ featuredProjects = [], clients = [] }: HomeProps) {
     const [demoOpen, setDemoOpen] = useState(false);
-    const { index, goTo } = useFullpage(SECTIONS.length, !demoOpen);
+    const { index, direction, goTo } = useFullpage(SECTIONS.length, !demoOpen);
 
     const openDemo = useCallback(() => setDemoOpen(true), []);
     const closeDemo = useCallback(() => setDemoOpen(false), []);
@@ -62,7 +62,7 @@ export default function Home({ featuredProjects = [], clients = [] }: HomeProps)
                 title="AI Image Editing, Digital Twins & Post-Production"
                 description="CuttingEdger blends AI-integrated image editing with expert post-production: digital twins, virtual try-on, retouching, 2D, 3D, DTP and video for fashion and e-commerce brands."
             />
-            <FullpageStage index={index} sections={sections} />
+            <FullpageStage index={index} direction={direction} sections={sections} />
             <Menubar index={index} goTo={goTo} openDemo={openDemo} />
             <SideDots index={index} goTo={goTo} />
             <DemoModal open={demoOpen} onClose={closeDemo} />
