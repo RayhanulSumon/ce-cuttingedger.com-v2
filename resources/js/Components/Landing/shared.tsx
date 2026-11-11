@@ -46,7 +46,7 @@ export function Reveal({
     return (
         <motion.div
             className={className}
-            initial={false}
+            initial={{ opacity: 0, y: 36 }}
             animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
             transition={{ duration: 0.8, ease: EASE, delay: active ? 0.35 + delay : 0 }}
         >

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { PAD_X, PillButton, Reveal, SectionProps, SECTION_INDEX } from './shared';
 
@@ -72,10 +72,19 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
     const edgerRef = useRef<HTMLSpanElement>(null);
     const stackRef = useRef<HTMLSpanElement>(null);
     const stackWordRef = useRef<HTMLSpanElement>(null);
+    const [mounted, setMounted] = useState(false);
 
     // Desktop: CUTTING + banner(3.1em) + EDGER + two 0.14em gaps; phones: stacked CUTTING.
     const rowSize = useFitFontSize(rowRef, [cuttingRef, edgerRef], PILL_EM + GAP_EM * 2, () => window.innerHeight * 0.2);
     const stackSize = useFitFontSize(stackRef, [stackWordRef], 0, () => window.innerHeight * 0.14);
+
+    // Trigger the same entrance reveal on initial page load/reload as when scrolling back to Hero.
+    useEffect(() => {
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, []);
+
+    const show = active && mounted;
 
     return (
         <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#f2f2f1] pb-10 pt-20 ${PAD_X}`}>
@@ -102,25 +111,25 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
                 >
                     <motion.span
                         ref={cuttingRef}
-                        initial={false}
-                        animate={active ? { x: 0, opacity: 1 } : { x: 24, opacity: 0 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: active ? 0.2 : 0 }}
+                        initial={{ x: 24, opacity: 0 }}
+                        animate={show ? { x: 0, opacity: 1 } : { x: 24, opacity: 0 }}
+                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.2 : 0 }}
                     >
                         CUTTING
                     </motion.span>
                     <motion.span
-                        initial={false}
-                        animate={active ? { width: `${PILL_EM}em`, opacity: 1 } : { width: '0.05em', opacity: 0 }}
-                        transition={{ duration: 1.4, ease: EASE, delay: active ? 0.3 : 0 }}
+                        initial={{ width: '0.05em', opacity: 0 }}
+                        animate={show ? { width: `${PILL_EM}em`, opacity: 1 } : { width: '0.05em', opacity: 0 }}
+                        transition={{ duration: 1.4, ease: EASE, delay: show ? 0.3 : 0 }}
                         className="relative block h-[1.55em] shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf]"
                     >
                         <BannerVideo />
                     </motion.span>
                     <motion.span
                         ref={edgerRef}
-                        initial={false}
-                        animate={active ? { x: 0, opacity: 1 } : { x: -24, opacity: 0 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: active ? 0.2 : 0 }}
+                        initial={{ x: -24, opacity: 0 }}
+                        animate={show ? { x: 0, opacity: 1 } : { x: -24, opacity: 0 }}
+                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.2 : 0 }}
                     >
                         EDGER
                     </motion.span>
@@ -133,20 +142,33 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
                     style={{ fontSize: stackSize ? `${stackSize}px` : 'min(18vw, 12vh)' }}
                     aria-hidden="true"
                 >
-                    <span ref={stackWordRef}>CUTTING</span>
                     <motion.span
-                        initial={false}
-                        animate={active ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.6 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: active ? 0.3 : 0 }}
+                        ref={stackWordRef}
+                        initial={{ y: 18, opacity: 0 }}
+                        animate={show ? { y: 0, opacity: 1 } : { y: 18, opacity: 0 }}
+                        transition={{ duration: 1.0, ease: EASE, delay: show ? 0.15 : 0 }}
+                    >
+                        CUTTING
+                    </motion.span>
+                    <motion.span
+                        initial={{ opacity: 0, scaleX: 0.6 }}
+                        animate={show ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.6 }}
+                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.3 : 0 }}
                         className="relative block h-[1.3em] w-full overflow-hidden rounded-[0.2em] bg-[#d8d3cf]"
                     >
                         <BannerVideo />
                     </motion.span>
-                    <span>EDGER</span>
+                    <motion.span
+                        initial={{ y: -18, opacity: 0 }}
+                        animate={show ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
+                        transition={{ duration: 1.0, ease: EASE, delay: show ? 0.2 : 0 }}
+                    >
+                        EDGER
+                    </motion.span>
                 </span>
             </h1>
 
-            <Reveal active={active} delay={0.9} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
+            <Reveal active={show} delay={0.9} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
                 <p className="text-sm leading-relaxed text-[#3a3a3a] sm:text-base">
                     Transform your apparel and product photography with next-generation AI-integrated image editing and
                     expert post-production. Save time, reduce production costs, and scale your visual content without
@@ -160,7 +182,7 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
                 </div>
             </Reveal>
 
-            <Reveal active={active} delay={1.2} className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-[#3a3a3a]/60 sm:block">
+            <Reveal active={show} delay={1.2} className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-[#3a3a3a]/60 sm:block">
                 Scroll to explore
             </Reveal>
         </div>
