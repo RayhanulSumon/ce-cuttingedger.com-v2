@@ -122,26 +122,15 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
     };
 
     return (
-        <>
-            {/* ── Close button: fixed to viewport so it's always above modal grid children ── */}
-            <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close pose preset view"
-                className="fixed right-5 top-5 z-[600] grid h-11 w-11 place-items-center rounded-full bg-[#16191f] text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 sm:right-8 sm:top-6"
-            >
-                <X size={20} />
-            </button>
-
-            <div
-                className="absolute inset-0 z-[500] flex flex-col bg-[#f4f7fb]/95 backdrop-blur-md lg:grid lg:grid-cols-[minmax(0,1fr)_410px] xl:grid-cols-[minmax(0,1fr)_440px]"
-                role="dialog"
-                aria-modal="true"
-                aria-label={`${twin.name} pose presets`}
-                onWheel={(e) => {
-                    e.stopPropagation();
-                }}
-            >
+        <div
+            className="absolute inset-0 z-[500] flex flex-col bg-[#f4f7fb]/95 backdrop-blur-md lg:grid lg:grid-cols-[minmax(0,1fr)_410px] xl:grid-cols-[minmax(0,1fr)_440px]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${twin.name} pose presets`}
+            onWheel={(e) => {
+                e.stopPropagation();
+            }}
+        >
             {/* LEFT SIDE: Selected Model + Multi-Pose Photo Gallery */}
             <div
                 data-scrollable
@@ -391,8 +380,17 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: 
                     </button>
                 </div>
             </aside>
+
+            {/* ── Close button: absolute last child → highest z-index within modal stacking context ── */}
+            <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close pose preset view"
+                className="absolute right-5 top-5 z-[9999] grid h-11 w-11 place-items-center rounded-full bg-[#16191f] text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 sm:right-8 sm:top-6"
+            >
+                <X size={20} />
+            </button>
         </div>
-        </>
     );
 }
 

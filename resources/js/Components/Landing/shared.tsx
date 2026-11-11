@@ -5,6 +5,9 @@ export interface SectionProps {
     active: boolean;
     goTo: (index: number) => void;
     openDemo: () => void;
+    /** Called when this section opens/closes a fullscreen overlay (e.g. the Digital Twins preset modal).
+     *  Home uses this to hide SideDots and Menubar while the overlay is showing. */
+    onOverlayChange?: (open: boolean) => void;
 }
 
 export const SECTIONS = [

@@ -10,12 +10,14 @@ interface MenubarProps {
     index: number;
     goTo: (index: number) => void;
     openDemo: () => void;
+    /** When true, fades out and disables pointer events (e.g. while a fullscreen modal is open). */
+    hidden?: boolean;
 }
 
 /** Light bars on dark sections (book demo + footer) */
 const DARK_SECTIONS = [SECTION_INDEX['book-demo'], SECTION_INDEX.contact];
 
-export function Menubar({ index, goTo, openDemo }: MenubarProps) {
+export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
     const [capOpen, setCapOpen] = useState(false);
     const [drawer, setDrawer] = useState(false);
@@ -32,7 +34,7 @@ export function Menubar({ index, goTo, openDemo }: MenubarProps) {
 
     return (
         <>
-            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-colors duration-500 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'}`}>
+            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[colors,opacity] duration-300 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}>
                 <button type="button" onClick={() => go(0)} className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
                     CUTTINGEDGER
                 </button>

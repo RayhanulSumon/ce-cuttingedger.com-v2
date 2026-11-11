@@ -26,6 +26,7 @@ interface HomeProps {
 
 export default function Home({ featuredProjects = [], clients = [] }: HomeProps) {
     const [demoOpen, setDemoOpen] = useState(false);
+    const [overlayOpen, setOverlayOpen] = useState(false);
     const { index, direction, goTo } = useFullpage(SECTIONS.length, !demoOpen);
 
     const openDemo = useCallback(() => setDemoOpen(true), []);
@@ -46,7 +47,7 @@ export default function Home({ featuredProjects = [], clients = [] }: HomeProps)
 
     const sections = [
         <HeroSection {...sectionProps(0)} />,
-        <DigitalTwinsSection {...sectionProps(1)} />,
+        <DigitalTwinsSection {...sectionProps(1)} onOverlayChange={setOverlayOpen} />,
         <TryOnSection {...sectionProps(2)} />,
         <RetouchingSection {...sectionProps(3)} />,
         <ShowcaseSection {...sectionProps(4)} projects={featuredProjects} />,
@@ -63,8 +64,8 @@ export default function Home({ featuredProjects = [], clients = [] }: HomeProps)
                 description="CuttingEdger blends AI-integrated image editing with expert post-production: digital twins, virtual try-on, retouching, 2D, 3D, DTP and video for fashion and e-commerce brands."
             />
             <FullpageStage index={index} direction={direction} sections={sections} />
-            <Menubar index={index} goTo={goTo} openDemo={openDemo} />
-            <SideDots index={index} goTo={goTo} />
+            <Menubar index={index} goTo={goTo} openDemo={openDemo} hidden={overlayOpen} />
+            <SideDots index={index} goTo={goTo} hidden={overlayOpen} />
             <DemoModal open={demoOpen} onClose={closeDemo} />
         </>
     );

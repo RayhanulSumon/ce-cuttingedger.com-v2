@@ -5,11 +5,13 @@ import { SECTIONS } from './shared';
 interface SideDotsProps {
     index: number;
     goTo: (index: number) => void;
+    /** When true, fades out and disables pointer events (e.g. while a fullscreen modal is open). */
+    hidden?: boolean;
 }
 
 const DARK_SECTIONS = [7, 9]; // book-demo, footer
 
-export function SideDots({ index, goTo }: SideDotsProps) {
+export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
     const dark = DARK_SECTIONS.includes(index);
     const count = SECTIONS.length;
 
@@ -19,7 +21,7 @@ export function SideDots({ index, goTo }: SideDotsProps) {
     return (
         <nav
             aria-label="Sections"
-            className="fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-0 sm:flex"
+            className={`fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-0 sm:flex transition-opacity duration-300 ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
         >
             {/* Vertical track + animated fill line */}
             <div

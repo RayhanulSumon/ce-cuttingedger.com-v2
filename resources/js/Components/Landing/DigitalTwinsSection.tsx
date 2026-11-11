@@ -18,7 +18,7 @@ const N = DIGITAL_TWINS.length;
 const wrap = (x: number, n: number) => ((x % n) + n) % n;
 const clamp = (x: number, a: number, b: number) => Math.min(b, Math.max(a, x));
 
-export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
+export function DigitalTwinsSection({ active, openDemo, onOverlayChange }: SectionProps) {
     const stageRef = useRef<HTMLDivElement | null>(null);
     const modelRefs = useRef<(HTMLDivElement | null)[]>([]);
     const rollRef = useRef<HTMLSpanElement | null>(null);
@@ -29,6 +29,18 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
     const [activeTwinIdx, setActiveTwinIdx] = useState(0);
     const [modalTwinIdx, setModalTwinIdx] = useState<number | null>(null);
     const [cursorMode, setCursorMode] = useState<'hidden' | 'ring' | 'drag' | 'view'>('hidden');
+
+    /** Opens the pose-preset modal and notifies the parent (hides SideDots/Menubar). */
+    const openModal = (idx: number) => {
+        setModalTwinIdx(idx);
+        onOverlayChange?.(true);
+    };
+
+    /** Closes the pose-preset modal and notifies the parent (restores SideDots/Menubar). */
+    const closeModal = () => {
+        setModalTwinIdx(null);
+        onOverlayChange?.(false);
+    };
 
     // Mutable animation state matching demo/Digital Twins.html
     const stateRef = useRef({
@@ -279,7 +291,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     s.target = Math.round(s.target) + d;
                 }
                 // Open the Pose Preset modal for the clicked model ("click view show that model with diffrent pose preset")
-                setModalTwinIdx(clickedIdx);
+                openModal(clickedIdx);
             }
         } else {
             s.target = Math.round(s.target);
@@ -326,7 +338,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                     e.preventDefault();
-                                    setModalTwinIdx(i);
+                                    openModal(i);
                                 }
                             }}
                             className="group absolute left-0 top-0 origin-top-left will-change-[transform,filter] lg:cursor-none"
@@ -385,7 +397,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     <div className="mt-3 flex flex-wrap items-center gap-4">
                         <button
                             type="button"
-                            onClick={() => setModalTwinIdx(activeTwinIdx)}
+                            onClick={() => openModal(activeTwinIdx)}
                             className="font-michroma inline-flex items-center gap-2 border-b border-[#16191f] pb-1 text-[10px] tracking-[0.14em] text-[#16191f] transition hover:opacity-70"
                         >
                             <Eye size={13} />
@@ -413,7 +425,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     </button>
                     <button
                         type="button"
-                        onClick={() => setModalTwinIdx(activeTwinIdx)}
+                        onClick={() => openModal(activeTwinIdx)}
                         className="font-michroma hidden h-11 items-center gap-2 rounded-full bg-[#16191f] px-5 text-[10px] tracking-[0.16em] text-white shadow-sm transition hover:bg-black sm:inline-flex"
                     >
                         <Eye size={14} />
@@ -467,7 +479,7 @@ export function DigitalTwinsSection({ active, openDemo }: SectionProps) {
                     stateRef.current.target = idx;
                     setModalTwinIdx(idx);
                 }}
-                onClose={() => setModalTwinIdx(null)}
+                onClose={closeModal}
                 openDemo={openDemo}
             />
         </div>
