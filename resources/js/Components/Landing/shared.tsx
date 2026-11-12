@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight } from 'lucide-react';
+import { WandSparkles } from 'lucide-react';
 
 export interface SectionProps {
     active: boolean;
@@ -133,17 +133,15 @@ export function orderUrl(service: string, reference?: string): string {
     return `/order?${query.toString()}`;
 }
 
-/** Orange call to action that opens the custom order form on its own page. */
+/** Black, gold-rimmed call to action that opens the custom order form on its own page. */
 export function OrderCta({ href, children }: { href: string; children: React.ReactNode }) {
     return (
         <Link
             href={href}
-            className="group inline-flex items-center gap-2.5 rounded-full bg-[#f5761a] py-2.5 pl-6 pr-2.5 text-sm font-bold text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-[#e0650c]"
+            className="group inline-flex items-center gap-2.5 rounded-xl border border-[#e9b949] bg-[#0b0b0b] h-11 px-6 text-base font-medium text-white shadow-[0_16px_34px_-16px_rgba(11,11,11,0.75)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-0.5 hover:border-[#f7d27a] hover:shadow-[0_18px_38px_-14px_rgba(233,185,73,0.55)] active:translate-y-0"
         >
+            <WandSparkles size={19} className="text-[#e9b949] transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" />
             {children}
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#f5761a] transition-transform duration-300 group-hover:rotate-45">
-                <ArrowUpRight size={16} />
-            </span>
         </Link>
     );
 }

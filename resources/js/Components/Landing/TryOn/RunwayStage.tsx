@@ -97,20 +97,19 @@ export function RunwayStage({ stageRef, actorRefs, cursorRef, cursor, dimmed, ha
             aria-roledescription="carousel"
             aria-label="Try the Look — drag or click a model to rotate the ring, click the front model to view outfit pins"
             {...handlers}
-            className={`relative min-h-0 flex-1 touch-pan-y select-none overflow-hidden ${
+            className={`relative min-h-0 flex-1 touch-pan-y select-none overflow-x-clip ${
                 cursor.on ? 'lg:cursor-none' : 'cursor-grab active:cursor-grabbing'
             }`}
         >
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(to_top,rgba(21,20,19,0.07),rgba(21,20,19,0.02)_55%,transparent)]"
-            />
-            <div
-                aria-hidden="true"
                 className="animate-rw-breathe pointer-events-none absolute -bottom-[16%] left-1/2 aspect-[2.4] w-[min(60%,680px)] bg-[radial-gradient(closest-side,rgba(255,255,255,0.55),rgba(255,255,255,0.18)_55%,rgba(255,255,255,0))]"
             />
 
-            <div className="ring-actors absolute inset-0" data-dimmed={dimmed}>
+            <div
+                className="ring-actors absolute inset-0 [mask-image:linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]"
+                data-dimmed={dimmed}
+            >
                 <RingActors actorRefs={actorRefs} />
             </div>
 

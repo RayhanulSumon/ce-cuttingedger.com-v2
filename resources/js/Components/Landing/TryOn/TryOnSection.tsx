@@ -130,6 +130,12 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
         <div
             className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-4 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 pt-20 text-[#151413] sm:pb-8 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${PAD_X}`}
         >
+            {/* Floor shade spans the whole section, so the runway and its controls sit on one seamless backdrop. */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(to_top,rgba(21,20,19,0.08),rgba(21,20,19,0.025)_55%,transparent)]"
+            />
+
             <div className="relative flex min-h-0 flex-col">
                 <SectionIntro active={active} title="Virtual Try-On" className={`relative z-10 ${fadeWhenOpen}`}>
                     Six looks, styled head to toe. Click the front model to shop each piece, or drag to spin the runway.
@@ -170,7 +176,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                 />
             </div>
 
-            <aside aria-label="In this look" className="relative min-h-0">
+            <aside aria-label="In this look" className="relative min-h-0 lg:pt-2">
                 <Reveal active={active} delay={0.2} x="36px" y="0px" className="h-full">
                     <PieceCards
                         look={look}
