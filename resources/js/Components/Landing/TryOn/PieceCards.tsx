@@ -47,7 +47,7 @@ export function PieceCards({
                         onMouseEnter={() => onHotPinChange(i)}
                         onMouseLeave={() => onHotPinChange(null)}
                         onClick={() => onSelect(i)}
-                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-3 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
+                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-4 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
                             isSelected
                                 ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-[#f5761a]'
                                 : isHot
@@ -67,7 +67,7 @@ export function PieceCards({
                             </span>
                         </div>
 
-                        <div className="relative my-1 min-h-0 flex-1">
+                        <div className="relative my-2 min-h-0 flex-1 px-1">
                             <img
                                 key={pieceKey}
                                 src={piece.image}
@@ -75,14 +75,14 @@ export function PieceCards({
                                 decoding="async"
                                 draggable={false}
                                 style={delay}
-                                className="animate-wipe-up absolute inset-0 h-full w-full object-contain transition-[scale] duration-500 group-hover:scale-105"
+                                className="animate-wipe-up absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-[scale] duration-500 group-hover:scale-105"
                             />
                         </div>
 
                         <h4
                             key={pieceKey}
                             style={delay}
-                            className="animate-card-in relative z-10 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.10em] text-[#151413]"
+                            className="animate-card-in relative z-10 min-w-0 truncate text-xs font-semibold tracking-[0.04em] text-[#151413]"
                         >
                             {piece.name}
                         </h4>

@@ -142,6 +142,20 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                     handlers={runway.stageHandlers}
                 />
 
+                <div className={`relative z-10 flex flex-col items-center gap-1 pt-1 ${fadeWhenOpen}`}>
+                    <Reveal active={active} delay={0.2} className="flex flex-col items-center gap-2 text-center">
+                        <p className="font-michroma text-sm tracking-[0.14em] text-[#16191f] sm:text-base">{look.name}</p>
+                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
+                            {LOOKS.map((_, i) => (
+                                <span
+                                    key={i}
+                                    className={`h-1 rounded-full transition-all duration-500 ${i === lookIndex ? 'w-6 bg-[#f5761a]' : 'w-1.5 bg-[#16191f]/20'}`}
+                                />
+                            ))}
+                        </div>
+                    </Reveal>
+                </div>
+
                 <div className={`relative z-10 pt-3 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.24} className="flex items-center justify-center">
                         <OrderCta href={orderUrl('virtual-try-on', look.name)}>Start Try-On Now</OrderCta>

@@ -106,7 +106,10 @@ export function RunwayStage({ stageRef, actorRefs, cursorRef, cursor, dimmed, ha
                 className="animate-rw-breathe pointer-events-none absolute -bottom-[16%] left-1/2 aspect-[2.4] w-[min(60%,680px)] bg-[radial-gradient(closest-side,rgba(255,255,255,0.55),rgba(255,255,255,0.18)_55%,rgba(255,255,255,0))]"
             />
 
-            <div className="ring-actors absolute inset-0" data-dimmed={dimmed}>
+            <div
+                className="ring-actors absolute inset-0 [mask-image:linear-gradient(90deg,transparent,#000_9%,#000_91%,transparent)]"
+                data-dimmed={dimmed}
+            >
                 <RingActors actorRefs={actorRefs} />
             </div>
 

@@ -109,6 +109,8 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
             const feet = s.horizon + (s.floor - s.horizon) * projection;
 
             let opacity = clamp((Math.cos(angle) + 0.55) / 0.3, 0, 1);
+            // Neighbours recede a little so the front model owns the focus.
+            opacity *= 1 - 0.22 * clamp(Math.abs(angle) / ACTOR_STEP, 0, 1);
             const halfWidth = modelWidth * scale * 0.5;
             if (x + halfWidth < -4 || x - halfWidth > s.width + 4) {
                 opacity = 0;
@@ -121,7 +123,7 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
                 continue;
             }
 
-            const rawBlur = slotsFromFront <= 1 ? 1.8 * slotsFromFront : Math.min(1.8 + (slotsFromFront - 1) * 2, 6.5);
+            const rawBlur = slotsFromFront <= 1 ? 3.2 * slotsFromFront : Math.min(3.2 + (slotsFromFront - 1) * 2.2, 8);
             // Quantised so the filter is re-rasterised a handful of times per step, not every frame.
             const blur = Math.round(rawBlur * 2) / 2;
 
