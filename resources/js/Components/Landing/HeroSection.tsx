@@ -86,10 +86,10 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
     // Spacer width = CUTTING − EDGER, so the pill sits on the exact centre of the viewport.
     useLayoutEffect(() => {
         const sync = () => {
-            const cuttingWidth = cuttingRef.current?.offsetWidth ?? 0;
-            const edgerWidth = edgerRef.current?.offsetWidth ?? 0;
+            const cuttingWidth = cuttingRef.current?.getBoundingClientRect().width ?? 0;
+            const edgerWidth = edgerRef.current?.getBoundingClientRect().width ?? 0;
             if (spacerRef.current) {
-                spacerRef.current.style.width = `${Math.max(0, cuttingWidth - edgerWidth)}px`;
+                spacerRef.current.style.width = `${Math.max(0, cuttingWidth - edgerWidth).toFixed(2)}px`;
             }
         };
         sync();
@@ -143,7 +143,8 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
                     <Reveal as="span" ref={edgerRef} active={show} x={`-${WORD_OFFSET_EM}em`} y="0px">
                         EDGER
                     </Reveal>
-                    <span ref={spacerRef} aria-hidden="true" className="shrink-0" style={{ width: 0 }} />
+                    {/* Negative margin cancels the flex gap this extra item would add, which pushed the pill off-centre. */}
+                    <span ref={spacerRef} aria-hidden="true" className="-ml-[0.14em] shrink-0" style={{ width: 0 }} />
                 </span>
 
                 {/* Phones: stacked */}
