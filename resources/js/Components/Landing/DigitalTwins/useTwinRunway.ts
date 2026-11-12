@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DIGITAL_TWINS, TWIN_Y0, TWIN_Y1 } from './twins';
 
-export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'buy';
+export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'dragging' | 'buy';
 
 interface TwinRunwayOptions {
     /** Run the animation loop (section is on screen and no overlay covers the runway). */
@@ -233,7 +233,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
     const applyHover = (modelIndex: number) => {
         const isFront = modelIndex >= 0 && modelIndex === wrap(Math.round(sim.current.position), TWIN_COUNT);
         setHoveredModel(isFront ? modelIndex : -1);
-        setCursorMode(isFront ? 'buy' : modelIndex >= 0 ? 'drag' : 'ring');
+        setCursorMode(isFront ? 'buy' : 'drag');
     };
 
     const onPointerEnter = (event: React.PointerEvent<HTMLElement>) => {
@@ -247,7 +247,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         if (cursorRef.current) {
             cursorRef.current.style.transform = `translate3d(${s.cursorX.toFixed(1)}px,${s.cursorY.toFixed(1)}px,0)`;
         }
-        setCursorMode('ring');
+        setCursorMode('drag');
     };
 
     const onPointerLeave = () => {
@@ -289,7 +289,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.travelled = 0;
         event.currentTarget.setPointerCapture(event.pointerId);
         if (event.pointerType === 'mouse') {
-            setCursorMode('drag');
+            setCursorMode('dragging');
         }
     };
 
