@@ -229,6 +229,13 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         return el ? Number(el.dataset.twinModel) : -1;
     };
 
+    /** Only the front model is "buyable"; blurred background models behave as drag handles. */
+    const applyHover = (modelIndex: number) => {
+        const isFront = modelIndex >= 0 && modelIndex === wrap(Math.round(sim.current.position), TWIN_COUNT);
+        setHoveredModel(isFront ? modelIndex : -1);
+        setCursorMode(isFront ? 'buy' : modelIndex >= 0 ? 'drag' : 'ring');
+    };
+
     const onPointerEnter = (event: React.PointerEvent<HTMLElement>) => {
         if (event.pointerType !== 'mouse' || !stageRef.current) {
             return;
@@ -267,8 +274,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         }
 
         if (event.pointerType === 'mouse') {
-            setHoveredModel(modelIndexAt(event.target));
-            setCursorMode(s.hoveredModel >= 0 ? 'buy' : 'ring');
+            applyHover(modelIndexAt(event.target));
         }
     };
 
@@ -302,12 +308,14 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         const hitIndex = hit ? Number(hit.dataset.twinModel) : -1;
 
         if (s.travelled < CLICK_SLOP_PX && hitIndex >= 0 && event.type !== 'pointercancel') {
+            const isFront = hitIndex === wrap(Math.round(s.position), TWIN_COUNT);
             focusTwin(hitIndex);
-            onOpenTwinRef.current(hitIndex);
+            if (isFront) {
+                onOpenTwinRef.current(hitIndex);
+            }
         }
         if (event.pointerType === 'mouse') {
-            setHoveredModel(hitIndex);
-            setCursorMode(hitIndex >= 0 ? 'buy' : 'ring');
+            applyHover(hitIndex);
         }
     };
 
