@@ -30,9 +30,9 @@ export const LOOKS: Look[] = [
         model: `${BASE}/model-1-640.webp`,
         modelHiRes: `${BASE}/original-look-1.webp`,
         pieces: [
-            piece('Air Jordan 12 Retro', 'tatum-5-orbit-copy', 'Nikey | Password: 1'),
-            piece('Tshirt', 'tshirt', 'Nike'),
             piece('Sweatshirt', 'sweatshirt', 'Nike'),
+            piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Air Jordan 12 Retro', 'tatum-5-orbit-copy', 'Nikey | Password: 1'),
         ],
         pins: [
             { left: 47, top: 27 },
@@ -46,9 +46,9 @@ export const LOOKS: Look[] = [
         model: `${BASE}/model-5-640.webp`,
         modelHiRes: `${BASE}/original-look-5.webp`,
         pieces: [
-            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1'),
             piece('Hoodie Black', 'hoodie-black', 'Nike', 'New'),
             piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1'),
         ],
         pins: [
             { left: 50, top: 28 },
@@ -63,8 +63,8 @@ export const LOOKS: Look[] = [
         modelHiRes: `${BASE}/original-look-4.webp`,
         pieces: [
             piece('Sweatshirt Plus', 'sweatshirt-plus', 'Nike'),
-            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1', 'New'),
             piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1', 'New'),
         ],
         pins: [
             { left: 50, top: 28 },
@@ -79,8 +79,8 @@ export const LOOKS: Look[] = [
         modelHiRes: `${BASE}/original-look-6.webp`,
         pieces: [
             piece('Hoodie Black', 'hoodie-black', 'Nike'),
-            piece('Air Jordan 12 Retro', 'tatum-5-orbit-copy', 'Nikey | Password: 1'),
             piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Air Jordan 12 Retro', 'tatum-5-orbit-copy', 'Nikey | Password: 1'),
         ],
         pins: [
             { left: 50, top: 28 },
@@ -95,8 +95,8 @@ export const LOOKS: Look[] = [
         modelHiRes: `${BASE}/original-look-3.webp`,
         pieces: [
             piece('Sweatshirt', 'sweatshirt', 'Nike'),
-            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1'),
             piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Tatum 5 Orbit', 'tatum-5-orbit', 'Nikey | Password: 1'),
         ],
         pins: [
             { left: 50, top: 28 },
@@ -111,8 +111,8 @@ export const LOOKS: Look[] = [
         modelHiRes: `${BASE}/original-look-2.webp`,
         pieces: [
             piece('Hoodie', 'hoodie', 'Nike'),
-            piece('Luka 5', 'air-jordan-12-retro-copy', 'Nikey | Password: 1'),
             piece('Tshirt', 'tshirt', 'Nike'),
+            piece('Luka 5', 'air-jordan-12-retro-copy', 'Nikey | Password: 1'),
         ],
         pins: [
             { left: 50, top: 28 },

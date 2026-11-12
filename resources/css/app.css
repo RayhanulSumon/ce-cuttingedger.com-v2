@@ -344,13 +344,31 @@ select option {
     text-transform: uppercase;
 }
 
+@keyframes dress-reveal-down {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, -36px, 0) scale(0.96);
+        clip-path: inset(0 0 100% 0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+.animate-dress-reveal {
+    animation: dress-reveal-down 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .landing-col-down,
     .landing-col-up,
     .animate-rw-ring,
     .animate-rw-ring-delayed,
     .animate-rw-fill,
-    .animate-rw-breathe {
+    .animate-rw-breathe,
+    .animate-dress-reveal {
         animation: none;
     }
 }

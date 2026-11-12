@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Check,
-    ChevronLeft,
-    ChevronRight,
+    Heart,
     Plus,
     RotateCcw,
-    Sparkles,
     X,
     ZoomIn,
     ZoomOut,
@@ -21,13 +19,11 @@ const MODEL_AR = 0.5625; // 9:16 model aspect ratio from demo
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 const mod = (v: number, n: number) => ((v % n) + n) % n;
 
-export function TryOnSection({ active, openDemo }: SectionProps) {
+export function TryOnSection({ active, openDemo, onOverlayChange }: SectionProps) {
     const stageRef = useRef<HTMLDivElement | null>(null);
     const actorRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLSpanElement | null>(null);
     const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
-    const pieceContainerRef = useRef<HTMLDivElement | null>(null);
-    const dragStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
 
     const [index, setIndex] = useState(0);
     const [zoomed, setZoomed] = useState(false);
@@ -35,12 +31,25 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
     const [playing, setPlaying] = useState(true);
     const [hotPin, setHotPin] = useState<number | null>(null);
     const [addedPieces, setAddedPieces] = useState<Record<string, boolean>>({});
-    const [modelZoom, setModelZoom] = useState(1);
+    const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
 
-    // Zoom & pan state for the big dress item preview
-    const [pieceZoom, setPieceZoom] = useState(1);
-    const [piecePan, setPiecePan] = useState({ x: 0, y: 0 });
-    const [isDraggingPiece, setIsDraggingPiece] = useState(false);
+    const toggleWishlist = (pieceKey: string) => {
+        setWishlist((prev) => ({ ...prev, [pieceKey]: !prev[pieceKey] }));
+    };
+
+    // 1. DRESS ITEM ZOOM & PAN STATE
+    const [dressZoom, setDressZoom] = useState(1);
+    const [dressPan, setDressPan] = useState({ x: 0, y: 0 });
+    const [isDraggingDress, setIsDraggingDress] = useState(false);
+    const dressDragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+    const dressContainerRef = useRef<HTMLDivElement | null>(null);
+
+    // 2. MODEL ZOOM & PAN STATE
+    const [modelZoom, setModelZoom] = useState(1);
+    const [modelPan, setModelPan] = useState({ x: 0, y: 0 });
+    const [isDraggingModel, setIsDraggingModel] = useState(false);
+    const modelDragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+    const modelContainerRef = useRef<HTMLDivElement | null>(null);
 
     const [cursorState, setCursorState] = useState<{
         on: boolean;
@@ -52,7 +61,31 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         dragging: false,
     });
 
-    // Mutable physics & layout state matching demo/hero & Virtual try on section/src/app.js
+    // Notify parent (Home.tsx) to lock fullpage scroll when the look view is active
+    useEffect(() => {
+        onOverlayChange?.(zoomed);
+        return () => {
+            onOverlayChange?.(false);
+        };
+    }, [zoomed, onOverlayChange]);
+
+    // Reset dress zoom when switching piece or look
+    useEffect(() => {
+        setDressZoom(1);
+        setDressPan({ x: 0, y: 0 });
+        setIsDraggingDress(false);
+    }, [selectedPiece, index]);
+
+    // Reset model zoom when closing or changing look
+    useEffect(() => {
+        if (!zoomed) {
+            setModelZoom(1);
+            setModelPan({ x: 0, y: 0 });
+            setIsDraggingModel(false);
+        }
+    }, [zoomed, index]);
+
+    // Physics state for 3D Ring Runway
     const simRef = useRef({
         W: 0,
         H: 0,
@@ -126,7 +159,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
             const bb = Math.round(blur * 10) / 10;
             st.filter = bb > 0.08 ? `blur(${bb}px)` : 'none';
 
-            // Mark front actor vs side actors
             const isFrontActor = sl < 0.35;
             el.dataset.frontActor = isFrontActor ? 'true' : 'false';
         }
@@ -173,7 +205,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         };
     }, [measure]);
 
-    // Spring animation loop for the 3D ring + smooth cursor follower
     useEffect(() => {
         if (!active) {
             return;
@@ -208,7 +239,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
 
             placeRing();
 
-            // Cursor inertia (trails pointer with k = 0.18 just like demo)
             const k = reduced ? 1 : 0.18;
             s.cursorX += (s.cursorTX - s.cursorX) * k;
             s.cursorY += (s.cursorTY - s.cursorY) * k;
@@ -252,7 +282,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         moveTo(Math.round(simRef.current.target) - 1);
     }, [moveTo]);
 
-    // Autoplay timer (5000ms matching data-speed="5000")
     useEffect(() => {
         if (!active || !playing || zoomed) {
             return;
@@ -265,14 +294,17 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         return () => window.clearTimeout(timer);
     }, [active, playing, zoomed, index, nextLook]);
 
-    // Reset zoom & pan when piece or look changes
-    useEffect(() => {
-        setPieceZoom(1);
-        setPiecePan({ x: 0, y: 0 });
-        setIsDraggingPiece(false);
-    }, [selectedPiece, index]);
+    const handleCloseLook = useCallback(() => {
+        setZoomed(false);
+        setSelectedPiece(null);
+        setHotPin(null);
+        setModelZoom(1);
+        setModelPan({ x: 0, y: 0 });
+        setDressZoom(1);
+        setDressPan({ x: 0, y: 0 });
+        onOverlayChange?.(false);
+    }, [onOverlayChange]);
 
-    // Close look popup or selected piece on Escape
     useEffect(() => {
         if (!zoomed) {
             return;
@@ -284,16 +316,13 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                 if (selectedPiece !== null) {
                     setSelectedPiece(null);
                 } else {
-                    setZoomed(false);
-                    setSelectedPiece(null);
-                    setHotPin(null);
-                    setModelZoom(1);
+                    handleCloseLook();
                 }
             }
         };
         window.addEventListener('keydown', onKey, true);
         return () => window.removeEventListener('keydown', onKey, true);
-    }, [zoomed, selectedPiece]);
+    }, [zoomed, selectedPiece, handleCloseLook]);
 
     const handleStagePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
         const stage = stageRef.current;
@@ -362,7 +391,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         s.dragging = false;
 
         if (s.moved < 8) {
-            // Click without drag: check if user clicked a model
             const elements = document.elementsFromPoint(e.clientX, e.clientY);
             let hitActor: HTMLElement | null = null;
             for (const el of elements) {
@@ -379,12 +407,10 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                 const actorIdx = Number(hitActor.dataset.actorIndex);
                 const isFront = hitActor.dataset.frontActor === 'true';
                 if (isFront) {
-                    // Clicking the front model opens the Look Popup / Zoom Modal (`rw__lb`)!
                     setPlaying(false);
                     setZoomed(true);
                     setSelectedPiece(null);
                 } else {
-                    // Clicking a side model in the ring rotates it to the front
                     let diff = ((actorIdx - Math.round(s.target)) % ACTOR_COUNT + ACTOR_COUNT) % ACTOR_COUNT;
                     if (diff > ACTOR_COUNT / 2) {
                         diff -= ACTOR_COUNT;
@@ -403,9 +429,73 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         }
     };
 
+    // DRESS ITEM ZOOM HANDLERS
+    const zoomInDress = () => setDressZoom((z) => Math.min(2.5, Number((z + 0.4).toFixed(2))));
+    const zoomOutDress = () => {
+        setDressZoom((z) => {
+            const next = Math.max(1, Number((z - 0.4).toFixed(2)));
+            if (next === 1) setDressPan({ x: 0, y: 0 });
+            return next;
+        });
+    };
+    const resetDressZoom = () => {
+        setDressZoom(1);
+        setDressPan({ x: 0, y: 0 });
+    };
+    const doubleClickDress = () => {
+        if (dressZoom > 1) {
+            resetDressZoom();
+        } else {
+            setDressZoom(1.8);
+        }
+    };
+    const handleDressWheel = (e: React.WheelEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        setDressZoom((z) => {
+            const next = clamp(Number((z + delta).toFixed(2)), 1, 2.5);
+            if (next === 1) setDressPan({ x: 0, y: 0 });
+            return next;
+        });
+    };
+    const handleDressPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (dressZoom <= 1) return;
+        setIsDraggingDress(true);
+        dressDragStart.current = { x: e.clientX, y: e.clientY, panX: dressPan.x, panY: dressPan.y };
+        e.currentTarget.setPointerCapture(e.pointerId);
+    };
+    const handleDressPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!isDraggingDress || dressZoom <= 1) return;
+        const dx = e.clientX - dressDragStart.current.x;
+        const dy = e.clientY - dressDragStart.current.y;
+        const maxPan = 140 * (dressZoom - 1);
+        setDressPan({
+            x: clamp(dressDragStart.current.panX + dx, -maxPan, maxPan),
+            y: clamp(dressDragStart.current.panY + dy, -maxPan, maxPan),
+        });
+    };
+    const handleDressPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (isDraggingDress) {
+            setIsDraggingDress(false);
+            try {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+            } catch {
+                // ignore
+            }
+        }
+    };
+
     const handlePinClick = (pinIdx: number) => {
+        if (selectedPiece === pinIdx) {
+            setSelectedPiece(null);
+            setHotPin(null);
+            resetDressZoom();
+            return;
+        }
         setHotPin(pinIdx);
         setSelectedPiece(pinIdx);
+        resetDressZoom();
         const card = cardRefs.current[pinIdx];
         if (card) {
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -416,108 +506,75 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         if (!zoomed) {
             setPlaying(false);
             setZoomed(true);
+            onOverlayChange?.(true);
+        }
+        if (selectedPiece === i && zoomed) {
+            setSelectedPiece(null);
+            setHotPin(null);
+            resetDressZoom();
+            return;
         }
         setHotPin(i);
         setSelectedPiece(i);
+        resetDressZoom();
         const card = cardRefs.current[i];
         if (card) {
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     };
 
-    const handlePrevPiece = () => {
-        if (selectedPiece === null) return;
-        const total = currentLook.pieces.length;
-        const prev = (selectedPiece - 1 + total) % total;
-        setSelectedPiece(prev);
-        setHotPin(prev);
-    };
-
-    const handleNextPiece = () => {
-        if (selectedPiece === null) return;
-        const total = currentLook.pieces.length;
-        const next = (selectedPiece + 1) % total;
-        setSelectedPiece(next);
-        setHotPin(next);
-    };
-
-    const handleCloseLook = () => {
-        setZoomed(false);
-        setSelectedPiece(null);
-        setHotPin(null);
-        setModelZoom(1);
-    };
-
-    // Zoom controls for the big dress item
-    const zoomInPiece = () => {
-        setPieceZoom((prev) => Math.min(3.5, Number((prev + 0.5).toFixed(2))));
-    };
-
-    const zoomOutPiece = () => {
-        setPieceZoom((prev) => {
-            const next = Math.max(1, Number((prev - 0.5).toFixed(2)));
-            if (next === 1) {
-                setPiecePan({ x: 0, y: 0 });
-            }
+    // MODEL ZOOM HANDLERS
+    const zoomInModel = () => setModelZoom((z) => Math.min(2.2, Number((z + 0.35).toFixed(2))));
+    const zoomOutModel = () => {
+        setModelZoom((z) => {
+            const next = Math.max(1, Number((z - 0.35).toFixed(2)));
+            if (next === 1) setModelPan({ x: 0, y: 0 });
             return next;
         });
     };
-
-    const resetPieceZoom = () => {
-        setPieceZoom(1);
-        setPiecePan({ x: 0, y: 0 });
+    const resetModelZoom = () => {
+        setModelZoom(1);
+        setModelPan({ x: 0, y: 0 });
     };
-
-    const doubleClickPiece = () => {
-        if (pieceZoom > 1) {
-            resetPieceZoom();
+    const doubleClickModel = (e: React.MouseEvent) => {
+        if ((e.target as HTMLElement).closest('button')) return;
+        if (modelZoom > 1) {
+            resetModelZoom();
         } else {
-            setPieceZoom(2);
+            setModelZoom(1.6);
         }
     };
-
-    const handleWheelZoom = (e: React.WheelEvent) => {
+    const handleModelWheel = (e: React.WheelEvent) => {
+        e.stopPropagation();
         e.preventDefault();
-        const delta = e.deltaY < 0 ? 0.25 : -0.25;
-        setPieceZoom((prev) => {
-            const next = clamp(Number((prev + delta).toFixed(2)), 1, 3.5);
-            if (next === 1) {
-                setPiecePan({ x: 0, y: 0 });
-            }
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        setModelZoom((z) => {
+            const next = clamp(Number((z + delta).toFixed(2)), 1, 2.2);
+            if (next === 1) setModelPan({ x: 0, y: 0 });
             return next;
         });
     };
-
-    const handlePiecePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (pieceZoom <= 1) return;
-        setIsDraggingPiece(true);
-        dragStartRef.current = {
-            x: e.clientX,
-            y: e.clientY,
-            panX: piecePan.x,
-            panY: piecePan.y,
-        };
+    const handleModelPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (modelZoom <= 1) return;
+        if ((e.target as HTMLElement).closest('button')) return;
+        setIsDraggingModel(true);
+        modelDragStart.current = { x: e.clientX, y: e.clientY, panX: modelPan.x, panY: modelPan.y };
         e.currentTarget.setPointerCapture(e.pointerId);
     };
-
-    const handlePiecePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (!isDraggingPiece || pieceZoom <= 1) return;
-        const dx = e.clientX - dragStartRef.current.x;
-        const dy = e.clientY - dragStartRef.current.y;
-        const container = pieceContainerRef.current;
-        const w = container ? container.clientWidth : 400;
-        const h = container ? container.clientHeight : 400;
-        const maxPanX = Math.max(0, (w * (pieceZoom - 1)) / 2);
-        const maxPanY = Math.max(0, (h * (pieceZoom - 1)) / 2);
-        setPiecePan({
-            x: clamp(dragStartRef.current.panX + dx, -maxPanX, maxPanX),
-            y: clamp(dragStartRef.current.panY + dy, -maxPanY, maxPanY),
+    const handleModelPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!isDraggingModel || modelZoom <= 1) return;
+        const dx = e.clientX - modelDragStart.current.x;
+        const dy = e.clientY - modelDragStart.current.y;
+        const maxPanX = 120 * (modelZoom - 1);
+        const maxPanY = 220 * (modelZoom - 1);
+        setModelPan({
+            x: clamp(modelDragStart.current.panX + dx, -maxPanX, maxPanX),
+            y: clamp(modelDragStart.current.panY + dy, -maxPanY, maxPanY),
         });
     };
-
-    const handlePiecePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (isDraggingPiece) {
-            setIsDraggingPiece(false);
+    const handleModelPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (isDraggingModel) {
+            setIsDraggingModel(false);
             try {
                 e.currentTarget.releasePointerCapture(e.pointerId);
             } catch {
@@ -526,19 +583,16 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
         }
     };
 
-    const toggleModelZoom = () => {
-        setModelZoom((prev) => (prev > 1 ? 1 : 1.55));
-    };
-
     const toggleAddPiece = (pieceKey: string) => {
         setAddedPieces((prev) => ({ ...prev, [pieceKey]: !prev[pieceKey] }));
     };
 
     const currentLook = LOOKS[index] ?? LOOKS[0];
+    const isPieceOpen = selectedPiece !== null && currentLook.pieces[selectedPiece] !== undefined;
 
     return (
-        <div className="relative grid h-full w-full grid-cols-1 overflow-hidden bg-white pt-16 text-[#151413] sm:pt-20 lg:grid-cols-[minmax(0,1fr)_380px]">
-            {/* LEFT COLUMN: Header + 3D Ring Runway Stage + Bottom Controls + Look Zoom Popup (`rw__lb`) */}
+        <div className="relative grid h-full w-full grid-cols-1 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] p-3 pt-16 sm:p-5 sm:pt-20 lg:p-6 lg:pt-20 text-[#151413] lg:grid-cols-[minmax(0,1fr)_270px] xl:grid-cols-[minmax(0,1fr)_290px] gap-3 lg:gap-4">
+            {/* LEFT COLUMN: Header + 3D Ring Runway Stage + Bottom Controls + Look View (`rw__lb`) */}
             <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
                 {/* Header (`rw__head`) */}
                 <div
@@ -572,7 +626,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         cursorState.on ? 'lg:cursor-none' : 'cursor-grab active:cursor-grabbing'
                     }`}
                 >
-                    {/* Stage Atmosphere: Floor Gradient + Breathing Spotlight + Haze */}
+                    {/* Stage Atmosphere */}
                     <div
                         aria-hidden="true"
                         className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(to_top,rgba(21,20,19,0.07),rgba(21,20,19,0.02)_55%,transparent)]"
@@ -599,9 +653,8 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                     }}
                                     data-actor-index={actorIdx}
                                     data-look-index={lookIdx}
-                                    className=" absolute bottom-0 left-0 origin-bottom opacity-0 will-change-[transform,opacity]"
+                                    className="absolute bottom-0 left-0 origin-bottom opacity-0 will-change-[transform,opacity]"
                                 >
-                                    {/* Contact Shadow (`.rw__shadow`) */}
                                     <span
                                         aria-hidden="true"
                                         className="pointer-events-none absolute bottom-0 left-[58%] h-[9%] max-h-[46px] min-h-[14px] w-[150%] -translate-x-1/2 translate-y-1/2 bg-[radial-gradient(closest-side,rgba(20,16,12,0.30),rgba(20,16,12,0.14)_45%,rgba(20,16,12,0.04)_75%,transparent)] blur-[2px]"
@@ -621,7 +674,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         })}
                     </div>
 
-                    {/* Custom Frosted 84×84px Cursor (`rw__cursor`) showing DRAG or VIEW */}
+                    {/* Custom Frosted Cursor (`rw__cursor`) */}
                     <span
                         ref={cursorRef}
                         aria-hidden="true"
@@ -651,129 +704,129 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                     </span>
                 </div>
 
-                {/* Bottom Controls (`rw__controls`) */}
+                {/* Bottom Runway Controls (`rw__controls`) */}
                 <div
                     className={`relative z-10 flex items-center gap-3 px-4 pb-5 pt-1.5 transition-opacity duration-300 sm:gap-5 sm:px-11 sm:pb-7 ${
                         zoomed ? 'pointer-events-none opacity-0' : 'opacity-100'
                     }`}
                 >
                     <Reveal active={active} delay={0.1} className="flex w-full items-center gap-3 sm:gap-5">
-                    <button
-                        type="button"
-                        onClick={prevLook}
-                        aria-label="Previous look"
-                        className="group relative grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
-                    >
-                        <svg
-                            width="26"
-                            height="14"
-                            viewBox="0 0 26 14"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="transition-transform duration-300 group-hover:-translate-x-1"
+                        <button
+                            type="button"
+                            onClick={prevLook}
+                            aria-label="Previous look"
+                            className="group relative grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
                         >
-                            <path d="M25 7H1M7 1L1 7l6 6" />
-                        </svg>
-                    </button>
-
-                    {/* 6 Expanding Progress Ticks (`rw__ticks`) */}
-                    <div className="flex min-w-0 flex-1 items-center gap-1.5">
-                        {LOOKS.map((l, i) => {
-                            const isCurrent = i === index;
-                            const isPast = i < index;
-                            return (
-                                <button
-                                    key={i}
-                                    type="button"
-                                    onClick={() => goToLook(i)}
-                                    aria-current={isCurrent ? 'true' : 'false'}
-                                    aria-label={`Look ${i + 1}: ${l.name}`}
-                                    className={`group flex h-11 flex-col justify-center gap-2 text-left transition-all duration-500 ${
-                                        isCurrent
-                                            ? 'w-[140px] shrink-0 text-[#151413] sm:w-[190px]'
-                                            : 'min-w-[14px] flex-1 basis-[44px] text-[#66625c] hover:text-[#151413]'
-                                    }`}
-                                >
-                                    <span className="relative block h-[2px] w-full overflow-hidden bg-[#151413]/14 transition-transform group-hover:scale-y-150">
-                                        <span
-                                            key={isCurrent && playing && !zoomed ? `run-${index}` : `still-${i}`}
-                                            className={` absolute inset-0 origin-left bg-[#0e0e0e] ${
-                                                isCurrent
-                                                    ? playing && !zoomed
-                                                        ? 'animate-rw-fill'
-                                                        : 'scale-x-100'
-                                                    : isPast
-                                                      ? 'scale-x-100 opacity-35'
-                                                      : 'scale-x-0'
-                                            }`}
-                                        />
-                                    </span>
-                                    <span className="block truncate text-[10px] tracking-[0.12em] tabular-nums">
-                                        {String(i + 1).padStart(2, '0')}
-                                        {isCurrent && (
-                                            <span className="ml-2 hidden sm:inline">{l.name}</span>
-                                        )}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Autoplay Toggle (`rw__auto`) */}
-                    <button
-                        type="button"
-                        onClick={() => setPlaying((p) => !p)}
-                        aria-pressed={playing}
-                        aria-label="Toggle autoplay"
-                        className="grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
-                    >
-                        {playing ? (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M6.5 4.5h3.5v15H6.5zM14 4.5h3.5v15H14z" />
+                            <svg
+                                width="26"
+                                height="14"
+                                viewBox="0 0 26 14"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="transition-transform duration-300 group-hover:-translate-x-1"
+                            >
+                                <path d="M25 7H1M7 1L1 7l6 6" />
                             </svg>
-                        ) : (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M7 4.5v15l12.5-7.5z" />
-                            </svg>
-                        )}
-                    </button>
+                        </button>
 
-                    <button
-                        type="button"
-                        onClick={nextLook}
-                        aria-label="Next look"
-                        className="group relative grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
-                    >
-                        <svg
-                            width="26"
-                            height="14"
-                            viewBox="0 0 26 14"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="transition-transform duration-300 group-hover:translate-x-1"
+                        <div className="flex min-w-0 flex-1 items-center gap-1.5">
+                            {LOOKS.map((l, i) => {
+                                const isCurrent = i === index;
+                                const isPast = i < index;
+                                return (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        onClick={() => goToLook(i)}
+                                        aria-current={isCurrent ? 'true' : 'false'}
+                                        aria-label={`Look ${i + 1}: ${l.name}`}
+                                        className={`group flex h-11 flex-col justify-center gap-2 text-left transition-all duration-500 ${
+                                            isCurrent
+                                                ? 'w-[140px] shrink-0 text-[#151413] sm:w-[190px]'
+                                                : 'min-w-[14px] flex-1 basis-[44px] text-[#66625c] hover:text-[#151413]'
+                                        }`}
+                                    >
+                                        <span className="relative block h-[2px] w-full overflow-hidden bg-[#151413]/14 transition-transform group-hover:scale-y-150">
+                                            <span
+                                                key={isCurrent && playing && !zoomed ? `run-${index}` : `still-${i}`}
+                                                className={`absolute inset-0 origin-left bg-[#0e0e0e] ${
+                                                    isCurrent
+                                                        ? playing && !zoomed
+                                                            ? 'animate-rw-fill'
+                                                            : 'scale-x-100'
+                                                        : isPast
+                                                          ? 'scale-x-100 opacity-35'
+                                                          : 'scale-x-0'
+                                                }`}
+                                            />
+                                        </span>
+                                        <span className="block truncate text-[10px] tracking-[0.12em] tabular-nums">
+                                            {String(i + 1).padStart(2, '0')}
+                                            {isCurrent && (
+                                                <span className="ml-2 hidden sm:inline">{l.name}</span>
+                                            )}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => setPlaying((p) => !p)}
+                            aria-pressed={playing}
+                            aria-label="Toggle autoplay"
+                            className="grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
                         >
-                            <path d="M1 7h24M19 1l6 6-6 6" />
-                        </svg>
-                    </button>
+                            {playing ? (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M6.5 4.5h3.5v15H6.5zM14 4.5h3.5v15H14z" />
+                                </svg>
+                            ) : (
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M7 4.5v15l12.5-7.5z" />
+                                </svg>
+                            )}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={nextLook}
+                            aria-label="Next look"
+                            className="group relative grid h-11 w-11 shrink-0 place-items-center text-[#151413] transition hover:opacity-75"
+                        >
+                            <svg
+                                width="26"
+                                height="14"
+                                viewBox="0 0 26 14"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="transition-transform duration-300 group-hover:translate-x-1"
+                            >
+                                <path d="M1 7h24M19 1l6 6-6 6" />
+                            </svg>
+                        </button>
                     </Reveal>
                 </div>
 
-                {/* LOOK POPUP / ZOOM MODAL (`rw__lb`) — Opens when clicking the front model */}
+                {/* LOOK VIEW (`rw__lb`) — Opens when clicking front model */}
                 <div
                     role="region"
                     aria-label="View look"
                     aria-hidden={!zoomed}
+                    onWheel={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
                     className={`absolute inset-0 z-40 transition-all duration-500 ${
                         zoomed ? 'visible pointer-events-auto opacity-100' : 'invisible pointer-events-none opacity-0'
                     }`}
                 >
-                    {/* Solid White Stage Backdrop (`rw__lb::before`) */}
+                    {/* Studio Stage Backdrop (blends seamlessly across entire stage) */}
                     <div
                         onClick={() => {
                             if (selectedPiece !== null) {
@@ -782,39 +835,45 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 handleCloseLook();
                             }
                         }}
-                        className="absolute inset-0 cursor-zoom-out bg-white"
+                        className="absolute inset-0 cursor-zoom-out bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)]"
                     />
 
-                    {/* Zoomed Front Model + Pulsing Numbered Pins (`rw__lb-stage`) */}
+                    {/* Zoomed Front Model Stage Area (translates left when piece is open) */}
                     <div
+                        ref={modelContainerRef}
+                        onWheel={handleModelWheel}
+                        onDoubleClick={doubleClickModel}
+                        onPointerDown={handleModelPointerDown}
+                        onPointerMove={handleModelPointerMove}
+                        onPointerUp={handleModelPointerUp}
+                        onPointerCancel={handleModelPointerUp}
                         onClick={(e) => {
                             if (e.target === e.currentTarget) {
                                 if (selectedPiece !== null) {
-                                    setSelectedPiece(null);
-                                } else {
-                                    handleCloseLook();
-                                }
+                                setSelectedPiece(null);
+                            } else {
+                                handleCloseLook();
                             }
+                        }
+                    }}
+                    className={`absolute inset-x-4 bottom-4 top-8 flex items-end justify-center sm:inset-x-8 sm:bottom-6 sm:top-10 select-none ${
+                        modelZoom > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-out'
+                    }`}
+                >
+                    <div
+                        className={`relative h-full aspect-[9/16] max-h-full cursor-default origin-bottom transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                            zoomed ? 'opacity-100' : 'opacity-0 scale-90 translate-y-6'
+                        } ${
+                            isPieceOpen
+                                ? 'lg:-translate-x-[24%] xl:-translate-x-[26%]'
+                                : 'translate-x-0'
+                        }`}
+                        style={{
+                            transform: `translate3d(${isPieceOpen ? -24 : 0}%, 0, 0) translate3d(${modelPan.x}px, ${modelPan.y}px, 0) scale(${
+                                modelZoom > 1 ? modelZoom : 1
+                            })`,
                         }}
-                        className="absolute inset-x-4 bottom-11 top-20 flex cursor-zoom-out items-end justify-center sm:inset-x-12 sm:bottom-12 sm:top-22"
                     >
-                        <div
-                            className={`relative h-full aspect-[9/16] max-h-full cursor-default origin-bottom transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                                zoomed ? 'opacity-100' : 'opacity-0 scale-90 translate-y-6'
-                            } ${
-                                selectedPiece !== null
-                                    ? 'lg:-translate-x-[26%] xl:-translate-x-[28%] 2xl:-translate-x-[30%]'
-                                    : 'translate-x-0'
-                            } ${
-                                modelZoom > 1
-                                    ? selectedPiece !== null
-                                        ? 'scale-[1.28] origin-[center_35%]'
-                                        : 'scale-[1.55] origin-[center_35%]'
-                                    : selectedPiece !== null
-                                        ? 'scale-[0.88] lg:scale-[0.92]'
-                                        : 'scale-100'
-                            }`}
-                        >
                             {/* Contact Shadow */}
                             <span
                                 aria-hidden="true"
@@ -828,7 +887,7 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 className="pointer-events-none h-full w-full object-contain object-bottom select-none"
                             />
 
-                            {/* Numbered Outfit Pins (`1`, `2`, `3`) with double pulsing rings & glass tooltip */}
+                            {/* Numbered Outfit Pins (1, 2, 3) mapped anatomically */}
                             <div className="absolute inset-0 z-10">
                                 {currentLook.pins.map((pinPos, pinIdx) => {
                                     const pieceItem = currentLook.pieces[pinIdx];
@@ -870,7 +929,6 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                                 {pinIdx + 1}
                                             </span>
 
-                                            {/* Frosted Glass Tooltip (`rw__pin::after`) */}
                                             {pieceItem && (
                                                 <span
                                                     className={`pointer-events-none absolute left-[calc(100%-6px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 ${
@@ -887,120 +945,128 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                 })}
                             </div>
                         </div>
+
+                        {/* Floating Model Zoom Controls Pill (Left Side Zoom) */}
+                        <div className="pointer-events-none absolute bottom-4 left-6 z-20 flex items-center gap-1.5">
+                            <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-[#151413]/15 bg-white/90 px-2.5 py-1 shadow-sm backdrop-blur-md">
+                                <button
+                                    type="button"
+                                    onClick={zoomOutModel}
+                                    disabled={modelZoom <= 1}
+                                    aria-label="Zoom out model"
+                                    className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
+                                >
+                                    <ZoomOut size={13} />
+                                </button>
+                                <span className="min-w-[38px] text-center text-[11px] font-semibold tabular-nums text-[#151413]">
+                                    {Math.round(modelZoom * 100)}%
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={zoomInModel}
+                                    disabled={modelZoom >= 2.2}
+                                    aria-label="Zoom in model"
+                                    className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
+                                >
+                                    <ZoomIn size={13} />
+                                </button>
+                                {modelZoom > 1 && (
+                                    <button
+                                        type="button"
+                                        onClick={resetModelZoom}
+                                        aria-label="Reset model zoom"
+                                        className="ml-1 flex items-center gap-1 rounded-full bg-[#151413] px-2 py-0.5 text-[9px] font-semibold tracking-wider text-white uppercase transition hover:bg-[#333]"
+                                    >
+                                        <RotateCcw size={10} />
+                                        <span>Reset</span>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* BIG DRESS ITEM SHOWCASE (Slides in from right when piece is selected) */}
-                    {selectedPiece !== null && currentLook.pieces[selectedPiece] && (
+                    {/* BIG DRESS ITEM SHOWCASE (Sits cleanly on stage beside model - pure borderless studio look) */}
+                    {isPieceOpen && currentLook.pieces[selectedPiece!] && (
                         <div
-                            role="dialog"
-                            aria-label={`Piece details: ${currentLook.pieces[selectedPiece].name}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="pointer-events-auto absolute bottom-8 right-3 top-16 z-30 flex w-[calc(100%-24px)] flex-col rounded-2xl border border-[#151413]/12 bg-white/95 p-4 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all duration-500 sm:right-6 sm:top-18 sm:bottom-12 sm:w-[460px] lg:right-6 lg:top-20 lg:bottom-12 lg:w-[min(50%,520px)] xl:right-8 xl:w-[min(52%,560px)]"
+                            className="pointer-events-auto absolute bottom-4 top-20 right-0 left-[38%] z-20 flex flex-col items-center justify-center p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:left-[42%] select-none touch-none"
                         >
-                            {/* Panel Header */}
-                            <div className="flex items-start justify-between gap-3 border-b border-[#151413]/10 pb-3">
-                                <div className="flex min-w-0 flex-col gap-0.5">
-                                    <div className="flex items-center gap-2">
-                                        <span className="rounded-full bg-[#151413] px-2 py-0.5 text-[9px] font-semibold tracking-[0.14em] uppercase text-white">
-                                            Piece {String(selectedPiece + 1).padStart(2, '0')} / {String(currentLook.pieces.length).padStart(2, '0')}
-                                        </span>
-                                        {currentLook.pieces[selectedPiece].tag && (
-                                            <span className="rounded-full border border-[#151413]/25 px-2 py-0.5 text-[9px] font-semibold tracking-[0.12em] uppercase text-[#151413]">
-                                                {currentLook.pieces[selectedPiece].tag}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="mt-1 truncate text-[10px] tracking-[0.16em] uppercase text-[#66625c]">
-                                        {currentLook.pieces[selectedPiece].brand}
+                            <div
+                                key={`${index}-${selectedPiece}`}
+                                className="animate-dress-reveal flex h-full w-full flex-col items-center justify-center"
+                            >
+                                {/* Minimalist Piece Label */}
+                                <div className="pointer-events-none mb-1 flex flex-col items-center text-center">
+                                    <span className="text-[10px] font-semibold tracking-[0.24em] uppercase text-[#736f69]">
+                                        {currentLook.pieces[selectedPiece!].brand}
                                     </span>
-                                    <h4 className="truncate text-lg font-medium tracking-tight text-[#151413] lg:text-xl">
-                                        {currentLook.pieces[selectedPiece].name}
+                                    <h4 className="mt-0.5 text-base font-medium tracking-tight text-[#151413] sm:text-lg lg:text-xl">
+                                        {currentLook.pieces[selectedPiece!].name}
                                     </h4>
                                 </div>
 
-                                <div className="flex shrink-0 items-center gap-1.5">
-                                    {/* Prev / Next piece navigation */}
-                                    <button
-                                        type="button"
-                                        onClick={handlePrevPiece}
-                                        aria-label="Previous piece"
-                                        className="grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-colors hover:bg-[#151413]/5"
-                                    >
-                                        <ChevronLeft size={15} />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleNextPiece}
-                                        aria-label="Next piece"
-                                        className="grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-colors hover:bg-[#151413]/5"
-                                    >
-                                        <ChevronRight size={15} />
-                                    </button>
-                                    {/* Close button */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setSelectedPiece(null)}
-                                        aria-label="Close piece view"
-                                        className="ml-1 grid h-8 w-8 place-items-center rounded-full border border-[#151413]/15 text-[#151413] transition-all duration-300 hover:rotate-90 hover:border-[#151413] hover:bg-[#151413]/5"
-                                    >
-                                        <X size={15} />
-                                    </button>
+                                {/* Dress Item Stage & Zoom Container */}
+                                <div
+                                    ref={dressContainerRef}
+                                    onWheel={handleDressWheel}
+                                    onDoubleClick={doubleClickDress}
+                                    onPointerDown={handleDressPointerDown}
+                                    onPointerMove={handleDressPointerMove}
+                                    onPointerUp={handleDressPointerUp}
+                                    onPointerCancel={handleDressPointerUp}
+                                    className={`relative flex h-[76%] max-h-[660px] w-full max-w-[480px] items-center justify-center ${
+                                        dressZoom > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-in'
+                                    }`}
+                                >
+                                    {/* Soft Contact Shadow for Dress Item */}
+                                    <span
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute bottom-4 left-1/2 h-[7%] max-h-[30px] w-[75%] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(20,16,12,0.18),rgba(20,16,12,0.06)_50%,transparent)] blur-[2px]"
+                                    />
+
+                                    <img
+                                        src={currentLook.pieces[selectedPiece!].image}
+                                        alt={currentLook.pieces[selectedPiece!].name}
+                                        draggable={false}
+                                        style={{
+                                            transform: `translate3d(${dressPan.x}px, ${dressPan.y}px, 0) scale(${dressZoom})`,
+                                            transformOrigin: 'center center',
+                                        }}
+                                        className={`max-h-[92%] max-w-[92%] object-contain select-none drop-shadow-[0_16px_36px_rgba(0,0,0,0.08)] will-change-transform ${
+                                            isDraggingDress ? 'transition-none' : 'transition-transform duration-200'
+                                        }`}
+                                    />
                                 </div>
-                            </div>
 
-                            {/* Interactive Big Garment Canvas with Zoom & Pan */}
-                            <div
-                                ref={pieceContainerRef}
-                                onWheel={handleWheelZoom}
-                                onDoubleClick={doubleClickPiece}
-                                onPointerDown={handlePiecePointerDown}
-                                onPointerMove={handlePiecePointerMove}
-                                onPointerUp={handlePiecePointerUp}
-                                onPointerCancel={handlePiecePointerUp}
-                                className="relative my-3 flex flex-1 min-h-[220px] items-center justify-center overflow-hidden rounded-xl border border-[#151413]/8 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,1),rgba(244,244,242,0.85))] select-none touch-none sm:min-h-[260px]"
-                            >
-                                <img
-                                    src={currentLook.pieces[selectedPiece].image}
-                                    alt={currentLook.pieces[selectedPiece].name}
-                                    draggable={false}
-                                    style={{
-                                        transform: `translate3d(${piecePan.x}px, ${piecePan.y}px, 0) scale(${pieceZoom})`,
-                                        transformOrigin: 'center center',
-                                    }}
-                                    className={`max-h-[85%] max-w-[85%] object-contain select-none will-change-transform ${
-                                        isDraggingPiece ? 'cursor-grabbing transition-none' : 'transition-transform duration-200'
-                                    } ${pieceZoom > 1 ? 'cursor-grab' : 'cursor-zoom-in'}`}
-                                />
-
-                                {/* Floating Zoom Bar */}
-                                <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex items-center justify-between">
-                                    <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-[#151413]/15 bg-white/92 px-2 py-1 shadow-md backdrop-blur-md">
+                                {/* Floating Dress Zoom Controls Pill (Right Side Zoom) */}
+                                <div className="pointer-events-none absolute bottom-4 right-4 z-20 flex items-center gap-1.5 sm:right-8">
+                                    <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-[#151413]/15 bg-white/95 px-2.5 py-1 shadow-sm backdrop-blur-md">
                                         <button
                                             type="button"
-                                            onClick={zoomOutPiece}
-                                            disabled={pieceZoom <= 1}
-                                            aria-label="Zoom out"
+                                            onClick={zoomOutDress}
+                                            disabled={dressZoom <= 1}
+                                            aria-label="Zoom out piece"
                                             className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
                                         >
                                             <ZoomOut size={13} />
                                         </button>
                                         <span className="min-w-[38px] text-center text-[11px] font-semibold tabular-nums text-[#151413]">
-                                            {Math.round(pieceZoom * 100)}%
+                                            {Math.round(dressZoom * 100)}%
                                         </span>
                                         <button
                                             type="button"
-                                            onClick={zoomInPiece}
-                                            disabled={pieceZoom >= 3.5}
-                                            aria-label="Zoom in"
+                                            onClick={zoomInDress}
+                                            disabled={dressZoom >= 2.5}
+                                            aria-label="Zoom in piece"
                                             className="grid h-6 w-6 place-items-center rounded-full text-[#151413] transition hover:bg-[#151413]/10 disabled:pointer-events-none disabled:opacity-30"
                                         >
                                             <ZoomIn size={13} />
                                         </button>
-                                        {pieceZoom > 1 && (
+                                        {dressZoom > 1 && (
                                             <button
                                                 type="button"
-                                                onClick={resetPieceZoom}
-                                                aria-label="Reset zoom"
+                                                onClick={resetDressZoom}
+                                                aria-label="Reset piece zoom"
                                                 className="ml-1 flex items-center gap-1 rounded-full bg-[#151413] px-2 py-0.5 text-[9px] font-semibold tracking-wider text-white uppercase transition hover:bg-[#333]"
                                             >
                                                 <RotateCcw size={10} />
@@ -1008,87 +1074,13 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                                             </button>
                                         )}
                                     </div>
-
-                                    <span className="pointer-events-none hidden rounded-full bg-white/85 px-2.5 py-1 text-[9px] font-medium tracking-wide text-[#66625c] backdrop-blur-md sm:inline-block">
-                                        {pieceZoom > 1 ? 'Drag to pan • Scroll to zoom' : 'Double-click or scroll to zoom'}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Piece Switcher & Bottom Actions */}
-                            <div className="flex flex-col gap-2.5 pt-1">
-                                {/* Quick Piece Switcher */}
-                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-                                    {currentLook.pieces.map((p, pIdx) => {
-                                        const isCur = selectedPiece === pIdx;
-                                        return (
-                                            <button
-                                                key={pIdx}
-                                                type="button"
-                                                onClick={() => {
-                                                    setSelectedPiece(pIdx);
-                                                    setHotPin(pIdx);
-                                                }}
-                                                className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left transition-all ${
-                                                    isCur
-                                                        ? 'bg-[#151413] text-white shadow-sm'
-                                                        : 'bg-[#151413]/5 text-[#151413] hover:bg-[#151413]/10'
-                                                }`}
-                                            >
-                                                <span
-                                                    className={`grid h-4 w-4 place-items-center rounded-full text-[9px] font-bold ${
-                                                        isCur ? 'bg-white text-[#151413]' : 'bg-[#151413]/15 text-[#151413]'
-                                                    }`}
-                                                >
-                                                    {pIdx + 1}
-                                                </span>
-                                                <span className="max-w-[100px] truncate text-[11px] font-medium sm:max-w-[120px]">
-                                                    {p.name}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className="grid grid-cols-2 gap-2 pt-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleAddPiece(`${index}-${selectedPiece}`)}
-                                        className={`flex items-center justify-center gap-1.5 rounded-lg border py-2.5 text-xs font-semibold tracking-[0.06em] uppercase transition-all duration-300 ${
-                                            addedPieces[`${index}-${selectedPiece}`]
-                                                ? 'border-[#0e0e0e] bg-[#0e0e0e] text-white shadow-sm'
-                                                : 'border-[#151413]/25 bg-white text-[#151413] hover:border-[#151413] hover:bg-[#151413]/5'
-                                        }`}
-                                    >
-                                        {addedPieces[`${index}-${selectedPiece}`] ? (
-                                            <>
-                                                <Check size={14} />
-                                                <span>In Look</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Plus size={14} />
-                                                <span>Add to Look</span>
-                                            </>
-                                        )}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={openDemo}
-                                        className="flex items-center justify-center gap-1.5 rounded-lg bg-[#0e0e0e] py-2.5 text-xs font-semibold tracking-[0.06em] uppercase text-white shadow-md transition-all duration-300 hover:bg-[#282725]"
-                                    >
-                                        <Sparkles size={13} />
-                                        <span>Try On Twin</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {/* Top Bar (`rw__lb-top`): Look Number + Look Name + Rotating Close Button */}
-                    <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-4 px-6 pt-5 sm:px-12 sm:pt-7">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-4 px-6 pt-4 sm:px-10 sm:pt-5">
                         <p className="flex flex-col gap-1">
                             <span className="text-[10px] tracking-[0.2em] uppercase text-[#66625c] tabular-nums">
                                 Look {String(index + 1).padStart(2, '0')}
@@ -1099,9 +1091,13 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         </p>
                         <button
                             type="button"
-                            onClick={handleCloseLook}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleCloseLook();
+                            }}
                             aria-label="Close look view"
-                            className="pointer-events-auto grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#151413]/22 bg-white/65 text-[#151413] backdrop-blur-md transition-all duration-500 hover:rotate-90 hover:border-[#151413]"
+                            className="pointer-events-auto relative z-50 grid h-12 w-12 shrink-0 cursor-pointer place-items-center rounded-full border border-[#151413]/25 bg-white/95 text-[#151413] shadow-md backdrop-blur-md transition-all duration-300 hover:rotate-90 hover:border-[#151413] hover:bg-white active:scale-95"
                         >
                             <svg
                                 width="16"
@@ -1118,178 +1114,122 @@ export function TryOnSection({ active, openDemo }: SectionProps) {
                         </button>
                     </div>
 
-                    {/* Bottom Bar: Model Zoom button + Hint (`rw__lb-hint`) */}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-between px-6 sm:px-12">
-                        <button
-                            type="button"
-                            onClick={toggleModelZoom}
-                            aria-label="Toggle model close-up zoom"
-                            className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-[#151413]/18 bg-white/85 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-sm backdrop-blur-md transition-all hover:border-[#151413] hover:bg-white"
-                        >
-                            {modelZoom > 1 ? (
-                                <>
-                                    <RotateCcw size={12} />
-                                    <span>Fit Model (1x)</span>
-                                </>
-                            ) : (
-                                <>
-                                    <ZoomIn size={12} />
-                                    <span>Zoom Model (1.5x)</span>
-                                </>
-                            )}
-                        </button>
-
-                        <p className="text-[10px] tracking-[0.2em] uppercase text-[#66625c]">
-                            {selectedPiece !== null ? 'Click another dot to switch pieces' : 'Tap a dot to shop the piece'}
-                        </p>
-
-                        <div className="hidden w-[110px] sm:block" />
-                    </div>
+                    {/* Bottom Hint (`rw__lb-hint`) */}
+                    <p className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-[10px] tracking-[0.2em] uppercase text-[#66625c]">
+                        {isPieceOpen ? 'Click another dot or card to switch pieces' : 'Tap a dot to shop the piece'}
+                    </p>
                 </div>
             </div>
 
-            {/* RIGHT SIDEBAR (`rw__panel`, 380px on desktop, border-l #c8c8c8) */}
+            {/* RIGHT SIDEBAR — Pure white cards floating on ice-blue studio stage */}
             <aside
                 aria-label="In this look"
-                className="relative flex flex-col border-t border-[#c8c8c8] bg-white lg:border-l lg:border-t-0"
+                className="relative flex h-full flex-col bg-transparent"
             >
-                <Reveal active={active} delay={0.12} className="flex h-full flex-col">
-                {/* Desktop Panel Header (`rw__panel-head`) */}
-                <div className="hidden items-baseline justify-between gap-3 px-8 pb-4 pt-8 lg:flex">
-                    <h3 className="text-[26px] font-normal leading-[1.1] text-[#151413]">In this look</h3>
-                    <span className="text-[10px] tracking-[0.16em] uppercase text-[#66625c]">
-                        {currentLook.pieces.length} pieces
-                    </span>
-                </div>
+                <Reveal active={active} delay={0.12} className="flex h-full flex-col justify-between overflow-hidden">
+                    {/* 3 Full-Height Pure White Cards matching Image 3 */}
+                    <ul
+                        role="list"
+                        className="flex h-full flex-row gap-2.5 overflow-x-auto p-1 lg:flex-col lg:justify-between lg:overflow-hidden lg:p-0"
+                    >
+                        {currentLook.pieces.map((pieceItem, i) => {
+                            const isHot = hotPin === i;
+                            const isSelected = selectedPiece === i && zoomed;
+                            const pieceKey = `${index}-${i}`;
+                            const isAdded = Boolean(addedPieces[pieceKey]);
+                            const isWishlisted = Boolean(wishlist[pieceKey]);
 
-                {/* Mobile Docked Header (`rw__mhead`) */}
-                <div className="flex items-baseline justify-between gap-3 px-5 pb-1.5 pt-3 lg:hidden">
-                    <span className="truncate text-base font-medium text-[#151413]">{currentLook.name}</span>
-                    <span className="text-[10px] tracking-[0.16em] uppercase text-[#66625c]">
-                        {currentLook.pieces.length} pieces
-                    </span>
-                </div>
-
-                {/* 3 Piece Items List (`rw__items` — full-height divided list on desktop, horizontal scroll row on mobile) */}
-                <ul
-                    data-scrollable
-                    role="list"
-                    className="flex flex-row gap-4 overflow-x-auto px-5 pb-4 pt-2 lg:flex-1 lg:flex-col lg:justify-between lg:gap-0 lg:overflow-y-auto lg:px-8 lg:pb-7 lg:pt-1.5"
-                >
-                    {currentLook.pieces.map((pieceItem, i) => {
-                        const isHot = hotPin === i;
-                        const isSelected = selectedPiece === i && zoomed;
-                        const pieceKey = `${index}-${i}`;
-                        const isAdded = Boolean(addedPieces[pieceKey]);
-
-                        return (
-                            <li
-                                key={`${index}-${pieceItem.name}-${i}`}
-                                ref={(el) => {
-                                    cardRefs.current[i] = el;
-                                }}
-                                onMouseEnter={() => setHotPin(i)}
-                                onMouseLeave={() => setHotPin(null)}
-                                onClick={(e) => {
-                                    if ((e.target as HTMLElement).closest('button[data-add-btn]')) {
-                                        return;
-                                    }
-                                    handleSelectPieceFromSidebar(i);
-                                }}
-                                className={`group relative grid shrink-0 grid-cols-[72px_minmax(0,1fr)_40px] items-center gap-x-3.5 py-2 transition-all cursor-pointer sm:grid-cols-[92px_minmax(0,1fr)_44px] lg:flex-1 lg:grid-cols-[106px_minmax(0,1fr)_44px] lg:gap-x-[18px] lg:border-t lg:border-[#c8c8c8] lg:py-4 lg:last:border-b ${
-                                    isSelected
-                                        ? 'bg-[#151413]/[0.05] lg:pl-2'
-                                        : isHot
-                                            ? 'bg-[#151413]/[0.025]'
-                                            : ''
-                                } min-w-[250px] lg:min-w-0`}
-                            >
-                                {/* Optional "New" swinging tag (`rw__tag`) */}
-                                {pieceItem.tag && (
-                                    <span
-                                        aria-hidden="true"
-                                        className="pointer-events-none absolute left-2 top-2 z-10 flex flex-col items-start"
-                                    >
-                                        <span className="rounded-[2px] bg-[#151413] px-1.5 py-1 text-[9px] font-semibold tracking-[0.14em] uppercase text-white">
-                                            {pieceItem.tag}
-                                        </span>
-                                    </span>
-                                )}
-
-                                {/* Product Media Thumbnail (`rw__media` 4/5 aspect ratio + top-right number badge) */}
-                                <button
-                                    type="button"
+                            return (
+                                <li
+                                    key={`${index}-${pieceItem.name}-${i}`}
+                                    ref={(el) => {
+                                        cardRefs.current[i] = el;
+                                    }}
+                                    onMouseEnter={() => setHotPin(i)}
+                                    onMouseLeave={() => setHotPin(null)}
                                     onClick={(e) => {
-                                        e.stopPropagation();
+                                        if ((e.target as HTMLElement).closest('button[data-action-btn]')) {
+                                            return;
+                                        }
                                         handleSelectPieceFromSidebar(i);
                                     }}
-                                    className={`relative block aspect-[4/5] w-full overflow-hidden bg-[#f3f3f3] text-left transition-all ${
-                                        isSelected ? 'ring-2 ring-[#0e0e0e] shadow-md' : ''
-                                    }`}
+                                    className={`group relative flex min-h-0 flex-1 flex-col justify-between rounded-xl bg-white p-3 sm:p-3.5 transition-all duration-300 cursor-pointer select-none shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] ${
+                                        isSelected
+                                            ? 'ring-2 ring-[#151413] shadow-md'
+                                            : isHot
+                                                ? 'ring-1 ring-[#151413]/30 shadow-md'
+                                                : 'hover:shadow-md hover:-translate-y-0.5'
+                                    } min-w-[200px] lg:min-w-0`}
                                 >
-                                    <img
-                                        src={pieceItem.image}
-                                        alt={pieceItem.name}
-                                        loading="lazy"
-                                        className="block h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <span
-                                        className={`absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full text-[10px] font-semibold transition-all duration-300 ${
-                                            isSelected || isHot
-                                                ? 'scale-110 bg-[#0e0e0e] text-white'
-                                                : 'bg-white/90 text-[#151413] group-hover:scale-110 group-hover:bg-[#0e0e0e] group-hover:text-white'
-                                        }`}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                </button>
+                                    {/* Card Top: Heart on Left, Dot Number on Right */}
+                                    <div className="flex items-center justify-between">
+                                        <button
+                                            type="button"
+                                            data-action-btn="true"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleWishlist(pieceKey);
+                                            }}
+                                            aria-label={`Wishlist ${pieceItem.name}`}
+                                            className="grid h-6 w-6 place-items-center text-[#151413]/75 transition-transform hover:scale-120 hover:text-[#151413]"
+                                        >
+                                            <Heart
+                                                size={15}
+                                                strokeWidth={1.5}
+                                                className={isWishlisted ? 'fill-[#151413] text-[#151413]' : 'stroke-current text-[#151413]'}
+                                            />
+                                        </button>
 
-                                {/* Brand & Product Name (`rw__info`) */}
-                                <div className="flex min-w-0 flex-col gap-1">
-                                    <span className="truncate text-[10px] tracking-[0.14em] uppercase text-[#66625c]">
-                                        {pieceItem.brand}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleSelectPieceFromSidebar(i);
-                                        }}
-                                        className="self-start text-left text-[13px] font-medium leading-[1.3] text-[#151413] underline-offset-4 hover:underline"
-                                    >
-                                        {pieceItem.name}
-                                    </button>
-                                </div>
+                                        <span
+                                            className={`grid h-[19px] w-[19px] place-items-center rounded-full text-[9px] font-bold transition-all duration-300 ${
+                                                isSelected || isHot
+                                                    ? 'scale-105 bg-[#0e0e0e] text-white shadow-sm'
+                                                    : 'bg-[#151413]/10 text-[#151413] group-hover:bg-[#0e0e0e] group-hover:text-white'
+                                            }`}
+                                        >
+                                            {i + 1}
+                                        </span>
+                                    </div>
 
-                                {/* Add / Shortlist Action Button (`rw__add`) */}
-                                <button
-                                    type="button"
-                                    data-add-btn="true"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleAddPiece(pieceKey);
-                                    }}
-                                    aria-label={`Select ${pieceItem.name}`}
-                                    className={`grid h-10 w-10 place-items-center rounded-full border transition-all duration-300 ${
-                                        isAdded
-                                            ? 'border-[#0e0e0e] bg-[#0e0e0e] text-white'
-                                            : 'border-[#151413]/20 text-[#151413] hover:rotate-90 hover:border-[#151413]'
-                                    }`}
-                                >
-                                    {isAdded ? <Check size={16} /> : <Plus size={16} />}
-                                </button>
+                                    {/* Card Center: Floating Garment Item Image */}
+                                    <div className="my-1 flex min-h-0 flex-1 items-center justify-center py-1">
+                                        <img
+                                            src={pieceItem.image}
+                                            alt={pieceItem.name}
+                                            loading="lazy"
+                                            className="max-h-[90px] sm:max-h-[105px] xl:max-h-[120px] w-auto max-w-[85%] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.06)] transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                    </div>
 
-                                {/* Bottom Active Highlight Line (`rw__item::after`) */}
-                                <span
-                                    aria-hidden="true"
-                                    className={`pointer-events-none absolute inset-x-0 -bottom-px hidden h-px origin-left bg-[#0e0e0e] transition-transform duration-500 lg:block ${
-                                        isSelected || isHot ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                                    }`}
-                                />
-                            </li>
-                        );
-                    })}
-                </ul>
+                                    {/* Card Bottom: Name (Uppercase, No Price) on Left, Plus Icon on Right */}
+                                    <div className="flex items-end justify-between gap-2 pt-0.5">
+                                        <div className="flex min-w-0 flex-col">
+                                            <h4 className="truncate text-[11px] font-semibold tracking-[0.10em] uppercase text-[#151413]">
+                                                {pieceItem.name}
+                                            </h4>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            data-action-btn="true"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleAddPiece(pieceKey);
+                                            }}
+                                            aria-label={`Add ${pieceItem.name} to look`}
+                                            className={`grid h-6 w-6 shrink-0 place-items-center rounded-full transition-all duration-300 ${
+                                                isAdded
+                                                    ? 'bg-[#0e0e0e] text-white'
+                                                    : 'text-[#151413] hover:scale-120'
+                                            }`}
+                                        >
+                                            {isAdded ? <Check size={14} strokeWidth={2} /> : <Plus size={16} strokeWidth={1.5} />}
+                                        </button>
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </Reveal>
             </aside>
         </div>

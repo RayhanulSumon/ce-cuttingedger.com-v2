@@ -27,7 +27,7 @@ interface HomeProps {
 export default function Home({ featuredProjects = [], clients = [] }: HomeProps) {
     const [demoOpen, setDemoOpen] = useState(false);
     const [overlayOpen, setOverlayOpen] = useState(false);
-    const { index, direction, goTo } = useFullpage(SECTIONS.length, !demoOpen);
+    const { index, direction, goTo } = useFullpage(SECTIONS.length, !demoOpen && !overlayOpen);
 
     const openDemo = useCallback(() => setDemoOpen(true), []);
     const closeDemo = useCallback(() => setDemoOpen(false), []);
@@ -48,7 +48,7 @@ export default function Home({ featuredProjects = [], clients = [] }: HomeProps)
     const sections = [
         <HeroSection {...sectionProps(0)} />,
         <DigitalTwinsSection {...sectionProps(1)} onOverlayChange={setOverlayOpen} />,
-        <TryOnSection {...sectionProps(2)} />,
+        <TryOnSection {...sectionProps(2)} onOverlayChange={setOverlayOpen} />,
         <RetouchingSection {...sectionProps(3)} />,
         <ShowcaseSection {...sectionProps(4)} projects={featuredProjects} />,
         <ClientsSection {...sectionProps(5)} clients={clients} />,
