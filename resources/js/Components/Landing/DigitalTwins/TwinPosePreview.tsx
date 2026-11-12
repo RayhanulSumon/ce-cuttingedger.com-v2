@@ -2,29 +2,36 @@ import React from 'react';
 import { TwinSpriteCrop } from './TwinSpriteCrop';
 import { DigitalTwinModel } from './twins';
 
-/** How many of the twin's poses to tease on hover. */
 const PREVIEW_COUNT = 3;
 
 /**
- * Three pose cards stacked on the right edge of the runway, shown while a model is hovered.
- * Preview only — clicking the model opens the full pose view.
+ * Three large pose cards to the right of the hovered model.
+ * Lives inside each model's wrapper div — tracks depth + position automatically.
  */
 export function TwinPosePreview({ twin, visible }: { twin: DigitalTwinModel; visible: boolean }) {
     return (
         <div
             aria-hidden="true"
-            className="pointer-events-none absolute right-14 top-1/2 z-[140] hidden -translate-y-1/2 flex-col gap-3 sm:flex lg:right-16"
+            className="pointer-events-none absolute top-[10%] flex flex-col gap-3"
+            style={{ left: '106%' }}
         >
             {twin.poses.slice(0, PREVIEW_COUNT).map((pose, i) => (
                 <div
                     key={pose.id}
-                    style={{ background: pose.backdrop, transitionDelay: visible ? `${i * 70}ms` : '0ms' }}
-                    className={`relative h-[clamp(120px,19vh,176px)] w-[clamp(92px,14.5vh,132px)] overflow-hidden rounded-2xl border border-white/80 p-2 shadow-[0_18px_40px_-18px_rgba(22,25,31,0.45)] transition-[opacity,translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                        visible ? 'translate-x-0 opacity-100' : 'translate-x-6 opacity-0'
+                    style={{
+                        background: pose.backdrop,
+                        transitionDelay: visible ? `${i * 60}ms` : `${(PREVIEW_COUNT - 1 - i) * 30}ms`,
+                        width: 160,
+                        height: 220,
+                    }}
+                    className={`relative overflow-hidden rounded-2xl border border-white/85 shadow-[0_20px_48px_-14px_rgba(22,25,31,0.50)] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        visible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
                     }`}
                 >
-                    <TwinSpriteCrop twin={twin} pose={pose} />
-                    <span className="font-michroma absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-1.5 py-0.5 text-[7px] tracking-[0.12em] text-[#16191f]">
+                    <span className="absolute inset-2 block">
+                        <TwinSpriteCrop twin={twin} pose={pose} />
+                    </span>
+                    <span className="font-michroma absolute bottom-2 left-2 right-2 rounded-full bg-white/92 py-1.5 text-center text-[8px] tracking-[0.12em] text-[#16191f] shadow-sm">
                         {pose.code}
                     </span>
                 </div>

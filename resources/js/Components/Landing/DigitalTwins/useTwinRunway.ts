@@ -261,7 +261,8 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             const pull = Math.max(150, s.width * 0.2);
             const dx = event.clientX - s.pressX;
             s.travelled = Math.max(s.travelled, Math.abs(dx));
-            s.target = s.pressTarget - dx / pull;
+            // Inverted: drag right → advance forward (natural carousel direction).
+            s.target = s.pressTarget + dx / pull;
             return;
         }
 

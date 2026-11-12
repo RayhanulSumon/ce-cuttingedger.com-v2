@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { EASE_OUT_QUART } from '../shared';
 import { TwinSpriteCrop } from './TwinSpriteCrop';
 import { DigitalTwinModel } from './twins';
@@ -13,88 +13,155 @@ interface TwinPoseStageProps {
 }
 
 const STEP_BUTTON =
-    'grid h-10 w-10 place-items-center rounded-full border border-[#16191f]/20 bg-white/85 text-[#16191f] transition-colors hover:bg-[#16191f] hover:text-white';
+    'grid h-9 w-9 place-items-center rounded-full border border-[#16191f]/20 bg-white/85 text-[#16191f] shadow-xs transition-colors hover:bg-[#16191f] hover:text-white';
 
-/** Strip of every pose for the twin: a column beside the stage on desktop, a row under it on phones. */
-function PoseThumbnails({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStageProps, 'onStepPose'>) {
-    return (
-        <div className="flex gap-2 lg:flex-col" role="tablist" aria-label="Poses">
-            {twin.poses.map((pose, i) => {
-                const selected = i === poseIndex;
-                return (
-                    <button
-                        key={pose.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={selected}
-                        aria-label={`${pose.code}: ${pose.title}`}
-                        onClick={() => onSelectPose(i)}
-                        style={{ background: pose.backdrop }}
-                        className={`relative h-20 min-w-0 flex-1 overflow-hidden rounded-xl border transition-[border-color,box-shadow,opacity] duration-300 lg:h-auto lg:min-h-0 ${
-                            selected
-                                ? 'border-[#16191f] shadow-md ring-2 ring-[#16191f]/15'
-                                : 'border-[#d8e1ec] opacity-70 hover:border-[#16191f]/50 hover:opacity-100'
-                        }`}
-                    >
-                        {/* Absolutely placed so the artwork never dictates the thumbnail's height. */}
-                        <span className="absolute inset-1 block">
-                            <TwinSpriteCrop twin={twin} pose={pose} />
-                        </span>
-                    </button>
-                );
-            })}
-        </div>
-    );
+/** Clean, neat short names for each pose (Front, Side, Close-up, Back, Detail, Stride). */
+export function getShortPoseName(id: string): string {
+    switch (id) {
+        case 'pose-01':
+            return 'Front View';
+        case 'pose-02':
+            return 'Side Angle';
+        case 'pose-03':
+            return 'Close-Up';
+        case 'pose-04':
+            return 'Back Turn';
+        case 'pose-05':
+            return 'Detail';
+        case 'pose-06':
+            return 'Stride';
+        default:
+            return 'Pose';
+    }
 }
 
-/** The selected pose, as large as the modal allows. */
-function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStageProps, 'onSelectPose'>) {
+/** Large inspection view showing the selected pose, fitted properly without cutting off head or feet. */
+export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStageProps, 'onSelectPose'>) {
     const pose = twin.poses[poseIndex] ?? twin.poses[0];
+    const shortName = getShortPoseName(pose.id);
 
     return (
         <div
-            className="relative min-h-[44vh] flex-1 overflow-hidden rounded-3xl border border-[#d8e1ec] lg:min-h-0"
+            className="relative flex h-full min-h-[420px] flex-col justify-between overflow-hidden rounded-2xl border border-[#d8e1ec] p-5 shadow-xs"
             style={{ background: pose.backdrop }}
         >
-            <span
-                aria-hidden="true"
-                className="pointer-events-none absolute bottom-[3%] left-1/2 h-[5%] w-2/5 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.26),transparent)]"
-            />
-            <motion.div
-                key={`${twin.index}-${pose.id}`}
-                initial={{ opacity: 0, scale: 0.97, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE_OUT_QUART }}
-                className="absolute inset-x-4 bottom-[4%] top-[3%]"
-            >
-                <TwinSpriteCrop twin={twin} pose={pose} />
-            </motion.div>
-
-            <div className="absolute left-4 top-4">
-                <span className="font-michroma inline-block rounded-full bg-[#16191f] px-3 py-1 text-[9px] tracking-[0.18em] text-white">
-                    {pose.code}
+            <div className="relative z-10 flex items-start justify-between gap-2">
+                <div>
+                    <span className="font-michroma inline-flex items-center gap-1.5 rounded-full bg-[#16191f] px-3 py-1 text-[9px] tracking-[0.18em] text-white shadow-xs">
+                        {pose.code} · {shortName}
+                    </span>
+                    <p className="mt-2 text-base font-bold text-[#16191f] sm:text-lg">{pose.title}</p>
+                    <p className="text-xs text-[#5d6572]">{pose.angle}</p>
+                </div>
+                <span className="rounded-full border border-[#16191f]/15 bg-white/85 px-3 py-1 text-[11px] font-medium text-[#16191f] shadow-xs">
+                    {pose.lens}
                 </span>
-                <p className="mt-2 text-sm font-bold text-[#16191f]">{pose.title}</p>
             </div>
 
-            <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                <button type="button" onClick={() => onStepPose(-1)} aria-label="Previous pose" className={STEP_BUTTON}>
-                    <ArrowLeft size={16} />
-                </button>
-                <button type="button" onClick={() => onStepPose(1)} aria-label="Next pose" className={STEP_BUTTON}>
-                    <ArrowRight size={16} />
-                </button>
+            {/* Main model showcase — properly framed so head, dress and shoes fit without clipping */}
+            <div className="relative my-2 flex flex-1 items-center justify-center min-h-[300px]">
+                <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute bottom-3 left-1/2 h-6 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.22),transparent)]"
+                />
+                <motion.div
+                    key={`${twin.index}-${pose.id}`}
+                    initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.45, ease: EASE_OUT_QUART }}
+                    className="relative flex h-full max-h-[460px] w-full items-center justify-center p-2"
+                >
+                    <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
+                </motion.div>
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between border-t border-[#16191f]/10 pt-3">
+                <span className="font-michroma text-[10px] tracking-[0.14em] text-[#5d6572]">
+                    POSE {String(poseIndex + 1).padStart(2, '0')} / {String(twin.poses.length).padStart(2, '0')}
+                </span>
+                <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => onStepPose(-1)} aria-label="Previous pose" className={STEP_BUTTON}>
+                        <ArrowLeft size={15} />
+                    </button>
+                    <button type="button" onClick={() => onStepPose(1)} aria-label="Next pose" className={STEP_BUTTON}>
+                        <ArrowRight size={15} />
+                    </button>
+                </div>
             </div>
         </div>
     );
 }
 
-/** Left side of the pose modal: thumbnails next to one large pose. */
+/** Thumbnail grid of every pose preset — seamless cards with neat short names and full image fill. */
+export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStageProps, 'onStepPose'>) {
+    return (
+        <div className="flex h-full min-h-0 flex-col">
+            <div className="mb-2.5 flex items-center justify-between">
+                <span className="font-michroma text-[10px] tracking-[0.18em] text-[#16191f]">
+                    MULTI-POSE PRESET GALLERY ({twin.poses.length} POSES)
+                </span>
+                <span className="text-xs text-[#737b86]">Click any pose photo to inspect</span>
+            </div>
+
+            <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3">
+                {twin.poses.map((pose, i) => {
+                    const selected = i === poseIndex;
+                    const shortName = getShortPoseName(pose.id);
+
+                    return (
+                        <button
+                            key={pose.id}
+                            type="button"
+                            onClick={() => onSelectPose(i)}
+                            aria-pressed={selected}
+                            style={{ background: pose.backdrop }}
+                            className={`group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden rounded-2xl border p-2 text-left transition-all duration-300 ${
+                                selected
+                                    ? 'border-[#16191f] shadow-lg ring-2 ring-[#16191f]/20 scale-[1.01]'
+                                    : 'border-[#d8e1ec] hover:border-[#16191f]/50 hover:shadow-md'
+                            }`}
+                        >
+                            {/* Top badge row */}
+                            <div className="relative z-10 flex w-full items-center justify-between">
+                                <span className="font-michroma rounded-full bg-white/92 px-2.5 py-0.5 text-[8px] font-bold tracking-[0.14em] text-[#16191f] shadow-xs backdrop-blur-xs">
+                                    {pose.code}
+                                </span>
+                                {selected && (
+                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-[#16191f] text-white shadow-xs">
+                                        <Check size={11} strokeWidth={3} />
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Centered Model Sprite — fills card naturally without odd gap */}
+                            <div className="relative flex flex-1 items-center justify-center overflow-hidden p-1 transition-transform duration-300 group-hover:scale-105">
+                                <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute bottom-1 left-1/2 h-3.5 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.2),transparent)]"
+                                />
+                                <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
+                            </div>
+
+                            {/* Integrated bottom caption — clean, neat name: Front, Side, Close-up, Back, Detail, Stride */}
+                            <div className="relative z-10 w-full rounded-xl bg-white/92 px-2.5 py-1.5 text-center shadow-xs backdrop-blur-xs transition-colors duration-300 group-hover:bg-white">
+                                <p className="font-michroma truncate text-[10px] font-bold tracking-[0.06em] text-[#16191f]">
+                                    {shortName}
+                                </p>
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+/** Left side of the preset modal: featured pose next to full pose gallery. */
 export function TwinPoseStage(props: TwinPoseStageProps) {
     return (
-        <div className="flex min-h-0 flex-1 flex-col-reverse gap-3 lg:grid lg:grid-cols-[88px_minmax(0,1fr)] lg:gap-4">
-            <PoseThumbnails twin={props.twin} poseIndex={props.poseIndex} onSelectPose={props.onSelectPose} />
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 lg:grid-cols-[minmax(320px,0.88fr)_minmax(0,1.12fr)]">
             <FeaturedPose twin={props.twin} poseIndex={props.poseIndex} onStepPose={props.onStepPose} />
+            <PoseGallery twin={props.twin} poseIndex={props.poseIndex} onSelectPose={props.onSelectPose} />
         </div>
     );
 }
