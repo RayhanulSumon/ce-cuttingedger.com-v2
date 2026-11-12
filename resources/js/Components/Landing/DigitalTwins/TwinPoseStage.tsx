@@ -100,7 +100,6 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                 <span className="font-michroma text-[10px] tracking-[0.18em] text-[#16191f]">
                     MULTI-POSE PRESET GALLERY ({twin.poses.length} POSES)
                 </span>
-                <span className="text-xs text-[#737b86]">Click any pose photo to inspect</span>
             </div>
 
             <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3">
@@ -133,20 +132,13 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                                 )}
                             </div>
 
-                            {/* Centered Model Sprite — fills card naturally without odd gap */}
-                            <div className="relative flex flex-1 items-center justify-center overflow-hidden p-1 transition-transform duration-300 group-hover:scale-105">
+                            {/* Centered Model Sprite — fills card naturally without extra labels underneath */}
+                            <div className="relative flex flex-1 items-center justify-center overflow-hidden pt-1 transition-transform duration-300 group-hover:scale-105">
                                 <span
                                     aria-hidden="true"
                                     className="pointer-events-none absolute bottom-1 left-1/2 h-3.5 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.2),transparent)]"
                                 />
                                 <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
-                            </div>
-
-                            {/* Integrated bottom caption */}
-                            <div className="relative z-10 w-full rounded-xl bg-white/92 px-2.5 py-1 text-center shadow-xs backdrop-blur-xs transition-colors duration-300 group-hover:bg-white">
-                                <p className="truncate text-[11px] font-semibold text-[#16191f]">
-                                    {pose.title}
-                                </p>
                             </div>
                         </button>
                     );
