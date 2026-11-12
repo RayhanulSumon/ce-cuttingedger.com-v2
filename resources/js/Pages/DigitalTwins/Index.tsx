@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Download, Sparkles } from 'lucide-react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { DemoModal } from '@/Components/Landing/DemoModal';
 import { TwinPresetModal } from '@/Components/Landing/DigitalTwins/TwinPresetModal';
 import { TwinSpriteCrop } from '@/Components/Landing/DigitalTwins/TwinSpriteCrop';
-import { DIGITAL_TWINS } from '@/Components/Landing/DigitalTwins/twins';
+import { DIGITAL_TWINS, formatDownloadCount, formatTwinAge } from '@/Components/Landing/DigitalTwins/twins';
 import { PAD_X } from '@/Components/Landing/shared';
 
 const ALL = 'All';
@@ -104,6 +104,11 @@ export default function DigitalTwinsIndex() {
                                         twin={twin}
                                         className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
                                     />
+                                    {twin.isCopyrightSold && (
+                                        <span className="absolute left-2 top-2 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
+                                            Sold out
+                                        </span>
+                                    )}
                                     <span className="absolute inset-x-2 bottom-2 grid place-items-center rounded-full bg-[#f5761a] py-1.5 text-[10px] font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
                                         View poses
                                     </span>
@@ -114,6 +119,15 @@ export default function DigitalTwinsIndex() {
                                     <p className="pt-1 text-[11px] text-[#5d6572]">
                                         from <span className="font-bold text-[#16191f]">{twin.presetPrice}</span>
                                     </p>
+                                    {!twin.isCopyrightSold && (
+                                        <div className="flex items-center gap-1.5 pt-1.5">
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-[#f5761a]/10 px-2 py-0.5 text-[10px] font-bold text-[#d9620d]">
+                                                <Download size={10} />
+                                                {formatDownloadCount(twin.downloadCount)}
+                                            </span>
+                                            <span className="truncate text-[10px] text-[#5d6572]">{formatTwinAge(twin.listedAt)} old</span>
+                                        </div>
+                                    )}
                                 </div>
                             </button>
                         );

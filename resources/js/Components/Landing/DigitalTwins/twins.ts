@@ -34,6 +34,12 @@ export interface DigitalTwinModel {
     presetPrice: string;
     customOrderPrice: string;
     lifetimePrice: string;
+    /** True once the full copyright has been bought — the model is no longer available for lifetime purchase. */
+    isCopyrightSold: boolean;
+    /** ISO date the twin was first listed (mock data). */
+    listedAt: string;
+    /** Total preset downloads so far (mock data). */
+    downloadCount: number;
     description: string;
     deliverables: string[];
     featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
@@ -124,6 +130,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: false,
+        listedAt: '2026-06-20',
+        downloadCount: 1284,
         description:
             'Photoreal AI digital twin trained for structured outerwear, feather textures, and fluid satin trousers with 6 pre-lit studio pose rigs.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -144,6 +153,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: true,
+        listedAt: '2026-03-09',
+        downloadCount: 3416,
         description:
             'Engineered for micro-pleated dresses, metallic waist accents, and soft evening movement across e-commerce and lookbook campaigns.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -164,6 +176,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: false,
+        listedAt: '2026-09-02',
+        downloadCount: 542,
         description:
             'Calibrated for satin trench silhouettes, structured leather accessories, and crisp architectural shadows in full-frame studio lighting.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -184,6 +199,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: false,
+        listedAt: '2026-01-15',
+        downloadCount: 2871,
         description:
             'Designed for billow-sleeve organza, sheer silk blouses, and tie-waist resort trousers with natural skin-to-fabric subsurface scattering.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -204,6 +222,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: true,
+        listedAt: '2025-11-28',
+        downloadCount: 4903,
         description:
             'Built for longline powder coats, ivory straight-leg tailoring, and clean Scandinavian studio aesthetics with zero reshoot overhead.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -224,6 +245,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         presetPrice: '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
+        isCopyrightSold: false,
+        listedAt: '2026-10-05',
+        downloadCount: 187,
         description:
             'Optimized for voluminous ruffle tops, pleated maxi skirts, and wide-stance hero campaign framing across web, print, and lookbooks.',
         deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
@@ -234,3 +258,26 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = [
         poses: DEFAULT_POSES,
     },
 ];
+
+/** Human-readable time since a twin was listed, e.g. "5 months" or "12 days". */
+export function formatTwinAge(listedAt: string, now: Date = new Date()): string {
+    const days = Math.max(1, Math.floor((now.getTime() - new Date(listedAt).getTime()) / 86_400_000));
+
+    if (days < 30) {
+        return `${days} ${days === 1 ? 'day' : 'days'}`;
+    }
+
+    if (days < 365) {
+        const months = Math.floor(days / 30);
+
+        return `${months} ${months === 1 ? 'month' : 'months'}`;
+    }
+
+    const years = Math.floor(days / 365);
+
+    return `${years} ${years === 1 ? 'year' : 'years'}`;
+}
+
+export function formatDownloadCount(count: number): string {
+    return count.toLocaleString('en-US');
+}
