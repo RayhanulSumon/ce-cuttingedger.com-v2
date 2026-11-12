@@ -18,7 +18,15 @@ interface PieceCardsProps {
     onToggleWishlist: (pieceKey: string) => void;
 }
 
-/** Sidebar list of the garments in the current look. Re-enters with a stagger whenever the look changes. */
+/** Delay between one card's garment wiping in and the next. */
+const STAGGER_MS = 110;
+
+/**
+ * Sidebar list of the garments in the current look.
+ *
+ * The white cards stay put; when the runway moves to another look only their contents change —
+ * each garment wipes up into its card, one after the other.
+ */
 export function PieceCards({
     look,
     lookIndex,
@@ -33,28 +41,25 @@ export function PieceCards({
     onToggleWishlist,
 }: PieceCardsProps) {
     return (
-        <ul
-            role="list"
-            className="flex h-full flex-row gap-2.5 overflow-x-auto p-1 lg:flex-col lg:justify-between lg:overflow-hidden lg:p-0"
-        >
+        <ul role="list" className="flex h-44 flex-row gap-3 overflow-x-auto [scrollbar-width:none] lg:h-full lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
             {look.pieces.map((piece, i) => {
                 const pieceKey = `${lookIndex}-${i}`;
                 const isHot = hotPin === i;
                 const isSelected = selectedPiece === i;
                 const isAdded = Boolean(added[pieceKey]);
                 const isWishlisted = Boolean(wishlist[pieceKey]);
+                const delay = { animationDelay: `${i * STAGGER_MS}ms` };
 
                 return (
                     <li
-                        key={pieceKey}
+                        key={i}
                         ref={(el) => {
                             cardRefs.current[i] = el;
                         }}
                         onMouseEnter={() => onHotPinChange(i)}
                         onMouseLeave={() => onHotPinChange(null)}
                         onClick={() => onSelect(i)}
-                        style={{ animationDelay: `${i * 70}ms` }}
-                        className={`animate-card-in group relative flex min-h-0 min-w-[200px] flex-1 cursor-pointer select-none flex-col justify-between rounded-xl bg-white p-3 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] transition-[box-shadow,translate] duration-300 sm:p-3.5 lg:min-w-0 ${
+                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl bg-white p-3 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
                             isSelected
                                 ? 'shadow-md ring-2 ring-[#151413]'
                                 : isHot
@@ -62,7 +67,7 @@ export function PieceCards({
                                   : 'hover:-translate-y-0.5 hover:shadow-md'
                         }`}
                     >
-                        <div className="flex items-center justify-between">
+                        <div className="relative z-10 flex items-center justify-between">
                             <button
                                 type="button"
                                 onClick={(event) => {
@@ -75,11 +80,10 @@ export function PieceCards({
                             >
                                 <Heart size={15} strokeWidth={1.5} className={isWishlisted ? 'fill-[#151413]' : ''} />
                             </button>
-
                             <span
-                                className={`grid h-[19px] w-[19px] place-items-center rounded-full text-[9px] font-bold transition-colors duration-300 ${
+                                className={`grid h-5 w-5 place-items-center rounded-full text-[10px] font-bold transition-colors duration-300 ${
                                     isSelected || isHot
-                                        ? 'bg-[#0e0e0e] text-white shadow-sm'
+                                        ? 'bg-[#0e0e0e] text-white'
                                         : 'bg-[#151413]/10 text-[#151413] group-hover:bg-[#0e0e0e] group-hover:text-white'
                                 }`}
                             >
@@ -87,19 +91,24 @@ export function PieceCards({
                             </span>
                         </div>
 
-                        <div className="my-1 flex min-h-0 flex-1 items-center justify-center py-1">
+                        <div className="relative my-1 min-h-0 flex-1">
                             <img
+                                key={pieceKey}
                                 src={piece.image}
                                 alt={piece.name}
-                                loading="lazy"
                                 decoding="async"
                                 draggable={false}
-                                className="max-h-[90px] w-auto max-w-[85%] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.06)] transition-transform duration-500 group-hover:scale-105 sm:max-h-[105px] xl:max-h-[120px]"
+                                style={delay}
+                                className="animate-wipe-up absolute inset-0 h-full w-full object-contain transition-[scale] duration-500 group-hover:scale-105"
                             />
                         </div>
 
-                        <div className="flex items-end justify-between gap-2 pt-0.5">
-                            <h4 className="min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.10em] text-[#151413]">
+                        <div className="relative z-10 flex items-end justify-between gap-2">
+                            <h4
+                                key={pieceKey}
+                                style={delay}
+                                className="animate-card-in min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.10em] text-[#151413]"
+                            >
                                 {piece.name}
                             </h4>
                             <button

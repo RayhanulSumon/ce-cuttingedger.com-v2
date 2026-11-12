@@ -1,19 +1,21 @@
-import React, { memo, useCallback, useState } from 'react';
-import { ArrowLeft, ArrowRight, Eye } from 'lucide-react';
-import { Eyebrow, Reveal, SectionProps } from '../shared';
+import React, { memo, useCallback, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { OrderCta, orderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
+import { TwinPosePreview } from './TwinPosePreview';
 import { TwinPresetModal } from './TwinPresetModal';
 import { TwinSpriteCrop } from './TwinSpriteCrop';
-import { DIGITAL_TWINS, TWIN_FIRST_LOOK } from './twins';
+import { DIGITAL_TWINS } from './twins';
 import { useTwinRunway } from './useTwinRunway';
-
-const TWIN_COUNT = DIGITAL_TWINS.length;
 
 const STAGE_BACKGROUND =
     'linear-gradient(transparent 60%, rgba(255,255,255,0.72) 100%), linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
 
 const ROUND_BUTTON =
     'grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/25 bg-white/85 text-[#16191f] transition-colors duration-300 hover:bg-[#16191f] hover:text-white';
+
+/** "Celeste M. — Pleated Couture Twin" → ["Celeste M.", "Pleated Couture Twin"]. */
+const splitTwinName = (name: string) => name.split(' — ');
 
 /** Section 01 — a runway of AI digital twins; clicking one opens its pose-preset modal. */
 export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, openDemo, onOverlayChange }: SectionProps) {
@@ -34,6 +36,13 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
 
     const runway = useTwinRunway({ running: active && modalTwinIndex === null, onOpenTwin: openModal });
     const activeTwin = DIGITAL_TWINS[runway.activeTwinIndex] ?? DIGITAL_TWINS[0];
+    const [activeName, activeStyle] = splitTwinName(activeTwin.name);
+
+    // Keep showing the last hovered twin's poses while the preview fades out.
+    const previewIndex = useRef(0);
+    if (runway.hoveredTwinIndex !== null) {
+        previewIndex.current = runway.hoveredTwinIndex;
+    }
 
     const selectTwinInModal = (index: number) => {
         runway.focusTwin(index);
@@ -44,7 +53,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
         <div className="relative h-full w-full select-none overflow-hidden bg-white">
             <section
                 ref={runway.stageRef}
-                aria-label="Digital Twins runway lookbook. Hover a model and click View to inspect pose presets, or drag to step through looks."
+                aria-label="Digital Twins runway. Hover a model to preview its poses, click to see every pose and buy, or drag to step through the models."
                 {...runway.stageHandlers}
                 className="relative h-full w-full touch-pan-y select-none overflow-hidden lg:cursor-none"
                 style={{ background: STAGE_BACKGROUND }}
@@ -59,103 +68,52 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                             data-twin-model={i}
                             role="button"
                             tabIndex={0}
-                            aria-label={`View ${twin.name} pose presets`}
+                            aria-label={`View ${twin.name} poses`}
                             onKeyDown={(event) => {
                                 if (event.key === 'Enter' || event.key === ' ') {
                                     event.preventDefault();
                                     openModal(i);
                                 }
                             }}
-                            className="group absolute left-0 top-0 origin-top-left will-change-transform lg:cursor-none"
+                            className="absolute left-0 top-0 origin-top-left will-change-transform lg:cursor-none"
                         >
                             <span
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -bottom-[1.6%] left-[8%] right-[8%] h-[3.6%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(70,85,105,0.24),transparent)]"
                             />
                             <TwinSpriteCrop twin={twin} className="relative block h-full w-full" />
-                            <span
-                                aria-hidden="true"
-                                className="font-michroma pointer-events-none absolute -bottom-5 left-1/2 w-max max-w-[140px] -translate-x-1/2 truncate text-center text-[8px] tracking-[0.14em] text-[#16191f]/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                            >
-                                {twin.name.split(' — ')[0]}
-                            </span>
                         </div>
                     ))}
                 </div>
 
-                {/* Intro */}
-                <div className="pointer-events-none absolute left-5 top-20 z-20 max-w-[420px] sm:left-10 sm:top-24 lg:left-14 lg:top-28">
-                    <Reveal active={active}>
-                        <Eyebrow>01 / Digital Twins · AI Generated Imagery</Eyebrow>
-                    </Reveal>
-                    <Reveal active={active} delay={0.08}>
-                        <h2 className="font-michroma mt-2.5 text-[clamp(18px,2vw,26px)] font-normal leading-[1.2] tracking-[0.16em] text-[#16191f]">
-                            Spring Summer 2027
-                        </h2>
-                    </Reveal>
-                    <Reveal active={active} delay={0.16}>
-                        <p className="mt-3 hidden text-xs leading-[1.62] tracking-[0.012em] text-[#737b86] sm:block sm:text-sm">
-                            A study in softness and strength. Shoot a garment once — our photoreal AI digital twins wear it
-                            across every studio pose, lighting preset, and lookbook angle. Hover any model and click{' '}
-                            <strong className="font-semibold text-[#16191f]">View</strong> to explore pose presets.
-                        </p>
-                    </Reveal>
-                </div>
+                <SectionIntro
+                    active={active}
+                    title="Digital Twins"
+                    className="pointer-events-none absolute left-5 top-20 z-20 sm:left-10 sm:top-24 lg:left-16 lg:top-28"
+                >
+                    Shoot a garment once. Our photoreal AI models wear it in every pose, light and angle.
+                </SectionIntro>
 
-                {/* Rolling look counter + actions */}
-                <div className="absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-14">
-                    <Reveal active={active} delay={0.24}>
-                        <div className="font-michroma pointer-events-none flex items-center gap-3 text-[clamp(22px,2.4vw,34px)] leading-[38px] tracking-[0.14em] text-[#16191f]">
-                            <span>Look</span>
-                            <span className="h-[38px] overflow-hidden" aria-hidden="true">
-                                <span ref={runway.counterRef} className="block will-change-transform">
-                                    {Array.from({ length: TWIN_COUNT + 1 }, (_, i) => (
-                                        <b key={i} className="block h-[38px] font-normal">
-                                            {TWIN_FIRST_LOOK + (i % TWIN_COUNT)}
-                                        </b>
-                                    ))}
-                                </span>
-                            </span>
-                            <span className="sr-only" aria-live="polite">
-                                {activeTwin.lookNumber}
-                            </span>
-                        </div>
+                <TwinPosePreview twin={DIGITAL_TWINS[previewIndex.current]} visible={runway.hoveredTwinIndex !== null} />
 
-                        <p className="mt-0.5 text-xs font-medium text-[#737b86]">{activeTwin.name}</p>
-
-                        <div className="mt-3 flex flex-wrap items-center gap-4">
-                            <button
-                                type="button"
-                                onClick={() => openModal(runway.activeTwinIndex)}
-                                className="font-michroma inline-flex items-center gap-2 border-b border-[#16191f] pb-1 text-[10px] tracking-[0.14em] text-[#16191f] transition-opacity hover:opacity-70"
-                            >
-                                <Eye size={13} />
-                                View Pose Presets ({activeTwin.poses.length} Poses)
-                            </button>
-                            <button
-                                type="button"
-                                onClick={openDemo}
-                                className="font-michroma inline-block border-b border-[#737b86] pb-1 text-[10px] tracking-[0.14em] text-[#737b86] transition-colors hover:border-[#16191f] hover:text-[#16191f]"
-                            >
-                                Create My Twin
-                            </button>
+                {/* Bottom bar: front model's name · custom order · runway arrows */}
+                <div className="absolute inset-x-5 bottom-6 z-20 grid grid-cols-[1fr_auto] items-end gap-x-4 gap-y-4 sm:inset-x-10 sm:bottom-10 sm:grid-cols-[1fr_auto_1fr] lg:inset-x-16">
+                    <Reveal active={active} delay={0.2} className="pointer-events-none col-span-2 sm:col-span-1">
+                        <div key={activeTwin.index} className="animate-card-in" aria-live="polite">
+                            <p className="font-michroma text-[clamp(24px,3.4vw,50px)] leading-[1.05] tracking-[0.08em] text-[#16191f]">
+                                {activeName}
+                            </p>
+                            <p className="mt-1.5 text-sm font-medium text-[#5d6572]">{activeStyle}</p>
                         </div>
                     </Reveal>
-                </div>
 
-                {/* Runway navigation */}
-                <div className="absolute bottom-6 right-5 z-20 sm:bottom-10 sm:right-10 lg:right-14">
-                    <Reveal active={active} delay={0.32} className="flex items-center gap-2.5">
+                    <Reveal active={active} delay={0.28} className="justify-self-start sm:justify-self-center">
+                        <OrderCta href={orderUrl('digital-twins', activeTwin.name)}>Want another model? Order now</OrderCta>
+                    </Reveal>
+
+                    <Reveal active={active} delay={0.34} className="flex items-center gap-2.5 justify-self-end">
                         <button type="button" onClick={() => runway.stepLook(-1)} aria-label="Previous digital twin" className={ROUND_BUTTON}>
                             <ArrowLeft size={18} />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => openModal(runway.activeTwinIndex)}
-                            className="font-michroma hidden h-11 items-center gap-2 rounded-full bg-[#16191f] px-5 text-[10px] tracking-[0.16em] text-white shadow-sm transition-colors duration-300 hover:bg-black sm:inline-flex"
-                        >
-                            <Eye size={14} />
-                            View Poses
                         </button>
                         <button type="button" onClick={() => runway.stepLook(1)} aria-label="Next digital twin" className={ROUND_BUTTON}>
                             <ArrowRight size={18} />

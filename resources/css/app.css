@@ -370,6 +370,32 @@ select option {
     animation: lp-card-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Garment wiping up into its card, used when the runway changes look. */
+@keyframes lp-wipe-up {
+    from { clip-path: inset(100% 0 0 0); transform: translate3d(0, 10%, 0) scale(1.08); }
+    to { clip-path: inset(0 0 0 0); transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.animate-wipe-up {
+    animation: lp-wipe-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Hero background slideshow: slow drift on whichever slide is showing. */
+@keyframes hero-drift {
+    from { transform: scale(1.04); }
+    to { transform: scale(1.14); }
+}
+
+.hero-slide {
+    opacity: 0;
+    transition: opacity 1.6s ease;
+}
+
+.hero-slide[data-current='true'] {
+    opacity: 1;
+    animation: hero-drift 9s ease-out both;
+}
+
 /* ── Landing: fullpage stage ─────────────────────────────────────────────
  * Section changes run as CSS keyframes on transform/opacity only, so they
  * stay on the compositor thread and never wait on React or layout.
@@ -561,7 +587,9 @@ select option {
     .animate-rw-fill,
     .animate-rw-breathe,
     .animate-dress-reveal,
-    .animate-card-in {
+    .animate-card-in,
+    .animate-wipe-up,
+    .hero-slide[data-current='true'] {
         animation: none;
     }
 

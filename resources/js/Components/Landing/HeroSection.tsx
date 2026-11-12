@@ -43,6 +43,42 @@ function BannerVideo({ playing }: { playing: boolean }) {
     );
 }
 
+const SLIDES = [
+    '/images/portfolio/portfolio-1.jpg',
+    '/images/portfolio/portfolio-2.jpg',
+    '/images/portfolio/portfolio-3.jpg',
+    '/images/portfolio/portfolio-4.jpg',
+];
+const SLIDE_INTERVAL_MS = 5000;
+
+/** Cross-fading image slideshow behind the hero, held at medium opacity so the title stays readable. */
+function BackgroundSlider({ playing }: { playing: boolean }) {
+    const [current, setCurrent] = useState(0);
+
+    useEffect(() => {
+        if (!playing) {
+            return;
+        }
+        const timer = window.setInterval(() => setCurrent((index) => (index + 1) % SLIDES.length), SLIDE_INTERVAL_MS);
+        return () => window.clearInterval(timer);
+    }, [playing]);
+
+    return (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-40">
+            {SLIDES.map((src, i) => (
+                <img
+                    key={src}
+                    src={src}
+                    alt=""
+                    data-current={i === current}
+                    decoding="async"
+                    className="hero-slide absolute inset-0 h-full w-full object-cover"
+                />
+            ))}
+        </div>
+    );
+}
+
 function BackgroundLines() {
     return (
         <svg
@@ -118,6 +154,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
 
     return (
         <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#f2f2f1] pb-10 pt-20 ${PAD_X}`}>
+            <BackgroundSlider playing={active} />
             <BackgroundLines />
 
             <h1 className="hero-title relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
@@ -174,7 +211,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
             </h1>
 
             <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
-                <p className="text-sm leading-relaxed text-[#3a3a3a] sm:text-base">
+                <p className="text-sm font-medium leading-relaxed text-[#1d1d1d] sm:text-base">
                     Transform your apparel and product photography with next-generation AI-integrated image editing and
                     expert post-production. Save time, reduce production costs, and scale your visual content without
                     compromising quality.

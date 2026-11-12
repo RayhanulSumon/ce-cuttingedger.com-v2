@@ -66,6 +66,28 @@ class PageControllerTest extends TestCase
         $this->assertStringContainsString('User-agent: *', $response->getContent());
     }
 
+    public function test_renders_order_page_prefilled_from_query_string(): void
+    {
+        $response = $this->get('/order?service=digital-twins&ref=Look%2016');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Order')
+            ->where('service', 'digital-twins')
+            ->where('reference', 'Look 16')
+        );
+    }
+
+    public function test_order_page_truncates_oversized_query_values(): void
+    {
+        $response = $this->get('/order?ref='.str_repeat('a', 500));
+
+        $response->assertInertia(fn (Assert $page) => $page
+            ->where('service', '')
+            ->where('reference', str_repeat('a', 120))
+        );
+    }
+
     public function test_renders_reviews_page(): void
     {
         $response = $this->get('/reviews');

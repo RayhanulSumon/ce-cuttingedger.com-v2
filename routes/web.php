@@ -160,6 +160,7 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
+Route::get('/order', [PageController::class, 'order'])->name('order');
 
 // Agency Team & Careers
 Route::get('/team', [TeamController::class, 'index'])->name('team.index');

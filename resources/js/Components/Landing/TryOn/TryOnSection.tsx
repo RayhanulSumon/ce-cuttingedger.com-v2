@@ -1,14 +1,17 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { Eyebrow, Reveal, SectionProps } from '../shared';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { OrderCta, orderUrl, PAD_X, Reveal, SectionIntro, SectionProps } from '../shared';
 import { LOOKS } from './looks';
 import { LookView } from './LookView';
 import { PieceCards } from './PieceCards';
-import { RunwayControls } from './RunwayControls';
 import { RunwayStage } from './RunwayStage';
 import { useRingRunway } from './useRingRunway';
 
-/** How long each look stays at the front while autoplay is on. Matches `.animate-rw-fill`. */
+/** How long each look stays at the front before the ring turns by itself. */
 const AUTOPLAY_MS = 5000;
+
+const ROUND_BUTTON =
+    'grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#151413]/25 bg-white/85 text-[#151413] transition-colors duration-300 hover:bg-[#151413] hover:text-white';
 
 const toggleKey = (key: string) => (previous: Record<string, boolean>) => ({ ...previous, [key]: !previous[key] });
 
@@ -21,7 +24,6 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
     const [lookOpen, setLookOpen] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
     const [hotPin, setHotPin] = useState<number | null>(null);
-    const [playing, setPlaying] = useState(true);
     const [added, setAdded] = useState<Record<string, boolean>>({});
     const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
     const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -32,7 +34,6 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
     }, []);
 
     const openLook = useCallback(() => {
-        setPlaying(false);
         setSelectedPiece(null);
         setLookOpen(true);
     }, []);
@@ -58,7 +59,19 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
     useEffect(() => () => onOverlayChange?.(false), [onOverlayChange]);
 
-    const autoplaying = active && playing && !lookOpen;
+    const autoplaying = active && !lookOpen;
+
+    // Warm the cache for every garment once the section is first shown, so cards never wipe in empty.
+    const preloaded = useRef(false);
+    useEffect(() => {
+        if (!active || preloaded.current) {
+            return;
+        }
+        preloaded.current = true;
+        new Set(LOOKS.flatMap((item) => item.pieces.map((piece) => piece.image))).forEach((src) => {
+            new Image().src = src;
+        });
+    }, [active]);
 
     useEffect(() => {
         if (!autoplaying) {
@@ -96,7 +109,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
         return () => window.removeEventListener('keydown', onKey, true);
     }, [lookOpen, dismiss]);
 
-    /** Shared by the pins on the model and the sidebar cards: toggles a garment's large view. */
+    /** Shared by the markers on the model and the sidebar cards: toggles a garment's large view. */
     const selectPiece = (pieceIndex: number) => {
         if (!lookOpen) {
             openLook();
@@ -114,23 +127,13 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
     const fadeWhenOpen = `transition-opacity duration-300 ${lookOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`;
 
     return (
-        <div className="relative grid h-full w-full grid-cols-1 gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] p-3 pt-16 text-[#151413] sm:p-5 sm:pt-20 lg:grid-cols-[minmax(0,1fr)_270px] lg:gap-4 lg:p-6 lg:pt-20 xl:grid-cols-[minmax(0,1fr)_290px]">
-            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-                <div className={`relative z-10 px-5 pt-3 sm:px-10 sm:pt-5 lg:px-14 ${fadeWhenOpen}`}>
-                    <Reveal active={active}>
-                        <Eyebrow>02 / Virtual Try-On</Eyebrow>
-                    </Reveal>
-                    <Reveal active={active} delay={0.08}>
-                        <h2 className="mt-1.5 text-[clamp(28px,3.8vw,46px)] font-normal leading-[1.06] tracking-[-0.02em] text-[#151413]">
-                            Try the Look.
-                        </h2>
-                    </Reveal>
-                    <Reveal active={active} delay={0.16}>
-                        <p className="mt-1.5 max-w-[38ch] text-xs leading-[1.55] text-[#66625c]">
-                            Six looks, styled head to toe. Tap the front model to view pins, or drag to spin the runway.
-                        </p>
-                    </Reveal>
-                </div>
+        <div
+            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-4 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 pt-20 text-[#151413] sm:pb-8 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${PAD_X}`}
+        >
+            <div className="relative flex min-h-0 flex-col">
+                <SectionIntro active={active} title="Virtual Try-On" className={`relative z-10 ${fadeWhenOpen}`}>
+                    Six looks, styled head to toe. Click the front model to shop each piece, or drag to spin the runway.
+                </SectionIntro>
 
                 <RunwayStage
                     stageRef={runway.stageRef}
@@ -141,16 +144,15 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                     handlers={runway.stageHandlers}
                 />
 
-                <div className={`relative z-10 px-4 pb-5 pt-1.5 sm:px-11 sm:pb-7 ${fadeWhenOpen}`}>
-                    <Reveal active={active} delay={0.24} className="flex w-full items-center gap-3 sm:gap-5">
-                        <RunwayControls
-                            lookIndex={lookIndex}
-                            playing={playing}
-                            progressRunning={autoplaying}
-                            onStep={runway.stepLook}
-                            onSelectLook={runway.goToLook}
-                            onTogglePlay={() => setPlaying((current) => !current)}
-                        />
+                <div className={`relative z-10 pt-3 ${fadeWhenOpen}`}>
+                    <Reveal active={active} delay={0.24} className="flex items-center justify-between gap-3">
+                        <button type="button" onClick={() => runway.stepLook(-1)} aria-label="Previous look" className={ROUND_BUTTON}>
+                            <ArrowLeft size={18} />
+                        </button>
+                        <OrderCta href={orderUrl('virtual-try-on', look.name)}>Order this look</OrderCta>
+                        <button type="button" onClick={() => runway.stepLook(1)} aria-label="Next look" className={ROUND_BUTTON}>
+                            <ArrowRight size={18} />
+                        </button>
                     </Reveal>
                 </div>
 
@@ -168,8 +170,8 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                 />
             </div>
 
-            <aside aria-label="In this look" className="relative flex h-full flex-col">
-                <Reveal active={active} delay={0.2} x="36px" y="0px" className="flex h-full flex-col justify-between overflow-hidden">
+            <aside aria-label="In this look" className="relative min-h-0">
+                <Reveal active={active} delay={0.2} x="36px" y="0px" className="h-full">
                     <PieceCards
                         look={look}
                         lookIndex={lookIndex}

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DIGITAL_TWINS, TWIN_Y0, TWIN_Y1 } from './twins';
 
-export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'view';
+export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'buy';
 
 interface TwinRunwayOptions {
     /** Run the animation loop (section is on screen and no overlay covers the runway). */
@@ -10,7 +10,7 @@ interface TwinRunwayOptions {
     onOpenTwin: (index: number) => void;
 }
 
-/** Auto-advance interval in ms (paused while dragging or hovering a model). */
+/** Auto-advance interval in ms. Paused while dragging, and while the pointer rests on a model (not elsewhere on the stage). */
 const AUTO_ADVANCE_MS = 2800;
 /** Pointer travel (px) below which a press counts as a click rather than a drag. */
 const CLICK_SLOP_PX = 6;
@@ -42,19 +42,18 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
     const stageRef = useRef<HTMLElement | null>(null);
     const modelRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const counterRef = useRef<HTMLSpanElement | null>(null);
     const cursorRef = useRef<HTMLDivElement | null>(null);
     const onOpenTwinRef = useRef(onOpenTwin);
     onOpenTwinRef.current = onOpenTwin;
 
     const [activeTwinIndex, setActiveTwinIndex] = useState(0);
     const [cursorMode, setCursorMode] = useState<TwinCursorMode>('hidden');
+    const [hoveredTwinIndex, setHoveredTwinIndex] = useState<number | null>(null);
 
     const sim = useRef({
         width: 0,
         height: 0,
         baseHeight: 0,
-        counterRowHeight: 38,
         position: 0,
         target: 0,
         lastTime: 0,
@@ -111,11 +110,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             el.style.zIndex = String(100 - Math.round(depth * 10));
         });
 
-        if (counterRef.current) {
-            const offset = -wrap(s.position, TWIN_COUNT) * s.counterRowHeight;
-            counterRef.current.style.transform = `translate3d(0,${offset.toFixed(1)}px,0)`;
-        }
-
         const front = wrap(Math.round(s.position), TWIN_COUNT);
         setActiveTwinIndex((previous) => (previous === front ? previous : front));
     }, []);
@@ -129,7 +123,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.width = stage.clientWidth;
         s.height = stage.clientHeight;
         s.baseHeight = s.height * 1.2;
-        s.counterRowHeight = (counterRef.current?.firstElementChild as HTMLElement | null)?.offsetHeight || 38;
 
         // Layout size is fixed per measure; depth is expressed purely through transform scale.
         TWIN_ASPECTS.forEach((aspect, i) => {
@@ -225,6 +218,12 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.dirty = true;
     }, []);
 
+    /** Records which model the pointer is on: pauses auto-advance and drives the pose preview. */
+    const setHoveredModel = (index: number) => {
+        sim.current.hoveredModel = index;
+        setHoveredTwinIndex(index >= 0 ? index : null);
+    };
+
     const modelIndexAt = (target: EventTarget | null): number => {
         const el = (target as HTMLElement | null)?.closest<HTMLElement>('[data-twin-model]');
         return el ? Number(el.dataset.twinModel) : -1;
@@ -245,7 +244,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
     };
 
     const onPointerLeave = () => {
-        sim.current.hoveredModel = -1;
+        setHoveredModel(-1);
         setCursorMode('hidden');
     };
 
@@ -267,8 +266,8 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         }
 
         if (event.pointerType === 'mouse') {
-            s.hoveredModel = modelIndexAt(event.target);
-            setCursorMode(s.hoveredModel >= 0 ? 'view' : 'ring');
+            setHoveredModel(modelIndexAt(event.target));
+            setCursorMode(s.hoveredModel >= 0 ? 'buy' : 'ring');
         }
     };
 
@@ -306,18 +305,18 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             onOpenTwinRef.current(hitIndex);
         }
         if (event.pointerType === 'mouse') {
-            s.hoveredModel = hitIndex;
-            setCursorMode(hitIndex >= 0 ? 'view' : 'ring');
+            setHoveredModel(hitIndex);
+            setCursorMode(hitIndex >= 0 ? 'buy' : 'ring');
         }
     };
 
     return {
         stageRef,
         modelRefs,
-        counterRef,
         cursorRef,
         activeTwinIndex,
         cursorMode,
+        hoveredTwinIndex,
         stepLook,
         focusTwin,
         stageHandlers: {

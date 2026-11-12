@@ -8,7 +8,9 @@ use App\Models\PricingPlan;
 use App\Models\Setting;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -62,6 +64,17 @@ class PageController extends Controller
     public function thankYou(): Response
     {
         return Inertia::render('ThankYou');
+    }
+
+    /**
+     * Display the custom order request page, optionally pre-filled from a landing page call to action.
+     */
+    public function order(Request $request): Response
+    {
+        return Inertia::render('Order', [
+            'service' => Str::limit((string) $request->query('service', ''), 80, ''),
+            'reference' => Str::limit((string) $request->query('ref', ''), 120, ''),
+        ]);
     }
 
     /**

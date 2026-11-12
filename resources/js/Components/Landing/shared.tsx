@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
+import { ArrowUpRight } from 'lucide-react';
 
 export interface SectionProps {
     active: boolean;
@@ -93,6 +95,56 @@ export function Reveal({
         >
             {children}
         </Tag>
+    );
+}
+
+/** Section title with a short description underneath. Shared by the Digital Twins and Try-On sections. */
+export function SectionIntro({
+    active,
+    title,
+    children,
+    className = '',
+}: {
+    active: boolean;
+    title: string;
+    children: React.ReactNode;
+    className?: string;
+}) {
+    return (
+        <div className={className}>
+            <Reveal active={active}>
+                <h2 className="font-michroma text-[clamp(22px,2.6vw,36px)] font-normal leading-[1.15] tracking-[0.14em] text-[#16191f]">
+                    {title}
+                </h2>
+            </Reveal>
+            <Reveal active={active} delay={0.1}>
+                <p className="mt-3 max-w-[36ch] text-sm leading-[1.6] text-[#5d6572]">{children}</p>
+            </Reveal>
+        </div>
+    );
+}
+
+/** Builds the custom order page URL, pre-filled with what the visitor was looking at. */
+export function orderUrl(service: string, reference?: string): string {
+    const query = new URLSearchParams({ service });
+    if (reference) {
+        query.set('ref', reference);
+    }
+    return `/order?${query.toString()}`;
+}
+
+/** Orange call to action that opens the custom order form on its own page. */
+export function OrderCta({ href, children }: { href: string; children: React.ReactNode }) {
+    return (
+        <Link
+            href={href}
+            className="group inline-flex items-center gap-2.5 rounded-full bg-[#f5761a] py-2.5 pl-6 pr-2.5 text-sm font-bold text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-[#e0650c]"
+        >
+            {children}
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#f5761a] transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight size={16} />
+            </span>
+        </Link>
     );
 }
 

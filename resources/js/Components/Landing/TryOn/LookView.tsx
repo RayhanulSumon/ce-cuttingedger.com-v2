@@ -1,9 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Look } from './looks';
+import { MagnifierLens, useMagnifier } from './Magnifier';
 import { PieceShowcase } from './PieceShowcase';
-import { useZoomPan } from './useZoomPan';
-import { ZoomControls } from './ZoomControls';
 
 interface LookViewProps {
     open: boolean;
@@ -20,9 +19,6 @@ interface LookViewProps {
     /** Screen rect of the runway's front model — where the big model flies from and back to. */
     getOriginRect: () => DOMRect | null;
 }
-
-const MODEL_MAX_ZOOM = 2.2;
-const modelPanLimit = (zoom: number) => ({ x: 120 * (zoom - 1), y: 220 * (zoom - 1) });
 
 const OPEN_FLIGHT = { duration: 720, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' };
 const CLOSE_FLIGHT = { duration: 560, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' };
@@ -76,7 +72,10 @@ function useModelFlight(
     }, [open]);
 }
 
-/** Numbered hotspots over the model, one per garment in the look. */
+/**
+ * Numbered garment markers. Each number sits in the clear space left of the model and a thin
+ * leader line points to the garment, so nothing covers the outfit itself.
+ */
 function LookPins({
     look,
     visible,
@@ -87,58 +86,69 @@ function LookPins({
 }: Pick<LookViewProps, 'look' | 'selectedPiece' | 'hotPin' | 'onHotPinChange' | 'onPinClick'> & { visible: boolean }) {
     return (
         <div
-            className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-                visible ? 'opacity-100 delay-[420ms]' : 'pointer-events-none opacity-0'
+            className={`pointer-events-none absolute inset-0 z-10 transition-opacity duration-300 ${
+                visible ? 'opacity-100 delay-[420ms]' : 'opacity-0'
             }`}
         >
             {look.pins.map((pin, pinIndex) => {
                 const piece = look.pieces[pinIndex];
-                const isHot = hotPin === pinIndex;
                 const isSelected = selectedPiece === pinIndex;
+                const isLit = isSelected || hotPin === pinIndex;
 
                 return (
-                    <button
+                    <div
                         key={pinIndex}
-                        type="button"
-                        style={{ left: `${pin.left}%`, top: `${pin.top}%` }}
-                        aria-label={`${pinIndex + 1}: ${piece?.name ?? ''}`}
-                        aria-pressed={isSelected}
-                        onMouseEnter={() => onHotPinChange(pinIndex)}
-                        onMouseLeave={() => onHotPinChange(null)}
-                        onFocus={() => onHotPinChange(pinIndex)}
-                        onBlur={() => onHotPinChange(null)}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            onPinClick(pinIndex);
-                        }}
-                        className="group absolute -ml-[22px] -mt-[22px] grid h-[44px] w-[44px] cursor-pointer place-items-center"
+                        style={{ top: `${pin.top}%`, width: `${pin.left}%` }}
+                        className="absolute left-0 flex -translate-y-1/2 items-center"
                     >
-                        <span
-                            className={`relative grid h-7 w-7 place-items-center rounded-full text-[11px] font-semibold leading-none shadow-[0_4px_14px_-4px_rgba(0,0,0,0.35)] transition-[scale,background-color,color,box-shadow] duration-300 ${
-                                isSelected
-                                    ? 'scale-125 bg-[#0e0e0e] text-white shadow-[0_0_0_6px_rgba(14,14,14,0.22),0_8px_20px_-6px_rgba(0,0,0,0.45)] ring-2 ring-white'
-                                    : isHot
-                                      ? 'scale-120 bg-[#0e0e0e] text-white shadow-[0_0_0_5px_rgba(14,14,14,0.18)]'
-                                      : 'bg-white/95 text-[#151413] group-hover:scale-120 group-hover:bg-[#0e0e0e] group-hover:text-white'
-                            }`}
+                        <button
+                            type="button"
+                            aria-label={`${pinIndex + 1}: ${piece?.name ?? ''}`}
+                            aria-pressed={isSelected}
+                            onMouseEnter={() => onHotPinChange(pinIndex)}
+                            onMouseLeave={() => onHotPinChange(null)}
+                            onFocus={() => onHotPinChange(pinIndex)}
+                            onBlur={() => onHotPinChange(null)}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                onPinClick(pinIndex);
+                            }}
+                            className={`relative grid h-11 w-11 shrink-0 cursor-pointer place-items-center ${visible ? 'pointer-events-auto' : ''}`}
                         >
-                            <span aria-hidden="true" className="animate-rw-ring pointer-events-none absolute -inset-[5px] rounded-full border border-white/80" />
-                            <span aria-hidden="true" className="animate-rw-ring-delayed pointer-events-none absolute -inset-[5px] rounded-full border border-white/55" />
-                            {pinIndex + 1}
-                        </span>
-
-                        {piece && (
                             <span
-                                className={`pointer-events-none absolute left-[calc(100%-6px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] transition-[translate,scale,opacity] duration-300 ${
-                                    isSelected || isHot
-                                        ? 'translate-x-0 scale-100 opacity-100'
-                                        : '-translate-x-2 scale-95 opacity-0 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100'
+                                className={`relative grid h-8 w-8 place-items-center rounded-full text-xs font-bold leading-none shadow-[0_4px_14px_-4px_rgba(0,0,0,0.35)] transition-[scale,background-color,color] duration-300 ${
+                                    isLit ? 'scale-115 bg-[#0e0e0e] text-white' : 'bg-white text-[#151413]'
                                 }`}
                             >
-                                {piece.name}
+                                <span aria-hidden="true" className="animate-rw-ring pointer-events-none absolute -inset-[5px] rounded-full border border-[#151413]/30" />
+                                {pinIndex + 1}
                             </span>
-                        )}
-                    </button>
+                            {piece && (
+                                <span
+                                    className={`pointer-events-none absolute bottom-full left-1 mb-0.5 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] transition-[translate,opacity] duration-300 ${
+                                        isLit ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'
+                                    }`}
+                                >
+                                    {piece.name}
+                                </span>
+                            )}
+                        </button>
+
+                        {/* Leader line with an arrowhead ending on the garment. */}
+                        <span
+                            aria-hidden="true"
+                            className={`h-px min-w-0 flex-1 transition-colors duration-300 ${isLit ? 'bg-[#0e0e0e]' : 'bg-[#151413]/35'}`}
+                        />
+                        <svg
+                            aria-hidden="true"
+                            width="7"
+                            height="10"
+                            viewBox="0 0 7 10"
+                            className={`-ml-px shrink-0 transition-colors duration-300 ${isLit ? 'text-[#0e0e0e]' : 'text-[#151413]/45'}`}
+                        >
+                            <path d="M0 0l7 5-7 5z" fill="currentColor" />
+                        </svg>
+                    </div>
                 );
             })}
         </div>
@@ -146,7 +156,7 @@ function LookPins({
 }
 
 /**
- * Close-up of the current look: a zoomable model with garment hotspots,
+ * Close-up of the current look: the model with numbered garment markers and a magnifier,
  * and the selected garment shown large beside it.
  */
 export function LookView({
@@ -162,15 +172,14 @@ export function LookView({
     getOriginRect,
 }: LookViewProps) {
     const figureRef = useRef<HTMLDivElement>(null);
-    const viewer = useZoomPan({ maxZoom: MODEL_MAX_ZOOM, step: 0.35, focusZoom: 1.6, panLimit: modelPanLimit });
-    const resetZoom = viewer.reset;
+    const magnifier = useMagnifier({ zoom: 2.2, size: 200, align: 'bottom' });
+    const hideLens = magnifier.hide;
 
     useModelFlight(figureRef, open, getOriginRect);
 
-    // Leave or change look → back to 100% so the flight and the next look start clean.
     useEffect(() => {
-        resetZoom();
-    }, [open, lookIndex, resetZoom]);
+        hideLens();
+    }, [open, lookIndex, selectedPiece, hideLens]);
 
     const piece = selectedPiece !== null ? look.pieces[selectedPiece] : undefined;
 
@@ -186,32 +195,24 @@ export function LookView({
             <div onClick={onDismiss} className={`absolute inset-0 cursor-zoom-out ${STUDIO_BACKDROP}`} />
 
             <div
-                ref={viewer.containerRef}
-                {...viewer.containerHandlers}
                 onClick={(event) => {
                     if (event.target === event.currentTarget) {
                         onDismiss();
                     }
                 }}
-                className={`absolute inset-x-4 bottom-4 top-8 flex select-none items-end justify-center sm:inset-x-8 sm:bottom-6 sm:top-10 ${
-                    viewer.zoom > 1 ? 'cursor-grab touch-none active:cursor-grabbing' : 'cursor-zoom-out'
-                }`}
+                className="absolute inset-x-4 bottom-4 top-8 flex cursor-zoom-out select-none items-end justify-center sm:inset-x-8 sm:bottom-6 sm:top-10"
             >
-                {/* figure: flight · inner: slides aside for the garment · innermost: zoom + pan */}
-                <div ref={figureRef} className="relative aspect-[9/16] h-full max-h-full origin-bottom cursor-default will-change-transform">
+                {/* figure: flight · inner: slides aside for the garment · innermost: magnifier area */}
+                <div ref={figureRef} className="relative aspect-[9/16] h-full max-h-full origin-bottom will-change-transform">
                     <div
                         className={`h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                             piece ? '-translate-x-[24%] lg:-translate-x-[48%] xl:-translate-x-[50%]' : 'translate-x-0'
                         }`}
                     >
-                        <div
-                            ref={(el) => {
-                                viewer.targetRef.current = el;
-                            }}
-                            className="relative h-full w-full origin-bottom"
-                        >
+                        <div {...magnifier.areaHandlers} className="relative h-full w-full cursor-zoom-in touch-none">
                             <span aria-hidden="true" className={CONTACT_SHADOW} />
                             <img
+                                ref={magnifier.imageRef}
                                 src={look.modelHiRes}
                                 alt={look.name}
                                 draggable={false}
@@ -226,19 +227,9 @@ export function LookView({
                                 onHotPinChange={onHotPinChange}
                                 onPinClick={onPinClick}
                             />
+                            <MagnifierLens lensRef={magnifier.lensRef} />
                         </div>
                     </div>
-                </div>
-
-                <div className="pointer-events-none absolute bottom-4 left-6 z-20">
-                    <ZoomControls
-                        zoom={viewer.zoom}
-                        maxZoom={MODEL_MAX_ZOOM}
-                        subject="model"
-                        onZoomIn={viewer.zoomIn}
-                        onZoomOut={viewer.zoomOut}
-                        onReset={viewer.reset}
-                    />
                 </div>
             </div>
 
@@ -265,10 +256,6 @@ export function LookView({
                     </svg>
                 </button>
             </div>
-
-            <p className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-[10px] uppercase tracking-[0.2em] text-[#66625c]">
-                {piece ? 'Click another dot or card to switch pieces' : 'Tap a dot to shop the piece'}
-            </p>
         </div>
     );
 }
