@@ -70,7 +70,10 @@ export function SeoHead({
     const { url } = usePage();
     const siteTitle = title ? `${title} — Cutting Edger` : 'Cutting Edger — AI-Driven Visual Performance Agency';
     const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : `https://cuttingedger.com${url}`);
-    const robotsContent = robots || (noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    const allowIndexing = import.meta.env.VITE_ALLOW_INDEXING === 'true';
+    const robotsContent = !allowIndexing
+        ? 'noindex, nofollow'
+        : robots || (noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
 
     // 1. Organization Schema (Site-wide)
     const orgSchema = {
