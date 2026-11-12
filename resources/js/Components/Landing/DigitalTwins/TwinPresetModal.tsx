@@ -39,7 +39,6 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
     const twin = DIGITAL_TWINS[twinIndex] ?? DIGITAL_TWINS[0];
     const poseCount = twin.poses.length;
     const pose = twin.poses[poseIndex] ?? twin.poses[0];
-    const [twinName, twinStyle] = twin.name.split(' — ');
 
     // Switching twin starts again from its first pose.
     const [shownTwin, setShownTwin] = useState(twinIndex);
@@ -93,7 +92,7 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
-            {/* Left side: Header (minimal top gap) + TwinPoseStage (Featured pose on left, Pose gallery with neat names on right) */}
+            {/* Left side: Model switcher pills moved to the left (no redundant top-left title) + TwinPoseStage */}
             <motion.div
                 data-scrollable
                 className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6 pt-5 sm:px-8 sm:pt-6 lg:px-8 lg:pt-6"
@@ -102,52 +101,39 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
                 exit={{ y: 16, opacity: 0 }}
                 transition={{ duration: 0.45, ease: EASE_OUT_QUART, delay: 0.05 }}
             >
-                {/* ── Top Header with tight spacing ── */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#d8e1ec] pb-3.5">
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="font-michroma inline-flex items-center gap-1 rounded-full bg-[#16191f] px-2.5 py-0.5 text-[8.5px] tracking-[0.16em] text-white">
-                                LOOK {twin.lookNumber}
-                            </span>
-                            <span className="text-xs font-semibold text-[#5d6572]">
-                                {twin.archetype} · {twin.collection}
-                            </span>
-                        </div>
-                        <h2 className="mt-1 text-xl font-extrabold tracking-[-0.02em] text-[#16191f] sm:text-2xl">
-                            {twinName} <span className="text-base font-normal text-[#737b86] sm:text-lg">— {twinStyle}</span>
-                        </h2>
-                    </div>
-
-                    {/* Quick look selector pills */}
-                    <div className="flex items-center gap-1 rounded-full border border-[#d8e1ec] bg-white/90 p-1 shadow-xs backdrop-blur-xs" role="tablist" aria-label="Digital twins">
-                        {DIGITAL_TWINS.map((item, i) => {
-                            const selected = i === twinIndex;
-                            const [firstName] = item.name.split(' — ')[0].split(' ');
-                            return (
-                                <button
-                                    key={item.lookNumber}
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={selected}
-                                    onClick={() => onSelectTwin(i)}
-                                    className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ${
-                                        selected
-                                            ? 'bg-[#16191f] text-white shadow-xs'
-                                            : 'text-[#5a6270] hover:bg-[#f1f5fa] hover:text-[#16191f]'
-                                    }`}
+                        {/* ── Top Header: Model switcher pills moved to the left ── */}
+                        <div className="flex items-center justify-between border-b border-[#d8e1ec] pb-3.5">
+                            <div className="flex items-center gap-1.5 rounded-full border border-[#d8e1ec] bg-white/90 p-1 shadow-xs backdrop-blur-xs" role="tablist" aria-label="Digital twins">
+                                {DIGITAL_TWINS.map((item, i) => {
+                                    const selected = i === twinIndex;
+                                    const [firstName] = item.name.split(' — ')[0].split(' ');
+                                    return (
+                                        <button
+                                            key={item.lookNumber}
+                                            type="button"
+                                            role="tab"
+                                            aria-selected={selected}
+                                            onClick={() => onSelectTwin(i)}
+                                                        ? 'bg-[#16191f] text-white shadow-xs'
+                                                        : 'text-[#5a6270] hover:bg-[#f1f5fa] hover:text-[#16191f]'
+                                                    }`}
                                 >
                                     <span className="font-michroma text-[9px] tracking-[0.1em]">#{item.lookNumber}</span>
-                                    <span className="hidden md:inline">{firstName}</span>
+                                    <span className="hidden sm:inline">{firstName}</span>
                                 </button>
                             );
                         })}
                     </div>
+
+                    <span className="font-michroma hidden text-[10px] tracking-[0.16em] text-[#737b86] lg:inline-block">
+                        AI DIGITAL TWIN STUDIO
+                    </span>
                 </div>
 
                 <TwinPoseStage twin={twin} poseIndex={poseIndex} onSelectPose={setPoseIndex} onStepPose={stepPose} />
             </motion.div>
 
-            {/* Right side: Clean action sidebar with simple model name, short description, and action buttons */}
+            {/* Right side: Clean action sidebar with model name, description, and action buttons */}
             <motion.aside
                 data-scrollable
                 className="flex flex-col justify-center overflow-y-auto border-t border-[#d8e1ec] bg-white p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10"
@@ -160,7 +146,7 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
                 <TwinPresetSidebar twin={twin} pose={pose} pendingAction={pendingAction} onAction={handleAction} />
             </motion.aside>
 
-            {/* Close button */}
+            {/* Close button on the top-right */}
             <button
                 ref={closeButtonRef}
                 type="button"
