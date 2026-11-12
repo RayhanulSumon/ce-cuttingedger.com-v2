@@ -1,108 +1,84 @@
-import React, { useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import React, { useCallback, useEffect, useState } from 'react';
+import { DARK_SECTIONS, STAGE_TRANSITION_MS } from './shared';
 
 interface FullpageStageProps {
     index: number;
-    direction: -1 | 0 | 1;
     sections: React.ReactNode[];
 }
 
+interface StageView {
+    index: number;
+    /** Section still on screen while it animates out, or null once the stage has settled. */
+    leaving: number | null;
+    direction: 'forward' | 'backward' | 'none';
+}
+
 /**
- * Cinematic fullpage stage — both sides of every transition are visible.
+ * Fullpage stage: every section is a stacked panel and only two of them are ever painted —
+ * the active one and, during a change, the one leaving.
  *
- * Z-index strategy (the key to feeling like a single screen):
- *   • The OUTGOING section stays on z=10 and slides visibly away.
- *   • The INCOMING section waits at z=5, revealed as the outgoing lifts off.
- *   • This "curtain pull" makes the EXIT animation dominant — you see the old
- *     panel leave, not just the new panel arrive.
- *
- * Going forward (direction=1): outgoing is now ABOVE active → slides up at z=10.
- * Going backward (direction=-1): outgoing is now BELOW active → slides down at z=10.
- * Initial load (direction=0): active is z=10, rest parked at z=1.
+ * The motion itself lives in app.css (`.fp-stage` / `.fp-panel`) as transform + opacity
+ * keyframes, so it runs on the GPU compositor and is unaffected by React renders.
+ * This component only decides which panel plays which role.
  */
+export function FullpageStage({ index, sections }: FullpageStageProps) {
+    const [view, setView] = useState<StageView>({ index, leaving: null, direction: 'none' });
 
-const EASE     = [0.76, 0, 0.24, 1] as const; // symmetric strong ease-in-out
-const DURATION = 1.05;                          // slow enough to feel deliberate
+    if (view.index !== index) {
+        setView({ index, leaving: view.index, direction: index > view.index ? 'forward' : 'backward' });
+    }
 
-const SPRING = { stiffness: 200, damping: 32, mass: 1 };
+    const settle = useCallback(() => {
+        setView((current) => (current.leaving === null ? current : { ...current, leaving: null, direction: 'none' }));
+    }, []);
 
-export function FullpageStage({ index, direction, sections }: FullpageStageProps) {
-    const count = sections.length;
-
-    const rawProgress    = useMotionValue(index / Math.max(count - 1, 1));
-    const smoothProgress = useSpring(rawProgress, SPRING);
-
+    // Safety net in case `animationend` never fires (tab hidden mid-transition, etc.).
     useEffect(() => {
-        rawProgress.set(index / Math.max(count - 1, 1));
-    }, [index, count, rawProgress]);
+        if (view.leaving === null) {
+            return;
+        }
+        const timer = window.setTimeout(settle, STAGE_TRANSITION_MS + 200);
+        return () => window.clearTimeout(timer);
+    }, [view.leaving, view.index, settle]);
+
+    const handleAnimationEnd = (event: React.AnimationEvent<HTMLElement>) => {
+        const isPanelAnimation = event.target === event.currentTarget && event.animationName.startsWith('fp-');
+        if (isPanelAnimation && event.pseudoElement === '') {
+            settle();
+        }
+    };
+
+    const count = sections.length;
+    const progress = count > 1 ? index / (count - 1) : 0;
+    const dark = DARK_SECTIONS.includes(index);
 
     return (
-        <div className="fixed inset-0 overflow-hidden">
+        <div
+            className="fp-stage fixed inset-0 overflow-hidden"
+            data-dir={view.direction}
+            style={{ '--fp-duration': `${STAGE_TRANSITION_MS}ms` } as React.CSSProperties}
+        >
             {sections.map((section, i) => {
-                const isActive = i === index;
-                const isAbove  = i < index;
-                const dist     = Math.abs(i - index);
-
-                /* ── Y target ──────────────────────────────────────────────────
-                 * Active = 0%. Everything else fully parked ±100%.
-                 * No partial recession — clean, predictable positions.
-                 * All transitions are animated by Framer Motion (no snap). */
-                const yTarget = isActive ? '0%' : isAbove ? '-100%' : '100%';
-
-                /* ── Z-index ───────────────────────────────────────────────────
-                 * The outgoing section must be on top so its exit is visible.
-                 *
-                 * direction > 0 (scrolled DOWN to next section):
-                 *   • The old section is now isAbove at dist=1 → z=10 (slides up, seen)
-                 *   • New active comes from 100% at z=5 (revealed beneath)
-                 *
-                 * direction < 0 (scrolled UP to prev section):
-                 *   • The old section is now !isAbove (below) at dist=1 → z=10 (slides down, seen)
-                 *   • New active comes from -100% at z=5 (revealed beneath)
-                 *
-                 * direction = 0 (initial load, no transition yet):
-                 *   • Active gets z=10, everything else z=1.
-                 */
-                let zIndex: number;
-                if (direction === 0) {
-                    zIndex = isActive ? 10 : 1;
-                } else if (isActive) {
-                    zIndex = 5;
-                } else if (direction > 0 && isAbove && dist === 1) {
-                    zIndex = 10; // outgoing slides UP, stays visible on top
-                } else if (direction < 0 && !isAbove && dist === 1) {
-                    zIndex = 10; // outgoing slides DOWN, stays visible on top
-                } else {
-                    zIndex = 1;
-                }
+                const state = i === view.index ? 'active' : i === view.leaving ? 'leaving' : 'idle';
 
                 return (
-                    <motion.section
+                    <section
                         key={i}
-                        className="absolute inset-0"
-                        initial={false}
-                        animate={{ y: yTarget }}
-                        transition={{ duration: DURATION, ease: EASE }}
-                        style={{
-                            zIndex,
-                            willChange: dist <= 1 ? 'transform' : 'auto',
-                        }}
-                        aria-hidden={!isActive}
-                        {...(!isActive ? { inert: true } : {})}
+                        className="fp-panel"
+                        data-state={state}
+                        aria-hidden={state !== 'active'}
+                        inert={state !== 'active'}
+                        onAnimationEnd={state === 'active' ? handleAnimationEnd : undefined}
                     >
                         {section}
-                    </motion.section>
+                    </section>
                 );
             })}
 
-            {/* ── Bottom progress bar ─────────────────────────────────── */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none fixed bottom-0 left-0 right-0 z-50 h-[2px] bg-black/8"
-            >
-                <motion.div
-                    className="absolute inset-y-0 left-0 bg-[#1b1b1b]/35"
-                    style={{ scaleX: smoothProgress, transformOrigin: 'left center' }}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[2px] bg-black/8">
+                <div
+                    className={`fp-progress absolute inset-0 ${dark ? 'bg-white/50' : 'bg-[#1b1b1b]/35'}`}
+                    style={{ transform: `scaleX(${progress})` }}
                 />
             </div>
         </div>

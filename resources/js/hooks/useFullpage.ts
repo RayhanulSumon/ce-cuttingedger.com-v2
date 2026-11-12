@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const LOCK_MS = 1100; // matches FullpageStage DURATION (1.05 s) + small buffer
-const WHEEL_THRESHOLD = 24;
+/** Accumulated wheel travel (px) that counts as one deliberate "next section" gesture. */
+const WHEEL_THRESHOLD = 40;
+/** A pause this long between wheel events starts a new gesture. */
+const WHEEL_GESTURE_GAP_MS = 160;
+/** Deltas at or above this come from a notched mouse wheel, never from trackpad inertia. */
+const MOUSE_TICK_DELTA = 50;
+/** A jump this large over the previous delta means the user flicked again mid-inertia. */
+const REFLICK_DELTA = 12;
+const LINE_HEIGHT_PX = 40;
 const SWIPE_THRESHOLD = 48;
 
 /**
@@ -28,36 +35,48 @@ function innerScrollerCanScroll(target: EventTarget | null, direction: 1 | -1): 
 }
 
 /**
- * Single-page "fullpage" navigation: one wheel tick / swipe / key press moves exactly one section.
+ * Single-page "fullpage" navigation: one wheel gesture / swipe / key press moves exactly one section.
  *
- * @return {{ index: number, goTo: (next: number) => void, next: () => void, prev: () => void }}
+ * - Wheel input is accumulated per gesture, so slow trackpad scrolling still registers, and the
+ *   inertia tail of a swipe cannot trigger a second section change once the lock expires.
+ * - `goTo` calls that arrive mid-transition are queued and run when the transition has finished,
+ *   so the stage never has to interrupt a running animation.
+ *
+ * @param count        number of sections
+ * @param transitionMs length of one section change; input is locked for this long
+ * @param enabled      set false to suspend wheel / key / touch handling (e.g. while an overlay is open)
  */
-export function useFullpage(count: number, enabled = true) {
-    const [state, setState] = useState({ index: 0, direction: 0 as -1 | 0 | 1 });
+export function useFullpage(count: number, transitionMs: number, enabled = true) {
+    const [index, setIndex] = useState(0);
     const indexRef = useRef(0);
     const lockedUntil = useRef(0);
+    const queuedTimer = useRef(0);
     const touchStartY = useRef<number | null>(null);
-
-    // Expose just `index` for compatibility with existing consumers
-    const index = state.index;
+    const wheel = useRef({ sum: 0, lastTime: 0, lastAbs: 0, consumed: false });
 
     const goTo = useCallback(
         (nextIndex: number) => {
             const clamped = Math.max(0, Math.min(count - 1, nextIndex));
+            window.clearTimeout(queuedTimer.current);
+
+            const wait = lockedUntil.current - performance.now();
+            if (wait > 0) {
+                queuedTimer.current = window.setTimeout(() => goTo(clamped), wait + 16);
+                return;
+            }
             if (clamped === indexRef.current) {
                 return;
             }
-            const dir = clamped > indexRef.current ? 1 : -1;
             indexRef.current = clamped;
-            lockedUntil.current = Date.now() + LOCK_MS;
-            setState({ index: clamped, direction: dir as -1 | 1 });
+            lockedUntil.current = performance.now() + transitionMs;
+            setIndex(clamped);
         },
-        [count],
+        [count, transitionMs],
     );
 
     const step = useCallback(
         (direction: 1 | -1) => {
-            if (Date.now() < lockedUntil.current) {
+            if (performance.now() < lockedUntil.current) {
                 return;
             }
             goTo(indexRef.current + direction);
@@ -65,44 +84,77 @@ export function useFullpage(count: number, enabled = true) {
         [goTo],
     );
 
+    useEffect(() => () => window.clearTimeout(queuedTimer.current), []);
+
     useEffect(() => {
         if (!enabled) {
             return;
         }
 
         const onWheel = (event: WheelEvent) => {
-            if (event.defaultPrevented) {
+            if (event.defaultPrevented || event.ctrlKey) {
                 return;
             }
-            const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : 0;
-            if (Math.abs(delta) < WHEEL_THRESHOLD) {
+            if (Math.abs(event.deltaY) < Math.abs(event.deltaX) || event.deltaY === 0) {
                 return;
             }
+            const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? event.deltaY * LINE_HEIGHT_PX : event.deltaY;
             const direction = delta > 0 ? 1 : -1;
+            const gesture = wheel.current;
+
             if (innerScrollerCanScroll(event.target, direction)) {
+                gesture.sum = 0;
                 return;
             }
             event.preventDefault();
-            step(direction);
+
+            const now = performance.now();
+            const abs = Math.abs(delta);
+            const isNewGesture = now - gesture.lastTime > WHEEL_GESTURE_GAP_MS;
+
+            if (isNewGesture || abs >= MOUSE_TICK_DELTA || abs > gesture.lastAbs + REFLICK_DELTA) {
+                gesture.consumed = false;
+            }
+            if (isNewGesture || Math.sign(gesture.sum) !== direction) {
+                gesture.sum = 0;
+            }
+            gesture.lastTime = now;
+            gesture.lastAbs = abs;
+
+            if (now < lockedUntil.current) {
+                gesture.consumed = true;
+                gesture.sum = 0;
+                return;
+            }
+            if (gesture.consumed) {
+                return;
+            }
+
+            gesture.sum += delta;
+            if (Math.abs(gesture.sum) >= WHEEL_THRESHOLD) {
+                gesture.sum = 0;
+                gesture.consumed = true;
+                step(direction);
+            }
         };
 
         const onKey = (event: KeyboardEvent) => {
             if (event.defaultPrevented) {
                 return;
             }
-            const tag = (event.target as HTMLElement)?.tagName;
+            const tag = (event.target as HTMLElement | null)?.tagName ?? '';
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
                 return;
             }
-            if (['ArrowDown', 'PageDown'].includes(event.key) || (event.key === ' ' && !event.shiftKey)) {
-                if (tag === 'BUTTON' || tag === 'A') {
-                    if (event.key === ' ') {
-                        return;
-                    }
-                }
+            const isSpace = event.key === ' ';
+            if (isSpace && (tag === 'BUTTON' || tag === 'A')) {
+                return;
+            }
+
+            if (['ArrowDown', 'PageDown'].includes(event.key) || (isSpace && !event.shiftKey)) {
                 event.preventDefault();
                 step(1);
-            } else if (['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey)) {
+            } else if (['ArrowUp', 'PageUp'].includes(event.key) || (isSpace && event.shiftKey)) {
                 event.preventDefault();
                 step(-1);
             } else if (event.key === 'Home') {
@@ -115,7 +167,7 @@ export function useFullpage(count: number, enabled = true) {
         };
 
         const onTouchStart = (event: TouchEvent) => {
-            touchStartY.current = event.touches[0].clientY;
+            touchStartY.current = event.touches.length === 1 ? event.touches[0].clientY : null;
         };
 
         const onTouchEnd = (event: TouchEvent) => {
@@ -147,12 +199,5 @@ export function useFullpage(count: number, enabled = true) {
         };
     }, [count, enabled, goTo, step]);
 
-    return {
-        index,
-        direction: state.direction,
-        goTo,
-        next: () => step(1),
-        prev: () => step(-1),
-    };
+    return { index, goTo };
 }
-

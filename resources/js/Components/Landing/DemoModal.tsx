@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, Paperclip, X } from 'lucide-react';
 import { getAttributionData } from '@/lib/attribution';
+import { EASE_OUT_QUART } from './shared';
 
 interface DemoModalProps {
     open: boolean;
@@ -14,7 +15,8 @@ const inputClass =
 
 export function DemoModal({ open, onClose }: DemoModalProps) {
     const fileInput = useRef<HTMLInputElement>(null);
-    const { data, setData, post, processing, errors, reset, transform, recentlySuccessful, wasSuccessful } = useForm({
+    const [submitted, setSubmitted] = useState(false);
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         name: '',
         email: '',
         company: '',
@@ -25,7 +27,9 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 
     useEffect(() => {
         if (!open) {
-            return;
+            // Reopening after a successful request starts from a clean form, not the thank-you screen.
+            const timer = window.setTimeout(() => setSubmitted(false), 400);
+            return () => window.clearTimeout(timer);
         }
         const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
         window.addEventListener('keydown', onKey);
@@ -46,20 +50,22 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
         post('/free-trial', {
             forceFormData: true,
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                setSubmitted(true);
+            },
         });
     };
-
-    const done = wasSuccessful || recentlySuccessful;
 
     return (
         <AnimatePresence>
             {open && (
                 <motion.div
-                    className="fixed inset-0 z-[100] grid place-items-center bg-[#0A0D14]/70 p-4 backdrop-blur-sm"
+                    className="fixed inset-0 z-[100] grid place-items-center bg-[#0A0D14]/80 p-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
                     onClick={onClose}
                 >
                     <motion.div
@@ -68,17 +74,17 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
                         aria-label="Book a demo"
                         data-scrollable
                         onClick={(e) => e.stopPropagation()}
-                        initial={{ y: 40, scale: 0.97 }}
-                        animate={{ y: 0, scale: 1 }}
-                        exit={{ y: 40, scale: 0.97 }}
-                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ y: 40, scale: 0.97, opacity: 0 }}
+                        animate={{ y: 0, scale: 1, opacity: 1 }}
+                        exit={{ y: 24, scale: 0.98, opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } }}
+                        transition={{ duration: 0.45, ease: EASE_OUT_QUART }}
                         className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-[28px] bg-[#EBEEF3] p-6 sm:p-9"
                     >
                         <button type="button" onClick={onClose} aria-label="Close" className="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full bg-white">
                             <X size={16} />
                         </button>
 
-                        {done ? (
+                        {submitted ? (
                             <div className="py-10 text-center">
                                 <CheckCircle2 className="mx-auto text-[#2B4BFF]" size={48} />
                                 <h3 className="mt-4 text-2xl font-extrabold text-[#141A26]">Request received</h3>

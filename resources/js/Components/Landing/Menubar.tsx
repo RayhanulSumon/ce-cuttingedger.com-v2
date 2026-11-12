@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { PageProps } from '@/types';
 import { CAPABILITY_FALLBACK } from './content';
-import { SECTION_INDEX } from './shared';
+import { DARK_SECTIONS, EASE_OUT_QUART, SECTION_INDEX } from './shared';
 
 interface MenubarProps {
     index: number;
@@ -14,8 +14,14 @@ interface MenubarProps {
     hidden?: boolean;
 }
 
-/** Light bars on dark sections (book demo + footer) */
-const DARK_SECTIONS = [SECTION_INDEX['book-demo'], SECTION_INDEX.contact];
+const NAV_ITEMS: [string, number][] = [
+    ['Home', SECTION_INDEX.hero],
+    ['Digital Twins', SECTION_INDEX['digital-twins']],
+    ['Try-On', SECTION_INDEX['try-on']],
+    ['Showcase', SECTION_INDEX.showcase],
+    ['Case Study', SECTION_INDEX['case-study']],
+    ['FAQ', SECTION_INDEX.faq],
+];
 
 export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
@@ -31,19 +37,10 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
         goTo(i);
     };
 
-    const NAV_ITEMS: [string, number][] = [
-        ['Home', SECTION_INDEX.hero],
-        ['Digital Twins', SECTION_INDEX['digital-twins']],
-        ['Try-On', SECTION_INDEX['try-on']],
-        ['Showcase', SECTION_INDEX.showcase],
-        ['Case Study', SECTION_INDEX['case-study']],
-        ['FAQ', SECTION_INDEX.faq],
-    ];
-
     return (
         <>
             <header
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[colors,opacity] duration-300 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[color,opacity] duration-500 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
             >
                 {/* Logo */}
                 <button
@@ -60,7 +57,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                     <button
                         type="button"
                         onClick={openDemo}
-                        className={`rounded-full px-5 py-2.5 text-xs font-bold ${dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white'}`}
+                        className={`rounded-full px-5 py-2.5 text-xs font-bold transition-colors duration-500 ${dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white'}`}
                     >
                         Book a Demo
                     </button>
@@ -70,7 +67,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                         type="button"
                         onClick={() => setDrawer(true)}
                         aria-label="Open menu"
-                        className={`grid h-10 w-10 place-items-center rounded-full transition ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#333]'}`}
+                        className={`grid h-10 w-10 place-items-center rounded-full transition-colors duration-500 ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#333]'}`}
                     >
                         <Menu size={18} />
                     </button>
@@ -83,7 +80,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                     <>
                         {/* Backdrop */}
                         <motion.div
-                            className="fixed inset-0 z-[88] bg-black/40 backdrop-blur-sm"
+                            className="fixed inset-0 z-[88] bg-black/55"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -93,11 +90,12 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
 
                         {/* Drawer panel — slides in from the right */}
                         <motion.aside
-                            className="fixed right-0 top-0 z-[90] flex h-full w-72 flex-col bg-[#141A26] px-8 py-8 text-white shadow-2xl"
+                            data-scrollable
+                            className="fixed right-0 top-0 z-[90] flex h-full w-72 flex-col overflow-y-auto bg-[#141A26] px-8 py-8 text-white shadow-2xl"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
-                            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ duration: 0.42, ease: EASE_OUT_QUART }}
                         >
                             {/* Close */}
                             <button

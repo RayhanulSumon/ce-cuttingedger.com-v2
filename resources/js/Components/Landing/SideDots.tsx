@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SECTIONS } from './shared';
+import { DARK_SECTIONS, SECTIONS } from './shared';
 
 interface SideDotsProps {
     index: number;
@@ -8,8 +8,6 @@ interface SideDotsProps {
     /** When true, fades out and disables pointer events (e.g. while a fullscreen modal is open). */
     hidden?: boolean;
 }
-
-const DARK_SECTIONS = [7, 9]; // book-demo, footer
 
 export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
     const dark = DARK_SECTIONS.includes(index);
@@ -46,12 +44,12 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                         type="button"
                         onClick={() => goTo(i)}
                         aria-label={s.label}
-                        aria-current={isActive}
+                        aria-current={isActive ? 'true' : undefined}
                         className="group relative flex items-center gap-3 py-3"
                     >
                         {/* Hover label */}
                         <span
-                            className={`pointer-events-none select-none text-[9px] font-semibold uppercase tracking-[0.22em] opacity-0 transition-all duration-200 group-hover:opacity-100 ${
+                            className={`pointer-events-none select-none text-[9px] font-semibold uppercase tracking-[0.22em] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 ${
                                 dark ? 'text-white' : 'text-[#1d1d1d]'
                             }`}
                         >
@@ -72,12 +70,8 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                             )}
                             {/* Inner fill */}
                             <motion.span
-                                className={`block rounded-full ${dark ? 'bg-white' : 'bg-[#1d1d1d]'}`}
-                                animate={{
-                                    width:   isActive ? 6 : 4,
-                                    height:  isActive ? 6 : 4,
-                                    opacity: isActive ? 1 : 0.35,
-                                }}
+                                className={`block h-1.5 w-1.5 rounded-full ${dark ? 'bg-white' : 'bg-[#1d1d1d]'}`}
+                                animate={{ scale: isActive ? 1 : 0.66, opacity: isActive ? 1 : 0.35 }}
                                 transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                             />
                         </span>

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Project } from '@/types/models';
 import { CASE_STUDIES } from './content';
-import { Eyebrow, Reveal, SectionProps } from './shared';
+import { EASE_OUT_QUART, Eyebrow, Reveal, SectionProps } from './shared';
 
 interface CaseStudyProps extends SectionProps {
     projects: Project[];
 }
 
-export function CaseStudySection({ active, projects }: CaseStudyProps) {
+export const CaseStudySection = memo(function CaseStudySection({ active, projects }: CaseStudyProps) {
     const [index, setIndex] = useState(0);
     const study = CASE_STUDIES[index];
     const linked = projects[index];
@@ -45,10 +45,10 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
                 <AnimatePresence mode="wait">
                     <motion.article
                         key={index}
-                        initial={{ opacity: 0, scale: 0.97 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.97 }}
-                        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -12, transition: { duration: 0.2, ease: 'easeIn' } }}
+                        transition={{ duration: 0.5, ease: EASE_OUT_QUART }}
                         style={{ backgroundColor: study.background }}
                         className="grid h-full min-h-[460px] overflow-hidden rounded-[28px] text-[#F2F4F8] lg:grid-cols-[1fr_1.1fr]"
                     >
@@ -58,16 +58,15 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
                             <p className="max-w-md text-sm leading-relaxed opacity-80">{study.summary}</p>
                             <dl className="flex flex-wrap gap-8">
                                 {study.metrics.map((m) => (
-                                    <div key={m.label}>
-                                        <dt className="sr-only">{m.label}</dt>
+                                    <div key={m.label} className="flex flex-col-reverse">
+                                        <dt className="text-xs opacity-70">{m.label}</dt>
                                         <dd className="text-3xl font-extrabold">{m.value}</dd>
-                                        <p className="text-xs opacity-70">{m.label}</p>
                                     </div>
                                 ))}
                             </dl>
                             <Link
                                 href={linked ? `/case-studies/${linked.slug}` : '/case-studies'}
-                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-5 py-3 text-sm font-semibold text-[#141A26]"
+                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-5 py-3 text-sm font-semibold text-[#141A26] transition-transform duration-300 hover:-translate-y-0.5"
                             >
                                 Read the case study
                             </Link>
@@ -83,5 +82,5 @@ export function CaseStudySection({ active, projects }: CaseStudyProps) {
             </Reveal>
         </div>
     );
-}
+});
 

@@ -361,6 +361,198 @@ select option {
     animation: dress-reveal-down 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes lp-card-in {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.animate-card-in {
+    animation: lp-card-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Landing: fullpage stage ─────────────────────────────────────────────
+ * Section changes run as CSS keyframes on transform/opacity only, so they
+ * stay on the compositor thread and never wait on React or layout.
+ *   forward  — the next panel slides up over the current one, which recedes.
+ *   backward — the current panel slides down off the previous one, which advances.
+ */
+.fp-stage {
+    --fp-duration: 1000ms;
+    --fp-ease: cubic-bezier(0.76, 0, 0.24, 1);
+    background: #0a0b0e;
+}
+
+.fp-panel {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    contain: layout paint;
+    backface-visibility: hidden;
+}
+
+.fp-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0b0e;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.fp-panel[data-state='active'] {
+    visibility: visible;
+    z-index: 2;
+}
+
+.fp-panel[data-state='leaving'] {
+    visibility: visible;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Parked panels stop their looping animations instead of burning frames off-screen. */
+.fp-panel[data-state='idle'] *,
+.fp-panel[data-state='idle'] *::before,
+.fp-panel[data-state='idle'] *::after {
+    animation-play-state: paused !important;
+}
+
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='active'] {
+    z-index: 3;
+    box-shadow: 0 -24px 80px rgba(0, 0, 0, 0.28);
+    animation: fp-slide-in var(--fp-duration) var(--fp-ease) both;
+}
+
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='leaving'] {
+    z-index: 2;
+    animation: fp-recede var(--fp-duration) var(--fp-ease) both;
+}
+
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='leaving']::after {
+    animation: fp-dim-in var(--fp-duration) var(--fp-ease) both;
+}
+
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='leaving'] {
+    z-index: 3;
+    box-shadow: 0 -24px 80px rgba(0, 0, 0, 0.28);
+    animation: fp-slide-out var(--fp-duration) var(--fp-ease) both;
+}
+
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='active'] {
+    z-index: 2;
+    animation: fp-advance var(--fp-duration) var(--fp-ease) both;
+}
+
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='active']::after {
+    animation: fp-dim-out var(--fp-duration) var(--fp-ease) both;
+}
+
+@keyframes fp-slide-in {
+    from { transform: translate3d(0, 100%, 0); }
+    to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes fp-slide-out {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, 100%, 0); }
+}
+
+@keyframes fp-recede {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(0, -9%, 0) scale(0.94); }
+}
+
+@keyframes fp-advance {
+    from { transform: translate3d(0, -9%, 0) scale(0.94); }
+    to { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes fp-dim-in {
+    from { opacity: 0; }
+    to { opacity: 0.6; }
+}
+
+@keyframes fp-dim-out {
+    from { opacity: 0.6; }
+    to { opacity: 0; }
+}
+
+.fp-progress {
+    transform-origin: left center;
+    transition: transform var(--fp-duration) var(--fp-ease), background-color 0.4s ease;
+}
+
+/* ── Landing: content reveals ────────────────────────────────────────────
+ * Hidden content keeps its place until the panel has finished leaving
+ * (zero-length transition delayed by the stage duration), then replays its
+ * entrance the next time the section becomes active.
+ */
+.lp-reveal {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 28px), 0);
+    transition:
+        opacity 0s linear var(--fp-duration, 1s),
+        transform 0s linear var(--fp-duration, 1s);
+}
+
+.lp-reveal[data-shown='true'] {
+    opacity: 1;
+    transform: none;
+    transition:
+        opacity calc(var(--reveal-duration, 0.9s) * 0.75) ease-out var(--reveal-delay, 0s),
+        transform var(--reveal-duration, 0.9s) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0s);
+}
+
+.lp-clip {
+    opacity: 0;
+    clip-path: inset(0 50% 0 50% round 0.2em);
+    transition:
+        opacity 0s linear var(--fp-duration, 1s),
+        clip-path 0s linear var(--fp-duration, 1s);
+}
+
+.lp-clip[data-shown='true'] {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 0.2em);
+    transition:
+        opacity 0.4s ease-out var(--reveal-delay, 0s),
+        clip-path var(--reveal-duration, 0.9s) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0s);
+}
+
+/* Hero title: the words and the video pill share one curve so they stay glued together. */
+.hero-title {
+    --reveal-duration: 1.3s;
+    --reveal-ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ── Landing: Try-On look view ───────────────────────────────────────────
+ * Closing waits for the model to travel back to the runway before fading.
+ */
+.look-view {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.26s ease 0.34s, visibility 0s linear 0.6s;
+}
+
+.look-view[data-open='true'] {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.26s ease, visibility 0s;
+}
+
+.ring-actors {
+    transition: opacity 0.26s ease 0.34s;
+}
+
+.ring-actors[data-dimmed='true'] {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.26s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .landing-col-down,
     .landing-col-up,
@@ -368,7 +560,14 @@ select option {
     .animate-rw-ring-delayed,
     .animate-rw-fill,
     .animate-rw-breathe,
-    .animate-dress-reveal {
+    .animate-dress-reveal,
+    .animate-card-in {
         animation: none;
+    }
+
+    .lp-reveal,
+    .lp-clip {
+        transform: none;
+        clip-path: none;
     }
 }

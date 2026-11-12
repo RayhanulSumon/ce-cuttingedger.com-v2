@@ -1,73 +1,74 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useFitFontSize } from '@/hooks/useFitFontSize';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { PAD_X, PillButton, Reveal, SectionProps, SECTION_INDEX } from './shared';
 
 const VIDEO_SRC = 'https://www.cuttingedger.com/videos/video_thumbnail.webm';
 const VIDEO_POSTER =
     'https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/726b168c-da47-4682-a255-cc3e02f89bae.jpg';
 
+/** Width of the video pill and the gap either side of it, in em of the title font size. */
 const PILL_EM = 3.1;
 const GAP_EM = 0.14;
-const EASE = [0.4, 0, 0.2, 1] as const;
+/** The words start touching at the centre line and are pushed apart as the pill opens. */
+const WORD_OFFSET_EM = PILL_EM / 2;
 
-function BannerVideo() {
+/** Looping banner clip. Only decodes while the hero is on screen. */
+function BannerVideo({ playing }: { playing: boolean }) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) {
+            return;
+        }
+        if (playing) {
+            video.play().catch(() => undefined);
+        } else {
+            video.pause();
+        }
+    }, [playing]);
+
     return (
         <video
+            ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover object-center"
             src={VIDEO_SRC}
             poster={VIDEO_POSTER}
-            autoPlay
             muted
             loop
             playsInline
             preload="auto"
-            style={{ objectPosition: '50% 50%' }}
         />
     );
 }
 
-
-/**
- * Largest font size (px) at which the measured words plus `extraEm` of fixed-em items
- * fill the container width, capped by `maxPx`. Re-fits on resize and once fonts load.
- */
-function useFitFontSize(
-    container: React.RefObject<HTMLElement | null>,
-    words: React.RefObject<HTMLElement | null>[],
-    extraEm: number,
-    maxPx: () => number,
-): number | null {
-    const [size, setSize] = useState<number | null>(null);
-
-    useLayoutEffect(() => {
-        const fit = () => {
-            const box = container.current;
-            if (!box) {
-                return;
-            }
-            const current = parseFloat(getComputedStyle(box).fontSize);
-            const wordsPx = words.reduce((sum, ref) => sum + (ref.current?.offsetWidth ?? 0), 0);
-            if (!current || !wordsPx) {
-                return;
-            }
-            const totalEm = wordsPx / current + extraEm;
-            const available = (box.parentElement ?? box).clientWidth;
-            setSize(Math.min((available / totalEm) * 0.985, maxPx()));
-        };
-
-        fit();
-        const observer = new ResizeObserver(fit);
-        if (container.current?.parentElement) {
-            observer.observe(container.current.parentElement);
-        }
-        document.fonts?.ready.then(fit);
-        return () => observer.disconnect();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return size;
+function BackgroundLines() {
+    return (
+        <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            viewBox="0 0 1600 1000"
+            preserveAspectRatio="none"
+        >
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
+                <path
+                    key={n}
+                    d={`M${-100 - n * 20},${900 - n * 40} C300,${850 - n * 30} 600,${400 - n * 20} 1700,${100 - n * 30}`}
+                    stroke="#fff"
+                    strokeWidth={1.5 + (n % 4)}
+                    opacity={0.55 + (n % 3) * 0.12}
+                    fill="none"
+                />
+            ))}
+        </svg>
+    );
 }
-export function HeroSection({ active, goTo, openDemo }: SectionProps) {
+
+const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf] bg-cover bg-center';
+const pillPoster = { backgroundImage: `url(${VIDEO_POSTER})` };
+
+export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }: SectionProps) {
     const rowRef = useRef<HTMLSpanElement>(null);
     const cuttingRef = useRef<HTMLSpanElement>(null);
     const edgerRef = useRef<HTMLSpanElement>(null);
@@ -75,88 +76,73 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
     const stackRef = useRef<HTMLSpanElement>(null);
     const stackWordRef = useRef<HTMLSpanElement>(null);
     const [mounted, setMounted] = useState(false);
+    const isWide = useMediaQuery('(min-width: 640px)');
 
-    // Desktop: CUTTING + pill + EDGER + invisible-spacer(= CUTTING − EDGER) + 2 gaps.
-    // Total effective word-width = 2 × CUTTING, so pass cuttingRef twice so the
-    // font fitter reserves the right amount of space and CUTTING never overflows.
+    // Desktop row: CUTTING + pill + EDGER + invisible spacer (= CUTTING − EDGER) + 2 gaps.
+    // Effective word width is 2 × CUTTING, so CUTTING is measured twice.
     const rowSize = useFitFontSize(rowRef, [cuttingRef, cuttingRef], PILL_EM + GAP_EM * 2, () => window.innerHeight * 0.2);
     const stackSize = useFitFontSize(stackRef, [stackWordRef], 0, () => window.innerHeight * 0.14);
 
-    // After fonts & layout settle, set the right-side spacer width = CUTTING width − EDGER width
-    // so the pill is visually centred on the page regardless of the two words' different lengths.
+    // Spacer width = CUTTING − EDGER, so the pill sits on the exact centre of the viewport.
     useLayoutEffect(() => {
         const sync = () => {
-            const cW = cuttingRef.current?.offsetWidth ?? 0;
-            const eW = edgerRef.current?.offsetWidth ?? 0;
+            const cuttingWidth = cuttingRef.current?.offsetWidth ?? 0;
+            const edgerWidth = edgerRef.current?.offsetWidth ?? 0;
             if (spacerRef.current) {
-                spacerRef.current.style.width = `${Math.max(0, cW - eW)}px`;
+                spacerRef.current.style.width = `${Math.max(0, cuttingWidth - edgerWidth)}px`;
             }
         };
         sync();
         document.fonts?.ready.then(sync);
-        const ro = new ResizeObserver(sync);
-        if (rowRef.current) ro.observe(rowRef.current);
-        return () => ro.disconnect();
+        const observer = new ResizeObserver(sync);
+        if (rowRef.current) {
+            observer.observe(rowRef.current);
+        }
+        return () => observer.disconnect();
     }, [rowSize]);
 
-    // Trigger the same entrance reveal on initial page load/reload as when scrolling back to Hero.
+    // Play the entrance on first load exactly as when scrolling back to the hero:
+    // paint the hidden state first, then flip to shown on the next frame.
     useEffect(() => {
-        const id = requestAnimationFrame(() => setMounted(true));
-        return () => cancelAnimationFrame(id);
+        let second = 0;
+        const first = requestAnimationFrame(() => {
+            second = requestAnimationFrame(() => setMounted(true));
+        });
+        return () => {
+            cancelAnimationFrame(first);
+            cancelAnimationFrame(second);
+        };
     }, []);
 
     const show = active && mounted;
 
     return (
         <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#f2f2f1] pb-10 pt-20 ${PAD_X}`}>
-            <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1600 1000" preserveAspectRatio="none">
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
-                    <path
-                        key={n}
-                        d={`M${-100 - n * 20},${900 - n * 40} C300,${850 - n * 30} 600,${400 - n * 20} 1700,${100 - n * 30}`}
-                        stroke="#fff"
-                        strokeWidth={1.5 + (n % 4)}
-                        opacity={0.55 + (n % 3) * 0.12}
-                        fill="none"
-                    />
-                ))}
-            </svg>
+            <BackgroundLines />
 
-            <h1 className="relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
-                {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line.
-                    A hidden right-side spacer balances the extra width of CUTTING vs EDGER
-                    so the video pill lands exactly on the horizontal centre of the viewport. */}
+            <h1 className="hero-title relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
+                {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line. */}
                 <span
                     ref={rowRef}
                     className="hidden w-full items-center justify-center gap-[0.14em] whitespace-nowrap font-extrabold leading-none tracking-[-0.045em] sm:flex"
                     style={{ fontSize: rowSize ? `${rowSize}px` : 'min(15vh, 8vw)' }}
                     aria-hidden="true"
                 >
-                    <motion.span
-                        ref={cuttingRef}
-                        initial={{ x: 24, opacity: 0 }}
-                        animate={show ? { x: 0, opacity: 1 } : { x: 24, opacity: 0 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.2 : 0 }}
-                    >
+                    <Reveal as="span" ref={cuttingRef} active={show} x={`${WORD_OFFSET_EM}em`} y="0px">
                         CUTTING
-                    </motion.span>
-                    <motion.span
-                        initial={{ width: '0.05em', opacity: 0 }}
-                        animate={show ? { width: `${PILL_EM}em`, opacity: 1 } : { width: '0.05em', opacity: 0 }}
-                        transition={{ duration: 1.4, ease: EASE, delay: show ? 0.3 : 0 }}
-                        className="relative block h-[1.55em] shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf]"
+                    </Reveal>
+                    <Reveal
+                        as="span"
+                        variant="clip"
+                        active={show}
+                        className={`${PILL_BASE} h-[1.55em]`}
                     >
-                        <BannerVideo />
-                    </motion.span>
-                    <motion.span
-                        ref={edgerRef}
-                        initial={{ x: -24, opacity: 0 }}
-                        animate={show ? { x: 0, opacity: 1 } : { x: -24, opacity: 0 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.2 : 0 }}
-                    >
+                        <span className="block h-full" style={{ width: `${PILL_EM}em`, ...pillPoster }} />
+                        {isWide === true && <BannerVideo playing={active} />}
+                    </Reveal>
+                    <Reveal as="span" ref={edgerRef} active={show} x={`-${WORD_OFFSET_EM}em`} y="0px">
                         EDGER
-                    </motion.span>
-                    {/* Invisible balance spacer — width = CUTTING − EDGER so pill centres perfectly */}
+                    </Reveal>
                     <span ref={spacerRef} aria-hidden="true" className="shrink-0" style={{ width: 0 }} />
                 </span>
 
@@ -167,49 +153,46 @@ export function HeroSection({ active, goTo, openDemo }: SectionProps) {
                     style={{ fontSize: stackSize ? `${stackSize}px` : 'min(18vw, 12vh)' }}
                     aria-hidden="true"
                 >
-                    <motion.span
-                        ref={stackWordRef}
-                        initial={{ y: 18, opacity: 0 }}
-                        animate={show ? { y: 0, opacity: 1 } : { y: 18, opacity: 0 }}
-                        transition={{ duration: 1.0, ease: EASE, delay: show ? 0.15 : 0 }}
-                    >
+                    <Reveal as="span" ref={stackWordRef} active={show} y="0.35em">
                         CUTTING
-                    </motion.span>
-                    <motion.span
-                        initial={{ opacity: 0, scaleX: 0.6 }}
-                        animate={show ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0.6 }}
-                        transition={{ duration: 1.1, ease: EASE, delay: show ? 0.3 : 0 }}
-                        className="relative block h-[1.3em] w-full overflow-hidden rounded-[0.2em] bg-[#d8d3cf]"
+                    </Reveal>
+                    <Reveal
+                        as="span"
+                        variant="clip"
+                        active={show}
+                        delay={0.1}
+                        className={`${PILL_BASE} h-[1.3em] w-full`}
                     >
-                        <BannerVideo />
-                    </motion.span>
-                    <motion.span
-                        initial={{ y: -18, opacity: 0 }}
-                        animate={show ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
-                        transition={{ duration: 1.0, ease: EASE, delay: show ? 0.2 : 0 }}
-                    >
+                        <span className="block h-full w-full" style={pillPoster} />
+                        {isWide === false && <BannerVideo playing={active} />}
+                    </Reveal>
+                    <Reveal as="span" active={show} y="-0.35em">
                         EDGER
-                    </motion.span>
+                    </Reveal>
                 </span>
             </h1>
 
-            <Reveal active={show} delay={0.9} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
+            <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
                 <p className="text-sm leading-relaxed text-[#3a3a3a] sm:text-base">
                     Transform your apparel and product photography with next-generation AI-integrated image editing and
                     expert post-production. Save time, reduce production costs, and scale your visual content without
                     compromising quality.
                 </p>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                    <PillButton onClick={openDemo}>Book a Demo</PillButton>
-                    <PillButton dark={false} onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
-                        Explore capabilities
-                    </PillButton>
-                </div>
+            </Reveal>
+            <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
+                <PillButton onClick={openDemo}>Book a Demo</PillButton>
+                <PillButton dark={false} onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
+                    Explore capabilities
+                </PillButton>
             </Reveal>
 
-            <Reveal active={show} delay={1.2} className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-[#3a3a3a]/60 sm:block">
+            <Reveal
+                active={show}
+                delay={1.1}
+                className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-[#3a3a3a]/60 sm:block"
+            >
                 Scroll to explore
             </Reveal>
         </div>
     );
-}
+});

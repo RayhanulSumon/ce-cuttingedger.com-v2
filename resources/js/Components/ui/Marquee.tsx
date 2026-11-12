@@ -16,9 +16,9 @@ export function Marquee({
     className = '',
 }: MarqueeProps) {
     const speedClass = {
-        slow: 'duration-[45s]',
-        normal: 'duration-[28s]',
-        fast: 'duration-[16s]',
+        slow: '[animation-duration:45s]!',
+        normal: '[animation-duration:28s]!',
+        fast: '[animation-duration:16s]!',
     }[speed];
 
     const animationClass = direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right';

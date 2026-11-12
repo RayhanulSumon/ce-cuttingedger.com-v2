@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
@@ -24,7 +24,7 @@ const DEFAULT_SOCIALS = [
 ];
 
 /** The familiar giant "CONTACT US" footer card, sized to fit one screen. */
-export function FooterSection({ active, goTo }: SectionProps) {
+export const FooterSection = memo(function FooterSection({ active, goTo }: SectionProps) {
     const { settings } = usePage<PageProps>().props;
     const [hovered, setHovered] = useState<number | null>(null);
 
@@ -51,7 +51,7 @@ export function FooterSection({ active, goTo }: SectionProps) {
                     <span className="hidden font-mono text-[11px] text-[#f9f4e8]/90 sm:inline">Dhaka · London · San Francisco</span>
                 </Reveal>
 
-                <Reveal active={active} delay={0.1} className="relative z-10 my-auto flex flex-col items-center py-6 text-center">
+                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-6 text-center">
                     <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-[#f5a623] sm:mb-5">
                         Ready to elevate your catalog craft &amp; velocity?
                     </span>
@@ -86,7 +86,7 @@ export function FooterSection({ active, goTo }: SectionProps) {
 
                 <Reveal
                     active={active}
-                    delay={0.2}
+                    delay={0.26}
                     className="relative z-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-5 font-mono text-xs text-[#f9f4e8] md:flex-row"
                 >
                     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
@@ -116,4 +116,4 @@ export function FooterSection({ active, goTo }: SectionProps) {
             </div>
         </div>
     );
-}
+});
