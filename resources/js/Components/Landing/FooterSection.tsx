@@ -45,7 +45,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                 <Reveal active={active} className="relative z-10 flex flex-col items-center justify-between gap-2 text-xs text-[#f9f4e8] sm:flex-row">
                     <span className="font-mono text-[11px] text-[#f9f4e8]/90">AI-Driven Visual Performance Agency</span>
                     <Link href="/" className="inline-flex items-center gap-2.5 text-xl font-extrabold uppercase tracking-tight text-white transition-colors hover:text-[#f5a623] sm:text-2xl">
-                        <img src="/images/ce/ce_icon_neon.png" alt="" className="h-6 w-6 object-contain" />
+                        <img src="/images/ce/ce_icon_white.png" alt="" className="h-6 w-6 object-contain" />
                         cutting edger
                     </Link>
                     <span className="hidden font-mono text-[11px] text-[#f9f4e8]/90 sm:inline">Dhaka · London · San Francisco</span>

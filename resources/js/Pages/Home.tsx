@@ -38,11 +38,10 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
 
     // Single-screen page: no document scrollbar, no smooth-scroll hijack.
     useEffect(() => {
-        const previous = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         getLenis()?.stop();
         return () => {
-            document.body.style.overflow = previous;
+            document.body.style.overflow = '';
             getLenis()?.start();
         };
     }, []);

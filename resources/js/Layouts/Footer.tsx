@@ -98,7 +98,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                             >
                                 <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-accent/60 group-hover:bg-accent/10 transition-all duration-300">
                                     <img
-                                        src="/images/ce/ce_icon_neon.png"
+                                        src="/images/ce/ce_icon_white.png"
                                         alt="Cutting Edger"
                                         className="w-5 h-5 object-contain group-hover:scale-110 transition-transform duration-300"
                                     />
@@ -310,7 +310,7 @@ export function Footer({ settings, onOpenContact, compact }: FooterProps) {
                         className="order-1 sm:order-2 inline-flex items-center gap-2.5 font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase hover:text-accent transition-colors"
                     >
                         <img
-                            src="/images/ce/ce_icon_neon.png"
+                            src="/images/ce/ce_icon_white.png"
                             alt="Cutting Edger"
                             className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
                         />

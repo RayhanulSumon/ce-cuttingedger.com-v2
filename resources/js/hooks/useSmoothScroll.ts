@@ -33,9 +33,15 @@ export function useSmoothScroll() {
             }
         }
 
+        // The landing page stops Lenis and locks body scroll; make sure every other page starts unlocked.
+        document.body.style.overflow = '';
+        globalLenis.start();
+        globalLenis.resize();
+
         // Reset scroll position cleanly on Inertia page transitions
         const removeNavigateListener = router.on('navigate', () => {
-            globalLenis?.scrollTo(0, { immediate: true });
+            globalLenis?.scrollTo(0, { immediate: true, force: true });
+            globalLenis?.resize();
         });
 
         return () => {

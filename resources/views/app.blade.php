@@ -9,11 +9,12 @@
         <title inertia>{{ config('app.name', 'CuttingEdger') }}</title>
 
         <!-- Brand Favicons -->
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="icon" type="image/webp" href="/images/ce/ce_icon.webp">
-        <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" sizes="any">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-dark-32x32.png?v=2" media="(prefers-color-scheme: light)">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-dark-16x16.png?v=2" media="(prefers-color-scheme: light)">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" media="(prefers-color-scheme: dark)">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" media="(prefers-color-scheme: dark)">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
 
         <!-- Modern Luxury Tech Fonts: Plus Jakarta Sans, Outfit, Inter, Space Grotesk, Roboto -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

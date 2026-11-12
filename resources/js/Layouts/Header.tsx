@@ -169,7 +169,7 @@ export function Header({
                     >
                         <div className="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center p-1.5 group-hover:border-accent/60 group-hover:bg-accent/10 transition-all duration-300">
                             <img
-                                src="/images/ce/ce_icon_neon.png"
+                                src="/images/ce/ce_icon_white.png"
                                 alt="Cutting Edger"
                                 className="w-5 h-5 object-contain group-hover:scale-110 transition-transform duration-300"
                             />
