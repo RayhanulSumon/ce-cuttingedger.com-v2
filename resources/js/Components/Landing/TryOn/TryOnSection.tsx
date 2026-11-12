@@ -144,8 +144,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
                 <div className={`relative z-10 flex flex-col items-center gap-1 pt-1 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.2} className="flex flex-col items-center gap-2 text-center">
-                        <p className="font-michroma text-sm tracking-[0.14em] text-[#16191f] sm:text-base">{look.name}</p>
-                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
+                        <p className="font-michroma text-sm tracking-[0.14em] text-[#16191f] sm:text-base">{look.modelName}</p>                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
                             {LOOKS.map((_, i) => (
                                 <span
                                     key={i}

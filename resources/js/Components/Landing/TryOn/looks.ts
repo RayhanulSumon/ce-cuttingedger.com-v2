@@ -8,6 +8,8 @@ export interface LookPiece {
 }
 
 export interface Look {
+    /** Unique name of the model wearing the look. */
+    modelName: string;
     name: string;
     description: string;
     model: string;
@@ -25,6 +27,7 @@ const piece = (name: string, image: string, brand = 'Nike', tag?: string): LookP
 
 export const LOOKS: Look[] = [
     {
+        modelName: 'Jonah K.',
         name: 'The City Edit',
         description: 'A charcoal knit and easy denim.',
         model: `${BASE}/model-1-640.webp`,
@@ -41,6 +44,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
+        modelName: 'Marcus T.',
         name: 'Gallery Opening',
         description: 'A clean white tee and relaxed denim.',
         model: `${BASE}/model-5-640.webp`,
@@ -57,7 +61,8 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        name: 'Gallery Opening',
+        modelName: 'Theo R.',
+        name: 'Olive Grounds',
         description: 'Olive knitwear. A grounded palette.',
         model: `${BASE}/model-4-640.webp`,
         modelHiRes: `${BASE}/original-look-4.webp`,
@@ -73,6 +78,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
+        modelName: 'Kai M.',
         name: 'Studio Day',
         description: 'Black, white and laid-back denim.',
         model: `${BASE}/model-6-640.webp`,
@@ -89,7 +95,8 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        name: 'Studio Day',
+        modelName: 'Rafael D.',
+        name: 'Burgundy Layers',
         description: 'Burgundy layers. A tailored perspective.',
         model: `${BASE}/model-3-640.webp`,
         modelHiRes: `${BASE}/original-look-3.webp`,
@@ -105,7 +112,8 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        name: 'Studio Day',
+        modelName: 'Elias V.',
+        name: 'Everyday Grey',
         description: 'A grey crew and your favourite denim.',
         model: `${BASE}/model-2-640.webp`,
         modelHiRes: `${BASE}/original-look-2.webp`,
