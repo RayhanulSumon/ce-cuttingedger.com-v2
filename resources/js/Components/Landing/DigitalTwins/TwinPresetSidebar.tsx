@@ -52,16 +52,19 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
                 <button
                     type="button"
                     onClick={() => onAction('buy')}
-                    className={`${ACTION_BUTTON} bg-[#f5761a] text-white shadow-[0_16px_34px_-16px_rgba(245,118,26,0.9)] hover:bg-[#e0650c]`}
+                    disabled={twin.isCopyrightSold}
+                    className={`${ACTION_BUTTON} bg-[#f5761a] text-white shadow-[0_16px_34px_-16px_rgba(245,118,26,0.9)] hover:bg-[#e0650c] disabled:cursor-not-allowed disabled:bg-[#16191f]/10 disabled:text-[#16191f]/45 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:bg-[#16191f]/10`}
                 >
                     <span className="flex items-center gap-3">
                         <ShoppingBag size={18} className="shrink-0" />
                         <span>
                             <span className="block text-sm font-bold">Buy this preset</span>
-                            <span className="block text-xs text-white/80">All {twin.poses.length} poses included</span>
+                            <span className="block text-xs opacity-80">
+                                {twin.isCopyrightSold ? 'Sold out — no longer available' : `All ${twin.poses.length} poses included`}
+                            </span>
                         </span>
                     </span>
-                    <span className="text-base font-extrabold">{twin.presetPrice}</span>
+                    <span className={`text-base font-extrabold ${twin.isCopyrightSold ? 'line-through' : ''}`}>{twin.presetPrice}</span>
                 </button>
 
                 <button
