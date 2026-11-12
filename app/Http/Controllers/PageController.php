@@ -45,6 +45,14 @@ class PageController extends Controller
     }
 
     /**
+     * Display the full Digital Twins catalogue (models are defined client-side).
+     */
+    public function digitalTwins(): Response
+    {
+        return Inertia::render('DigitalTwins/Index');
+    }
+
+    /**
      * Display accessible FAQ page.
      */
     public function faq(): Response

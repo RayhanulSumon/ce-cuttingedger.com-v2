@@ -175,6 +175,7 @@ Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('care
 
 Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');

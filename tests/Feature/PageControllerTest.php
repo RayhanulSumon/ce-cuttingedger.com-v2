@@ -27,6 +27,13 @@ class PageControllerTest extends TestCase
         );
     }
 
+    public function test_renders_digital_twins_catalogue_page(): void
+    {
+        $this->get(route('digital-twins.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('DigitalTwins/Index'));
+    }
+
     public function test_renders_pricing_page(): void
     {
         $response = $this->get('/pricing');

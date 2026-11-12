@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
+import { Link } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react';
 import { orderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
@@ -154,6 +155,19 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                                 <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                             </span>
                         </a>
+                    </Reveal>
+                </div>
+
+                {/* Right side bottom: Explore more -> full catalogue */}
+                <div className="absolute bottom-6 right-5 z-20 sm:bottom-10 sm:right-10 lg:right-16">
+                    <Reveal active={active} delay={0.32}>
+                        <Link
+                            href="/digital-twins"
+                            className="group inline-flex items-center gap-2 rounded-full border border-[#16191f]/15 bg-white/80 px-5 py-3 text-xs font-semibold text-[#16191f] shadow-[0_10px_28px_-12px_rgba(22,25,31,0.15)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f5761a]/60 hover:bg-white hover:text-[#f5761a] active:scale-95 sm:text-sm"
+                        >
+                            Explore more
+                            <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </Link>
                     </Reveal>
                 </div>
 
