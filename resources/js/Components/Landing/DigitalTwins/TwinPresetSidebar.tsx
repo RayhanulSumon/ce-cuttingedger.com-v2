@@ -28,15 +28,21 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
                         Sold out
                     </span>
                 ) : (
-                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs font-medium text-[#5d6572]">
-                        <span className="inline-flex items-center gap-1.5">
-                            <Calendar size={13} />
-                            Listed {formatTwinAge(twin.listedAt)} ago
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f5761a]/10 px-3 py-1 text-xs font-bold text-[#d9620d]">
-                            <Download size={13} />
-                            {formatDownloadCount(twin.downloadCount)} downloads
-                        </span>
+                    <div className="mt-4 flex items-center divide-x divide-[#16191f]/10 rounded-xl border border-[#16191f]/10 bg-[#f6f8fb] text-[#16191f]">
+                        <div className="flex flex-1 items-center gap-2.5 px-4 py-2.5">
+                            <Download size={16} className="text-[#f5761a]" strokeWidth={2.5} />
+                            <div className="leading-tight">
+                                <p className="text-base font-extrabold">{formatDownloadCount(twin.downloadCount)}</p>
+                                <p className="text-[11px] text-[#5d6572]">downloads so far</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-1 items-center gap-2.5 px-4 py-2.5">
+                            <Calendar size={16} className="text-[#5d6572]" />
+                            <div className="leading-tight">
+                                <p className="text-base font-extrabold">{formatTwinAge(twin.listedAt)}</p>
+                                <p className="text-[11px] text-[#5d6572]">since listed</p>
+                            </div>
+                        </div>
                     </div>
                 )}
                 <p className="mt-3 text-sm leading-relaxed text-[#5d6572]">{twin.description}</p>

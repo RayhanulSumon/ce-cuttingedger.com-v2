@@ -120,13 +120,16 @@ export default function DigitalTwinsIndex() {
                                         from <span className="font-bold text-[#16191f]">{twin.presetPrice}</span>
                                     </p>
                                     {!twin.isCopyrightSold && (
-                                        <div className="flex items-center gap-1.5 pt-1.5">
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-[#f5761a]/10 px-2 py-0.5 text-[10px] font-bold text-[#d9620d]">
-                                                <Download size={10} />
+<>
+                                        <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#f6f8fb] px-2.5 py-1 ring-1 ring-[#16191f]/10">
+                                            <span className="inline-flex items-center gap-1 text-xs font-extrabold leading-none text-[#16191f]">
+                                                <Download size={12} strokeWidth={2.5} className="text-[#f5761a]" />
                                                 {formatDownloadCount(twin.downloadCount)}
                                             </span>
-                                            <span className="truncate text-[10px] text-[#5d6572]">{formatTwinAge(twin.listedAt)} old</span>
+                                            <span className="text-[10px] font-medium text-[#5d6572]">downloads</span>
                                         </div>
+                                        <p className="pt-1.5 text-[11px] text-[#5d6572]">{formatTwinAge(twin.listedAt)} old</p>
+</>
                                     )}
                                 </div>
                             </button>
