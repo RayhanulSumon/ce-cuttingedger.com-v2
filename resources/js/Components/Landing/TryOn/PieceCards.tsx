@@ -1,5 +1,4 @@
 import React from 'react';
-import { Check, Heart, Plus } from 'lucide-react';
 import { Look } from './looks';
 
 interface PieceCardsProps {
@@ -8,14 +7,9 @@ interface PieceCardsProps {
     hotPin: number | null;
     /** Garment currently open in the look view, or null. */
     selectedPiece: number | null;
-    /** Keys (`"look-piece"`) of garments added to the look / saved to the wishlist. */
-    added: Record<string, boolean>;
-    wishlist: Record<string, boolean>;
     cardRefs: React.RefObject<(HTMLLIElement | null)[]>;
     onHotPinChange: (pieceIndex: number | null) => void;
     onSelect: (pieceIndex: number) => void;
-    onToggleAdded: (pieceKey: string) => void;
-    onToggleWishlist: (pieceKey: string) => void;
 }
 
 /** Delay between one card's garment wiping in and the next. */
@@ -32,13 +26,9 @@ export function PieceCards({
     lookIndex,
     hotPin,
     selectedPiece,
-    added,
-    wishlist,
     cardRefs,
     onHotPinChange,
     onSelect,
-    onToggleAdded,
-    onToggleWishlist,
 }: PieceCardsProps) {
     return (
         <ul role="list" className="flex h-44 flex-row gap-3 overflow-x-auto [scrollbar-width:none] lg:h-full lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
@@ -46,8 +36,6 @@ export function PieceCards({
                 const pieceKey = `${lookIndex}-${i}`;
                 const isHot = hotPin === i;
                 const isSelected = selectedPiece === i;
-                const isAdded = Boolean(added[pieceKey]);
-                const isWishlisted = Boolean(wishlist[pieceKey]);
                 const delay = { animationDelay: `${i * STAGGER_MS}ms` };
 
                 return (
@@ -59,35 +47,23 @@ export function PieceCards({
                         onMouseEnter={() => onHotPinChange(i)}
                         onMouseLeave={() => onHotPinChange(null)}
                         onClick={() => onSelect(i)}
-                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl bg-white p-3 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
+                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-3 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
                             isSelected
-                                ? 'shadow-md ring-2 ring-[#151413]'
+                                ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-[#f5761a]'
                                 : isHot
-                                  ? 'shadow-md ring-1 ring-[#151413]/30'
-                                  : 'hover:-translate-y-0.5 hover:shadow-md'
+                                  ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-1 ring-[#f5761a]/70'
+                                  : 'hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)]'
                         }`}
                     >
-                        <div className="relative z-10 flex items-center justify-between">
-                            <button
-                                type="button"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    onToggleWishlist(pieceKey);
-                                }}
-                                aria-pressed={isWishlisted}
-                                aria-label={`Wishlist ${piece.name}`}
-                                className="grid h-6 w-6 place-items-center text-[#151413] transition-transform hover:scale-120"
-                            >
-                                <Heart size={15} strokeWidth={1.5} className={isWishlisted ? 'fill-[#151413]' : ''} />
-                            </button>
+                        <div className="relative z-10 flex items-center">
                             <span
-                                className={`grid h-5 w-5 place-items-center rounded-full text-[10px] font-bold transition-colors duration-300 ${
+                                className={`grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-[10px] font-bold tabular-nums transition-colors duration-300 ${
                                     isSelected || isHot
-                                        ? 'bg-[#0e0e0e] text-white'
-                                        : 'bg-[#151413]/10 text-[#151413] group-hover:bg-[#0e0e0e] group-hover:text-white'
+                                        ? 'bg-[#f5761a] text-white'
+                                        : 'bg-[#dfe8f1] text-[#3d4857] group-hover:bg-[#f5761a] group-hover:text-white'
                                 }`}
                             >
-                                {i + 1}
+                                {String(i + 1).padStart(2, '0')}
                             </span>
                         </div>
 
@@ -103,29 +79,13 @@ export function PieceCards({
                             />
                         </div>
 
-                        <div className="relative z-10 flex items-end justify-between gap-2">
-                            <h4
-                                key={pieceKey}
-                                style={delay}
-                                className="animate-card-in min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.10em] text-[#151413]"
-                            >
-                                {piece.name}
-                            </h4>
-                            <button
-                                type="button"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    onToggleAdded(pieceKey);
-                                }}
-                                aria-pressed={isAdded}
-                                aria-label={`Add ${piece.name} to look`}
-                                className={`grid h-6 w-6 shrink-0 place-items-center rounded-full transition-[scale,background-color,color] duration-300 ${
-                                    isAdded ? 'bg-[#0e0e0e] text-white' : 'text-[#151413] hover:scale-120'
-                                }`}
-                            >
-                                {isAdded ? <Check size={14} strokeWidth={2} /> : <Plus size={16} strokeWidth={1.5} />}
-                            </button>
-                        </div>
+                        <h4
+                            key={pieceKey}
+                            style={delay}
+                            className="animate-card-in relative z-10 min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.10em] text-[#151413]"
+                        >
+                            {piece.name}
+                        </h4>
                     </li>
                 );
             })}

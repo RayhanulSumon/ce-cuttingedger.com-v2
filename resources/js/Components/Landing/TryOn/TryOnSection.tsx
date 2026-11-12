@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { OrderCta, orderUrl, PAD_X, Reveal, SectionIntro, SectionProps } from '../shared';
 import { LOOKS } from './looks';
 import { LookView } from './LookView';
@@ -10,11 +9,6 @@ import { useRingRunway } from './useRingRunway';
 /** How long each look stays at the front before the ring turns by itself. */
 const AUTOPLAY_MS = 5000;
 
-const ROUND_BUTTON =
-    'grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#151413]/25 bg-white/85 text-[#151413] transition-colors duration-300 hover:bg-[#151413] hover:text-white';
-
-const toggleKey = (key: string) => (previous: Record<string, boolean>) => ({ ...previous, [key]: !previous[key] });
-
 /**
  * Section 02 — a ring runway of styled looks. Clicking the front model opens the look view,
  * where each garment can be inspected beside the model.
@@ -24,8 +18,6 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
     const [lookOpen, setLookOpen] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
     const [hotPin, setHotPin] = useState<number | null>(null);
-    const [added, setAdded] = useState<Record<string, boolean>>({});
-    const [wishlist, setWishlist] = useState<Record<string, boolean>>({});
     const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
 
     const handleLookChange = useCallback((index: number) => {
@@ -151,14 +143,10 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                 />
 
                 <div className={`relative z-10 pt-3 ${fadeWhenOpen}`}>
-                    <Reveal active={active} delay={0.24} className="flex items-center justify-between gap-3">
-                        <button type="button" onClick={() => runway.stepLook(-1)} aria-label="Previous look" className={ROUND_BUTTON}>
-                            <ArrowLeft size={18} />
-                        </button>
-                        <OrderCta href={orderUrl('virtual-try-on', look.name)}>Order this look</OrderCta>
-                        <button type="button" onClick={() => runway.stepLook(1)} aria-label="Next look" className={ROUND_BUTTON}>
-                            <ArrowRight size={18} />
-                        </button>
+                    <Reveal active={active} delay={0.24} className="flex items-center justify-center">
+                        <OrderCta href={orderUrl('virtual-try-on', look.name)} label="Like this look?">
+                            Start Try-On Now
+                        </OrderCta>
                     </Reveal>
                 </div>
 
@@ -183,13 +171,9 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                         lookIndex={lookIndex}
                         hotPin={hotPin}
                         selectedPiece={lookOpen ? selectedPiece : null}
-                        added={added}
-                        wishlist={wishlist}
                         cardRefs={cardRefs}
                         onHotPinChange={setHotPin}
                         onSelect={selectPiece}
-                        onToggleAdded={(key) => setAdded(toggleKey(key))}
-                        onToggleWishlist={(key) => setWishlist(toggleKey(key))}
                     />
                 </Reveal>
             </aside>

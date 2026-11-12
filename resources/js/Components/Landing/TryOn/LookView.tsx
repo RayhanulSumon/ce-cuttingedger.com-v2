@@ -172,7 +172,7 @@ export function LookView({
     getOriginRect,
 }: LookViewProps) {
     const figureRef = useRef<HTMLDivElement>(null);
-    const magnifier = useMagnifier({ zoom: 2.2, size: 200, align: 'bottom' });
+    const magnifier = useMagnifier({ zoom: 2.2, size: 150, align: 'bottom' });
     const hideLens = magnifier.hide;
 
     useModelFlight(figureRef, open, getOriginRect);

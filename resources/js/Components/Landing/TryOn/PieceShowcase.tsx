@@ -9,7 +9,7 @@ import { MagnifierLens, useMagnifier } from './Magnifier';
  * Mount it with a `key` per piece so the parent's AnimatePresence cross-fades the old piece out.
  */
 export function PieceShowcase({ piece }: { piece: LookPiece }) {
-    const magnifier = useMagnifier({ zoom: 2.4, size: 200 });
+    const magnifier = useMagnifier({ zoom: 2.4, size: 150 });
 
     return (
         <motion.div

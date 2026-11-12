@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react';
-import { orderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { OrderCta, orderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
 import { TwinNameLabel } from './TwinNameLabel';
 import { TwinPosePreview } from './TwinPosePreview';
@@ -134,26 +134,13 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                 {/* ── Left side bottom: Interactive "Want a custom model? Order now" CTA ── */}
                 <div className="absolute left-5 bottom-6 z-20 sm:left-10 sm:bottom-10 lg:left-16">
                     <Reveal active={active} delay={0.28}>
-                        <a
+                        <OrderCta
                             href={orderUrl('digital-twins', activeTwin.name)}
-                            aria-label={`Want a custom model? Order now for ${activeTwin.name}`}
-                            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-[#16191f]/15 bg-white/95 p-1.5 pl-4 shadow-[0_10px_28px_-10px_rgba(22,25,31,0.18)] backdrop-blur-md transition-all duration-300 hover:border-[#f5761a]/60 hover:shadow-[0_14px_36px_-10px_rgba(245,118,26,0.35)] hover:-translate-y-0.5 active:scale-95"
+                            label="Want a custom model?"
+                            ariaLabel={`Want a custom model? Order now for ${activeTwin.name}`}
                         >
-                            <div className="flex items-center gap-2">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f5761a]/10 text-[#f5761a] transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                                    <Sparkles size={13} />
-                                </span>
-                                <span className="text-xs font-semibold text-[#16191f] sm:text-sm">
-                                    Want a custom model?
-                                </span>
-                            </div>
-
-                            {/* Interactive high-contrast action chip with animated arrow */}
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f5761a] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-all duration-300 group-hover:bg-[#e0650c] group-hover:shadow-sm">
-                                Order now
-                                <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                            </span>
-                        </a>
+                            Order now
+                        </OrderCta>
                     </Reveal>
                 </div>
 
