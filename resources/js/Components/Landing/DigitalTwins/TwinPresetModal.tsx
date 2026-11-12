@@ -101,22 +101,24 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
                 exit={{ y: 16, opacity: 0 }}
                 transition={{ duration: 0.45, ease: EASE_OUT_QUART, delay: 0.05 }}
             >
-                        {/* ── Top Header: Model switcher pills moved to the left ── */}
-                        <div className="flex items-center justify-between border-b border-[#d8e1ec] pb-3.5">
-                            <div className="flex items-center gap-1.5 rounded-full border border-[#d8e1ec] bg-white/90 p-1 shadow-xs backdrop-blur-xs" role="tablist" aria-label="Digital twins">
-                                {DIGITAL_TWINS.map((item, i) => {
-                                    const selected = i === twinIndex;
-                                    const [firstName] = item.name.split(' — ')[0].split(' ');
-                                    return (
-                                        <button
-                                            key={item.lookNumber}
-                                            type="button"
-                                            role="tab"
-                                            aria-selected={selected}
-                                            onClick={() => onSelectTwin(i)}
-                                                        ? 'bg-[#16191f] text-white shadow-xs'
-                                                        : 'text-[#5a6270] hover:bg-[#f1f5fa] hover:text-[#16191f]'
-                                                    }`}
+                {/* ── Top Header: Model switcher pills moved to the left ── */}
+                <div className="flex items-center justify-between border-b border-[#d8e1ec] pb-3.5">
+                    <div className="flex items-center gap-1.5 rounded-full border border-[#d8e1ec] bg-white/90 p-1 shadow-xs backdrop-blur-xs" role="tablist" aria-label="Digital twins">
+                        {DIGITAL_TWINS.map((item, i) => {
+                            const selected = i === twinIndex;
+                            const [firstName] = item.name.split(' — ')[0].split(' ');
+                            return (
+                                <button
+                                    key={item.lookNumber}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={selected}
+                                    onClick={() => onSelectTwin(i)}
+                                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 ${
+                                        selected
+                                            ? 'bg-[#16191f] text-white shadow-xs'
+                                            : 'text-[#5a6270] hover:bg-[#f1f5fa] hover:text-[#16191f]'
+                                    }`}
                                 >
                                     <span className="font-michroma text-[9px] tracking-[0.1em]">#{item.lookNumber}</span>
                                     <span className="hidden sm:inline">{firstName}</span>
@@ -146,7 +148,7 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
                 <TwinPresetSidebar twin={twin} pose={pose} pendingAction={pendingAction} onAction={handleAction} />
             </motion.aside>
 
-            {/* Close button on the top-right */}
+            {/* Close button */}
             <button
                 ref={closeButtonRef}
                 type="button"

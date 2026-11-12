@@ -16,15 +16,14 @@ const ACTION_BUTTON =
 
 /** Right side of the pose modal: model name, short description, and simple action buttons. */
 export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetSidebarProps) {
-    const [name, style] = twin.name.split(' — ');
+    const [name] = twin.name.split(' — ');
 
     return (
         <div className="flex flex-col gap-6">
             <div>
                 <p className="font-michroma text-[10px] tracking-[0.2em] text-[#737b86]">LOOK {twin.lookNumber}</p>
                 <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.02em] text-[#16191f]">{name}</h3>
-                <p className="mt-1 text-sm font-medium text-[#5d6572]">{style}</p>
-                <p className="mt-4 text-sm leading-relaxed text-[#5d6572]">{twin.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-[#5d6572]">{twin.description}</p>
             </div>
 
             <div className="space-y-3">
