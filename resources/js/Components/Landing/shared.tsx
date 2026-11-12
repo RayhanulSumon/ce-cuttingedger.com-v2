@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 export interface SectionProps {
     active: boolean;
@@ -134,18 +134,15 @@ export function orderUrl(service: string, reference?: string): string {
 }
 
 /**
- * Primary call to action, shared by every landing section: a white pill with a short prompt
- * and an orange action chip that opens the custom order form on its own page.
+ * Primary call to action, shared by every landing section: a solid orange pill with an arrow
+ * inside it that opens the custom order form on its own page.
  */
 export function OrderCta({
     href,
-    label,
     ariaLabel,
     children,
 }: {
     href: string;
-    /** Short prompt shown before the orange action chip. */
-    label: string;
     ariaLabel?: string;
     children: React.ReactNode;
 }) {
@@ -153,19 +150,14 @@ export function OrderCta({
         <Link
             href={href}
             aria-label={ariaLabel}
-            className="group relative inline-flex min-h-11 items-center gap-3 overflow-hidden rounded-full border border-[#16191f]/15 bg-white/95 p-1.5 pl-4 shadow-[0_10px_28px_-10px_rgba(22,25,31,0.18)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f5761a]/60 hover:shadow-[0_14px_36px_-10px_rgba(245,118,26,0.35)] active:scale-95"
+            className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full bg-[#f5761a] px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#e0650c] hover:shadow-[0_18px_36px_-12px_rgba(245,118,26,0.95)] active:translate-y-0 active:scale-95"
         >
-            <span className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f5761a]/10 text-[#f5761a] transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                    <Sparkles size={13} />
-                </span>
-                <span className="text-xs font-semibold text-[#16191f] sm:text-sm">{label}</span>
-            </span>
-
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f5761a] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-all duration-300 group-hover:bg-[#e0650c] group-hover:shadow-sm">
-                {children}
-                <ArrowUpRight size={13} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </span>
+            <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)] opacity-0 transition-[translate,opacity] duration-700 group-hover:translate-x-[320%] group-hover:opacity-100"
+            />
+            <span className="relative">{children}</span>
+            <ArrowUpRight size={16} className="relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-1" />
         </Link>
     );
 }

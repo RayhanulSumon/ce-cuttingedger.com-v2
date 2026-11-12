@@ -144,9 +144,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
                 <div className={`relative z-10 pt-3 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.24} className="flex items-center justify-center">
-                        <OrderCta href={orderUrl('virtual-try-on', look.name)} label="Like this look?">
-                            Start Try-On Now
-                        </OrderCta>
+                        <OrderCta href={orderUrl('virtual-try-on', look.name)}>Start Try-On Now</OrderCta>
                     </Reveal>
                 </div>
 
