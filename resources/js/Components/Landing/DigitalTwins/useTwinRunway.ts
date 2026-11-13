@@ -270,6 +270,10 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             s.travelled = Math.max(s.travelled, Math.abs(dx));
             // Inverted: drag right → advance forward (natural carousel direction).
             s.target = s.pressTarget + dx / pull;
+            // The drag cursor only appears once it really is a drag, so a plain click on BUY / VIEW doesn't flash it.
+            if (event.pointerType === 'mouse' && s.travelled >= CLICK_SLOP_PX) {
+                setCursorMode('dragging');
+            }
             return;
         }
 
@@ -294,9 +298,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.pressTarget = s.target;
         s.travelled = 0;
         event.currentTarget.setPointerCapture(event.pointerId);
-        if (event.pointerType === 'mouse') {
-            setCursorMode('dragging');
-        }
     };
 
     const onPointerUp = (event: React.PointerEvent<HTMLElement>) => {
