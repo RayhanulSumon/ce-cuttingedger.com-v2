@@ -25,7 +25,7 @@ export function ScrollToTop({ visible, onClick }: ScrollToTopProps) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 14, scale: 0.85 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="fixed bottom-[1.75rem] right-[5.25rem] z-[99] grid h-8 w-8 place-items-center rounded-full bg-ink/25 text-white backdrop-blur-sm transition-colors duration-300 hover:bg-ink/80 sm:bottom-10 sm:right-[6.25rem]"
+                    className="fixed bottom-[1.75rem] right-[5.25rem] z-[99] grid h-8 w-8 place-items-center rounded-full border border-ink/20 bg-surface/30 text-ink backdrop-blur-sm transition-colors duration-300 hover:border-ink hover:bg-ink hover:text-white sm:bottom-10 sm:right-[6.25rem]"
                 >
                     <ChevronUp size={16} strokeWidth={2.2} />
                 </motion.button>

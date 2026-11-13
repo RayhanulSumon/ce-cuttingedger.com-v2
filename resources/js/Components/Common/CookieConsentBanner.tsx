@@ -41,7 +41,7 @@ export function CookieConsentBanner() {
     return (
         <aside
             aria-label="Cookie and Privacy Consent"
-            className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[999] bg-white/95 border border-ink/15 p-5 rounded-2xl shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 select-none"
+            className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:bottom-6 sm:max-w-md z-[999] bg-white/95 border border-ink/15 p-5 rounded-2xl shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 select-none"
         >
             <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 text-primary-ink">

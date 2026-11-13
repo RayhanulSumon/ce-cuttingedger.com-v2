@@ -140,7 +140,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                 />
 
                 {/* Right side bottom: Explore more -> full catalogue */}
-                <div className="absolute bottom-6 right-5 z-20 sm:bottom-10 sm:right-10 lg:right-16">
+                <div className="absolute bottom-6 right-[8rem] z-20 sm:bottom-10 sm:right-[9.5rem]">
                     <Reveal active={active} delay={0.32}>
                         <Link
                             href="/digital-twins"
