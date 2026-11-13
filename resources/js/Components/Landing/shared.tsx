@@ -193,7 +193,7 @@ export function CustomOrderCta({
     className?: string;
 }) {
     return (
-        <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`}>
+        <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`} data-twin-cursor-free>
             <Reveal active={active} delay={delay} className="flex flex-col items-start gap-2.5">
                 <p className="pl-1 text-sm font-semibold leading-none text-ink sm:text-base">{question}</p>
                 <OrderCta href={href} icon={<Sparkles size={16} />}>
