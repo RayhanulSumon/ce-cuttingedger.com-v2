@@ -9,32 +9,6 @@ use App\Models\Service;
 class FaqAndServiceTool
 {
     /**
-     * Tool schema for services and FAQ search.
-     *
-     * @return array<string, mixed>
-     */
-    public static function schema(): array
-    {
-        return [
-            'type' => 'function',
-            'function' => [
-                'name' => 'search_services_and_faqs',
-                'description' => 'Search services, capabilities, deliverables, turnaround times, file formats, and FAQs about CuttingEdger.',
-                'parameters' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'topic' => [
-                            'type' => 'string',
-                            'description' => 'The topic or question, e.g. "turnaround time", "free trial", "ghost mannequin", "file formats", "revisions"',
-                        ],
-                    ],
-                    'required' => ['topic'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Search relevant information across services and FAQs.
      *
      * @param  array<string, mixed>  $params

@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\ChatSession;
 use App\Models\Order;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Chat\ChatSessionManager;
 use App\Services\Security\LinkAndFileSecurityGuard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -109,97 +107,6 @@ class AdminOrderTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertTrue(str_contains((string) $response->headers->get('content-disposition'), 'CE-ORD-ZIPTEST'));
-    }
-
-    public function test_chat_creates_order_and_validates_quantity_discrepancy(): void
-    {
-        $session = ChatSession::create([
-            'ip_address' => '127.0.0.1',
-            'status' => 'active',
-            'lead_email' => 'client@shopifybrand.com',
-            'lead_name' => 'Sarah Connor',
-        ]);
-
-        // 1. Client confirms batch order of 50 images in chat
-        $response = $this->withHeaders(['X-Chat-Session-Id' => $session->id])
-            ->withCookie(ChatSessionManager::COOKIE_NAME, $session->id)
-            ->postJson('/api/chat/message', [
-                'message' => 'Proceed with order for 50 Clipping Path / Background Removal images (medium complexity, $35.00)',
-            ]);
-
-        $response->assertStatus(200);
-
-        // Verify order created in DB
-        $order = Order::where('chat_session_id', $session->id)->first();
-        $this->assertNotNull($order);
-        $this->assertSame(50, $order->quantity);
-        $this->assertSame(0, $order->uploaded_count);
-        $this->assertSame('pending', $order->status);
-
-        // 2. Client uploads 2 images (less than quoted 50)
-        $msgWithUploads = $this->withHeaders(['X-Chat-Session-Id' => $session->id])
-            ->withCookie(ChatSessionManager::COOKIE_NAME, $session->id)
-            ->postJson('/api/chat/message', [
-                'message' => 'Uploaded 2 test images',
-                'attachments' => [
-                    'https://cdn.example.com/img1.jpg',
-                    'https://cdn.example.com/img2.jpg',
-                ],
-            ]);
-
-        $msgWithUploads->assertStatus(200);
-        $order->refresh();
-
-        $this->assertSame(50, $order->quantity);
-        $this->assertSame(2, $order->uploaded_count);
-        $this->assertCount(2, $order->images);
-
-        // 3. Client shares Google Drive folder link
-        $msgWithDrive = $this->withHeaders(['X-Chat-Session-Id' => $session->id])
-            ->withCookie(ChatSessionManager::COOKIE_NAME, $session->id)
-            ->postJson('/api/chat/message', [
-                'message' => 'Here are all the remaining files on Google Drive: https://drive.google.com/drive/folders/1a2b3c4d5e',
-            ]);
-
-        $msgWithDrive->assertStatus(200);
-        $order->refresh();
-
-        $this->assertSame('https://drive.google.com/drive/folders/1a2b3c4d5e', $order->cloud_link);
-    }
-
-    public function test_file_size_limit_and_cloud_link_endpoint(): void
-    {
-        Storage::fake('public');
-        $session = ChatSession::create(['ip_address' => '127.0.0.1']);
-
-        $order = Order::factory()->create([
-            'chat_session_id' => $session->id,
-            'status' => 'pending',
-            'cloud_link' => null,
-        ]);
-
-        // 1. Test file exceeding 25MB limit (e.g. 27MB)
-        $oversizedFile = UploadedFile::fake()->create('huge_raw_batch.psd', 27000); // 27MB
-        $uploadResponse = $this->withHeaders(['X-Chat-Session-Id' => $session->id])
-            ->withCookie(ChatSessionManager::COOKIE_NAME, $session->id)
-            ->postJson('/api/chat/upload', [
-                'file' => $oversizedFile,
-            ]);
-
-        $uploadResponse->assertStatus(422);
-        $uploadResponse->assertJsonStructure(['error', 'suggest_cloud_drive']);
-        $this->assertTrue($uploadResponse->json('suggest_cloud_drive'));
-
-        // 2. Test direct cloud link submission endpoint with trusted link
-        $cloudResponse = $this->withHeaders(['X-Chat-Session-Id' => $session->id])
-            ->withCookie(ChatSessionManager::COOKIE_NAME, $session->id)
-            ->postJson('/api/chat/cloud-link', [
-                'link' => 'https://www.dropbox.com/sh/xyz123/all-product-photos',
-            ]);
-
-        $cloudResponse->assertStatus(200);
-        $order->refresh();
-        $this->assertSame('https://www.dropbox.com/sh/xyz123/all-product-photos', $order->cloud_link);
     }
 
     public function test_security_guard_blocks_malicious_links_and_files(): void

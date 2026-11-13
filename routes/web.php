@@ -26,6 +26,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PageController;
@@ -198,7 +199,7 @@ Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
 
 /*
 |--------------------------------------------------------------------------
-| Smart Client Chat Dialog & Hybrid MCP API
+| Information-only Chat Assistant
 |--------------------------------------------------------------------------
 */
 Route::prefix('api/chat')->name('chat.')->group(function (): void {
@@ -206,13 +207,10 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/reset', [ChatController::class, 'reset'])->name('reset');
     Route::post('/message', [ChatController::class, 'message'])->name('message');
     Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
-    Route::post('/upload', [ChatController::class, 'uploadImage'])->name('upload');
-    Route::post('/lead', [ChatController::class, 'saveLead'])->name('lead');
-    Route::post('/cloud-link', [ChatController::class, 'saveCloudLink'])->name('cloud-link');
-    Route::post('/book-slot', [ChatController::class, 'bookSlot'])->name('book-slot');
-    Route::get('/available-slots', [ChatController::class, 'availableSlots'])->name('available-slots');
-    Route::get('/inactivity-check', [ChatController::class, 'checkInactivity'])->name('inactivity-check');
 });
+
+Route::get('/api/discovery-call/slots', [DiscoveryCallController::class, 'slots'])->name('discovery-call.slots');
+Route::post('/api/discovery-call/book', [DiscoveryCallController::class, 'book'])->name('discovery-call.book');
 
 Route::get('/api/captcha/math', function (EmailAndSpamGuard $guard) {
     return response()->json($guard->generateMathCaptcha());

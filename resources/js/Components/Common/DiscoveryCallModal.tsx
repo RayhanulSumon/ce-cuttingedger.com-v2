@@ -75,7 +75,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
         setIsLoadingSlots(true);
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
-        fetch(`/api/chat/available-slots?timezone=${encodeURIComponent(timezone)}`, {
+        fetch(`/api/discovery-call/slots?timezone=${encodeURIComponent(timezone)}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -138,14 +138,11 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
         setIsSubmitting(true);
 
         try {
-            const storedSession = localStorage.getItem('ce_chat_session_id');
-
-            const res = await fetch('/api/chat/book-slot', {
+            const res = await fetch('/api/discovery-call/book', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    ...(storedSession ? { 'X-Chat-Session-Id': storedSession } : {}),
                 },
                 body: JSON.stringify({
                     slot_datetime: selectedSlot.iso,

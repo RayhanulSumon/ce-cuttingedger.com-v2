@@ -1,415 +1,264 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-    MessageSquare,
-    X,
-    Send,
-    Paperclip,
-    Sparkles,
-    Minimize2,
-    Maximize2,
-    Calendar,
-    Tag,
-    Clock,
-    Loader2,
-    ArrowRight,
-    Bot,
-    User,
-    CheckCircle2,
-    Plus,
-    RotateCcw,
-    Copy,
-    Check,
-    UploadCloud,
-    FileText,
-    HelpCircle,
-    Pencil,
-    Trash2,
-} from 'lucide-react';
-import { QuoteCard } from './QuoteCard';
-import { CalendarSlotPicker } from './CalendarSlotPicker';
-import { CompactSlotProposalCard } from './CompactSlotProposalCard';
-import { BookingConfirmedCard } from './BookingConfirmedCard';
-import { ServiceCatalogCard } from './ServiceCatalogCard';
-import { FreeTrialConfirmedCard } from './FreeTrialConfirmedCard';
-import { TrialQuotaExhaustedCard } from './TrialQuotaExhaustedCard';
-import { OrderConfirmedCard } from './OrderConfirmedCard';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link } from '@inertiajs/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bot, Maximize2, MessageSquare, Minimize2, RotateCcw, Send, User, X } from 'lucide-react';
+import { ChatCard, InfoCards } from './InfoCards';
 
 interface ChatMessageItem {
     id: number | string;
     sender: 'user' | 'assistant' | 'system' | 'operator';
     content: string;
-    attachments?: string[];
-    tool_cards?: any[];
+    tool_cards?: ChatCard[];
     suggested_replies?: string[];
     created_at?: string;
 }
 
+const SESSION_KEY = 'ce_chat_session_id';
+const POLL_MS = 3000;
+
+/** Renders **bold** inside a line. */
+function formatInline(text: string): React.ReactNode[] {
+    return text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+            <strong key={i} className="font-bold text-ink">
+                {part.slice(2, -2)}
+            </strong>
+        ) : (
+            <React.Fragment key={i}>{part}</React.Fragment>
+        ),
+    );
+}
+
+/** Small markdown subset: paragraphs, bullets and numbered steps. */
+function MessageText({ content, onDark = false }: { content: string; onDark?: boolean }) {
+    const lines = content.split('\n');
+
+    return (
+        <div className={`space-y-1.5 text-[13px] leading-relaxed ${onDark ? 'text-white [&_strong]:text-white' : 'text-ink-2'}`}>
+            {lines.map((raw, i) => {
+                const line = raw.trim();
+                if (!line) {
+                    return <div key={i} className="h-1" />;
+                }
+                const bullet = line.match(/^[*-]\s+(.*)$/);
+                if (bullet) {
+                    return (
+                        <p key={i} className="flex gap-2">
+                            <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                            <span>{formatInline(bullet[1])}</span>
+                        </p>
+                    );
+                }
+                const step = line.match(/^(\d+)[.)]\s+(.*)$/);
+                if (step) {
+                    return (
+                        <p key={i} className="flex gap-2.5">
+                            <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-bold text-primary-ink">
+                                {step[1]}
+                            </span>
+                            <span>{formatInline(step[2])}</span>
+                        </p>
+                    );
+                }
+                return <p key={i}>{formatInline(line)}</p>;
+            })}
+        </div>
+    );
+}
+
+function TypingDots() {
+    return (
+        <div className="flex w-fit items-center gap-1 rounded-2xl rounded-bl-sm border border-ink/10 bg-surface px-4 py-3 shadow-sm" aria-label="Assistant is typing">
+            {[0, 1, 2].map((i) => (
+                <motion.span
+                    key={i}
+                    className="h-1.5 w-1.5 rounded-full bg-primary"
+                    animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
+                />
+            ))}
+        </div>
+    );
+}
+
+/**
+ * Information-only assistant: answers questions about services, pricing, turnaround and the process,
+ * and points visitors to the contact page for anything else. It never books, quotes or collects files.
+ */
 export function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [messages, setMessages] = useState<ChatMessageItem[]>([]);
     const [inputText, setInputText] = useState('');
     const [sessionId, setSessionId] = useState<string | null>(null);
-    const [chatMode, setChatMode] = useState<'bot' | 'operator'>('bot');
     const [operatorName, setOperatorName] = useState<string | null>(null);
-    const [needsHuman, setNeedsHuman] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isTypingVisible, setIsTypingVisible] = useState(false);
-    const [typingPhase, setTypingPhase] = useState<'analyzing' | 'checking' | 'composing'>('analyzing');
     const [isResetting, setIsResetting] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
-    const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
-    const [showNudgeBubble, setShowNudgeBubble] = useState(false);
-    const [showQuickMenu, setShowQuickMenu] = useState(false);
-    const [isDragOver, setIsDragOver] = useState(false);
 
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const lastActivityRef = useRef<number>(Date.now());
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    // Prevent Lenis smooth scroll from intercepting mouse wheel/touch in messages
-    useEffect(() => {
-        const el = scrollContainerRef.current;
-        if (!el) return;
+    const headers = useCallback(
+        (id: string | null): HeadersInit => ({
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            ...(id ? { 'X-Chat-Session-Id': id } : {}),
+        }),
+        [],
+    );
 
-        const stopScrollPropagation = (e: Event) => {
-            e.stopPropagation();
-        };
-
-        el.addEventListener('wheel', stopScrollPropagation, { passive: false });
-        el.addEventListener('touchmove', stopScrollPropagation, { passive: false });
-
-        return () => {
-            el.removeEventListener('wheel', stopScrollPropagation);
-            el.removeEventListener('touchmove', stopScrollPropagation);
-        };
-    }, [isOpen]);
-
-    // 1. Initialize or resume session (lazy loading: only creates DB session on chat open or when resuming)
-    const initSession = (force = false) => {
-        if (isResetting) return;
-        const storedSession = localStorage.getItem('ce_chat_session_id');
-        if (!storedSession && !force) {
-            return;
+    const applyState = useCallback((data: any) => {
+        if (data.session_id) {
+            setSessionId(data.session_id);
+            try {
+                localStorage.setItem(SESSION_KEY, data.session_id);
+            } catch {
+                // Storage can be blocked; the chat still works for this visit.
+            }
         }
-
-        fetch('/api/chat/session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                ...(storedSession ? { 'X-Chat-Session-Id': storedSession } : {}),
-            },
-            body: JSON.stringify({
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.session_id) {
-                    setSessionId(data.session_id);
-                    localStorage.setItem('ce_chat_session_id', data.session_id);
-                }
-                if (data.mode) setChatMode(data.mode);
-                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
-                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
-                if (data.messages && Array.isArray(data.messages)) {
-                    setMessages(data.messages);
-                }
-            })
-            .catch((err) => console.error('Chat init error:', err));
-    };
-
-    // On initial page mount: only resume if visitor already had an ongoing session in localStorage
-    useEffect(() => {
-        const storedSession = localStorage.getItem('ce_chat_session_id');
-        if (storedSession) {
-            initSession(false);
+        if (data.operator_name !== undefined) {
+            setOperatorName(data.operator_name);
         }
     }, []);
 
-    // When visitor clicks to open the chat widget, initialize session if not already loaded
+    const initSession = useCallback(async () => {
+        let stored: string | null = null;
+        try {
+            stored = localStorage.getItem(SESSION_KEY);
+        } catch {
+            stored = null;
+        }
+
+        try {
+            const res = await fetch('/api/chat/session', { method: 'POST', headers: headers(stored), body: '{}' });
+            const data = await res.json();
+            applyState(data);
+            if (Array.isArray(data.messages)) {
+                setMessages(data.messages);
+            }
+        } catch (error) {
+            console.error('Chat init error:', error);
+        }
+    }, [applyState, headers]);
+
+    // Resume an earlier conversation quietly; start a new one only when the visitor opens the chat.
+    useEffect(() => {
+        try {
+            if (localStorage.getItem(SESSION_KEY)) {
+                void initSession();
+            }
+        } catch {
+            // ignore
+        }
+    }, [initSession]);
+
     useEffect(() => {
         if (isOpen && !sessionId && !isResetting) {
-            initSession(true);
+            void initSession();
         }
-    }, [isOpen, sessionId, isResetting]);
-
-    // 2. Auto-scroll on new messages & typing indicator
-    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollTo({
-                top: scrollContainerRef.current.scrollHeight,
-                behavior,
-            });
-        }
-    };
-
-    useEffect(() => {
         if (isOpen) {
-            const timer = setTimeout(() => {
-                scrollToBottom('smooth');
-            }, 60);
             setUnreadCount(0);
-            setShowNudgeBubble(false);
-            return () => clearTimeout(timer);
         }
-    }, [messages, isOpen, isTypingVisible]);
+    }, [isOpen, sessionId, isResetting, initSession]);
 
-    // Web Audio Synthesizer: Crisp chime for incoming replies without external asset dependency
-    const playNotificationChime = () => {
-        try {
-            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-            if (!AudioContextClass) return;
-            const audioCtx = new AudioContextClass();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.35);
-        } catch {
-            // Audio context not allowed or supported
-        }
-    };
+    // A human operator can join the conversation from the admin panel; poll for their replies.
+    const lastServerId = messages.reduce((max, m) => {
+        const id = typeof m.id === 'number' ? m.id : Number.parseInt(String(m.id), 10);
+        return Number.isNaN(id) || String(m.id).startsWith('user-') ? max : Math.max(max, id);
+    }, 0);
 
-    // 2.5. Live polling for operator replies and state updates
     useEffect(() => {
-        if (!sessionId) return;
-
-        const pollInterval = setInterval(async () => {
-            // Do not poll while a message send is in flight to prevent race conditions
-            if (isLoading) return;
-
-            try {
-                // Find highest numeric server message ID (ignore temporary optimistic IDs)
-                const highestId = messages.reduce((max, m) => {
-                    const num = typeof m.id === 'number' ? m.id : parseInt(String(m.id), 10);
-                    return !isNaN(num) && String(m.id).indexOf('user-') === -1 && num > max ? num : max;
-                }, 0);
-
-                const res = await fetch(`/api/chat/poll?after_id=${highestId}`, {
-                    headers: {
-                        'X-Chat-Session-Id': sessionId,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                });
-                const data = await res.json();
-
-                if (data.mode) setChatMode(data.mode);
-                if (data.operator_name !== undefined) setOperatorName(data.operator_name);
-                if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
-
-                if (data.messages && data.messages.length > 0) {
-                    setMessages((prev) => {
-                        let updated = [...prev];
-                        let hasChanges = false;
-                        const brandNew: any[] = [];
-
-                        data.messages.forEach((m: any) => {
-                            const strId = String(m.id);
-                            // Skip if already in message list by server ID
-                            if (updated.some((p) => String(p.id) === strId)) return;
-
-                            // Reconcile optimistic user message
-                            if (m.sender === 'user') {
-                                const optIndex = updated.findIndex(
-                                    (p) => String(p.id).startsWith('user-') && p.content.trim() === m.content.trim()
-                                );
-                                if (optIndex !== -1) {
-                                    // Upgrade optimistic ID to the real database ID
-                                    updated[optIndex] = { ...updated[optIndex], id: m.id };
-                                    hasChanges = true;
-                                    return;
-                                }
-                                // If already in updated list by content match, ignore to avoid duplicates
-                                if (updated.some((p) => p.sender === 'user' && p.content.trim() === m.content.trim())) {
-                                    return;
-                                }
-                            }
-
-                            brandNew.push(m);
-                            updated.push(m);
-                            hasChanges = true;
-                        });
-
-                        if (!hasChanges) return prev;
-
-                        if (brandNew.some((m: any) => m.sender === 'operator')) {
-                            playNotificationChime();
-                        }
-
-                        if (!isOpen && brandNew.length > 0) {
-                            setUnreadCount((c) => c + brandNew.length);
-                            setNudgeMessage(brandNew[brandNew.length - 1].content);
-                            setShowNudgeBubble(true);
-                        }
-                        return updated;
-                    });
-                }
-            } catch {
-                // Background poll silent fallback
-            }
-        }, 2500);
-
-        return () => clearInterval(pollInterval);
-    }, [sessionId, messages, isOpen, isLoading]);
-
-    // Natural brief pause and progressive status phases during inference
-    useEffect(() => {
-        if (!isLoading) {
-            setIsTypingVisible(false);
-            setTypingPhase('analyzing');
+        if (!sessionId) {
             return;
         }
-
-        const timer = setTimeout(() => {
-            setIsTypingVisible(true);
-        }, 700);
-
-        const phase2Timer = setTimeout(() => {
-            setTypingPhase('checking');
-        }, 3500);
-
-        const phase3Timer = setTimeout(() => {
-            setTypingPhase('composing');
-        }, 8500);
-
-        return () => {
-            clearTimeout(timer);
-            clearTimeout(phase2Timer);
-            clearTimeout(phase3Timer);
-        };
-    }, [isLoading]);
-
-    // 3. User activity tracker & Inactivity Heartbeat (only checks when user has actually chatted)
-    useEffect(() => {
-        const updateActivity = () => {
-            lastActivityRef.current = Date.now();
-        };
-
-        window.addEventListener('mousemove', updateActivity);
-        window.addEventListener('keydown', updateActivity);
-        window.addEventListener('scroll', updateActivity);
-
-        const interval = setInterval(() => {
-            const idleTimeMs = Date.now() - lastActivityRef.current;
-            // Only ping if chat has a valid session and at least one message has been exchanged
-            if (idleTimeMs > 90000 && sessionId && messages.length > 0) {
-                fetch('/api/chat/inactivity-check', {
-                    headers: {
-                        'X-Chat-Session-Id': sessionId,
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if (data.nudge) {
-                            setMessages((prev) => [...prev, data.nudge]);
-                            setNudgeMessage(data.nudge.content);
-                            if (!isOpen) {
-                                setShowNudgeBubble(true);
-                                setUnreadCount((c) => c + 1);
-                            }
-                        }
-                    })
-                    .catch(() => {});
+        const timer = window.setInterval(async () => {
+            if (isLoading) {
+                return;
             }
-        }, 30000);
+            try {
+                const res = await fetch(`/api/chat/poll?after_id=${lastServerId}`, { headers: headers(sessionId) });
+                const data = await res.json();
+                applyState(data);
 
-        return () => {
-            window.removeEventListener('mousemove', updateActivity);
-            window.removeEventListener('keydown', updateActivity);
-            window.removeEventListener('scroll', updateActivity);
-            clearInterval(interval);
+                const incoming: ChatMessageItem[] = (data.messages ?? []).filter((m: ChatMessageItem) => m.sender !== 'user');
+                if (incoming.length === 0) {
+                    return;
+                }
+                setMessages((prev) => {
+                    const fresh = incoming.filter((m) => !prev.some((p) => String(p.id) === String(m.id)));
+                    if (fresh.length === 0) {
+                        return prev;
+                    }
+                    if (!isOpen) {
+                        setUnreadCount((count) => count + fresh.length);
+                    }
+                    return [...prev, ...fresh];
+                });
+            } catch {
+                // Polling is best effort.
+            }
+        }, POLL_MS);
+
+        return () => window.clearInterval(timer);
+    }, [sessionId, lastServerId, isLoading, isOpen, headers, applyState]);
+
+    useEffect(() => {
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    }, [messages, isLoading, isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+        inputRef.current?.focus({ preventScroll: true });
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
         };
-    }, [sessionId, isOpen]);
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [isOpen]);
 
-    // 4. Send Message Handler
-    const handleSendMessage = async (textToSend?: string) => {
-        const text = (textToSend || inputText).trim();
-        if (!text || isLoading) return;
-
-        setShowQuickMenu(false);
-
-        // Immediate reset command handling
-        if (['/reset', '/clear', 'reset', 'clear'].includes(text.toLowerCase())) {
-            handleResetChat();
+    const send = async (textToSend?: string) => {
+        const text = (textToSend ?? inputText).trim();
+        if (!text || isLoading) {
             return;
         }
 
         const optimisticId = `user-${Date.now()}`;
-        const newMsg: ChatMessageItem = {
-            id: optimisticId,
-            sender: 'user',
-            content: text,
-            created_at: new Date().toISOString(),
-        };
-
-        setMessages((prev) => [...prev, newMsg]);
+        setMessages((prev) => [...prev, { id: optimisticId, sender: 'user', content: text, created_at: new Date().toISOString() }]);
         setInputText('');
         setIsLoading(true);
 
-        const startTime = Date.now();
+        const startedAt = Date.now();
         try {
-            const res = await fetch('/api/chat/message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
-                },
-                body: JSON.stringify({
-                    message: text,
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                }),
-            });
-
+            const res = await fetch('/api/chat/message', { method: 'POST', headers: headers(sessionId), body: JSON.stringify({ message: text }) });
             const data = await res.json();
-            if (data.session_id) {
-                setSessionId(data.session_id);
-                localStorage.setItem('ce_chat_session_id', data.session_id);
-            }
-            if (data.mode) setChatMode(data.mode);
-            if (data.operator_name !== undefined) setOperatorName(data.operator_name);
-            if (data.needs_human !== undefined) setNeedsHuman(Boolean(data.needs_human));
+            applyState(data);
 
-            // If the server took longer than 600ms, deliver immediately; otherwise pad slightly so it doesn't blink
-            const elapsed = Date.now() - startTime;
-            const targetDelay = Math.max(0, 600 - elapsed);
-            if (targetDelay > 0) {
-                await new Promise((resolve) => setTimeout(resolve, targetDelay));
+            // Keep the typing dots up for a moment so the reply never just blinks in.
+            const wait = Math.max(0, 600 - (Date.now() - startedAt));
+            if (wait > 0) {
+                await new Promise((resolve) => window.setTimeout(resolve, wait));
             }
 
             setMessages((prev) => {
-                let updated = prev.map((m) =>
-                    m.id === optimisticId
-                        ? { ...m, id: data.user_message_id || m.id }
-                        : m
-                );
-                // Only append reply message if it's not a user message and not already present
-                if (data.message && data.message.sender !== 'user' && !updated.some((m) => String(m.id) === String(data.message.id))) {
-                    updated.push(data.message);
+                const next = prev.map((m) => (m.id === optimisticId ? { ...m, id: data.user_message_id ?? m.id } : m));
+                if (data.message && !next.some((m) => String(m.id) === String(data.message.id))) {
+                    next.push(data.message);
                 }
-                return updated;
+                return next;
             });
-        } catch (err) {
-            console.error('Error sending message:', err);
+        } catch {
             setMessages((prev) => [
                 ...prev,
                 {
                     id: `error-${Date.now()}`,
                     sender: 'assistant',
-                    content: "I had a brief connection glitch. Please choose one of the options below or ask again!",
-                    suggested_replies: ['Calculate Pricing', 'Schedule a Call', 'Claim 3 Free Edits'],
+                    content: 'Something went wrong on my side. Please try again, or contact the team directly.',
+                    suggested_replies: ['What services do you offer?', 'How does pricing work?'],
                 },
             ]);
         } finally {
@@ -417,927 +266,193 @@ export function ChatWidget() {
         }
     };
 
-    // 5. Image Upload Handler (Handles single or multiple files with 25MB limit)
-    const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB server safety limit
-
-    const uploadFiles = async (files: File[]) => {
-        if (files.length === 0) return;
-
-        const oversizedFiles = files.filter((f) => f.size > MAX_FILE_SIZE_BYTES);
-        const validFiles = files.filter((f) => f.size <= MAX_FILE_SIZE_BYTES);
-
-        if (oversizedFiles.length > 0) {
-            const oversizedNames = oversizedFiles.map((f) => `${f.name} (${(f.size / (1024 * 1024)).toFixed(1)}MB)`).join(', ');
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: Date.now() + Math.random(),
-                    sender: 'assistant',
-                    content: `⚠️ **File Size Limit Notice:**\n\n${oversizedFiles.length === 1 ? 'This file' : 'These files'} exceed our 25MB direct upload limit:\n*${oversizedNames}*\n\n📁 **For large RAW, PSD, TIFF, or batch archives**, please share a **Google Drive, Dropbox, or WeTransfer link** right here in chat! Our retouchers will download directly from your cloud folder.`,
-                    suggested_replies: [
-                        'How do I share a Google Drive link?',
-                        'Calculate Pricing First',
-                        'Schedule Consultation Call',
-                    ],
-                    created_at: new Date().toISOString(),
-                },
-            ]);
-        }
-
-        if (validFiles.length === 0) {
-            if (fileInputRef.current) fileInputRef.current.value = '';
-            return;
-        }
-
-        setIsUploading(true);
-        try {
-            const uploadedUrls: string[] = [];
-            const base64List: string[] = [];
-            let lastFileName = '';
-
-            for (const file of validFiles) {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                const uploadRes = await fetch('/api/chat/upload', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
-                    },
-                    body: formData,
-                });
-
-                const uploadData = await uploadRes.json();
-                if (uploadRes.ok && uploadData.url) {
-                    uploadedUrls.push(uploadData.url);
-                    if (uploadData.base64) base64List.push(uploadData.base64);
-                    lastFileName = uploadData.filename;
-                } else if (uploadData.error) {
-                    setMessages((prev) => [
-                        ...prev,
-                        {
-                            id: Date.now() + Math.random(),
-                            sender: 'assistant',
-                            content: `⚠️ ${uploadData.error}`,
-                            suggested_replies: ['Share Google Drive Link', 'Schedule Consultation Call'],
-                            created_at: new Date().toISOString(),
-                        },
-                    ]);
-                }
-            }
-
-            if (uploadedUrls.length > 0) {
-                const msgText = uploadedUrls.length === 1
-                    ? `Uploaded sample image: ${lastFileName}`
-                    : `Uploaded batch of ${uploadedUrls.length} images for editing`;
-
-                const msgRes = await fetch('/api/chat/message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
-                    },
-                    body: JSON.stringify({
-                        message: msgText,
-                        attachments: uploadedUrls,
-                        images_base64: base64List,
-                    }),
-                });
-
-                const data = await msgRes.json();
-                if (data.message) {
-                    setMessages((prev) => [...prev, data.message]);
-                }
-            }
-        } catch (err) {
-            console.error('Upload error:', err);
-        } finally {
-            setIsUploading(false);
-            if (fileInputRef.current) fileInputRef.current.value = '';
-        }
-    };
-
-    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        uploadFiles(files);
-    };
-
-    // 6. Slot Booking Submission
-    const handleBookSlot = async (bookingData: any) => {
-        const payload = {
-            ...bookingData,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        };
-        const res = await fetch('/api/chat/book-slot', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
-            },
-            body: JSON.stringify(payload),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error(data.message || 'Unable to confirm booking');
-        }
-
-        if (data.message) {
-            setMessages((prev) => [...prev, data.message]);
-        }
-    };
-
-    // 7. Restart conversation (forces brand new session and clears cookie)
-    const handleResetChat = async () => {
+    const resetChat = async () => {
         setIsResetting(true);
         try {
-            const res = await fetch('/api/chat/reset', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    ...(sessionId ? { 'X-Chat-Session-Id': sessionId } : {}),
-                },
-            });
+            const res = await fetch('/api/chat/reset', { method: 'POST', headers: headers(sessionId), body: '{}' });
             const data = await res.json();
-            if (data.session_id) {
-                setSessionId(data.session_id);
-                localStorage.setItem('ce_chat_session_id', data.session_id);
-            }
-            if (data.messages && Array.isArray(data.messages)) {
-                setMessages(data.messages);
-            }
+            applyState(data);
+            setMessages(Array.isArray(data.messages) ? data.messages : []);
             setInputText('');
-            setShowQuickMenu(false);
-        } catch (err) {
-            console.error('Reset error:', err);
+        } catch (error) {
+            console.error('Reset error:', error);
         } finally {
             setIsResetting(false);
         }
     };
 
-    // 7.5. Edit user message (rewinds conversation so user can fix typos/misspellings)
-    const handleEditUserMessage = (msgId: number | string, text: string, index: number) => {
-        setInputText(text);
-        // Rewind messages up to this index so the user can re-send their corrected text
-        setMessages((prev) => prev.slice(0, index));
-    };
-
-    // 7.6. Delete user message
-    const handleDeleteUserMessage = (msgId: number | string, index: number) => {
-        setMessages((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    // Helper to format inline markdown elements (bold, code)
-    const formatInline = (text: string) => {
-        const parts = text.split(/(\*\*.*?\*\*|`.*?`)/g);
-        return parts.map((part, i) => {
-            if (part.startsWith('**') && part.endsWith('**')) {
-                return (
-                    <strong key={i} className="text-ink font-semibold">
-                        {part.slice(2, -2)}
-                    </strong>
-                );
-            }
-            if (part.startsWith('`') && part.endsWith('`')) {
-                return (
-                    <code key={i} className="px-1.5 py-0.5 rounded bg-ink/[0.05] text-primary-ink font-mono text-[11px]">
-                        {part.slice(1, -1)}
-                    </code>
-                );
-            }
-            return part;
-        });
-    };
-
-    // Advanced Visual Formatter for Chat Messages
-    const renderVisualMessage = (content: string, isUser: boolean) => {
-        if (isUser) {
-            return (
-                <p className="whitespace-pre-wrap text-[13px] font-medium text-white leading-relaxed select-text">
-                    {content}
-                </p>
-            );
-        }
-
-        const lines = content.split('\n');
-        const elements: React.ReactNode[] = [];
-
-        lines.forEach((rawLine, idx) => {
-            const line = rawLine.trim();
-
-            if (!line) {
-                elements.push(<div key={`sp-${idx}`} className="h-1" />);
-                return;
-            }
-
-            // 1. Numbered Step Cards (e.g. "1. **Ingestion & Calibration:** description" or "1. Ingestion...")
-            const stepMatch = line.match(/^(\d+)[\.\)]\s*(.*)$/);
-            if (stepMatch) {
-                const num = stepMatch[1];
-                const text = stepMatch[2];
-                elements.push(
-                    <div
-                        key={`step-${idx}`}
-                        className="flex items-start gap-2.5 my-1.5 p-2.5 rounded-xl bg-white/[0.03] border border-ink/10 hover:border-ink/15 transition-all shadow-sm"
-                    >
-                        <span className="w-5 h-5 rounded-md bg-primary/15 text-primary-ink font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-primary/30 shadow-sm shadow-primary/10">
-                            {num.padStart(2, '0')}
-                        </span>
-                        <div className="text-xs leading-relaxed text-ink-2 flex-1">
-                            {formatInline(text)}
-                        </div>
-                    </div>
-                );
-                return;
-            }
-
-            // 2. Bullet list items (e.g. "* **Clipping Path:** ..." or "- Point")
-            const bulletMatch = line.match(/^[\*\-•]\s*(.*)$/);
-            if (bulletMatch) {
-                const text = bulletMatch[1];
-                elements.push(
-                    <div key={`bullet-${idx}`} className="flex items-start gap-2 my-1 pl-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0 shadow-sm shadow-primary/50" />
-                        <div className="text-xs leading-relaxed text-ink-2 flex-1">
-                            {formatInline(text)}
-                        </div>
-                    </div>
-                );
-                return;
-            }
-
-            // 3. Highlight / KPI lines (ONLY specific SLA, rate, or trial banners - NOT ordinary emojis or greetings)
-            const kpiMatch = line.match(/^(⏱️|🏷️|🎁|🚀|💡)\s*(.*)$/u);
-            const isActualKpi = kpiMatch && (
-                /turnaround|rate|pricing|price|trial|discount|offer|sla/i.test(line)
-            );
-            if (isActualKpi && kpiMatch) {
-                const icon = kpiMatch[1];
-                const text = kpiMatch[2];
-                elements.push(
-                    <div
-                        key={`hl-${idx}`}
-                        className="my-2 p-2.5 rounded-xl bg-gradient-to-r from-primary/15 via-ink/[0.02] to-transparent border border-primary/25 flex items-center gap-2.5 shadow-sm"
-                    >
-                        <span className="text-sm shrink-0">{icon}</span>
-                        <div className="text-xs font-medium text-ink/95 flex-1">
-                            {formatInline(text)}
-                        </div>
-                    </div>
-                );
-                return;
-            }
-
-            // 4. Section Headers (e.g. "### Header")
-            if (line.startsWith('### ')) {
-                elements.push(
-                    <h5 key={`h3-${idx}`} className="text-xs font-mono font-bold uppercase tracking-wider text-primary-ink mt-3 mb-1">
-                        {line.replace('### ', '')}
-                    </h5>
-                );
-                return;
-            }
-
-            // 5. Standard paragraph (clean, natural rendering for greetings like "👋 Hi there!" without tool boxes)
-            elements.push(
-                <p key={`p-${idx}`} className="text-xs leading-relaxed text-ink-2 my-0.5">
-                    {formatInline(line)}
-                </p>
-            );
-        });
-
-        return <div className="space-y-0.5">{elements}</div>;
-    };
+    const lastAssistantIndex = messages.reduce((last, m, i) => (m.sender !== 'user' ? i : last), -1);
 
     return (
-        <aside aria-label="Live Assistant" className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end">
-            {/* Inactivity / Exit Nudge Bubble */}
-            <AnimatePresence>
-                {showNudgeBubble && !isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        onClick={() => setIsOpen(true)}
-                        className="mb-3 mr-2 p-3.5 max-w-[290px] rounded-2xl bg-white/95 border border-primary/40 shadow-2xl backdrop-blur-md cursor-pointer hover:border-primary transition-all"
-                    >
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary-ink flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" /> Quick Question?
-                            </span>
-                            <button
-                                type="button"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowNudgeBubble(false);
-                                }}
-                                className="text-ink/40 hover:text-ink"
-                            >
-                                <X className="w-3 h-3" />
-                            </button>
-                        </div>
-                        <p className="text-xs text-ink/90 leading-relaxed">
-                            {nudgeMessage || "Test our quality with 3 free image edits! Zero cost, zero commitment."}
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Chat Dialog Window */}
+        <aside aria-label="Assistant" className="fixed bottom-4 right-4 z-[100] flex flex-col items-end sm:bottom-6 sm:right-6">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: 24, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        data-lenis-prevent="true"
-                        data-lenis-prevent-wheel="true"
-                        data-lenis-prevent-touch="true"
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDragOver(true);
-                        }}
-                        onDragLeave={() => setIsDragOver(false)}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            setIsDragOver(false);
-                            const files = Array.from(e.dataTransfer.files || []).filter(
-                                (f) => f.type.startsWith('image/')
-                            );
-                            if (files.length > 0) uploadFiles(files);
-                        }}
-                        className={`relative flex flex-col rounded-3xl bg-surface border border-ink/10 shadow-[0_32px_80px_-24px_color-mix(in_srgb,var(--color-ink)_55%,transparent)] overflow-hidden mb-3 transition-all duration-300 ${
+                        exit={{ opacity: 0, y: 24, scale: 0.96 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        onWheel={(event) => event.stopPropagation()}
+                        onTouchMove={(event) => event.stopPropagation()}
+                        role="dialog"
+                        aria-label="Chat assistant"
+                        className={`mb-3 flex origin-bottom-right flex-col overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-[0_32px_80px_-24px_color-mix(in_srgb,var(--color-ink)_55%,transparent)] ${
                             isExpanded
-                                ? 'w-[calc(100vw-2rem)] sm:w-[720px] h-[min(700px,80vh)]'
-                                : 'w-[calc(100vw-2rem)] sm:w-[380px] md:w-[410px] h-[min(540px,78vh)]'
+                                ? 'h-[min(720px,82vh)] w-[calc(100vw-2rem)] sm:w-[640px]'
+                                : 'h-[min(600px,80vh)] w-[calc(100vw-2rem)] sm:w-[400px]'
                         }`}
                     >
-                        {/* Drag and Drop Active Overlay */}
-                        {isDragOver && (
-                            <div className="absolute inset-0 z-50 bg-white/90 border-2 border-dashed border-primary rounded-3xl flex flex-col items-center justify-center gap-3 backdrop-blur-md p-6 text-center animate-in fade-in duration-200">
-                                <div className="p-4 rounded-2xl bg-primary/10 text-primary-ink">
-                                    <UploadCloud className="w-12 h-12 animate-bounce" />
-                                </div>
-                                <h4 className="text-base font-bold text-ink font-mono">
-                                    Drop Photos Here
-                                </h4>
-                                <p className="text-xs text-ink/60 max-w-[280px]">
-                                    We will analyze the complexity and provide an instant price estimate.
-                                </p>
-                            </div>
-                        )}
-
                         {/* Header */}
-                        <div className="px-5 py-3.5 border-b border-ink/10 bg-surface flex items-center justify-between shrink-0">
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
-                                        chatMode === 'operator'
-                                            ? 'bg-gradient-to-br from-secondary to-ink text-white shadow-md'
-                                            : 'bg-gradient-to-br from-primary to-primary-hover text-white shadow-md shadow-primary/30'
-                                    }`}>
-                                        {chatMode === 'operator' ? (
-                                            <User className="w-5 h-5" />
-                                        ) : (
-                                            <Bot className="w-5 h-5" />
-                                        )}
-                                    </div>
-                                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
-                                        'bg-emerald-400'
-                                    }`} />
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-bold text-ink tracking-tight">
-                                            {chatMode === 'operator' ? 'CuttingEdger Live Studio' : 'CuttingEdger Assistant'}
-                                        </h3>
-                                    </div>
-                                    <p className="text-[10px] text-ink/50 font-mono flex items-center gap-1.5">
-                                        <span className={`w-1.5 h-1.5 rounded-full ${
-                                            'bg-emerald-500 animate-pulse'
-                                        }`} />
-                                        <span>
-                                            {chatMode === 'operator'
-                                                ? `Live with ${operatorName || 'Studio Specialist'}`
-                                                : '24/7 Studio • Instant Estimates'}
-                                        </span>
-                                    </p>
-                                </div>
+                        <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-br from-secondary to-ink px-5 py-4 text-white">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary-hover shadow-md">
+                                    {operatorName ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
+                                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-secondary bg-emerald-400" />
+                                </span>
+                                <span className="min-w-0">
+                                    <span className="block truncate text-sm font-bold leading-tight">
+                                        {operatorName ? `${operatorName} · CuttingEdger` : 'CuttingEdger Assistant'}
+                                    </span>
+                                    <span className="block text-[11px] text-white/60">
+                                        {operatorName ? 'Live specialist' : 'Ask about services, pricing and delivery'}
+                                    </span>
+                                </span>
                             </div>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-0.5">
                                 <button
                                     type="button"
-                                    onClick={handleResetChat}
+                                    onClick={resetChat}
                                     disabled={isResetting}
-                                    className="px-2 py-1 rounded-lg text-ink/50 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer flex items-center gap-1.5 text-[11px] font-mono border border-ink/10 hover:border-ink/15"
-                                    title="Start fresh conversation"
+                                    title="Start a new chat"
+                                    aria-label="Start a new chat"
+                                    className="grid h-8 w-8 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                                 >
-                                    <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-primary-ink' : ''}`} />
-                                    <span className="hidden sm:inline">{isResetting ? 'Resetting...' : 'New Chat'}</span>
+                                    <RotateCcw className={`h-4 w-4 ${isResetting ? 'animate-spin' : ''}`} />
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => setIsExpanded(!isExpanded)}
-                                    className="p-1.5 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer hidden sm:block"
-                                    title={isExpanded ? 'Collapse' : 'Expand full view'}
+                                    onClick={() => setIsExpanded((value) => !value)}
+                                    title={isExpanded ? 'Smaller' : 'Larger'}
+                                    aria-label={isExpanded ? 'Make chat smaller' : 'Make chat larger'}
+                                    className="hidden h-8 w-8 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:grid"
                                 >
-                                    {isExpanded ? (
-                                        <Minimize2 className="w-3.5 h-3.5" />
-                                    ) : (
-                                        <Maximize2 className="w-3.5 h-3.5" />
-                                    )}
+                                    {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="p-1.5 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer"
-                                    title="Close chat"
+                                    title="Close"
+                                    aria-label="Close chat"
+                                    className="grid h-8 w-8 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="h-4 w-4" />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Live Operator Active Banner */}
-                        {chatMode === 'operator' && (
-                            <div className="px-4 py-1.5 bg-primary/10 border-b border-primary/20 text-[11px] font-mono text-primary-ink flex items-center justify-between">
-                                <span className="flex items-center gap-1.5 font-semibold">
-                                    <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-                                    Live Specialist Active ({operatorName || 'Production Lead'})
-                                </span>
-                                <span className="text-[10px] text-ink/50">Direct Chat</span>
-                            </div>
-                        )}
-                        {needsHuman && chatMode !== 'operator' && (
-                            <div className="px-4 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-[11px] font-mono text-amber-400 flex items-center justify-between">
-                                <span className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                                    Specialist notified • A live agent will reply shortly
-                                </span>
-                            </div>
-                        )}
-
-                        {/* Messages Scroll Area */}
-                        <div
-                            ref={scrollContainerRef}
-                            data-lenis-prevent="true"
-                            data-lenis-prevent-wheel="true"
-                            data-lenis-prevent-touch="true"
-                            onWheel={(e) => e.stopPropagation()}
-                            onTouchMove={(e) => e.stopPropagation()}
-                            style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
-                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-page p-4 space-y-4 scrollbar-thin scrollbar-thumb-ink/20"
-                        >
-                            {messages.map((msg, index) => {
-                                const isUser = msg.sender === 'user';
-                                const isOperator = msg.sender === 'operator';
-                                const isLatestAssistant =
-                                    !isUser && index === messages.length - 1;
+                        {/* Messages */}
+                        <div ref={scrollRef} data-scrollable className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-page px-4 py-5">
+                            {messages.map((message, index) => {
+                                const isUser = message.sender === 'user';
+                                const isLast = index === lastAssistantIndex;
 
                                 return (
-                                    <div
-                                        key={msg.id || index}
-                                        className={`flex flex-col group ${isUser ? 'items-end' : 'items-start'}`}
+                                    <motion.div
+                                        key={message.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                        className={`flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}
                                     >
-                                        {isOperator && (
-                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-primary-ink font-mono">
-                                                <User className="w-3 h-3 text-primary-ink" />
-                                                <span className="font-semibold">{operatorName || 'Live Studio Specialist'}</span>
-                                            </div>
+                                        {message.sender === 'operator' && (
+                                            <span className="text-[10.5px] font-semibold text-primary-ink">{operatorName || 'CuttingEdger team'}</span>
                                         )}
 
-                                        <div className="relative max-w-[88%]">
-                                            <div
-                                                className={`rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed ${
-                                                    isUser
-                                                        ? 'bg-gradient-to-br from-primary-hover to-primary-ink text-white font-medium rounded-br-xs shadow-md shadow-primary/25 border border-primary-ink/40'
-                                                        : isOperator
-                                                        ? 'bg-primary/10 text-ink border border-primary/30 rounded-bl-xs shadow-sm'
-                                                        : 'bg-white text-ink/90 border border-ink/10 rounded-bl-xs shadow-md'
-                                                }`}
-                                            >
-                                                {/* Attached Images */}
-                                                {msg.attachments && msg.attachments.length > 0 && (
-                                                    <div className="mb-2 flex flex-wrap gap-1.5">
-                                                        {msg.attachments.map((url, i) => (
-                                                            <img
-                                                                key={i}
-                                                                src={url}
-                                                                alt="Attached sample"
-                                                                className="w-20 h-20 object-cover rounded-lg border border-ink/20 shadow-md"
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                )}
-
-                                                {/* Text Content */}
-                                                {renderVisualMessage(msg.content, isUser)}
-                                            </div>
-
-                                            {/* Edit & Delete controls for user messages */}
-                                            {isUser && (
-                                                <div className="opacity-0 group-hover:opacity-100 absolute -bottom-5 right-1 flex items-center gap-2 text-[10px] text-ink/50 transition-opacity">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleEditUserMessage(msg.id, msg.content, index)}
-                                                        className="hover:text-primary-ink flex items-center gap-1 cursor-pointer transition-colors"
-                                                        title="Edit & fix typo in message"
-                                                    >
-                                                        <Pencil className="w-2.5 h-2.5" />
-                                                        <span>Edit</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteUserMessage(msg.id, index)}
-                                                        className="hover:text-rose-400 flex items-center gap-1 cursor-pointer transition-colors"
-                                                        title="Remove message"
-                                                    >
-                                                        <Trash2 className="w-2.5 h-2.5" />
-                                                        <span>Delete</span>
-                                                    </button>
-                                                </div>
-                                            )}
+                                        <div
+                                            className={`max-w-[88%] rounded-2xl px-4 py-2.5 ${
+                                                isUser
+                                                    ? 'rounded-br-sm bg-gradient-to-br from-primary-hover to-primary-ink shadow-md shadow-primary/25'
+                                                    : 'rounded-bl-sm border border-ink/10 bg-surface shadow-sm'
+                                            }`}
+                                        >
+                                            <MessageText content={message.content} onDark={isUser} />
                                         </div>
 
-                                        {/* Tool Cards (Quote / Calendar / Confirmation / Upload / Info) */}
-                                        {msg.tool_cards && msg.tool_cards.length > 0 && (
-                                            <div className="w-full mt-2.5">
-                                                {msg.tool_cards.map((card: any, cIdx: number) => {
-                                                    if (card.type === 'quote_card') {
-                                                        return (
-                                                            <QuoteCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onSelectReply={(text) => handleSendMessage(text)}
-                                                                onUploadClick={() => fileInputRef.current?.click()}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'free_trial_confirmed_card') {
-                                                        return (
-                                                            <FreeTrialConfirmedCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onSendPrompt={(text) => handleSendMessage(text)}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'order_confirmed_card') {
-                                                        return (
-                                                            <OrderConfirmedCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onSendPrompt={(text) => handleSendMessage(text)}
-                                                                onUploadClick={() => fileInputRef.current?.click()}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'trial_quota_exhausted_card') {
-                                                        return (
-                                                            <TrialQuotaExhaustedCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onSendPrompt={(text) => handleSendMessage(text)}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'reset_chat_prompt_card') {
-                                                        return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-white border border-primary/30 shadow-lg text-left space-y-2.5 animate-in fade-in duration-200">
-                                                                <div className="flex items-center gap-2">
-                                                                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary-ink">
-                                                                        <RotateCcw className="w-4 h-4" />
-                                                                    </div>
-                                                                    <h4 className="text-xs font-bold text-ink tracking-tight">{card.title || 'Start Fresh Conversation'}</h4>
-                                                                </div>
-                                                                <p className="text-[11px] text-ink/70 leading-relaxed">{card.description}</p>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={handleResetChat}
-                                                                    disabled={isResetting}
-                                                                    className="w-full py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                                                                >
-                                                                    <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
-                                                                    <span>{isResetting ? 'Resetting...' : (card.cta || 'Start Fresh Chat')}</span>
-                                                                </button>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    if (card.type === 'upload_prompt_card') {
-                                                        return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-primary/10 border border-primary/40 shadow-xl backdrop-blur-md text-left">
-                                                                <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="p-1.5 rounded-lg bg-primary text-white">
-                                                                        <UploadCloud className="w-4 h-4" />
-                                                                    </span>
-                                                                    <div>
-                                                                        <h4 className="text-sm font-bold text-ink tracking-tight">{card.title}</h4>
-                                                                        <span className="text-[10px] text-primary-ink font-mono">Ready to process</span>
-                                                                    </div>
-                                                                </div>
-                                                                <p className="text-xs text-ink/80 my-2 leading-relaxed">{card.description}</p>
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => fileInputRef.current?.click()}
-                                                                    className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
-                                                                >
-                                                                    <UploadCloud className="w-3.5 h-3.5" />
-                                                                    <span>{card.cta || 'Select Images to Upload'}</span>
-                                                                </button>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    if (card.type === 'compact_slot_proposal') {
-                                                        return (
-                                                            <CompactSlotProposalCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onBookSlot={handleBookSlot}
-                                                                onShowAllTimes={() => handleSendMessage('Show full calendar with all dates')}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'calendar_slot_picker') {
-                                                        return (
-                                                            <CalendarSlotPicker
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onBookSlot={handleBookSlot}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'service_catalog_card' || card.type === 'service_detail_card') {
-                                                        return (
-                                                            <ServiceCatalogCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onSendPrompt={(prompt) => handleSendMessage(prompt)}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'booking_confirmed_card' || card.type === 'appointment_status_card') {
-                                                        return (
-                                                            <BookingConfirmedCard
-                                                                key={cIdx}
-                                                                card={card}
-                                                                onReschedule={() => {
-                                                                    handleSendMessage('I would like to reschedule my consultation call');
-                                                                }}
-                                                            />
-                                                        );
-                                                    }
-                                                    if (card.type === 'info_card') {
-                                                        const hasServices = card.services && card.services.length > 0;
-                                                        const hasFaqs = card.faqs && card.faqs.length > 0;
-                                                        if (!hasServices && !hasFaqs) {
-                                                            return null;
-                                                        }
-
-                                                        return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-white border border-ink/10 text-left space-y-2.5">
-                                                                {hasServices && (
-                                                                    <div>
-                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink block mb-1">
-                                                                            Studio Services
-                                                                        </span>
-                                                                        {card.services.map((s: any, sI: number) => (
-                                                                            <div key={sI} className="bg-ink/[0.03] p-2 rounded-lg my-1">
-                                                                                <p className="text-xs font-bold text-ink">{s.title}</p>
-                                                                                <p className="text-[11px] text-ink/60">{s.subtitle}</p>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-                                                                {hasFaqs && (
-                                                                    <div>
-                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink block mb-1">
-                                                                            FAQ Answers
-                                                                        </span>
-                                                                        {card.faqs.map((f: any, fI: number) => (
-                                                                            <div key={fI} className="bg-ink/[0.03] p-2 rounded-lg my-1">
-                                                                                <p className="text-xs font-semibold text-ink">Q: {f.q}</p>
-                                                                                <p className="text-[11px] text-ink/70 mt-0.5">{f.a}</p>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })}
+                                        {!isUser && (message.tool_cards ?? []).length > 0 && (
+                                            <div className="w-full max-w-[96%] space-y-2">
+                                                {(message.tool_cards ?? []).map((card, i) => (
+                                                    <InfoCards key={`${message.id}-${i}`} card={card} onAsk={send} />
+                                                ))}
                                             </div>
                                         )}
 
-                                        {/* INLINE SUGGESTION PILLS (Only directly below latest assistant message) */}
-                                        {isLatestAssistant &&
-                                            msg.suggested_replies &&
-                                            msg.suggested_replies.length > 0 &&
-                                            !isLoading && (
-                                                <div className="mt-3 flex flex-wrap gap-1.5 w-full">
-                                                    {msg.suggested_replies.map((reply, rIdx) => (
-                                                        <button
-                                                            key={rIdx}
-                                                            type="button"
-                                                            onClick={() => handleSendMessage(reply)}
-                                                            className="text-[11px] font-mono px-3 py-1.5 rounded-full bg-surface hover:bg-primary/10 hover:text-primary-ink hover:border-primary/30 text-ink/80 border border-ink/10 transition-all text-left flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-                                                        >
-                                                            <span>{reply}</span>
-                                                            <ArrowRight className="w-2.5 h-2.5 opacity-50 shrink-0" />
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                    </div>
+                                        {!isUser && isLast && !isLoading && (message.suggested_replies ?? []).length > 0 && (
+                                            <div className="flex max-w-[96%] flex-wrap gap-1.5">
+                                                {(message.suggested_replies ?? []).map((reply) => (
+                                                    <button
+                                                        key={reply}
+                                                        type="button"
+                                                        onClick={() => send(reply)}
+                                                        className="rounded-full border border-ink/10 bg-surface px-3.5 py-1.5 text-[12px] font-semibold text-ink-2 shadow-sm transition-[transform,border-color,color] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary-ink"
+                                                    >
+                                                        {reply}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </motion.div>
                                 );
                             })}
-
-                            {/* Realistic Typing Indicator Bubble with Progressive Status */}
-                            {isTypingVisible && (
-                                <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
-                                    <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-primary/20 to-primary/20 border border-ink/15 flex items-center justify-center text-primary-ink shrink-0 mt-0.5">
-                                        <Bot className="w-3.5 h-3.5" />
-                                    </div>
-                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-white border border-ink/10 shadow-md flex items-center gap-2.5">
-                                        <div className="flex items-center gap-1">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
-                                        </div>
-                                        <span className="text-[11px] font-mono text-ink/60">
-                                            {typingPhase === 'analyzing' && 'CuttingEdger is analyzing request...'}
-                                            {typingPhase === 'checking' && 'Reviewing studio schedule & specs...'}
-                                            {typingPhase === 'composing' && 'Composing response...'}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {isUploading && (
-                                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-primary/30 text-primary-ink text-xs w-fit">
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                    <span className="font-mono text-[11px]">Uploading sample photo batch...</span>
-                                </div>
-                            )}
-
-                            <div ref={messagesEndRef} />
+                            {isLoading && <TypingDots />}
                         </div>
 
-                        {/* Input Box with + Quick Actions Menu */}
-                        <div className="p-3 border-t border-ink/10 bg-white relative">
-                            {/* Quick Actions Popover Menu */}
-                            <AnimatePresence>
-                                {showQuickMenu && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute bottom-full left-3 mb-2 w-72 rounded-2xl bg-white/95 border border-ink/15 shadow-2xl backdrop-blur-xl p-2 z-50 space-y-1 font-mono text-xs"
-                                    >
-                                        <div className="px-2.5 py-1.5 text-[10px] text-ink/40 uppercase tracking-wider font-bold border-b border-ink/10">
-                                            Quick Actions
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSendMessage('Get an Instant Quote')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
-                                        >
-                                            <Tag className="w-3.5 h-3.5 text-primary-ink" />
-                                            <span>Get Instant Quote</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSendMessage('Claim 3 Free Sample Edits')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
-                                        >
-                                            <Sparkles className="w-3.5 h-3.5 text-primary-ink" />
-                                            <span>Claim 3 Free Sample Edits</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSendMessage('Schedule Consultation Call')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
-                                        >
-                                            <Calendar className="w-3.5 h-3.5 text-primary-ink" />
-                                            <span>Book 15-Min Technical Call</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSendMessage('Turnaround SLAs')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
-                                        >
-                                            <Clock className="w-3.5 h-3.5 text-[#ff3e8a]" />
-                                            <span>Turnaround & SLAs</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleSendMessage('Can I speak with a live specialist?')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
-                                        >
-                                            <User className="w-3.5 h-3.5 text-primary-ink" />
-                                            <span>Talk to Live Specialist</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowQuickMenu(false);
-                                                fileInputRef.current?.click();
-                                            }}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer border-t border-ink/10 pt-2"
-                                        >
-                                            <UploadCloud className="w-3.5 h-3.5 text-ink/60" />
-                                            <span>Upload Batch Photos</span>
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
+                        {/* Input */}
+                        <div className="shrink-0 border-t border-ink/10 bg-surface px-4 pb-3 pt-3">
                             <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSendMessage();
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    void send();
                                 }}
                                 className="flex items-center gap-2"
                             >
                                 <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    onChange={handleFileInputChange}
-                                    accept="image/jpeg,image/png,image/webp,image/tiff"
-                                    multiple
-                                    className="hidden"
-                                />
-
-                                {/* Plus / Quick Action Toggle */}
-                                <button
-                                    type="button"
-                                    onClick={() => setShowQuickMenu(!showQuickMenu)}
-                                    title="Quick Actions Menu"
-                                    className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer ${
-                                        showQuickMenu
-                                            ? 'bg-primary text-white rotate-45'
-                                            : 'bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/60 hover:text-ink'
-                                    }`}
-                                >
-                                    <Plus className="w-4 h-4 transition-transform" />
-                                </button>
-
-                                {/* Paperclip Upload */}
-                                <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    title="Attach sample photos"
-                                    className="p-2 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/60 hover:text-ink transition-colors shrink-0 cursor-pointer"
-                                >
-                                    <Paperclip className="w-4 h-4" />
-                                </button>
-
-                                <input
+                                    ref={inputRef}
                                     type="text"
                                     value={inputText}
-                                    onChange={(e) => setInputText(e.target.value)}
-                                    placeholder="Ask a question, pricing, turnaround, or edits..."
-                                    className="flex-1 bg-ink/[0.03] border border-ink/10 rounded-xl px-3.5 py-2 text-xs text-ink placeholder-faint focus:outline-none focus:border-primary transition-colors"
+                                    onChange={(event) => setInputText(event.target.value)}
+                                    maxLength={2000}
+                                    placeholder="Ask about services, pricing or delivery…"
+                                    aria-label="Your question"
+                                    className="min-w-0 flex-1 rounded-full border border-ink/10 bg-page px-4 py-2.5 text-[13px] text-ink placeholder-faint outline-none transition-colors focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/15"
                                 />
-
                                 <button
                                     type="submit"
                                     disabled={!inputText.trim() || isLoading}
-                                    className="p-2 rounded-xl bg-primary hover:bg-primary-hover text-white transition-all disabled:opacity-30 disabled:hover:bg-primary shrink-0 cursor-pointer shadow-md shadow-primary/20"
+                                    aria-label="Send"
+                                    className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-md shadow-primary/30 transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover disabled:translate-y-0 disabled:opacity-40"
                                 >
-                                    <Send className="w-4 h-4" />
+                                    <Send className="h-4 w-4" />
                                 </button>
                             </form>
-
-                            <div className="flex items-center justify-between text-[10px] text-ink/40 pt-1.5 px-1 font-mono">
-                                <span>We reply instantly • Ask us anything</span>
-                                <span className="flex items-center gap-1 text-ink/50">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-primary" /> 100% Confidential
-                                </span>
-                            </div>
+                            <p className="mt-2 text-center text-[10.5px] text-subtle">
+                                Information only. For quotes and orders, <Link href="/contact" prefetch className="font-semibold text-primary-ink hover:underline">contact the team</Link>.
+                            </p>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Floating Launcher Button */}
+            {/* Floating launcher */}
             <motion.button
+                type="button"
                 whileHover={{ scale: 1.06, y: -2 }}
                 whileTap={{ scale: 0.94 }}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen((value) => !value)}
                 className="group relative grid h-14 w-14 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-hover text-white shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)] sm:h-16 sm:w-16"
-                aria-label="Toggle AI Chat Dialog"
+                aria-label={isOpen ? 'Close chat' : 'Open chat'}
+                aria-expanded={isOpen}
             >
-                {/* Soft pulse while the chat is closed */}
-                {!isOpen && (
-                    <span aria-hidden="true" className="absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />
-                )}
-                {/* Glass highlight */}
+                {!isOpen && <span aria-hidden="true" className="absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />}
                 <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-white/35 to-transparent" />
 
                 <AnimatePresence mode="wait" initial={false}>
@@ -1357,9 +472,7 @@ export function ChatWidget() {
                     </motion.span>
                 </AnimatePresence>
 
-                {!isOpen && (
-                    <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-emerald-400" aria-hidden="true" />
-                )}
+                {!isOpen && <span aria-hidden="true" className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-emerald-400" />}
 
                 {unreadCount > 0 && !isOpen && (
                     <span className="absolute -left-1 -top-1 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-md">

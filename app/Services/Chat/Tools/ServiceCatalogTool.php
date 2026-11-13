@@ -7,36 +7,6 @@ use App\Models\Service;
 class ServiceCatalogTool
 {
     /**
-     * Tool schema for exploring services catalog and service details.
-     *
-     * @return array<string, mixed>
-     */
-    public static function schema(): array
-    {
-        return [
-            'type' => 'function',
-            'function' => [
-                'name' => 'explore_services_catalog',
-                'description' => 'Explore CuttingEdger studio retouching services, technical specifications, deliverables, turnaround SLAs, and starting rates.',
-                'parameters' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'service_slug' => [
-                            'type' => 'string',
-                            'description' => 'Optional slug to inspect a specific service (e.g. "background-removal", "ghost-mannequin", "high-end-model-retouch", "jewelry-retouch", "3d-modeling", "dtp-publishing").',
-                        ],
-                        'action' => [
-                            'type' => 'string',
-                            'description' => '"list" to see all studio services, or "detail" for full specs of a specific service.',
-                            'enum' => ['list', 'detail'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Execute catalog query or fetch individual service specs.
      *
      * @param  array<string, mixed>  $params
