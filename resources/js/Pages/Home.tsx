@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
+import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { CaseStudySection } from '@/Components/Landing/CaseStudySection';
 import { ClientsSection } from '@/Components/Landing/ClientsSection';
@@ -74,6 +75,10 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
             <Menubar index={index} goTo={goTo} openDemo={openDemo} hidden={overlayOpen} />
             <SideDots index={index} goTo={goTo} hidden={overlayOpen} />
             <DemoModal open={demoOpen} onClose={closeDemo} />
+            {/* Floating chat, bottom right. Hidden (not unmounted) while a fullscreen overlay is open so the conversation survives. */}
+            <div className={overlayOpen ? 'hidden' : undefined}>
+                <ChatWidget />
+            </div>
         </>
     );
 }
