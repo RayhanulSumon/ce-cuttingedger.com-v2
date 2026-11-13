@@ -31,4 +31,13 @@ class ContactPhonesTest extends TestCase
             ->where('settings.contact_phone', '+88 02 0000 0000')
         );
     }
+
+    public function test_whatsapp_number_is_shared_and_empty_by_default(): void
+    {
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('settings.whatsapp_number', ''));
+
+        Setting::create(['key' => 'whatsapp_number', 'value' => '8801700000000']);
+
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('settings.whatsapp_number', '8801700000000'));
+    }
 }

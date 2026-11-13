@@ -57,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                 'contact_email' => $dbSettings['contact_email'] ?? 'hello@cuttingedger.com',
                 'contact_phones' => $phones,
                 'contact_phone' => $phones[0]['number'] ?? '',
+                'whatsapp_number' => $dbSettings['whatsapp_number'] ?? '',
                 'office_address' => $dbSettings['office_address'] ?? 'Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215',
                 'calendly_url' => $dbSettings['calendly_url'] ?? 'https://calendly.com/cuttingedger/discovery-call',
                 'socials' => [

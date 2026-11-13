@@ -173,6 +173,8 @@ export interface SiteSettings {
     contact_phones: { label: string; number: string }[];
     /** The first phone number, for places that show only one. */
     contact_phone: string;
+    /** WhatsApp number with country code, digits only. Empty hides the link. */
+    whatsapp_number: string;
     office_address: string;
     socials: {
         twitter?: string;

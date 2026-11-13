@@ -1,8 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { ChevronUp } from 'lucide-react';
+import { ArrowUpRight, Check, ChevronUp, MessageCircle } from 'lucide-react';
 import { PageProps } from '@/types';
+import { SocialIcon } from './SocialIcon';
 import { Reveal, SectionProps } from './shared';
 
 const LETTERS = Array.from('CONTACT US');
@@ -56,6 +57,64 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
     );
 }
 
+/** Email signup for the newsletter. Success is shown in place, because the homepage has no toast area. */
+function NewsletterSignup() {
+    const { data, setData, post, processing, errors, reset } = useForm({ email: '' });
+    const [done, setDone] = useState(false);
+
+    const submit = (event: React.FormEvent) => {
+        event.preventDefault();
+        post('/newsletter', {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                reset('email');
+                setDone(true);
+            },
+        });
+    };
+
+    return (
+        <div className="max-w-md">
+            <p className="text-xl font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-2xl">Get new work and tips in your inbox.</p>
+            <p className="mt-1.5 text-sm text-muted">Occasional emails on retouching, 3D and catalog workflows. No spam.</p>
+
+            {done ? (
+                <p role="status" className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-white">
+                    <Check size={16} strokeWidth={3} /> You are on the list.
+                </p>
+            ) : (
+                <form onSubmit={submit} className="mt-4">
+                    <div className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-surface p-1.5 pl-5 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                        <label htmlFor="footer-newsletter" className="sr-only">
+                            Email address
+                        </label>
+                        <input
+                            id="footer-newsletter"
+                            type="email"
+                            required
+                            value={data.email}
+                            onChange={(event) => setData('email', event.target.value)}
+                            placeholder="you@company.com"
+                            autoComplete="email"
+                            className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder-faint outline-none"
+                        />
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary disabled:opacity-60"
+                        >
+                            {processing ? 'Sending…' : 'Subscribe'}
+                            <ArrowUpRight size={15} />
+                        </button>
+                    </div>
+                    {errors.email && <p className="mt-2 pl-5 text-xs text-rose-600">{errors.email}</p>}
+                </form>
+            )}
+        </div>
+    );
+}
+
 /** The giant "CONTACT US" footer card, sized to fit one screen. */
 export const FooterSection = memo(function FooterSection({ active, goTo }: SectionProps) {
     const { settings } = usePage<PageProps>().props;
@@ -70,6 +129,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
     const email = settings?.contact_email || 'hello@cuttingedger.com';
     const phones = settings?.contact_phones ?? [];
     const office = settings?.office_address;
+    const whatsapp = (settings?.whatsapp_number ?? '').replace(/\D/g, '');
 
     return (
         <div className="h-full w-full bg-page p-3 pt-16 sm:p-5 sm:pt-20">
@@ -84,9 +144,11 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                     className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]"
                 />
 
-                {/* Top: how to reach us */}
-                <Reveal active={active} className="relative z-10 flex md:justify-end">
-                    <dl className="w-full md:max-w-sm">
+                {/* Top: newsletter on the left, how to reach us on the right */}
+                <Reveal active={active} className="relative z-10 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:items-start">
+                    <NewsletterSignup />
+
+                    <dl className="w-full rounded-2xl border border-ink/10 bg-surface/80 p-5 shadow-sm backdrop-blur-sm md:justify-self-end">
                         <InfoRow label="Email">
                             <a href={`mailto:${email}`} className="transition-colors hover:text-primary-ink">
                                 {email}
@@ -99,6 +161,18 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                                 </a>
                             </InfoRow>
                         ))}
+                        {whatsapp && (
+                            <InfoRow label="WhatsApp">
+                                <a
+                                    href={`https://wa.me/${whatsapp}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 transition-colors hover:text-primary-ink"
+                                >
+                                    <MessageCircle size={14} /> Chat on WhatsApp
+                                </a>
+                            </InfoRow>
+                        )}
                         {office && <InfoRow label="Office">{office}</InfoRow>}
                     </dl>
                 </Reveal>
@@ -162,11 +236,18 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                                 </li>
                             ))}
                         </ul>
-                        <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                        <ul className="flex flex-wrap gap-2">
                             {socials.map((social) => (
                                 <li key={social.name}>
-                                    <a href={social.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted transition-colors hover:text-ink">
-                                        {social.name}
+                                    <a
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={social.name}
+                                        title={social.name}
+                                        className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface/70 text-ink transition-[transform,background-color,color,border-color] duration-300 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
+                                    >
+                                        <SocialIcon name={social.name} />
                                     </a>
                                 </li>
                             ))}

@@ -33,6 +33,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 "AI-Driven Visual Performance & Post-Production Agency.",
             contact_email: initialMap["contact_email"] || "hello@cuttingedger.com",
             contact_phones: initialMap["contact_phones"] ?? "USA | +1 (409) 995-2565",
+            whatsapp_number: initialMap["whatsapp_number"] ?? "",
             office_address:
                 initialMap["office_address"] ||
                 "Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215",
@@ -269,6 +270,22 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                 }
                             />
                         </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-mono uppercase text-neutral-400">
+                            WhatsApp number (country code, digits only, optional)
+                        </label>
+                        <Input
+                            placeholder="8801700000000"
+                            value={data.settings.whatsapp_number}
+                            onChange={(e) =>
+                                setData("settings", {
+                                    ...data.settings,
+                                    whatsapp_number: e.target.value,
+                                })
+                            }
+                        />
                     </div>
 
                     <div className="space-y-1.5">
