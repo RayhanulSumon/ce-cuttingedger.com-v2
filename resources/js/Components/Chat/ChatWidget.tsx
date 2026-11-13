@@ -1330,7 +1330,7 @@ export function ChatWidget() {
                 whileHover={{ scale: 1.06, y: -2 }}
                 whileTap={{ scale: 0.94 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="group relative grid h-14 w-14 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-hover text-white shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)] ring-4 ring-white sm:h-16 sm:w-16"
+                className="group relative grid h-14 w-14 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-hover text-white shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)] sm:h-16 sm:w-16"
                 aria-label="Toggle AI Chat Dialog"
             >
                 {/* Soft pulse while the chat is closed */}
@@ -1358,7 +1358,7 @@ export function ChatWidget() {
                 </AnimatePresence>
 
                 {!isOpen && (
-                    <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" aria-hidden="true" />
+                    <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-emerald-400" aria-hidden="true" />
                 )}
 
                 {unreadCount > 0 && !isOpen && (
