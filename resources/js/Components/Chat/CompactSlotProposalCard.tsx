@@ -176,7 +176,7 @@ export function CompactSlotProposalCard({
                                     if (error) setError(null);
                                 }}
                                 required
-                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-white/40 focus:outline-none focus:border-primary"
+                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-faint focus:outline-none focus:border-primary"
                             />
                         </div>
                         <div className="relative">
@@ -190,7 +190,7 @@ export function CompactSlotProposalCard({
                                     if (error) setError(null);
                                 }}
                                 required
-                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-white/40 focus:outline-none focus:border-primary"
+                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-faint focus:outline-none focus:border-primary"
                             />
                         </div>
                     </div>

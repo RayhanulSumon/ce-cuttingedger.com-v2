@@ -245,7 +245,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                             onChange={(e) => setCloudLinkInput(e.target.value)}
                             placeholder="https://drive.google.com/drive/folders/..."
                             disabled={isSubmittingCloud}
-                            className="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-purple-400/30 text-ink placeholder-white/30 text-xs focus:outline-none focus:border-purple-400 transition-colors font-mono"
+                            className="flex-1 px-3 py-1.5 rounded-xl bg-ink/[0.04] border border-purple-400/30 text-ink placeholder-faint text-xs focus:outline-none focus:border-purple-400 transition-colors font-mono"
                         />
                         <button
                             type="submit"
@@ -314,7 +314,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="name@company.com"
                                 disabled={isSubmittingEmail}
-                                className="flex-1 px-3 py-1.5 rounded-xl bg-black/50 border border-ink/20 text-ink placeholder-white/30 text-xs focus:outline-none focus:border-primary transition-colors font-mono"
+                                className="flex-1 px-3 py-1.5 rounded-xl bg-black/50 border border-ink/20 text-ink placeholder-faint text-xs focus:outline-none focus:border-primary transition-colors font-mono"
                             />
                             <button
                                 type="submit"

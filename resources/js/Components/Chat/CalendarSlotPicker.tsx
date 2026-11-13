@@ -171,7 +171,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                             placeholder="Your Name *"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary"
+                            className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-faint focus:outline-none focus:border-primary"
                         />
                         <input
                             type="email"
@@ -179,7 +179,7 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                             placeholder="Your Email *"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary"
+                            className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-faint focus:outline-none focus:border-primary"
                         />
                     </div>
                     <input
@@ -187,14 +187,14 @@ export function CalendarSlotPicker({ card, onBookSlot }: CalendarSlotPickerProps
                         placeholder="WhatsApp / Phone (Optional)"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary"
+                        className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-faint focus:outline-none focus:border-primary"
                     />
                     <textarea
                         rows={2}
                         placeholder="What would you like to discuss? (e.g. ghost mannequin, turnaround, 3D specs) (Optional)"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary resize-none"
+                        className="w-full px-2.5 py-1.5 bg-ink/[0.03] border border-ink/10 rounded-lg text-xs text-ink placeholder-faint focus:outline-none focus:border-primary resize-none"
                     />
 
                     {error && (

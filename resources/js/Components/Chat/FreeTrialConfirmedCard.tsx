@@ -188,7 +188,7 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
                             placeholder="Enter your email (e.g. alex@brand.com)"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="flex-1 px-3 py-1.5 rounded-lg bg-ink/[0.03] border border-ink/10 text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary"
+                            className="flex-1 px-3 py-1.5 rounded-lg bg-ink/[0.03] border border-ink/10 text-xs text-ink placeholder-faint focus:outline-none focus:border-primary"
                         />
                         <button
                             type="submit"

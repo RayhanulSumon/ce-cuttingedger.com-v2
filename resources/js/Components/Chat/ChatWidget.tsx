@@ -771,7 +771,7 @@ export function ChatWidget() {
                             );
                             if (files.length > 0) uploadFiles(files);
                         }}
-                        className={`relative flex flex-col rounded-3xl bg-[#0b0c10]/95 border border-ink/10 shadow-2xl backdrop-blur-xl overflow-hidden mb-3 transition-all duration-300 ${
+                        className={`relative flex flex-col rounded-3xl bg-surface border border-ink/10 shadow-[0_32px_80px_-24px_color-mix(in_srgb,var(--color-ink)_55%,transparent)] overflow-hidden mb-3 transition-all duration-300 ${
                             isExpanded
                                 ? 'w-[calc(100vw-2rem)] sm:w-[720px] h-[min(700px,80vh)]'
                                 : 'w-[calc(100vw-2rem)] sm:w-[380px] md:w-[410px] h-[min(540px,78vh)]'
@@ -793,13 +793,13 @@ export function ChatWidget() {
                         )}
 
                         {/* Header */}
-                        <div className="px-5 py-3.5 border-b border-ink/10 bg-white/90 flex items-center justify-between shrink-0">
+                        <div className="px-5 py-3.5 border-b border-ink/10 bg-surface flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                                         chatMode === 'operator'
-                                            ? 'bg-gradient-to-tr from-primary/30 to-primary/20 border border-primary/40 text-primary-ink'
-                                            : 'bg-gradient-to-tr from-primary/25 to-primary/20 border border-ink/20 text-primary-ink'
+                                            ? 'bg-gradient-to-br from-secondary to-ink text-white shadow-md'
+                                            : 'bg-gradient-to-br from-primary to-primary-hover text-white shadow-md shadow-primary/30'
                                     }`}>
                                         {chatMode === 'operator' ? (
                                             <User className="w-5 h-5" />
@@ -808,7 +808,7 @@ export function ChatWidget() {
                                         )}
                                     </div>
                                     <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
-                                        chatMode === 'operator' ? 'bg-primary' : 'bg-primary'
+                                        'bg-emerald-400'
                                     }`} />
                                 </div>
                                 <div>
@@ -819,7 +819,7 @@ export function ChatWidget() {
                                     </div>
                                     <p className="text-[10px] text-ink/50 font-mono flex items-center gap-1.5">
                                         <span className={`w-1.5 h-1.5 rounded-full ${
-                                            chatMode === 'operator' ? 'bg-primary animate-pulse' : 'bg-primary animate-pulse'
+                                            'bg-emerald-500 animate-pulse'
                                         }`} />
                                         <span>
                                             {chatMode === 'operator'
@@ -891,7 +891,7 @@ export function ChatWidget() {
                             onWheel={(e) => e.stopPropagation()}
                             onTouchMove={(e) => e.stopPropagation()}
                             style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
-                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-ink/20"
+                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-page p-4 space-y-4 scrollbar-thin scrollbar-thumb-ink/20"
                         >
                             {messages.map((msg, index) => {
                                 const isUser = msg.sender === 'user';
@@ -913,11 +913,11 @@ export function ChatWidget() {
 
                                         <div className="relative max-w-[88%]">
                                             <div
-                                                className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
+                                                className={`rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed ${
                                                     isUser
                                                         ? 'bg-gradient-to-r from-primary to-primary-hover text-white font-semibold rounded-br-xs shadow-md shadow-primary/20 border border-primary/40'
                                                         : isOperator
-                                                        ? 'bg-[#0e1724] text-ink/95 border border-primary/30 rounded-bl-xs shadow-md shadow-primary/5'
+                                                        ? 'bg-primary/10 text-ink border border-primary/30 rounded-bl-xs shadow-sm'
                                                         : 'bg-white text-ink/90 border border-ink/10 rounded-bl-xs shadow-md'
                                                 }`}
                                             >
@@ -1145,7 +1145,7 @@ export function ChatWidget() {
                                                             key={rIdx}
                                                             type="button"
                                                             onClick={() => handleSendMessage(reply)}
-                                                            className="text-[11px] font-mono px-3 py-1.5 rounded-xl bg-ink/[0.03] hover:bg-primary/15 hover:text-primary-ink hover:border-primary/30 text-ink/80 border border-ink/10 transition-all text-left flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                                                            className="text-[11px] font-mono px-3 py-1.5 rounded-full bg-surface hover:bg-primary/10 hover:text-primary-ink hover:border-primary/30 text-ink/80 border border-ink/10 transition-all text-left flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                                                         >
                                                             <span>{reply}</span>
                                                             <ArrowRight className="w-2.5 h-2.5 opacity-50 shrink-0" />
@@ -1302,7 +1302,7 @@ export function ChatWidget() {
                                     value={inputText}
                                     onChange={(e) => setInputText(e.target.value)}
                                     placeholder="Ask a question, pricing, turnaround, or edits..."
-                                    className="flex-1 bg-ink/[0.03] border border-ink/10 rounded-xl px-3.5 py-2 text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary transition-colors"
+                                    className="flex-1 bg-ink/[0.03] border border-ink/10 rounded-xl px-3.5 py-2 text-xs text-ink placeholder-faint focus:outline-none focus:border-primary transition-colors"
                                 />
 
                                 <button
@@ -1327,27 +1327,42 @@ export function ChatWidget() {
 
             {/* Floating Launcher Button */}
             <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.06, y: -2 }}
+                whileTap={{ scale: 0.94 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-3.5 sm:p-4 rounded-2xl bg-gradient-to-tr from-primary to-primary-hover border border-primary text-white shadow-2xl hover:border-primary transition-all flex items-center justify-center group cursor-pointer"
+                className="group relative grid h-14 w-14 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-hover text-white shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)] ring-4 ring-white sm:h-16 sm:w-16"
                 aria-label="Toggle AI Chat Dialog"
             >
-                {/* Glow ring */}
-                <span className="absolute inset-0 rounded-2xl bg-primary/20 blur-md group-hover:bg-primary/30 transition-all -z-10" />
+                {/* Soft pulse while the chat is closed */}
+                {!isOpen && (
+                    <span aria-hidden="true" className="absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />
+                )}
+                {/* Glass highlight */}
+                <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-white/35 to-transparent" />
 
-                {isOpen ? (
-                    <Minimize2 className="w-5 h-5 sm:w-6 sm:h-6 text-ink" />
-                ) : (
-                    <>
-                        <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-primary-ink" />
-                        {/* Status dot */}
-                        <span className="absolute -top-1 -right-1 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-primary border-2 border-white" />
-                    </>
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                        key={isOpen ? 'close' : 'chat'}
+                        initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+                        animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                        exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+                        transition={{ duration: 0.2 }}
+                        className="relative"
+                    >
+                        {isOpen ? (
+                            <X className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.4} />
+                        ) : (
+                            <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" fill="currentColor" fillOpacity={0.2} strokeWidth={2.2} />
+                        )}
+                    </motion.span>
+                </AnimatePresence>
+
+                {!isOpen && (
+                    <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" aria-hidden="true" />
                 )}
 
                 {unreadCount > 0 && !isOpen && (
-                    <span className="absolute -top-2 -left-2 px-1.5 py-0.5 rounded-full bg-red-500 text-ink font-mono text-[10px] font-bold shadow-md">
+                    <span className="absolute -left-1 -top-1 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-md">
                         {unreadCount}
                     </span>
                 )}
