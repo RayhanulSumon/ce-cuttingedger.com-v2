@@ -452,7 +452,7 @@ export function ChatWidget() {
                 aria-label={isOpen ? 'Close chat' : 'Open chat'}
                 aria-expanded={isOpen}
             >
-                {!isOpen && <span aria-hidden="true" className="absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />}
+                {!isOpen && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />}
                 <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-white/35 to-transparent" />
 
                 <AnimatePresence mode="wait" initial={false}>

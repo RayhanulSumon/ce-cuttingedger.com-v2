@@ -274,7 +274,13 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         }
 
         if (event.pointerType === 'mouse') {
-            applyHover(modelIndexAt(event.target));
+            // Over a real button or link (arrows, order button), the normal pointer is shown and the custom cursor steps aside.
+            if ((event.target as HTMLElement | null)?.closest('button, a')) {
+                setHoveredModel(-1);
+                setCursorMode('hidden');
+            } else {
+                applyHover(modelIndexAt(event.target));
+            }
         }
     };
 

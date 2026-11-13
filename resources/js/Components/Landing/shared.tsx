@@ -140,22 +140,26 @@ export function orderUrl(service: string, reference?: string): string {
 export function OrderCta({
     href,
     ariaLabel,
+    icon,
     children,
 }: {
     href: string;
     ariaLabel?: string;
+    /** Optional icon shown before the label. */
+    icon?: React.ReactNode;
     children: React.ReactNode;
 }) {
     return (
         <Link
             href={href}
             aria-label={ariaLabel}
-            className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
+            className="group relative inline-flex h-11 cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
         >
             <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)] opacity-0 transition-[translate,opacity] duration-700 group-hover:translate-x-[320%] group-hover:opacity-100"
             />
+            {icon && <span className="relative grid place-items-center">{icon}</span>}
             <span className="relative">{children}</span>
             <ArrowUpRight size={16} className="relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-1" />
         </Link>
@@ -183,14 +187,11 @@ export function CustomOrderCta({
 }) {
     return (
         <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`}>
-            <Reveal active={active} delay={delay} className="flex flex-col items-start gap-3">
-                <p className="flex items-center gap-2 text-sm font-semibold text-ink sm:text-base">
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-primary/12 text-primary">
-                        <Sparkles size={14} />
-                    </span>
-                    {question}
-                </p>
-                <OrderCta href={href}>{buttonLabel}</OrderCta>
+            <Reveal active={active} delay={delay} className="flex flex-col items-start gap-2.5">
+                <p className="pl-1 text-sm font-semibold leading-none text-ink sm:text-base">{question}</p>
+                <OrderCta href={href} icon={<Sparkles size={16} />}>
+                    {buttonLabel}
+                </OrderCta>
             </Reveal>
         </div>
     );
