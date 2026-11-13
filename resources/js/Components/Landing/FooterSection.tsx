@@ -31,11 +31,12 @@ const DEFAULT_SOCIALS = [
     { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
 ];
 
-/** Light theme gradient: white to page colour, with a soft primary-colour glow rising from the bottom right. */
+/** Light theme gradient with more depth: a strong primary glow from the bottom right, a lighter one bottom left, on a tinted base. */
 const FOOTER_GRADIENT = [
-    'radial-gradient(62% 80% at 90% 115%, color-mix(in srgb, var(--color-primary) 30%, transparent), transparent 70%)',
-    'radial-gradient(40% 50% at 6% -6%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 70%)',
-    'linear-gradient(160deg, var(--color-surface) 0%, var(--color-page) 100%)',
+    'radial-gradient(70% 90% at 92% 120%, color-mix(in srgb, var(--color-primary) 62%, transparent), transparent 68%)',
+    'radial-gradient(45% 60% at 0% 112%, color-mix(in srgb, var(--color-primary) 26%, transparent), transparent 70%)',
+    'radial-gradient(40% 50% at 6% -6%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 70%)',
+    'linear-gradient(165deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-primary) 16%, var(--color-page)) 100%)',
 ].join(', ');
 
 /**
@@ -103,7 +104,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                 </Reveal>
 
                 {/* Middle: the big call to action */}
-                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-2 text-center">
+                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-6 text-center sm:py-8">
                     <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-primary-ink sm:mb-4">
                         Ready to elevate your catalog craft &amp; velocity?
                     </span>
@@ -121,14 +122,14 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                         <span className="flex flex-nowrap items-center justify-center" aria-label="Contact us">
                             {LETTERS.map((char, i) =>
                                 char === ' ' ? (
-                                    <span key={i} className="inline-block w-[2.4vw] sm:w-[3vw]" aria-hidden="true" />
+                                    <span key={i} className="inline-block w-[3vw] sm:w-[3.6vw]" aria-hidden="true" />
                                 ) : (
                                     <motion.span
                                         key={i}
                                         aria-hidden="true"
                                         onPointerEnter={() => setHovered(i)}
                                         onPointerLeave={() => setHovered((prev) => (prev === i ? null : prev))}
-                                        animate={{ scaleY: hovered === i ? 1.12 : 1, y: hovered === i ? '-2%' : '0%' }}
+                                        animate={{ scaleY: hovered === i ? 1.3 : 1.18, y: hovered === i ? '-2%' : '0%' }}
                                         transition={{ duration: 0.25, ease: [0.39, 0.575, 0.565, 1] }}
                                         style={{
                                             transformOrigin: 'center bottom',
@@ -139,7 +140,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                                             backgroundClip: 'text',
                                             color: 'transparent',
                                         }}
-                                        className="inline-block select-none text-[min(10.5vw,20vh)] font-black uppercase leading-[0.95] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
+                                        className="inline-block select-none text-[min(13.4vw,34vh)] font-black uppercase leading-[0.95] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
                                     >
                                         {char}
                                     </motion.span>
