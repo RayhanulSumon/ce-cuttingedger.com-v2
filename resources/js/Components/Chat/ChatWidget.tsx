@@ -617,7 +617,7 @@ export function ChatWidget() {
     const renderVisualMessage = (content: string, isUser: boolean) => {
         if (isUser) {
             return (
-                <p className="whitespace-pre-wrap text-xs font-semibold text-ink leading-relaxed select-text">
+                <p className="whitespace-pre-wrap text-[13px] font-medium text-white leading-relaxed select-text">
                     {content}
                 </p>
             );
@@ -915,7 +915,7 @@ export function ChatWidget() {
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed ${
                                                     isUser
-                                                        ? 'bg-gradient-to-r from-primary to-primary-hover text-white font-semibold rounded-br-xs shadow-md shadow-primary/20 border border-primary/40'
+                                                        ? 'bg-gradient-to-br from-primary-hover to-primary-ink text-white font-medium rounded-br-xs shadow-md shadow-primary/25 border border-primary-ink/40'
                                                         : isOperator
                                                         ? 'bg-primary/10 text-ink border border-primary/30 rounded-bl-xs shadow-sm'
                                                         : 'bg-white text-ink/90 border border-ink/10 rounded-bl-xs shadow-md'
