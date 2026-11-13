@@ -8,8 +8,8 @@ const SHAPE: Record<TwinCursorMode, string> = {
     drag: 'h-[42px] w-[100px] scale-100 border-[2px] border-ink/40 bg-white/70 opacity-100 shadow-[0_6px_16px_-10px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]',
     dragging:
         'h-[42px] w-[112px] scale-[0.94] border-[2px] border-primary/45 bg-primary/25 opacity-100 shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-primary)_55%,transparent)]',
-    view: 'h-[96px] w-[96px] scale-100 bg-ink opacity-100 shadow-[0_14px_34px_-10px_color-mix(in_srgb,var(--color-ink)_60%,transparent)] ring-2 ring-white/70',
-    buy: 'h-[96px] w-[96px] scale-100 bg-primary opacity-100 shadow-[0_14px_34px_-10px_color-mix(in_srgb,var(--color-primary)_85%,transparent)] ring-2 ring-white/70',
+    view: 'h-[92px] w-[92px] scale-100 border border-white/30 bg-gradient-to-br from-ink/90 to-ink opacity-100 shadow-[0_16px_36px_-12px_color-mix(in_srgb,var(--color-ink)_65%,transparent),inset_0_1px_0_rgba(255,255,255,0.28)]',
+    buy: 'h-[92px] w-[92px] scale-100 border border-white/30 bg-gradient-to-br from-primary to-primary-hover opacity-100 shadow-[0_16px_36px_-10px_color-mix(in_srgb,var(--color-primary)_75%,transparent),inset_0_1px_0_rgba(255,255,255,0.4)]',
 };
 
 const SPRING = 'ease-[cubic-bezier(0.22,1,0.36,1)]';
@@ -28,12 +28,10 @@ export function TwinCursor({ cursorRef, mode }: { cursorRef: React.Ref<HTMLDivEl
             <div
                 className={`relative grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition-[width,height,opacity,scale,background-color,border-color,box-shadow] duration-500 ${SPRING} ${SHAPE[mode]}`}
             >
-                {mode === 'buy' && (
-                    <span className="select-none pl-[0.2em] text-[13px] font-extrabold tracking-[0.2em] text-white">BUY</span>
-                )}
-
-                {mode === 'view' && (
-                    <span className="select-none pl-[0.2em] text-[13px] font-extrabold tracking-[0.2em] text-white">VIEW</span>
+                {(mode === 'buy' || mode === 'view') && (
+                    <span className="select-none pl-[0.2em] text-[13px] font-extrabold tracking-[0.2em] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
+                        {mode === 'buy' ? 'BUY' : 'VIEW'}
+                    </span>
                 )}
 
                 {isDrag && (
