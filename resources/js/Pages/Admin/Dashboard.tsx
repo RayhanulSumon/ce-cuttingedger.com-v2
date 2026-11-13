@@ -4,22 +4,38 @@ import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
 import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
-import { Project, ContactMessage } from "@/types/models";
+import { ContactMessage, Project } from "@/types/models";
 import {
-    FolderKanban,
-    Layers,
-    Mail,
-    Send,
-    ArrowUpRight,
+    ShoppingBag,
     Sparkles,
-    CheckCircle2,
-    Users,
+    Shirt,
+    Mail,
+    ArrowUpRight,
     CalendarCheck2,
     MessageSquareText,
+    FolderKanban,
+    Clock,
+    CheckCircle2,
 } from "lucide-react";
+
+interface RecentOrderSummary {
+    id: number;
+    order_number: string;
+    order_type: string;
+    client_name: string;
+    client_email: string;
+    service_name: string;
+    total_price: number;
+    status: string;
+    created_at_formatted: string;
+}
 
 interface AdminDashboardProps {
     stats: {
+        total_orders?: number;
+        pending_orders?: number;
+        digital_twins_count?: number;
+        try_on_looks_count?: number;
         total_projects: number;
         total_capabilities: number;
         new_inquiries: number;
@@ -27,237 +43,304 @@ interface AdminDashboardProps {
         upcoming_consultations?: number;
         total_chat_leads?: number;
     };
+    recentOrders?: RecentOrderSummary[];
     recentInquiries: ContactMessage[];
     featuredProjects: Project[];
 }
 
 export default function Dashboard({
     stats,
+    recentOrders = [],
     recentInquiries = [],
-    featuredProjects = [],
 }: AdminDashboardProps) {
     return (
-        <AdminLayout title="COMMAND CENTER">
+        <AdminLayout title="Dashboard">
             <AdminPageHeader
-                title="Command Center"
-                description="Studio telemetry, flagship deployment registry, and prospect inquiry alerts."
-                badge="REALTIME ENGINE"
+                title="Dashboard"
+                description="Overview of your Digital Twins, Virtual Try-On quotes, client orders, and customer messages."
             >
-                <Link href="/admin/projects">
-                    <Button className="gap-2">
-                        <FolderKanban className="w-4 h-4" />
-                        <span>Manage Flagships</span>
-                    </Button>
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Link href="/admin/digital-twins">
+                        <Button
+                            variant="outline"
+                            className="gap-2 bg-white border-slate-200 text-ink hover:bg-slate-50 font-semibold text-xs"
+                        >
+                            <Sparkles className="w-3.5 h-3.5 text-primary" />
+                            <span>Digital Twins</span>
+                        </Button>
+                    </Link>
+                    <Link href="/admin/try-on-looks">
+                        <Button
+                            variant="outline"
+                            className="gap-2 bg-white border-slate-200 text-ink hover:bg-slate-50 font-semibold text-xs"
+                        >
+                            <Shirt className="w-3.5 h-3.5 text-primary" />
+                            <span>Virtual Try-On</span>
+                        </Button>
+                    </Link>
+                    <Link href="/admin/orders">
+                        <Button className="gap-2 bg-primary hover:bg-primary-hover text-white font-semibold text-xs">
+                            <ShoppingBag className="w-3.5 h-3.5" />
+                            <span>View Orders & Quotes</span>
+                        </Button>
+                    </Link>
+                </div>
             </AdminPageHeader>
 
-            <div className="space-y-10">
-                {/* KPI Metrics Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                Live Projects
+            <div className="space-y-8">
+                {/* Primary KPI Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Link
+                        href="/admin/orders"
+                        className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-primary/40 transition-all group space-y-2"
+                    >
+                        <div className="flex items-center justify-between text-slate-500">
+                            <span className="text-xs font-semibold">Orders & Quotes</span>
+                            <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                                <ShoppingBag className="w-4 h-4" />
+                            </div>
+                        </div>
+                        <div className="text-3xl font-extrabold text-ink tracking-tight">
+                            {stats.total_orders ?? 0}
+                        </div>
+                        <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="text-primary font-semibold">
+                                {stats.pending_orders ?? 0} pending review
                             </span>
-                            <FolderKanban className="w-4 h-4 text-accent" />
+                            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                         </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                            {stats.total_projects}
-                        </div>
-                        <span className="text-xs font-mono text-accent block">
-                            Flagship 2D/3D builds
-                        </span>
-                    </div>
-
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                Capabilities
-                            </span>
-                            <Layers className="w-4 h-4 text-emerald-400" />
-                        </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                            {stats.total_capabilities}
-                        </div>
-                        <span className="text-xs font-mono text-emerald-400 block">
-                            Main and sub-capabilities
-                        </span>
-                    </div>
-
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                New Inquiries
-                            </span>
-                            <Mail className="w-4 h-4 text-amber-400" />
-                        </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                            {stats.new_inquiries}
-                        </div>
-                        <span className="text-xs font-mono text-amber-400 block">
-                            Awaiting response
-                        </span>
-                    </div>
-
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                Subscribers
-                            </span>
-                            <Send className="w-4 h-4 text-sky-400" />
-                        </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                            {stats.total_subscribers}
-                        </div>
-                        <span className="text-xs font-mono text-sky-400 block">
-                            Dispatch audience
-                        </span>
-                    </div>
-
-                    <Link href="/admin/consultations" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-[#00f5ff]/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                Booked Calls
-                            </span>
-                            <CalendarCheck2 className="w-4 h-4 text-[#00f5ff]" />
-                        </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-[#00f5ff] tracking-tight">
-                            {stats.upcoming_consultations ?? 0}
-                        </div>
-                        <span className="text-xs font-mono text-[#00f5ff] flex items-center gap-1">
-                            <span>Upcoming calls</span>
-                            <ArrowUpRight className="w-3 h-3" />
-                        </span>
                     </Link>
 
-                    <Link href="/admin/chat-sessions" className="block p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-3 relative overflow-hidden group hover:border-accent/40 transition-colors">
-                        <div className="flex items-center justify-between text-neutral-400">
-                            <span className="font-mono text-xs uppercase tracking-wider">
-                                Chat Leads
+                    <Link
+                        href="/admin/digital-twins"
+                        className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-primary/40 transition-all group space-y-2"
+                    >
+                        <div className="flex items-center justify-between text-slate-500">
+                            <span className="text-xs font-semibold">Digital Twins</span>
+                            <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                                <Sparkles className="w-4 h-4" />
+                            </div>
+                        </div>
+                        <div className="text-3xl font-extrabold text-ink tracking-tight">
+                            {stats.digital_twins_count ?? 6}
+                        </div>
+                        <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="text-slate-500">
+                                Manage models & attributes
                             </span>
-                            <MessageSquareText className="w-4 h-4 text-accent" />
+                            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                         </div>
-                        <div className="text-3xl sm:text-4xl font-extrabold text-accent tracking-tight">
-                            {stats.total_chat_leads ?? 0}
+                    </Link>
+
+                    <Link
+                        href="/admin/try-on-looks"
+                        className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-primary/40 transition-all group space-y-2"
+                    >
+                        <div className="flex items-center justify-between text-slate-500">
+                            <span className="text-xs font-semibold">Virtual Try-On Looks</span>
+                            <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                                <Shirt className="w-4 h-4" />
+                            </div>
                         </div>
-                        <span className="text-xs font-mono text-accent flex items-center gap-1">
-                            <span>View Transcripts</span>
-                            <ArrowUpRight className="w-3 h-3" />
-                        </span>
+                        <div className="text-3xl font-extrabold text-ink tracking-tight">
+                            {stats.try_on_looks_count ?? 6}
+                        </div>
+                        <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="text-slate-500">
+                                Runway models & garment pins
+                            </span>
+                            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
+                        </div>
+                    </Link>
+
+                    <Link
+                        href="/admin/messages"
+                        className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-primary/40 transition-all group space-y-2"
+                    >
+                        <div className="flex items-center justify-between text-slate-500">
+                            <span className="text-xs font-semibold">Customer Inbox</span>
+                            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <Mail className="w-4 h-4" />
+                            </div>
+                        </div>
+                        <div className="text-3xl font-extrabold text-ink tracking-tight">
+                            {stats.new_inquiries}
+                        </div>
+                        <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="text-slate-500">
+                                {stats.upcoming_consultations ?? 0} booked calls • {stats.total_chat_leads ?? 0} chat leads
+                            </span>
+                            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
+                        </div>
                     </Link>
                 </div>
 
-                {/* Split Overview: Inquiries & Flagships */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Recent Inquiries */}
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                            <div className="flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-accent" />
-                                <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
-                                    Recent Inquiries Inbox
+                {/* Split Overview: Recent Orders & Recent Messages */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Left 7 Columns: Recent Orders & Quotes */}
+                    <div className="lg:col-span-7 p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h2 className="text-base font-bold text-ink">
+                                    Recent Orders & Quotes
                                 </h2>
+                                <p className="text-xs text-slate-500">
+                                    Latest Digital Twin orders and Virtual Try-On quote requests
+                                </p>
                             </div>
                             <Link
-                                href="/admin/messages"
-                                className="text-xs font-mono text-accent hover:underline flex items-center gap-1"
+                                href="/admin/orders"
+                                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
                             >
                                 <span>View all</span>
                                 <ArrowUpRight className="w-3.5 h-3.5" />
                             </Link>
                         </div>
 
-                        <div className="space-y-3">
-                            {recentInquiries.length > 0 ? (
-                                recentInquiries.map((inq) => (
-                                    <div
-                                        key={inq.id}
-                                        className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors flex items-center justify-between"
+                        <div className="space-y-2.5">
+                            {recentOrders.length > 0 ? (
+                                recentOrders.map((ord) => (
+                                    <Link
+                                        key={ord.id}
+                                        href="/admin/orders"
+                                        className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200/70 hover:border-primary/30 transition-colors flex items-center justify-between gap-4"
                                     >
-                                        <div>
-                                            <div className="font-semibold text-sm text-white">
-                                                {inq.name}
-                                            </div>
-                                            <div className="text-xs text-neutral-400 font-mono">
-                                                {inq.company || inq.email} •{" "}
-                                                <span className="text-accent">
-                                                    {inq.budget || "Custom"}
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold text-xs text-ink">
+                                                    #{ord.order_number}
+                                                </span>
+                                                <span className="text-xs text-slate-400">•</span>
+                                                <span className="text-xs font-semibold text-slate-700 truncate">
+                                                    {ord.client_name}
                                                 </span>
                                             </div>
+                                            <div className="text-xs text-slate-500 truncate mt-0.5">
+                                                {ord.service_name} • {ord.created_at_formatted}
+                                            </div>
                                         </div>
-                                        <Badge
-                                            variant={
-                                                inq.status === "new"
-                                                    ? "accent"
-                                                    : "secondary"
-                                            }
-                                        >
-                                            {inq.status.toUpperCase()}
-                                        </Badge>
-                                    </div>
+
+                                        <div className="flex items-center gap-2.5 shrink-0">
+                                            {ord.total_price > 0 ? (
+                                                <span className="text-xs font-bold text-ink">
+                                                    ${ord.total_price.toFixed(0)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-[11px] font-semibold text-primary">
+                                                    Custom Quote
+                                                </span>
+                                            )}
+
+                                            {ord.status === "completed" ? (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <CheckCircle2 className="w-3 h-3" />
+                                                    Completed
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 capitalize">
+                                                    <Clock className="w-3 h-3" />
+                                                    {ord.status.replace("_", " ")}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </Link>
                                 ))
                             ) : (
-                                <p className="text-xs text-neutral-500 font-mono py-8 text-center">
-                                    No pending inquiries.
-                                </p>
+                                <div className="py-10 text-center space-y-2">
+                                    <p className="text-sm font-semibold text-slate-600">
+                                        No orders or quotes yet
+                                    </p>
+                                    <p className="text-xs text-slate-400">
+                                        New Digital Twin orders and Virtual Try-On quotes will appear here automatically.
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Featured Projects */}
-                    <div className="p-6 rounded-2xl bg-[#12141c] border border-white/10 space-y-6">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                            <div className="flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-accent" />
-                                <h2 className="text-sm font-mono uppercase tracking-wider text-white font-bold">
-                                    Featured Flagships
+                    {/* Right 5 Columns: Recent Contact Messages */}
+                    <div className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h2 className="text-base font-bold text-ink">
+                                    Recent Messages
                                 </h2>
+                                <p className="text-xs text-slate-500">
+                                    Latest inquiries from the contact form
+                                </p>
                             </div>
                             <Link
-                                href="/admin/projects"
-                                className="text-xs font-mono text-accent hover:underline flex items-center gap-1"
+                                href="/admin/messages"
+                                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
                             >
-                                <span>Curate</span>
+                                <span>Open inbox</span>
                                 <ArrowUpRight className="w-3.5 h-3.5" />
                             </Link>
                         </div>
 
-                        <div className="space-y-3">
-                            {featuredProjects.length > 0 ? (
-                                featuredProjects.map((proj) => (
-                                    <div
-                                        key={proj.id}
-                                        className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors flex items-center justify-between"
+                        <div className="space-y-2.5">
+                            {recentInquiries.length > 0 ? (
+                                recentInquiries.map((inq) => (
+                                    <Link
+                                        key={inq.id}
+                                        href="/admin/messages"
+                                        className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200/70 hover:border-primary/30 transition-colors flex items-center justify-between gap-3"
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <img
-                                                src={proj.cover_image}
-                                                alt={proj.title}
-                                                className="w-10 h-10 rounded-lg object-cover bg-neutral-900 border border-white/10"
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src =
-                                                        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80";
-                                                }}
-                                            />
-                                            <div>
-                                                <div className="font-semibold text-sm text-white">
-                                                    {proj.title}
-                                                </div>
-                                                <div className="text-xs text-neutral-400 font-mono">
-                                                    {proj.client_name} • {proj.year}
-                                                </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="font-semibold text-xs text-ink truncate">
+                                                {inq.name}
+                                            </div>
+                                            <div className="text-xs text-slate-500 truncate mt-0.5">
+                                                {inq.company || inq.email}
                                             </div>
                                         </div>
-                                        <Badge variant="outline">
-                                            #{proj.sort_order}
+                                        <Badge
+                                            className={
+                                                inq.status === "new"
+                                                    ? "bg-primary/10 text-primary border border-primary/20"
+                                                    : "bg-slate-100 text-slate-600 border border-slate-200"
+                                            }
+                                        >
+                                            {inq.status}
                                         </Badge>
-                                    </div>
+                                    </Link>
                                 ))
                             ) : (
-                                <p className="text-xs text-neutral-500 font-mono py-8 text-center">
-                                    No featured projects assigned.
+                                <p className="text-xs text-slate-400 py-10 text-center">
+                                    No pending messages.
                                 </p>
                             )}
+                        </div>
+
+                        {/* Quick Links Footer */}
+                        <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
+                            <Link
+                                href="/admin/consultations"
+                                className="p-2.5 rounded-xl bg-[#f8fafc] hover:bg-slate-100 border border-slate-200/70 text-center transition-colors"
+                            >
+                                <CalendarCheck2 className="w-4 h-4 text-primary mx-auto mb-1" />
+                                <span className="text-[11px] font-semibold text-slate-700 block">
+                                    Booked Calls
+                                </span>
+                            </Link>
+                            <Link
+                                href="/admin/chat-sessions"
+                                className="p-2.5 rounded-xl bg-[#f8fafc] hover:bg-slate-100 border border-slate-200/70 text-center transition-colors"
+                            >
+                                <MessageSquareText className="w-4 h-4 text-primary mx-auto mb-1" />
+                                <span className="text-[11px] font-semibold text-slate-700 block">
+                                    Live Chat
+                                </span>
+                            </Link>
+                            <Link
+                                href="/admin/projects"
+                                className="p-2.5 rounded-xl bg-[#f8fafc] hover:bg-slate-100 border border-slate-200/70 text-center transition-colors"
+                            >
+                                <FolderKanban className="w-4 h-4 text-primary mx-auto mb-1" />
+                                <span className="text-[11px] font-semibold text-slate-700 block">
+                                    Case Studies
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -119,7 +119,7 @@ body:not(.admin-body) h4,
     letter-spacing: -0.03em;
 }
 
-/* Industry-Standard Admin Dashboard Typography (Inter / Modern Enterprise UI) */
+/* Clean Modern SaaS Admin Dashboard Typography (Plus Jakarta Sans / Inter) */
 .admin-shell,
 .admin-shell h1,
 .admin-shell h2,
@@ -131,13 +131,13 @@ body:not(.admin-body) h4,
 .admin-shell input,
 .admin-shell select,
 .admin-shell textarea,
-.admin-shell table {
+.admin-shell table,
+.admin-shell .font-mono,
+[data-slot="dialog-content"] .font-mono,
+[data-slot="alert-dialog-content"] .font-mono,
+[data-slot="dropdown-menu-content"] .font-mono {
     font-family: var(--font-admin) !important;
-    letter-spacing: -0.011em;
-}
-
-.admin-shell .font-mono {
-    font-family: var(--font-mono) !important;
+    letter-spacing: -0.01em;
 }
 
 /* Custom Scrollbar */
