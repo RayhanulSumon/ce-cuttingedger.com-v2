@@ -25,6 +25,7 @@ class HomeControllerTest extends TestCase
             ->component('Home')
             ->has('featuredProjects', 4)
             ->has('clients')
+            ->has('testimonials')
         );
     }
 }

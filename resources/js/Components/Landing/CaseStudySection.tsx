@@ -18,7 +18,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         <div data-scrollable className="overflow-y-auto flex h-full w-full flex-col bg-white px-5 pb-8 pt-24 sm:px-10 lg:px-16">
             <Reveal active={active} className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <Eyebrow>06 / Case study</Eyebrow>
+                    <Eyebrow>Case study</Eyebrow>
                     <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#141A26]">
                         Results, not promises.
                     </h2>

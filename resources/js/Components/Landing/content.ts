@@ -35,6 +35,10 @@ export const FAQS: FaqEntry[] = [
         answer: 'Every project is covered by an NDA on request, files are stored on encrypted storage, and your images are never used to train public models.',
     },
     {
+        question: 'How does pricing work?',
+        answer: 'Retouching is priced per image with volume discounts, digital twins per preset or as lifetime copyright, and custom projects as a fixed quote within one business day. There are no hidden fees.',
+    },
+    {
         question: 'Can you match our existing style guide?',
         answer: 'Yes. We build a brand preset from your guidelines and sample files so every batch is consistent across retouchers and over time.',
     },
@@ -89,3 +93,33 @@ export const CAPABILITY_FALLBACK = [
     { label: 'Video', href: '/services' },
 ];
 
+
+export interface ReviewEntry {
+    quote: string;
+    name: string;
+    role: string;
+}
+
+/** Shown until real testimonials exist in the admin panel. */
+export const REVIEW_FALLBACK: ReviewEntry[] = [
+    {
+        quote: 'They turned 12,000 SKUs around in six weeks and every image matched our style guide. Our catalog has never looked this consistent.',
+        name: 'Head of E-commerce',
+        role: 'Multi-brand apparel retailer',
+    },
+    {
+        quote: 'Digital twins replaced two physical shoots. We launched the season three weeks early and with twice the variants.',
+        name: 'Creative Director',
+        role: 'Footwear brand',
+    },
+    {
+        quote: 'The free sample sold us. Same quality on the full batch, delivered overnight, every time.',
+        name: 'Production Manager',
+        role: 'Jewelry house',
+    },
+    {
+        quote: 'Retouching, layout and video from one team. It removed three vendors from our workflow.',
+        name: 'Marketing Lead',
+        role: 'Fashion marketplace',
+    },
+];

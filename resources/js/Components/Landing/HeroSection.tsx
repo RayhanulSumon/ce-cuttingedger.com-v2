@@ -79,28 +79,6 @@ function BackgroundSlider({ playing }: { playing: boolean }) {
     );
 }
 
-function BackgroundLines() {
-    return (
-        <svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            viewBox="0 0 1600 1000"
-            preserveAspectRatio="none"
-        >
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
-                <path
-                    key={n}
-                    d={`M${-100 - n * 20},${900 - n * 40} C300,${850 - n * 30} 600,${400 - n * 20} 1700,${100 - n * 30}`}
-                    stroke="#fff"
-                    strokeWidth={1.5 + (n % 4)}
-                    opacity={0.55 + (n % 3) * 0.12}
-                    fill="none"
-                />
-            ))}
-        </svg>
-    );
-}
-
 const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf] bg-cover bg-center';
 const pillPoster = { backgroundImage: `url(${VIDEO_POSTER})` };
 
@@ -155,7 +133,6 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
     return (
         <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#f2f2f1] pb-10 pt-20 ${PAD_X}`}>
             <BackgroundSlider playing={active} />
-            <BackgroundLines />
 
             <h1 className="hero-title relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
                 {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line. */}
@@ -210,8 +187,8 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
                 </span>
             </h1>
 
-            <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
-                <p className="text-sm font-medium leading-relaxed text-[#1d1d1d] sm:text-base">
+            <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-2xl text-center sm:mt-10">
+                <p className="text-base font-medium leading-[1.65] text-[#111318] sm:text-lg lg:text-[19px]">
                     Transform your apparel and product photography with next-generation AI-integrated image editing and
                     expert post-production. Save time, reduce production costs, and scale your visual content without
                     compromising quality.

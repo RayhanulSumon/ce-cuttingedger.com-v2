@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
+import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { PageProps } from '@/types';
 import { EASE_OUT_QUART } from '../shared';
 import { TwinPoseStage } from './TwinPoseStage';
 import { PresetAction, TwinPresetSidebar } from './TwinPresetSidebar';
@@ -11,26 +13,55 @@ interface TwinPresetModalProps {
     twinIndex: number | null;
     onSelectTwin: (index: number) => void;
     onClose: () => void;
-    openDemo: () => void;
 }
 
-/** Pause between picking a purchase action and opening the demo form, so the confirmation is readable. */
+/** Pause between picking a purchase action and opening the mail app, so the confirmation is readable. */
 const ACTION_FEEDBACK_MS = 260;
 
 /**
  * Fullscreen pose-preset overlay for a digital twin.
  */
-export function TwinPresetModal({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPresetModalProps) {
+export function TwinPresetModal({ twinIndex, onSelectTwin, onClose }: TwinPresetModalProps) {
     return (
         <AnimatePresence>
             {twinIndex !== null && (
-                <TwinPresetPanel twinIndex={twinIndex} onSelectTwin={onSelectTwin} onClose={onClose} openDemo={openDemo} />
+                <TwinPresetPanel twinIndex={twinIndex} onSelectTwin={onSelectTwin} onClose={onClose} />
             )}
         </AnimatePresence>
     );
 }
 
-function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPresetModalProps & { twinIndex: number }) {
+const MODEL_ARROW =
+    'absolute top-1/3 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/20 bg-white/90 text-[#16191f] shadow-[0_8px_28px_-8px_rgba(22,25,31,0.3)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-[#16191f] hover:text-white lg:top-1/2 lg:-translate-y-1/2';
+
+const FALLBACK_EMAIL = 'hello@cuttingedger.com';
+
+const ACTION_LABEL: Record<PresetAction, string> = {
+    buy: 'preset',
+    lifetime: 'lifetime copyright',
+};
+
+/** Pre-written email to the studio for buying a preset or a model's lifetime copyright. */
+function buildMailtoUrl(email: string, twinName: string, action: PresetAction, price: string): string {
+    const [name] = twinName.split(' — ');
+    const subject = `${action === 'lifetime' ? 'Lifetime copyright' : 'Preset purchase'}: ${name}`;
+    const body = [
+        'Hello CuttingEdger team,',
+        '',
+        `I would like to buy the ${ACTION_LABEL[action]} for the digital twin "${name}" (${price}).`,
+        '',
+        'Please send me the next steps and an invoice.',
+        '',
+        'Name:',
+        'Company:',
+    ].join('\n');
+
+    return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function TwinPresetPanel({ twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
+    const { settings } = usePage<PageProps>().props;
+    const contactEmail = settings?.contact_email || FALLBACK_EMAIL;
     const [poseIndex, setPoseIndex] = useState(0);
     const [pendingAction, setPendingAction] = useState<PresetAction | null>(null);
     const actionTimer = useRef(0);
@@ -47,6 +78,8 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
         setPoseIndex(0);
         setPendingAction(null);
     }
+
+    const stepTwin = (delta: number) => onSelectTwin((twinIndex + delta + DIGITAL_TWINS.length) % DIGITAL_TWINS.length);
 
     const stepPose = (delta: number) => setPoseIndex((current) => (current + delta + poseCount) % poseCount);
 
@@ -76,7 +109,8 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
         window.clearTimeout(actionTimer.current);
         actionTimer.current = window.setTimeout(() => {
             setPendingAction(null);
-            openDemo();
+            const price = action === 'lifetime' ? twin.lifetimePrice : twin.presetPrice;
+            window.location.href = buildMailtoUrl(contactEmail, twin.name, action, price);
         }, ACTION_FEEDBACK_MS);
     };
 
@@ -92,48 +126,35 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose, openDemo }: TwinPre
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
-            {/* Left side: Model switcher pills moved to the left (no redundant top-left title) + TwinPoseStage */}
+            {/* Left side: pose stage with previous / next model arrows on either side */}
             <motion.div
                 data-scrollable
-                className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6 pt-5 sm:px-8 sm:pt-6 lg:px-8 lg:pt-6"
+                className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-14 pb-6 pt-16 sm:px-16 lg:px-16 lg:pt-6"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 16, opacity: 0 }}
                 transition={{ duration: 0.45, ease: EASE_OUT_QUART, delay: 0.05 }}
             >
-                {/* ── Top Header: Model switcher pills moved to the left ── */}
-                <div className="flex items-center justify-between border-b border-[#d8e1ec] pb-3.5">
-                    <div className="flex items-center gap-1.5 rounded-full border border-[#d8e1ec] bg-white/90 p-1 shadow-xs backdrop-blur-xs" role="tablist" aria-label="Digital twins">
-                        {DIGITAL_TWINS.map((item, i) => {
-                            const selected = i === twinIndex;
-                            const [firstName] = item.name.split(' — ')[0].split(' ');
-                            return (
-                                <button
-                                    key={item.lookNumber}
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={selected}
-                                    onClick={() => onSelectTwin(i)}
-                                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 ${
-                                        selected
-                                            ? 'bg-[#16191f] text-white shadow-xs'
-                                            : 'text-[#5a6270] hover:bg-[#f1f5fa] hover:text-[#16191f]'
-                                    }`}
-                                >
-                                    <span className="font-michroma text-[9px] tracking-[0.1em]">#{item.lookNumber}</span>
-                                    <span className="hidden sm:inline">{firstName}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    <span className="font-michroma hidden text-[10px] tracking-[0.16em] text-[#737b86] lg:inline-block">
-                        AI DIGITAL TWIN STUDIO
-                    </span>
-                </div>
-
                 <TwinPoseStage twin={twin} poseIndex={poseIndex} onSelectPose={setPoseIndex} onStepPose={stepPose} />
             </motion.div>
+
+            {/* Previous / next model — fixed at the two sides of the stage */}
+            <button
+                type="button"
+                onClick={() => stepTwin(-1)}
+                aria-label="Previous digital twin"
+                className={`${MODEL_ARROW} left-3 sm:left-5`}
+            >
+                <ArrowLeft size={20} />
+            </button>
+            <button
+                type="button"
+                onClick={() => stepTwin(1)}
+                aria-label="Next digital twin"
+                className={`${MODEL_ARROW} right-3 sm:right-5 lg:right-[396px] xl:right-[426px]`}
+            >
+                <ArrowRight size={20} />
+            </button>
 
             {/* Right side: Clean action sidebar with model name, description, and action buttons */}
             <motion.aside

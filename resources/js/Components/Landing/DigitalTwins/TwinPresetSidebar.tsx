@@ -86,7 +86,7 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
                 </button>
 
                 <p role="status" className={`text-center text-xs font-medium text-emerald-700 ${pendingAction ? '' : 'invisible'}`}>
-                    {pendingAction === 'lifetime' ? 'Lifetime copyright selected' : 'Preset selected'} — opening checkout…
+                    {pendingAction === 'lifetime' ? 'Lifetime copyright selected' : 'Preset selected'} — opening your email…
                 </p>
             </div>
         </div>

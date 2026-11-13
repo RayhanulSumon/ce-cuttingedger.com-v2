@@ -1,4 +1,3 @@
-import 'lenis/dist/lenis.css';
 import '../css/app.css';
 
 import React from 'react';

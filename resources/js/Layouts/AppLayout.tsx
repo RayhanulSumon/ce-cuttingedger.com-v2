@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
-import { Header } from './Header';
 import { Footer } from './Footer';
-import { MobileMenu } from './MobileMenu';
 import { SlideOverContact } from './SlideOverContact';
 import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
 import { Toaster, toast } from '@/Components/ui/sonner';
-import { useSmoothScroll } from '@/hooks/useSmoothScroll';
+import { DemoModal } from '@/Components/Landing/DemoModal';
+import { Menubar } from '@/Components/Landing/Menubar';
 import { initializeAttribution } from '@/lib/attribution';
 import { PageProps } from '@/types';
 
@@ -21,10 +20,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     const { settings, flash } = usePage<PageProps>().props;
     const [isContactOpen, setIsContactOpen] = useState(false);
     const [isDiscoveryCallOpen, setIsDiscoveryCallOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    // Initialize Lenis smooth scroll
-    useSmoothScroll();
+    const [isDemoOpen, setIsDemoOpen] = useState(false);
 
     // Initialize first-touch lead attribution tracker
     useEffect(() => {
@@ -70,13 +66,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             {/* Dark Aesthetic Toast Container */}
             <Toaster />
 
-            {/* Persistent Header */}
-            <Header
-                onOpenContact={() => setIsContactOpen(true)}
-                onOpenDiscoveryCall={() => setIsDiscoveryCallOpen(true)}
-                onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-                settings={settings}
-            />
+            {/* Same menubar as the homepage (light ink on these dark pages) */}
+            <Menubar openDemo={() => setIsDemoOpen(true)} onDark />
 
             {/* Main Page Slot */}
             <main id="main-content" className="flex-1 w-full">
@@ -101,13 +92,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 settings={settings}
             />
 
-            {/* Full-screen Mobile Menu */}
-            <MobileMenu
-                isOpen={isMobileMenuOpen}
-                onClose={() => setIsMobileMenuOpen(false)}
-                onOpenContact={() => setIsContactOpen(true)}
-                settings={settings}
-            />
+            <DemoModal open={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
 
             {/* Smart Public Client Chat & MCP Dialog */}
             <ChatWidget />

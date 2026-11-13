@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 
 export interface SectionProps {
     active: boolean;
@@ -19,7 +19,7 @@ export const SECTIONS = [
     { id: 'showcase', label: 'Showcase' },
     { id: 'clients', label: 'Clients' },
     { id: 'case-study', label: 'Case Study' },
-    { id: 'book-demo', label: 'Book a Demo' },
+    { id: 'services', label: 'Services' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Contact' },
 ] as const;
@@ -30,7 +30,7 @@ export const SECTION_INDEX = Object.fromEntries(SECTIONS.map((s, i) => [s.id, i]
 >;
 
 /** Sections with a dark background: the menubar, side dots and progress bar switch to light ink on these. */
-export const DARK_SECTIONS: readonly number[] = [SECTION_INDEX['book-demo'], SECTION_INDEX.contact];
+export const DARK_SECTIONS: readonly number[] = [SECTION_INDEX.contact];
 
 /** Length of one section change. Drives the stage keyframes, the input lock and the reveal reset. */
 export const STAGE_TRANSITION_MS = 1000;
@@ -159,6 +159,40 @@ export function OrderCta({
             <span className="relative">{children}</span>
             <ArrowUpRight size={16} className="relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-1" />
         </Link>
+    );
+}
+
+/**
+ * Bottom-left call to action shared by Digital Twins and Virtual Try-On:
+ * the question sits above, the order button underneath.
+ */
+export function CustomOrderCta({
+    active,
+    href,
+    question,
+    buttonLabel,
+    delay = 0.28,
+    className = '',
+}: {
+    active: boolean;
+    href: string;
+    question: string;
+    buttonLabel: string;
+    delay?: number;
+    className?: string;
+}) {
+    return (
+        <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`}>
+            <Reveal active={active} delay={delay} className="flex flex-col items-start gap-3">
+                <p className="flex items-center gap-2 text-sm font-semibold text-[#16191f] sm:text-base">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-[#f5761a]/12 text-[#f5761a]">
+                        <Sparkles size={14} />
+                    </span>
+                    {question}
+                </p>
+                <OrderCta href={href}>{buttonLabel}</OrderCta>
+            </Reveal>
+        </div>
     );
 }
 

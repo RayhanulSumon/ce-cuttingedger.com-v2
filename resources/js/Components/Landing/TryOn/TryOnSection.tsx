@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { OrderCta, orderUrl, PAD_X, Reveal, SectionIntro, SectionProps } from '../shared';
+import { CustomOrderCta, orderUrl, PAD_X, Reveal, SectionIntro, SectionProps } from '../shared';
 import { LOOKS } from './looks';
 import { LookView } from './LookView';
 import { PieceCards } from './PieceCards';
@@ -144,7 +144,8 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
                 <div className={`relative z-10 flex flex-col items-center gap-1 pt-1 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.2} className="flex flex-col items-center gap-2 text-center">
-                        <p className="font-michroma text-sm tracking-[0.14em] text-[#16191f] sm:text-base">{look.modelName}</p>                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
+                        <p className="font-michroma text-sm tracking-[0.14em] text-[#16191f] sm:text-base">{look.modelName}</p>
+                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
                             {LOOKS.map((_, i) => (
                                 <span
                                     key={i}
@@ -152,12 +153,6 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                                 />
                             ))}
                         </div>
-                    </Reveal>
-                </div>
-
-                <div className={`relative z-10 pt-3 ${fadeWhenOpen}`}>
-                    <Reveal active={active} delay={0.24} className="flex items-center justify-center">
-                        <OrderCta href={orderUrl('virtual-try-on', look.name)}>Start Try-On Now</OrderCta>
                     </Reveal>
                 </div>
 
@@ -174,6 +169,14 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                     getOriginRect={runway.getFrontActorRect}
                 />
             </div>
+
+            <CustomOrderCta
+                active={active}
+                href={orderUrl('virtual-try-on', look.name)}
+                question="Want this look on your own garments?"
+                buttonLabel="Start Try-On Now"
+                className={fadeWhenOpen}
+            />
 
             <aside aria-label="In this look" className="relative min-h-0 lg:pt-2">
                 <Reveal active={active} delay={0.2} x="36px" y="0px" className="h-full">

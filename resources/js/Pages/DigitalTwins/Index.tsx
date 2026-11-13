@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Link } from '@inertiajs/react';
-import { ArrowLeft, Download, Sparkles } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { SeoHead } from '@/Components/Common/SeoHead';
-import { DemoModal } from '@/Components/Landing/DemoModal';
 import { TwinPresetModal } from '@/Components/Landing/DigitalTwins/TwinPresetModal';
 import { TwinSpriteCrop } from '@/Components/Landing/DigitalTwins/TwinSpriteCrop';
 import { DIGITAL_TWINS, formatDownloadCount, formatTwinAge } from '@/Components/Landing/DigitalTwins/twins';
-import { PAD_X } from '@/Components/Landing/shared';
+import { OrderCta, orderUrl, PAD_X } from '@/Components/Landing/shared';
+import { LandingLayout } from '@/Layouts/LandingLayout';
 
 const ALL = 'All';
 
@@ -15,44 +14,20 @@ const PAGE_BACKGROUND = 'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9
 /** Digital Twins catalogue — every model in a filterable grid, styled like the homepage. */
 export default function DigitalTwinsIndex() {
     const [category, setCategory] = useState<string>(ALL);
-    const [demoOpen, setDemoOpen] = useState(false);
     const [modalTwinIndex, setModalTwinIndex] = useState<number | null>(null);
     const closeModal = useCallback(() => setModalTwinIndex(null), []);
-    const closeDemo = useCallback(() => setDemoOpen(false), []);
 
     const categories = useMemo(() => [ALL, ...Array.from(new Set(DIGITAL_TWINS.map((twin) => twin.archetype)))], []);
     const twins = category === ALL ? DIGITAL_TWINS : DIGITAL_TWINS.filter((twin) => twin.archetype === category);
 
     return (
-        <div className="min-h-screen bg-white text-[#16191f]">
+        <div className="bg-white text-[#16191f]">
             <SeoHead
                 title="Digital Twins — AI Fashion Models"
                 description="Browse every photoreal AI digital twin. Filter by style and order a model for your next collection."
             />
 
-            <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-white/80 py-4 text-sm font-medium backdrop-blur-md ${PAD_X}`}>
-                <Link href="/" className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
-                    CUTTING  EDGER
-                </Link>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/"
-                        className="hidden items-center gap-2 rounded-full border border-[#16191f]/15 bg-white px-4 py-2.5 text-xs font-semibold transition-colors hover:border-[#f5761a]/60 hover:text-[#f5761a] sm:inline-flex"
-                    >
-                        <ArrowLeft size={14} />
-                        Back to home
-                    </Link>
-                    <button
-                        type="button"
-                        onClick={() => setDemoOpen(true)}
-                        className="rounded-full bg-[#1b1b1b] px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#333]"
-                    >
-                        Book a Demo
-                    </button>
-                </div>
-            </header>
-
-            <section style={{ background: PAGE_BACKGROUND }} className={`pb-14 pt-32 sm:pt-36 ${PAD_X}`}>
+            <section style={{ background: PAGE_BACKGROUND }} className={`pb-14 pt-28 sm:pt-32 ${PAD_X}`}>
                 <h1 className="font-michroma text-[clamp(26px,3.4vw,48px)] font-normal leading-[1.15] tracking-[0.14em]">
                     Digital Twins
                 </h1>
@@ -61,7 +36,7 @@ export default function DigitalTwinsIndex() {
                 </p>
             </section>
 
-            <div className={`sticky top-[64px] z-30 border-y border-[#16191f]/10 bg-white/85 py-4 backdrop-blur-md ${PAD_X}`}>
+            <div className={`border-y border-[#16191f]/10 bg-white/85 py-4 ${PAD_X}`}>
                 <div role="tablist" aria-label="Filter digital twins by category" className="flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center gap-2 overflow-x-auto">
                     {categories.map((name) => (
                         <button
@@ -137,18 +112,9 @@ export default function DigitalTwinsIndex() {
                     })}
                 </div>
 
-                <div className="mt-14 flex justify-center">
-                    <button
-                        type="button"
-                        onClick={() => setDemoOpen(true)}
-                        className="group inline-flex items-center gap-3 rounded-full border border-[#16191f]/15 bg-white p-1.5 pl-4 shadow-[0_10px_28px_-10px_rgba(22,25,31,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f5761a]/60"
-                    >
-                        <span className="flex items-center gap-2 text-sm font-semibold">
-                            <Sparkles size={14} className="text-[#f5761a]" />
-                            Want a custom model?
-                        </span>
-                        <span className="rounded-full bg-[#f5761a] px-3.5 py-1.5 text-xs font-bold text-white">Talk to us</span>
-                    </button>
+                <div className="mt-14 flex flex-col items-center gap-3 text-center">
+                    <p className="text-sm font-semibold sm:text-base">Want a custom model?</p>
+                    <OrderCta href={orderUrl('digital-twins')}>Order now</OrderCta>
                 </div>
             </main>
 
@@ -157,13 +123,11 @@ export default function DigitalTwinsIndex() {
                     twinIndex={modalTwinIndex}
                     onSelectTwin={setModalTwinIndex}
                     onClose={closeModal}
-                    openDemo={() => setDemoOpen(true)}
                 />
             </div>
 
-            <DemoModal open={demoOpen} onClose={closeDemo} />
         </div>
     );
 }
 
-DigitalTwinsIndex.layout = (page: React.ReactNode) => page;
+DigitalTwinsIndex.layout = (page: React.ReactNode) => <LandingLayout>{page}</LandingLayout>;

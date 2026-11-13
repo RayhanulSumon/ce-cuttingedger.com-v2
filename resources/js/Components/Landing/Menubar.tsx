@@ -4,55 +4,85 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { PageProps } from '@/types';
 import { CAPABILITY_FALLBACK } from './content';
-import { DARK_SECTIONS, EASE_OUT_QUART, SECTION_INDEX } from './shared';
+import { DARK_SECTIONS, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
 
 interface MenubarProps {
-    index: number;
-    goTo: (index: number) => void;
+    /** Active homepage section. Omit on other pages. */
+    index?: number;
+    /** Jumps to a homepage section in place. Omit on other pages: section links then navigate to the homepage. */
+    goTo?: (index: number) => void;
     openDemo: () => void;
     /** When true, fades out and disables pointer events (e.g. while a fullscreen modal is open). */
     hidden?: boolean;
+    /** Force light ink on a dark page background. Defaults to the active section's tone. */
+    onDark?: boolean;
 }
 
-const NAV_ITEMS: [string, number][] = [
-    ['Home', SECTION_INDEX.hero],
-    ['Digital Twins', SECTION_INDEX['digital-twins']],
-    ['Try-On', SECTION_INDEX['try-on']],
-    ['Showcase', SECTION_INDEX.showcase],
-    ['Case Study', SECTION_INDEX['case-study']],
-    ['FAQ', SECTION_INDEX.faq],
+/** Homepage sections shown in the menu, in order. */
+const SECTION_LINKS: [string, keyof typeof SECTION_INDEX][] = [
+    ['Home', 'hero'],
+    ['Digital Twins', 'digital-twins'],
+    ['Virtual Try-On', 'try-on'],
+    ['Showcase', 'showcase'],
+    ['Clients', 'clients'],
+    ['Case Study', 'case-study'],
+    ['Services', 'services'],
+    ['FAQ', 'faq'],
 ];
 
-export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps) {
+const PAGE_LINKS: [string, string][] = [
+    ['Case Studies', '/case-studies'],
+    ['Pricing', '/pricing'],
+    ['Blog', '/blog'],
+    ['About', '/about'],
+    ['Contact', '/contact'],
+];
+
+/** URL that opens the homepage on a given section. */
+export function sectionUrl(id: string): string {
+    return id === 'hero' ? '/' : `/?section=${id}`;
+}
+
+/** Reads `?section=` from an Inertia page url and returns the matching section index. */
+export function sectionIndexFromUrl(url: string): number {
+    const id = new URLSearchParams(url.split('?')[1] ?? '').get('section');
+    const found = SECTIONS.findIndex((section) => section.id === id);
+    return found === -1 ? 0 : found;
+}
+
+const DRAWER_ITEM = 'rounded-xl px-4 py-3 text-left text-lg font-semibold tracking-tight transition hover:bg-white/10';
+
+export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
     const [drawer, setDrawer] = useState(false);
-    const dark = DARK_SECTIONS.includes(index);
+    const dark = onDark ?? (index !== undefined && DARK_SECTIONS.includes(index));
 
     const capabilities = services_nav.length
         ? services_nav.map((s) => ({ label: s.title, href: s.path }))
         : CAPABILITY_FALLBACK;
 
-    const go = (i: number) => {
-        setDrawer(false);
-        goTo(i);
-    };
+    const closeDrawer = () => setDrawer(false);
 
     return (
         <>
             <header
                 className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[color,opacity] duration-500 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
             >
-                {/* Logo */}
-                <button
-                    type="button"
-                    onClick={() => go(0)}
-                    className="text-base font-extrabold tracking-[-0.04em]"
-                    aria-label="CuttingEdger home"
-                >
-                    CUTTING  EDGER
-                </button>
+                {goTo ? (
+                    <button
+                        type="button"
+                        onClick={() => goTo(0)}
+                        className="text-base font-extrabold tracking-[-0.04em]"
+                        aria-label="CuttingEdger home"
+                    >
+                        CUTTING  EDGER
+                    </button>
+                ) : (
+                    <Link href="/" className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
+                        CUTTING  EDGER
+                    </Link>
+                )}
 
-                {/* Right side: Book a Demo + sidebar toggle */}
                 <div className="flex items-center gap-3">
                     <button
                         type="button"
@@ -62,7 +92,6 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                         Book a Demo
                     </button>
 
-                    {/* Sidebar toggle — always visible on all breakpoints */}
                     <button
                         type="button"
                         onClick={() => setDrawer(true)}
@@ -74,21 +103,18 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                 </div>
             </header>
 
-            {/* Right-side Sidebar Drawer */}
             <AnimatePresence>
                 {drawer && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             className="fixed inset-0 z-[88] bg-black/55"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            onClick={() => setDrawer(false)}
+                            onClick={closeDrawer}
                         />
 
-                        {/* Drawer panel — slides in from the right */}
                         <motion.aside
                             data-scrollable
                             className="fixed right-0 top-0 z-[90] flex h-full w-72 flex-col overflow-y-auto bg-[#141A26] px-8 py-8 text-white shadow-2xl"
@@ -97,41 +123,64 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                             exit={{ x: '100%' }}
                             transition={{ duration: 0.42, ease: EASE_OUT_QUART }}
                         >
-                            {/* Close */}
                             <button
                                 type="button"
-                                onClick={() => setDrawer(false)}
+                                onClick={closeDrawer}
                                 aria-label="Close menu"
                                 className="ml-auto grid h-10 w-10 place-items-center rounded-full bg-white/10 hover:bg-white/20"
                             >
                                 <X size={18} />
                             </button>
 
-                            {/* Nav links */}
                             <nav className="mt-8 flex flex-col gap-1">
-                                {NAV_ITEMS.map(([label, i]) => (
-                                    <button
-                                        key={label}
-                                        type="button"
-                                        onClick={() => go(i)}
-                                        className={`rounded-xl px-4 py-3 text-left text-lg font-semibold tracking-tight transition hover:bg-white/10 ${index === i ? 'text-white' : 'text-white/70'}`}
-                                    >
-                                        {label}
-                                    </button>
-                                ))}
+                                {SECTION_LINKS.map(([label, id]) => {
+                                    const active = index === SECTION_INDEX[id];
+                                    const tone = active ? 'text-white' : 'text-white/70';
+
+                                    return goTo ? (
+                                        <button
+                                            key={id}
+                                            type="button"
+                                            onClick={() => {
+                                                closeDrawer();
+                                                goTo(SECTION_INDEX[id]);
+                                            }}
+                                            className={`${DRAWER_ITEM} ${tone}`}
+                                        >
+                                            {label}
+                                        </button>
+                                    ) : (
+                                        <Link key={id} href={sectionUrl(id)} onClick={closeDrawer} className={`${DRAWER_ITEM} ${tone}`}>
+                                            {label}
+                                        </Link>
+                                    );
+                                })}
                             </nav>
 
-                            {/* Capabilities sub-links */}
                             <div className="mt-6 border-t border-white/10 pt-6">
-                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
-                                    Capabilities
-                                </p>
+                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Explore</p>
+                                <div className="flex flex-col gap-1">
+                                    {PAGE_LINKS.map(([label, href]) => (
+                                        <Link
+                                            key={href}
+                                            href={href}
+                                            onClick={closeDrawer}
+                                            className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+                                        >
+                                            {label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="mt-6 border-t border-white/10 pt-6">
+                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Capabilities</p>
                                 <div className="flex flex-col gap-1">
                                     {capabilities.map((c) => (
                                         <Link
                                             key={c.label}
                                             href={c.href}
-                                            onClick={() => setDrawer(false)}
+                                            onClick={closeDrawer}
                                             className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
                                         >
                                             {c.label}
@@ -140,11 +189,13 @@ export function Menubar({ index, goTo, openDemo, hidden = false }: MenubarProps)
                                 </div>
                             </div>
 
-                            {/* Book Demo CTA */}
                             <div className="mt-auto pt-6">
                                 <button
                                     type="button"
-                                    onClick={() => { setDrawer(false); openDemo(); }}
+                                    onClick={() => {
+                                        closeDrawer();
+                                        openDemo();
+                                    }}
                                     className="w-full rounded-full bg-white py-3 text-sm font-bold text-[#141A26] transition hover:bg-white/90"
                                 >
                                     Book a Demo

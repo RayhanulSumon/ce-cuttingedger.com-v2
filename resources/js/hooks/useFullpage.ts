@@ -45,10 +45,11 @@ function innerScrollerCanScroll(target: EventTarget | null, direction: 1 | -1): 
  * @param count        number of sections
  * @param transitionMs length of one section change; input is locked for this long
  * @param enabled      set false to suspend wheel / key / touch handling (e.g. while an overlay is open)
+ * @param initialIndex section to open on (e.g. when arriving from another page's menu)
  */
-export function useFullpage(count: number, transitionMs: number, enabled = true) {
-    const [index, setIndex] = useState(0);
-    const indexRef = useRef(0);
+export function useFullpage(count: number, transitionMs: number, enabled = true, initialIndex = 0) {
+    const [index, setIndex] = useState(initialIndex);
+    const indexRef = useRef(initialIndex);
     const lockedUntil = useRef(0);
     const queuedTimer = useRef(0);
     const touchStartY = useRef<number | null>(null);

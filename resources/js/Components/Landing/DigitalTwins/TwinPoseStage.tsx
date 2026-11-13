@@ -96,12 +96,6 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
 export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStageProps, 'onStepPose'>) {
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="mb-2.5 flex items-center justify-between">
-                <span className="font-michroma text-[10px] tracking-[0.18em] text-[#16191f]">
-                    MULTI-POSE PRESET GALLERY ({twin.poses.length} POSES)
-                </span>
-            </div>
-
             <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3">
                 {twin.poses.map((pose, i) => {
                     const selected = i === poseIndex;

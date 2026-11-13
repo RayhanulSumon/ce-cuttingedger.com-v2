@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
-import { BookDemoSection } from '@/Components/Landing/BookDemoSection';
 import { CaseStudySection } from '@/Components/Landing/CaseStudySection';
 import { ClientsSection } from '@/Components/Landing/ClientsSection';
 import { DemoModal } from '@/Components/Landing/DemoModal';
@@ -9,40 +9,41 @@ import { FaqSection } from '@/Components/Landing/FaqSection';
 import { FooterSection } from '@/Components/Landing/FooterSection';
 import { FullpageStage } from '@/Components/Landing/FullpageStage';
 import { HeroSection } from '@/Components/Landing/HeroSection';
-import { Menubar } from '@/Components/Landing/Menubar';
+import { Menubar, sectionIndexFromUrl } from '@/Components/Landing/Menubar';
 import { RetouchingSection } from '@/Components/Landing/RetouchingSection';
 import { SECTION_INDEX, SECTIONS, STAGE_TRANSITION_MS } from '@/Components/Landing/shared';
+import { ServicesSection } from '@/Components/Landing/ServicesSection';
 import { ShowcaseSection } from '@/Components/Landing/ShowcaseSection';
 import { SideDots } from '@/Components/Landing/SideDots';
 import { TryOnSection } from '@/Components/Landing/TryOn/TryOnSection';
 import { useFullpage } from '@/hooks/useFullpage';
-import { getLenis } from '@/hooks/useSmoothScroll';
-import { Client, Project } from '@/types/models';
+import { Client, Project, Testimonial } from '@/types/models';
 
 interface HomeProps {
     featuredProjects?: Project[];
     clients?: Client[];
+    testimonials?: Testimonial[];
 }
 
 /** Stable fallbacks so the memoised sections do not re-render on every section change. */
 const NO_PROJECTS: Project[] = [];
 const NO_CLIENTS: Client[] = [];
+const NO_TESTIMONIALS: Testimonial[] = [];
 
-export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIENTS }: HomeProps) {
+export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIENTS, testimonials = NO_TESTIMONIALS }: HomeProps) {
+    const { url } = usePage();
     const [demoOpen, setDemoOpen] = useState(false);
     const [overlayOpen, setOverlayOpen] = useState(false);
-    const { index, goTo } = useFullpage(SECTIONS.length, STAGE_TRANSITION_MS, !demoOpen && !overlayOpen);
+    const { index, goTo } = useFullpage(SECTIONS.length, STAGE_TRANSITION_MS, !demoOpen && !overlayOpen, sectionIndexFromUrl(url));
 
     const openDemo = useCallback(() => setDemoOpen(true), []);
     const closeDemo = useCallback(() => setDemoOpen(false), []);
 
-    // Single-screen page: no document scrollbar, no smooth-scroll hijack.
+    // Single-screen page: no document scrollbar.
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        getLenis()?.stop();
         return () => {
             document.body.style.overflow = '';
-            getLenis()?.start();
         };
     }, []);
 
@@ -55,10 +56,10 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
         <DigitalTwinsSection {...common} active={isActive('digital-twins')} onOverlayChange={setOverlayOpen} />,
         <TryOnSection {...common} active={isActive('try-on')} onOverlayChange={setOverlayOpen} />,
         <RetouchingSection {...common} active={isActive('retouching')} />,
-        <ShowcaseSection {...common} active={isActive('showcase')} projects={featuredProjects} />,
-        <ClientsSection {...common} active={isActive('clients')} clients={clients} />,
+        <ShowcaseSection {...common} active={isActive('showcase')} projects={featuredProjects} onOverlayChange={setOverlayOpen} />,
+        <ClientsSection {...common} active={isActive('clients')} clients={clients} testimonials={testimonials} />,
         <CaseStudySection {...common} active={isActive('case-study')} projects={featuredProjects} />,
-        <BookDemoSection {...common} active={isActive('book-demo')} />,
+        <ServicesSection {...common} active={isActive('services')} />,
         <FaqSection {...common} active={isActive('faq')} />,
         <FooterSection {...common} active={isActive('contact')} />,
     ];
