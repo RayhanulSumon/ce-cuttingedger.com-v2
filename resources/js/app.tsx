@@ -21,9 +21,13 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.tsx')
         );
 
-        // Apply persistent LandingLayout if not specified otherwise (skip for Admin pages)
+        // Apply persistent LandingLayout if not specified otherwise (skip for Admin and Client Portal pages)
         const resolvedPage = (page as any).default;
-        if (resolvedPage.layout === undefined && !name.startsWith('Admin/')) {
+        if (
+            resolvedPage.layout === undefined &&
+            !name.startsWith('Admin/') &&
+            !name.startsWith('Client/')
+        ) {
             resolvedPage.layout = (pageElement: React.ReactNode) => (
                 <LandingLayout>{pageElement}</LandingLayout>
             );

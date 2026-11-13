@@ -299,5 +299,21 @@ class DigitalTwinsAndTryOnTest extends TestCase
                 ->component('Admin/TryOnLooks/Index')
                 ->has('looks', 6)
             );
+
+        $this->actingAs($this->admin)
+            ->get('/admin/client-accounts')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/ClientAccounts/Index')
+                ->has('clients')
+            );
+
+        $this->actingAs($this->admin)
+            ->get('/admin/users')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Users/Index')
+                ->has('users')
+            );
     }
 }

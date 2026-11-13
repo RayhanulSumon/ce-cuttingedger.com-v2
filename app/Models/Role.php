@@ -2,23 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-#[Fillable(['name'])]
-class Role extends Model
+class Role extends SpatieRole
 {
     use HasFactory;
 
     /**
-     * Users associated with this role.
+     * Default attributes for new Role instances.
      *
-     * @return HasMany<User>
+     * @var array<string, mixed>
      */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+    protected $attributes = [
+        'guard_name' => 'web',
+    ];
 }

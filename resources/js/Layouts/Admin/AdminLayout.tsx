@@ -152,6 +152,18 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         ? `${admin_badges.pending_orders}`
                         : null,
                 },
+                {
+                    name: "Client Accounts",
+                    href: "/admin/client-accounts",
+                    icon: Users,
+                    active: url.startsWith("/admin/client-accounts"),
+                },
+                {
+                    name: "Client Accounts",
+                    href: "/admin/client-accounts",
+                    icon: Users,
+                    active: url.startsWith("/admin/client-accounts"),
+                },
             ],
         },
         {

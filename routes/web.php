@@ -154,10 +154,21 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::post('redirects/resolve-404/{notFoundLog}', [AdminRedirectController::class, 'resolve404'])->name('redirects.resolve-404');
     Route::delete('redirects-clear/404s', [AdminRedirectController::class, 'clear404Logs'])->name('redirects.clear-404s');
 
-    // Super Admin Exclusive Endpoints
+    // Registered Client Accounts Management (Separate Page & Link: /admin/client-accounts)
+    Route::get('client-accounts', [AdminUserController::class, 'clientAccounts'])->name('client-accounts.index');
+    Route::post('client-accounts', [AdminUserController::class, 'store'])->name('client-accounts.store');
+    Route::put('client-accounts/{user}', [AdminUserController::class, 'update'])->name('client-accounts.update');
+    Route::post('client-accounts/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('client-accounts.toggle-status');
+    Route::post('client-accounts/{user}/verify-email', [AdminUserController::class, 'verifyEmail'])->name('client-accounts.verify-email');
+    Route::delete('client-accounts/{user}', [AdminUserController::class, 'destroy'])->name('client-accounts.destroy');
+
+    // Super Admin Exclusive Endpoints (Admin Users, Roles & Permissions, System Settings)
     Route::middleware('role:super_admin')->group(function () {
         Route::resource('users', AdminUserController::class)->except(['show', 'create', 'edit']);
         Route::post('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::post('roles', [AdminUserController::class, 'storeRole'])->name('roles.store');
+        Route::put('roles/{role}', [AdminUserController::class, 'updateRole'])->name('roles.update');
+        Route::delete('roles/{role}', [AdminUserController::class, 'destroyRole'])->name('roles.destroy');
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
     });

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'company', 'phone', 'email_verified_at', 'role_id', 'status', 'last_login_at'])]
 #[Hidden(['password', 'remember_token'])]
@@ -18,6 +20,27 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    use HasRoles {
+        hasRole as spatieHasRole;
+    }
+
+    protected string $guard_name = 'web';
+
+    /**
+     * Automatically synchronize role_id and Spatie roles table.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (User $user): void {
+            if ($user->role_id) {
+                $role = Role::find($user->role_id);
+                if ($role && ! $user->spatieHasRole($role->name)) {
+                    $user->syncRoles([$role->name]);
+                }
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -34,7 +57,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Role that this user belongs to.
+     * Primary Role that this user belongs to.
      *
      * @return BelongsTo<Role, $this>
      */
@@ -44,10 +67,16 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Determine if the user has a specific role.
+     * Determine if the user has a specific role via Spatie Permission or primary role.
+     *
+     * @param  string|int|array|\Spatie\Permission\Contracts\Role|Collection|\BackedEnum  $roles
      */
-    public function hasRole(string|array $roles): bool
+    public function hasRole($roles, ?string $guard = null): bool
     {
+        if ($this->spatieHasRole($roles, $guard)) {
+            return true;
+        }
+
         if (! $this->relationLoaded('role')) {
             $this->load('role');
         }
@@ -60,7 +89,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return in_array($this->role->name, $roles, true);
         }
 
-        return $this->role->name === $roles;
+        return is_string($roles) && $this->role->name === $roles;
     }
 
     /**

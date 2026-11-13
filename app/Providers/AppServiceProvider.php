@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
@@ -24,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user, $ability) {
+            return method_exists($user, 'hasRole') && $user->hasRole('super_admin') ? true : null;
+        });
         if (request()->isSecure() || request()->header('x-forwarded-proto') === 'https' || (app()->isProduction() && str_starts_with((string) config('app.url'), 'https://'))) {
             URL::forceScheme('https');
         }
