@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Check, Plus } from 'lucide-react';
 import { capabilityIcon } from '@/Components/Common/capabilityIcons';
-import { PageHero } from '@/Components/Common/PageHero';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { Capability, Project } from '@/types/models';
 
@@ -12,25 +11,53 @@ interface CapabilityShowProps {
     relatedProjects: Project[];
 }
 
+const WRAP = 'mx-auto w-full max-w-6xl px-5 sm:px-8';
+
 function pathFor(capability: Capability, parent?: Capability | null): string {
     const owner = capability.parent ?? parent;
     return owner ? `/capabilities/${owner.slug}/${capability.slug}` : `/capabilities/${capability.slug}`;
 }
 
-function BulletCard({ title, items }: { title: string; items: string[] }) {
-    if (items.length === 0) {
-        return null;
-    }
+function SectionTitle({ children, hint }: { children: React.ReactNode; hint?: string }) {
+    return (
+        <div className="mb-6 flex items-end justify-between gap-4">
+            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-[28px]">{children}</h2>
+            {hint && <span className="hidden text-sm text-subtle sm:block">{hint}</span>}
+        </div>
+    );
+}
+
+/** One clean card: icon, title, one line, arrow. Used for sub-capabilities and related links. */
+function CapabilityCard({ capability, href }: { capability: Capability; href: string }) {
+    const Icon = capabilityIcon(capability.icon);
 
     return (
-        <div className="rounded-3xl border border-ink/10 bg-surface p-6 sm:p-8">
-            <h2 className="text-xl font-extrabold tracking-[-0.02em] text-ink">{title}</h2>
-            <ul className="mt-5 space-y-3">
+        <Link
+            href={href}
+            prefetch
+            className="group flex h-full flex-col rounded-2xl border border-ink/10 bg-surface p-5 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_36px_-26px_color-mix(in_srgb,var(--color-ink)_45%,transparent)]"
+        >
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary-ink transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
+                <Icon size={20} />
+            </span>
+            <span className="mt-5 block text-[17px] font-bold leading-snug text-ink">{capability.title}</span>
+            <span className="mt-1.5 line-clamp-2 block flex-1 text-sm leading-relaxed text-muted">{capability.subtitle}</span>
+            <span className="mt-5 inline-flex items-center gap-1 text-[13px] font-semibold text-ink">
+                Learn more
+                <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </span>
+        </Link>
+    );
+}
+
+function CheckList({ title, items }: { title: string; items: string[] }) {
+    return (
+        <div>
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-subtle">{title}</h3>
+            <ul className="mt-4 space-y-3">
                 {items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-[15px] leading-relaxed text-ink-2">
-                        <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-primary-ink">
-                            <Check size={12} strokeWidth={3} />
-                        </span>
+                    <li key={item} className="flex items-start gap-3 text-[15px] leading-snug text-ink-2">
+                        <Check size={16} strokeWidth={3} className="mt-0.5 shrink-0 text-primary" />
                         {item}
                     </li>
                 ))}
@@ -43,9 +70,11 @@ function BulletCard({ title, items }: { title: string; items: string[] }) {
 export default function Show({ capability, related = [], relatedProjects = [] }: CapabilityShowProps) {
     const parent = capability.parent ?? null;
     const children = capability.children ?? [];
+    const features = capability.features ?? [];
+    const deliverables = capability.deliverables ?? [];
     const steps = capability.process_steps ?? [];
     const faqs = capability.faqs ?? [];
-    const Icon = capabilityIcon(capability.icon);
+    const label = capability.tag ?? parent?.tag ?? 'Capability';
 
     const breadcrumbs = [
         { name: 'Home', url: '/' },
@@ -64,148 +93,152 @@ export default function Show({ capability, related = [], relatedProjects = [] }:
                 faqSchema={faqs}
             />
 
-            <PageHero
-                eyebrow={parent ? `${parent.tag ?? parent.title} · Capability` : 'Capability'}
-                title={capability.title}
-                description={capability.subtitle}
-                backUrl={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
-                backLabel={parent ? `Back to ${parent.title}` : 'All capabilities'}
-            />
+            {/* Hero */}
+            <header className="border-b border-ink/10 bg-page pb-14 pt-36 sm:pb-20 sm:pt-44">
+                <div className={WRAP}>
+                    <Link
+                        href={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
+                        prefetch
+                        className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-primary"
+                    >
+                        <ArrowLeft size={15} />
+                        {parent ? parent.title : 'All capabilities'}
+                    </Link>
 
-            <section className="bg-page py-14 sm:py-20">
-                <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
-                    <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-14">
-                        <div>
-                            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-ink text-white">
-                                <Icon size={26} />
-                            </span>
-                            <p className="mt-6 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-ink-2">{capability.description}</p>
-
-                            <div className="mt-8 flex flex-wrap gap-3">
-                                <Link
-                                    href={`/order?service=other&ref=${encodeURIComponent(capability.title)}`}
-                                    className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover"
-                                >
-                                    Request a quote
-                                    <ArrowUpRight size={16} />
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                    className="inline-flex items-center gap-2 rounded-full border border-ink/25 px-7 py-3.5 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
-                                >
-                                    Schedule a call
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4">
-                            <BulletCard title="What you get" items={capability.features ?? []} />
-                            <BulletCard title="Deliverables" items={capability.deliverables ?? []} />
-                        </div>
+                    <div className="mt-8 max-w-3xl">
+                        <span className="inline-block rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                            {label}
+                        </span>
+                        <h1 className="mt-5 text-[clamp(34px,5.4vw,64px)] font-extrabold leading-[1.04] tracking-[-0.035em] text-ink">{capability.title}</h1>
+                        <p className="mt-5 text-lg leading-relaxed text-ink-2 sm:text-xl">{capability.subtitle}</p>
                     </div>
 
-                    {children.length > 0 && (
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">Specialities</h2>
-                            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {children.map((child) => (
-                                    <li key={child.id}>
-                                        <Link
-                                            href={pathFor(child, capability)}
-                                            prefetch
-                                            className="group flex h-full flex-col justify-between gap-6 rounded-3xl border border-ink/10 bg-surface p-6 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-primary/50"
-                                        >
-                                            <span>
-                                                <span className="block text-lg font-bold leading-snug text-ink">{child.title}</span>
-                                                <span className="mt-2 block text-sm leading-relaxed text-muted">{child.subtitle}</span>
-                                            </span>
-                                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-ink">
-                                                Learn more <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                                            </span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {steps.length > 0 && (
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">How it works</h2>
-                            <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                                {steps.map((step, i) => (
-                                    <li key={step.title} className="rounded-3xl border border-ink/10 bg-surface p-6">
-                                        <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-bold text-white">{i + 1}</span>
-                                        <h3 className="mt-4 text-base font-bold text-ink">{step.title}</h3>
-                                        <p className="mt-1.5 text-sm leading-relaxed text-muted">{step.description}</p>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                    )}
-
-                    {faqs.length > 0 && (
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">Questions</h2>
-                            <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                                {faqs.map((faq) => (
-                                    <div key={faq.question} className="rounded-3xl border border-ink/10 bg-surface p-6">
-                                        <h3 className="text-base font-bold text-ink">{faq.question}</h3>
-                                        <p className="mt-2 text-[15px] leading-relaxed text-muted">{faq.answer}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {relatedProjects.length > 0 && (
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">Recent work</h2>
-                            <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                                {relatedProjects.map((project) => (
-                                    <li key={project.id}>
-                                        <Link
-                                            href={`/case-studies/${project.slug}`}
-                                            prefetch
-                                            className="group block overflow-hidden rounded-3xl border border-ink/10 bg-surface transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-primary/50"
-                                        >
-                                            {project.cover_image && (
-                                                <img src={project.cover_image} alt={project.title} loading="lazy" className="aspect-[16/9] w-full object-cover" />
-                                            )}
-                                            <span className="block p-5">
-                                                <span className="block text-base font-bold text-ink">{project.title}</span>
-                                                <span className="mt-1 line-clamp-2 block text-sm text-muted">{project.summary}</span>
-                                            </span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {related.length > 0 && (
-                        <div>
-                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">{parent ? `More in ${parent.title}` : 'Other capabilities'}</h2>
-                            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                                {related.map((item) => (
-                                    <li key={item.id}>
-                                        <Link
-                                            href={pathFor(item, parent)}
-                                            prefetch
-                                            className="group flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-5 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-primary/50"
-                                        >
-                                            {item.tag && <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary-ink">{item.tag}</span>}
-                                            <span className="mt-1 text-base font-bold leading-snug text-ink">{item.title}</span>
-                                            <span className="mt-1.5 line-clamp-3 text-sm text-muted">{item.subtitle}</span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
+                    <div className="mt-8 flex flex-wrap gap-3">
+                        <Link
+                            href={`/order?service=other&ref=${encodeURIComponent(capability.title)}`}
+                            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover"
+                        >
+                            Request a quote
+                            <ArrowUpRight size={16} />
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                            className="inline-flex items-center rounded-full border border-ink/20 px-7 py-3.5 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
+                        >
+                            Schedule a call
+                        </button>
+                    </div>
                 </div>
-            </section>
+            </header>
+
+            <div className="space-y-16 bg-page py-14 sm:space-y-24 sm:py-20">
+                {/* Specialities: the main content of a main capability */}
+                {children.length > 0 && (
+                    <section className={WRAP}>
+                        <SectionTitle hint={`${children.length} specialities`}>Specialities</SectionTitle>
+                        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {children.map((child) => (
+                                <li key={child.id}>
+                                    <CapabilityCard capability={child} href={pathFor(child, capability)} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
+
+                {/* Overview */}
+                <section className={WRAP}>
+                    <div className="grid gap-10 rounded-3xl border border-ink/10 bg-surface p-7 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+                        <div>
+                            <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-[28px]">Overview</h2>
+                            <p className="mt-4 whitespace-pre-line text-base leading-relaxed text-muted sm:text-[17px]">{capability.description}</p>
+                        </div>
+                        {(features.length > 0 || deliverables.length > 0) && (
+                            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 lg:gap-10">
+                                {features.length > 0 && <CheckList title="What you get" items={features} />}
+                                {deliverables.length > 0 && <CheckList title="Deliverables" items={deliverables} />}
+                            </div>
+                        )}
+                    </div>
+                </section>
+
+                {/* Process */}
+                {steps.length > 0 && (
+                    <section className={WRAP}>
+                        <SectionTitle>How it works</SectionTitle>
+                        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {steps.map((step, i) => (
+                                <li key={step.title} className="rounded-2xl border border-ink/10 bg-surface p-5">
+                                    <span className="text-3xl font-extrabold tracking-[-0.03em] text-primary/90">{i + 1}</span>
+                                    <h3 className="mt-3 text-base font-bold text-ink">{step.title}</h3>
+                                    <p className="mt-1.5 text-sm leading-relaxed text-muted">{step.description}</p>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                )}
+
+                {/* Questions */}
+                {faqs.length > 0 && (
+                    <section className={`${WRAP} max-w-4xl`}>
+                        <SectionTitle>Questions</SectionTitle>
+                        <div className="space-y-3">
+                            {faqs.map((faq, i) => (
+                                <details key={faq.question} open={i === 0} className="group rounded-2xl border border-ink/10 bg-surface px-6 py-4 open:border-primary/40">
+                                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-bold text-ink [&::-webkit-details-marker]:hidden">
+                                        {faq.question}
+                                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-page text-ink transition-[transform,background-color,color] duration-300 group-open:rotate-45 group-open:bg-primary group-open:text-white">
+                                            <Plus size={15} />
+                                        </span>
+                                    </summary>
+                                    <p className="pb-2 pt-3 text-[15px] leading-relaxed text-muted">{faq.answer}</p>
+                                </details>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Recent work */}
+                {relatedProjects.length > 0 && (
+                    <section className={WRAP}>
+                        <SectionTitle>Recent work</SectionTitle>
+                        <ul className="grid gap-4 sm:grid-cols-2">
+                            {relatedProjects.map((project) => (
+                                <li key={project.id}>
+                                    <Link
+                                        href={`/case-studies/${project.slug}`}
+                                        prefetch
+                                        className="group block overflow-hidden rounded-2xl border border-ink/10 bg-surface transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-primary/40"
+                                    >
+                                        {project.cover_image && (
+                                            <img src={project.cover_image} alt={project.title} loading="lazy" className="aspect-[16/9] w-full object-cover" />
+                                        )}
+                                        <span className="block p-5">
+                                            <span className="block text-base font-bold text-ink">{project.title}</span>
+                                            <span className="mt-1 line-clamp-2 block text-sm text-muted">{project.summary}</span>
+                                        </span>
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
+
+                {/* Related */}
+                {related.length > 0 && (
+                    <section className={WRAP}>
+                        <SectionTitle>{parent ? `More in ${parent.title}` : 'Other capabilities'}</SectionTitle>
+                        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {related.map((item) => (
+                                <li key={item.id}>
+                                    <CapabilityCard capability={item} href={pathFor(item, parent)} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
+            </div>
         </>
     );
 }
