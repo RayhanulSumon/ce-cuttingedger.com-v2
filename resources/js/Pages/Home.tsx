@@ -78,5 +78,5 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
     );
 }
 
-/** Full-screen design: opt out of the persistent AppLayout (header/footer). */
+/** Full-screen design: opt out of the persistent LandingLayout (header/footer). */
 Home.layout = (page: React.ReactNode) => page;

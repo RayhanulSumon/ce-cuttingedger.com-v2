@@ -27,49 +27,37 @@ export function PageHero({
 }: PageHeroProps) {
     return (
         <section
-            className={`relative ${
-                compact ? 'pt-28 pb-10 sm:pt-32 sm:pb-12' : 'pt-36 pb-20'
-            } bg-[#f2f2f1] border-b border-[#16191f]/10 overflow-hidden`}
+            className={`relative overflow-hidden border-b border-[#16191f]/10 bg-[#f2f2f1] ${
+                compact ? 'pb-10 pt-28 sm:pb-12 sm:pt-32' : 'pb-16 pt-32 sm:pb-20 sm:pt-40'
+            }`}
         >
-            {/* Ambient Background Aura */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#f5761a]/10 rounded-full blur-[140px] pointer-events-none" />
-
-            <div className={`${containerMaxWidth || 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8 relative z-10`}>
+            <div className={`${containerMaxWidth || 'max-w-7xl'} relative z-10 mx-auto px-4 sm:px-6 lg:px-8`}>
                 {backUrl && (
                     <div className="mb-6">
                         <Link
                             href={backUrl}
-                            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#4a505b] hover:text-[#c4540a] transition-colors"
+                            className="inline-flex items-center gap-2 text-xs font-semibold text-[#5d6572] transition-colors hover:text-[#f5761a]"
                         >
-                            <ArrowLeft className="w-4 h-4" />
+                            <ArrowLeft className="h-4 w-4" />
                             <span>{backLabel || 'Back'}</span>
                         </Link>
                     </div>
                 )}
 
-                <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a] block mb-3">
-                    [ {eyebrow} ]
-                </span>
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#5d6572]">{eyebrow}</p>
 
                 <h1
                     className={`${
-                        compact
-                            ? 'text-3xl sm:text-4xl lg:text-[44px]'
-                            : 'text-4xl sm:text-6xl lg:text-7xl'
-                    } font-display font-extrabold text-[#16191f] tracking-tight leading-[1.12] max-w-4xl`}
+                        compact ? 'text-[clamp(30px,4.2vw,52px)]' : 'text-[clamp(34px,5.6vw,76px)]'
+                    } max-w-4xl font-extrabold leading-[1.02] tracking-[-0.035em] text-[#16191f]`}
                 >
-                    {title}{' '}
-                    {highlight && (
-                        <span className="text-[#c4540a]">
-                            {highlight}
-                        </span>
-                    )}
+                    {title} {highlight && <span className="text-[#f5761a]">{highlight}</span>}
                 </h1>
 
                 <p
                     className={`${
-                        compact ? 'mt-3 sm:mt-4 text-sm sm:text-base' : 'mt-6 text-lg sm:text-xl'
-                    } text-[#4a505b] max-w-2xl font-normal leading-relaxed`}
+                        compact ? 'mt-3 text-base sm:mt-4 sm:text-lg' : 'mt-6 text-lg sm:text-xl'
+                    } max-w-2xl leading-relaxed text-[#2f333a]`}
                 >
                     {description}
                 </p>

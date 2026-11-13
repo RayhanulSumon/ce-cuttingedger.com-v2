@@ -3,7 +3,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { renderToString } from 'react-dom/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { AppLayout } from '@/Layouts/AppLayout';
+import { LandingLayout } from '@/Layouts/LandingLayout';
 
 const appName = 'CuttingEdger';
 
@@ -20,7 +20,7 @@ createServer((page) =>
             const resolved = (resolvedPageModule as any).default;
             if (resolved.layout === undefined) {
                 resolved.layout = (pageElement: React.ReactNode) => (
-                    <AppLayout>{pageElement}</AppLayout>
+                    <LandingLayout>{pageElement}</LandingLayout>
                 );
             }
             return resolvedPageModule;

@@ -4,7 +4,7 @@ import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { AppLayout } from '@/Layouts/AppLayout';
+import { LandingLayout } from '@/Layouts/LandingLayout';
 import { configureEcho } from '@laravel/echo-react';
 
 configureEcho({
@@ -21,11 +21,11 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.tsx')
         );
 
-        // Apply persistent AppLayout if not specified otherwise (skip for Admin pages)
+        // Apply persistent LandingLayout if not specified otherwise (skip for Admin pages)
         const resolvedPage = (page as any).default;
         if (resolvedPage.layout === undefined && !name.startsWith('Admin/')) {
             resolvedPage.layout = (pageElement: React.ReactNode) => (
-                <AppLayout>{pageElement}</AppLayout>
+                <LandingLayout>{pageElement}</LandingLayout>
             );
         }
 

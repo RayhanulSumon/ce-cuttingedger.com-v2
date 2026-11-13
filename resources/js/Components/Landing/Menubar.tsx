@@ -30,11 +30,26 @@ const SECTION_LINKS: [string, keyof typeof SECTION_INDEX][] = [
     ['FAQ', 'faq'],
 ];
 
+/** Links shown in the bar itself on wide screens. `section` entries jump in place on the homepage. */
+const BAR_LINKS: { label: string; section?: keyof typeof SECTION_INDEX; href: string }[] = [
+    { label: 'Digital Twins', section: 'digital-twins', href: '/digital-twins' },
+    { label: 'Virtual Try-On', section: 'try-on', href: sectionUrl('try-on') },
+    { label: 'Services', section: 'services', href: '/services' },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'About', href: '/about' },
+];
+
 const PAGE_LINKS: [string, string][] = [
     ['Case Studies', '/case-studies'],
     ['Pricing', '/pricing'],
     ['Blog', '/blog'],
     ['About', '/about'],
+    ['Team', '/team'],
+    ['Careers', '/careers'],
+    ['Reviews', '/reviews'],
+    ['FAQ', '/faq'],
     ['Contact', '/contact'],
 ];
 
@@ -54,6 +69,10 @@ const DRAWER_ITEM = 'rounded-xl px-4 py-3 text-left text-lg font-semibold tracki
 
 export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
+    const { url } = usePage();
+    const path = url.split('?')[0];
+    /** Inner pages scroll under the bar, so it gets a backdrop; the homepage stage does not scroll. */
+    const solid = !goTo;
     const [drawer, setDrawer] = useState(false);
     const dark = onDark ?? (index !== undefined && DARK_SECTIONS.includes(index));
 
@@ -66,7 +85,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
     return (
         <>
             <header
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 text-sm font-medium transition-[color,opacity] duration-500 sm:px-10 lg:px-16 ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-6 px-5 py-4 text-sm font-medium transition-[color,opacity,background-color] duration-500 sm:px-10 lg:px-16 ${solid ? 'bg-[#f2f2f1]/85 backdrop-blur-md' : 'py-5'} ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
             >
                 {goTo ? (
                     <button
@@ -78,10 +97,31 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                         CUTTING  EDGER
                     </button>
                 ) : (
-                    <Link href="/" className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
+                    <Link href="/" prefetch className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
                         CUTTING  EDGER
                     </Link>
                 )}
+
+                <nav aria-label="Main" className="hidden items-center gap-1 xl:flex">
+                    {BAR_LINKS.map((item) => {
+                        const isCurrent = goTo
+                            ? item.section !== undefined && index === SECTION_INDEX[item.section]
+                            : path === item.href || path.startsWith(`${item.href}/`);
+                        const classes = `rounded-full px-3 py-2 text-[13px] font-semibold transition-colors duration-300 ${
+                            isCurrent ? 'bg-[#16191f]/10' : 'opacity-75 hover:bg-[#16191f]/5 hover:opacity-100'
+                        }`;
+
+                        return goTo && item.section !== undefined ? (
+                            <button key={item.label} type="button" onClick={() => goTo(SECTION_INDEX[item.section!])} className={classes}>
+                                {item.label}
+                            </button>
+                        ) : (
+                            <Link key={item.label} href={item.href} prefetch className={classes}>
+                                {item.label}
+                            </Link>
+                        );
+                    })}
+                </nav>
 
                 <div className="flex items-center gap-3">
                     <button
@@ -150,7 +190,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                             {label}
                                         </button>
                                     ) : (
-                                        <Link key={id} href={sectionUrl(id)} onClick={closeDrawer} className={`${DRAWER_ITEM} ${tone}`}>
+                                        <Link key={id} href={sectionUrl(id)} prefetch onClick={closeDrawer} className={`${DRAWER_ITEM} ${tone}`}>
                                             {label}
                                         </Link>
                                     );
@@ -164,6 +204,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                         <Link
                                             key={href}
                                             href={href}
+                                            prefetch
                                             onClick={closeDrawer}
                                             className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
                                         >
@@ -180,6 +221,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                         <Link
                                             key={c.label}
                                             href={c.href}
+                                            prefetch
                                             onClick={closeDrawer}
                                             className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
                                         >
