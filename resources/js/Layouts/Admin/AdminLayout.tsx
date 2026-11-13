@@ -139,10 +139,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     active: url.startsWith("/admin/projects"),
                 },
                 {
-                    name: "Services",
-                    href: "/admin/services",
+                    name: "Capabilities",
+                    href: "/admin/capabilities",
                     icon: Layers,
-                    active: url.startsWith("/admin/services"),
+                    active: url.startsWith("/admin/capabilities"),
                 },
                 {
                     name: "Blogs",

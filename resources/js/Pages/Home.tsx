@@ -13,7 +13,7 @@ import { HeroSection } from '@/Components/Landing/HeroSection';
 import { Menubar, sectionIndexFromUrl } from '@/Components/Landing/Menubar';
 import { RetouchingSection } from '@/Components/Landing/RetouchingSection';
 import { SECTION_INDEX, SECTIONS, STAGE_TRANSITION_MS } from '@/Components/Landing/shared';
-import { ServicesSection } from '@/Components/Landing/ServicesSection';
+import { CapabilitiesSection } from '@/Components/Landing/CapabilitiesSection';
 import { ShowcaseSection } from '@/Components/Landing/ShowcaseSection';
 import { SideDots } from '@/Components/Landing/SideDots';
 import { TryOnSection } from '@/Components/Landing/TryOn/TryOnSection';
@@ -60,7 +60,7 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
         <ShowcaseSection {...common} active={isActive('showcase')} projects={featuredProjects} onOverlayChange={setOverlayOpen} />,
         <ClientsSection {...common} active={isActive('clients')} clients={clients} testimonials={testimonials} />,
         <CaseStudySection {...common} active={isActive('case-study')} projects={featuredProjects} />,
-        <ServicesSection {...common} active={isActive('services')} />,
+        <CapabilitiesSection {...common} active={isActive('capabilities')} />,
         <FaqSection {...common} active={isActive('faq')} />,
         <FooterSection {...common} active={isActive('contact')} />,
     ];

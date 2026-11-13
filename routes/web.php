@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminBlogCategoryController;
 use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\Admin\AdminCapabilityController;
 use App\Http\Controllers\Admin\AdminCareerOpeningController;
 use App\Http\Controllers\Admin\AdminChatSessionController;
 use App\Http\Controllers\Admin\AdminClientController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPricingPlanController;
 use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\Admin\AdminRedirectController;
-use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSubscriberController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\Admin\AdminTrackingScriptController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CapabilityController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
@@ -30,7 +31,6 @@ use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkController;
@@ -68,7 +68,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
 
     // Content & Agency CRUDs
     Route::resource('projects', AdminProjectController::class)->except(['show', 'create', 'edit']);
-    Route::resource('services', AdminServiceController::class)->except(['show', 'create', 'edit']);
+    Route::resource('capabilities', AdminCapabilityController::class)->except(['show', 'create', 'edit']);
     Route::resource('team', AdminTeamMemberController::class)->except(['show', 'create', 'edit']);
     Route::resource('clients', AdminClientController::class)->except(['show', 'create', 'edit']);
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show', 'create', 'edit']);
@@ -138,9 +138,9 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 
-// Service Pillars Hub and Hierarchical Child Pages
-Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-Route::get('/services/{parentSlug}/{childSlug?}', [ServiceController::class, 'show'])->name('services.show');
+// Capabilities: main capabilities (2D, 3D, DTP, Video) and their sub-capabilities
+Route::get('/capabilities', [CapabilityController::class, 'index'])->name('capabilities.index');
+Route::get('/capabilities/{parentSlug}/{childSlug?}', [CapabilityController::class, 'show'])->name('capabilities.show');
 
 // Case Studies (Primary SEO Plan URL) & Legacy /work 301
 Route::get('/case-studies', [WorkController::class, 'index'])->name('case-studies.index');

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Capability;
 use App\Models\ChatConsultation;
 use App\Models\ChatSession;
 use App\Models\ContactMessage;
 use App\Models\NewsletterSubscriber;
 use App\Models\Project;
-use App\Models\Service;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,7 +21,7 @@ class AdminDashboardController extends Controller
     {
         $stats = [
             'total_projects' => Project::count(),
-            'total_services' => Service::count(),
+            'total_capabilities' => Capability::count(),
             'new_inquiries' => ContactMessage::where('status', 'new')->count(),
             'total_subscribers' => NewsletterSubscriber::count(),
             'upcoming_consultations' => ChatConsultation::where('scheduled_at', '>=', now())

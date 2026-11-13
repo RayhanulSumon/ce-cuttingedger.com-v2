@@ -39,7 +39,7 @@ const FOOTER_LINK = 'text-sm text-ink-2 transition-colors hover:text-primary';
  */
 export function LandingLayout({ children }: { children: React.ReactNode }) {
     const { url } = usePage();
-    const { settings, flash, services_nav = [] } = usePage<PageProps>().props;
+    const { settings, flash, capabilities_nav = [] } = usePage<PageProps>().props;
     const [demoOpen, setDemoOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [discoveryOpen, setDiscoveryOpen] = useState(false);
@@ -117,15 +117,15 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                     <div>
                         <p className={FOOTER_HEADING}>Capabilities</p>
                         <ul className="mt-4 space-y-2.5">
-                            {services_nav.slice(0, 6).map((service) => (
-                                <li key={service.id}>
-                                    <Link href={service.path} prefetch className={FOOTER_LINK}>
-                                        {service.title}
+                            {capabilities_nav.map((capability) => (
+                                <li key={capability.id}>
+                                    <Link href={capability.path} prefetch className={FOOTER_LINK}>
+                                        {capability.title}
                                     </Link>
                                 </li>
                             ))}
                             <li>
-                                <Link href="/services" prefetch className={FOOTER_LINK}>
+                                <Link href="/capabilities" prefetch className={FOOTER_LINK}>
                                     All capabilities
                                 </Link>
                             </li>

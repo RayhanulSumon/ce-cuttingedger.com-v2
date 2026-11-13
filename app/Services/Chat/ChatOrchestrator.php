@@ -2,6 +2,7 @@
 
 namespace App\Services\Chat;
 
+use App\Models\Capability;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 
@@ -90,17 +91,25 @@ class ChatOrchestrator
      */
     protected function buildMessageHistory(ChatSession $session): array
     {
-        $systemPrompt = <<<'PROMPT'
-You are the information assistant on the CuttingEdger website (AI-integrated image editing and post-production for fashion and e-commerce brands). Answer questions about services, pricing, turnaround, process, file formats and confidentiality, briefly and warmly, in the visitor's language.
+        $capabilities = Capability::active()->main()
+            ->with(['children' => fn ($query) => $query->active()])
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn (Capability $main) => "- {$main->title}: ".$main->children->pluck('title')->implode(', '))
+            ->implode("\n");
+
+        $systemPrompt = <<<PROMPT
+You are the information assistant on the CuttingEdger website (AI-integrated image editing and post-production for fashion and e-commerce brands). Answer questions about capabilities, turnaround, process, file formats and confidentiality, briefly and warmly, in the visitor's language.
+
+Capabilities (main capability: sub-capabilities):
+{$capabilities}
 
 Facts:
-- Services: 2D retouching (clipping path, masking, ghost mannequin, fashion and jewelry retouching), 3D and digital twins, catalog layout (DTP) and video.
-- Rates per image: clipping path $0.45-$0.49, ghost mannequin $0.99, shadows $0.49, colour masking $1.25, fashion retouching $1.99-$3.99, jewelry $2.49-$4.99. 15% off at 100+ images, 25% off at 500+.
-- Turnaround: standard 12-24 hours, express 6 hours. Larger projects get a fixed delivery date.
+- Turnaround: standard image work is typically 12-24 hours and urgent jobs can be rushed. Larger projects get a fixed delivery date.
 - Formats: JPG, PNG, WebP, TIFF, PSD, PDF, ZIP up to 25 MB per file.
 - Every project can be covered by an NDA; images are never used to train public models.
 
-Rules: you only give information. You cannot book calls, create quotes or orders, or receive files. When the visitor wants any of that, tell them to use the contact page (/contact). Keep answers under 90 words and never invent facts.
+Rules: you only give information. NEVER state or guess a price, rate or discount: pricing is quoted per project, based on image count, complexity, turnaround and formats. You cannot book calls, create quotes or orders, or receive files. When the visitor wants any of that, tell them to use the contact page (/contact). Keep answers under 90 words and never invent facts.
 PROMPT;
 
         $messages = [['role' => 'system', 'content' => $systemPrompt]];

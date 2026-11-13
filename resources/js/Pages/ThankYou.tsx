@@ -176,8 +176,8 @@ export default function ThankYou() {
                             ← Return Home
                         </Link>
                         <span className="text-muted">·</span>
-                        <Link href="/services" className="hover:text-ink transition-colors flex items-center gap-1">
-                            <span>View Services</span>
+                        <Link href="/capabilities" className="hover:text-ink transition-colors flex items-center gap-1">
+                            <span>View Capabilities</span>
                             <ArrowRight className="w-3 h-3" />
                         </Link>
                         <span className="text-muted">·</span>

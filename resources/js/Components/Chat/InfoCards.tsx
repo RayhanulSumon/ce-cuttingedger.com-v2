@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight, Check, Clock, HelpCircle, Layers, Tag } from 'lucide-react';
+import { ArrowUpRight, Check, HelpCircle, Layers } from 'lucide-react';
 
 export interface ChatCard {
     type: string;
@@ -14,34 +14,6 @@ interface InfoCardsProps {
 
 const SURFACE = 'rounded-2xl border border-ink/10 bg-surface p-4 text-left shadow-sm';
 const LABEL = 'text-[10px] font-semibold uppercase tracking-[0.18em] text-subtle';
-
-/** One service as a tappable row that asks the assistant for its details (information only). */
-function ServiceRow({ service, onAsk }: { service: any; onAsk: (text: string) => void }) {
-    return (
-        <button
-            type="button"
-            onClick={() => onAsk(`Tell me about ${service.title}`)}
-            className="group flex w-full items-start gap-3 rounded-xl px-2.5 py-2.5 text-left transition-colors hover:bg-page"
-        >
-            <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink">
-                <Layers className="h-4 w-4" />
-            </span>
-            <span className="min-w-0 flex-1">
-                <span className="block text-[13px] font-bold leading-snug text-ink">{service.title}</span>
-                {service.subtitle && <span className="mt-0.5 line-clamp-2 block text-[11.5px] leading-snug text-muted">{service.subtitle}</span>}
-                <span className="mt-1.5 flex flex-wrap gap-1.5">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-page px-2 py-0.5 text-[10.5px] font-semibold text-ink-2">
-                        <Tag className="h-3 w-3" /> {service.starting_rate}
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-page px-2 py-0.5 text-[10.5px] font-semibold text-ink-2">
-                        <Clock className="h-3 w-3" /> {service.turnaround}
-                    </span>
-                </span>
-            </span>
-            <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-faint transition-colors group-hover:text-primary" />
-        </button>
-    );
-}
 
 function BulletList({ title, items }: { title: string; items: string[] }) {
     if (!items?.length) {
@@ -64,62 +36,73 @@ function BulletList({ title, items }: { title: string; items: string[] }) {
 
 export function InfoCards({ card, onAsk }: InfoCardsProps) {
     switch (card.type) {
-        case 'service_catalog_card':
+        case 'capability_catalog_card':
             return (
                 <div className={`${SURFACE} space-y-1`}>
-                    <p className={LABEL}>Our services</p>
+                    <p className={LABEL}>Our capabilities</p>
                     <div className="-mx-1">
-                        {(card.services ?? []).map((service: any) => (
-                            <ServiceRow key={service.id ?? service.slug} service={service} onAsk={onAsk} />
+                        {(card.capabilities ?? []).map((capability: any) => (
+                            <div key={capability.id} className="rounded-xl px-2.5 py-2.5">
+                                <Link href={capability.path} prefetch className="group flex items-start gap-3">
+                                    <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary-ink">
+                                        {capability.tag ?? <Layers className="h-4 w-4" />}
+                                    </span>
+                                    <span className="min-w-0 flex-1">
+                                        <span className="block text-[13px] font-bold leading-snug text-ink group-hover:text-primary-ink">{capability.title}</span>
+                                        <span className="mt-0.5 line-clamp-2 block text-[11.5px] leading-snug text-muted">{capability.subtitle}</span>
+                                    </span>
+                                    <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-faint transition-colors group-hover:text-primary" />
+                                </Link>
+                                {capability.children?.length > 0 && (
+                                    <div className="ml-11 mt-2 flex flex-wrap gap-1.5">
+                                        {capability.children.map((child: any) => (
+                                            <button
+                                                key={child.path}
+                                                type="button"
+                                                onClick={() => onAsk(`Tell me about ${child.title}`)}
+                                                className="rounded-full bg-page px-2.5 py-1 text-[10.5px] font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
+                                            >
+                                                {child.title}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>
             );
 
-        case 'service_detail_card':
+        case 'capability_detail_card':
             return (
                 <div className={`${SURFACE} space-y-3`}>
                     <div>
+                        {card.tag && <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-ink">{card.tag}</p>}
                         <p className="text-sm font-bold leading-snug text-ink">{card.title}</p>
                         {card.subtitle && <p className="mt-0.5 text-[12px] leading-snug text-muted">{card.subtitle}</p>}
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary-ink">
-                            <Tag className="h-3 w-3" /> {card.starting_rate}
-                        </span>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-page px-2.5 py-1 text-[11px] font-semibold text-ink-2">
-                            <Clock className="h-3 w-3" /> {card.turnaround}
-                        </span>
-                    </div>
-                    <BulletList title="What you get" items={(card.features ?? []).slice(0, 4)} />
-                    <BulletList title="Deliverables" items={(card.deliverables ?? []).slice(0, 4)} />
-                </div>
-            );
-
-        case 'pricing_card':
-            return (
-                <div className={`${SURFACE} space-y-2.5`}>
-                    <p className={LABEL}>{card.title ?? 'Pricing'}</p>
-                    <ul className="divide-y divide-ink/10">
-                        {(card.rows ?? []).map((row: any) => (
-                            <li key={row.name} className="flex items-center justify-between gap-3 py-2">
-                                <span className="min-w-0">
-                                    <span className="block text-[12.5px] font-semibold leading-snug text-ink">{row.name}</span>
-                                    <span className="block text-[10.5px] text-subtle">{row.turnaround}</span>
-                                </span>
-                                <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11.5px] font-bold text-primary-ink">{row.rate}</span>
-                            </li>
-                        ))}
-                    </ul>
-                    {card.notes?.length > 0 && (
-                        <ul className="flex flex-wrap gap-1.5 pt-0.5">
-                            {card.notes.map((note: string) => (
-                                <li key={note} className="rounded-full bg-page px-2.5 py-1 text-[10.5px] font-medium text-muted">
-                                    {note}
-                                </li>
-                            ))}
-                        </ul>
+                    <BulletList title="What you get" items={card.features ?? []} />
+                    <BulletList title="Deliverables" items={card.deliverables ?? []} />
+                    {card.children?.length > 0 && (
+                        <div>
+                            <p className={LABEL}>Specialities</p>
+                            <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                {card.children.map((child: any) => (
+                                    <button
+                                        key={child.path}
+                                        type="button"
+                                        onClick={() => onAsk(`Tell me about ${child.title}`)}
+                                        className="rounded-full bg-page px-2.5 py-1 text-[10.5px] font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
+                                    >
+                                        {child.title}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     )}
+                    <Link href={card.path} prefetch className="inline-flex items-center gap-1.5 text-[12px] font-bold text-primary-ink hover:underline">
+                        Open the full page <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
                 </div>
             );
 

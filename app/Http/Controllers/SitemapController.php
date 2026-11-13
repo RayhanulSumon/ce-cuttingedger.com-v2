@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Capability;
 use App\Models\Job;
 use App\Models\Project;
-use App\Models\Service;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
@@ -20,7 +20,7 @@ class SitemapController extends Controller
         // Static core indexable pages
         $staticPages = [
             ['url' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => date('Y-m-d')],
-            ['url' => url('/services'), 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/capabilities'), 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/case-studies'), 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/pricing'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/about'), 'priority' => '0.7', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
@@ -38,14 +38,13 @@ class SitemapController extends Controller
             $entries[] = $page;
         }
 
-        // Services & Child Sub-services (Only indexable)
-        $services = Service::where('is_noindex', false)->with('parent')->get();
-        foreach ($services as $service) {
+        // Capabilities and sub-capabilities
+        foreach (Capability::active()->with('parent')->get() as $capability) {
             $entries[] = [
-                'url' => url($service->path),
-                'priority' => $service->parent_id ? '0.85' : '0.9',
+                'url' => url($capability->path),
+                'priority' => $capability->parent_id ? '0.85' : '0.9',
                 'changefreq' => 'weekly',
-                'lastmod' => $service->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
+                'lastmod' => $capability->updated_at?->format('Y-m-d') ?? date('Y-m-d'),
             ];
         }
 

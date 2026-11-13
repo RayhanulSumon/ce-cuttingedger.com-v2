@@ -21,8 +21,8 @@ class ChatConsultation extends Model
         return $this->belongsTo(ChatSession::class, 'chat_session_id');
     }
 
-    public function service(): BelongsTo
+    public function capability(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'service_id');
+        return $this->belongsTo(Capability::class, 'capability_id');
     }
 }

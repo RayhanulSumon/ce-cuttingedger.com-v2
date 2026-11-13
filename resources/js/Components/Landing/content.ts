@@ -86,14 +86,6 @@ export const CASE_STUDIES: CaseStudyEntry[] = [
     },
 ];
 
-export const CAPABILITY_FALLBACK = [
-    { label: '2D', href: '/services' },
-    { label: '3D', href: '/services' },
-    { label: 'DTP', href: '/services' },
-    { label: 'Video', href: '/services' },
-];
-
-
 export interface ReviewEntry {
     quote: string;
     name: string;

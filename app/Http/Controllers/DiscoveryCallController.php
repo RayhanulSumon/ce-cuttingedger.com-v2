@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Chat\Tools\CalendarBookingTool;
+use App\Services\Consultation\ConsultationScheduler;
 use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
  */
 class DiscoveryCallController extends Controller
 {
-    public function __construct(protected CalendarBookingTool $calendar) {}
+    public function __construct(protected ConsultationScheduler $calendar) {}
 
     /**
      * Available consultation slots for the calendar popup.
@@ -33,7 +33,7 @@ class DiscoveryCallController extends Controller
             'email' => 'required|email|max:150',
             'phone' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:1000',
-            'service' => 'nullable|string|max:100',
+            'capability' => 'nullable|string|max:100',
             'consultation_id' => 'nullable|integer',
             'is_reschedule' => 'nullable|boolean',
         ]);

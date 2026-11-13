@@ -36,38 +36,38 @@ class ChatFlowTest extends TestCase
         $this->assertDatabaseCount('chat_sessions', 1);
     }
 
-    public function test_view_all_services_returns_service_catalog_card(): void
+    public function test_capabilities_question_returns_capability_catalog_card(): void
     {
         $sessionResponse = $this->postJson('/api/chat/session');
         $sessionId = $sessionResponse->json('session_id');
 
         $response = $this->withHeader('X-Chat-Session-Id', $sessionId)
             ->postJson('/api/chat/message', [
-                'message' => 'View All Services',
+                'message' => 'What capabilities do you offer?',
             ]);
 
         $response->assertStatus(200);
         $toolCards = $response->json('message.tool_cards');
         $this->assertNotEmpty($toolCards);
-        $this->assertSame('service_catalog_card', $toolCards[0]['type']);
-        $this->assertNotEmpty($toolCards[0]['services']);
+        $this->assertSame('capability_catalog_card', $toolCards[0]['type']);
+        $this->assertCount(4, $toolCards[0]['capabilities']);
     }
 
-    public function test_specific_service_query_returns_service_detail_card(): void
+    public function test_specific_capability_question_returns_capability_detail_card(): void
     {
         $sessionResponse = $this->postJson('/api/chat/session');
         $sessionId = $sessionResponse->json('session_id');
 
         $response = $this->withHeader('X-Chat-Session-Id', $sessionId)
             ->postJson('/api/chat/message', [
-                'message' => 'Tell me about ghost mannequin service specs',
+                'message' => 'Tell me about ghost mannequin',
             ]);
 
         $response->assertStatus(200);
         $toolCards = $response->json('message.tool_cards');
         $this->assertNotEmpty($toolCards);
-        $this->assertSame('service_detail_card', $toolCards[0]['type']);
-        $this->assertContains($toolCards[0]['slug'], ['ghost-mannequin', 'ghost-mannequin-service']);
+        $this->assertSame('capability_detail_card', $toolCards[0]['type']);
+        $this->assertSame('Ghost Mannequin', $toolCards[0]['title']);
     }
 
     public function test_admin_can_view_and_update_free_trial(): void
@@ -190,7 +190,7 @@ class ChatFlowTest extends TestCase
         $this->assertStringContainsString('Welcome to **CuttingEdger**', $messages[0]['content']);
     }
 
-    public function test_pricing_question_returns_pricing_card_and_contact_link(): void
+    public function test_pricing_question_never_shows_a_price(): void
     {
         $sessionId = $this->postJson('/api/chat/session')->json('session_id');
 
@@ -198,9 +198,9 @@ class ChatFlowTest extends TestCase
             ->postJson('/api/chat/message', ['message' => 'How much does ghost mannequin retouching cost?']);
 
         $response->assertStatus(200);
-        $types = collect($response->json('message.tool_cards'))->pluck('type')->all();
-        $this->assertContains('pricing_card', $types);
-        $this->assertContains('link_card', $types);
+        $this->assertSame(['link_card'], collect($response->json('message.tool_cards'))->pluck('type')->all());
+        $this->assertDoesNotMatchRegularExpression('/\$\s?\d|\d\s?%/', $response->json('message.content'));
+        $this->assertStringContainsString('fixed prices', $response->json('message.content'));
     }
 
     public function test_booking_request_points_to_contact_instead_of_booking(): void

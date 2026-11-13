@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
-import { ArrowUpRight, Box, ChevronDown, Clapperboard, Layers, LayoutTemplate, Menu, X } from 'lucide-react';
-import { PageProps, ServiceNavItem } from '@/types';
+import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
+import { capabilityIcon } from '@/Components/Common/capabilityIcons';
+import { PageProps } from '@/types';
 import { DARK_SECTIONS, EASE_OUT_EXPO, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
 
 interface MenubarProps {
@@ -29,65 +30,6 @@ export function sectionIndexFromUrl(url: string): number {
     return found === -1 ? 0 : found;
 }
 
-interface Capability {
-    key: string;
-    tag: string;
-    title: string;
-    blurb: string;
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-    /** Matches the admin service whose page this capability opens. */
-    match: RegExp;
-}
-
-export const CAPABILITIES: Capability[] = [
-    {
-        key: '2d',
-        tag: '2D',
-        title: '2D Retouching',
-        blurb: 'Cutouts, masking, ghost mannequin and colour-true retouching.',
-        icon: Layers,
-        match: /retouch|clipping|mask|ghost|colou?r|catalog/i,
-    },
-    {
-        key: '3d',
-        tag: '3D',
-        title: '3D & Digital Twins',
-        blurb: 'Product modelling, renders and photoreal digital twins.',
-        icon: Box,
-        match: /3d|cgi|twin|render/i,
-    },
-    {
-        key: 'dtp',
-        tag: 'DTP',
-        title: 'Catalog & Layout',
-        blurb: 'Catalog layout, multilingual formatting and prepress.',
-        icon: LayoutTemplate,
-        match: /publish|dtp|layout|prepress/i,
-    },
-    {
-        key: 'video',
-        tag: 'Video',
-        title: 'Motion & Video',
-        blurb: 'Short-form cut-downs built from the same source files.',
-        icon: Clapperboard,
-        match: /video|motion/i,
-    },
-];
-
-/** Finds the service page for a capability, falling back to the services hub. */
-function capabilityHref(capability: Capability, services: ServiceNavItem[]): string {
-    for (const pillar of services) {
-        if (capability.match.test(pillar.title)) {
-            return pillar.path;
-        }
-        const child = pillar.children.find((item) => capability.match.test(item.title));
-        if (child) {
-            return child.path;
-        }
-    }
-    return '/services';
-}
-
 type NavItem = { label: string; href: string; section?: keyof typeof SECTION_INDEX; capabilities?: true };
 
 /** Main navigation. `section` entries jump in place when the menu is opened on the homepage. */
@@ -95,7 +37,7 @@ const MAIN_NAV: NavItem[] = [
     { label: 'Home', href: '/', section: 'hero' },
     { label: 'Digital Twins', href: '/digital-twins', section: 'digital-twins' },
     { label: 'Virtual Try-On', href: sectionUrl('try-on'), section: 'try-on' },
-    { label: 'Capabilities', href: '/services', section: 'services', capabilities: true },
+    { label: 'Capabilities', href: '/capabilities', section: 'capabilities', capabilities: true },
     { label: 'Case Studies', href: '/case-studies' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Blog', href: '/blog' },
@@ -123,7 +65,7 @@ const ROW =
     'flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-[22px] font-bold tracking-[-0.02em] transition-colors duration-300 hover:bg-white/10';
 
 export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
-    const { services_nav = [] } = usePage<PageProps>().props;
+    const { capabilities_nav = [] } = usePage<PageProps>().props;
     const { url } = usePage();
     const path = url.split('?')[0];
     const [drawer, setDrawer] = useState(false);
@@ -171,32 +113,39 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                     animate="show"
                                     variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } }}
                                 >
-                                    {CAPABILITIES.map((capability) => (
-                                        <motion.li
-                                            key={capability.key}
-                                            variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT_QUART } } }}
-                                        >
-                                            <Link
-                                                href={capabilityHref(capability, services_nav)}
-                                                prefetch
-                                                onClick={closeDrawer}
-                                                className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/10"
+                                    {capabilities_nav.map((capability) => {
+                                        const Icon = capabilityIcon(capability.icon);
+
+                                        return (
+                                            <motion.li
+                                                key={capability.id}
+                                                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT_QUART } } }}
                                             >
-                                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-primary transition-[background-color,color] duration-300 group-hover:bg-primary group-hover:text-white">
-                                                    <capability.icon size={18} />
-                                                </span>
-                                                <span className="min-w-0">
-                                                    <span className="block text-[15px] font-semibold leading-tight">
-                                                        <span className="text-primary">{capability.tag}</span> · {capability.title}
+                                                <Link
+                                                    href={capability.path}
+                                                    prefetch
+                                                    onClick={closeDrawer}
+                                                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/10"
+                                                >
+                                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-primary transition-[background-color,color] duration-300 group-hover:bg-primary group-hover:text-white">
+                                                        <Icon size={18} />
                                                     </span>
-                                                    <span className="mt-0.5 block text-xs leading-snug text-white/50">{capability.blurb}</span>
-                                                </span>
-                                            </Link>
-                                        </motion.li>
-                                    ))}
+                                                    <span className="min-w-0">
+                                                        <span className="block text-[15px] font-semibold leading-tight">
+                                                            {capability.tag && <span className="text-primary">{capability.tag} · </span>}
+                                                            {capability.title}
+                                                        </span>
+                                                        <span className="mt-0.5 block text-xs leading-snug text-white/50">
+                                                            {capability.children.length} {capability.children.length === 1 ? 'speciality' : 'specialities'}
+                                                        </span>
+                                                    </span>
+                                                </Link>
+                                            </motion.li>
+                                        );
+                                    })}
                                     <li>
                                         <Link
-                                            href="/services"
+                                            href="/capabilities"
                                             prefetch
                                             onClick={closeDrawer}
                                             className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white/70 transition-colors hover:text-white"

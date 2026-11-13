@@ -15,9 +15,9 @@ import {
 export default function NotFound() {
     const quickLinks = [
         {
-            title: 'Production Services',
-            desc: 'Hand-drawn clipping paths, ghost mannequin, and jewelry retouching.',
-            href: '/services',
+            title: 'Capabilities',
+            desc: '2D, 3D, DTP and Video, with every speciality we offer.',
+            href: '/capabilities',
             icon: Layers,
             badge: 'Core Engine',
         },

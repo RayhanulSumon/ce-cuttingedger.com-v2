@@ -258,7 +258,7 @@ export function ChatWidget() {
                     id: `error-${Date.now()}`,
                     sender: 'assistant',
                     content: 'Something went wrong on my side. Please try again, or contact the team directly.',
-                    suggested_replies: ['What services do you offer?', 'How does pricing work?'],
+                    suggested_replies: ['What capabilities do you offer?', 'How is pricing decided?'],
                 },
             ]);
         } finally {
@@ -314,7 +314,7 @@ export function ChatWidget() {
                                         {operatorName ? `${operatorName} · CuttingEdger` : 'CuttingEdger Assistant'}
                                     </span>
                                     <span className="block text-[11px] text-white/60">
-                                        {operatorName ? 'Live specialist' : 'Ask about services, pricing and delivery'}
+                                        {operatorName ? 'Live specialist' : 'Ask about capabilities, pricing and delivery'}
                                     </span>
                                 </span>
                             </div>
@@ -421,7 +421,7 @@ export function ChatWidget() {
                                     value={inputText}
                                     onChange={(event) => setInputText(event.target.value)}
                                     maxLength={2000}
-                                    placeholder="Ask about services, pricing or delivery…"
+                                    placeholder="Ask about capabilities, pricing or delivery…"
                                     aria-label="Your question"
                                     className="min-w-0 flex-1 rounded-full border border-ink/10 bg-page px-4 py-2.5 text-[13px] text-ink placeholder-faint outline-none transition-colors focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/15"
                                 />

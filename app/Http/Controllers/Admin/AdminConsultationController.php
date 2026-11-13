@@ -20,7 +20,7 @@ class AdminConsultationController extends Controller
     {
         $status = $request->query('status');
 
-        $query = ChatConsultation::with('service', 'session')
+        $query = ChatConsultation::with('capability', 'session')
             ->orderBy('scheduled_at', 'desc');
 
         if ($status && in_array($status, ['pending', 'confirmed', 'completed', 'cancelled'], true)) {
@@ -33,7 +33,7 @@ class AdminConsultationController extends Controller
             'name' => $c->name,
             'email' => $c->email,
             'phone' => $c->phone,
-            'service_name' => $c->service?->title ?? 'General Technical Intake',
+            'capability_name' => $c->capability?->title ?? 'General Technical Intake',
             'scheduled_at' => $c->scheduled_at->toISOString(),
             'scheduled_at_formatted' => $c->scheduled_at->format('M j, Y \a\t g:i A'),
             'is_upcoming' => $c->scheduled_at->isFuture(),

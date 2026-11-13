@@ -21,7 +21,7 @@ import {
 interface AdminDashboardProps {
     stats: {
         total_projects: number;
-        total_services: number;
+        total_capabilities: number;
         new_inquiries: number;
         total_subscribers: number;
         upcoming_consultations?: number;
@@ -77,10 +77,10 @@ export default function Dashboard({
                             <Layers className="w-4 h-4 text-emerald-400" />
                         </div>
                         <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                            {stats.total_services}
+                            {stats.total_capabilities}
                         </div>
                         <span className="text-xs font-mono text-emerald-400 block">
-                            Disciplines active
+                            Main and sub-capabilities
                         </span>
                     </div>
 

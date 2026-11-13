@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Capability;
 use App\Models\Project;
 use App\Models\Redirect;
-use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,15 +18,15 @@ class RedirectMiddlewareTest extends TestCase
         $this->seed();
     }
 
-    public function test_legacy_service_redirects_with_301_and_increments_hits(): void
+    public function test_legacy_site_url_redirects_with_301_and_increments_hits(): void
     {
-        $redirect = Redirect::where('source_path', '/services/background-removal')->firstOrFail();
+        $redirect = Redirect::where('source_path', '/photo-background-removal-services')->firstOrFail();
         $initialHits = $redirect->hit_count;
 
-        $response = $this->get('/services/background-removal');
+        $response = $this->get('/photo-background-removal-services');
 
         $response->assertStatus(301);
-        $response->assertRedirect('/services/ecommerce-catalog-optimization/clipping-path-service');
+        $response->assertRedirect('/capabilities/2d/background-removal');
 
         $redirect->refresh();
         $this->assertEquals($initialHits + 1, $redirect->hit_count);
@@ -45,17 +45,17 @@ class RedirectMiddlewareTest extends TestCase
         ]);
     }
 
-    public function test_changing_service_slug_automatically_creates_301_redirect(): void
+    public function test_changing_capability_slug_automatically_creates_301_redirect(): void
     {
-        $service = Service::whereNull('parent_id')->firstOrFail();
-        $oldPath = $service->path;
-        $newSlug = $service->slug.'-renamed';
+        $capability = Capability::main()->firstOrFail();
+        $oldPath = $capability->path;
+        $newSlug = $capability->slug.'-renamed';
 
-        $service->update(['slug' => $newSlug]);
+        $capability->update(['slug' => $newSlug]);
 
         $this->assertDatabaseHas('redirects', [
             'source_path' => $oldPath,
-            'target_url' => "/services/{$newSlug}",
+            'target_url' => "/capabilities/{$newSlug}",
             'status_code' => 301,
             'is_active' => true,
         ]);

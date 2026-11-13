@@ -171,7 +171,7 @@ export default function RedirectsIndex({
     const openResolveModal = (log: NotFoundLog) => {
         setResolvingLog(log);
         resolveForm.setData({
-            target_url: "/services",
+            target_url: "/capabilities",
             status_code: 301,
         });
     };
@@ -553,7 +553,7 @@ export default function RedirectsIndex({
                                 <Input
                                     value={ruleForm.data.source_path}
                                     onChange={(e) => ruleForm.setData("source_path", e.target.value)}
-                                    placeholder="/old-portfolio or /services/photo-editing"
+                                    placeholder="/old-portfolio or /photo-editing"
                                     className="bg-neutral-900 border-white/10 text-xs font-mono"
                                     required
                                 />
@@ -680,7 +680,7 @@ export default function RedirectsIndex({
                                 <Input
                                     value={resolveForm.data.target_url}
                                     onChange={(e) => resolveForm.setData("target_url", e.target.value)}
-                                    placeholder="/services or /case-studies"
+                                    placeholder="/capabilities or /case-studies"
                                     className="bg-neutral-900 border-white/10 text-xs font-mono"
                                     required
                                 />
@@ -739,7 +739,7 @@ export default function RedirectsIndex({
                             <div className="text-[11px] font-mono text-neutral-400 space-y-1 bg-black/40 p-3 rounded-lg border border-white/5">
                                 <p className="text-neutral-300 font-semibold">CSV Column Format Example:</p>
                                 <p className="text-neutral-500">source_path, target_url, status_code</p>
-                                <p className="text-emerald-400">/old-service, /services/ecommerce-catalog-optimization, 301</p>
+                                <p className="text-emerald-400">/old-service, /capabilities/2d/ghost-mannequin, 301</p>
                             </div>
 
                             <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">

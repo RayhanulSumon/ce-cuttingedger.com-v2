@@ -39,18 +39,26 @@ export interface Project {
     live_url?: string;
 }
 
-export interface Service {
+export interface Capability {
     id: number;
+    parent_id: number | null;
+    parent?: Capability | null;
+    children?: Capability[];
     title: string;
     slug: string;
-    marquee_label: string;
+    tag: string | null;
     subtitle: string;
     description: string;
-    features: string[];
-    deliverables: string[];
     icon: string;
+    features: string[] | null;
+    deliverables: string[] | null;
+    process_steps: { title: string; description: string }[] | null;
+    faqs: { question: string; answer: string }[] | null;
+    meta_title: string | null;
+    meta_description: string | null;
+    is_active: boolean;
     sort_order: number;
-    accent_color?: string;
+    path?: string;
 }
 
 export interface TeamMember {

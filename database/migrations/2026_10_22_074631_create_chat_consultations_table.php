@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();
-            $table->foreignId('service_id')->nullable()->constrained('services')->nullOnDelete();
+            $table->foreignId('capability_id')->nullable()->constrained('capabilities')->nullOnDelete();
             $table->dateTime('scheduled_at');
             $table->string('timezone')->default('UTC');
             $table->string('status')->default('confirmed'); // pending, confirmed, completed, cancelled

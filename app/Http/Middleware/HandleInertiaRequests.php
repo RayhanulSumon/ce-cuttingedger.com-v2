@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Capability;
 use App\Models\ChatConsultation;
 use App\Models\ContactMessage;
 use App\Models\Order;
-use App\Models\Service;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -84,36 +84,30 @@ class HandleInertiaRequests extends Middleware
                 'unread_leads' => ContactMessage::where('inquiry_type', 'chat_lead')->where('status', 'new')->count(),
                 'new_messages' => ContactMessage::where('inquiry_type', '!=', 'chat_lead')->where('status', 'new')->count(),
             ] : null,
-            'services_nav' => function () {
+            'capabilities_nav' => function () {
                 try {
-                    return Service::whereNull('parent_id')
-                        ->with(['children' => fn ($q) => $q->orderBy('sort_order')])
+                    return Capability::active()->main()
+                        ->with(['children' => fn ($query) => $query->active()])
                         ->orderBy('sort_order')
                         ->get()
-                        ->map(function (Service $pillar) {
-                            $children = $pillar->children->map(function (Service $child) use ($pillar) {
-                                return [
-                                    'id' => $child->id,
-                                    'title' => $child->title,
-                                    'slug' => $child->slug,
-                                    'path' => "/services/{$pillar->slug}/{$child->slug}",
-                                    'subtitle' => $child->subtitle,
-                                    'icon' => $child->icon ?: 'Sparkles',
-                                ];
-                            })->values()->all();
-
-                            return [
-                                'id' => $pillar->id,
-                                'title' => $pillar->title,
-                                'slug' => $pillar->slug,
-                                'path' => "/services/{$pillar->slug}",
-                                'subtitle' => $pillar->subtitle,
-                                'icon' => $pillar->icon ?: 'Layers',
-                                'accent_color' => $pillar->accent_color ?: '#d4ff00',
-                                'children' => $children,
-                            ];
-                        })->values()->all();
-                } catch (\Throwable $e) {
+                        ->map(fn (Capability $main) => [
+                            'id' => $main->id,
+                            'title' => $main->title,
+                            'tag' => $main->tag,
+                            'slug' => $main->slug,
+                            'path' => $main->path,
+                            'subtitle' => $main->subtitle,
+                            'icon' => $main->icon,
+                            'children' => $main->children->map(fn (Capability $child) => [
+                                'id' => $child->id,
+                                'title' => $child->title,
+                                'slug' => $child->slug,
+                                'path' => $child->path,
+                                'subtitle' => $child->subtitle,
+                                'icon' => $child->icon,
+                            ])->values()->all(),
+                        ])->values()->all();
+                } catch (\Throwable) {
                     return [];
                 }
             },

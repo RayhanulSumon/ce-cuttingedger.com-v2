@@ -71,7 +71,7 @@ const COLORED_TILES = [
         title: 'Retouching',
         description: 'Clean, consistent retouching for apparel, jewelry and products, delivered within 24 hours.',
         actions: [
-            { label: 'Explore services', href: '/services' },
+            { label: 'Explore capabilities', href: '/capabilities' },
             { label: 'Order retouching', href: orderUrl('retouching') },
         ],
     },
@@ -81,7 +81,7 @@ const COLORED_TILES = [
         label: 'DTP',
         title: 'Catalog layout',
         description: 'Multilingual catalog formatting, raster-to-vector conversion and prepress, from one workflow.',
-        actions: [{ label: 'Explore services', href: '/services' }],
+        actions: [{ label: 'Explore capabilities', href: '/capabilities' }],
     },
     {
         bg: '#151515',
@@ -89,7 +89,7 @@ const COLORED_TILES = [
         label: 'Video',
         title: 'Motion cut-downs',
         description: 'Short-form video cut-downs built from the same source files as your stills.',
-        actions: [{ label: 'Explore services', href: '/services' }],
+        actions: [{ label: 'Explore capabilities', href: '/capabilities' }],
     },
 ];
 

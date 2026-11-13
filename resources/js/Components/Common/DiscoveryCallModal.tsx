@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { usePage } from '@inertiajs/react';
+import { PageProps } from '@/types';
 import {
     Calendar,
     Clock,
@@ -32,7 +34,8 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
-    const [service, setService] = useState('Catalog Optimization & Retouching');
+    const { capabilities_nav = [] } = usePage<PageProps>().props;
+    const [capability, setCapability] = useState(capabilities_nav[0]?.slug ?? '');
     const [notes, setNotes] = useState('');
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -149,7 +152,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                     name: name.trim(),
                     email: email.trim(),
                     phone: phone.trim() || null,
-                    service: service,
+                    capability,
                     notes: notes.trim() || null,
                 }),
             });
@@ -393,18 +396,23 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
 
                                     <div className="space-y-1">
                                         <label className="text-[11px] font-mono uppercase text-muted">
-                                            Service Discipline
+                                            Capability
                                         </label>
                                         <select
-                                            value={service}
-                                            onChange={(e) => setService(e.target.value)}
+                                            value={capability}
+                                            onChange={(e) => setCapability(e.target.value)}
                                             className="w-full h-9 rounded-xl bg-white border border-ink/10 text-xs px-3 text-ink focus:outline-none focus:border-primary"
                                         >
-                                            <option value="Catalog Optimization & Retouching">1. Catalog Optimization & Retouching</option>
-                                            <option value="Color Standardization">2. Color Standardization & Multi-Colorways</option>
-                                            <option value="White-Label Studio Extension">3. White-Label Agency Extension</option>
-                                            <option value="Virtual Production & 3D CGI">4. Virtual Production & 3D CGI</option>
-                                            <option value="Custom High-Volume Enterprise SLA">Enterprise High-Volume Retouching</option>
+                                            {capabilities_nav.map((main) => (
+                                                <optgroup key={main.id} label={main.title}>
+                                                    <option value={main.slug}>{main.title}: all</option>
+                                                    {main.children.map((child) => (
+                                                        <option key={child.id} value={child.slug}>
+                                                            {child.title}
+                                                        </option>
+                                                    ))}
+                                                </optgroup>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>

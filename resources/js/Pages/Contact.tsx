@@ -21,17 +21,10 @@ import {
 import { getAttributionData } from '@/lib/attribution';
 import { PageProps } from '@/types';
 
-const SERVICES = [
-    'Catalog Retouching',
-    'Clipping & Masking',
-    'Ghost Mannequin',
-    'Color Matching',
-    '3D CGI / AR',
-    'Agency White-Label',
-];
 
 export default function Contact() {
-    const { settings, flash } = usePage<PageProps>().props;
+    const { settings, flash, capabilities_nav = [] } = usePage<PageProps>().props;
+    const capabilityOptions = [...capabilities_nav.map((capability) => capability.title), 'Not sure yet'];
     const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
     const contactPhone = (settings as any)?.contact_phone || '+1 (409) 995-2565';
     const contactAddress = (settings as any)?.company_address || 'Artisan Center, Panthapath, Dhaka 1215';
@@ -45,7 +38,7 @@ export default function Contact() {
         website: '',
         monthly_volume: '500 – 2,000 SKUs / month',
         platform: 'Shopify / Shopify Plus',
-        service_interest: SERVICES[0],
+        service_interest: capabilityOptions[0],
         budget: '$1,500 – $5,000 / mo Retainer',
         message: '',
         honeypot: '',
@@ -386,13 +379,13 @@ export default function Contact() {
                                     </div>
                                 </div>
 
-                                {/* Service Needed - Refined Modern Chips */}
+                                {/* Capability needed: chips come from the admin panel */}
                                 <div className="space-y-2">
                                     <label className="text-xs text-ink-2 font-medium block">
-                                        Service Needed
+                                        Capability needed
                                     </label>
                                     <div className="flex flex-wrap gap-2">
-                                        {SERVICES.map((srv) => {
+                                        {capabilityOptions.map((srv) => {
                                             const active = data.service_interest === srv;
                                             return (
                                                 <button

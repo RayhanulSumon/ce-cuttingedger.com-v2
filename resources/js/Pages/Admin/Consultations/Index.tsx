@@ -52,7 +52,7 @@ interface ConsultationItem {
     name: string;
     email: string;
     phone?: string;
-    service_name: string;
+    capability_name: string;
     scheduled_at: string;
     scheduled_at_formatted: string;
     is_upcoming: boolean;
@@ -219,11 +219,11 @@ export default function ConsultationsIndex({
         },
         {
             header: "Topic & Client Concern",
-            accessorKey: "service_name",
+            accessorKey: "capability_name",
             cell: (row) => (
                 <div className="space-y-1">
                     <div className="text-xs text-neutral-200 font-medium">
-                        {row.service_name}
+                        {row.capability_name}
                     </div>
                     {row.notes && (
                         <div className="text-[11px] text-neutral-300 font-mono bg-white/[0.04] px-2 py-1 rounded border border-white/5 line-clamp-2 max-w-xs">
@@ -442,7 +442,7 @@ export default function ConsultationsIndex({
                                         <span>{selectedConsultation.scheduled_at_formatted} ({selectedConsultation.timezone})</span>
                                     </div>
                                     <span className="text-neutral-400 text-[11px] block mt-1">
-                                        Service: {selectedConsultation.service_name}
+                                        Capability: {selectedConsultation.capability_name}
                                     </span>
                                 </div>
 
