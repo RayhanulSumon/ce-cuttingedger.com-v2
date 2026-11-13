@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Check, ChevronUp, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, Check, MessageCircle } from 'lucide-react';
 import { PageProps } from '@/types';
 import { SocialIcon } from './SocialIcon';
 import { Reveal, SectionProps } from './shared';
@@ -116,7 +116,7 @@ function NewsletterSignup() {
 }
 
 /** The giant "CONTACT US" footer card, sized to fit one screen. */
-export const FooterSection = memo(function FooterSection({ active, goTo }: SectionProps) {
+export const FooterSection = memo(function FooterSection({ active }: SectionProps) {
     const { settings } = usePage<PageProps>().props;
     const [hovered, setHovered] = useState<number | null>(null);
     const [groupHover, setGroupHover] = useState(false);
@@ -179,9 +179,6 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
 
                 {/* Middle: the big call to action */}
                 <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-6 text-center sm:py-8">
-                    <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-primary-ink sm:mb-4">
-                        Ready to elevate your catalog craft &amp; velocity?
-                    </span>
                     <Link
                         href="/contact"
                         prefetch
@@ -263,14 +260,6 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                                 </Link>
                             ))}
                         </p>
-                        <button
-                            type="button"
-                            onClick={() => goTo(0)}
-                            aria-label="Back to top"
-                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white shadow-lg transition-colors hover:bg-primary"
-                        >
-                            <ChevronUp size={18} strokeWidth={2.5} />
-                        </button>
                     </div>
                 </Reveal>
             </div>

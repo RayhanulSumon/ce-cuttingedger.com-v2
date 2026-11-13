@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
+import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
 import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
 import { DemoModal } from '@/Components/Landing/DemoModal';
 import { Menubar } from '@/Components/Landing/Menubar';
@@ -43,6 +44,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
     const [demoOpen, setDemoOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [discoveryOpen, setDiscoveryOpen] = useState(false);
+    const scrolled = useScrolledPast();
     const openDemo = useCallback(() => setDemoOpen(true), []);
     const closeDemo = useCallback(() => setDemoOpen(false), []);
 
@@ -167,6 +169,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
             <DemoModal open={demoOpen} onClose={closeDemo} />
             <DiscoveryCallModal isOpen={discoveryOpen} onClose={() => setDiscoveryOpen(false)} />
             <SlideOverContact isOpen={contactOpen} onClose={() => setContactOpen(false)} settings={settings} />
+            <ScrollToTop visible={scrolled} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
             <ChatWidget />
             <CookieConsentBanner />
         </div>
