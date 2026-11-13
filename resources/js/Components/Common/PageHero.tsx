@@ -29,17 +29,17 @@ export function PageHero({
         <section
             className={`relative ${
                 compact ? 'pt-28 pb-10 sm:pt-32 sm:pb-12' : 'pt-36 pb-20'
-            } bg-[#0a0b0e] border-b border-white/10 overflow-hidden`}
+            } bg-[#f2f2f1] border-b border-[#16191f]/10 overflow-hidden`}
         >
             {/* Ambient Background Aura */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[140px] pointer-events-none" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#f5761a]/10 rounded-full blur-[140px] pointer-events-none" />
 
             <div className={`${containerMaxWidth || 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8 relative z-10`}>
                 {backUrl && (
                     <div className="mb-6">
                         <Link
                             href={backUrl}
-                            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-neutral-400 hover:text-accent transition-colors"
+                            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#4a505b] hover:text-[#c4540a] transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             <span>{backLabel || 'Back'}</span>
@@ -47,7 +47,7 @@ export function PageHero({
                     </div>
                 )}
 
-                <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-3">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a] block mb-3">
                     [ {eyebrow} ]
                 </span>
 
@@ -56,11 +56,11 @@ export function PageHero({
                         compact
                             ? 'text-3xl sm:text-4xl lg:text-[44px]'
                             : 'text-4xl sm:text-6xl lg:text-7xl'
-                    } font-display font-extrabold text-white tracking-tight leading-[1.12] max-w-4xl`}
+                    } font-display font-extrabold text-[#16191f] tracking-tight leading-[1.12] max-w-4xl`}
                 >
                     {title}{' '}
                     {highlight && (
-                        <span className="text-accent">
+                        <span className="text-[#c4540a]">
                             {highlight}
                         </span>
                     )}
@@ -69,7 +69,7 @@ export function PageHero({
                 <p
                     className={`${
                         compact ? 'mt-3 sm:mt-4 text-sm sm:text-base' : 'mt-6 text-lg sm:text-xl'
-                    } text-neutral-400 max-w-2xl font-normal leading-relaxed`}
+                    } text-[#4a505b] max-w-2xl font-normal leading-relaxed`}
                 >
                     {description}
                 </p>

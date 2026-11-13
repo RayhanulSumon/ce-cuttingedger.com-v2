@@ -17,20 +17,20 @@ export default function Terms() {
                 description="General provisions governing studio deliverables, intellectual property rights, and client engagements."
             />
 
-            <section className="py-20 bg-[#0a0b0e]">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-invert space-y-8 text-neutral-300 leading-relaxed">
+            <section className="py-20 bg-[#f2f2f1]">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-invert space-y-8 text-[#2f333a] leading-relaxed">
                     <div>
-                        <h2 className="text-2xl font-display font-bold text-white mb-3">1. Intellectual Property & Ownership</h2>
+                        <h2 className="text-2xl font-display font-bold text-[#16191f] mb-3">1. Intellectual Property & Ownership</h2>
                         <p>Upon receipt of final milestone payment, full ownership of all custom design artifacts, source code, and brand marks created under an executed Master Services Agreement transfers unconditionally to the client.</p>
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-display font-bold text-white mb-3">2. Portfolio Showcase Rights</h2>
+                        <h2 className="text-2xl font-display font-bold text-[#16191f] mb-3">2. Portfolio Showcase Rights</h2>
                         <p>CuttingEdger reserves the right to exhibit completed creative work, case studies, and performance benchmarks in our archive and industry awards, unless explicitly protected by an active non-disclosure agreement.</p>
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-display font-bold text-white mb-3">3. Warranty & Hypercare</h2>
+                        <h2 className="text-2xl font-display font-bold text-[#16191f] mb-3">3. Warranty & Hypercare</h2>
                         <p>All production web flagships include a 30-day hypercare warranty against reproducible functional bugs upon DNS cutover.</p>
                     </div>
                 </div>

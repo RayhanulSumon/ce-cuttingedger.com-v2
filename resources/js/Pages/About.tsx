@@ -48,23 +48,23 @@ export default function About({ leadership = [] }: AboutProps) {
             />
 
             {/* Philosophy Narrative */}
-            <section className="py-24 bg-[#0c0d12] border-b border-white/10">
+            <section className="py-24 bg-white border-b border-[#16191f]/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                         <div className="lg:col-span-5 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-widest text-accent">
+                            <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a]">
                                 [ OUR CONVICTION ]
                             </span>
-                            <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white leading-tight">
+                            <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#16191f] leading-tight">
                                 Crafting dopamine through code & form.
                             </h2>
                         </div>
 
-                        <div className="lg:col-span-7 space-y-6 text-neutral-300 text-lg sm:text-xl font-normal leading-relaxed">
+                        <div className="lg:col-span-7 space-y-6 text-[#2f333a] text-lg sm:text-xl font-normal leading-relaxed">
                             <p>
                                 The contemporary internet is drowning in sea-of-sameness software. SaaS landing pages copy the same three cards; brands adopt the same safe geometric fonts; apps strip away all tactile humanity in pursuit of uninspired efficiency.
                             </p>
-                            <p className="text-neutral-400 text-base">
+                            <p className="text-[#4a505b] text-base">
                                 We believe in the power of visceral emotion. When a user interacts with a button that responds with calculated spring physics, or scrolls through an editorial canvas with synchronized shader lighting, their brain registers genuine craft. That craft transforms casual visitors into fanatical brand evangelists.
                             </p>
                         </div>
@@ -73,13 +73,13 @@ export default function About({ leadership = [] }: AboutProps) {
             </section>
 
             {/* 4 Pillars Grid */}
-            <section className="py-28 bg-[#0a0b0e]">
+            <section className="py-28 bg-[#f2f2f1]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                        <span className="font-mono text-xs uppercase tracking-widest text-accent">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a]">
                             [ FOUNDATIONAL PILLARS ]
                         </span>
-                        <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white">
+                        <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#16191f]">
                             HOW WE OPERATE.
                         </h2>
                     </div>
@@ -90,20 +90,20 @@ export default function About({ leadership = [] }: AboutProps) {
                             return (
                                 <div
                                     key={i}
-                                    className="p-8 rounded-3xl bg-[#12141c] border border-white/10 hover:border-accent/40 transition-colors flex flex-col justify-between group"
+                                    className="p-8 rounded-3xl bg-white border border-[#16191f]/10 hover:border-[#f5761a]/40 transition-colors flex flex-col justify-between group"
                                 >
                                     <div>
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-accent group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 rounded-2xl bg-[#16191f]/[0.03] border border-[#16191f]/10 flex items-center justify-center mb-6 text-[#c4540a] group-hover:scale-110 transition-transform">
                                             <IconComponent className="w-6 h-6" />
                                         </div>
-                                        <h3 className="text-xl font-display font-bold text-white mb-3">
+                                        <h3 className="text-xl font-display font-bold text-[#16191f] mb-3">
                                             {pillar.title}
                                         </h3>
-                                        <p className="text-sm text-neutral-400 leading-relaxed">
+                                        <p className="text-sm text-[#4a505b] leading-relaxed">
                                             {pillar.description}
                                         </p>
                                     </div>
-                                    <span className="font-mono text-[10px] text-neutral-600 uppercase tracking-widest mt-8 block">
+                                    <span className="font-mono text-[10px] text-[#6b7280] uppercase tracking-widest mt-8 block">
                                         Pillar // 0{i + 1}
                                     </span>
                                 </div>
@@ -114,20 +114,20 @@ export default function About({ leadership = [] }: AboutProps) {
             </section>
 
             {/* Leadership Spotlight */}
-            <section className="py-24 bg-[#0c0d12] border-t border-white/10">
+            <section className="py-24 bg-white border-t border-[#16191f]/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
                         <div>
-                            <span className="font-mono text-xs uppercase tracking-widest text-accent block mb-2">
+                            <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a] block mb-2">
                                 [ STUDIO LEADERSHIP ]
                             </span>
-                            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#16191f]">
                                 The partners steering the ship.
                             </h2>
                         </div>
                         <Link
                             href="/team"
-                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent hover:text-white transition-colors"
+                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#c4540a] hover:text-[#16191f] transition-colors"
                         >
                             <span>View Full Collective</span>
                             <ArrowUpRight className="w-4 h-4" />
@@ -139,9 +139,9 @@ export default function About({ leadership = [] }: AboutProps) {
                             <Link
                                 key={member.id}
                                 href={`/team/${member.slug}`}
-                                className="group rounded-2xl bg-[#12141c] border border-white/10 overflow-hidden hover:border-accent/40 transition-colors"
+                                className="group rounded-2xl bg-white border border-[#16191f]/10 overflow-hidden hover:border-[#f5761a]/40 transition-colors"
                             >
-                                <div className="aspect-[4/5] bg-neutral-900 overflow-hidden">
+                                <div className="aspect-[4/5] bg-white overflow-hidden">
                                     <img
                                         src={member.avatar}
                                         alt={member.name}
@@ -149,10 +149,10 @@ export default function About({ leadership = [] }: AboutProps) {
                                     />
                                 </div>
                                 <div className="p-4 space-y-1">
-                                    <h4 className="font-display font-bold text-white group-hover:text-accent transition-colors">
+                                    <h4 className="font-display font-bold text-[#16191f] group-hover:text-[#c4540a] transition-colors">
                                         {member.name}
                                     </h4>
-                                    <p className="text-xs font-mono text-neutral-400">
+                                    <p className="text-xs font-mono text-[#4a505b]">
                                         {member.role}
                                     </p>
                                 </div>

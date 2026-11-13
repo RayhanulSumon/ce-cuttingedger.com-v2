@@ -140,9 +140,9 @@ export default function Contact() {
                 ]}
             />
 
-            <section className="relative py-16 sm:py-24 lg:py-28 bg-[#08090d] min-h-[90vh] flex items-center overflow-hidden">
+            <section className="relative py-16 sm:py-24 lg:py-28 bg-[#f2f2f1] min-h-[90vh] flex items-center overflow-hidden">
                 {/* Ambient Radial Mesh Lighting */}
-                <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-accent/[0.04] rounded-full blur-[220px] pointer-events-none" />
+                <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-[#f5761a]/[0.04] rounded-full blur-[220px] pointer-events-none" />
                 <div className="absolute bottom-1/4 right-1/4 translate-x-1/3 translate-y-1/3 w-[36rem] h-[24rem] bg-white/[0.015] rounded-full blur-[200px] pointer-events-none" />
 
                 {/* Subtle Technical Grid Texture */}
@@ -157,14 +157,14 @@ export default function Contact() {
                         {/* LEFT: Clean, High-End Editorial Context */}
                         <div className="lg:col-span-5 space-y-8">
                             <div className="space-y-3.5">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-mono uppercase tracking-[0.18em] text-accent font-semibold">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f5761a]/10 border border-[#f5761a]/25 text-[11px] font-mono uppercase tracking-[0.18em] text-[#c4540a] font-semibold">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                     <span>Direct Studio Inquiry</span>
                                 </div>
-                                <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-display font-extrabold text-white tracking-tight leading-[1.12]">
-                                    Let’s scale your <span className="text-accent">product imagery.</span>
+                                <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-display font-extrabold text-[#16191f] tracking-tight leading-[1.12]">
+                                    Let’s scale your <span className="text-[#c4540a]">product imagery.</span>
                                 </h1>
-                                <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-md">
+                                <p className="text-[#4a505b] text-sm sm:text-base leading-relaxed max-w-md">
                                     Whether ramping up for a seasonal catalog drop, standardizing multi-category color specs, or securing dedicated studio bandwidth, our directors respond within 24 business hours.
                                 </p>
                             </div>
@@ -172,16 +172,16 @@ export default function Contact() {
                             {/* Direct Communication Channels */}
                             <div className="space-y-3 pt-2">
                                 {/* Email Card with 1-Click Copy */}
-                                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all">
+                                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-[#16191f]/10 hover:border-[#16191f]/20 transition-all">
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+                                        <div className="w-9 h-9 rounded-xl bg-[#f5761a]/10 border border-[#f5761a]/20 flex items-center justify-center text-[#c4540a] shrink-0">
                                             <Mail className="w-4 h-4" />
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">Direct Email</p>
+                                            <p className="text-[10px] font-mono uppercase tracking-wider text-[#4a505b]">Direct Email</p>
                                             <a
                                                 href={`mailto:${contactEmail}`}
-                                                className="text-white hover:text-accent font-mono text-xs sm:text-sm truncate block transition-colors font-medium"
+                                                className="text-[#16191f] hover:text-[#c4540a] font-mono text-xs sm:text-sm truncate block transition-colors font-medium"
                                             >
                                                 {contactEmail}
                                             </a>
@@ -191,14 +191,14 @@ export default function Contact() {
                                         type="button"
                                         onClick={handleCopyEmail}
                                         aria-label="Copy studio email address"
-                                        className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-neutral-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ml-2"
+                                        className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-[#2f333a] hover:text-[#16191f] transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ml-2"
                                     >
                                         {copiedEmail ? (
-                                            <span className="text-accent flex items-center gap-1 font-semibold">
+                                            <span className="text-[#c4540a] flex items-center gap-1 font-semibold">
                                                 <Check className="w-3.5 h-3.5" /> Copied
                                             </span>
                                         ) : (
-                                            <span className="flex items-center gap-1 text-neutral-400 hover:text-white">
+                                            <span className="flex items-center gap-1 text-[#4a505b] hover:text-[#16191f]">
                                                 <Copy className="w-3.5 h-3.5" /> Copy
                                             </span>
                                         )}
@@ -208,42 +208,42 @@ export default function Contact() {
                                 {/* Discovery Call Card */}
                                 <div
                                     onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                    className="group flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-accent/40 hover:bg-accent/[0.02] transition-all cursor-pointer"
+                                    className="group flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-[#16191f]/10 hover:border-[#f5761a]/40 hover:bg-[#f5761a]/[0.02] transition-all cursor-pointer"
                                 >
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 group-hover:bg-accent group-hover:text-black group-hover:border-accent flex items-center justify-center text-neutral-300 transition-all shrink-0">
+                                        <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-[#16191f]/10 group-hover:bg-[#f5761a] group-hover:text-white group-hover:border-[#f5761a] flex items-center justify-center text-[#2f333a] transition-all shrink-0">
                                             <Calendar className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-mono uppercase tracking-wider text-accent font-semibold">Live Screen-Share</p>
-                                            <p className="text-white group-hover:text-accent text-xs sm:text-sm font-medium transition-colors">
+                                            <p className="text-[10px] font-mono uppercase tracking-wider text-[#c4540a] font-semibold">Live Screen-Share</p>
+                                            <p className="text-[#16191f] group-hover:text-[#c4540a] text-xs sm:text-sm font-medium transition-colors">
                                                 Book 15-Min Discovery Call
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-neutral-500 group-hover:text-accent group-hover:translate-x-1 transition-all text-xs font-mono">
+                                    <span className="text-[#5d6572] group-hover:text-[#c4540a] group-hover:translate-x-1 transition-all text-xs font-mono">
                                         →
                                     </span>
                                 </div>
 
                                 {/* Hotline & Studio Location in Compact Clean Row */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-mono uppercase tracking-wider">
-                                            <Phone className="w-3 h-3 text-accent" />
+                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-[#16191f]/10 space-y-1">
+                                        <div className="flex items-center gap-1.5 text-[#4a505b] text-[10px] font-mono uppercase tracking-wider">
+                                            <Phone className="w-3 h-3 text-[#c4540a]" />
                                             <span>Studio Line</span>
                                         </div>
-                                        <p className="text-neutral-200 font-mono text-xs font-medium">
+                                        <p className="text-[#2f333a] font-mono text-xs font-medium">
                                             {contactPhone}
                                         </p>
                                     </div>
 
-                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
-                                        <div className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-mono uppercase tracking-wider">
-                                            <MapPin className="w-3 h-3 text-neutral-400" />
+                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-[#16191f]/10 space-y-1">
+                                        <div className="flex items-center gap-1.5 text-[#4a505b] text-[10px] font-mono uppercase tracking-wider">
+                                            <MapPin className="w-3 h-3 text-[#4a505b]" />
                                             <span>Studio Hub</span>
                                         </div>
-                                        <p className="text-neutral-300 text-xs truncate" title={contactAddress}>
+                                        <p className="text-[#2f333a] text-xs truncate" title={contactAddress}>
                                             {contactAddress}
                                         </p>
                                     </div>
@@ -251,22 +251,22 @@ export default function Contact() {
                             </div>
 
                             {/* Clean Studio Standards Pill Row */}
-                            <div className="pt-2 border-t border-white/10 space-y-2.5">
-                                <p className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 font-medium">
+                            <div className="pt-2 border-t border-[#16191f]/10 space-y-2.5">
+                                <p className="text-[11px] font-mono uppercase tracking-wider text-[#4a505b] font-medium">
                                     Studio Commitments
                                 </p>
                                 <div className="space-y-2 text-xs">
-                                    <div className="flex items-start gap-2.5 text-neutral-300">
-                                        <Clock className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                                        <span><strong className="text-white font-medium">24-Hour Production SLA:</strong> Guaranteed delivery on scheduled catalog drops.</span>
+                                    <div className="flex items-start gap-2.5 text-[#2f333a]">
+                                        <Clock className="w-4 h-4 text-[#c4540a] shrink-0 mt-0.5" />
+                                        <span><strong className="text-[#16191f] font-medium">24-Hour Production SLA:</strong> Guaranteed delivery on scheduled catalog drops.</span>
                                     </div>
-                                    <div className="flex items-start gap-2.5 text-neutral-300">
-                                        <Lock className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                                        <span><strong className="text-white font-medium">Mutual Non-Disclosure Agreement:</strong> Secure IP protection for unreleased collections.</span>
+                                    <div className="flex items-start gap-2.5 text-[#2f333a]">
+                                        <Lock className="w-4 h-4 text-[#c4540a] shrink-0 mt-0.5" />
+                                        <span><strong className="text-[#16191f] font-medium">Mutual Non-Disclosure Agreement:</strong> Secure IP protection for unreleased collections.</span>
                                     </div>
-                                    <div className="flex items-start gap-2.5 text-neutral-300">
-                                        <Users className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                                        <span><strong className="text-white font-medium">Dedicated Retoucher Pod:</strong> Assigned senior colorists aligned to your guidelines.</span>
+                                    <div className="flex items-start gap-2.5 text-[#2f333a]">
+                                        <Users className="w-4 h-4 text-[#c4540a] shrink-0 mt-0.5" />
+                                        <span><strong className="text-[#16191f] font-medium">Dedicated Retoucher Pod:</strong> Assigned senior colorists aligned to your guidelines.</span>
                                     </div>
                                 </div>
                             </div>
@@ -276,33 +276,33 @@ export default function Contact() {
                         <div className="lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
-                                className="relative p-6 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-b from-[#11131c]/95 to-[#0b0c11]/95 border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.7)] backdrop-blur-2xl space-y-5 overflow-hidden"
+                                className="relative p-6 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-b from-white/95 to-[#f2f2f1]/95 border border-[#16191f]/10 shadow-[0_30px_90px_rgba(0,0,0,0.7)] backdrop-blur-2xl space-y-5 overflow-hidden"
                             >
                                 {/* Top Hairline Accent Highlight */}
-                                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
+                                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#f5761a]/70 to-transparent" />
 
-                                <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+                                <div className="flex items-center justify-between pb-3.5 border-b border-[#16191f]/10">
                                     <div className="space-y-1">
-                                        <h2 className="text-lg sm:text-xl font-display font-bold text-white tracking-tight">
+                                        <h2 className="text-lg sm:text-xl font-display font-bold text-[#16191f] tracking-tight">
                                             Project Inquiry
                                         </h2>
-                                        <p className="text-xs text-neutral-400">
+                                        <p className="text-xs text-[#4a505b]">
                                             Tell us about your requirements. Zero spam, ever.
                                         </p>
                                     </div>
-                                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-mono uppercase tracking-wider text-neutral-400">
-                                        <ShieldCheck className="w-3 h-3 text-accent" />
+                                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-[#16191f]/10 text-[10px] font-mono uppercase tracking-wider text-[#4a505b]">
+                                        <ShieldCheck className="w-3 h-3 text-[#c4540a]" />
                                         <span>Confidential</span>
                                     </span>
                                 </div>
 
                                 {/* Clean In-page Success Banner */}
                                 {flash?.success && (
-                                    <div className="p-4 rounded-2xl bg-accent/10 border border-accent/30 flex items-start gap-3.5 text-white animate-in fade-in duration-300">
-                                        <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                                    <div className="p-4 rounded-2xl bg-[#f5761a]/10 border border-[#f5761a]/30 flex items-start gap-3.5 text-[#16191f] animate-in fade-in duration-300">
+                                        <CheckCircle2 className="w-5 h-5 text-[#c4540a] shrink-0 mt-0.5" />
                                         <div className="space-y-1">
-                                            <p className="text-sm font-bold text-accent">Inquiry Transmitted Successfully</p>
-                                            <p className="text-xs text-neutral-300 leading-relaxed">{flash.success}</p>
+                                            <p className="text-sm font-bold text-[#c4540a]">Inquiry Transmitted Successfully</p>
+                                            <p className="text-xs text-[#2f333a] leading-relaxed">{flash.success}</p>
                                         </div>
                                     </div>
                                 )}
@@ -325,9 +325,9 @@ export default function Contact() {
                                 {/* Row 1: Name & Email */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-neutral-300 font-medium flex items-center justify-between">
+                                        <label className="text-xs text-[#2f333a] font-medium flex items-center justify-between">
                                             <span>Your Name</span>
-                                            <span className="text-accent">*</span>
+                                            <span className="text-[#c4540a]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -335,15 +335,15 @@ export default function Contact() {
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
                                             placeholder="Alex Mercer"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-accent focus:bg-accent/[0.02] focus:ring-1 focus:ring-accent/30 rounded-xl text-sm text-white placeholder-neutral-500 transition-all outline-none"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-[#16191f]/10 hover:border-[#16191f]/20 focus:border-[#f5761a] focus:bg-[#f5761a]/[0.02] focus:ring-1 focus:ring-[#f5761a]/30 rounded-xl text-sm text-[#16191f] placeholder-[#8a919c] transition-all outline-none"
                                         />
                                         {errors.name && <p className="text-xs text-rose-400 font-mono">{errors.name}</p>}
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-neutral-300 font-medium flex items-center justify-between">
+                                        <label className="text-xs text-[#2f333a] font-medium flex items-center justify-between">
                                             <span>Work Email</span>
-                                            <span className="text-accent">*</span>
+                                            <span className="text-[#c4540a]">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -351,7 +351,7 @@ export default function Contact() {
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
                                             placeholder="alex@company.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-accent focus:bg-accent/[0.02] focus:ring-1 focus:ring-accent/30 rounded-xl text-sm text-white placeholder-neutral-500 transition-all outline-none"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-[#16191f]/10 hover:border-[#16191f]/20 focus:border-[#f5761a] focus:bg-[#f5761a]/[0.02] focus:ring-1 focus:ring-[#f5761a]/30 rounded-xl text-sm text-[#16191f] placeholder-[#8a919c] transition-all outline-none"
                                         />
                                         {errors.email && <p className="text-xs text-rose-400 font-mono">{errors.email}</p>}
                                     </div>
@@ -360,35 +360,35 @@ export default function Contact() {
                                 {/* Row 2: Company & Store URL */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-neutral-400 font-medium">
-                                            Company / Brand <span className="text-neutral-500 font-normal">(Optional)</span>
+                                        <label className="text-xs text-[#4a505b] font-medium">
+                                            Company / Brand <span className="text-[#5d6572] font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={data.company}
                                             onChange={(e) => setData('company', e.target.value)}
                                             placeholder="Acme Footwear"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-accent focus:bg-accent/[0.02] focus:ring-1 focus:ring-accent/30 rounded-xl text-sm text-white placeholder-neutral-500 transition-all outline-none"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-[#16191f]/10 hover:border-[#16191f]/20 focus:border-[#f5761a] focus:bg-[#f5761a]/[0.02] focus:ring-1 focus:ring-[#f5761a]/30 rounded-xl text-sm text-[#16191f] placeholder-[#8a919c] transition-all outline-none"
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-neutral-400 font-medium">
-                                            Store / Website <span className="text-neutral-500 font-normal">(Optional)</span>
+                                        <label className="text-xs text-[#4a505b] font-medium">
+                                            Store / Website <span className="text-[#5d6572] font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="url"
                                             value={data.website}
                                             onChange={(e) => setData('website', e.target.value)}
                                             placeholder="https://acme.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-accent focus:bg-accent/[0.02] focus:ring-1 focus:ring-accent/30 rounded-xl text-sm text-white placeholder-neutral-500 transition-all outline-none"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-[#16191f]/10 hover:border-[#16191f]/20 focus:border-[#f5761a] focus:bg-[#f5761a]/[0.02] focus:ring-1 focus:ring-[#f5761a]/30 rounded-xl text-sm text-[#16191f] placeholder-[#8a919c] transition-all outline-none"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Service Needed - Refined Modern Chips */}
                                 <div className="space-y-2">
-                                    <label className="text-xs text-neutral-300 font-medium block">
+                                    <label className="text-xs text-[#2f333a] font-medium block">
                                         Service Needed
                                     </label>
                                     <div className="flex flex-wrap gap-2">
@@ -401,8 +401,8 @@ export default function Contact() {
                                                     onClick={() => setData('service_interest', srv)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
                                                         active
-                                                            ? 'bg-accent text-black font-bold shadow-[0_0_15px_rgba(245,166,35,0.35)] scale-[1.02]'
-                                                            : 'bg-white/[0.03] border border-white/10 text-neutral-300 hover:border-white/25 hover:text-white'
+                                                            ? 'bg-[#f5761a] text-white font-bold shadow-[0_0_15px_rgba(245,166,35,0.35)] scale-[1.02]'
+                                                            : 'bg-white/[0.03] border border-[#16191f]/10 text-[#2f333a] hover:border-[#16191f]/25 hover:text-[#16191f]'
                                                     }`}
                                                 >
                                                     {srv}
@@ -414,9 +414,9 @@ export default function Contact() {
 
                                 {/* Message */}
                                 <div className="space-y-1.5">
-                                    <label className="text-xs text-neutral-300 font-medium flex items-center justify-between">
+                                    <label className="text-xs text-[#2f333a] font-medium flex items-center justify-between">
                                         <span>Project Scope & Timeline</span>
-                                        <span className="text-accent">*</span>
+                                        <span className="text-[#c4540a]">*</span>
                                     </label>
                                     <textarea
                                         required
@@ -424,38 +424,38 @@ export default function Contact() {
                                         value={data.message}
                                         onChange={(e) => setData('message', e.target.value)}
                                         placeholder="Briefly describe your image volume, desired background specs, or turnaround deadline..."
-                                        className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-accent focus:bg-accent/[0.02] focus:ring-1 focus:ring-accent/30 rounded-xl text-sm text-white placeholder-neutral-500 transition-all outline-none leading-relaxed"
+                                        className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-[#16191f]/10 hover:border-[#16191f]/20 focus:border-[#f5761a] focus:bg-[#f5761a]/[0.02] focus:ring-1 focus:ring-[#f5761a]/30 rounded-xl text-sm text-[#16191f] placeholder-[#8a919c] transition-all outline-none leading-relaxed"
                                     />
                                     {errors.message && <p className="text-xs text-rose-400 font-mono">{errors.message}</p>}
                                 </div>
 
                                 {/* Bottom Row: Clean Security Challenge & High-Converting Submit Button */}
-                                <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-white/10">
+                                <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#16191f]/10">
                                     {/* Minimalist Integrated Security Verification */}
                                     {captchaQuestion ? (
-                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs font-mono text-neutral-300 self-start sm:self-auto">
-                                            <span className="text-neutral-400 text-[11px]">Security:</span>
-                                            <span className="text-accent font-semibold">{captchaQuestion} =</span>
+                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-[#16191f]/10 text-xs font-mono text-[#2f333a] self-start sm:self-auto">
+                                            <span className="text-[#4a505b] text-[11px]">Security:</span>
+                                            <span className="text-[#c4540a] font-semibold">{captchaQuestion} =</span>
                                             <input
                                                 type="text"
                                                 required
                                                 value={data.captcha_answer}
                                                 onChange={(e) => setData('captcha_answer', e.target.value)}
                                                 placeholder="?"
-                                                className="w-12 px-2 py-0.5 bg-white/[0.06] border border-white/15 focus:border-accent rounded-md text-xs text-center text-white font-mono focus:outline-none"
+                                                className="w-12 px-2 py-0.5 bg-white/[0.06] border border-[#16191f]/15 focus:border-[#f5761a] rounded-md text-xs text-center text-[#16191f] font-mono focus:outline-none"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={refreshCaptcha}
                                                 title="Refresh challenge"
-                                                className="text-neutral-500 hover:text-accent transition-colors p-0.5 cursor-pointer"
+                                                className="text-[#5d6572] hover:text-[#c4540a] transition-colors p-0.5 cursor-pointer"
                                             >
                                                 <RotateCw className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-mono">
-                                            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+                                        <div className="flex items-center gap-1.5 text-xs text-[#4a505b] font-mono">
+                                            <ShieldCheck className="w-3.5 h-3.5 text-[#c4540a]" />
                                             <span>Protected under Mutual NDA</span>
                                         </div>
                                     )}
@@ -463,7 +463,7 @@ export default function Contact() {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-display font-bold text-xs uppercase tracking-wider hover:bg-[#ffb834] hover:shadow-[0_0_20px_rgba(245,166,35,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
+                                        className="px-6 py-2.5 rounded-xl bg-[#f5761a] text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-[#ffb834] hover:shadow-[0_0_20px_rgba(245,166,35,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
                                     >
                                         {processing ? (
                                             <>

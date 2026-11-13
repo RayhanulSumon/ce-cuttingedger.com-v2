@@ -49,14 +49,14 @@ function renderInlineFormatting(text: string): React.ReactNode {
     return parts.map((part, index) => {
         if (part.startsWith('**') && part.endsWith('**')) {
             return (
-                <strong key={index} className="text-white font-semibold">
+                <strong key={index} className="text-[#16191f] font-semibold">
                     {part.slice(2, -2)}
                 </strong>
             );
         }
         if (part.startsWith('*') && part.endsWith('*')) {
             return (
-                <em key={index} className="italic text-neutral-200">
+                <em key={index} className="italic text-[#2f333a]">
                     {part.slice(1, -1)}
                 </em>
             );
@@ -65,7 +65,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
             return (
                 <code
                     key={index}
-                    className="px-1.5 py-0.5 rounded bg-[#12131a] text-accent border border-white/10 font-mono text-[0.875em]"
+                    className="px-1.5 py-0.5 rounded bg-[#12131a] text-[#c4540a] border border-[#16191f]/10 font-mono text-[0.875em]"
                 >
                     {part.slice(1, -1)}
                 </code>
@@ -81,7 +81,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
                     href={linkUrl}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
-                    className="text-accent underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
+                    className="text-[#c4540a] underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
                 >
                     <span>{linkText}</span>
                     {isExternal && <ExternalLink className="w-3 h-3 inline-block" />}
@@ -105,22 +105,22 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
     };
 
     return (
-        <div className="my-6 rounded-2xl overflow-hidden border border-white/10 bg-[#07080c] shadow-2xl group">
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#0d0f16] border-b border-white/10 text-xs font-mono text-neutral-400">
+        <div className="my-6 rounded-2xl overflow-hidden border border-[#16191f]/10 bg-[#07080c] shadow-2xl group">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-[#0d0f16] border-b border-[#16191f]/10 text-xs font-mono text-[#4a505b]">
                 <div className="flex items-center gap-2">
                     <span className="flex gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                     </span>
-                    <span className="ml-2 uppercase text-[11px] font-semibold text-accent">
+                    <span className="ml-2 uppercase text-[11px] font-semibold text-[#c4540a]">
                         {language || 'CODE SNIPPET'}
                     </span>
                 </div>
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white transition-colors cursor-pointer text-[11px]"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] text-[#2f333a] hover:text-[#16191f] transition-colors cursor-pointer text-[11px]"
                     title="Copy snippet"
                 >
                     {copied ? (
@@ -136,7 +136,7 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
                     )}
                 </button>
             </div>
-            <pre className="p-5 font-mono text-xs sm:text-sm text-neutral-200 overflow-x-auto leading-relaxed">
+            <pre className="p-5 font-mono text-xs sm:text-sm text-[#2f333a] overflow-x-auto leading-relaxed">
                 <code>{code}</code>
             </pre>
         </div>
@@ -232,15 +232,15 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
             {/* Scroll Reading Progress Bar */}
             <div className="fixed top-0 left-0 right-0 h-[3px] bg-transparent z-[60] pointer-events-none">
                 <div
-                    className="h-full bg-accent shadow-[0_0_12px_rgba(251, 183, 24, 0.8)] transition-all duration-100 ease-out"
+                    className="h-full bg-[#f5761a] shadow-[0_0_12px_rgba(251, 183, 24, 0.8)] transition-all duration-100 ease-out"
                     style={{ width: `${readingProgress}%` }}
                 />
             </div>
 
             {/* EDITORIAL HERO SECTION */}
-            <header className="relative pt-24 sm:pt-28 pb-8 sm:pb-10 bg-[#0a0b0e] border-b border-white/10 overflow-hidden">
+            <header className="relative pt-24 sm:pt-28 pb-8 sm:pb-10 bg-[#f2f2f1] border-b border-[#16191f]/10 overflow-hidden">
                 {/* Ambient Kinetic Glows */}
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[320px] bg-gradient-to-b from-accent/15 via-accent/5 to-transparent rounded-full blur-[110px] pointer-events-none" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[320px] bg-gradient-to-b from-[#f5761a]/15 via-[#f5761a]/5 to-transparent rounded-full blur-[110px] pointer-events-none" />
                 <div className="absolute top-1/4 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(251, 183, 24, 0.06),rgba(255,255,255,0))] pointer-events-none" />
 
@@ -249,26 +249,26 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4 text-xs font-mono">
                         <Link
                             href="/blog"
-                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white transition-all group shadow-xs text-[11px]"
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] border border-[#16191f]/10 text-[#2f333a] hover:text-[#16191f] transition-all group shadow-xs text-[11px]"
                         >
-                            <ArrowLeft className="w-3 h-3 text-accent group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeft className="w-3 h-3 text-[#c4540a] group-hover:-translate-x-1 transition-transform" />
                             <span>Return to Blog</span>
                         </Link>
 
-                        <div className="flex items-center gap-2 text-neutral-400 bg-black/40 px-3 py-1 rounded-full border border-white/5 backdrop-blur-xs text-[11px]">
-                            <Link href="/" className="text-accent hover:underline font-medium transition-colors">
+                        <div className="flex items-center gap-2 text-[#4a505b] bg-[#16191f]/[0.04] px-3 py-1 rounded-full border border-[#16191f]/10 backdrop-blur-xs text-[11px]">
+                            <Link href="/" className="text-[#c4540a] hover:underline font-medium transition-colors">
                                 Home
                             </Link>
-                            <ChevronRight className="w-3 h-3 text-neutral-600" />
-                            <Link href="/blog" className="text-white/90 hover:text-white transition-colors">
+                            <ChevronRight className="w-3 h-3 text-[#6b7280]" />
+                            <Link href="/blog" className="text-[#16191f]/90 hover:text-[#16191f] transition-colors">
                                 Blog
                             </Link>
                             {blog.category && (
                                 <>
-                                    <ChevronRight className="w-3 h-3 text-neutral-600" />
+                                    <ChevronRight className="w-3 h-3 text-[#6b7280]" />
                                     <Link
                                         href={`/blog?category=${blog.category.slug}`}
-                                        className="text-accent hover:underline"
+                                        className="text-[#c4540a] hover:underline"
                                     >
                                         {blog.category.name}
                                     </Link>
@@ -282,15 +282,15 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                         {blog.category && (
                             <Link
                                 href={`/blog?category=${blog.category.slug}`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black transition-all shadow-[0_0_12px_rgba(245,166,35,0.15)] group"
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-[#f5761a]/10 text-[#c4540a] border border-[#f5761a]/30 hover:bg-[#f5761a] hover:text-white transition-all shadow-[0_0_12px_rgba(245,166,35,0.15)] group"
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--color-accent)] group-hover:bg-black transition-colors" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#f5761a] shadow-[0_0_6px_var(--color-accent)] group-hover:bg-white transition-colors" />
                                 <span>{blog.category.name}</span>
                             </Link>
                         )}
                         {blog.subcategory && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase bg-white/[0.04] text-neutral-300 border border-white/10 backdrop-blur-xs">
-                                <CornerDownRight className="w-3 h-3 text-accent" />
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase bg-white/[0.04] text-[#2f333a] border border-[#16191f]/10 backdrop-blur-xs">
+                                <CornerDownRight className="w-3 h-3 text-[#c4540a]" />
                                 <span>{blog.subcategory.name}</span>
                             </span>
                         )}
@@ -309,19 +309,19 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                     {/* Executive Synopsis Callout */}
                     {blog.excerpt && (
-                        <div className="relative mt-4 sm:mt-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-accent/[0.08] via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/10 backdrop-blur-md shadow-md max-w-3xl">
-                            <span className="text-[9px] font-mono text-accent uppercase tracking-widest block mb-1 font-bold flex items-center gap-1.5">
-                                <Quote className="w-2.5 h-2.5 rotate-180 inline-block text-accent" />
+                        <div className="relative mt-4 sm:mt-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#f5761a]/[0.08] via-[#16191f]/[0.02] to-transparent border-l-4 border-[#f5761a] border-y border-r border-[#16191f]/10 backdrop-blur-md shadow-md max-w-3xl">
+                            <span className="text-[9px] font-mono text-[#c4540a] uppercase tracking-widest block mb-1 font-bold flex items-center gap-1.5">
+                                <Quote className="w-2.5 h-2.5 rotate-180 inline-block text-[#c4540a]" />
                                 EXECUTIVE SYNOPSIS
                             </span>
-                            <p className="text-sm sm:text-base text-neutral-200 font-light leading-relaxed">
+                            <p className="text-sm sm:text-base text-[#2f333a] font-light leading-relaxed">
                                 {blog.excerpt}
                             </p>
                         </div>
                     )}
 
                     {/* Editorial Attribution & Action Deck */}
-                    <div className="mt-5 sm:mt-6 p-2.5 sm:p-3 px-4 rounded-xl bg-[#0e1017]/90 border border-white/10 backdrop-blur-xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                    <div className="mt-5 sm:mt-6 p-2.5 sm:p-3 px-4 rounded-xl bg-white/90 border border-[#16191f]/10 backdrop-blur-xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
                         {/* Author Credentials */}
                         {blog.author ? (
                             <Link
@@ -333,55 +333,55 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                         <img
                                             src={blog.author.avatar}
                                             alt={blog.author.name}
-                                            className="w-9 h-9 rounded-full object-cover border border-accent/40 group-hover:border-accent transition-colors shadow-[0_0_8px_rgba(251, 183, 24, 0.2)]"
+                                            className="w-9 h-9 rounded-full object-cover border border-[#f5761a]/40 group-hover:border-[#f5761a] transition-colors shadow-[0_0_8px_rgba(251, 183, 24, 0.2)]"
                                         />
-                                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#0e1017]" title="Verified Author" />
+                                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white" title="Verified Author" />
                                     </div>
                                 ) : (
-                                    <div className="w-9 h-9 rounded-full bg-accent/10 border border-accent/40 flex items-center justify-center text-accent font-mono font-bold text-xs shadow-[0_0_8px_rgba(251, 183, 24, 0.15)]">
+                                    <div className="w-9 h-9 rounded-full bg-[#f5761a]/10 border border-[#f5761a]/40 flex items-center justify-center text-[#c4540a] font-mono font-bold text-xs shadow-[0_0_8px_rgba(251, 183, 24, 0.15)]">
                                         {blog.author.name.charAt(0)}
                                     </div>
                                 )}
                                 <div className="space-y-0.5">
-                                    <div className="text-xs sm:text-sm font-display font-bold text-white group-hover:text-accent transition-colors flex items-center gap-1">
+                                    <div className="text-xs sm:text-sm font-display font-bold text-[#16191f] group-hover:text-[#c4540a] transition-colors flex items-center gap-1">
                                         <span>{blog.author.name}</span>
-                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
+                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-[#c4540a]" />
                                     </div>
-                                    <div className="text-[10px] font-mono text-neutral-400">
+                                    <div className="text-[10px] font-mono text-[#4a505b]">
                                         {blog.author.role}
                                     </div>
                                 </div>
                             </Link>
                         ) : (
                             <div className="flex items-center gap-2.5 shrink-0">
-                                <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-accent font-mono font-bold text-[10px]">
+                                <div className="w-8 h-8 rounded-full bg-[#16191f]/[0.03] border border-[#16191f]/10 flex items-center justify-center text-[#c4540a] font-mono font-bold text-[10px]">
                                     CE
                                 </div>
-                                <div className="text-[11px] font-mono text-neutral-400">
+                                <div className="text-[11px] font-mono text-[#4a505b]">
                                     Editorial Team • CuttingEdger
                                 </div>
                             </div>
                         )}
 
                         {/* Metadata Counters (Unified Capsule) */}
-                        <div className="flex items-center flex-wrap gap-2 text-[11px] font-mono text-neutral-300 bg-black/40 px-3 py-1.5 rounded-lg border border-white/5">
+                        <div className="flex items-center flex-wrap gap-2 text-[11px] font-mono text-[#2f333a] bg-[#16191f]/[0.04] px-3 py-1.5 rounded-lg border border-[#16191f]/10">
                             <span className="flex items-center gap-1.5">
-                                <Calendar className="w-3 h-3 text-accent" />
+                                <Calendar className="w-3 h-3 text-[#c4540a]" />
                                 <span>{formattedPublishDate}</span>
                             </span>
 
-                            <span className="text-neutral-600 font-bold">•</span>
+                            <span className="text-[#6b7280] font-bold">•</span>
 
                             <span className="flex items-center gap-1.5">
-                                <Clock className="w-3 h-3 text-accent" />
+                                <Clock className="w-3 h-3 text-[#c4540a]" />
                                 <span>{blog.reading_time || 5} min read</span>
                             </span>
 
                             {wordCount > 0 && (
                                 <>
-                                    <span className="text-neutral-600 font-bold">•</span>
+                                    <span className="text-[#6b7280] font-bold">•</span>
                                     <span className="flex items-center gap-1.5">
-                                        <FileText className="w-3 h-3 text-neutral-400" />
+                                        <FileText className="w-3 h-3 text-[#4a505b]" />
                                         <span>{wordCount.toLocaleString()} words</span>
                                     </span>
                                 </>
@@ -393,17 +393,17 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                             <button
                                 type="button"
                                 onClick={handleCopyUrl}
-                                className="h-8 px-3 rounded-lg bg-white/5 hover:bg-accent text-neutral-200 hover:text-black border border-white/10 hover:border-accent font-mono text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs group"
+                                className="h-8 px-3 rounded-lg bg-[#16191f]/[0.03] hover:bg-[#f5761a] text-[#2f333a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] font-mono text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs group"
                                 title="Copy article URL"
                             >
                                 {copiedLink ? (
                                     <>
-                                        <Check className="w-3 h-3 text-emerald-400 group-hover:text-black" />
-                                        <span className="text-emerald-400 group-hover:text-black font-bold">Copied!</span>
+                                        <Check className="w-3 h-3 text-emerald-400 group-hover:text-white" />
+                                        <span className="text-emerald-400 group-hover:text-white font-bold">Copied!</span>
                                     </>
                                 ) : (
                                     <>
-                                        <Copy className="w-3 h-3 text-accent group-hover:text-black" />
+                                        <Copy className="w-3 h-3 text-[#c4540a] group-hover:text-white" />
                                         <span>Copy Link</span>
                                     </>
                                 )}
@@ -413,7 +413,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                 href={twitterShareUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-accent text-neutral-300 hover:text-black border border-white/10 hover:border-accent flex items-center justify-center transition-all cursor-pointer shadow-xs"
+                                className="w-8 h-8 rounded-lg bg-[#16191f]/[0.03] hover:bg-[#f5761a] text-[#2f333a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] flex items-center justify-center transition-all cursor-pointer shadow-xs"
                                 title="Share on X (Twitter)"
                                 aria-label="Share on X"
                             >
@@ -426,7 +426,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                 href={linkedinShareUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-accent text-neutral-300 hover:text-black border border-white/10 hover:border-accent flex items-center justify-center transition-all cursor-pointer shadow-xs"
+                                className="w-8 h-8 rounded-lg bg-[#16191f]/[0.03] hover:bg-[#f5761a] text-[#2f333a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] flex items-center justify-center transition-all cursor-pointer shadow-xs"
                                 title="Share on LinkedIn"
                                 aria-label="Share on LinkedIn"
                             >
@@ -440,7 +440,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
             </header>
 
             {/* MAIN ARTICLE EDITORIAL GRID */}
-            <main className="py-10 lg:py-14 bg-[#0a0b0e]">
+            <main className="py-10 lg:py-14 bg-[#f2f2f1]">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
                         {/* MAIN PROSE COLUMN (8 Cols) */}
@@ -449,9 +449,9 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                             {blog.cover_image && (
                                 <div className="relative group">
                                     <div
-                                        className="absolute -inset-1 bg-gradient-to-r from-accent/15 via-cyan-500/10 to-accent/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
+                                        className="absolute -inset-1 bg-gradient-to-r from-[#f5761a]/15 via-cyan-500/10 to-[#f5761a]/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
                                     />
-                                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] border border-white/15 bg-neutral-950 shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
+                                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] border border-[#16191f]/15 bg-[#f2f2f1] shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
                                         <img
                                             src={blog.cover_image}
                                             alt={blog.title}
@@ -462,7 +462,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                 </div>
                             )}
 
-                            <div className="space-y-6 text-neutral-200 font-sans text-base sm:text-lg lg:text-[19px] leading-[1.8] font-normal">
+                            <div className="space-y-6 text-[#2f333a] font-sans text-base sm:text-lg lg:text-[19px] leading-[1.8] font-normal">
                                 {blog.body.split('\n\n').map((block, idx) => {
                                     const trimmed = block.trim();
                                     if (!trimmed) return null;
@@ -486,12 +486,12 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <h2
                                                 key={idx}
                                                 id={headingId}
-                                                className="scroll-mt-32 text-2xl sm:text-4xl font-display font-extrabold text-white pt-8 pb-3 border-b border-white/10 group flex items-center justify-between"
+                                                className="scroll-mt-32 text-2xl sm:text-4xl font-display font-extrabold text-[#16191f] pt-8 pb-3 border-b border-[#16191f]/10 group flex items-center justify-between"
                                             >
                                                 <span>{headingText}</span>
                                                 <a
                                                     href={`#${headingId}`}
-                                                    className="opacity-0 group-hover:opacity-100 text-accent text-sm font-mono transition-opacity ml-2"
+                                                    className="opacity-0 group-hover:opacity-100 text-[#c4540a] text-sm font-mono transition-opacity ml-2"
                                                     title="Direct section link"
                                                 >
                                                     #
@@ -508,12 +508,12 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <h3
                                                 key={idx}
                                                 id={headingId}
-                                                className="scroll-mt-32 text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white pt-6 pb-1 text-accent group flex items-center justify-between"
+                                                className="scroll-mt-32 text-xl sm:text-2xl lg:text-3xl font-display font-bold text-[#16191f] pt-6 pb-1 text-[#c4540a] group flex items-center justify-between"
                                             >
                                                 <span>{headingText}</span>
                                                 <a
                                                     href={`#${headingId}`}
-                                                    className="opacity-0 group-hover:opacity-100 text-accent text-xs font-mono transition-opacity ml-2"
+                                                    className="opacity-0 group-hover:opacity-100 text-[#c4540a] text-xs font-mono transition-opacity ml-2"
                                                     title="Direct section link"
                                                 >
                                                     #
@@ -530,7 +530,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <h4
                                                 key={idx}
                                                 id={headingId}
-                                                className="scroll-mt-32 text-lg sm:text-xl font-display font-semibold text-white pt-4"
+                                                className="scroll-mt-32 text-lg sm:text-xl font-display font-semibold text-[#16191f] pt-4"
                                             >
                                                 {headingText}
                                             </h4>
@@ -543,10 +543,10 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                         return (
                                             <blockquote
                                                 key={idx}
-                                                className="relative my-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-accent/10 via-white/[0.02] to-transparent border-l-4 border-accent border-y border-r border-white/5"
+                                                className="relative my-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#f5761a]/10 via-[#16191f]/[0.02] to-transparent border-l-4 border-[#f5761a] border-y border-r border-[#16191f]/10"
                                             >
-                                                <Quote className="w-8 h-8 text-accent/40 absolute top-4 right-4 pointer-events-none" />
-                                                <p className="font-display italic text-lg sm:text-xl text-neutral-100 leading-relaxed">
+                                                <Quote className="w-8 h-8 text-[#c4540a]/40 absolute top-4 right-4 pointer-events-none" />
+                                                <p className="font-display italic text-lg sm:text-xl text-[#2f333a] leading-relaxed">
                                                     &ldquo;{quoteText}&rdquo;
                                                 </p>
                                             </blockquote>
@@ -580,9 +580,9 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                 {items.map((item, itemIdx) => (
                                                     <li
                                                         key={itemIdx}
-                                                        className="flex items-start gap-3 text-neutral-300"
+                                                        className="flex items-start gap-3 text-[#2f333a]"
                                                     >
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0 shadow-[0_0_6px_var(--color-accent)]" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-[#f5761a] mt-2.5 shrink-0 shadow-[0_0_6px_var(--color-accent)]" />
                                                         <span className="flex-1">
                                                             {renderInlineFormatting(item)}
                                                         </span>
@@ -603,9 +603,9 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                             {/* Tags Section */}
                             {Array.isArray(blog.tags) && blog.tags.length > 0 && (
-                                <div className="mt-14 pt-8 border-t border-white/10 space-y-3">
-                                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-neutral-400">
-                                        <Tag className="w-3.5 h-3.5 text-accent" />
+                                <div className="mt-14 pt-8 border-t border-[#16191f]/10 space-y-3">
+                                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#4a505b]">
+                                        <Tag className="w-3.5 h-3.5 text-[#c4540a]" />
                                         <span>Categorized Topics & Tags</span>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
@@ -613,7 +613,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <Link
                                                 key={i}
                                                 href={`/blog?category=all`}
-                                                className="px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-accent/10 border border-white/10 hover:border-accent/40 text-neutral-300 hover:text-accent font-mono text-xs transition-all"
+                                                className="px-3.5 py-1.5 rounded-full bg-[#16191f]/[0.03] hover:bg-[#f5761a]/10 border border-[#16191f]/10 hover:border-[#f5761a]/40 text-[#2f333a] hover:text-[#c4540a] font-mono text-xs transition-all"
                                             >
                                                 #{tag}
                                             </Link>
@@ -624,34 +624,34 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                             {/* Author Spotlight Profile Card */}
                             {blog.author && (
-                                <div className="mt-14 p-8 rounded-3xl bg-gradient-to-br from-[#12141c] via-[#0d0f15] to-[#0a0b0e] border border-white/10 shadow-2xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-[80px] pointer-events-none" />
+                                <div className="mt-14 p-8 rounded-3xl bg-gradient-to-br from-white via-white to-[#f2f2f1] border border-[#16191f]/10 shadow-2xl relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#f5761a]/5 rounded-full blur-[80px] pointer-events-none" />
 
                                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10 text-center sm:text-left">
                                         {blog.author.avatar ? (
                                             <img
                                                 src={blog.author.avatar}
                                                 alt={blog.author.name}
-                                                className="w-20 h-20 rounded-2xl object-cover border-2 border-accent/40 group-hover:border-accent transition-colors shrink-0 shadow-xl"
+                                                className="w-20 h-20 rounded-2xl object-cover border-2 border-[#f5761a]/40 group-hover:border-[#f5761a] transition-colors shrink-0 shadow-xl"
                                             />
                                         ) : (
-                                            <div className="w-20 h-20 rounded-2xl bg-accent/10 border border-accent/40 flex items-center justify-center text-accent font-mono font-bold text-xl shrink-0">
+                                            <div className="w-20 h-20 rounded-2xl bg-[#f5761a]/10 border border-[#f5761a]/40 flex items-center justify-center text-[#c4540a] font-mono font-bold text-xl shrink-0">
                                                 {blog.author.name.charAt(0)}
                                             </div>
                                         )}
 
                                         <div className="space-y-3 flex-1 min-w-0">
                                             <div className="space-y-1">
-                                                <h3 className="font-display font-extrabold text-2xl text-white">
+                                                <h3 className="font-display font-extrabold text-2xl text-[#16191f]">
                                                     {blog.author.name}
                                                 </h3>
-                                                <p className="text-xs font-mono text-neutral-400">
+                                                <p className="text-xs font-mono text-[#4a505b]">
                                                     {blog.author.role}
                                                 </p>
                                             </div>
 
                                             {blog.author.bio && (
-                                                <p className="text-sm text-neutral-300 leading-relaxed">
+                                                <p className="text-sm text-[#2f333a] leading-relaxed">
                                                     {blog.author.bio}
                                                 </p>
                                             )}
@@ -659,7 +659,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
                                                 <Link
                                                     href={`/team/${blog.author.slug}`}
-                                                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-accent text-black font-mono text-xs font-bold hover:bg-[#b8dd00] transition-all shadow-md"
+                                                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#f5761a] text-white font-mono text-xs font-bold hover:bg-[#b8dd00] transition-all shadow-md"
                                                 >
                                                     <span>View Member Profile</span>
                                                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -670,7 +670,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                         href={blog.author.social_links.twitter}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+                                                        className="w-8 h-8 rounded-full bg-[#16191f]/[0.03] border border-[#16191f]/10 flex items-center justify-center text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.05] transition-colors"
                                                         aria-label="Author Twitter"
                                                     >
                                                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
@@ -684,7 +684,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                         href={blog.author.social_links.linkedin}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+                                                        className="w-8 h-8 rounded-full bg-[#16191f]/[0.03] border border-[#16191f]/10 flex items-center justify-center text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.05] transition-colors"
                                                         aria-label="Author LinkedIn"
                                                     >
                                                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
@@ -699,19 +699,19 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                             )}
 
                             {/* POST-AUTHOR: SHARE ARTICLE */}
-                            <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-[#0e1017] border border-white/10 shadow-xl space-y-6 relative overflow-hidden group">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+                            <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-white border border-[#16191f]/10 shadow-xl space-y-6 relative overflow-hidden group">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#16191f]/10">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
+                                        <div className="w-9 h-9 rounded-xl bg-[#f5761a]/10 border border-[#f5761a]/30 flex items-center justify-center text-[#c4540a] shrink-0">
                                             <Share2 className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <h4 className="font-display font-bold text-xl text-white">
+                                            <h4 className="font-display font-bold text-xl text-[#16191f]">
                                                 Share Article
                                             </h4>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-neutral-400 font-mono">
+                                    <p className="text-xs text-[#4a505b] font-mono">
                                         Distribute this blog across your network
                                     </p>
                                 </div>
@@ -720,18 +720,18 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                     <button
                                         type="button"
                                         onClick={handleCopyUrl}
-                                        className="h-11 rounded-xl bg-white/5 hover:bg-accent text-neutral-200 hover:text-black border border-white/10 hover:border-accent font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group"
+                                        className="h-11 rounded-xl bg-[#16191f]/[0.03] hover:bg-[#f5761a] text-[#2f333a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group"
                                     >
                                         {copiedLink ? (
                                             <>
-                                                <Check className="w-4 h-4 text-emerald-400 group-hover:text-black" />
-                                                <span className="text-emerald-400 group-hover:text-black font-bold">
+                                                <Check className="w-4 h-4 text-emerald-400 group-hover:text-white" />
+                                                <span className="text-emerald-400 group-hover:text-white font-bold">
                                                     Link Copied!
                                                 </span>
                                             </>
                                         ) : (
                                             <>
-                                                <Copy className="w-4 h-4 text-accent group-hover:text-black" />
+                                                <Copy className="w-4 h-4 text-[#c4540a] group-hover:text-white" />
                                                 <span>Copy Link</span>
                                             </>
                                         )}
@@ -741,7 +741,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                         href={twitterShareUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-11 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 hover:border-white/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+                                        className="h-11 rounded-xl bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] text-[#2f333a] hover:text-[#16191f] border border-[#16191f]/10 hover:border-[#16191f]/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
                                     >
                                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -753,7 +753,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                         href={linkedinShareUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-11 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 hover:border-white/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+                                        className="h-11 rounded-xl bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] text-[#2f333a] hover:text-[#16191f] border border-[#16191f]/10 hover:border-[#16191f]/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
                                     >
                                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                                             <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.3a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
@@ -766,17 +766,17 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                         {/* RIGHT STICKY EDITORIAL SIDEBAR (4 Cols) */}
                         <aside className="lg:col-span-4 sticky top-28 space-y-6">
-                            <div className="p-6 rounded-3xl bg-[#0e1017] border border-white/10 shadow-2xl relative overflow-hidden space-y-5">
-                                <div className="absolute top-0 right-0 w-44 h-44 bg-accent/5 rounded-full blur-[60px] pointer-events-none" />
+                            <div className="p-6 rounded-3xl bg-white border border-[#16191f]/10 shadow-2xl relative overflow-hidden space-y-5">
+                                <div className="absolute top-0 right-0 w-44 h-44 bg-[#f5761a]/5 rounded-full blur-[60px] pointer-events-none" />
 
                                 {/* Sidebar Header */}
-                                <div className="flex items-center justify-between pb-4 border-b border-white/10 relative z-10">
+                                <div className="flex items-center justify-between pb-4 border-b border-[#16191f]/10 relative z-10">
                                     <div className="flex items-center gap-2.5">
-                                        <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
+                                        <div className="w-8 h-8 rounded-lg bg-[#f5761a]/10 border border-[#f5761a]/30 flex items-center justify-center text-[#c4540a]">
                                             <BookOpen className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <h3 className="font-display font-bold text-base text-white">
+                                            <h3 className="font-display font-bold text-base text-[#16191f]">
                                                 Other Blogs
                                             </h3>
                                         </div>
@@ -784,7 +784,7 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
 
                                     <Link
                                         href="/blog"
-                                        className="text-[11px] font-mono text-neutral-400 hover:text-accent flex items-center gap-1 transition-colors"
+                                        className="text-[11px] font-mono text-[#4a505b] hover:text-[#c4540a] flex items-center gap-1 transition-colors"
                                     >
                                         <span>View All</span>
                                         <ArrowUpRight className="w-3 h-3" />
@@ -798,10 +798,10 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                             <Link
                                                 key={otherBlog.id}
                                                 href={`/blog/${otherBlog.slug}`}
-                                                className="group flex gap-3.5 p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-accent/40 transition-all duration-300"
+                                                className="group flex gap-3.5 p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-[#16191f]/10 hover:border-[#f5761a]/40 transition-all duration-300"
                                             >
                                                 {/* Thumbnail */}
-                                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-neutral-900 border border-white/10 shrink-0 relative">
+                                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white border border-[#16191f]/10 shrink-0 relative">
                                                     {otherBlog.cover_image ? (
                                                         <img
                                                             src={otherBlog.cover_image}
@@ -809,12 +809,12 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                         />
                                                     ) : (
-                                                        <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-600">
+                                                        <div className="w-full h-full bg-white flex items-center justify-center text-[#6b7280]">
                                                             <FileText className="w-5 h-5" />
                                                         </div>
                                                     )}
                                                     {otherBlog.category && (
-                                                        <span className="absolute bottom-1 left-1 right-1 px-1 py-0.5 rounded bg-black/80 backdrop-blur-xs text-[8px] font-mono text-accent uppercase tracking-wider truncate text-center">
+                                                        <span className="absolute bottom-1 left-1 right-1 px-1 py-0.5 rounded bg-white/90 backdrop-blur-xs text-[8px] font-mono text-[#c4540a] uppercase tracking-wider truncate text-center">
                                                             {otherBlog.category.name}
                                                         </span>
                                                     )}
@@ -823,8 +823,8 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                 {/* Info */}
                                                 <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                                                     <div className="space-y-1">
-                                                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
-                                                            <Clock className="w-3 h-3 text-accent" />
+                                                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#4a505b]">
+                                                            <Clock className="w-3 h-3 text-[#c4540a]" />
                                                             <span>{otherBlog.reading_time || 5}m read</span>
                                                             {otherBlog.author && (
                                                                 <>
@@ -834,22 +834,22 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                                             )}
                                                         </div>
 
-                                                        <h4 className="font-display font-bold text-xs sm:text-sm text-neutral-100 group-hover:text-accent transition-colors line-clamp-2 leading-snug">
+                                                        <h4 className="font-display font-bold text-xs sm:text-sm text-[#2f333a] group-hover:text-[#c4540a] transition-colors line-clamp-2 leading-snug">
                                                             {otherBlog.title}
                                                         </h4>
                                                     </div>
 
-                                                    <div className="flex items-center gap-1 text-[10px] font-mono text-neutral-400 group-hover:text-white transition-colors pt-1">
+                                                    <div className="flex items-center gap-1 text-[10px] font-mono text-[#4a505b] group-hover:text-[#16191f] transition-colors pt-1">
                                                         <span>Read Article</span>
-                                                        <ArrowUpRight className="w-3 h-3 text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                                        <ArrowUpRight className="w-3 h-3 text-[#c4540a] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                                     </div>
                                                 </div>
                                             </Link>
                                         ))
                                     ) : (
-                                        <div className="p-6 text-center space-y-3 rounded-2xl bg-white/[0.02] border border-white/5">
-                                            <BookOpen className="w-8 h-8 text-neutral-600 mx-auto" />
-                                            <p className="text-xs font-mono text-neutral-400">
+                                        <div className="p-6 text-center space-y-3 rounded-2xl bg-white/[0.02] border border-[#16191f]/10">
+                                            <BookOpen className="w-8 h-8 text-[#6b7280] mx-auto" />
+                                            <p className="text-xs font-mono text-[#4a505b]">
                                                 No additional blogs available.
                                             </p>
                                         </div>
@@ -860,10 +860,10 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                                 <div className="pt-2 relative z-10">
                                     <Link
                                         href="/blog"
-                                        className="w-full h-10 rounded-xl bg-white/5 hover:bg-accent text-neutral-300 hover:text-black border border-white/10 hover:border-accent font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all duration-300 group"
+                                        className="w-full h-10 rounded-xl bg-[#16191f]/[0.03] hover:bg-[#f5761a] text-[#2f333a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all duration-300 group"
                                     >
                                         <span>Explore Complete Journal</span>
-                                        <ArrowUpRight className="w-3.5 h-3.5 text-accent group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        <ArrowUpRight className="w-3.5 h-3.5 text-[#c4540a] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </Link>
                                 </div>
                             </div>
@@ -873,27 +873,27 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
             </main>
 
             {/* CONTINUED READING / EXPLORATION STRIP */}
-            <section className="py-16 sm:py-20 bg-[#07080b] border-t border-white/10 relative overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-gradient-to-r from-accent/10 to-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+            <section className="py-16 sm:py-20 bg-[#07080b] border-t border-[#16191f]/10 relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-gradient-to-r from-[#f5761a]/10 to-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
 
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-neutral-300">
-                        <Sparkles className="w-3.5 h-3.5 text-accent" />
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#16191f]/[0.03] border border-[#16191f]/10 text-xs font-mono text-[#2f333a]">
+                        <Sparkles className="w-3.5 h-3.5 text-[#c4540a]" />
                         <span>CONTINUE EXPLORING ARCHITECTURAL BLOGS</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl font-display font-extrabold text-white tracking-tight">
+                    <h2 className="text-2xl sm:text-4xl font-display font-extrabold text-[#16191f] tracking-tight">
                         Dive Deeper Into Kinetic Code & Brand Gravity
                     </h2>
 
-                    <p className="max-w-2xl mx-auto text-sm sm:text-base text-neutral-400 font-light leading-relaxed">
+                    <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#4a505b] font-light leading-relaxed">
                         Browse our full archive of long-form essays, system post-mortems, and engineering manifestos.
                     </p>
 
                     <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                         <Link
                             href="/blog"
-                            className="px-6 py-3 rounded-full bg-accent hover:bg-[#b8dd00] text-black font-mono text-xs font-bold transition-all shadow-[0_0_20px_rgba(251, 183, 24, 0.3)] inline-flex items-center gap-2"
+                            className="px-6 py-3 rounded-full bg-[#f5761a] hover:bg-[#b8dd00] text-white font-mono text-xs font-bold transition-all shadow-[0_0_20px_rgba(251, 183, 24, 0.3)] inline-flex items-center gap-2"
                         >
                             <span>Browse All Blogs</span>
                             <ArrowUpRight className="w-4 h-4" />
@@ -902,10 +902,10 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                         {blog.category && (
                             <Link
                                 href={`/blog?category=${blog.category.slug}`}
-                                className="px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-200 hover:text-white font-mono text-xs font-medium transition-all inline-flex items-center gap-2"
+                                className="px-6 py-3 rounded-full bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] border border-[#16191f]/10 text-[#2f333a] hover:text-[#16191f] font-mono text-xs font-medium transition-all inline-flex items-center gap-2"
                             >
                                 <span>More in {blog.category.name}</span>
-                                <ArrowRight className="w-4 h-4 text-accent" />
+                                <ArrowRight className="w-4 h-4 text-[#c4540a]" />
                             </Link>
                         )}
                     </div>
