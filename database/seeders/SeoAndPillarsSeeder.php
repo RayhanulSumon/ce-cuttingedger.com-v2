@@ -728,7 +728,7 @@ class SeoAndPillarsSeeder extends Seeder
             '/page/aboutus' => '/about',
             '/page/contact' => '/contact',
             '/page/pricing' => '/pricing',
-            '/page/faqs' => '/faq',
+            '/page/faqs' => '/?section=faq',
         ];
 
         foreach ($redirectsMap as $source => $target) {

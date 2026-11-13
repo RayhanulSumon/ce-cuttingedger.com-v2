@@ -17,10 +17,8 @@ const COMPANY_LINKS: [string, string][] = [
     ['Team', '/team'],
     ['Careers', '/careers'],
     ['Case Studies', '/case-studies'],
-    ['Reviews', '/reviews'],
     ['Blog', '/blog'],
     ['Pricing', '/pricing'],
-    ['FAQ', '/faq'],
     ['Contact', '/contact'],
 ];
 
@@ -117,7 +115,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <div>
-                        <p className={FOOTER_HEADING}>Services</p>
+                        <p className={FOOTER_HEADING}>Capabilities</p>
                         <ul className="mt-4 space-y-2.5">
                             {services_nav.slice(0, 6).map((service) => (
                                 <li key={service.id}>
@@ -128,7 +126,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                             ))}
                             <li>
                                 <Link href="/services" prefetch className={FOOTER_LINK}>
-                                    All services
+                                    All capabilities
                                 </Link>
                             </li>
                         </ul>

@@ -19,7 +19,7 @@ export const SECTIONS = [
     { id: 'showcase', label: 'Showcase' },
     { id: 'clients', label: 'Clients' },
     { id: 'case-study', label: 'Case Study' },
-    { id: 'services', label: 'Services' },
+    { id: 'services', label: 'Capabilities' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Contact' },
 ] as const;

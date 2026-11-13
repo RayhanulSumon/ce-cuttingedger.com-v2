@@ -7,7 +7,6 @@ use App\Models\Faq;
 use App\Models\PricingPlan;
 use App\Models\Setting;
 use App\Models\TeamMember;
-use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Str;
@@ -53,20 +52,6 @@ class PageController extends Controller
     }
 
     /**
-     * Display accessible FAQ page.
-     */
-    public function faq(): Response
-    {
-        $faqs = Faq::orderBy('sort_order')->get();
-        $categories = Faq::select('category')->distinct()->pluck('category');
-
-        return Inertia::render('Faq', [
-            'faqs' => $faqs,
-            'categories' => $categories,
-        ]);
-    }
-
-    /**
      * Display dedicated Thank You page with Calendly booking embed.
      */
     public function thankYou(): Response
@@ -107,20 +92,6 @@ class PageController extends Controller
     public function esgPolicy(): Response
     {
         return Inertia::render('Trust/EsgPolicy');
-    }
-
-    /**
-     * Display verified customer reviews and ratings page.
-     */
-    public function reviews(): Response
-    {
-        $testimonials = Testimonial::latest()->get();
-        $clients = Client::orderBy('sort_order')->get();
-
-        return Inertia::render('Reviews', [
-            'testimonials' => $testimonials,
-            'clients' => $clients,
-        ]);
     }
 
     /**

@@ -147,8 +147,9 @@ Route::get('/case-studies/{project:slug}', [WorkController::class, 'show'])->nam
 Route::get('/work', fn () => redirect()->to('/case-studies', 301))->name('work.index');
 Route::get('/work/{project:slug}', fn (Project $project) => redirect()->to("/case-studies/{$project->slug}", 301))->name('work.show');
 
-// Verified Reviews & Social Proof
-Route::get('/reviews', [PageController::class, 'reviews'])->name('reviews');
+// The reviews and FAQ pages now live on the homepage.
+Route::get('/reviews', fn () => redirect()->to('/?section=clients', 301));
+Route::get('/faq', fn () => redirect()->to('/?section=faq', 301));
 
 // Legal, Trust & Security Compliance Pages
 Route::get('/cookie-policy', [PageController::class, 'cookiePolicy'])->name('cookie-policy');
@@ -174,7 +175,6 @@ Route::get('/career', fn () => redirect()->to('/careers', 301))->name('career');
 Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('careers.show');
 
 Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
-Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

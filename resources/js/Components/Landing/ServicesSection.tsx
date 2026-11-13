@@ -54,14 +54,14 @@ export const ServicesSection = memo(function ServicesSection({ active, openDemo 
                 <div>
                     <Reveal active={active}>
                         <h2 className="text-[clamp(32px,5.4vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-[#1d1d1d]">
-                            Services built
+                            Capabilities
                             <br />
-                            for scale.
+                            built for scale.
                         </h2>
                     </Reveal>
                     <Reveal active={active} delay={0.1}>
                         <p className="mt-4 max-w-xl text-base leading-relaxed text-[#2f333a] sm:text-lg">
-                            Pick a service to see exactly what we deliver, how it works and what it costs.
+                            Pick a capability to see exactly what we deliver, how it works and what it costs.
                         </p>
                     </Reveal>
                 </div>
@@ -70,7 +70,7 @@ export const ServicesSection = memo(function ServicesSection({ active, openDemo 
                         href="/services"
                         className="rounded-full border border-[#1b1b1b] px-6 py-3 text-sm font-semibold text-[#1b1b1b] transition-colors duration-300 hover:bg-[#1b1b1b] hover:text-white"
                     >
-                        All services
+                        All capabilities
                     </Link>
                     <button
                         type="button"

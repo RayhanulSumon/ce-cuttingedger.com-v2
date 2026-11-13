@@ -46,16 +46,9 @@ class PageControllerTest extends TestCase
         );
     }
 
-    public function test_renders_faq_page(): void
+    public function test_faq_page_redirects_to_the_homepage_section(): void
     {
-        $response = $this->get('/faq');
-
-        $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Faq')
-            ->has('faqs')
-            ->has('categories')
-        );
+        $this->get('/faq')->assertRedirect('/?section=faq')->assertStatus(301);
     }
 
     public function test_renders_privacy_and_terms_pages(): void
@@ -95,15 +88,8 @@ class PageControllerTest extends TestCase
         );
     }
 
-    public function test_renders_reviews_page(): void
+    public function test_reviews_page_redirects_to_the_homepage_section(): void
     {
-        $response = $this->get('/reviews');
-
-        $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Reviews')
-            ->has('testimonials')
-            ->has('clients')
-        );
+        $this->get('/reviews')->assertRedirect('/?section=clients')->assertStatus(301);
     }
 }

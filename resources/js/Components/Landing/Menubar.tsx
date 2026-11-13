@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
-import { PageProps } from '@/types';
-import { CAPABILITY_FALLBACK } from './content';
-import { DARK_SECTIONS, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { ArrowUpRight, Box, ChevronDown, Clapperboard, Layers, LayoutTemplate, Menu, X } from 'lucide-react';
+import { PageProps, ServiceNavItem } from '@/types';
+import { DARK_SECTIONS, EASE_OUT_EXPO, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
 
 interface MenubarProps {
     /** Active homepage section. Omit on other pages. */
@@ -18,41 +17,6 @@ interface MenubarProps {
     onDark?: boolean;
 }
 
-/** Homepage sections shown in the menu, in order. */
-const SECTION_LINKS: [string, keyof typeof SECTION_INDEX][] = [
-    ['Home', 'hero'],
-    ['Digital Twins', 'digital-twins'],
-    ['Virtual Try-On', 'try-on'],
-    ['Showcase', 'showcase'],
-    ['Clients', 'clients'],
-    ['Case Study', 'case-study'],
-    ['Services', 'services'],
-    ['FAQ', 'faq'],
-];
-
-/** Links shown in the bar itself on wide screens. `section` entries jump in place on the homepage. */
-const BAR_LINKS: { label: string; section?: keyof typeof SECTION_INDEX; href: string }[] = [
-    { label: 'Digital Twins', section: 'digital-twins', href: '/digital-twins' },
-    { label: 'Virtual Try-On', section: 'try-on', href: sectionUrl('try-on') },
-    { label: 'Services', section: 'services', href: '/services' },
-    { label: 'Case Studies', href: '/case-studies' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'About', href: '/about' },
-];
-
-const PAGE_LINKS: [string, string][] = [
-    ['Case Studies', '/case-studies'],
-    ['Pricing', '/pricing'],
-    ['Blog', '/blog'],
-    ['About', '/about'],
-    ['Team', '/team'],
-    ['Careers', '/careers'],
-    ['Reviews', '/reviews'],
-    ['FAQ', '/faq'],
-    ['Contact', '/contact'],
-];
-
 /** URL that opens the homepage on a given section. */
 export function sectionUrl(id: string): string {
     return id === 'hero' ? '/' : `/?section=${id}`;
@@ -65,27 +29,221 @@ export function sectionIndexFromUrl(url: string): number {
     return found === -1 ? 0 : found;
 }
 
-const DRAWER_ITEM = 'rounded-xl px-4 py-3 text-left text-lg font-semibold tracking-tight transition hover:bg-white/10';
+interface Capability {
+    key: string;
+    tag: string;
+    title: string;
+    blurb: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    /** Matches the admin service whose page this capability opens. */
+    match: RegExp;
+}
+
+export const CAPABILITIES: Capability[] = [
+    {
+        key: '2d',
+        tag: '2D',
+        title: '2D Retouching',
+        blurb: 'Cutouts, masking, ghost mannequin and colour-true retouching.',
+        icon: Layers,
+        match: /retouch|clipping|mask|ghost|colou?r|catalog/i,
+    },
+    {
+        key: '3d',
+        tag: '3D',
+        title: '3D & Digital Twins',
+        blurb: 'Product modelling, renders and photoreal digital twins.',
+        icon: Box,
+        match: /3d|cgi|twin|render/i,
+    },
+    {
+        key: 'dtp',
+        tag: 'DTP',
+        title: 'Catalog & Layout',
+        blurb: 'Catalog layout, multilingual formatting and prepress.',
+        icon: LayoutTemplate,
+        match: /publish|dtp|layout|prepress/i,
+    },
+    {
+        key: 'video',
+        tag: 'Video',
+        title: 'Motion & Video',
+        blurb: 'Short-form cut-downs built from the same source files.',
+        icon: Clapperboard,
+        match: /video|motion/i,
+    },
+];
+
+/** Finds the service page for a capability, falling back to the services hub. */
+function capabilityHref(capability: Capability, services: ServiceNavItem[]): string {
+    for (const pillar of services) {
+        if (capability.match.test(pillar.title)) {
+            return pillar.path;
+        }
+        const child = pillar.children.find((item) => capability.match.test(item.title));
+        if (child) {
+            return child.path;
+        }
+    }
+    return '/services';
+}
+
+type NavItem = { label: string; href: string; section?: keyof typeof SECTION_INDEX; capabilities?: true };
+
+/** Main navigation. `section` entries jump in place when the menu is opened on the homepage. */
+const MAIN_NAV: NavItem[] = [
+    { label: 'Home', href: '/', section: 'hero' },
+    { label: 'Digital Twins', href: '/digital-twins', section: 'digital-twins' },
+    { label: 'Virtual Try-On', href: sectionUrl('try-on'), section: 'try-on' },
+    { label: 'Capabilities', href: '/services', section: 'services', capabilities: true },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'About', href: '/about' },
+    { label: 'FAQ', href: sectionUrl('faq'), section: 'faq' },
+];
+
+const SECONDARY_NAV: [string, string][] = [
+    ['Team', '/team'],
+    ['Careers', '/careers'],
+    ['Contact', '/contact'],
+];
+
+const LIST: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
+};
+
+const ITEM: Variants = {
+    hidden: { opacity: 0, x: 32 },
+    show: { opacity: 1, x: 0, transition: { duration: 0.55, ease: EASE_OUT_EXPO } },
+};
+
+const ROW =
+    'flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-[22px] font-bold tracking-[-0.02em] transition-colors duration-300 hover:bg-white/10';
 
 export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
     const { services_nav = [] } = usePage<PageProps>().props;
     const { url } = usePage();
     const path = url.split('?')[0];
-    /** Inner pages scroll under the bar, so it gets a backdrop; the homepage stage does not scroll. */
-    const solid = !goTo;
     const [drawer, setDrawer] = useState(false);
+    const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
     const dark = onDark ?? (index !== undefined && DARK_SECTIONS.includes(index));
-
-    const capabilities = services_nav.length
-        ? services_nav.map((s) => ({ label: s.title, href: s.path }))
-        : CAPABILITY_FALLBACK;
+    /** Inner pages scroll under the bar, so it fades in a backdrop; the homepage stage does not scroll. */
+    const solid = !goTo;
 
     const closeDrawer = () => setDrawer(false);
 
+    const isCurrent = (item: NavItem) => {
+        if (goTo) {
+            return item.section !== undefined && index === SECTION_INDEX[item.section];
+        }
+        return item.href === '/' ? path === '/' : path === item.href || path.startsWith(`${item.href}/`);
+    };
+
+    const renderRow = (item: NavItem) => {
+        const tone = isCurrent(item) ? 'text-white' : 'text-white/65';
+
+        if (item.capabilities) {
+            return (
+                <div>
+                    <button
+                        type="button"
+                        aria-expanded={capabilitiesOpen}
+                        onClick={() => setCapabilitiesOpen((open) => !open)}
+                        className={`${ROW} ${tone}`}
+                    >
+                        {item.label}
+                        <ChevronDown size={20} className={`transition-transform duration-300 ${capabilitiesOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                        {capabilitiesOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.4, ease: EASE_OUT_QUART }}
+                                className="overflow-hidden"
+                            >
+                                <motion.ul
+                                    className="grid gap-1 px-2 pb-2 pt-1"
+                                    initial="hidden"
+                                    animate="show"
+                                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } }}
+                                >
+                                    {CAPABILITIES.map((capability) => (
+                                        <motion.li
+                                            key={capability.key}
+                                            variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT_QUART } } }}
+                                        >
+                                            <Link
+                                                href={capabilityHref(capability, services_nav)}
+                                                prefetch
+                                                onClick={closeDrawer}
+                                                className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/10"
+                                            >
+                                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-[#f5761a] transition-[background-color,color] duration-300 group-hover:bg-[#f5761a] group-hover:text-white">
+                                                    <capability.icon size={18} />
+                                                </span>
+                                                <span className="min-w-0">
+                                                    <span className="block text-[15px] font-semibold leading-tight">
+                                                        <span className="text-[#f5761a]">{capability.tag}</span> · {capability.title}
+                                                    </span>
+                                                    <span className="mt-0.5 block text-xs leading-snug text-white/50">{capability.blurb}</span>
+                                                </span>
+                                            </Link>
+                                        </motion.li>
+                                    ))}
+                                    <li>
+                                        <Link
+                                            href="/services"
+                                            prefetch
+                                            onClick={closeDrawer}
+                                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white/70 transition-colors hover:text-white"
+                                        >
+                                            All capabilities <ArrowUpRight size={14} />
+                                        </Link>
+                                    </li>
+                                </motion.ul>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            );
+        }
+
+        if (goTo && item.section !== undefined) {
+            const target = SECTION_INDEX[item.section];
+            return (
+                <button
+                    type="button"
+                    onClick={() => {
+                        closeDrawer();
+                        goTo(target);
+                    }}
+                    className={`${ROW} ${tone}`}
+                >
+                    {item.label}
+                </button>
+            );
+        }
+
+        return (
+            <Link href={item.href} prefetch onClick={closeDrawer} className={`${ROW} ${tone}`}>
+                {item.label}
+            </Link>
+        );
+    };
+
     return (
         <>
-            <header
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-6 px-5 py-4 text-sm font-medium transition-[color,opacity,background-color] duration-500 sm:px-10 lg:px-16 ${solid ? 'bg-[#f2f2f1]/85 backdrop-blur-md' : 'py-5'} ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+            <motion.header
+                initial={{ opacity: 0, y: -18 }}
+                animate={{ opacity: hidden ? 0 : 1, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 text-sm font-medium transition-colors duration-500 sm:px-10 lg:px-16 ${
+                    solid ? 'bg-gradient-to-b from-[#f2f2f1] via-[#f2f2f1]/80 to-transparent' : ''
+                } ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none' : ''}`}
             >
                 {goTo ? (
                     <button
@@ -102,52 +260,36 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                     </Link>
                 )}
 
-                <nav aria-label="Main" className="hidden items-center gap-1 xl:flex">
-                    {BAR_LINKS.map((item) => {
-                        const isCurrent = goTo
-                            ? item.section !== undefined && index === SECTION_INDEX[item.section]
-                            : path === item.href || path.startsWith(`${item.href}/`);
-                        const classes = `rounded-full px-3 py-2 text-[13px] font-semibold transition-colors duration-300 ${
-                            isCurrent ? 'bg-[#16191f]/10' : 'opacity-75 hover:bg-[#16191f]/5 hover:opacity-100'
-                        }`;
-
-                        return goTo && item.section !== undefined ? (
-                            <button key={item.label} type="button" onClick={() => goTo(SECTION_INDEX[item.section!])} className={classes}>
-                                {item.label}
-                            </button>
-                        ) : (
-                            <Link key={item.label} href={item.href} prefetch className={classes}>
-                                {item.label}
-                            </Link>
-                        );
-                    })}
-                </nav>
-
                 <div className="flex items-center gap-3">
                     <button
                         type="button"
                         onClick={openDemo}
-                        className={`rounded-full px-5 py-2.5 text-xs font-bold transition-colors duration-500 ${dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white'}`}
+                        className={`group inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${
+                            dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white hover:bg-[#f5761a]'
+                        }`}
                     >
                         Book a Demo
+                        <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </button>
 
                     <button
                         type="button"
                         onClick={() => setDrawer(true)}
                         aria-label="Open menu"
-                        className={`grid h-10 w-10 place-items-center rounded-full transition-colors duration-500 ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#333]'}`}
+                        className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${
+                            dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#f5761a]'
+                        }`}
                     >
                         <Menu size={18} />
                     </button>
                 </div>
-            </header>
+            </motion.header>
 
             <AnimatePresence>
                 {drawer && (
                     <>
                         <motion.div
-                            className="fixed inset-0 z-[88] bg-black/55"
+                            className="fixed inset-0 z-[88] bg-black/55 backdrop-blur-sm"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -157,92 +299,62 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
 
                         <motion.aside
                             data-scrollable
-                            className="fixed right-0 top-0 z-[90] flex h-full w-72 flex-col overflow-y-auto bg-[#141A26] px-8 py-8 text-white shadow-2xl"
+                            aria-label="Main navigation"
+                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-[#141A26] px-6 py-6 text-white shadow-2xl sm:px-8"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
-                            transition={{ duration: 0.42, ease: EASE_OUT_QUART }}
+                            transition={{ duration: 0.55, ease: EASE_OUT_EXPO }}
                         >
-                            <button
-                                type="button"
-                                onClick={closeDrawer}
-                                aria-label="Close menu"
-                                className="ml-auto grid h-10 w-10 place-items-center rounded-full bg-white/10 hover:bg-white/20"
-                            >
-                                <X size={18} />
-                            </button>
+                            <div className="flex items-center justify-between">
+                                <span className="text-sm font-extrabold tracking-[-0.04em] text-white/60">CUTTING  EDGER</span>
+                                <button
+                                    type="button"
+                                    onClick={closeDrawer}
+                                    aria-label="Close menu"
+                                    className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-[transform,background-color] duration-300 hover:rotate-90 hover:bg-white/20"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
 
-                            <nav className="mt-8 flex flex-col gap-1">
-                                {SECTION_LINKS.map(([label, id]) => {
-                                    const active = index === SECTION_INDEX[id];
-                                    const tone = active ? 'text-white' : 'text-white/70';
+                            <motion.div variants={LIST} initial="hidden" animate="show" className="flex flex-1 flex-col">
+                                <nav aria-label="Main" className="mt-6 flex flex-col gap-0.5">
+                                    {MAIN_NAV.map((item) => (
+                                        <motion.div key={item.label} variants={ITEM}>
+                                            {renderRow(item)}
+                                        </motion.div>
+                                    ))}
+                                </nav>
 
-                                    return goTo ? (
-                                        <button
-                                            key={id}
-                                            type="button"
-                                            onClick={() => {
-                                                closeDrawer();
-                                                goTo(SECTION_INDEX[id]);
-                                            }}
-                                            className={`${DRAWER_ITEM} ${tone}`}
-                                        >
-                                            {label}
-                                        </button>
-                                    ) : (
-                                        <Link key={id} href={sectionUrl(id)} prefetch onClick={closeDrawer} className={`${DRAWER_ITEM} ${tone}`}>
-                                            {label}
-                                        </Link>
-                                    );
-                                })}
-                            </nav>
-
-                            <div className="mt-6 border-t border-white/10 pt-6">
-                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Explore</p>
-                                <div className="flex flex-col gap-1">
-                                    {PAGE_LINKS.map(([label, href]) => (
+                                <motion.div variants={ITEM} className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/10 px-4 pt-5">
+                                    {SECONDARY_NAV.map(([label, href]) => (
                                         <Link
                                             key={href}
                                             href={href}
                                             prefetch
                                             onClick={closeDrawer}
-                                            className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+                                            className="text-sm font-medium text-white/55 transition-colors hover:text-white"
                                         >
                                             {label}
                                         </Link>
                                     ))}
-                                </div>
-                            </div>
+                                </motion.div>
 
-                            <div className="mt-6 border-t border-white/10 pt-6">
-                                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Capabilities</p>
-                                <div className="flex flex-col gap-1">
-                                    {capabilities.map((c) => (
-                                        <Link
-                                            key={c.label}
-                                            href={c.href}
-                                            prefetch
-                                            onClick={closeDrawer}
-                                            className="rounded-xl px-4 py-2.5 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
-                                        >
-                                            {c.label}
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="mt-auto pt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        closeDrawer();
-                                        openDemo();
-                                    }}
-                                    className="w-full rounded-full bg-white py-3 text-sm font-bold text-[#141A26] transition hover:bg-white/90"
-                                >
-                                    Book a Demo
-                                </button>
-                            </div>
+                                <motion.div variants={ITEM} className="mt-auto pt-8">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            closeDrawer();
+                                            openDemo();
+                                        }}
+                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-[#141A26] transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-white/90"
+                                    >
+                                        Book a Demo
+                                        <ArrowUpRight size={16} />
+                                    </button>
+                                </motion.div>
+                            </motion.div>
                         </motion.aside>
                     </>
                 )}
