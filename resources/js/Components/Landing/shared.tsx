@@ -104,21 +104,25 @@ export function SectionIntro({
     title,
     children,
     className = '',
+    titleClassName = 'text-[clamp(22px,2.6vw,36px)] font-normal',
+    bodyClassName = 'text-sm text-subtle',
 }: {
     active: boolean;
     title: string;
     children: React.ReactNode;
     className?: string;
+    titleClassName?: string;
+    bodyClassName?: string;
 }) {
     return (
         <div className={className}>
             <Reveal active={active}>
-                <h2 className="font-michroma text-[clamp(22px,2.6vw,36px)] font-normal leading-[1.15] tracking-[0.14em] text-ink">
+                <h2 className={`font-michroma leading-[1.15] tracking-[0.14em] text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>
             <Reveal active={active} delay={0.1}>
-                <p className="mt-3 max-w-[36ch] text-sm leading-[1.6] text-subtle">{children}</p>
+                <p className={`mt-3 max-w-[36ch] leading-[1.6] ${bodyClassName}`}>{children}</p>
             </Reveal>
         </div>
     );

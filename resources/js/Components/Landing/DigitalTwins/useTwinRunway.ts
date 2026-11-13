@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DIGITAL_TWINS, TWIN_Y0, TWIN_Y1 } from './twins';
 
-export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'dragging' | 'buy';
+export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'dragging' | 'buy' | 'view';
 
 interface TwinRunwayOptions {
     /** Run the animation loop (section is on screen and no overlay covers the runway). */
@@ -233,7 +233,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
     const applyHover = (modelIndex: number) => {
         const isFront = modelIndex >= 0 && modelIndex === wrap(Math.round(sim.current.position), TWIN_COUNT);
         setHoveredModel(isFront ? modelIndex : -1);
-        setCursorMode(isFront ? 'buy' : 'drag');
+        setCursorMode(isFront ? (DIGITAL_TWINS[modelIndex].isCopyrightSold ? 'view' : 'buy') : 'drag');
     };
 
     const onPointerEnter = (event: React.PointerEvent<HTMLElement>) => {

@@ -8,6 +8,7 @@ const SHAPE: Record<TwinCursorMode, string> = {
     drag: 'h-[42px] w-[100px] scale-100 border-[2px] border-ink/40 bg-white/70 opacity-100 shadow-[0_6px_16px_-10px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]',
     dragging:
         'h-[42px] w-[112px] scale-[0.94] border-[2px] border-primary/45 bg-primary/25 opacity-100 shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-primary)_55%,transparent)]',
+    view: 'h-[96px] w-[96px] scale-100 bg-ink opacity-100 shadow-[0_14px_34px_-10px_color-mix(in_srgb,var(--color-ink)_60%,transparent)] ring-2 ring-white/70',
     buy: 'h-[96px] w-[96px] scale-100 bg-primary opacity-100 shadow-[0_14px_34px_-10px_color-mix(in_srgb,var(--color-primary)_85%,transparent)] ring-2 ring-white/70',
 };
 
@@ -29,6 +30,10 @@ export function TwinCursor({ cursorRef, mode }: { cursorRef: React.Ref<HTMLDivEl
             >
                 {mode === 'buy' && (
                     <span className="select-none pl-[0.2em] text-[13px] font-extrabold tracking-[0.2em] text-white">BUY</span>
+                )}
+
+                {mode === 'view' && (
+                    <span className="select-none pl-[0.2em] text-[13px] font-extrabold tracking-[0.2em] text-white">VIEW</span>
                 )}
 
                 {isDrag && (
