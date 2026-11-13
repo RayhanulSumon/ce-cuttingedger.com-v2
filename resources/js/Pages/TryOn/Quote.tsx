@@ -143,7 +143,15 @@ export default function TryOnQuote({
     tryOnLooks,
     initialLook = '',
 }: TryOnQuoteProps) {
-    const { flash, errors } = usePage<{
+    const { auth, flash, errors } = usePage<{
+        auth?: {
+            user?: {
+                name: string;
+                email: string;
+                company?: string | null;
+                phone?: string | null;
+            } | null;
+        };
         flash?: { success?: string; error?: string };
         errors?: Record<string, string>;
     }>().props;
@@ -196,14 +204,14 @@ export default function TryOnQuote({
     const [garmentShoes, setGarmentShoes] = useState<File | null>(null);
     const [shoesPreview, setShoesPreview] = useState<string | null>(null);
 
-    // Description for Other + Contact Fields
+    // Description for Other + Contact Fields (pre-filled from authenticated client account)
     const [instructions, setInstructions] = useState('');
     const [cloudLink, setCloudLink] = useState('');
     const [monthlyVolume, setMonthlyVolume] = useState(VOLUME_OPTIONS[0]);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [company, setCompany] = useState('');
-    const [phone, setPhone] = useState('');
+    const [name, setName] = useState(auth?.user?.name || '');
+    const [email, setEmail] = useState(auth?.user?.email || '');
+    const [company, setCompany] = useState(auth?.user?.company || '');
+    const [phone, setPhone] = useState(auth?.user?.phone || '');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFileWithPreview = (
@@ -266,13 +274,24 @@ export default function TryOnQuote({
             {/* Header Hero */}
             <section style={{ background: PAGE_BACKGROUND }} className={`pb-12 pt-28 sm:pt-32 ${PAD_X}`}>
                 <div className="mx-auto max-w-7xl">
-                    <Link
-                        href="/#try-on"
-                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
-                    >
-                        <ArrowLeft size={14} />
-                        Back to Virtual Try-On Runway
-                    </Link>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <Link
+                            href="/#try-on"
+                            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
+                        >
+                            <ArrowLeft size={14} />
+                            Back to Virtual Try-On Runway
+                        </Link>
+                        {auth?.user && (
+                            <Link
+                                href="/portal"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-ink/15 bg-white px-4 py-1.5 text-xs font-bold text-ink transition-colors hover:border-primary hover:text-primary"
+                            >
+                                <UserCheck size={13} className="text-primary" />
+                                My Client Portal ({auth.user.name})
+                            </Link>
+                        )}
+                    </div>
 
                     <div className="mt-5 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
                         <div>

@@ -149,11 +149,12 @@ class OrderController extends Controller
 
         $order = Order::create([
             'order_type' => $orderType,
+            'user_id' => $request->user()?->id,
             'digital_twin_id' => $twin?->id,
             'client_name' => $validated['name'],
             'client_email' => strtolower(trim($validated['email'])),
-            'client_phone' => $validated['phone'] ?? null,
-            'company' => $validated['company'] ?? null,
+            'client_phone' => $validated['phone'] ?? $request->user()?->phone,
+            'company' => $validated['company'] ?? $request->user()?->company,
             'ip_address' => $request->ip(),
             'service_name' => $serviceName,
             'service_slug' => Str::slug($orderType),
@@ -264,11 +265,12 @@ class OrderController extends Controller
 
         $order = Order::create([
             'order_type' => 'virtual_try_on_quote',
+            'user_id' => $request->user()?->id,
             'try_on_look_id' => $look?->id,
             'client_name' => $validated['name'],
             'client_email' => strtolower(trim($validated['email'])),
-            'client_phone' => $validated['phone'] ?? null,
-            'company' => $validated['company'] ?? null,
+            'client_phone' => $validated['phone'] ?? $request->user()?->phone,
+            'company' => $validated['company'] ?? $request->user()?->company,
             'monthly_volume' => $validated['monthly_volume'] ?? null,
             'ip_address' => $request->ip(),
             'service_name' => "Virtual Try-On — {$modelSummary}",

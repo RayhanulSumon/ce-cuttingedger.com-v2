@@ -46,6 +46,7 @@ const MAIN_NAV: NavItem[] = [
 ];
 
 const SECONDARY_NAV: [string, string][] = [
+    ['Client Portal', '/portal'],
     ['Team', '/team'],
     ['Careers', '/careers'],
     ['Contact', '/contact'],
@@ -65,7 +66,7 @@ const ROW =
     'flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-[22px] font-bold tracking-[-0.02em] transition-colors duration-300 hover:bg-white/10';
 
 export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
-    const { capabilities_nav = [] } = usePage<PageProps>().props;
+    const { capabilities_nav = [], auth } = usePage<PageProps>().props;
     const { url } = usePage();
     const path = url.split('?')[0];
     const [drawer, setDrawer] = useState(false);
@@ -235,7 +236,18 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                     </Link>
                 )}
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                    <Link
+                        href={auth?.user ? (auth.user.role === 'super_admin' || auth.user.role === 'admin' ? '/admin' : '/portal') : '/login'}
+                        className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${
+                            dark
+                                ? 'border-white/25 text-white hover:bg-white/15'
+                                : 'border-ink/20 text-ink hover:border-primary hover:text-primary'
+                        }`}
+                    >
+                        {auth?.user ? 'My Portal' : 'Client Login'}
+                    </Link>
+
                     <button
                         type="button"
                         onClick={openDemo}

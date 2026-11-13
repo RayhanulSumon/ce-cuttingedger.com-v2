@@ -22,8 +22,12 @@ return new class extends Migration
             $table->foreignId('role_id')->nullable()->constrained('roles')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('google_id')->nullable()->unique();
+            $table->string('avatar')->nullable();
+            $table->string('company')->nullable();
+            $table->string('phone', 50)->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('status')->default('active'); // active, suspended
             $table->timestamp('last_login_at')->nullable();
             $table->rememberToken();

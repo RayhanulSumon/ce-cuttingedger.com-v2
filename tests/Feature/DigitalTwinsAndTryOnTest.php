@@ -7,10 +7,13 @@ use App\Models\Order;
 use App\Models\Role;
 use App\Models\TryOnLook;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -20,6 +23,8 @@ class DigitalTwinsAndTryOnTest extends TestCase
 
     protected User $admin;
 
+    protected User $client;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,7 +33,25 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $role = Role::firstOrCreate(['name' => 'super_admin']);
         $this->admin = User::firstOrCreate(
             ['email' => 'admin@test.com'],
-            ['name' => 'Admin User', 'password' => 'secret', 'role_id' => $role->id, 'status' => 'active']
+            [
+                'name' => 'Admin User',
+                'password' => 'secret',
+                'role_id' => $role->id,
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $this->client = User::firstOrCreate(
+            ['email' => 'client@atelier.com'],
+            [
+                'name' => 'Clara Vance',
+                'company' => 'Vance Atelier',
+                'phone' => '+1 555 234 5678',
+                'password' => 'secret123',
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
         );
     }
 
@@ -69,6 +92,41 @@ class DigitalTwinsAndTryOnTest extends TestCase
             ->assertJsonCount(6, 'data');
     }
 
+    public function test_guests_must_login_and_verify_email_before_ordering(): void
+    {
+        Notification::fake();
+
+        $this->get('/digital-twins/order')->assertRedirect(route('login'));
+        $this->get('/virtual-try-on/quote')->assertRedirect(route('login'));
+
+        $this->post('/register', [
+            'name' => 'Elena Rossi',
+            'email' => 'elena@milanstudio.it',
+            'company' => 'Milan Studio',
+            'phone' => '+39 02 1234 5678',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+        ])->assertRedirect(route('verification.notice'));
+
+        $newUser = User::where('email', 'elena@milanstudio.it')->firstOrFail();
+        $this->assertNull($newUser->email_verified_at);
+        Notification::assertSentTo($newUser, VerifyEmail::class);
+
+        $this->actingAs($newUser)->get('/digital-twins/order')->assertRedirect(route('verification.notice'));
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $newUser->id, 'hash' => sha1($newUser->getEmailForVerification())]
+        );
+
+        $this->actingAs($newUser)->get($verificationUrl)->assertRedirect(route('digital-twins.order'));
+        $this->assertNotNull($newUser->fresh()->email_verified_at);
+
+        $this->actingAs($newUser->fresh())->get('/digital-twins/order')->assertOk();
+        $this->actingAs($newUser->fresh())->get('/portal')->assertOk();
+    }
+
     public function test_client_can_submit_custom_digital_twin_order_with_7_dynamic_attributes(): void
     {
         Mail::fake();
@@ -76,7 +134,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
 
         $twin = DigitalTwin::firstOrFail();
 
-        $response = $this->post('/digital-twins/order', [
+        $response = $this->actingAs($this->client)->post('/digital-twins/order', [
             'mode' => 'custom',
             'digital_twin_id' => $twin->id,
             'name' => 'Clara Vance',
@@ -107,12 +165,22 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $response->assertSessionHas('success');
 
         $order = Order::latest('id')->firstOrFail();
+        $this->assertSame($this->client->id, $order->user_id);
         $this->assertSame('digital_twin_custom', $order->order_type);
         $this->assertSame($twin->id, $order->digital_twin_id);
         $this->assertSame(0.0, (float) $order->total_price);
         $this->assertSame('5\'9" ft', $order->specifications['attributes']['Height']);
         $this->assertSame('16 in', $order->specifications['attributes']['Body Measurement']['Shoulder']);
         $this->assertCount(1, $order->images);
+
+        $this->actingAs($this->client)
+            ->get('/portal')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Client/Dashboard')
+                ->has('orders', 1)
+                ->where('stats.total_orders', 1)
+            );
     }
 
     public function test_marking_lifetime_copyright_order_as_paid_automatically_marks_twin_sold_out(): void
@@ -121,7 +189,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
 
         $twin = DigitalTwin::where('is_copyright_sold', false)->firstOrFail();
 
-        $this->post('/digital-twins/order', [
+        $this->actingAs($this->client)->post('/digital-twins/order', [
             'mode' => 'lifetime',
             'digital_twin_id' => $twin->id,
             'name' => 'Marcus Sterling',
@@ -147,7 +215,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
 
         $look = TryOnLook::firstOrFail();
 
-        $response = $this->post('/virtual-try-on/quote', [
+        $response = $this->actingAs($this->client)->post('/virtual-try-on/quote', [
             'model_source' => 'our_model',
             'try_on_look_id' => $look->id,
             'selected_look_name' => $look->name,
@@ -164,6 +232,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $response->assertSessionHas('success');
 
         $order = Order::where('order_type', 'virtual_try_on_quote')->latest('id')->firstOrFail();
+        $this->assertSame($this->client->id, $order->user_id);
         $this->assertSame($look->id, $order->try_on_look_id);
         $this->assertSame('our_model', $order->specifications['model_source']);
         $this->assertSame($look->model_name, $order->specifications['selected_model_name']);
@@ -178,7 +247,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
         Mail::fake();
         Storage::fake('public');
 
-        $response = $this->post('/virtual-try-on/quote', [
+        $response = $this->actingAs($this->client)->post('/virtual-try-on/quote', [
             'model_source' => 'custom_model',
             'model_file' => UploadedFile::fake()->image('my-brand-model.jpg', 900, 1200),
             'garment_top' => UploadedFile::fake()->image('jacket.jpg', 600, 800),

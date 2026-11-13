@@ -24,10 +24,12 @@ use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\Admin\AdminTrackingScriptController;
 use App\Http\Controllers\Admin\AdminTryOnLookController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CapabilityController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Client\ClientPortalController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
@@ -53,11 +55,29 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| Admin Authentication Routes
+| Client & Admin Authentication Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/login', [ClientAuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [ClientAuthController::class, 'login'])->name('login.submit');
+Route::get('/register', [ClientAuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [ClientAuthController::class, 'register'])->name('register.submit');
+Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+
+Route::get('/auth/google/redirect', [ClientAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [ClientAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/verify-email', [ClientAuthController::class, 'verifyNotice'])->name('verification.notice');
+    Route::get('/verify-email/{id}/{hash}', [ClientAuthController::class, 'verifyEmail'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    Route::post('/email/verification-notification', [ClientAuthController::class, 'resendVerification'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});
+
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
@@ -176,19 +196,27 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 
-// Digital Twins Catalogue, Dedicated Custom Twin Order & Virtual Try-On Quote Pages
+// Digital Twins Public Catalogue & Legacy Redirect
 Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
-Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
-Route::post('/digital-twins/order', [OrderController::class, 'storeDigitalTwinOrder'])
-    ->middleware('throttle:public-contact')
-    ->name('digital-twins.order.store');
-
-Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
-Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
-    ->middleware('throttle:public-contact')
-    ->name('try-on.quote.store');
-
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
+
+// Protected Client Portal & Order / Quote Routes (Requires Verified Account)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
+    Route::get('/dashboard', fn () => redirect()->route('client.portal'))->name('dashboard');
+    Route::post('/portal/profile', [ClientPortalController::class, 'updateProfile'])->name('client.portal.profile');
+    Route::post('/portal/password', [ClientPortalController::class, 'updatePassword'])->name('client.portal.password');
+
+    Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
+    Route::post('/digital-twins/order', [OrderController::class, 'storeDigitalTwinOrder'])
+        ->middleware('throttle:public-contact')
+        ->name('digital-twins.order.store');
+
+    Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
+    Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
+        ->middleware('throttle:public-contact')
+        ->name('try-on.quote.store');
+});
 
 // Agency Team & Careers
 Route::get('/team', [TeamController::class, 'index'])->name('team.index');

@@ -122,7 +122,15 @@ export default function DigitalTwinOrder({
     initialTwinSlug = '',
     initialReference = '',
 }: DigitalTwinOrderProps) {
-    const { flash, errors } = usePage<{
+    const { auth, flash, errors } = usePage<{
+        auth?: {
+            user?: {
+                name: string;
+                email: string;
+                company?: string | null;
+                phone?: string | null;
+            } | null;
+        };
         flash?: { success?: string; error?: string };
         errors?: Record<string, string>;
     }>().props;
@@ -166,11 +174,11 @@ export default function DigitalTwinOrder({
     const [attrValues, setAttrValues] = useState<Record<string, any>>({});
     const [selectedPoses, setSelectedPoses] = useState<string[]>(DEFAULT_POSES);
 
-    // Client & submission fields
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [company, setCompany] = useState('');
-    const [phone, setPhone] = useState('');
+    // Client & submission fields (pre-filled from authenticated client account)
+    const [name, setName] = useState(auth?.user?.name || '');
+    const [email, setEmail] = useState(auth?.user?.email || '');
+    const [company, setCompany] = useState(auth?.user?.company || '');
+    const [phone, setPhone] = useState(auth?.user?.phone || '');
     const [cloudLink, setCloudLink] = useState('');
     const [instructions, setInstructions] = useState('');
     const [attachments, setAttachments] = useState<File[]>([]);
@@ -317,13 +325,24 @@ export default function DigitalTwinOrder({
             {/* Header Hero */}
             <section style={{ background: PAGE_BACKGROUND }} className={`pb-12 pt-28 sm:pt-32 ${PAD_X}`}>
                 <div className="mx-auto max-w-7xl">
-                    <Link
-                        href="/digital-twins"
-                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
-                    >
-                        <ArrowLeft size={14} />
-                        Back to Digital Twins Catalog
-                    </Link>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <Link
+                            href="/digital-twins"
+                            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
+                        >
+                            <ArrowLeft size={14} />
+                            Back to Digital Twins Catalog
+                        </Link>
+                        {auth?.user && (
+                            <Link
+                                href="/portal"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-ink/15 bg-white px-4 py-1.5 text-xs font-bold text-ink transition-colors hover:border-primary hover:text-primary"
+                            >
+                                <UserCheck size={13} className="text-primary" />
+                                My Client Portal ({auth.user.name})
+                            </Link>
+                        )}
+                    </div>
 
                     <div className="mt-5 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
                         <div>

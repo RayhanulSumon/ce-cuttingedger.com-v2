@@ -26,6 +26,7 @@ class RoleAndSuperAdminSeeder extends Seeder
                 'password' => Hash::make('12345678'),
                 'role_id' => $superAdminRole->id,
                 'status' => 'active',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -37,6 +38,7 @@ class RoleAndSuperAdminSeeder extends Seeder
                 'password' => Hash::make('Secret123!'),
                 'role_id' => $adminRole->id,
                 'status' => 'active',
+                'email_verified_at' => now(),
             ]
         );
     }
