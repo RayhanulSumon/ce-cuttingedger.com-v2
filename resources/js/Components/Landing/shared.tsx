@@ -30,7 +30,7 @@ export const SECTION_INDEX = Object.fromEntries(SECTIONS.map((s, i) => [s.id, i]
 >;
 
 /** Sections with a dark background: the menubar, side dots and progress bar switch to light ink on these. */
-export const DARK_SECTIONS: readonly number[] = [SECTION_INDEX.contact];
+export const DARK_SECTIONS: readonly number[] = [];
 
 /** Length of one section change. Drives the stage keyframes, the input lock and the reveal reset. */
 export const STAGE_TRANSITION_MS = 1000;

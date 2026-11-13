@@ -31,26 +31,26 @@ const DEFAULT_SOCIALS = [
     { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
 ];
 
-/** Theme gradient: navy base with a primary-colour glow rising from the bottom right. Follows the colour variables. */
+/** Light theme gradient: white to page colour, with a soft primary-colour glow rising from the bottom right. */
 const FOOTER_GRADIENT = [
-    'radial-gradient(60% 75% at 88% 112%, color-mix(in srgb, var(--color-primary) 60%, transparent), transparent 70%)',
-    'radial-gradient(45% 55% at 8% -8%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 70%)',
-    'linear-gradient(160deg, var(--color-secondary) 0%, var(--color-ink) 100%)',
+    'radial-gradient(62% 80% at 90% 115%, color-mix(in srgb, var(--color-primary) 30%, transparent), transparent 70%)',
+    'radial-gradient(40% 50% at 6% -6%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 70%)',
+    'linear-gradient(160deg, var(--color-surface) 0%, var(--color-page) 100%)',
 ].join(', ');
 
 /**
- * Letter fill: white at rest, sliding into a white-to-primary gradient when hovered. The gradient is three
+ * Letter fill: ink at rest, sliding into an ink-to-primary gradient when hovered. The gradient is three
  * times taller than the letter and only its position moves, so the change is smooth instead of a flat colour swap.
  */
 const LETTER_FILL =
-    'linear-gradient(180deg, #ffffff 0%, #ffffff 34%, color-mix(in srgb, var(--color-primary) 85%, white) 62%, var(--color-primary) 80%, var(--color-primary-ink) 100%)';
+    'linear-gradient(180deg, var(--color-ink) 0%, var(--color-ink) 34%, var(--color-primary-ink) 60%, var(--color-primary) 84%, color-mix(in srgb, var(--color-primary) 70%, white) 100%)';
 
 /** One labelled line of the contact box, with a thin rule under it. */
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <div className="flex items-baseline justify-between gap-6 border-b border-white/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
-            <dt className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">{label}</dt>
-            <dd className="text-right text-[13px] font-semibold text-white">{children}</dd>
+        <div className="flex items-baseline justify-between gap-6 border-b border-ink/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
+            <dt className="text-[10px] font-bold uppercase tracking-[0.2em] text-subtle">{label}</dt>
+            <dd className="text-right text-[13px] font-semibold text-ink">{children}</dd>
         </div>
     );
 }
@@ -71,29 +71,29 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
     const office = settings?.office_address;
 
     return (
-        <div className="h-full w-full bg-secondary p-3 pt-16 sm:p-5 sm:pt-20">
+        <div className="h-full w-full bg-page p-3 pt-16 sm:p-5 sm:pt-20">
             <div
                 data-scrollable
-                className="relative flex h-full flex-col justify-between gap-6 overflow-y-auto rounded-[24px] border border-white/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10"
+                className="relative flex h-full flex-col justify-between gap-6 overflow-y-auto rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10"
                 style={{ backgroundImage: FOOTER_GRADIENT }}
             >
                 {/* Soft grid that fades out towards the glow, for a little texture. */}
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]"
+                    className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]"
                 />
 
                 {/* Top: how to reach us */}
                 <Reveal active={active} className="relative z-10 flex md:justify-end">
                     <dl className="w-full md:max-w-sm">
                         <InfoRow label="Email">
-                            <a href={`mailto:${email}`} className="transition-colors hover:text-primary">
+                            <a href={`mailto:${email}`} className="transition-colors hover:text-primary-ink">
                                 {email}
                             </a>
                         </InfoRow>
                         {phones.map((phone) => (
                             <InfoRow key={`${phone.label}-${phone.number}`} label={phone.label}>
-                                <a href={`tel:${phone.number.replace(/[^+\d]/g, '')}`} className="transition-colors hover:text-primary">
+                                <a href={`tel:${phone.number.replace(/[^+\d]/g, '')}`} className="transition-colors hover:text-primary-ink">
                                     {phone.number}
                                 </a>
                             </InfoRow>
@@ -104,7 +104,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
 
                 {/* Middle: the big call to action */}
                 <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-2 text-center">
-                    <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-primary sm:mb-4">
+                    <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-primary-ink sm:mb-4">
                         Ready to elevate your catalog craft &amp; velocity?
                     </span>
                     <Link
@@ -150,12 +150,12 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                 </Reveal>
 
                 {/* Bottom: one line of links, one line of small print */}
-                <Reveal active={active} delay={0.26} className="relative z-10 space-y-4 border-t border-white/15 pt-5">
+                <Reveal active={active} delay={0.26} className="relative z-10 space-y-4 border-t border-ink/10 pt-5">
                     <nav aria-label="Footer" className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <ul className="flex flex-wrap gap-x-6 gap-y-2">
                             {MAIN_LINKS.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} prefetch className="text-sm font-semibold text-white/85 transition-colors hover:text-primary">
+                                    <Link href={item.href} prefetch className="text-sm font-semibold text-ink transition-colors hover:text-primary-ink">
                                         {item.label}
                                     </Link>
                                 </li>
@@ -164,7 +164,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                         <ul className="flex flex-wrap gap-x-5 gap-y-2">
                             {socials.map((social) => (
                                 <li key={social.name}>
-                                    <a href={social.url} target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 transition-colors hover:text-white">
+                                    <a href={social.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted transition-colors hover:text-ink">
                                         {social.name}
                                     </a>
                                 </li>
@@ -172,11 +172,11 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                         </ul>
                     </nav>
 
-                    <div className="flex items-center justify-between gap-4 text-xs text-white/50">
+                    <div className="flex items-center justify-between gap-4 text-xs text-subtle">
                         <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
                             <span>© {new Date().getFullYear()} Cutting Edger</span>
                             {POLICY.map((item) => (
-                                <Link key={item.href} href={item.href} className="transition-colors hover:text-white">
+                                <Link key={item.href} href={item.href} className="transition-colors hover:text-ink">
                                     {item.label}
                                 </Link>
                             ))}
@@ -185,7 +185,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                             type="button"
                             onClick={() => goTo(0)}
                             aria-label="Back to top"
-                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white text-ink shadow-xl transition-colors hover:bg-primary hover:text-white"
+                            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-white shadow-lg transition-colors hover:bg-primary"
                         >
                             <ChevronUp size={18} strokeWidth={2.5} />
                         </button>
