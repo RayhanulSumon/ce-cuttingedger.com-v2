@@ -47,13 +47,16 @@ class HandleInertiaRequests extends Middleware
             // Silently fallback if db is migrating
         }
 
+        $phones = Setting::parsePhones($dbSettings['contact_phones'] ?? 'USA | +1 (409) 995-2565');
+
         return [
             ...parent::share($request),
             'settings' => [
                 'brand_name' => $dbSettings['brand_name'] ?? config('app.name', 'Cutting Edger'),
                 'tagline' => $dbSettings['tagline'] ?? 'AI-Driven Visual Performance & Post-Production Agency.',
                 'contact_email' => $dbSettings['contact_email'] ?? 'hello@cuttingedger.com',
-                'contact_phone' => $dbSettings['contact_phone'] ?? '+1 (409) 995-2565',
+                'contact_phones' => $phones,
+                'contact_phone' => $phones[0]['number'] ?? '',
                 'office_address' => $dbSettings['office_address'] ?? 'Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215',
                 'calendly_url' => $dbSettings['calendly_url'] ?? 'https://calendly.com/cuttingedger/discovery-call',
                 'socials' => [

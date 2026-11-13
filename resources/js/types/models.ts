@@ -169,6 +169,9 @@ export interface SiteSettings {
     brand_name: string;
     tagline: string;
     contact_email: string;
+    /** Phone numbers per country or office, managed in the admin settings. */
+    contact_phones: { label: string; number: string }[];
+    /** The first phone number, for places that show only one. */
     contact_phone: string;
     office_address: string;
     socials: {

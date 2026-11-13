@@ -32,7 +32,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 initialMap["tagline"] ||
                 "AI-Driven Visual Performance & Post-Production Agency.",
             contact_email: initialMap["contact_email"] || "hello@cuttingedger.com",
-            contact_phone: initialMap["contact_phone"] || "+1 (409) 995-2565",
+            contact_phones: initialMap["contact_phones"] ?? "USA | +1 (409) 995-2565",
             office_address:
                 initialMap["office_address"] ||
                 "Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215",
@@ -255,14 +255,16 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-mono uppercase text-neutral-400">
-                                Studio Phone
+                                Phone numbers (one per line: Country | Number)
                             </label>
-                            <Input
-                                value={data.settings.contact_phone}
+                            <Textarea
+                                rows={3}
+                                placeholder={"BD | +88 02 0000 0000\nUAE | +971 00 000 0000"}
+                                value={data.settings.contact_phones}
                                 onChange={(e) =>
                                     setData("settings", {
                                         ...data.settings,
-                                        contact_phone: e.target.value,
+                                        contact_phones: e.target.value,
                                     })
                                 }
                             />

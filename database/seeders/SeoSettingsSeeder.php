@@ -87,7 +87,7 @@ class SeoSettingsSeeder extends Seeder
             'brand_name' => 'Cutting Edger',
             'tagline' => 'AI-Driven Visual Performance & Post-Production Agency.',
             'contact_email' => 'hello@cuttingedger.com',
-            'contact_phone' => '+1 (409) 995-2565',
+            'contact_phones' => 'USA | +1 (409) 995-2565',
             'office_address' => 'Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215',
             'calendly_url' => 'https://calendly.com/cuttingedger/discovery-call',
             'default_meta_title' => 'Cutting Edger — AI-Driven Visual Performance Agency',
