@@ -54,7 +54,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
             {searchKey && (
                 <div className="flex items-center justify-between gap-4">
                     <div className="relative w-full max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
                             placeholder={searchPlaceholder}
                             value={search}
@@ -62,21 +62,21 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            className="pl-9 bg-[#12141c] border-white/10 text-white placeholder:text-neutral-500"
+                            className="pl-9 bg-white border-slate-200 text-ink placeholder:text-slate-400"
                         />
                     </div>
 
-                    <div className="text-xs font-mono text-neutral-400">
+                    <div className="text-xs font-mono text-slate-500">
                         Total {filteredData.length} records
                     </div>
                 </div>
             )}
 
             {/* Table Container */}
-            <div className="rounded-2xl border border-white/10 bg-[#12141c] overflow-hidden shadow-xl">
+            <div className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-xs">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-neutral-300">
-                        <thead className="bg-[#181b24] text-[11px] font-mono uppercase tracking-wider text-neutral-400 border-b border-white/10">
+                    <table className="w-full text-left text-sm text-slate-700">
+                        <thead className="bg-[#f8fafc] text-[11px] font-mono uppercase tracking-wider text-slate-500 border-b border-slate-200">
                             <tr>
                                 {columns.map((col, idx) => (
                                     <th
@@ -91,18 +91,18 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-slate-100">
                             {paginatedData.length > 0 ? (
                                 paginatedData.map((row, rowIdx) => (
                                     <tr
                                         key={row.id ?? rowIdx}
-                                        className="hover:bg-white/[0.02] transition-colors"
+                                        className="hover:bg-slate-50/80 transition-colors"
                                     >
                                         {columns.map((col, colIdx) => (
                                             <td
                                                 key={colIdx}
                                                 className={cn(
-                                                    "px-6 py-4 text-neutral-200",
+                                                    "px-6 py-4 text-slate-700",
                                                     col.className
                                                 )}
                                             >
@@ -123,7 +123,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 <tr>
                                     <td
                                         colSpan={columns.length}
-                                        className="px-6 py-12 text-center text-neutral-500 font-mono text-xs"
+                                        className="px-6 py-12 text-center text-slate-400 font-mono text-xs"
                                     >
                                         {emptyMessage}
                                     </td>
@@ -135,7 +135,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
 
                 {/* Pagination footer */}
                 {totalPages > 1 && (
-                    <div className="px-6 py-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400 bg-[#0e1017]">
+                    <div className="px-6 py-3 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-500 bg-[#f8fafc]">
                         <span>
                             Page {page} of {totalPages}
                         </span>

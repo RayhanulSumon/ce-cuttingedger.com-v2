@@ -21,33 +21,36 @@ export default function Login() {
         <>
             <SeoHead title="Ops Portal Clearance — Sign In" />
 
-            <div className="min-h-screen bg-[#08090c] text-white flex items-center justify-center p-4 selection:bg-accent selection:text-black">
-                {/* Background grid accent */}
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
-
+            <div
+                style={{
+                    background:
+                        "linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)",
+                }}
+                className="min-h-screen text-ink flex items-center justify-center p-4 selection:bg-primary selection:text-white"
+            >
                 <div className="w-full max-w-md relative z-10 space-y-8">
                     {/* Brand header */}
                     <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent text-black font-black text-xl font-mono shadow-xl shadow-accent/10">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary text-white font-black text-xl font-mono shadow-lg shadow-primary/20">
                             CE
                         </div>
                         <div>
-                            <span className="font-mono text-xs uppercase tracking-widest text-accent block">
-                                [ STUDIO OPERATIONS // RESTRICTED ACCESS ]
+                            <span className="font-mono text-xs uppercase tracking-widest text-primary block font-bold">
+                                [ STUDIO OPERATIONS // ADMIN PORTAL ]
                             </span>
-                            <h1 className="text-3xl font-display font-extrabold text-white tracking-tight mt-1">
-                                Command Clearance.
+                            <h1 className="text-3xl font-display font-extrabold text-ink tracking-tight mt-1">
+                                Command Clearance
                             </h1>
                         </div>
                     </div>
 
                     {/* Login Card */}
-                    <div className="p-8 rounded-3xl bg-[#0f1118] border border-white/10 shadow-2xl space-y-6">
+                    <div className="p-8 rounded-3xl bg-white border border-slate-200/90 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.12)] space-y-6">
                         <form onSubmit={submit} className="space-y-4">
                             {/* Email */}
                             <div className="space-y-2">
-                                <label className="text-xs font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                                    <Mail className="w-3.5 h-3.5 text-neutral-500" />
+                                <label className="text-xs font-mono uppercase tracking-wider text-slate-600 font-semibold flex items-center gap-1.5">
+                                    <Mail className="w-3.5 h-3.5 text-slate-400" />
                                     <span>Clearance ID / Email</span>
                                 </label>
                                 <Input
@@ -58,10 +61,10 @@ export default function Login() {
                                     placeholder="admin@cuttingedger.com"
                                     required
                                     autoFocus
-                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-accent"
+                                    className="bg-[#f8fafc] border-slate-200 text-ink placeholder:text-slate-400 focus-visible:ring-primary"
                                 />
                                 {errors.email && (
-                                    <p className="text-xs text-rose-400 font-mono">
+                                    <p className="text-xs text-rose-600 font-mono">
                                         {errors.email}
                                     </p>
                                 )}
@@ -69,8 +72,8 @@ export default function Login() {
 
                             {/* Password */}
                             <div className="space-y-2">
-                                <label className="text-xs font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                                    <Lock className="w-3.5 h-3.5 text-neutral-500" />
+                                <label className="text-xs font-mono uppercase tracking-wider text-slate-600 font-semibold flex items-center gap-1.5">
+                                    <Lock className="w-3.5 h-3.5 text-slate-400" />
                                     <span>Master Passcode</span>
                                 </label>
                                 <Input
@@ -80,10 +83,10 @@ export default function Login() {
                                     onChange={(e) => setData("password", e.target.value)}
                                     placeholder="••••••••••••"
                                     required
-                                    className="bg-[#161922] border-white/10 text-white placeholder:text-neutral-600 focus-visible:ring-accent"
+                                    className="bg-[#f8fafc] border-slate-200 text-ink placeholder:text-slate-400 focus-visible:ring-primary"
                                 />
                                 {errors.password && (
-                                    <p className="text-xs text-rose-400 font-mono">
+                                    <p className="text-xs text-rose-600 font-mono">
                                         {errors.password}
                                     </p>
                                 )}
@@ -91,14 +94,14 @@ export default function Login() {
 
                             {/* Remember Checkbox */}
                             <div className="flex items-center justify-between text-xs pt-1">
-                                <label className="flex items-center gap-2 cursor-pointer text-neutral-400 hover:text-white transition-colors">
+                                <label className="flex items-center gap-2 cursor-pointer text-slate-600 hover:text-ink transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={data.remember}
                                         onChange={(e) =>
                                             setData("remember", e.target.checked)
                                         }
-                                        className="rounded border-white/20 bg-[#161922] text-accent focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                                        className="rounded border-slate-300 bg-white text-primary focus:ring-0 focus:ring-offset-0 cursor-pointer"
                                     />
                                     <span>Maintain Session</span>
                                 </label>
@@ -108,7 +111,7 @@ export default function Login() {
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full h-11 bg-accent hover:bg-[#bde600] text-black font-semibold text-sm rounded-xl gap-2 mt-4"
+                                className="w-full h-11 bg-primary hover:bg-primary-hover text-white font-semibold text-sm rounded-xl gap-2 mt-4 shadow-md shadow-primary/20 cursor-pointer"
                             >
                                 <span>{processing ? "Authenticating..." : "Authorize Access"}</span>
                                 <ArrowRight className="w-4 h-4" />
@@ -117,7 +120,7 @@ export default function Login() {
                     </div>
 
                     <div className="text-center">
-                        <span className="text-[11px] font-mono text-neutral-500">
+                        <span className="text-[11px] font-mono text-slate-500">
                             SECURED BY CUTTING EDGER OPS ENGINE
                         </span>
                     </div>

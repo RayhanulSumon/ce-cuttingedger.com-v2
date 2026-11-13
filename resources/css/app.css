@@ -31,15 +31,15 @@
     --color-page: #f2f2f1; /* page background */
     --color-surface: #ffffff; /* cards, panels */
 
-    --color-accent: #f5a623;
-    --color-accent-hover: #e09214;
-    --color-accent-dim: rgba(245, 166, 35, 0.15);
-    --color-accent-glow: rgba(245, 166, 35, 0.28);
-    --color-dark-bg: #0a0b0e;
-    --color-dark-surface: #12141a;
-    --color-dark-elevated: #1a1d26;
-    --color-dark-border: rgba(255, 255, 255, 0.08);
-    --font-admin: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --color-accent: #f5761a;
+    --color-accent-hover: #e0650c;
+    --color-accent-dim: rgba(245, 118, 26, 0.12);
+    --color-accent-glow: rgba(245, 118, 26, 0.24);
+    --color-dark-bg: #f4f7fb;
+    --color-dark-surface: #ffffff;
+    --color-dark-elevated: #f8fafc;
+    --color-dark-border: rgba(15, 23, 42, 0.09);
+    --font-admin: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
@@ -47,24 +47,24 @@
     --bg-main: #f8f9fc;
     --bg-surface: #ffffff;
     --bg-surface-elevated: #f0f2f7;
-    --border-subtle: rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.16);
-    --text-primary: #0a0c10;
+    --border-subtle: rgba(15, 23, 42, 0.08);
+    --border-strong: rgba(15, 23, 42, 0.16);
+    --text-primary: #16191f;
     --text-secondary: #4a5264;
-    --text-muted: #838d9e;
-    --accent: #f5a623;
-    --accent-hover: #e09214;
-    --accent-dim: rgba(245, 166, 35, 0.15);
-    --accent-glow: rgba(245, 166, 35, 0.25);
-    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
-    --sidebar: hsl(0 0% 98%);
-    --sidebar-foreground: hsl(240 5.3% 26.1%);
-    --sidebar-primary: hsl(240 5.9% 10%);
-    --sidebar-primary-foreground: hsl(0 0% 98%);
-    --sidebar-accent: hsl(240 4.8% 95.9%);
-    --sidebar-accent-foreground: hsl(240 5.9% 10%);
-    --sidebar-border: hsl(220 13% 91%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    --text-muted: #5d6572;
+    --accent: #f5761a;
+    --accent-hover: #e0650c;
+    --accent-dim: rgba(245, 118, 26, 0.12);
+    --accent-glow: rgba(245, 118, 26, 0.22);
+    --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.06);
+    --sidebar: #ffffff;
+    --sidebar-foreground: #16191f;
+    --sidebar-primary: #f5761a;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #f1f5f9;
+    --sidebar-accent-foreground: #16191f;
+    --sidebar-border: #e2e8f0;
+    --sidebar-ring: #f5761a;
 }
 
 @media (max-width: 1023px) {
@@ -258,7 +258,7 @@ button:focus-visible:not([data-slot="button"]):not([data-slot="input"]) {
     }
 }
 
-/* Fix Browser Autofill (Chrome/Edge/Safari/Firefox) turning inputs bright white/blue */
+/* Fix Browser Autofill (Chrome/Edge/Safari/Firefox) for consistent light editorial theme */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -269,20 +269,153 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-    -webkit-text-fill-color: #ffffff !important;
-    caret-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0 1000px #0d0f15 inset !important;
-    box-shadow: 0 0 0 1000px #0d0f15 inset !important;
+    -webkit-text-fill-color: #16191f !important;
+    caret-color: #16191f !important;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
     transition: background-color 5000s ease-in-out 0s !important;
 }
 
-/* Ensure select and its option popup menus respect dark theme across OS/browsers */
+/* Ensure select and its option popup menus match the clean light theme */
 select {
-    color-scheme: dark;
+    color-scheme: light;
 }
 select option {
-    background-color: #12141c;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #16191f;
+}
+
+/* Unified Light Editorial Theme for Admin Shell & Modals (Consistent with Homepage) */
+.admin-shell,
+[data-slot="dialog-content"],
+[data-slot="alert-dialog-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"] {
+    color: #16191f;
+}
+
+.admin-shell .bg-\[\#08090c\],
+.admin-shell .bg-\[\#0a0b0e\],
+.admin-shell .bg-\[\#0a0b0f\] {
+    background-color: #f4f7fb !important;
+}
+
+.admin-shell .bg-\[\#0c0e14\],
+.admin-shell .bg-\[\#0f1117\],
+.admin-shell .bg-\[\#0f1118\],
+.admin-shell .bg-\[\#10121a\],
+.admin-shell .bg-\[\#12141a\],
+.admin-shell .bg-\[\#12141c\],
+[data-slot="dialog-content"].bg-\[\#0f1117\],
+[data-slot="dialog-content"].bg-\[\#12141a\],
+[data-slot="dialog-content"].bg-\[\#12141c\],
+[data-slot="alert-dialog-content"].bg-\[\#12141a\],
+[data-slot="alert-dialog-content"].bg-\[\#12141c\],
+[data-slot="dropdown-menu-content"].bg-\[\#0c0e14\],
+[data-slot="dropdown-menu-content"].bg-\[\#12141a\],
+[data-slot="dropdown-menu-content"].bg-\[\#12141c\] {
+    background-color: #ffffff !important;
+    color: #16191f !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.08) !important;
+}
+
+.admin-shell .bg-\[\#141824\],
+.admin-shell .bg-\[\#161922\],
+.admin-shell .bg-\[\#181b24\],
+.admin-shell .bg-\[\#0e1017\],
+.admin-shell .bg-black\/40,
+.admin-shell .bg-black\/50,
+.admin-shell .bg-white\/5,
+.admin-shell .bg-white\/10,
+[data-slot="dialog-content"] .bg-\[\#12141a\],
+[data-slot="dialog-content"] .bg-\[\#141824\],
+[data-slot="dialog-content"] .bg-\[\#161922\],
+[data-slot="dialog-content"] .bg-black\/40,
+[data-slot="dialog-content"] .bg-black\/50,
+[data-slot="dialog-content"] .bg-white\/5,
+[data-slot="dialog-content"] .bg-white\/10 {
+    background-color: #f8fafc !important;
+}
+
+.admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.admin-shell textarea,
+.admin-shell select,
+[data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+[data-slot="dialog-content"] textarea,
+[data-slot="dialog-content"] select {
+    background-color: #ffffff !important;
+    color: #16191f !important;
+    border-color: #cbd5e1 !important;
+}
+
+.admin-shell .text-white,
+[data-slot="dialog-content"] .text-white,
+[data-slot="alert-dialog-content"] .text-white,
+[data-slot="dropdown-menu-content"] .text-white {
+    color: #16191f !important;
+}
+
+.admin-shell .bg-primary,
+.admin-shell .bg-accent,
+.admin-shell .bg-accent.text-black,
+.admin-shell .bg-ink.text-white,
+.admin-shell .bg-rose-600.text-white,
+.admin-shell .bg-emerald-600.text-white,
+.admin-shell .bg-purple-500.text-white,
+[data-slot="dialog-content"] .bg-primary,
+[data-slot="dialog-content"] .bg-accent,
+[data-slot="dialog-content"] .bg-accent.text-black,
+[data-slot="dialog-content"] .bg-rose-600.text-white,
+[data-slot="alert-dialog-content"] .bg-rose-600.text-white {
+    color: #ffffff !important;
+}
+
+.admin-shell .text-white\/90,
+.admin-shell .text-white\/80,
+.admin-shell .text-white\/70,
+.admin-shell .text-neutral-200,
+.admin-shell .text-neutral-300,
+[data-slot="dialog-content"] .text-white\/90,
+[data-slot="dialog-content"] .text-white\/80,
+[data-slot="dialog-content"] .text-white\/70 {
+    color: #334155 !important;
+}
+
+.admin-shell .text-white\/60,
+.admin-shell .text-white\/50,
+.admin-shell .text-white\/40,
+.admin-shell .text-neutral-400,
+.admin-shell .text-neutral-500,
+[data-slot="dialog-content"] .text-white\/60,
+[data-slot="dialog-content"] .text-white\/50,
+[data-slot="dialog-content"] .text-white\/40,
+[data-slot="alert-dialog-content"] .text-white\/60 {
+    color: #64748b !important;
+}
+
+.admin-shell .text-\[\#00f5ff\],
+[data-slot="dialog-content"] .text-\[\#00f5ff\],
+[data-slot="dropdown-menu-content"] .text-\[\#00f5ff\] {
+    color: #0284c7 !important;
+}
+
+.admin-shell .border-white\/5,
+.admin-shell .border-white\/10,
+.admin-shell .border-white\/15,
+.admin-shell .border-white\/20,
+[data-slot="dialog-content"] .border-white\/5,
+[data-slot="dialog-content"] .border-white\/10,
+[data-slot="dialog-content"] .border-white\/15,
+[data-slot="dialog-content"] .border-white\/20,
+[data-slot="alert-dialog-content"] .border-white\/10,
+[data-slot="dropdown-menu-content"] .border-white\/10 {
+    border-color: #e2e8f0 !important;
+}
+
+.admin-shell .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
+.admin-shell .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #f1f5f9 !important;
 }
 
 .dark {

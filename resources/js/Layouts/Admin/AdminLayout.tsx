@@ -98,20 +98,20 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     const getRoleBadge = (roleName?: string) => {
         if (roleName === "super_admin") {
             return (
-                <span className="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-accent/30 bg-accent/10 text-accent whitespace-nowrap shadow-xs">
+                <span className="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-primary/30 bg-primary/10 text-primary whitespace-nowrap shadow-xs">
                     SUPER ADMIN
                 </span>
             );
         }
         if (roleName === "admin") {
             return (
-                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 whitespace-nowrap">
+                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-emerald-600/30 bg-emerald-50 text-emerald-700 whitespace-nowrap">
                     ADMIN
                 </span>
             );
         }
         return (
-            <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-white/10 bg-white/5 text-neutral-400 whitespace-nowrap">
+            <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border border-slate-200 bg-slate-100 text-slate-600 whitespace-nowrap">
                 USER
             </span>
         );
@@ -306,22 +306,22 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     return (
         <TooltipProvider>
             <SidebarProvider defaultOpen={true}>
-                <div className="dark admin-shell min-h-screen w-full bg-[#08090c] text-white flex antialiased">
-                    {/* Official shadcn Sidebar */}
-                    <Sidebar className="border-r border-white/10 bg-[#0c0e14] text-white">
-                        <SidebarHeader className="border-b border-white/10 p-4">
+                <div className="admin-shell min-h-screen w-full bg-[#f4f7fb] text-ink flex antialiased">
+                    {/* Official shadcn Sidebar — Light Editorial Theme */}
+                    <Sidebar className="border-r border-slate-200/90 bg-white text-ink">
+                        <SidebarHeader className="border-b border-slate-200/80 p-4">
                             <Link
                                 href="/admin"
                                 className="flex items-center gap-2.5 group cursor-pointer"
                             >
-                                <div className="w-8 h-8 rounded-lg bg-accent text-black font-black flex items-center justify-center font-mono text-sm tracking-tighter">
+                                <div className="w-8 h-8 rounded-lg bg-primary text-white font-black flex items-center justify-center font-mono text-sm tracking-tighter shadow-xs">
                                     CE
                                 </div>
                                 <div className="group-data-[collapsible=icon]:hidden">
-                                    <span className="font-bold text-sm tracking-tight text-white block">
+                                    <span className="font-bold text-sm tracking-tight text-ink block">
                                         CUTTING EDGER
                                     </span>
-                                    <span className="text-[10px] font-mono tracking-widest text-accent uppercase block">
+                                    <span className="text-[10px] font-mono tracking-widest text-primary uppercase block">
                                         OPS PORTAL
                                     </span>
                                 </div>
@@ -331,11 +331,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         <SidebarContent
                             ref={sidebarContentRef}
                             onScroll={handleSidebarScroll}
-                            className="px-2 py-4 space-y-4"
+                            className="px-2 py-4 space-y-4 bg-white"
                         >
                             {navSections.map((section, idx) => (
                                 <SidebarGroup key={idx}>
-                                    <SidebarGroupLabel className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase font-semibold px-2">
+                                    <SidebarGroupLabel className="text-[10px] font-mono tracking-widest text-slate-400 uppercase font-semibold px-2">
                                         {section.title}
                                     </SidebarGroupLabel>
                                     <SidebarMenu>
@@ -350,8 +350,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                         className={cn(
                                                             "rounded-xl text-xs transition-colors py-2 px-3",
                                                             item.active
-                                                                ? "bg-[#181b24] text-accent font-semibold border border-white/10"
-                                                                : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                                                ? "bg-primary/10 text-primary font-semibold border border-primary/20"
+                                                                : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
                                                         )}
                                                     >
                                                         <Link
@@ -363,8 +363,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                 className={cn(
                                                                     "w-4 h-4",
                                                                     item.active
-                                                                        ? "text-accent"
-                                                                        : "text-neutral-500 group-hover:text-white"
+                                                                        ? "text-primary"
+                                                                        : "text-slate-400 group-hover:text-ink"
                                                                 )}
                                                             />
                                                             <span className="truncate flex-1">
@@ -373,8 +373,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                             {"badge" in item && item.badge && (
                                                                 <span
                                                                     className={cn(
-                                                                        "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[10px] font-mono font-bold tracking-tight shadow-xs",
-                                                                        ("badgeColor" in item && item.badgeColor) || "bg-accent text-black"
+                                                                        "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[10px] font-mono font-bold tracking-tight shadow-xs bg-primary text-white"
                                                                     )}
                                                                 >
                                                                     {item.badge}
@@ -390,13 +389,13 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             ))}
                         </SidebarContent>
 
-                        <SidebarFooter className="border-t border-white/10 p-4 bg-[#0a0b0f] space-y-3">
+                        <SidebarFooter className="border-t border-slate-200/80 p-4 bg-[#f8fafc] space-y-3">
                             <div className="flex items-center justify-between gap-2 min-w-0 group-data-[collapsible=icon]:hidden">
                                 <div className="flex flex-col min-w-0 flex-1">
-                                    <span className="text-xs font-semibold text-white truncate">
+                                    <span className="text-xs font-semibold text-ink truncate">
                                         {user?.name || "Architect"}
                                     </span>
-                                    <span className="text-[11px] text-neutral-400 truncate">
+                                    <span className="text-[11px] text-slate-500 truncate">
                                         {user?.email}
                                     </span>
                                 </div>
@@ -405,11 +404,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 pt-2 border-t border-white/5 group-data-[collapsible=icon]:hidden">
+                            <div className="flex items-center gap-2 pt-2 border-t border-slate-200/70 group-data-[collapsible=icon]:hidden">
                                 <Link
                                     href="/"
                                     target="_blank"
-                                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[11px] rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white transition-colors"
+                                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[11px] rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-ink border border-slate-200 transition-colors"
                                 >
                                     <ExternalLink className="w-3.5 h-3.5" />
                                     <span>Live Site</span>
@@ -418,7 +417,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                     href="/admin/logout"
                                     method="post"
                                     as="button"
-                                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[11px] rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition-colors cursor-pointer"
+                                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[11px] rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors cursor-pointer"
                                 >
                                     <LogOut className="w-3.5 h-3.5" />
                                     <span>Sign Out</span>
@@ -428,22 +427,22 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     </Sidebar>
 
                     {/* Main Inset Content Area */}
-                    <SidebarInset className="bg-[#08090c] text-white flex-1 flex flex-col min-w-0">
+                    <SidebarInset className="bg-[#f4f7fb] text-ink flex-1 flex flex-col min-w-0">
                         {/* Header with shadcn SidebarTrigger */}
-                        <header className="h-16 border-b border-white/10 bg-[#0c0e14]/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20">
+                        <header className="h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20">
                             <div className="flex items-center gap-3">
-                                <SidebarTrigger className="text-neutral-400 hover:text-white hover:bg-white/10" />
-                                <div className="h-4 w-px bg-white/10" />
-                                <Terminal className="w-4 h-4 text-accent" />
-                                <span className="text-xs font-mono uppercase tracking-widest text-neutral-400">
+                                <SidebarTrigger className="text-slate-500 hover:text-ink hover:bg-slate-100" />
+                                <div className="h-4 w-px bg-slate-200" />
+                                <Terminal className="w-4 h-4 text-primary" />
+                                <span className="text-xs font-mono uppercase tracking-widest text-slate-500">
                                     OPS // {title || "SYSTEM ACTIVE"}
                                 </span>
                             </div>
 
                             <div className="flex items-center gap-3">
                                 <AdminNotificationDropdown />
-                                <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-mono flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-mono flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                     <span>Connected</span>
                                 </span>
                             </div>

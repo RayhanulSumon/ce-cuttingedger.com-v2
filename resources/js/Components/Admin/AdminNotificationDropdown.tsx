@@ -200,12 +200,12 @@ export function AdminNotificationDropdown() {
             <DropdownMenuTrigger asChild>
                 <button
                     type="button"
-                    className="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-300 hover:text-white transition-all cursor-pointer focus:outline-hidden"
+                    className="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-600 hover:text-ink transition-all cursor-pointer focus:outline-hidden"
                     title="Real-time Admin Notifications"
                 >
                     <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-accent text-black font-mono font-bold text-[10px] shadow-sm animate-pulse">
+                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-primary text-white font-mono font-bold text-[10px] shadow-sm animate-pulse">
                             {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                     )}
@@ -215,18 +215,18 @@ export function AdminNotificationDropdown() {
             <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-84 sm:w-96 bg-[#0c0e14] border border-white/10 rounded-2xl shadow-2xl p-0 overflow-hidden text-white z-50 flex flex-col"
+                className="w-84 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl p-0 overflow-hidden text-ink z-50 flex flex-col"
             >
                 {/* Header */}
-                <div className="p-3.5 px-4 border-b border-white/10 bg-[#12141c] flex items-center justify-between">
+                <div className="p-3.5 px-4 border-b border-slate-200 bg-[#f8fafc] flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-white">Notifications</span>
+                        <span className="font-bold text-sm text-ink">Notifications</span>
                         {unreadCount > 0 ? (
-                            <span className="px-1.5 py-0.2 rounded-full bg-accent/15 text-accent text-[10px] font-mono font-bold border border-accent/30">
+                            <span className="px-1.5 py-0.2 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-bold border border-primary/25">
                                 {unreadCount} new
                             </span>
                         ) : (
-                            <span className="text-xs text-neutral-500 font-mono">All read</span>
+                            <span className="text-xs text-slate-400 font-mono">All read</span>
                         )}
                     </div>
 
@@ -236,10 +236,10 @@ export function AdminNotificationDropdown() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={markAllRead}
-                                className="h-7 px-2 text-[11px] font-mono text-neutral-400 hover:text-white hover:bg-white/5 gap-1"
+                                className="h-7 px-2 text-[11px] font-mono text-slate-600 hover:text-ink hover:bg-slate-100 gap-1"
                                 title="Mark all as read"
                             >
-                                <CheckCheck className="w-3.5 h-3.5 text-accent" />
+                                <CheckCheck className="w-3.5 h-3.5 text-primary" />
                                 <span>Mark read</span>
                             </Button>
                         )}
@@ -248,7 +248,7 @@ export function AdminNotificationDropdown() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={clearAll}
-                                className="h-7 w-7 p-0 text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10"
+                                className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                                 title="Clear all notifications"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
