@@ -298,6 +298,10 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.pressTarget = s.target;
         s.travelled = 0;
         event.currentTarget.setPointerCapture(event.pointerId);
+        // On a drag handle (background model / empty stage) react instantly; on a BUY / VIEW model wait to see if it is a click.
+        if (event.pointerType === 'mouse') {
+            setCursorMode((mode) => (mode === 'drag' ? 'dragging' : mode));
+        }
     };
 
     const onPointerUp = (event: React.PointerEvent<HTMLElement>) => {
