@@ -21,9 +21,10 @@ class PageControllerTest extends TestCase
         $response = $this->get('/about');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('About')
-            ->has('leadership')
+        $response->assertInertia(
+            fn(Assert $page) => $page
+                ->component('About')
+                ->has('leadership')
         );
     }
 
@@ -31,7 +32,7 @@ class PageControllerTest extends TestCase
     {
         $this->get(route('digital-twins.index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('DigitalTwins/Index'));
+            ->assertInertia(fn(Assert $page) => $page->component('DigitalTwins/Index'));
     }
 
     public function test_renders_pricing_page(): void
@@ -39,10 +40,11 @@ class PageControllerTest extends TestCase
         $response = $this->get('/pricing');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Pricing')
-            ->has('plans', 3)
-            ->has('faqs')
+        $response->assertInertia(
+            fn(Assert $page) => $page
+                ->component('Pricing')
+                ->has('plans', 3)
+                ->has('faqs')
         );
     }
 
@@ -53,8 +55,8 @@ class PageControllerTest extends TestCase
 
     public function test_renders_privacy_and_terms_pages(): void
     {
-        $this->get('/privacy')->assertStatus(200)->assertInertia(fn (Assert $page) => $page->component('Privacy'));
-        $this->get('/terms')->assertStatus(200)->assertInertia(fn (Assert $page) => $page->component('Terms'));
+        $this->get('/privacy')->assertStatus(200)->assertInertia(fn(Assert $page) => $page->component('Privacy'));
+        $this->get('/terms')->assertStatus(200)->assertInertia(fn(Assert $page) => $page->component('Terms'));
     }
 
     public function test_renders_robots_txt_as_plain_text(): void
@@ -71,12 +73,13 @@ class PageControllerTest extends TestCase
         $response = $this->get('/digital-twins/order?mode=custom&ref=Look%2016');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('DigitalTwins/Order')
-            ->where('initialMode', 'custom')
-            ->where('initialReference', 'Look 16')
-            ->has('digitalTwins')
-            ->has('attributes')
+        $response->assertInertia(
+            fn(Assert $page) => $page
+                ->component('DigitalTwins/Order')
+                ->where('initialMode', 'custom')
+                ->where('initialReference', 'Look 16')
+                ->has('digitalTwins')
+                ->has('attributes')
         );
     }
 

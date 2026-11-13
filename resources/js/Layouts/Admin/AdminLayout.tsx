@@ -282,24 +282,24 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         },
         ...(isSuperAdmin
             ? [
-                  {
-                      title: "SYSTEM & ACCESS",
-                      items: [
-                          {
-                              name: "User Management",
-                              href: "/admin/users",
-                              icon: Shield,
-                              active: url.startsWith("/admin/users"),
-                          },
-                          {
-                              name: "Settings",
-                              href: "/admin/settings",
-                              icon: Settings,
-                              active: url.startsWith("/admin/settings"),
-                          },
-                      ],
-                  },
-              ]
+                {
+                    title: "SYSTEM & ACCESS",
+                    items: [
+                        {
+                            name: "User Management",
+                            href: "/admin/users",
+                            icon: Shield,
+                            active: url.startsWith("/admin/users"),
+                        },
+                        {
+                            name: "Settings",
+                            href: "/admin/settings",
+                            icon: Settings,
+                            active: url.startsWith("/admin/settings"),
+                        },
+                    ],
+                },
+            ]
             : []),
     ];
 
