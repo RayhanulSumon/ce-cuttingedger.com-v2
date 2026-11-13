@@ -348,7 +348,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 <div className="admin-shell min-h-screen w-full bg-[#f5f7fb] text-ink flex antialiased">
                     {/* Clean Light Editorial Sidebar */}
                     <Sidebar className="border-r border-slate-200/90 bg-white text-ink">
-                        <SidebarHeader className="border-b border-slate-100 px-5 py-4">
+                        <SidebarHeader className="border-b border-slate-100 bg-white px-5 py-4">
                             <Link
                                 href="/admin"
                                 className="flex items-center justify-between gap-2 group cursor-pointer"

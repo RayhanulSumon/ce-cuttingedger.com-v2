@@ -64,6 +64,15 @@ Route::get('/register', [ClientAuthController::class, 'showRegister'])->name('re
 Route::post('/register', [ClientAuthController::class, 'register'])->name('register.submit');
 Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
 
+Route::get('/forgot-password', [ClientAuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [ClientAuthController::class, 'sendResetLinkEmail'])
+    ->middleware('throttle:6,1')
+    ->name('password.email');
+Route::get('/reset-password/{token}', [ClientAuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [ClientAuthController::class, 'resetPassword'])
+    ->middleware('throttle:6,1')
+    ->name('password.store');
+
 Route::get('/auth/google/redirect', [ClientAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [ClientAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 

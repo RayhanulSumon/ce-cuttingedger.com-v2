@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Password as PasswordBroker;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
@@ -362,6 +364,97 @@ class ClientAuthController extends Controller
     }
 
     /**
+     * Show the forgot password request form (used by both Clients and Admins).
+     */
+    public function showForgotPassword(Request $request): Response
+    {
+        return Inertia::render('Auth/ForgotPassword', [
+            'from' => (string) $request->query('from', 'client'),
+        ]);
+    }
+
+    /**
+     * Send a password reset link to the given user's email.
+     */
+    public function sendResetLinkEmail(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+        ]);
+
+        try {
+            $status = PasswordBroker::sendResetLink($request->only('email'));
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'Unable to send password reset email right now. Please check mail settings.');
+        }
+
+        if ($status === PasswordBroker::RESET_LINK_SENT) {
+            return back()->with('success', __($status));
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [__($status)],
+        ]);
+    }
+
+    /**
+     * Display the password reset view for the given token.
+     */
+    public function showResetPassword(Request $request, string $token): Response
+    {
+        return Inertia::render('Auth/ResetPassword', [
+            'token' => $token,
+            'email' => (string) $request->query('email', ''),
+        ]);
+    }
+
+    /**
+     * Handle an incoming new password request.
+     */
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ]);
+
+        $status = PasswordBroker::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password): void {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === PasswordBroker::PASSWORD_RESET) {
+            $user = User::where('email', strtolower(trim((string) $request->input('email'))))->first();
+
+            if ($user && $user->isAdmin()) {
+                return redirect()->route('admin.login')->with(
+                    'success',
+                    'Your password has been reset! You can now sign in to the Admin Portal.'
+                );
+            }
+
+            return redirect()->route('login')->with(
+                'success',
+                'Your password has been reset! You can now sign in with your new password.'
+            );
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [__($status)],
+        ]);
+    }
+
+    /**
      * Resolve Google OAuth credentials from config or settings table.
      *
      * @return array{0: string, 1: string, 2: string}
@@ -383,4 +476,3 @@ class ClientAuthController extends Controller
         return $clientId !== '' && $clientSecret !== '';
     }
 }
-

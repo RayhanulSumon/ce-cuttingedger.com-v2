@@ -1,11 +1,12 @@
 import React from "react";
-import { useForm } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import { SeoHead } from "@/Components/Common/SeoHead";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Terminal, Shield, Lock, Mail, ArrowRight } from "lucide-react";
+import { CheckCircle2, Lock, Mail, ArrowRight } from "lucide-react";
 
 export default function Login() {
+    const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const { data, setData, post, processing, errors } = useForm({
         email: "",
         password: "",
@@ -43,6 +44,19 @@ export default function Login() {
                             </h1>
                         </div>
                     </div>
+
+                    {flash?.success && (
+                        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-500/30 bg-emerald-50 p-4 text-xs font-semibold text-emerald-900">
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                            <span>{flash.success}</span>
+                        </div>
+                    )}
+
+                    {flash?.error && (
+                        <div className="rounded-2xl border border-rose-500/30 bg-rose-50 p-4 text-xs font-semibold text-rose-800">
+                            {flash.error}
+                        </div>
+                    )}
 
                     {/* Login Card */}
                     <div className="p-8 rounded-3xl bg-white border border-slate-200/90 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.12)] space-y-6">
@@ -92,7 +106,7 @@ export default function Login() {
                                 )}
                             </div>
 
-                            {/* Remember Checkbox */}
+                            {/* Remember Checkbox & Forgot Password */}
                             <div className="flex items-center justify-between text-xs pt-1">
                                 <label className="flex items-center gap-2 cursor-pointer text-slate-600 hover:text-ink transition-colors">
                                     <input
@@ -105,6 +119,12 @@ export default function Login() {
                                     />
                                     <span>Maintain Session</span>
                                 </label>
+                                <Link
+                                    href="/forgot-password?from=admin"
+                                    className="font-semibold text-primary hover:underline"
+                                >
+                                    Forgot password?
+                                </Link>
                             </div>
 
                             {/* Submit Button */}

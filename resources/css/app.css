@@ -42,7 +42,8 @@
     --font-admin: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-:root {
+:root,
+.dark {
     --header-height: 61px;
     --bg-main: #f8f9fc;
     --bg-surface: #ffffff;
@@ -61,8 +62,8 @@
     --sidebar-foreground: #16191f;
     --sidebar-primary: #f5761a;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f1f5f9;
-    --sidebar-accent-foreground: #16191f;
+    --sidebar-accent: #f5761a;
+    --sidebar-accent-foreground: #ffffff;
     --sidebar-border: #e2e8f0;
     --sidebar-ring: #f5761a;
 }
@@ -71,22 +72,6 @@
     :root {
         --header-height: 67px;
     }
-}
-
-html.dark {
-    --bg-main: #0a0b0e;
-    --bg-surface: #12141a;
-    --bg-surface-elevated: #1a1d26;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-strong: rgba(255, 255, 255, 0.15);
-    --text-primary: #f5f6f9;
-    --text-secondary: #9aa1b2;
-    --text-muted: #5e6578;
-    --accent: #f5a623;
-    --accent-hover: #e09214;
-    --accent-dim: rgba(245, 166, 35, 0.15);
-    --accent-glow: rgba(245, 166, 35, 0.28);
-    --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 html {
@@ -416,17 +401,6 @@ select option {
 .admin-shell .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
 .admin-shell .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
     border-color: #f1f5f9 !important;
-}
-
-.dark {
-    --sidebar: hsl(240 5.9% 10%);
-    --sidebar-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-primary: hsl(224.3 76.3% 48%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(240 3.7% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(240 3.7% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 @theme inline {

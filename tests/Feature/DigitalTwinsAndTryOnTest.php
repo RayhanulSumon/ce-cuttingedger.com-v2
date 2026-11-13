@@ -7,11 +7,14 @@ use App\Models\Order;
 use App\Models\Role;
 use App\Models\TryOnLook;
 use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -315,5 +318,47 @@ class DigitalTwinsAndTryOnTest extends TestCase
                 ->component('Admin/Users/Index')
                 ->has('users')
             );
+    }
+
+    public function test_client_and_admin_can_request_and_reset_password_via_email(): void
+    {
+        Notification::fake();
+
+        $this->get('/forgot-password')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
+
+        // Client requests reset link
+        $this->post('/forgot-password', [
+            'email' => $this->client->email,
+        ])->assertRedirect();
+
+        Notification::assertSentTo($this->client, ResetPasswordNotification::class);
+
+        // Client resets password using token
+        $clientToken = Password::createToken($this->client);
+        $this->get("/reset-password/{$clientToken}?email={$this->client->email}")
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/ResetPassword'));
+
+        $this->post('/reset-password', [
+            'token' => $clientToken,
+            'email' => $this->client->email,
+            'password' => 'NewClientPass123!',
+            'password_confirmation' => 'NewClientPass123!',
+        ])->assertRedirect(route('login'));
+
+        $this->assertTrue(Hash::check('NewClientPass123!', $this->client->fresh()->password));
+
+        // Admin resets password using token and redirects to admin.login
+        $adminToken = Password::createToken($this->admin);
+        $this->post('/reset-password', [
+            'token' => $adminToken,
+            'email' => $this->admin->email,
+            'password' => 'NewAdminPass123!',
+            'password_confirmation' => 'NewAdminPass123!',
+        ])->assertRedirect(route('admin.login'));
+
+        $this->assertTrue(Hash::check('NewAdminPass123!', $this->admin->fresh()->password));
     }
 }

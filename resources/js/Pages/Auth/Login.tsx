@@ -170,6 +170,12 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                                 />
                                 <span>Keep me signed in</span>
                             </label>
+                            <Link
+                                href="/forgot-password"
+                                className="font-bold text-primary hover:underline"
+                            >
+                                Forgot password?
+                            </Link>
                         </div>
 
                         <button
