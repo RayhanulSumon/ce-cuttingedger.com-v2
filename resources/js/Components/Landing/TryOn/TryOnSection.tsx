@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { CustomOrderCta, orderUrl, PAD_X, Reveal, SectionIntro, SectionProps } from '../shared';
-import { LOOKS } from './looks';
+import { CustomOrderCta, PAD_X, Reveal, SectionIntro, SectionProps, tryOnQuoteUrl } from '../shared';
+import { Look, LOOKS } from './looks';
 import { LookView } from './LookView';
 import { PieceCards } from './PieceCards';
 import { RunwayStage } from './RunwayStage';
@@ -9,11 +9,16 @@ import { useRingRunway } from './useRingRunway';
 /** How long each look stays at the front before the ring turns by itself. */
 const AUTOPLAY_MS = 5000;
 
+interface TryOnSectionProps extends SectionProps {
+    looks?: Look[];
+}
+
 /**
  * Section 02 — a ring runway of styled looks. Clicking the front model opens the look view,
  * where each garment can be inspected beside the model.
  */
-export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange }: SectionProps) {
+export const TryOnSection = memo(function TryOnSection({ active, looks, onOverlayChange }: TryOnSectionProps) {
+    const activeLooks = looks && looks.length > 0 ? looks : LOOKS;
     const [lookIndex, setLookIndex] = useState(0);
     const [lookOpen, setLookOpen] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
@@ -39,6 +44,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
     const runway = useRingRunway({
         running: active,
         interactive: !lookOpen,
+        looks: activeLooks,
         onLookChange: handleLookChange,
         onFrontActorClick: openLook,
     });
@@ -60,10 +66,10 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
             return;
         }
         preloaded.current = true;
-        new Set(LOOKS.flatMap((item) => item.pieces.map((piece) => piece.image))).forEach((src) => {
+        new Set(activeLooks.flatMap((item) => item.pieces.map((piece) => piece.image))).forEach((src) => {
             new Image().src = src;
         });
-    }, [active]);
+    }, [active, activeLooks]);
 
     useEffect(() => {
         if (!autoplaying) {
@@ -115,7 +121,7 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
         cardRefs.current[pieceIndex]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     };
 
-    const look = LOOKS[lookIndex] ?? LOOKS[0];
+    const look = activeLooks[lookIndex] ?? activeLooks[0];
     const fadeWhenOpen = `transition-opacity duration-300 ${lookOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`;
 
     return (
@@ -130,10 +136,12 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
             <div className="relative flex min-h-0 flex-col">
                 <SectionIntro active={active} title="Virtual Try-On" className={`relative z-10 ${fadeWhenOpen}`}>
-                    Six looks, styled head to toe. Click the front model to shop each piece, or drag to spin the runway.
+                    Styled looks, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
                 </SectionIntro>
 
                 <RunwayStage
+                    looks={activeLooks}
+                    actorCount={runway.actorCount}
                     stageRef={runway.stageRef}
                     actorRefs={runway.actorRefs}
                     cursorRef={runway.cursorRef}
@@ -145,8 +153,8 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
                 <div className={`relative z-10 flex flex-col items-center gap-1 pt-1 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.2} className="flex flex-col items-center gap-2 text-center">
                         <p className="font-michroma text-sm tracking-[0.14em] text-ink sm:text-base">{look.modelName}</p>
-                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${LOOKS.length}`}>
-                            {LOOKS.map((_, i) => (
+                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${activeLooks.length}`}>
+                            {activeLooks.map((_, i) => (
                                 <span
                                     key={i}
                                     className={`h-1 rounded-full transition-all duration-500 ${i === lookIndex ? 'w-6 bg-primary' : 'w-1.5 bg-ink/20'}`}
@@ -172,9 +180,9 @@ export const TryOnSection = memo(function TryOnSection({ active, onOverlayChange
 
             <CustomOrderCta
                 active={active}
-                href={orderUrl('virtual-try-on', look.name)}
+                href={tryOnQuoteUrl(look.name)}
                 question="Want this look on your own garments?"
-                buttonLabel="Start Try-On Now"
+                buttonLabel="Request Try-On Quote"
                 className={fadeWhenOpen}
             />
 

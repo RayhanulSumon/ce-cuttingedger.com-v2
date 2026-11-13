@@ -131,13 +131,45 @@ export function SectionIntro({
     );
 }
 
-/** Builds the custom order page URL, pre-filled with what the visitor was looking at. */
-export function orderUrl(service: string, reference?: string): string {
-    const query = new URLSearchParams({ service });
-    if (reference) {
-        query.set('ref', reference);
+/** Builds the dedicated Digital Twins Order / Configurator URL. */
+export function digitalTwinOrderUrl(params?: {
+    mode?: 'custom' | 'preset' | 'lifetime';
+    twin?: string;
+    ref?: string;
+}): string {
+    const query = new URLSearchParams();
+    if (params?.mode && params.mode !== 'custom') {
+        query.set('mode', params.mode);
     }
-    return `/order?${query.toString()}`;
+    if (params?.twin) {
+        query.set('twin', params.twin);
+    }
+    if (params?.ref) {
+        query.set('ref', params.ref);
+    }
+    const qs = query.toString();
+    return qs ? `/digital-twins/order?${qs}` : '/digital-twins/order';
+}
+
+/** Builds the dedicated Virtual Try-On Capability Quote URL. */
+export function tryOnQuoteUrl(look?: string, service?: string): string {
+    const query = new URLSearchParams();
+    if (look) {
+        query.set('look', look);
+    }
+    if (service && service !== 'virtual-try-on') {
+        query.set('service', service);
+    }
+    const qs = query.toString();
+    return qs ? `/virtual-try-on/quote?${qs}` : '/virtual-try-on/quote';
+}
+
+/** Builds the order or quote URL depending on the target service. */
+export function orderUrl(service: string, reference?: string): string {
+    if (service === 'digital-twins') {
+        return digitalTwinOrderUrl({ ref: reference });
+    }
+    return tryOnQuoteUrl(reference, service);
 }
 
 /**

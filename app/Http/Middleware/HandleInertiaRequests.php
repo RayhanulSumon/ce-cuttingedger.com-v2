@@ -82,9 +82,8 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'admin_badges' => fn () => $request->user()?->isAdmin() ? [
-                'pending_orders' => Order::where('status', 'pending')->where('payment_status', '!=', 'free_trial')->count(),
+                'pending_orders' => Order::where('status', 'pending')->count(),
                 'pending_consultations' => ChatConsultation::where('status', 'pending')->count(),
-                'pending_trials' => Order::where('status', 'pending')->where('payment_status', 'free_trial')->count(),
                 'unread_leads' => ContactMessage::where('inquiry_type', 'chat_lead')->where('status', 'new')->count(),
                 'new_messages' => ContactMessage::where('inquiry_type', '!=', 'chat_lead')->where('status', 'new')->count(),
             ] : null,

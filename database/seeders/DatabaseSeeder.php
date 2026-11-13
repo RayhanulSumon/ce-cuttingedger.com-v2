@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             RoleAndSuperAdminSeeder::class,
             CategoryAndProjectSeeder::class,
             CapabilitySeeder::class,
+            DigitalTwinSeeder::class,
+            TryOnLookSeeder::class,
             SeoSettingsSeeder::class,
             ClientSeeder::class,
             TestimonialSeeder::class,

@@ -66,26 +66,27 @@ class PageControllerTest extends TestCase
         $this->assertStringContainsString('User-agent: *', $response->getContent());
     }
 
-    public function test_renders_order_page_prefilled_from_query_string(): void
+    public function test_renders_digital_twin_order_page_prefilled_from_query_string(): void
     {
-        $response = $this->get('/order?service=digital-twins&ref=Look%2016');
+        $response = $this->get('/digital-twins/order?mode=custom&ref=Look%2016');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
-            ->component('Order')
-            ->where('service', 'digital-twins')
-            ->where('reference', 'Look 16')
+            ->component('DigitalTwins/Order')
+            ->where('initialMode', 'custom')
+            ->where('initialReference', 'Look 16')
+            ->has('digitalTwins')
+            ->has('attributes')
         );
     }
 
-    public function test_order_page_truncates_oversized_query_values(): void
+    public function test_legacy_order_route_redirects_to_dedicated_order_pages(): void
     {
-        $response = $this->get('/order?ref='.str_repeat('a', 500));
+        $this->get('/order?service=digital-twins&ref=Look%2016')
+            ->assertRedirect(route('digital-twins.order', ['ref' => 'Look 16']));
 
-        $response->assertInertia(fn (Assert $page) => $page
-            ->where('service', '')
-            ->where('reference', str_repeat('a', 120))
-        );
+        $this->get('/order?service=virtual-try-on&ref=Elena')
+            ->assertRedirect(route('try-on.quote', ['look' => 'Elena', 'service' => 'virtual-try-on']));
     }
 
     public function test_reviews_page_redirects_to_the_homepage_section(): void

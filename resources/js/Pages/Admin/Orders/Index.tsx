@@ -55,10 +55,15 @@ import { cn } from "@/lib/utils";
 interface OrderItem {
     id: number;
     order_number: string;
+    order_type?: string;
+    digital_twin_id?: number | null;
+    try_on_look_id?: number | null;
     chat_session_id?: string;
     client_name: string;
     client_email: string;
     client_phone?: string;
+    company?: string;
+    monthly_volume?: string;
     service_name: string;
     service_slug: string;
     complexity: string;
@@ -70,12 +75,13 @@ interface OrderItem {
     currency: string;
     turnaround: string;
     images: string[];
+    specifications?: Record<string, any>;
     completed_files: string[];
     cloud_link?: string | null;
     instructions?: string;
     admin_notes?: string;
     status: "pending" | "in_production" | "review" | "completed" | "cancelled";
-    payment_status: "unpaid" | "paid" | "invoice_sent";
+    payment_status: "unpaid" | "paid" | "invoice_sent" | "free_trial";
     source: string;
     created_at: string;
     created_at_formatted: string;
@@ -96,10 +102,14 @@ interface PageProps {
         pending: number;
         in_production: number;
         completed: number;
+        digital_twin_orders?: number;
+        try_on_quotes?: number;
+        total_trials?: number;
         total_revenue: number;
     };
     currentStatus?: string;
     currentPaymentStatus?: string;
+    currentType?: string;
     searchTerm?: string;
 }
 
@@ -108,6 +118,7 @@ export default function OrdersIndex({
     stats,
     currentStatus,
     currentPaymentStatus,
+    currentType,
     searchTerm,
 }: PageProps) {
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
@@ -123,6 +134,20 @@ export default function OrdersIndex({
             "/admin/orders",
             {
                 ...(status ? { status } : {}),
+                ...(currentType ? { type: currentType } : {}),
+                ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
+                ...(searchTerm ? { search: searchTerm } : {}),
+            },
+            { preserveState: true }
+        );
+    };
+
+    const handleTypeFilter = (type?: string) => {
+        router.get(
+            "/admin/orders",
+            {
+                ...(type ? { type } : {}),
+                ...(currentStatus ? { status: currentStatus } : {}),
                 ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
                 ...(searchTerm ? { search: searchTerm } : {}),
             },
@@ -134,6 +159,7 @@ export default function OrdersIndex({
         router.get(
             "/admin/orders",
             {
+                ...(currentType ? { type: currentType } : {}),
                 ...(currentStatus ? { status: currentStatus } : {}),
                 ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
                 ...(query ? { search: query } : {}),
@@ -467,6 +493,33 @@ export default function OrdersIndex({
                     </div>
                 </div>
 
+                {/* Order Type Filter Pills (Digital Twins, Virtual Try-On, Free Trials, All) */}
+                <div className="flex flex-wrap items-center gap-2">
+                    {[
+                        { key: undefined, label: `All Orders (${stats.total})` },
+                        { key: "digital_twin", label: `Digital Twins (${stats.digital_twin_orders ?? 0})` },
+                        { key: "virtual_try_on", label: `Virtual Try-On Quotes (${stats.try_on_quotes ?? 0})` },
+                        { key: "free_trial", label: `Free Trials (${stats.total_trials ?? 0})` },
+                    ].map((tab) => {
+                        const active = (currentType || undefined) === tab.key;
+                        return (
+                            <button
+                                key={tab.key ?? "all"}
+                                type="button"
+                                onClick={() => handleTypeFilter(tab.key)}
+                                className={cn(
+                                    "px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold border transition-all cursor-pointer",
+                                    active
+                                        ? "bg-accent text-black border-accent"
+                                        : "bg-[#12141a] text-white/70 border-white/10 hover:border-white/25 hover:text-white"
+                                )}
+                            >
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
+
                 {/* Orders Data Table */}
                 <AdminDataTable
                     columns={columns}
@@ -568,6 +621,117 @@ export default function OrdersIndex({
                                     <span className="text-base font-bold text-accent">${selectedOrder.total_price.toFixed(2)} USD</span>
                                 </div>
                             </div>
+
+                            {/* Specifications Breakdown (Digital Twin Attributes or Virtual Try-On Model & Labeled Garments) */}
+                            {selectedOrder.specifications &&
+                                Object.keys(selectedOrder.specifications).length > 0 && (
+                                    <div className="p-3.5 rounded-xl bg-[#141824] border border-[#00f5ff]/30 space-y-2.5 font-mono">
+                                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#00f5ff] block">
+                                            {selectedOrder.order_type?.startsWith("digital_twin")
+                                                ? "Digital Twin Specification & Custom Attributes"
+                                                : selectedOrder.order_type === "virtual_try_on_quote"
+                                                    ? "Virtual Try-On Model & Garment Slots"
+                                                    : "Order Specifications"}
+                                        </span>
+
+                                        {/* Digital Twin Specification */}
+                                        {selectedOrder.order_type?.startsWith("digital_twin") && (
+                                            <div className="space-y-2 text-xs">
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <span className="text-white/40 text-[10px] block">Order Mode</span>
+                                                        <span className="text-accent font-bold uppercase">
+                                                            {selectedOrder.specifications.mode}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-white/40 text-[10px] block">Reference / Licensed Twin</span>
+                                                        <span className="text-white font-semibold">
+                                                            {selectedOrder.specifications.reference_twin_name || "Build from scratch"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {Array.isArray(selectedOrder.specifications.selected_poses) &&
+                                                    selectedOrder.specifications.selected_poses.length > 0 && (
+                                                        <div>
+                                                            <span className="text-white/40 text-[10px] block">Requested Pose Angles</span>
+                                                            <span className="text-white/90">
+                                                                {selectedOrder.specifications.selected_poses.join(", ")}
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                {selectedOrder.specifications.attributes &&
+                                                    Object.keys(selectedOrder.specifications.attributes).length > 0 && (
+                                                        <div className="pt-2 border-t border-white/10 grid grid-cols-2 gap-2">
+                                                            {Object.entries(selectedOrder.specifications.attributes).map(
+                                                                ([attrKey, attrVal]) => (
+                                                                    <div key={attrKey} className="bg-black/40 p-2 rounded-lg border border-white/5">
+                                                                        <span className="text-[10px] text-white/50 block">{attrKey}</span>
+                                                                        <span className="text-white font-semibold">
+                                                                            {typeof attrVal === "object" && attrVal !== null
+                                                                                ? Object.entries(attrVal)
+                                                                                    .map(([k, v]) => `${k}: ${v}`)
+                                                                                    .join(" | ")
+                                                                                : String(attrVal)}
+                                                                        </span>
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        )}
+
+                                        {/* Virtual Try-On Specification */}
+                                        {selectedOrder.order_type === "virtual_try_on_quote" && (
+                                            <div className="space-y-2 text-xs">
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <span className="text-white/40 text-[10px] block">Model Source</span>
+                                                        <span className="text-accent font-bold uppercase">
+                                                            {selectedOrder.specifications.model_source === "our_model"
+                                                                ? "Our Studio Model"
+                                                                : "Client Uploaded Model"}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-white/40 text-[10px] block">Selected Model / Look</span>
+                                                        <span className="text-white font-semibold">
+                                                            {selectedOrder.specifications.selected_model_name
+                                                                ? `${selectedOrder.specifications.selected_model_name} (${selectedOrder.specifications.selected_look_name})`
+                                                                : selectedOrder.specifications.selected_look_name || "Client Custom Talent"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {selectedOrder.specifications.labeled_files && (
+                                                    <div className="pt-2 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                        {Object.entries(selectedOrder.specifications.labeled_files).map(
+                                                            ([slotKey, fileUrl]) => (
+                                                                <a
+                                                                    key={slotKey}
+                                                                    href={String(fileUrl)}
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                    className="bg-black/40 hover:bg-black/60 p-2 rounded-lg border border-white/10 flex flex-col gap-1 transition-colors"
+                                                                >
+                                                                    <span className="text-[10px] uppercase text-accent font-bold">
+                                                                        {slotKey.replace("_", " ")}
+                                                                    </span>
+                                                                    <span className="text-[10px] text-[#00f5ff] underline">
+                                                                        View / Download ↗
+                                                                    </span>
+                                                                </a>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                             {/* Cloud Drive / Google Drive Folder */}
                             {selectedOrder.cloud_link && (

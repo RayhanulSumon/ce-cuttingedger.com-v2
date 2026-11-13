@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { LOOKS } from './looks';
+import { Look, LOOKS } from './looks';
 
 export interface RunwayCursorState {
     on: boolean;
@@ -13,6 +13,8 @@ interface RingRunwayOptions {
     running: boolean;
     /** Accept drags and clicks on the stage (false while the look view covers it). */
     interactive: boolean;
+    /** Dynamic looks from the database. */
+    looks?: Look[];
     onLookChange: (lookIndex: number) => void;
     onFrontActorClick: () => void;
 }
@@ -22,7 +24,6 @@ export const LOOK_COUNT = LOOKS.length;
 export const ACTOR_COUNT = LOOK_COUNT * 2;
 
 const TAU = Math.PI * 2;
-const ACTOR_STEP = TAU / ACTOR_COUNT;
 /** Model image aspect ratio (9:16). */
 const MODEL_ASPECT = 0.5625;
 /** Extra scale given to the model standing at the front. */
@@ -36,17 +37,18 @@ const CLICK_SLOP_PX = 8;
 const MOBILE_MAX_WIDTH = 749;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const mod = (value: number, n: number) => ((value % n) + n) % n;
+const mod = (value: number, n: number) => (n > 0 ? ((value % n) + n) % n : 0);
 
 /**
- * Drives the Try-On runway: twelve models standing on a perspective ring that the visitor
+ * Drives the Try-On runway: models standing on a perspective ring that the visitor
  * can drag, click or auto-play through.
- *
- * Actor styles (transform / opacity / filter) are written directly from the animation loop,
- * and only while the ring is actually moving — React state is limited to the current look
- * and the custom cursor's mode.
  */
-export function useRingRunway({ running, interactive, onLookChange, onFrontActorClick }: RingRunwayOptions) {
+export function useRingRunway({ running, interactive, looks = LOOKS, onLookChange, onFrontActorClick }: RingRunwayOptions) {
+    const activeLooks = looks.length > 0 ? looks : LOOKS;
+    const lookCount = activeLooks.length;
+    const actorCount = Math.max(8, lookCount * 2);
+    const actorStep = TAU / actorCount;
+
     const stageRef = useRef<HTMLDivElement | null>(null);
     const actorRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLSpanElement | null>(null);
@@ -89,12 +91,12 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
         }
         const modelWidth = s.modelHeight * MODEL_ASPECT;
 
-        for (let a = 0; a < ACTOR_COUNT; a++) {
+        for (let a = 0; a < actorCount; a++) {
             const el = actorRefs.current[a];
             if (!el) {
                 continue;
             }
-            let angle = ((a - s.position) * ACTOR_STEP) % TAU;
+            let angle = ((a - s.position) * actorStep) % TAU;
             if (angle > Math.PI) {
                 angle -= TAU;
             } else if (angle < -Math.PI) {
@@ -102,15 +104,14 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
             }
 
             const depth = s.radius * (1 - Math.cos(angle));
-            const slotsFromFront = Math.abs(angle) / ACTOR_STEP;
+            const slotsFromFront = Math.abs(angle) / actorStep;
             const projection = s.perspective / (s.perspective + depth);
             const scale = projection * (1 + (FRONT_SCALE - 1) * clamp(1 - slotsFromFront, 0, 1));
             const x = s.centerX + s.radius * Math.sin(angle) * projection;
             const feet = s.horizon + (s.floor - s.horizon) * projection;
 
             let opacity = clamp((Math.cos(angle) + 0.55) / 0.3, 0, 1);
-            // Neighbours recede a little so the front model owns the focus.
-            opacity *= 1 - 0.22 * clamp(Math.abs(angle) / ACTOR_STEP, 0, 1);
+            opacity *= 1 - 0.22 * clamp(Math.abs(angle) / actorStep, 0, 1);
             const halfWidth = modelWidth * scale * 0.5;
             if (x + halfWidth < -4 || x - halfWidth > s.width + 4) {
                 opacity = 0;
@@ -124,7 +125,6 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
             }
 
             const rawBlur = slotsFromFront <= 1 ? 3.2 * slotsFromFront : Math.min(3.2 + (slotsFromFront - 1) * 2.2, 8);
-            // Quantised so the filter is re-rasterised a handful of times per step, not every frame.
             const blur = Math.round(rawBlur * 2) / 2;
 
             style.visibility = 'visible';
@@ -135,7 +135,7 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
             style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
             el.dataset.frontActor = slotsFromFront < 0.35 ? 'true' : 'false';
         }
-    }, []);
+    }, [actorCount, actorStep]);
 
     const measure = useCallback(() => {
         const stage = stageRef.current;
@@ -159,7 +159,6 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
         s.horizon = height * 0.36;
         s.dragUnit = Math.max(mobile ? 90 : 120, width * 0.3);
 
-        // Layout size is fixed per measure; depth is expressed purely through transform scale.
         const modelWidth = Math.round(s.modelHeight * MODEL_ASPECT);
         actorRefs.current.forEach((el) => {
             if (el) {
@@ -232,37 +231,41 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
         return () => cancelAnimationFrame(frame);
     }, [running, placeRing]);
 
-    const reportLook = (target: number) => {
-        const lookIndex = mod(Math.round(target), LOOK_COUNT);
-        if (lookIndex !== sim.current.lookIndex) {
-            sim.current.lookIndex = lookIndex;
-            callbacks.current.onLookChange(lookIndex);
-        }
-    };
+    const reportLook = useCallback(
+        (target: number) => {
+            const lookIndex = mod(Math.round(target), lookCount);
+            if (lookIndex !== sim.current.lookIndex) {
+                sim.current.lookIndex = lookIndex;
+                callbacks.current.onLookChange(lookIndex);
+            }
+        },
+        [lookCount],
+    );
 
-    const moveTo = useCallback((target: number) => {
-        sim.current.target = target;
-        reportLook(target);
-    }, []);
+    const moveTo = useCallback(
+        (target: number) => {
+            sim.current.target = target;
+            reportLook(target);
+        },
+        [reportLook],
+    );
 
     const stepLook = useCallback((delta: number) => moveTo(Math.round(sim.current.target) + delta), [moveTo]);
 
-    /** Rotates to a look by the shortest way round. */
     const goToLook = useCallback(
         (lookIndex: number) => {
             const current = Math.round(sim.current.target);
-            let delta = mod(lookIndex - current, LOOK_COUNT);
-            if (delta > LOOK_COUNT / 2) {
-                delta -= LOOK_COUNT;
+            let delta = mod(lookIndex - current, lookCount);
+            if (delta > lookCount / 2) {
+                delta -= lookCount;
             }
             moveTo(current + delta);
         },
-        [moveTo],
+        [lookCount, moveTo],
     );
 
     const isDragging = useCallback(() => sim.current.dragging, []);
 
-    /** Screen rect of the model currently standing at the front, or null while the ring is between slots. */
     const getFrontActorRect = useCallback((): DOMRect | null => {
         const front = actorRefs.current.find((el) => el?.dataset.frontActor === 'true');
         return front ? front.getBoundingClientRect() : null;
@@ -287,7 +290,6 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
         s.pointerX = event.clientX - rect.left;
         s.pointerY = event.clientY - rect.top;
 
-        // First contact: jump the cursor to the pointer instead of sweeping in from the corner.
         if (!s.cursorOn && event.pointerType === 'mouse') {
             s.cursorX = s.pointerX;
             s.cursorY = s.pointerY;
@@ -343,16 +345,15 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
 
         const settled = Math.round(s.target);
         const isClick = s.travelled < CLICK_SLOP_PX && event.type !== 'pointercancel';
-        // Pointer capture retargets the event to the stage, so hit-test the release point instead.
         const actor = isClick ? actorAt(event.clientX, event.clientY) : null;
 
         if (actor?.dataset.frontActor === 'true') {
             moveTo(settled);
             callbacks.current.onFrontActorClick();
         } else if (actor) {
-            let delta = mod(Number(actor.dataset.actorIndex) - settled, ACTOR_COUNT);
-            if (delta > ACTOR_COUNT / 2) {
-                delta -= ACTOR_COUNT;
+            let delta = mod(Number(actor.dataset.actorIndex) - settled, actorCount);
+            if (delta > actorCount / 2) {
+                delta -= actorCount;
             }
             moveTo(settled + delta);
         } else {
@@ -369,6 +370,7 @@ export function useRingRunway({ running, interactive, onLookChange, onFrontActor
         actorRefs,
         cursorRef,
         cursor,
+        actorCount,
         stepLook,
         goToLook,
         isDragging,

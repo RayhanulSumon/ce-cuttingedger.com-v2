@@ -7,9 +7,8 @@ use App\Models\Faq;
 use App\Models\PricingPlan;
 use App\Models\Setting;
 use App\Models\TeamMember;
-use Illuminate\Http\Request;
+use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -44,11 +43,13 @@ class PageController extends Controller
     }
 
     /**
-     * Display the full Digital Twins catalogue (models are defined client-side).
+     * Display the full Digital Twins catalogue backed by the cached database catalog.
      */
     public function digitalTwins(): Response
     {
-        return Inertia::render('DigitalTwins/Index');
+        return Inertia::render('DigitalTwins/Index', [
+            'digitalTwins' => CatalogCacheService::getAllDigitalTwins(),
+        ]);
     }
 
     /**
@@ -57,17 +58,6 @@ class PageController extends Controller
     public function thankYou(): Response
     {
         return Inertia::render('ThankYou');
-    }
-
-    /**
-     * Display the custom order request page, optionally pre-filled from a landing page call to action.
-     */
-    public function order(Request $request): Response
-    {
-        return Inertia::render('Order', [
-            'service' => Str::limit((string) $request->query('service', ''), 80, ''),
-            'reference' => Str::limit((string) $request->query('ref', ''), 120, ''),
-        ]);
     }
 
     /**

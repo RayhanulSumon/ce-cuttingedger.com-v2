@@ -35,8 +35,11 @@ function SpriteCrop({
 }
 
 /**
- * A model cut from the Digital Twins sprite sheet, with optional per-pose framing
- * (full-body, 3/4, portrait, waist crop, mirrored stance).
+ * Renders a Digital Twin model or pose:
+ * 1. If `pose?.imageUrl` is uploaded for that specific pose, renders the dedicated pose image.
+ * 2. If `twin.runwayImage` / `twin.hiResImage` is uploaded from the Admin Panel, renders that model image
+ *    with automatic smart-crop framing for poses that do not have a separate pose upload.
+ * 3. Otherwise falls back to cropping from the default Digital Twins sprite sheet.
  */
 export const TwinSpriteCrop = memo(function TwinSpriteCrop({
     twin,
@@ -47,7 +50,45 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
     pose?: TwinPosePreset;
     className?: string;
 }) {
-    const fullWidth = twin.x1 - twin.x0;
+    if (pose?.imageUrl) {
+        return (
+            <img
+                src={pose.imageUrl}
+                alt={`${twin.name} — ${pose.title}`}
+                decoding="async"
+                draggable={false}
+                className={`block select-none object-contain ${className}`}
+            />
+        );
+    }
+
+    const uploadedImage = pose ? (twin.hiResImage || twin.runwayImage) : (twin.runwayImage || twin.hiResImage);
+
+    if (uploadedImage) {
+        const aspect = twin.aspectRatio && twin.aspectRatio > 0 ? twin.aspectRatio : 0.36;
+        const baseW = 1000 * aspect;
+        const baseH = 1000;
+        const yStart = pose ? pose.yStartFrac * baseH : 0;
+        const yEnd = pose ? pose.yEndFrac * baseH : baseH;
+        const padX = pose?.xPadFrac ? baseW * pose.xPadFrac : 0;
+        const transforms = [pose?.mirror ? 'scaleX(-1)' : '', pose?.tiltDeg ? `rotate(${pose.tiltDeg}deg)` : ''].filter(Boolean);
+
+        return (
+            <SpriteCrop
+                href={uploadedImage}
+                sheetWidth={baseW}
+                sheetHeight={baseH}
+                x={-padX}
+                y={yStart}
+                width={baseW + padX * 2}
+                height={Math.max(120, yEnd - yStart)}
+                className={className}
+                style={transforms.length ? { transform: transforms.join(' ') } : undefined}
+            />
+        );
+    }
+
+    const fullWidth = Math.max(40, (twin.x1 || 176) - (twin.x0 || 12));
     const fullHeight = TWIN_Y1 - TWIN_Y0;
     const yStart = TWIN_Y0 + (pose ? pose.yStartFrac * fullHeight : 0);
     const yEnd = TWIN_Y0 + (pose ? pose.yEndFrac * fullHeight : fullHeight);
@@ -60,7 +101,7 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
             href={TWIN_MODELS_SPRITE}
             sheetWidth={960}
             sheetHeight={540}
-            x={twin.x0 - padX}
+            x={(twin.x0 || 12) - padX}
             y={yStart}
             width={fullWidth + padX * 2}
             height={Math.max(60, yEnd - yStart)}

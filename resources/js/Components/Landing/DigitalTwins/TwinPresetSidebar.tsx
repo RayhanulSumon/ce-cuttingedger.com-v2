@@ -1,8 +1,8 @@
 import React from 'react';
-import { Calendar, Copyright, Download, ShoppingBag } from 'lucide-react';
+import { Calendar, Copyright, Download, ShoppingBag, Sparkles } from 'lucide-react';
 import { DigitalTwinModel, formatDownloadCount, formatTwinAge, TwinPosePreset } from './twins';
 
-export type PresetAction = 'buy' | 'lifetime';
+export type PresetAction = 'buy' | 'lifetime' | 'custom';
 
 interface TwinPresetSidebarProps {
     twin: DigitalTwinModel;
@@ -12,7 +12,7 @@ interface TwinPresetSidebarProps {
 }
 
 const ACTION_BUTTON =
-    'flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-[transform,background-color] duration-300 hover:-translate-y-0.5';
+    'flex w-full cursor-pointer items-center justify-between rounded-2xl px-5 py-4 text-left transition-[transform,background-color] duration-300 hover:-translate-y-0.5';
 
 /** Right side of the pose modal: model name, short description, and simple action buttons. */
 export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetSidebarProps) {
@@ -85,8 +85,28 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
                     <span className={`text-base font-extrabold ${twin.isCopyrightSold ? 'line-through' : ''}`}>{twin.lifetimePrice}</span>
                 </button>
 
+                <button
+                    type="button"
+                    onClick={() => onAction('custom')}
+                    className={`${ACTION_BUTTON} border border-ink/15 bg-[#f6f8fb] text-ink hover:border-primary/50 hover:bg-white`}
+                >
+                    <span className="flex items-center gap-3">
+                        <Sparkles size={18} className="shrink-0 text-primary" />
+                        <span>
+                            <span className="block text-sm font-bold">Customize a model like {name}</span>
+                            <span className="block text-xs text-subtle">Tailor height, body, skin, eye &amp; lip presets</span>
+                        </span>
+                    </span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary">Configure</span>
+                </button>
+
                 <p role="status" className={`text-center text-xs font-medium text-emerald-700 ${pendingAction ? '' : 'invisible'}`}>
-                    {pendingAction === 'lifetime' ? 'Lifetime copyright selected' : 'Preset selected'} — opening your email…
+                    {pendingAction === 'lifetime'
+                        ? 'Lifetime copyright selected'
+                        : pendingAction === 'custom'
+                          ? 'Opening custom configurator'
+                          : 'Preset selected'}{' '}
+                    — opening order page…
                 </p>
             </div>
         </div>

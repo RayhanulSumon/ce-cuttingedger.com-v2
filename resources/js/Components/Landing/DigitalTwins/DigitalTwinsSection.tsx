@@ -1,13 +1,13 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { CustomOrderCta, orderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
+import { CustomOrderCta, digitalTwinOrderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
 import { TwinNameLabel } from './TwinNameLabel';
 import { TwinPosePreview } from './TwinPosePreview';
 import { TwinPresetModal } from './TwinPresetModal';
 import { TwinSpriteCrop } from './TwinSpriteCrop';
-import { DIGITAL_TWINS } from './twins';
+import { DIGITAL_TWINS, DigitalTwinModel } from './twins';
 import { useTwinRunway } from './useTwinRunway';
 
 const STAGE_BACKGROUND =
@@ -16,8 +16,13 @@ const STAGE_BACKGROUND =
 const SIDE_ARROW =
     'grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_32px_-8px_color-mix(in_srgb,var(--color-ink)_22%,transparent)] backdrop-blur-sm transition-all duration-300 hover:bg-ink hover:text-white hover:scale-110 hover:shadow-[0_12px_40px_-10px_color-mix(in_srgb,var(--color-ink)_45%,transparent)]';
 
+interface DigitalTwinsSectionProps extends SectionProps {
+    twins?: DigitalTwinModel[];
+}
+
 /** Section 01 — a runway of AI digital twins; clicking one opens its pose-preset modal. */
-export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, onOverlayChange }: SectionProps) {
+export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, twins, onOverlayChange }: DigitalTwinsSectionProps) {
+    const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
     const [modalTwinIndex, setModalTwinIndex] = useState<number | null>(null);
 
     const openModal = useCallback(
@@ -33,8 +38,8 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
         onOverlayChange?.(false);
     }, [onOverlayChange]);
 
-    const runway = useTwinRunway({ running: active && modalTwinIndex === null, onOpenTwin: openModal });
-    const activeTwin = DIGITAL_TWINS[runway.activeTwinIndex] ?? DIGITAL_TWINS[0];
+    const runway = useTwinRunway({ running: active && modalTwinIndex === null, twins: models, onOpenTwin: openModal });
+    const activeTwin = models[runway.activeTwinIndex] ?? models[0];
 
     // Only track preview on the ACTIVE (front) model — never on blurry background models.
     const previewIndex = useRef(0);
@@ -57,14 +62,14 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                 style={{ background: STAGE_BACKGROUND }}
             >
                 <div className="absolute inset-0 overflow-hidden">
-                    {DIGITAL_TWINS.map((twin, i) => {
+                    {models.map((twin, i) => {
                         const isFrontModel = i === runway.activeTwinIndex;
                         const isHovered = runway.hoveredTwinIndex === i && isFrontModel;
                         const showPreview = isFrontModel && i === previewIndex.current;
 
                         return (
                             <div
-                                key={twin.lookNumber}
+                                key={twin.id ?? twin.lookNumber ?? i}
                                 ref={(el) => {
                                     runway.modelRefs.current[i] = el;
                                 }}
@@ -92,9 +97,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                                 {isFrontModel && <TwinNameLabel twin={twin} />}
 
                                 {/* Pose preview cards — 3 large cards to the right of the front model on hover */}
-                                {showPreview && (
-                                    <TwinPosePreview twin={twin} visible={isHovered} />
-                                )}
+                                {showPreview && <TwinPosePreview twin={twin} visible={isHovered} />}
                             </div>
                         );
                     })}
@@ -137,7 +140,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
 
                 <CustomOrderCta
                     active={active}
-                    href={orderUrl('digital-twins', activeTwin.name)}
+                    href={digitalTwinOrderUrl({ mode: 'custom', twin: activeTwin.slug, ref: activeTwin.name })}
                     question="Want a custom model?"
                     buttonLabel="Order now"
                 />
@@ -159,6 +162,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
             </section>
 
             <TwinPresetModal
+                twins={models}
                 twinIndex={modalTwinIndex}
                 onSelectTwin={selectTwinInModal}
                 onClose={closeModal}

@@ -11,9 +11,12 @@ export const TWIN_FIRST_LOOK = 15;
 export interface TwinPosePreset {
     id: string;
     code: string;
+    shortName?: string;
     title: string;
     angle: string;
     lens: string;
+    /** Optional dedicated uploaded image for this specific pose. Falls back to smart crop of the model image when null. */
+    imageUrl?: string | null;
     /** Normalized crop within the model's bounding box [yStartFrac, yEndFrac] and optional mirror/scale */
     yStartFrac: number;
     yEndFrac: number;
@@ -24,10 +27,15 @@ export interface TwinPosePreset {
 }
 
 export interface DigitalTwinModel {
+    id?: number;
+    slug?: string;
     index: number;
     lookNumber: number;
     x0: number;
     x1: number;
+    aspectRatio?: number;
+    runwayImage?: string | null;
+    hiResImage?: string | null;
     name: string;
     archetype: string;
     collection: string;
@@ -36,23 +44,42 @@ export interface DigitalTwinModel {
     lifetimePrice: string;
     /** True once the full copyright has been bought — the model is no longer available for lifetime purchase. */
     isCopyrightSold: boolean;
-    /** ISO date the twin was first listed (mock data). */
+    /** ISO date the twin was first listed. */
     listedAt: string;
-    /** Total preset downloads so far (mock data). */
+    /** Total preset downloads so far. */
     downloadCount: number;
     description: string;
     deliverables: string[];
     featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
     poses: TwinPosePreset[];
+    isFeaturedOnHome?: boolean;
+    isActive?: boolean;
+    sortOrder?: number;
 }
 
-const DEFAULT_POSES: TwinPosePreset[] = [
+export interface DigitalTwinAttributeItem {
+    id: number;
+    name: string;
+    slug: string;
+    inputType: 'unit_input' | 'select' | 'multi_input';
+    options: string[];
+    allowCustom: boolean;
+    customLabel: string;
+    placeholder?: string | null;
+    isRequired: boolean;
+    isActive: boolean;
+    sortOrder: number;
+}
+
+export const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-01',
         code: 'POSE 01',
+        shortName: 'Front',
         title: 'Full-Length Runway Walk',
         angle: 'Eye-Level Front · Full Body',
         lens: '85mm f/2.0 Studio Prime',
+        imageUrl: null,
         yStartFrac: 0,
         yEndFrac: 1,
         xPadFrac: 0.04,
@@ -61,9 +88,11 @@ const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-02',
         code: 'POSE 02',
+        shortName: 'Side',
         title: 'Three-Quarter Editorial',
         angle: 'Three-Quarter Mid-Length',
         lens: '70mm f/2.8 Soft Key',
+        imageUrl: null,
         yStartFrac: 0.01,
         yEndFrac: 0.72,
         xPadFrac: 0.02,
@@ -72,9 +101,11 @@ const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-03',
         code: 'POSE 03',
+        shortName: 'Close-Up',
         title: 'Portrait & Collar Drape',
         angle: 'Close-Up Bust & Neckline',
         lens: '105mm f/2.8 Macro Portrait',
+        imageUrl: null,
         yStartFrac: 0.0,
         yEndFrac: 0.44,
         xPadFrac: 0.08,
@@ -83,9 +114,11 @@ const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-04',
         code: 'POSE 04',
+        shortName: 'Back',
         title: 'Counter-Turn Silhouette',
         angle: 'Mirrored Studio Stance',
         lens: '85mm f/2.0 Contre-Jour',
+        imageUrl: null,
         yStartFrac: 0,
         yEndFrac: 1,
         xPadFrac: 0.04,
@@ -95,9 +128,11 @@ const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-05',
         code: 'POSE 05',
+        shortName: 'Detail',
         title: 'Waist & Garment Detail',
         angle: 'Mid-Torso & Tailoring Crop',
         lens: '90mm f/4.0 Studio Strobe',
+        imageUrl: null,
         yStartFrac: 0.16,
         yEndFrac: 0.68,
         xPadFrac: 0.05,
@@ -106,9 +141,11 @@ const DEFAULT_POSES: TwinPosePreset[] = [
     {
         id: 'pose-06',
         code: 'POSE 06',
+        shortName: 'Stride',
         title: 'Dynamic Runway Stride',
         angle: 'Low-Angle Full-Body Motion',
         lens: '50mm f/1.8 Editorial Wide',
+        imageUrl: null,
         yStartFrac: 0.08,
         yEndFrac: 1.0,
         xPadFrac: 0.03,

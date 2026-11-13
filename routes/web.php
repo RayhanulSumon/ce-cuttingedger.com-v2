@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminDigitalTwinController;
 use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminOrderController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Admin\AdminSubscriberController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\Admin\AdminTrackingScriptController;
+use App\Http\Controllers\Admin\AdminTryOnLookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CapabilityController;
@@ -30,6 +32,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
@@ -67,6 +70,16 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Content & Agency CRUDs
+    Route::post('digital-twins/attributes', [AdminDigitalTwinController::class, 'storeAttribute'])->name('digital-twin-attributes.store');
+    Route::match(['put', 'post'], 'digital-twins/attributes/{attribute}', [AdminDigitalTwinController::class, 'updateAttribute'])->name('digital-twin-attributes.update');
+    Route::delete('digital-twins/attributes/{attribute}', [AdminDigitalTwinController::class, 'destroyAttribute'])->name('digital-twin-attributes.destroy');
+    Route::post('digital-twins/{digitalTwin}/toggle-sold-out', [AdminDigitalTwinController::class, 'toggleSoldOut'])->name('digital-twins.toggle-sold-out');
+    Route::post('digital-twins/{digitalTwin}', [AdminDigitalTwinController::class, 'update'])->name('digital-twins.update.post');
+    Route::resource('digital-twins', AdminDigitalTwinController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    Route::post('try-on-looks/{tryOnLook}', [AdminTryOnLookController::class, 'update'])->name('try-on-looks.update.post');
+    Route::resource('try-on-looks', AdminTryOnLookController::class)->only(['index', 'store', 'update', 'destroy']);
+
     Route::resource('projects', AdminProjectController::class)->except(['show', 'create', 'edit']);
     Route::resource('capabilities', AdminCapabilityController::class)->except(['show', 'create', 'edit']);
     Route::resource('team', AdminTeamMemberController::class)->except(['show', 'create', 'edit']);
@@ -162,7 +175,20 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
-Route::get('/order', [PageController::class, 'order'])->name('order');
+
+// Digital Twins Catalogue, Dedicated Custom Twin Order & Virtual Try-On Quote Pages
+Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
+Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
+Route::post('/digital-twins/order', [OrderController::class, 'storeDigitalTwinOrder'])
+    ->middleware('throttle:public-contact')
+    ->name('digital-twins.order.store');
+
+Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
+Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
+    ->middleware('throttle:public-contact')
+    ->name('try-on.quote.store');
+
+Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
 
 // Agency Team & Careers
 Route::get('/team', [TeamController::class, 'index'])->name('team.index');
@@ -176,7 +202,6 @@ Route::get('/career', fn () => redirect()->to('/careers', 301))->name('career');
 Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('careers.show');
 
 Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
-Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
@@ -196,6 +221,16 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+
+/*
+|--------------------------------------------------------------------------
+| Fast Cached Catalog APIs
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api/catalog')->name('api.catalog.')->group(function (): void {
+    Route::get('/digital-twins', [OrderController::class, 'apiDigitalTwins'])->name('digital-twins');
+    Route::get('/try-on-looks', [OrderController::class, 'apiTryOnLooks'])->name('try-on-looks');
+});
 
 /*
 |--------------------------------------------------------------------------

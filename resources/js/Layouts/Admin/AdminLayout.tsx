@@ -133,6 +133,18 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             title: "PORTFOLIO & CORE",
             items: [
                 {
+                    name: "Digital Twins",
+                    href: "/admin/digital-twins",
+                    icon: Sparkles,
+                    active: url.startsWith("/admin/digital-twins"),
+                },
+                {
+                    name: "Virtual Try-On",
+                    href: "/admin/try-on-looks",
+                    icon: Layers,
+                    active: url.startsWith("/admin/try-on-looks"),
+                },
+                {
                     name: "Projects",
                     href: "/admin/projects",
                     icon: FolderKanban,
@@ -228,16 +240,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     active: url.startsWith("/admin/orders"),
                     badge: admin_badges?.pending_orders
                         ? `${admin_badges.pending_orders}`
-                        : null,
-                    badgeColor: "bg-accent text-black",
-                },
-                {
-                    name: "Free Trial Orders",
-                    href: "/admin/free-trials",
-                    icon: Sparkles,
-                    active: url.startsWith("/admin/free-trials"),
-                    badge: admin_badges?.pending_trials
-                        ? `${admin_badges.pending_trials}`
                         : null,
                     badgeColor: "bg-accent text-black",
                 },

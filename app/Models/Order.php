@@ -17,6 +17,7 @@ class Order extends Model
 
     protected $casts = [
         'images' => 'array',
+        'specifications' => 'array',
         'completed_files' => 'array',
         'quantity' => 'integer',
         'uploaded_count' => 'integer',
@@ -29,9 +30,12 @@ class Order extends Model
     {
         static::creating(function (Order $order): void {
             if (empty($order->order_number)) {
-                $prefix = ($order->payment_status === 'free_trial' || $order->source === 'web_trial' || $order->source === 'chat_trial')
-                    ? 'CE-TRL-'
-                    : 'CE-ORD-';
+                $prefix = match (true) {
+                    $order->payment_status === 'free_trial' || $order->source === 'web_trial' || $order->source === 'chat_trial' => 'CE-TRL-',
+                    str_starts_with((string) $order->order_type, 'digital_twin') => 'CE-TWN-',
+                    $order->order_type === 'virtual_try_on_quote' => 'CE-VTO-',
+                    default => 'CE-ORD-',
+                };
                 $order->order_number = $prefix.strtoupper(Str::random(6));
             }
         });
@@ -43,6 +47,22 @@ class Order extends Model
     public function isFreeTrial(): bool
     {
         return $this->payment_status === 'free_trial' || $this->source === 'web_trial' || $this->source === 'chat_trial';
+    }
+
+    /**
+     * Get the associated Digital Twin if applicable.
+     */
+    public function digitalTwin(): BelongsTo
+    {
+        return $this->belongsTo(DigitalTwin::class);
+    }
+
+    /**
+     * Get the associated Virtual Try-On Look if applicable.
+     */
+    public function tryOnLook(): BelongsTo
+    {
+        return $this->belongsTo(TryOnLook::class);
     }
 
     /**

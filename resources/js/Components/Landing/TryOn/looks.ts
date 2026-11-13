@@ -4,10 +4,12 @@ export interface LookPiece {
     name: string;
     brand: string;
     image: string;
-    tag?: string;
+    tag?: string | null;
 }
 
 export interface Look {
+    id?: number;
+    slug?: string;
     /** Unique name of the model wearing the look. */
     modelName: string;
     name: string;
@@ -16,6 +18,9 @@ export interface Look {
     modelHiRes: string;
     pieces: LookPiece[];
     pins: { left: number; top: number }[];
+    isFeaturedOnHome?: boolean;
+    isActive?: boolean;
+    sortOrder?: number;
 }
 
 const piece = (name: string, image: string, brand = 'Nike', tag?: string): LookPiece => ({

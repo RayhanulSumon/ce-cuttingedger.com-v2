@@ -1,16 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { DIGITAL_TWINS, TWIN_Y0, TWIN_Y1 } from './twins';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DIGITAL_TWINS, DigitalTwinModel, TWIN_Y0, TWIN_Y1 } from './twins';
 
 export type TwinCursorMode = 'hidden' | 'ring' | 'drag' | 'dragging' | 'buy' | 'view';
 
 interface TwinRunwayOptions {
     /** Run the animation loop (section is on screen and no overlay covers the runway). */
     running: boolean;
+    /** Dynamic list of Digital Twins from the database. */
+    twins?: DigitalTwinModel[];
     /** Called when a model is clicked / tapped without dragging. */
     onOpenTwin: (index: number) => void;
 }
 
-/** Auto-advance interval in ms. Paused while dragging, and while the pointer rests on a model (not elsewhere on the stage). */
+/** Auto-advance interval in ms. Paused while dragging, and while the pointer rests on a model. */
 const AUTO_ADVANCE_MS = 2800;
 /** Pointer travel (px) below which a press counts as a click rather than a drag. */
 const CLICK_SLOP_PX = 6;
@@ -27,10 +29,7 @@ const DEPTH_BLUR = [0, 0, 1.5, 4, 8, 12, 17];
 const DEPTH_OPACITY = [1, 1, 1, 1, 0.86, 0.5, 0];
 const LAST_STOP = DEPTH_X.length - 1;
 
-const TWIN_COUNT = DIGITAL_TWINS.length;
-/** Width / height of each model's sprite crop. */
-const TWIN_ASPECTS = DIGITAL_TWINS.map((twin) => (twin.x1 - twin.x0) / (TWIN_Y1 - TWIN_Y0));
-const wrap = (value: number, n: number) => ((value % n) + n) % n;
+const wrap = (value: number, n: number) => (n > 0 ? ((value % n) + n) % n : 0);
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 /**
@@ -39,7 +38,20 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
  * All per-frame work writes straight to element styles (transform / opacity / filter) —
  * React only re-renders when the front look or the cursor mode actually changes.
  */
-export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
+export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: TwinRunwayOptions) {
+    const models = twins.length > 0 ? twins : DIGITAL_TWINS;
+    const twinCount = models.length;
+
+    const twinAspects = useMemo(
+        () =>
+            models.map((twin) =>
+                twin.aspectRatio && twin.aspectRatio > 0
+                    ? twin.aspectRatio
+                    : Math.max(40, (twin.x1 || 176) - (twin.x0 || 12)) / (TWIN_Y1 - TWIN_Y0),
+            ),
+        [models],
+    );
+
     const stageRef = useRef<HTMLElement | null>(null);
     const modelRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLDivElement | null>(null);
@@ -71,18 +83,18 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
 
     const paint = useCallback(() => {
         const s = sim.current;
-        if (!s.width || !s.height || !s.baseHeight) {
+        if (!s.width || !s.height || !s.baseHeight || twinCount === 0) {
             return;
         }
 
-        DIGITAL_TWINS.forEach((_, i) => {
+        models.forEach((_, i) => {
             const el = modelRefs.current[i];
             if (!el) {
                 return;
             }
-            let depth = wrap(i - s.position, TWIN_COUNT);
-            if (depth > TWIN_COUNT - 1) {
-                depth -= TWIN_COUNT;
+            let depth = wrap(i - s.position, twinCount);
+            if (depth > twinCount - 1) {
+                depth -= twinCount;
             }
             const stop = clamp(depth + 1, 0, LAST_STOP);
             const lower = Math.floor(stop);
@@ -98,9 +110,9 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
 
             const height = mix(DEPTH_HEIGHT) * s.height;
             const scale = height / s.baseHeight;
-            const x = mix(DEPTH_X) * s.width - height * TWIN_ASPECTS[i] * 0.5;
+            const aspect = twinAspects[i] ?? 0.36;
+            const x = mix(DEPTH_X) * s.width - height * aspect * 0.5;
             const y = mix(DEPTH_FEET) * s.height - height;
-            // Quantised so the filter only changes a few times per step instead of every frame.
             const blur = Math.round(mix(DEPTH_BLUR) * 2) / 2;
 
             el.style.visibility = 'visible';
@@ -110,9 +122,9 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             el.style.zIndex = String(100 - Math.round(depth * 10));
         });
 
-        const front = wrap(Math.round(s.position), TWIN_COUNT);
+        const front = wrap(Math.round(s.position), twinCount);
         setActiveTwinIndex((previous) => (previous === front ? previous : front));
-    }, []);
+    }, [models, twinAspects, twinCount]);
 
     const measure = useCallback(() => {
         const stage = stageRef.current;
@@ -124,8 +136,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.height = stage.clientHeight;
         s.baseHeight = s.height * 1.2;
 
-        // Layout size is fixed per measure; depth is expressed purely through transform scale.
-        TWIN_ASPECTS.forEach((aspect, i) => {
+        twinAspects.forEach((aspect, i) => {
             const el = modelRefs.current[i];
             if (el) {
                 el.style.width = `${(s.baseHeight * aspect).toFixed(1)}px`;
@@ -135,7 +146,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
 
         s.dirty = true;
         paint();
-    }, [paint]);
+    }, [paint, twinAspects]);
 
     useEffect(() => {
         measure();
@@ -148,7 +159,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         return () => observer.disconnect();
     }, [measure]);
 
-    // Animation loop: eases the runway towards its target and trails the custom cursor.
     useEffect(() => {
         if (!running) {
             return;
@@ -201,30 +211,29 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         return () => window.clearInterval(timer);
     }, [running]);
 
-    /** Steps the runway by whole looks. The queue is circular, so the target is never clamped. */
     const stepLook = useCallback((delta: number) => {
         sim.current.target = Math.round(sim.current.target) + delta;
     }, []);
 
-    /** Brings a twin to the front by the shortest way round. */
-    const focusTwin = useCallback((index: number) => {
-        const s = sim.current;
-        const current = Math.round(s.target);
-        let delta = wrap(index - current, TWIN_COUNT);
-        if (delta > TWIN_COUNT / 2) {
-            delta -= TWIN_COUNT;
-        }
-        s.target = current + delta;
-        s.dirty = true;
-    }, []);
+    const focusTwin = useCallback(
+        (index: number) => {
+            const s = sim.current;
+            const current = Math.round(s.target);
+            let delta = wrap(index - current, twinCount);
+            if (delta > twinCount / 2) {
+                delta -= twinCount;
+            }
+            s.target = current + delta;
+            s.dirty = true;
+        },
+        [twinCount],
+    );
 
-    /** Records which model the pointer is on: pauses auto-advance and drives the pose preview. */
     const setHoveredModel = (index: number) => {
         sim.current.hoveredModel = index;
         setHoveredTwinIndex(index >= 0 ? index : null);
     };
 
-    /** Text blocks marked `data-twin-cursor-free` (heading, description) keep the normal pointer. */
     const isOverCursorFreeZone = (x: number, y: number): boolean =>
         Array.from(document.querySelectorAll<HTMLElement>('[data-twin-cursor-free]')).some((el) => {
             const r = el.getBoundingClientRect();
@@ -236,11 +245,10 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         return el ? Number(el.dataset.twinModel) : -1;
     };
 
-    /** Only the front model is "buyable"; blurred background models behave as drag handles. */
     const applyHover = (modelIndex: number) => {
-        const isFront = modelIndex >= 0 && modelIndex === wrap(Math.round(sim.current.position), TWIN_COUNT);
+        const isFront = modelIndex >= 0 && modelIndex === wrap(Math.round(sim.current.position), twinCount);
         setHoveredModel(isFront ? modelIndex : -1);
-        setCursorMode(isFront ? (DIGITAL_TWINS[modelIndex].isCopyrightSold ? 'view' : 'buy') : 'drag');
+        setCursorMode(isFront ? (models[modelIndex]?.isCopyrightSold ? 'view' : 'buy') : 'drag');
     };
 
     const onPointerEnter = (event: React.PointerEvent<HTMLElement>) => {
@@ -275,9 +283,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
             const pull = Math.max(150, s.width * 0.2);
             const dx = event.clientX - s.pressX;
             s.travelled = Math.max(s.travelled, Math.abs(dx));
-            // Inverted: drag right → advance forward (natural carousel direction).
             s.target = s.pressTarget + dx / pull;
-            // The drag cursor only appears once it really is a drag, so a plain click on BUY / VIEW doesn't flash it.
             if (event.pointerType === 'mouse' && s.travelled >= CLICK_SLOP_PX) {
                 setCursorMode('dragging');
             }
@@ -285,7 +291,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         }
 
         if (event.pointerType === 'mouse') {
-            // Over a real button or link (arrows, order button), the normal pointer is shown and the custom cursor steps aside.
             if ((event.target as HTMLElement | null)?.closest('button, a') || isOverCursorFreeZone(event.clientX, event.clientY)) {
                 setHoveredModel(-1);
                 setCursorMode('hidden');
@@ -305,7 +310,6 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.pressTarget = s.target;
         s.travelled = 0;
         event.currentTarget.setPointerCapture(event.pointerId);
-        // On a drag handle (background model / empty stage) react instantly; on a BUY / VIEW model wait to see if it is a click.
         if (event.pointerType === 'mouse') {
             setCursorMode((mode) => (mode === 'drag' ? 'dragging' : mode));
         }
@@ -319,14 +323,13 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         s.pressed = false;
         s.target = Math.round(s.target);
 
-        // Pointer capture retargets the event to the stage, so hit-test the release point instead.
         const hit = document
             .elementsFromPoint(event.clientX, event.clientY)
             .find((el): el is HTMLElement => el instanceof HTMLElement && el.dataset.twinModel !== undefined);
         const hitIndex = hit ? Number(hit.dataset.twinModel) : -1;
 
         if (s.travelled < CLICK_SLOP_PX && hitIndex >= 0 && event.type !== 'pointercancel') {
-            const isFront = hitIndex === wrap(Math.round(s.position), TWIN_COUNT);
+            const isFront = hitIndex === wrap(Math.round(s.position), twinCount);
             focusTwin(hitIndex);
             if (isFront) {
                 onOpenTwinRef.current(hitIndex);

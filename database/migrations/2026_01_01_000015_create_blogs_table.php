@@ -36,6 +36,7 @@ return new class extends Migration
             $table->string('robots')->default('index, follow');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

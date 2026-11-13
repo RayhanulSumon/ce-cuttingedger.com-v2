@@ -3,22 +3,27 @@ import { Download } from 'lucide-react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { TwinPresetModal } from '@/Components/Landing/DigitalTwins/TwinPresetModal';
 import { TwinSpriteCrop } from '@/Components/Landing/DigitalTwins/TwinSpriteCrop';
-import { DIGITAL_TWINS, formatDownloadCount, formatTwinAge } from '@/Components/Landing/DigitalTwins/twins';
-import { OrderCta, orderUrl, PAD_X } from '@/Components/Landing/shared';
+import { DIGITAL_TWINS, DigitalTwinModel, formatDownloadCount, formatTwinAge } from '@/Components/Landing/DigitalTwins/twins';
+import { digitalTwinOrderUrl, OrderCta, PAD_X } from '@/Components/Landing/shared';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
 const ALL = 'All';
 
 const PAGE_BACKGROUND = 'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
 
+interface DigitalTwinsIndexProps {
+    digitalTwins?: DigitalTwinModel[];
+}
+
 /** Digital Twins catalogue — every model in a filterable grid, styled like the homepage. */
-export default function DigitalTwinsIndex() {
+export default function DigitalTwinsIndex({ digitalTwins }: DigitalTwinsIndexProps) {
+    const allTwins = digitalTwins && digitalTwins.length > 0 ? digitalTwins : DIGITAL_TWINS;
     const [category, setCategory] = useState<string>(ALL);
     const [modalTwinIndex, setModalTwinIndex] = useState<number | null>(null);
     const closeModal = useCallback(() => setModalTwinIndex(null), []);
 
-    const categories = useMemo(() => [ALL, ...Array.from(new Set(DIGITAL_TWINS.map((twin) => twin.archetype)))], []);
-    const twins = category === ALL ? DIGITAL_TWINS : DIGITAL_TWINS.filter((twin) => twin.archetype === category);
+    const categories = useMemo(() => [ALL, ...Array.from(new Set(allTwins.map((twin) => twin.archetype)))], [allTwins]);
+    const twins = category === ALL ? allTwins : allTwins.filter((twin) => twin.archetype === category);
 
     return (
         <div className="bg-white text-ink">
@@ -65,12 +70,13 @@ export default function DigitalTwinsIndex() {
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-6">
                     {twins.map((twin) => {
                         const [name, style] = twin.name.split(' — ');
+                        const fullIdx = allTwins.findIndex((item) => (item.id && item.id === twin.id) || item.lookNumber === twin.lookNumber);
 
                         return (
                             <button
-                                key={twin.lookNumber}
+                                key={twin.id ?? twin.lookNumber}
                                 type="button"
-                                onClick={() => setModalTwinIndex(twin.index)}
+                                onClick={() => setModalTwinIndex(fullIdx >= 0 ? fullIdx : twin.index)}
                                 aria-label={`View ${name} poses`}
                                 className="group cursor-pointer overflow-hidden rounded-2xl border border-ink/10 bg-white text-left shadow-[0_8px_22px_-16px_color-mix(in_srgb,var(--color-ink)_20%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_14px_34px_-16px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]"
                             >
@@ -90,21 +96,21 @@ export default function DigitalTwinsIndex() {
                                 </div>
                                 <div className="space-y-0.5 p-3">
                                     <h3 className="truncate text-sm font-semibold">{name}</h3>
-                                    <p className="truncate text-[11px] text-subtle">{style}</p>
+                                    <p className="truncate text-[11px] text-subtle">{style || twin.archetype}</p>
                                     <p className="pt-1 text-[11px] text-subtle">
                                         from <span className="font-bold text-ink">{twin.presetPrice}</span>
                                     </p>
                                     {!twin.isCopyrightSold && (
-<>
-                                        <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#f6f8fb] px-2.5 py-1 ring-1 ring-ink/10">
-                                            <span className="inline-flex items-center gap-1 text-xs font-extrabold leading-none text-ink">
-                                                <Download size={12} strokeWidth={2.5} className="text-primary" />
-                                                {formatDownloadCount(twin.downloadCount)}
-                                            </span>
-                                            <span className="text-[10px] font-medium text-subtle">downloads</span>
-                                        </div>
-                                        <p className="pt-1.5 text-[11px] text-subtle">{formatTwinAge(twin.listedAt)} old</p>
-</>
+                                        <>
+                                            <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#f6f8fb] px-2.5 py-1 ring-1 ring-ink/10">
+                                                <span className="inline-flex items-center gap-1 text-xs font-extrabold leading-none text-ink">
+                                                    <Download size={12} strokeWidth={2.5} className="text-primary" />
+                                                    {formatDownloadCount(twin.downloadCount)}
+                                                </span>
+                                                <span className="text-[10px] font-medium text-subtle">downloads</span>
+                                            </div>
+                                            <p className="pt-1.5 text-[11px] text-subtle">{formatTwinAge(twin.listedAt)} old</p>
+                                        </>
                                     )}
                                 </div>
                             </button>
@@ -114,18 +120,18 @@ export default function DigitalTwinsIndex() {
 
                 <div className="mt-14 flex flex-col items-center gap-3 text-center">
                     <p className="text-sm font-semibold sm:text-base">Want a custom model?</p>
-                    <OrderCta href={orderUrl('digital-twins')}>Order now</OrderCta>
+                    <OrderCta href={digitalTwinOrderUrl({ mode: 'custom' })}>Order now</OrderCta>
                 </div>
             </main>
 
             <div className={`fixed inset-0 z-[500] ${modalTwinIndex === null ? 'pointer-events-none' : ''}`}>
                 <TwinPresetModal
+                    twins={allTwins}
                     twinIndex={modalTwinIndex}
                     onSelectTwin={setModalTwinIndex}
                     onClose={closeModal}
                 />
             </div>
-
         </div>
     );
 }

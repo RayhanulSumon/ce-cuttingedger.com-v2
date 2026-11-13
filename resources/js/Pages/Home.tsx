@@ -7,6 +7,7 @@ import { CaseStudySection } from '@/Components/Landing/CaseStudySection';
 import { ClientsSection } from '@/Components/Landing/ClientsSection';
 import { DemoModal } from '@/Components/Landing/DemoModal';
 import { DigitalTwinsSection } from '@/Components/Landing/DigitalTwins/DigitalTwinsSection';
+import { DigitalTwinModel } from '@/Components/Landing/DigitalTwins/twins';
 import { FaqSection } from '@/Components/Landing/FaqSection';
 import { FooterSection } from '@/Components/Landing/FooterSection';
 import { FullpageStage } from '@/Components/Landing/FullpageStage';
@@ -17,22 +18,33 @@ import { SECTION_INDEX, SECTIONS, STAGE_TRANSITION_MS } from '@/Components/Landi
 import { CapabilitiesSection } from '@/Components/Landing/CapabilitiesSection';
 import { ShowcaseSection } from '@/Components/Landing/ShowcaseSection';
 import { SideDots } from '@/Components/Landing/SideDots';
+import { Look } from '@/Components/Landing/TryOn/looks';
 import { TryOnSection } from '@/Components/Landing/TryOn/TryOnSection';
 import { useFullpage } from '@/hooks/useFullpage';
 import { Client, Project, Testimonial } from '@/types/models';
 
 interface HomeProps {
+    digitalTwins?: DigitalTwinModel[];
+    tryOnLooks?: Look[];
     featuredProjects?: Project[];
     clients?: Client[];
     testimonials?: Testimonial[];
 }
 
 /** Stable fallbacks so the memoised sections do not re-render on every section change. */
+const NO_TWINS: DigitalTwinModel[] = [];
+const NO_LOOKS: Look[] = [];
 const NO_PROJECTS: Project[] = [];
 const NO_CLIENTS: Client[] = [];
 const NO_TESTIMONIALS: Testimonial[] = [];
 
-export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIENTS, testimonials = NO_TESTIMONIALS }: HomeProps) {
+export default function Home({
+    digitalTwins = NO_TWINS,
+    tryOnLooks = NO_LOOKS,
+    featuredProjects = NO_PROJECTS,
+    clients = NO_CLIENTS,
+    testimonials = NO_TESTIMONIALS,
+}: HomeProps) {
     const { url } = usePage();
     const [demoOpen, setDemoOpen] = useState(false);
     const [overlayOpen, setOverlayOpen] = useState(false);
@@ -55,8 +67,8 @@ export default function Home({ featuredProjects = NO_PROJECTS, clients = NO_CLIE
     // Order must match SECTIONS in Components/Landing/shared.tsx.
     const sections = [
         <HeroSection {...common} active={isActive('hero')} />,
-        <DigitalTwinsSection {...common} active={isActive('digital-twins')} onOverlayChange={setOverlayOpen} />,
-        <TryOnSection {...common} active={isActive('try-on')} onOverlayChange={setOverlayOpen} />,
+        <DigitalTwinsSection {...common} twins={digitalTwins} active={isActive('digital-twins')} onOverlayChange={setOverlayOpen} />,
+        <TryOnSection {...common} looks={tryOnLooks} active={isActive('try-on')} onOverlayChange={setOverlayOpen} />,
         <RetouchingSection {...common} active={isActive('retouching')} />,
         <ShowcaseSection {...common} active={isActive('showcase')} projects={featuredProjects} onOverlayChange={setOverlayOpen} />,
         <ClientsSection {...common} active={isActive('clients')} clients={clients} testimonials={testimonials} />,

@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
-import { LOOKS } from './looks';
-import { ACTOR_COUNT, LOOK_COUNT, RunwayCursorState } from './useRingRunway';
+import { Look, LOOKS } from './looks';
+import { ACTOR_COUNT, RunwayCursorState } from './useRingRunway';
 
 interface RunwayStageProps {
+    looks?: Look[];
+    actorCount?: number;
     stageRef: React.Ref<HTMLDivElement>;
     actorRefs: React.RefObject<(HTMLDivElement | null)[]>;
     cursorRef: React.Ref<HTMLSpanElement>;
@@ -18,12 +20,19 @@ interface RunwayStageProps {
 const CONTACT_SHADOW =
     'pointer-events-none absolute bottom-0 left-[58%] h-[9%] max-h-[46px] min-h-[14px] w-[150%] -translate-x-1/2 translate-y-1/2 bg-[radial-gradient(closest-side,rgba(20,16,12,0.30),rgba(20,16,12,0.14)_45%,rgba(20,16,12,0.04)_75%,transparent)] blur-[2px]';
 
-/** The ring's models. Positioned by `useRingRunway`, so this never needs to re-render. */
-const RingActors = memo(function RingActors({ actorRefs }: Pick<RunwayStageProps, 'actorRefs'>) {
+/** The ring's models. Positioned by `useRingRunway`, so this never needs to re-render unless looks change. */
+const RingActors = memo(function RingActors({
+    looks = LOOKS,
+    actorCount = ACTOR_COUNT,
+    actorRefs,
+}: Pick<RunwayStageProps, 'looks' | 'actorCount' | 'actorRefs'>) {
+    const activeLooks = looks.length > 0 ? looks : LOOKS;
+    const lookCount = activeLooks.length;
+
     return (
         <>
-            {Array.from({ length: ACTOR_COUNT }, (_, actorIndex) => {
-                const look = LOOKS[actorIndex % LOOK_COUNT];
+            {Array.from({ length: actorCount }, (_, actorIndex) => {
+                const look = activeLooks[actorIndex % lookCount];
                 return (
                     <div
                         key={actorIndex}
@@ -88,8 +97,8 @@ function RunwayCursor({ cursorRef, cursor, hidden }: { cursorRef: React.Ref<HTML
     );
 }
 
-/** The 3D ring runway: atmosphere, the twelve models and the custom cursor. */
-export function RunwayStage({ stageRef, actorRefs, cursorRef, cursor, dimmed, handlers }: RunwayStageProps) {
+/** The 3D ring runway: atmosphere, the models and the custom cursor. */
+export function RunwayStage({ looks, actorCount, stageRef, actorRefs, cursorRef, cursor, dimmed, handlers }: RunwayStageProps) {
     return (
         <div
             ref={stageRef}
@@ -110,7 +119,7 @@ export function RunwayStage({ stageRef, actorRefs, cursorRef, cursor, dimmed, ha
                 className="ring-actors absolute inset-0 [mask-image:linear-gradient(90deg,transparent,#000_9%,#000_91%,transparent)]"
                 data-dimmed={dimmed}
             >
-                <RingActors actorRefs={actorRefs} />
+                <RingActors looks={looks} actorCount={actorCount} actorRefs={actorRefs} />
             </div>
 
             <RunwayCursor cursorRef={cursorRef} cursor={cursor} hidden={dimmed} />

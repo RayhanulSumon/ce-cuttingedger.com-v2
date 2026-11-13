@@ -1,31 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { usePage } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import { PageProps } from '@/types';
-import { EASE_OUT_QUART } from '../shared';
+import { digitalTwinOrderUrl, EASE_OUT_QUART } from '../shared';
 import { TwinPoseStage } from './TwinPoseStage';
 import { PresetAction, TwinPresetSidebar } from './TwinPresetSidebar';
-import { DIGITAL_TWINS } from './twins';
+import { DIGITAL_TWINS, DigitalTwinModel } from './twins';
 
 interface TwinPresetModalProps {
+    /** Dynamic list of Digital Twins. */
+    twins?: DigitalTwinModel[];
     /** Twin to show, or null when the modal is closed. */
     twinIndex: number | null;
     onSelectTwin: (index: number) => void;
     onClose: () => void;
 }
 
-/** Pause between picking a purchase action and opening the mail app, so the confirmation is readable. */
-const ACTION_FEEDBACK_MS = 260;
+/** Pause between picking a purchase action and navigating to the order page, so the confirmation is readable. */
+const ACTION_FEEDBACK_MS = 220;
 
 /**
  * Fullscreen pose-preset overlay for a digital twin.
  */
-export function TwinPresetModal({ twinIndex, onSelectTwin, onClose }: TwinPresetModalProps) {
+export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps) {
     return (
         <AnimatePresence>
             {twinIndex !== null && (
-                <TwinPresetPanel twinIndex={twinIndex} onSelectTwin={onSelectTwin} onClose={onClose} />
+                <TwinPresetPanel twins={twins} twinIndex={twinIndex} onSelectTwin={onSelectTwin} onClose={onClose} />
             )}
         </AnimatePresence>
     );
@@ -34,40 +35,14 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose }: TwinPreset
 const MODEL_ARROW =
     'absolute top-1/3 z-20 grid h-11 w-11 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white lg:top-1/2 lg:-translate-y-1/2';
 
-const FALLBACK_EMAIL = 'hello@cuttingedger.com';
-
-const ACTION_LABEL: Record<PresetAction, string> = {
-    buy: 'preset',
-    lifetime: 'lifetime copyright',
-};
-
-/** Pre-written email to the studio for buying a preset or a model's lifetime copyright. */
-function buildMailtoUrl(email: string, twinName: string, action: PresetAction, price: string): string {
-    const [name] = twinName.split(' — ');
-    const subject = `${action === 'lifetime' ? 'Lifetime copyright' : 'Preset purchase'}: ${name}`;
-    const body = [
-        'Hello CuttingEdger team,',
-        '',
-        `I would like to buy the ${ACTION_LABEL[action]} for the digital twin "${name}" (${price}).`,
-        '',
-        'Please send me the next steps and an invoice.',
-        '',
-        'Name:',
-        'Company:',
-    ].join('\n');
-
-    return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-
-function TwinPresetPanel({ twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
-    const { settings } = usePage<PageProps>().props;
-    const contactEmail = settings?.contact_email || FALLBACK_EMAIL;
+function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
+    const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
     const [poseIndex, setPoseIndex] = useState(0);
     const [pendingAction, setPendingAction] = useState<PresetAction | null>(null);
     const actionTimer = useRef(0);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-    const twin = DIGITAL_TWINS[twinIndex] ?? DIGITAL_TWINS[0];
+    const twin = models[twinIndex] ?? models[0];
     const poseCount = twin.poses.length;
     const pose = twin.poses[poseIndex] ?? twin.poses[0];
 
@@ -79,7 +54,7 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose }: TwinPresetModalPr
         setPendingAction(null);
     }
 
-    const stepTwin = (delta: number) => onSelectTwin((twinIndex + delta + DIGITAL_TWINS.length) % DIGITAL_TWINS.length);
+    const stepTwin = (delta: number) => onSelectTwin((twinIndex + delta + models.length) % models.length);
 
     const stepPose = (delta: number) => setPoseIndex((current) => (current + delta + poseCount) % poseCount);
 
@@ -109,8 +84,14 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose }: TwinPresetModalPr
         window.clearTimeout(actionTimer.current);
         actionTimer.current = window.setTimeout(() => {
             setPendingAction(null);
-            const price = action === 'lifetime' ? twin.lifetimePrice : twin.presetPrice;
-            window.location.href = buildMailtoUrl(contactEmail, twin.name, action, price);
+            const mode = action === 'lifetime' ? 'lifetime' : action === 'buy' ? 'preset' : 'custom';
+            router.visit(
+                digitalTwinOrderUrl({
+                    mode,
+                    twin: twin.slug,
+                    ref: twin.name,
+                }),
+            );
         }, ACTION_FEEDBACK_MS);
     };
 
