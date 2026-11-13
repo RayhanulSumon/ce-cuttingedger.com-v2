@@ -49,9 +49,9 @@ export function PieceCards({
                         onClick={() => onSelect(i)}
                         className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-4 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
                             isSelected
-                                ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-[#f5761a]'
+                                ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-primary'
                                 : isHot
-                                  ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-1 ring-[#f5761a]/70'
+                                  ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-1 ring-primary/70'
                                   : 'hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)]'
                         }`}
                     >
@@ -59,8 +59,8 @@ export function PieceCards({
                             <span
                                 className={`grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-[10px] font-bold tabular-nums transition-colors duration-300 ${
                                     isSelected || isHot
-                                        ? 'bg-[#f5761a] text-white'
-                                        : 'bg-[#dfe8f1] text-[#3d4857] group-hover:bg-[#f5761a] group-hover:text-white'
+                                        ? 'bg-primary text-white'
+                                        : 'bg-[#dfe8f1] text-[#3d4857] group-hover:bg-primary group-hover:text-white'
                                 }`}
                             >
                                 {String(i + 1).padStart(2, '0')}

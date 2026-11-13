@@ -69,8 +69,8 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
     if (card.type === 'service_detail_card') {
         const accentColor = card.accent_color || '#00f5ff';
         return (
-            <div className="my-2.5 p-4 rounded-2xl bg-[#12141a]/95 border border-[#00f5ff]/30 shadow-2xl backdrop-blur-md text-left space-y-3">
-                <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
+            <div className="my-2.5 p-4 rounded-2xl bg-white/95 border border-primary/30 shadow-2xl backdrop-blur-md text-left space-y-3">
+                <div className="flex items-start justify-between gap-3 border-b border-ink/10 pb-3">
                     <div className="flex items-center gap-2.5">
                         <span
                             className="p-2 rounded-xl text-black flex items-center justify-center font-bold"
@@ -79,17 +79,17 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                             {getServiceIcon(card.icon, card.slug)}
                         </span>
                         <div>
-                            <span className="text-[10px] font-mono uppercase tracking-wider text-[#00f5ff] block">
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink block">
                                 Technical Specification
                             </span>
-                            <h4 className="text-sm font-bold text-white tracking-tight">{card.title}</h4>
+                            <h4 className="text-sm font-bold text-ink tracking-tight">{card.title}</h4>
                         </div>
                     </div>
                     <div className="text-right">
-                        <span className="text-[11px] font-mono font-bold text-accent block">
+                        <span className="text-[11px] font-mono font-bold text-primary-ink block">
                             {card.starting_rate}
                         </span>
-                        <span className="text-[10px] text-white/50 font-mono flex items-center gap-1 justify-end">
+                        <span className="text-[10px] text-ink/50 font-mono flex items-center gap-1 justify-end">
                             <Clock className="w-3 h-3" />
                             {card.turnaround}
                         </span>
@@ -97,7 +97,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                 </div>
 
                 {card.description && (
-                    <p className="text-xs text-white/70 leading-relaxed">
+                    <p className="text-xs text-ink/70 leading-relaxed">
                         {card.description}
                     </p>
                 )}
@@ -105,13 +105,13 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                 {/* Features & Deliverables Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
                     {card.features && card.features.length > 0 && (
-                        <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5">
-                            <span className="text-[10px] text-accent uppercase tracking-wider block font-bold">
+                        <div className="p-2.5 rounded-xl bg-ink/[0.03] border border-ink/10 space-y-1.5">
+                            <span className="text-[10px] text-primary-ink uppercase tracking-wider block font-bold">
                                 Key Highlights
                             </span>
                             {card.features.map((feat, i) => (
-                                <div key={i} className="flex items-start gap-1.5 text-white/80 text-[11px]">
-                                    <CheckCircle2 className="w-3 h-3 text-accent shrink-0 mt-0.5" />
+                                <div key={i} className="flex items-start gap-1.5 text-ink/80 text-[11px]">
+                                    <CheckCircle2 className="w-3 h-3 text-primary-ink shrink-0 mt-0.5" />
                                     <span>{feat}</span>
                                 </div>
                             ))}
@@ -119,13 +119,13 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                     )}
 
                     {card.deliverables && card.deliverables.length > 0 && (
-                        <div className="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5">
-                            <span className="text-[10px] text-[#00f5ff] uppercase tracking-wider block font-bold">
+                        <div className="p-2.5 rounded-xl bg-ink/[0.03] border border-ink/10 space-y-1.5">
+                            <span className="text-[10px] text-primary-ink uppercase tracking-wider block font-bold">
                                 Master Deliverables
                             </span>
                             {card.deliverables.map((deliv, i) => (
-                                <div key={i} className="flex items-start gap-1.5 text-white/80 text-[11px]">
-                                    <ArrowRight className="w-3 h-3 text-[#00f5ff] shrink-0 mt-0.5" />
+                                <div key={i} className="flex items-start gap-1.5 text-ink/80 text-[11px]">
+                                    <ArrowRight className="w-3 h-3 text-primary-ink shrink-0 mt-0.5" />
                                     <span>{deliv}</span>
                                 </div>
                             ))}
@@ -138,7 +138,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                     <button
                         type="button"
                         onClick={() => onSendPrompt?.(`Calculate volume price for ${card.title}`)}
-                        className="flex-1 py-2 px-3 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                        className="flex-1 py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
                     >
                         <Calculator className="w-3.5 h-3.5" />
                         <span>Get Instant Quote</span>
@@ -146,9 +146,9 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                     <button
                         type="button"
                         onClick={() => onSendPrompt?.(`Book technical intake call for ${card.title}`)}
-                        className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                        className="py-2 px-3 rounded-xl bg-ink/[0.05] hover:bg-ink/10 text-ink font-mono text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
-                        <Calendar className="w-3.5 h-3.5 text-[#00f5ff]" />
+                        <Calendar className="w-3.5 h-3.5 text-primary-ink" />
                         <span>Book Call</span>
                     </button>
                 </div>
@@ -160,17 +160,17 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
     const services = card.services || [];
 
     return (
-        <div className="my-2.5 p-3.5 sm:p-4 rounded-2xl bg-[#12141a]/95 border border-white/15 shadow-2xl backdrop-blur-md text-left space-y-3">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <div className="my-2.5 p-3.5 sm:p-4 rounded-2xl bg-white/95 border border-ink/15 shadow-2xl backdrop-blur-md text-left space-y-3">
+            <div className="flex items-center justify-between border-b border-ink/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-accent/15 text-accent">
+                    <span className="p-1.5 rounded-lg bg-primary/15 text-primary-ink">
                         <Layers className="w-4 h-4" />
                     </span>
                     <div>
-                        <h4 className="text-sm font-bold text-white tracking-tight">
+                        <h4 className="text-sm font-bold text-ink tracking-tight">
                             {card.title || 'Studio Production Services'}
                         </h4>
-                        <p className="text-[10px] text-white/50 font-mono">
+                        <p className="text-[10px] text-ink/50 font-mono">
                             {card.subtitle || 'Senior human retouchers • 100% Pen Tool precision'}
                         </p>
                     </div>
@@ -186,21 +186,21 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                             key={s.id || s.slug}
                             className={`rounded-xl border transition-all ${
                                 isExpanded
-                                    ? 'bg-white/8 border-[#00f5ff]/40 shadow-lg'
-                                    : 'bg-white/4 border-white/5 hover:border-white/15'
+                                    ? 'bg-white/8 border-primary/40 shadow-lg'
+                                    : 'bg-white/4 border-ink/10 hover:border-ink/15'
                             }`}
                         >
                             <div className="p-2.5 flex items-center justify-between gap-2.5">
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     <div
                                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-black font-bold"
-                                        style={{ backgroundColor: s.accent_color || '#f5a623' }}
+                                        style={{ backgroundColor: s.accent_color || 'var(--color-primary)' }}
                                     >
                                         {getServiceIcon(s.icon, s.slug)}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs font-bold text-white truncate">{s.title}</p>
-                                        <p className="text-[10px] text-white/60 truncate font-mono">
+                                        <p className="text-xs font-bold text-ink truncate">{s.title}</p>
+                                        <p className="text-[10px] text-ink/60 truncate font-mono">
                                             {s.starting_rate} • {s.turnaround}
                                         </p>
                                     </div>
@@ -210,7 +210,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                     <button
                                         type="button"
                                         onClick={() => setExpandedSlug(isExpanded ? null : s.slug)}
-                                        className="py-1 px-2 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/70 hover:text-white font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                                        className="py-1 px-2 rounded-lg bg-ink/[0.03] hover:bg-ink/[0.05] text-[11px] text-ink/70 hover:text-ink font-mono flex items-center gap-1 transition-colors cursor-pointer"
                                         title={isExpanded ? 'Collapse' : 'View Specs'}
                                     >
                                         <span>{isExpanded ? 'Less' : 'Specs'}</span>
@@ -223,7 +223,7 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                     <button
                                         type="button"
                                         onClick={() => onSendPrompt?.(`Get quote for ${s.title}`)}
-                                        className="py-1 px-2 rounded-lg bg-accent hover:bg-accent-hover text-black text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
+                                        className="py-1 px-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-[11px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
                                     >
                                         <span>Quote</span>
                                         <ArrowRight className="w-3 h-3" />
@@ -233,18 +233,18 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
 
                             {/* Expanded Spec Panel */}
                             {isExpanded && (
-                                <div className="px-3 pb-3 pt-1 border-t border-white/10 space-y-2 animate-in fade-in duration-200">
-                                    <p className="text-[11px] text-white/75">{s.subtitle}</p>
+                                <div className="px-3 pb-3 pt-1 border-t border-ink/10 space-y-2 animate-in fade-in duration-200">
+                                    <p className="text-[11px] text-ink/75">{s.subtitle}</p>
 
                                     {s.features && s.features.length > 0 && (
                                         <div className="space-y-1">
-                                            <span className="text-[9px] font-mono uppercase tracking-wider text-accent font-semibold">
+                                            <span className="text-[9px] font-mono uppercase tracking-wider text-primary-ink font-semibold">
                                                 Technical Highlights
                                             </span>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-white/80 font-mono">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-ink/80 font-mono">
                                                 {s.features.map((f, fIdx) => (
                                                     <div key={fIdx} className="flex items-center gap-1.5">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                                                         <span>{f}</span>
                                                     </div>
                                                 ))}
@@ -256,15 +256,15 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
                                         <button
                                             type="button"
                                             onClick={() => onSendPrompt?.(`Book technical call for ${s.title}`)}
-                                            className="py-1.5 px-2.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[11px] font-mono flex items-center gap-1.5 cursor-pointer"
+                                            className="py-1.5 px-2.5 rounded-lg bg-ink/[0.05] hover:bg-ink/10 text-ink text-[11px] font-mono flex items-center gap-1.5 cursor-pointer"
                                         >
-                                            <Calendar className="w-3 h-3 text-[#00f5ff]" />
+                                            <Calendar className="w-3 h-3 text-primary-ink" />
                                             <span>Schedule Call</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => onSendPrompt?.(`Tell me about ${s.title} deliverables and formats`)}
-                                            className="text-[11px] text-[#00f5ff] hover:underline font-mono py-1 px-2"
+                                            className="text-[11px] text-primary-ink hover:underline font-mono py-1 px-2"
                                         >
                                             View Full SLA & Formats →
                                         </button>
@@ -277,8 +277,8 @@ export function ServiceCatalogCard({ card, onSendPrompt }: ServiceCatalogCardPro
             </div>
 
             {/* Trial Banner */}
-            <div className="p-2.5 rounded-xl bg-accent/10 border border-accent/25 flex items-center gap-2 text-[11px] font-mono text-white/80">
-                <Shield className="w-3.5 h-3.5 text-accent shrink-0" />
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/25 flex items-center gap-2 text-[11px] font-mono text-ink/80">
+                <Shield className="w-3.5 h-3.5 text-primary-ink shrink-0" />
                 <span>{card.trial_banner || 'All services include 3 Free Sample Edits with zero upfront billing.'}</span>
             </div>
         </div>

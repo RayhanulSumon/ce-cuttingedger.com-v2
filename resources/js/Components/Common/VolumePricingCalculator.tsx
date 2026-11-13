@@ -315,39 +315,39 @@ export function VolumePricingCalculator() {
     return (
         <section
             id="volume-calculator-section"
-            className="relative py-16 sm:py-20 lg:py-24 bg-[#f2f2f1] border-t border-[#16191f]/10 overflow-hidden"
+            className="relative py-16 sm:py-20 lg:py-24 bg-page border-t border-ink/10 overflow-hidden"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-[#f5761a]/5 rounded-full blur-[220px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[45rem] h-[30rem] bg-primary/5 rounded-full blur-[220px] pointer-events-none" />
             <div className="absolute bottom-10 right-10 w-[30rem] h-[30rem] bg-[#00f5ff]/5 rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Header Section */}
                 <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#16191f]/[0.03] border border-[#16191f]/10 text-xs font-mono uppercase tracking-widest text-[#c4540a] mb-4">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-ink/[0.03] border border-ink/10 text-xs font-mono uppercase tracking-widest text-primary-ink mb-4">
                         <Calculator className="w-3.5 h-3.5" />
                         <span>[ LIVE PRODUCTION RATE ESTIMATOR ]</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-[#16191f] tracking-tight leading-[1.08] sm:leading-[1.05]">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-extrabold text-ink tracking-tight leading-[1.08] sm:leading-[1.05]">
                         Calculate Your Rate <br />
-                        <span className="text-[#c4540a]">Down to the Penny.</span>
+                        <span className="text-primary-ink">Down to the Penny.</span>
                     </h2>
 
-                    <p className="mt-3.5 text-sm sm:text-base text-[#4a505b] font-sans leading-relaxed">
+                    <p className="mt-3.5 text-sm sm:text-base text-muted font-sans leading-relaxed">
                         Select a single service or combine multiple services for <strong>bundled volume discounts</strong>. Rates automatically scale down as your batch size grows.
                     </p>
 
                     {/* Quick Preset Combos */}
                     <div className="flex items-center justify-center gap-2.5 pt-4 flex-wrap">
-                        <span className="text-xs font-mono text-[#5d6572] uppercase mr-1">Quick Presets:</span>
+                        <span className="text-xs font-mono text-subtle uppercase mr-1">Quick Presets:</span>
                         <button
                             type="button"
                             onClick={selectSingleCutout}
                             className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer ${
                                 selectedServiceIds.length === 1 && selectedServiceIds[0] === 'cutout'
-                                    ? 'bg-[#16191f]/10 text-[#16191f] font-bold border border-[#16191f]/30'
-                                    : 'bg-[#16191f]/[0.03] text-[#4a505b] hover:text-[#16191f] border border-[#16191f]/10'
+                                    ? 'bg-ink/10 text-ink font-bold border border-ink/30'
+                                    : 'bg-ink/[0.03] text-muted hover:text-ink border border-ink/10'
                             }`}
                         >
                             Single Cutout ($0.40)
@@ -357,8 +357,8 @@ export function VolumePricingCalculator() {
                             onClick={selectComboPlan1}
                             className={`px-3.5 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
                                 hasSameFlowFreeFinish
-                                    ? 'bg-[#f5761a] text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
-                                    : 'bg-[#f5761a]/10 text-[#c4540a] hover:bg-[#f5761a]/20 border border-[#f5761a]/30'
+                                    ? 'bg-primary text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
+                                    : 'bg-primary/10 text-primary-ink hover:bg-primary/20 border border-primary/30'
                             }`}
                         >
                             <Gift className="w-3 h-3" />
@@ -370,31 +370,31 @@ export function VolumePricingCalculator() {
                 {/* Calculator Interactive Container */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch max-w-6xl mx-auto">
                     {/* Left Column: Interactive Controls */}
-                    <div className="lg:col-span-7 rounded-2xl sm:rounded-3xl border border-[#16191f]/10 bg-[#f2f2f1]/95 backdrop-blur-xl p-4 sm:p-8 space-y-6 shadow-2xl flex flex-col justify-between">
+                    <div className="lg:col-span-7 rounded-2xl sm:rounded-3xl border border-ink/10 bg-page/95 backdrop-blur-xl p-4 sm:p-8 space-y-6 shadow-2xl flex flex-col justify-between">
                         {/* 1. Service Selection */}
                         <div className="space-y-3.5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#f5761a]/15 text-[#c4540a] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-primary/15 text-primary-ink font-mono text-xs font-bold flex items-center justify-center">
                                         1
                                     </span>
-                                    <label className="text-sm font-semibold text-[#16191f] tracking-wide">
+                                    <label className="text-sm font-semibold text-ink tracking-wide">
                                         Select Services
                                     </label>
-                                    <span className="text-xs font-mono text-[#4a505b] ml-1">
+                                    <span className="text-xs font-mono text-muted ml-1">
                                         ({selectedServiceIds.length} active · ${combinedBasePrice.toFixed(2)} base)
                                     </span>
                                 </div>
 
                                 {/* Category Switcher Filter */}
-                                <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-[#16191f]/10 self-start sm:self-auto">
+                                <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-ink/10 self-start sm:self-auto">
                                     <button
                                         type="button"
                                         onClick={() => setCategoryFilter('all')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === 'all'
-                                                ? 'bg-[#f5761a] text-white font-bold shadow-sm'
-                                                : 'text-[#4a505b] hover:text-[#16191f]'
+                                                ? 'bg-primary text-white font-bold shadow-sm'
+                                                : 'text-muted hover:text-ink'
                                         }`}
                                     >
                                         All ({services.length})
@@ -404,8 +404,8 @@ export function VolumePricingCalculator() {
                                         onClick={() => setCategoryFilter('2d')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === '2d'
-                                                ? 'bg-[#f5761a] text-white font-bold shadow-sm'
-                                                : 'text-[#4a505b] hover:text-[#16191f]'
+                                                ? 'bg-primary text-white font-bold shadow-sm'
+                                                : 'text-muted hover:text-ink'
                                         }`}
                                     >
                                         2D Retouch
@@ -415,8 +415,8 @@ export function VolumePricingCalculator() {
                                         onClick={() => setCategoryFilter('specialty')}
                                         className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                                             categoryFilter === 'specialty'
-                                                ? 'bg-[#f5761a] text-white font-bold shadow-sm'
-                                                : 'text-[#4a505b] hover:text-[#16191f]'
+                                                ? 'bg-primary text-white font-bold shadow-sm'
+                                                : 'text-muted hover:text-ink'
                                         }`}
                                     >
                                         3D & DTP
@@ -437,28 +437,28 @@ export function VolumePricingCalculator() {
                                             onClick={() => handleToggleService(svc.id)}
                                             className={`group px-3 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer select-none relative flex items-center justify-between gap-2.5 ${
                                                 isSelected
-                                                    ? 'border-[#f5761a] bg-[#f5761a]/10 text-[#16191f] shadow-[0_0_15px_rgba(251, 183, 24, 0.12)] ring-1 ring-[#f5761a]/40'
-                                                    : 'border-[#16191f]/[0.08] bg-white/[0.02] text-[#2f333a] hover:border-[#16191f]/20 hover:bg-white/[0.05]'
+                                                    ? 'border-primary bg-primary/10 text-ink shadow-[0_0_15px_rgba(251, 183, 24, 0.12)] ring-1 ring-primary/40'
+                                                    : 'border-ink/[0.08] bg-white/[0.02] text-ink-2 hover:border-ink/20 hover:bg-white/[0.05]'
                                             }`}
                                         >
                                             <div className="flex items-center gap-2.5 min-w-0">
                                                 <div
                                                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                                                         isSelected
-                                                            ? 'bg-[#f5761a] text-white shadow-sm'
-                                                            : 'bg-[#16191f]/[0.03] text-[#4a505b] group-hover:text-[#16191f] border border-[#16191f]/10'
+                                                            ? 'bg-primary text-white shadow-sm'
+                                                            : 'bg-ink/[0.03] text-muted group-hover:text-ink border border-ink/10'
                                                     }`}
                                                 >
                                                     <IconComponent className="w-4 h-4" />
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <span className="text-xs font-semibold text-[#16191f] block truncate leading-tight">
+                                                    <span className="text-xs font-semibold text-ink block truncate leading-tight">
                                                         {svc.name}
                                                     </span>
-                                                    <span className="text-[11px] font-mono text-[#4a505b] block mt-0.5">
+                                                    <span className="text-[11px] font-mono text-muted block mt-0.5">
                                                         ${svc.basePrice.toFixed(2)}
-                                                        <span className="text-[#5d6572] text-[10px]"> / {svc.unitNameSingular.toLowerCase()}</span>
+                                                        <span className="text-subtle text-[10px]"> / {svc.unitNameSingular.toLowerCase()}</span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -466,8 +466,8 @@ export function VolumePricingCalculator() {
                                             <div
                                                 className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-all ${
                                                     isSelected
-                                                        ? 'bg-[#f5761a] text-white shadow-sm'
-                                                        : 'border border-[#16191f]/20 bg-[#16191f]/[0.03]'
+                                                        ? 'bg-primary text-white shadow-sm'
+                                                        : 'border border-ink/20 bg-ink/[0.03]'
                                                 }`}
                                             >
                                                 {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
@@ -479,15 +479,15 @@ export function VolumePricingCalculator() {
 
                             {/* COMBO PERKS BANNER */}
                             {hasSameFlowFreeFinish && (
-                                <div className="p-3 rounded-xl bg-[#f5761a]/10 border border-[#f5761a]/25 flex items-center gap-3 animate-in fade-in">
-                                    <div className="w-7 h-7 rounded-lg bg-[#f5761a] text-white flex items-center justify-center shrink-0">
+                                <div className="p-3 rounded-xl bg-primary/10 border border-primary/25 flex items-center gap-3 animate-in fade-in">
+                                    <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shrink-0">
                                         <Gift className="w-4 h-4" />
                                     </div>
                                     <div className="text-xs leading-tight min-w-0">
-                                        <span className="font-semibold text-[#c4540a] block">
+                                        <span className="font-semibold text-primary-ink block">
                                             Combo Deal Active: Free Natural Shadow & Resize
                                         </span>
-                                        <span className="text-[#2f333a] block text-[11px] mt-0.5">
+                                        <span className="text-ink-2 block text-[11px] mt-0.5">
                                             $0.15/photo value included free (<strong>+${calculation.freeFinishValue} bonus</strong> value)
                                         </span>
                                     </div>
@@ -496,26 +496,26 @@ export function VolumePricingCalculator() {
                         </div>
 
                         {/* 2. Interactive Quantity Slider & Stepper */}
-                        <div className="space-y-3 pt-4 border-t border-[#16191f]/[0.08]">
+                        <div className="space-y-3 pt-4 border-t border-ink/[0.08]">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#f5761a]/15 text-[#c4540a] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-primary/15 text-primary-ink font-mono text-xs font-bold flex items-center justify-center">
                                         2
                                     </span>
-                                    <label className="text-sm font-semibold text-[#16191f] tracking-wide">
+                                    <label className="text-sm font-semibold text-ink tracking-wide">
                                         Batch Volume
                                     </label>
-                                    <span className="text-xs font-mono text-[#4a505b]">
+                                    <span className="text-xs font-mono text-muted">
                                         ({primaryService.unitNamePlural})
                                     </span>
                                 </div>
 
                                 {/* Direct Editable Numerical Stepper */}
-                                <div className="flex items-center gap-1 bg-white/[0.04] border border-[#16191f]/10 rounded-xl p-1">
+                                <div className="flex items-center gap-1 bg-white/[0.04] border border-ink/10 rounded-xl p-1">
                                     <button
                                         type="button"
                                         onClick={() => setQuantity((q) => Math.max(sliderMin, q - primaryService.stepQty))}
-                                        className="w-7 h-7 rounded-lg bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] text-[#2f333a] hover:text-[#16191f] flex items-center justify-center transition-colors cursor-pointer select-none"
+                                        className="w-7 h-7 rounded-lg bg-ink/[0.03] hover:bg-ink/[0.05] text-ink-2 hover:text-ink flex items-center justify-center transition-colors cursor-pointer select-none"
                                         title="Decrease volume"
                                     >
                                         <Minus className="w-3.5 h-3.5" />
@@ -526,12 +526,12 @@ export function VolumePricingCalculator() {
                                         max={sliderMax}
                                         value={quantity}
                                         onChange={handleQuantityInputChange}
-                                        className="w-16 sm:w-20 bg-transparent text-center text-[#16191f] font-mono text-sm font-bold focus:outline-none"
+                                        className="w-16 sm:w-20 bg-transparent text-center text-ink font-mono text-sm font-bold focus:outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setQuantity((q) => Math.min(sliderMax, q + primaryService.stepQty))}
-                                        className="w-7 h-7 rounded-lg bg-[#16191f]/[0.03] hover:bg-[#16191f]/[0.05] text-[#2f333a] hover:text-[#16191f] flex items-center justify-center transition-colors cursor-pointer select-none"
+                                        className="w-7 h-7 rounded-lg bg-ink/[0.03] hover:bg-ink/[0.05] text-ink-2 hover:text-ink flex items-center justify-center transition-colors cursor-pointer select-none"
                                         title="Increase volume"
                                     >
                                         <Plus className="w-3.5 h-3.5" />
@@ -549,14 +549,14 @@ export function VolumePricingCalculator() {
                                         step={primaryService.stepQty}
                                         value={quantity}
                                         onChange={(e) => setQuantity(Number(e.target.value))}
-                                        className="w-full h-2.5 bg-[#16191f]/[0.05] rounded-lg appearance-none cursor-pointer accent-accent relative z-10"
+                                        className="w-full h-2.5 bg-ink/[0.05] rounded-lg appearance-none cursor-pointer accent-accent relative z-10"
                                         style={{
-                                            background: `linear-gradient(to right, #f5a623 0%, #f5a623 ${progressPercent}%, rgba(255,255,255,0.1) ${progressPercent}%, rgba(255,255,255,0.1) 100%)`,
+                                            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${progressPercent}%, color-mix(in srgb, var(--color-ink) 10%, transparent) ${progressPercent}%, color-mix(in srgb, var(--color-ink) 10%, transparent) 100%)`,
                                         }}
                                     />
                                 </div>
 
-                                <div className="flex justify-between text-[10px] font-mono text-[#5d6572]">
+                                <div className="flex justify-between text-[10px] font-mono text-subtle">
                                     <span>Min: {sliderMin.toLocaleString()}</span>
                                     <span>Max: {sliderMax.toLocaleString()}</span>
                                 </div>
@@ -564,7 +564,7 @@ export function VolumePricingCalculator() {
 
                             {/* Preset Buttons */}
                             <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[11px] font-mono text-[#5d6572] uppercase mr-1">Presets:</span>
+                                <span className="text-[11px] font-mono text-subtle uppercase mr-1">Presets:</span>
                                 {primaryService.presets.map((preset) => (
                                     <button
                                         type="button"
@@ -572,8 +572,8 @@ export function VolumePricingCalculator() {
                                         onClick={() => setQuantity(preset)}
                                         className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer select-none ${
                                             quantity === preset
-                                                ? 'bg-[#f5761a] text-white font-bold shadow-[0_0_10px_rgba(251, 183, 24, 0.3)]'
-                                                : 'bg-[#16191f]/[0.03] text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.05] border border-[#16191f]/10'
+                                                ? 'bg-primary text-white font-bold shadow-[0_0_10px_rgba(251, 183, 24, 0.3)]'
+                                                : 'bg-ink/[0.03] text-muted hover:text-ink hover:bg-ink/[0.05] border border-ink/10'
                                         }`}
                                     >
                                         {preset >= 1000 ? `${preset / 1000}k` : preset}
@@ -583,22 +583,22 @@ export function VolumePricingCalculator() {
                         </div>
 
                         {/* 3. Turnaround SLA Speed Selector - Sleek Segmented Switch */}
-                        <div className="space-y-2.5 pt-4 border-t border-[#16191f]/[0.08]">
+                        <div className="space-y-2.5 pt-4 border-t border-ink/[0.08]">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-5 h-5 rounded-md bg-[#f5761a]/15 text-[#c4540a] font-mono text-xs font-bold flex items-center justify-center">
+                                    <span className="w-5 h-5 rounded-md bg-primary/15 text-primary-ink font-mono text-xs font-bold flex items-center justify-center">
                                         3
                                     </span>
-                                    <label className="text-sm font-semibold text-[#16191f] tracking-wide">
+                                    <label className="text-sm font-semibold text-ink tracking-wide">
                                         Turnaround Speed
                                     </label>
                                 </div>
-                                <span className="text-xs font-mono text-[#c4540a] font-medium">
+                                <span className="text-xs font-mono text-primary-ink font-medium">
                                     {speedLabel}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-[#16191f]/10">
+                            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-ink/10">
                                 {[
                                     { multiplier: 1.0, label: 'Standard 24h', desc: 'Standard' },
                                     { multiplier: 1.25, label: 'Rush 12h', desc: '+25% Priority' },
@@ -615,14 +615,14 @@ export function VolumePricingCalculator() {
                                             }}
                                             className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer select-none ${
                                                 active
-                                                    ? 'bg-[#f5761a] text-white font-bold shadow-md'
-                                                    : 'text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.03] font-medium'
+                                                    ? 'bg-primary text-white font-bold shadow-md'
+                                                    : 'text-muted hover:text-ink hover:bg-ink/[0.03] font-medium'
                                             }`}
                                         >
                                             <div className="text-xs font-sans font-semibold leading-tight">
                                                 {tier.label}
                                             </div>
-                                            <div className={`text-[10px] font-mono mt-0.5 ${active ? 'text-white/80' : 'text-[#5d6572]'}`}>
+                                            <div className={`text-[10px] font-mono mt-0.5 ${active ? 'text-white/80' : 'text-subtle'}`}>
                                                 {tier.desc}
                                             </div>
                                         </button>
@@ -633,19 +633,19 @@ export function VolumePricingCalculator() {
                     </div>
 
                     {/* Right Column: Instant Live Estimate Card */}
-                    <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl border-2 border-[#f5761a] bg-white/95 backdrop-blur-2xl p-4 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(251, 183, 24, 0.12)] relative overflow-hidden">
+                    <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl border-2 border-primary bg-white/95 backdrop-blur-2xl p-4 sm:p-10 flex flex-col justify-between shadow-[0_0_50px_rgba(251, 183, 24, 0.12)] relative overflow-hidden">
                         {/* Glow orb */}
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-[#f5761a]/10 rounded-full blur-[70px] pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-[70px] pointer-events-none" />
 
                         <div className="space-y-6 relative z-10">
                             {/* Live Badge */}
-                            <div className="flex items-center justify-between border-b border-[#16191f]/10 pb-4">
-                                <span className="font-mono text-xs uppercase tracking-widest text-[#c4540a] font-bold flex items-center gap-1.5">
-                                    <Clock className="w-3.5 h-3.5 text-[#c4540a]" />
+                            <div className="flex items-center justify-between border-b border-ink/10 pb-4">
+                                <span className="font-mono text-xs uppercase tracking-widest text-primary-ink font-bold flex items-center gap-1.5">
+                                    <Clock className="w-3.5 h-3.5 text-primary-ink" />
                                     <span>INSTANT LIVE ESTIMATE</span>
                                 </span>
                                 {discountTier.percent > 0 && (
-                                    <span className="px-2.5 py-0.5 rounded-full bg-[#f5761a]/10 border border-[#f5761a]/30 text-[#c4540a] font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                    <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary-ink font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
                                         <Tag className="w-3 h-3" />
                                         <span>{discountTier.label}</span>
                                     </span>
@@ -654,28 +654,28 @@ export function VolumePricingCalculator() {
 
                             {/* Big Total Price */}
                             <div className="space-y-1">
-                                <span className="text-xs font-mono text-[#4a505b] uppercase tracking-widest block">
+                                <span className="text-xs font-mono text-muted uppercase tracking-widest block">
                                     Estimated Total Batch Cost
                                 </span>
-                                <div className="text-4xl sm:text-6xl font-display font-extrabold text-[#16191f] tracking-tight tabular-nums">
+                                <div className="text-4xl sm:text-6xl font-display font-extrabold text-ink tracking-tight tabular-nums">
                                     ${calculation.totalCost}
                                 </div>
                             </div>
 
                             {/* Unit Cost & Total Savings Grid */}
-                            <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/[0.03] border border-[#16191f]/10">
+                            <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/[0.03] border border-ink/10">
                                 <div>
-                                    <span className="text-[11px] font-mono text-[#4a505b] uppercase tracking-wider block">
+                                    <span className="text-[11px] font-mono text-muted uppercase tracking-wider block">
                                         Effective Unit Cost
                                     </span>
-                                    <div className="text-xl sm:text-2xl font-mono font-bold text-[#c4540a] mt-0.5 tabular-nums">
+                                    <div className="text-xl sm:text-2xl font-mono font-bold text-primary-ink mt-0.5 tabular-nums">
                                         ${calculation.unitPrice}
-                                        <span className="text-xs text-[#4a505b] font-normal"> / {primaryService.unitNameSingular.toLowerCase()}</span>
+                                        <span className="text-xs text-muted font-normal"> / {primaryService.unitNameSingular.toLowerCase()}</span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <span className="text-[11px] font-mono text-[#4a505b] uppercase tracking-wider block">
+                                    <span className="text-[11px] font-mono text-muted uppercase tracking-wider block">
                                         {hasSameFlowFreeFinish ? 'Total Value Savings' : 'Volume Savings'}
                                     </span>
                                     <div className="text-xl sm:text-2xl font-mono font-bold text-emerald-400 mt-0.5 flex items-center gap-1 tabular-nums">
@@ -697,36 +697,36 @@ export function VolumePricingCalculator() {
                             )}
 
                             {/* Features Checklist */}
-                            <ul className="space-y-2.5 text-xs font-mono text-[#2f333a]">
+                            <ul className="space-y-2.5 text-xs font-mono text-ink-2">
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#c4540a] shrink-0" />
+                                    <Check className="w-4 h-4 text-primary-ink shrink-0" />
                                     <span>Guaranteed Delivery SLA: <strong>{speedLabel}</strong></span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#c4540a] shrink-0" />
+                                    <Check className="w-4 h-4 text-primary-ink shrink-0" />
                                     <span>Free Unlimited Revisions until 100% Approved</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-[#c4540a] shrink-0" />
+                                    <Check className="w-4 h-4 text-primary-ink shrink-0" />
                                     <span>Senior QA Double-Inspection Included</span>
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <ShieldCheck className="w-4 h-4 text-[#c4540a] shrink-0" />
+                                    <ShieldCheck className="w-4 h-4 text-primary-ink shrink-0" />
                                     <span>Enterprise Encrypted TLS Cloud Storage</span>
                                 </li>
                             </ul>
                         </div>
 
                         {/* CTA Lock Rate Button */}
-                        <div className="pt-6 mt-6 border-t border-[#16191f]/10 relative z-10 space-y-2">
+                        <div className="pt-6 mt-6 border-t border-ink/10 relative z-10 space-y-2">
                             <a
                                 href="#trial-uploader-section"
-                                className="w-full py-4 px-6 rounded-2xl bg-[#f5761a] text-white font-display font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#e0650c] hover:shadow-[0_0_25px_rgba(251, 183, 24, 0.5)] transition-all duration-300 cursor-pointer select-none"
+                                className="w-full py-4 px-6 rounded-2xl bg-primary text-white font-display font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-primary-hover hover:shadow-[0_0_25px_rgba(251, 183, 24, 0.5)] transition-all duration-300 cursor-pointer select-none"
                             >
                                 <span>Lock This Rate & Try 3 Free</span>
                                 <ArrowUpRight className="w-4 h-4 text-white stroke-[2.5]" />
                             </a>
-                            <p className="text-center text-[11px] font-mono text-[#5d6572]">
+                            <p className="text-center text-[11px] font-mono text-subtle">
                                 Zero upfront payment. We process your first 3 samples 100% free.
                             </p>
                         </div>

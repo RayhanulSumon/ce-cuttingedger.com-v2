@@ -48,19 +48,19 @@ export const ServicesSection = memo(function ServicesSection({ active, openDemo 
     return (
         <div
             data-scrollable
-            className={`flex h-full w-full flex-col justify-center overflow-y-auto bg-[#f2f2f1] pb-8 pt-24 ${PAD_X}`}
+            className={`flex h-full w-full flex-col justify-center overflow-y-auto bg-page pb-8 pt-24 ${PAD_X}`}
         >
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
                 <div>
                     <Reveal active={active}>
-                        <h2 className="text-[clamp(32px,5.4vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-[#1d1d1d]">
+                        <h2 className="text-[clamp(32px,5.4vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">
                             Capabilities
                             <br />
                             built for scale.
                         </h2>
                     </Reveal>
                     <Reveal active={active} delay={0.1}>
-                        <p className="mt-4 max-w-xl text-base leading-relaxed text-[#2f333a] sm:text-lg">
+                        <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-2 sm:text-lg">
                             Pick a capability to see exactly what we deliver, how it works and what it costs.
                         </p>
                     </Reveal>
@@ -68,14 +68,14 @@ export const ServicesSection = memo(function ServicesSection({ active, openDemo 
                 <Reveal active={active} delay={0.16} className="flex flex-wrap items-center gap-3">
                     <Link
                         href="/services"
-                        className="rounded-full border border-[#1b1b1b] px-6 py-3 text-sm font-semibold text-[#1b1b1b] transition-colors duration-300 hover:bg-[#1b1b1b] hover:text-white"
+                        className="rounded-full border border-ink px-6 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
                     >
                         All capabilities
                     </Link>
                     <button
                         type="button"
                         onClick={openDemo}
-                        className="rounded-full bg-[#1b1b1b] px-6 py-3 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5"
+                        className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5"
                     >
                         Book a Demo
                     </button>
@@ -88,24 +88,24 @@ export const ServicesSection = memo(function ServicesSection({ active, openDemo 
                         <Reveal active={active} delay={0.2 + i * 0.07} y="24px" className="h-full">
                             <Link
                                 href={card.href}
-                                className="group flex h-full min-h-[180px] flex-col justify-between rounded-3xl border border-[#1d1d1d]/10 bg-white p-6 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-[#f5761a]/50 hover:shadow-[0_22px_40px_-24px_rgba(22,25,31,0.35)] sm:p-7"
+                                className="group flex h-full min-h-[180px] flex-col justify-between rounded-3xl border border-ink/10 bg-white p-6 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_22px_40px_-24px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] sm:p-7"
                             >
                                 <div className="flex items-start justify-between gap-4">
-                                    <h3 className="text-xl font-extrabold leading-tight tracking-[-0.02em] text-[#16191f] sm:text-2xl">
+                                    <h3 className="text-xl font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-2xl">
                                         {card.title}
                                     </h3>
-                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#1b1b1b] text-white transition-[background-color,transform] duration-300 group-hover:rotate-45 group-hover:bg-[#f5761a]">
+                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink text-white transition-[background-color,transform] duration-300 group-hover:rotate-45 group-hover:bg-primary">
                                         <ArrowUpRight size={18} />
                                     </span>
                                 </div>
                                 <div className="mt-6">
                                     {card.summary && (
-                                        <p className="line-clamp-3 text-sm leading-relaxed text-[#4a505b]">{card.summary}</p>
+                                        <p className="line-clamp-3 text-sm leading-relaxed text-muted">{card.summary}</p>
                                     )}
                                     {card.tags.length > 0 && (
                                         <div className="mt-3 flex flex-wrap gap-1.5">
                                             {card.tags.map((tag) => (
-                                                <span key={tag} className="rounded-full bg-[#f2f2f1] px-2.5 py-1 text-[11px] font-medium text-[#3a3f48]">
+                                                <span key={tag} className="rounded-full bg-page px-2.5 py-1 text-[11px] font-medium text-ink-2">
                                                     {tag}
                                                 </span>
                                             ))}

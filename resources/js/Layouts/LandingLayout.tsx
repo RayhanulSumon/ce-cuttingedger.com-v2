@@ -30,8 +30,8 @@ const LEGAL_LINKS: [string, string][] = [
     ['ESG', '/esg-policy'],
 ];
 
-const FOOTER_HEADING = 'text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5d6572]';
-const FOOTER_LINK = 'text-sm text-[#2f333a] transition-colors hover:text-[#f5761a]';
+const FOOTER_HEADING = 'text-[11px] font-semibold uppercase tracking-[0.22em] text-subtle';
+const FOOTER_LINK = 'text-sm text-ink-2 transition-colors hover:text-primary';
 
 /**
  * Light page shell shared by every inner page and persistent across Inertia visits: the menubar, modals
@@ -78,10 +78,10 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
     const email = settings?.contact_email || 'hello@cuttingedger.com';
 
     return (
-        <div className="flex min-h-screen flex-col bg-[#f2f2f1] text-[#16191f] selection:bg-[#f5761a] selection:text-white">
+        <div className="flex min-h-screen flex-col bg-page text-ink selection:bg-primary selection:text-white">
             <a
                 href="#main-content"
-                className="sr-only z-[1000] rounded-md bg-[#f5761a] px-4 py-2 font-bold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+                className="sr-only z-[1000] rounded-md bg-primary px-4 py-2 font-bold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
             >
                 Skip to main content
             </a>
@@ -100,16 +100,16 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                 {children}
             </motion.main>
 
-            <footer className={`border-t border-[#16191f]/10 bg-white pb-8 pt-12 ${PAD_X}`}>
+            <footer className={`border-t border-ink/10 bg-white pb-8 pt-12 ${PAD_X}`}>
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
                     <div className="max-w-xs">
                         <Link href="/" prefetch className="text-lg font-extrabold tracking-[-0.04em]">
                             CUTTING  EDGER
                         </Link>
-                        <p className="mt-3 text-sm leading-relaxed text-[#4a505b]">
+                        <p className="mt-3 text-sm leading-relaxed text-muted">
                             AI-integrated image editing and post-production for fashion and e-commerce brands.
                         </p>
-                        <a href={`mailto:${email}`} className="mt-4 inline-block text-sm font-semibold text-[#16191f] hover:text-[#f5761a]">
+                        <a href={`mailto:${email}`} className="mt-4 inline-block text-sm font-semibold text-ink hover:text-primary">
                             {email}
                         </a>
                     </div>
@@ -159,7 +159,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </div>
 
-                <p className="mt-10 border-t border-[#16191f]/10 pt-6 text-xs text-[#5d6572]">
+                <p className="mt-10 border-t border-ink/10 pt-6 text-xs text-subtle">
                     &copy; {new Date().getFullYear()} CuttingEdger. All rights reserved.
                 </p>
             </footer>

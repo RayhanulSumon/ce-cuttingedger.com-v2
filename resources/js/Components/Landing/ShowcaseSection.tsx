@@ -47,7 +47,7 @@ const FALLBACK_PHOTO_COPY = {
 const COLORED_TILES = [
     {
         bg: '#ef5d44',
-        fg: '#0f0f0e',
+        fg: 'var(--color-ink)',
         label: 'AI',
         title: 'Virtual try-on',
         description: 'Show every garment on a model without a shoot. Six styled looks, shoppable piece by piece.',
@@ -55,7 +55,7 @@ const COLORED_TILES = [
     },
     {
         bg: '#fcdd71',
-        fg: '#0f0f0e',
+        fg: 'var(--color-ink)',
         label: '3D',
         title: 'CGI & Twins',
         description: 'Photoreal digital twins and 3D product renders, ready for any pose, colour or setting.',
@@ -66,7 +66,7 @@ const COLORED_TILES = [
     },
     {
         bg: '#9fd5f7',
-        fg: '#0f0f0e',
+        fg: 'var(--color-ink)',
         label: '2D',
         title: 'Retouching',
         description: 'Clean, consistent retouching for apparel, jewelry and products, delivered within 24 hours.',
@@ -77,7 +77,7 @@ const COLORED_TILES = [
     },
     {
         bg: '#f9f6f1',
-        fg: '#0f0f0e',
+        fg: 'var(--color-ink)',
         label: 'DTP',
         title: 'Catalog layout',
         description: 'Multilingual catalog formatting, raster-to-vector conversion and prepress, from one workflow.',
@@ -115,11 +115,11 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
         tabIndex: decorative ? -1 : 0,
         'aria-label': `Open ${tile.title}`,
         className:
-            'group relative aspect-[0.73] w-full shrink-0 cursor-pointer overflow-hidden rounded-[18px] text-left transition-[transform,box-shadow] duration-300 hover:z-10 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_24px_40px_-18px_rgba(15,15,14,0.55)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f5761a] sm:rounded-[22px]',
+            'group relative aspect-[0.73] w-full shrink-0 cursor-pointer overflow-hidden rounded-[18px] text-left transition-[transform,box-shadow] duration-300 hover:z-10 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_24px_40px_-18px_rgba(15,15,14,0.55)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:rounded-[22px]',
     };
 
     const hoverChip = (
-        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-[#0f0f0e] opacity-0 shadow-md transition-[opacity,transform] duration-300 group-hover:rotate-45 group-hover:opacity-100">
+        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-ink opacity-0 shadow-md transition-[opacity,transform] duration-300 group-hover:rotate-45 group-hover:opacity-100">
             <ArrowUpRight size={16} />
         </span>
     );
@@ -233,9 +233,9 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                         </div>
 
                         <div className="flex flex-col justify-center p-6 sm:p-9">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#5d6572]">{tile.label}</p>
-                            <h3 className="mt-2 text-2xl font-extrabold tracking-[-0.02em] text-[#16191f] sm:text-3xl">{tile.title}</h3>
-                            <p className="mt-3 text-[15px] leading-relaxed text-[#3a3f48]">{tile.description}</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-subtle">{tile.label}</p>
+                            <h3 className="mt-2 text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">{tile.title}</h3>
+                            <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{tile.description}</p>
 
                             <div className="mt-6 flex flex-wrap gap-3">
                                 {tile.actions.map((action, i) => (
@@ -244,8 +244,8 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                                         href={action.href}
                                         className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 ${
                                             i === 0
-                                                ? 'bg-[#f5761a] text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)]'
-                                                : 'border border-[#16191f]/25 text-[#16191f] hover:bg-[#16191f] hover:text-white'
+                                                ? 'bg-primary text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)]'
+                                                : 'border border-ink/25 text-ink hover:bg-ink hover:text-white'
                                         }`}
                                     >
                                         {action.label}
@@ -259,7 +259,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                             type="button"
                             onClick={onClose}
                             aria-label="Close"
-                            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-[#16191f] text-white shadow-lg transition-transform duration-300 hover:rotate-90"
+                            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-ink text-white shadow-lg transition-transform duration-300 hover:rotate-90"
                         >
                             <X size={18} />
                         </button>
@@ -312,24 +312,24 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, openDemo,
         <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-[#f5f4ef] md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
                 <Reveal active={active}>
-                    <h2 className="text-[clamp(38px,7.2vw,104px)] font-black uppercase leading-[0.9] tracking-[-0.05em] text-[#0f0f0e]">
+                    <h2 className="text-[clamp(38px,7.2vw,104px)] font-black uppercase leading-[0.9] tracking-[-0.05em] text-ink">
                         What we
                         <br />
                         achieved
                     </h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
-                    <p className="mt-4 max-w-md text-sm leading-relaxed text-[#0f0f0e] sm:text-base md:mt-6 md:text-lg">
+                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink sm:text-base md:mt-6 md:text-lg">
                         Catalogs, campaigns and digital twins delivered for fashion and e-commerce brands, from{' '}
                         <strong className="font-bold">one-off retouches</strong> to <strong className="font-bold">thousand-SKU programmes</strong>.
                     </p>
                 </Reveal>
                 <Reveal active={active} delay={0.26} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
-                    <Link href="/case-studies" className="rounded-full bg-[#0f0f0e] px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
+                    <Link href="/case-studies" className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
                         View case studies
                     </Link>
                     <button type="button" onClick={openDemo} className="group flex items-center gap-3 text-sm font-bold">
-                        <span className="grid h-8 w-8 place-items-center rounded-full bg-[#0f0f0e] text-white transition-transform duration-300 group-hover:rotate-45">
+                        <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white transition-transform duration-300 group-hover:rotate-45">
                             <ArrowUpRight size={14} />
                         </span>
                         Book a Demo

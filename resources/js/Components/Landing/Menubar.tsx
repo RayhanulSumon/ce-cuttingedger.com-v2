@@ -182,12 +182,12 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                                 onClick={closeDrawer}
                                                 className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/10"
                                             >
-                                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-[#f5761a] transition-[background-color,color] duration-300 group-hover:bg-[#f5761a] group-hover:text-white">
+                                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-primary transition-[background-color,color] duration-300 group-hover:bg-primary group-hover:text-white">
                                                     <capability.icon size={18} />
                                                 </span>
                                                 <span className="min-w-0">
                                                     <span className="block text-[15px] font-semibold leading-tight">
-                                                        <span className="text-[#f5761a]">{capability.tag}</span> · {capability.title}
+                                                        <span className="text-primary">{capability.tag}</span> · {capability.title}
                                                     </span>
                                                     <span className="mt-0.5 block text-xs leading-snug text-white/50">{capability.blurb}</span>
                                                 </span>
@@ -242,8 +242,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                 animate={{ opacity: hidden ? 0 : 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
                 className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 text-sm font-medium transition-colors duration-500 sm:px-10 lg:px-16 ${
-                    solid ? 'bg-gradient-to-b from-[#f2f2f1] via-[#f2f2f1]/80 to-transparent' : ''
-                } ${dark ? 'text-white' : 'text-[#1d1d1d]'} ${hidden ? 'pointer-events-none' : ''}`}
+                    solid ? 'bg-gradient-to-b from-page via-page/80 to-transparent' : ''
+                } ${dark ? 'text-white' : 'text-ink'} ${hidden ? 'pointer-events-none' : ''}`}
             >
                 {goTo ? (
                     <button
@@ -265,7 +265,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                         type="button"
                         onClick={openDemo}
                         className={`group inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${
-                            dark ? 'bg-white text-[#141A26]' : 'bg-[#1b1b1b] text-white hover:bg-[#f5761a]'
+                            dark ? 'bg-white text-secondary' : 'bg-ink text-white hover:bg-primary'
                         }`}
                     >
                         Book a Demo
@@ -277,7 +277,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                         onClick={() => setDrawer(true)}
                         aria-label="Open menu"
                         className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${
-                            dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-[#1b1b1b] text-white hover:bg-[#f5761a]'
+                            dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-ink text-white hover:bg-primary'
                         }`}
                     >
                         <Menu size={18} />
@@ -300,7 +300,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                         <motion.aside
                             data-scrollable
                             aria-label="Main navigation"
-                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-[#141A26] px-6 py-6 text-white shadow-2xl sm:px-8"
+                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-secondary px-6 py-6 text-white shadow-2xl sm:px-8"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
@@ -348,7 +348,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                             closeDrawer();
                                             openDemo();
                                         }}
-                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-[#141A26] transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-white/90"
+                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-secondary transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-white/90"
                                     >
                                         Book a Demo
                                         <ArrowUpRight size={16} />

@@ -50,7 +50,7 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                         {/* Hover label */}
                         <span
                             className={`pointer-events-none select-none text-[9px] font-semibold uppercase tracking-[0.22em] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 ${
-                                dark ? 'text-white' : 'text-[#1d1d1d]'
+                                dark ? 'text-white' : 'text-ink'
                             }`}
                         >
                             {s.label}
@@ -63,14 +63,14 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                                 <motion.span
                                     layoutId="side-dot-ring"
                                     className={`absolute inset-[-3px] rounded-full border ${
-                                        dark ? 'border-white/60' : 'border-[#1d1d1d]/40'
+                                        dark ? 'border-white/60' : 'border-ink/40'
                                     }`}
                                     transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
                                 />
                             )}
                             {/* Inner fill */}
                             <motion.span
-                                className={`block h-1.5 w-1.5 rounded-full ${dark ? 'bg-white' : 'bg-[#1d1d1d]'}`}
+                                className={`block h-1.5 w-1.5 rounded-full ${dark ? 'bg-white' : 'bg-ink'}`}
                                 animate={{ scale: isActive ? 1 : 0.66, opacity: isActive ? 1 : 0.35 }}
                                 transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                             />

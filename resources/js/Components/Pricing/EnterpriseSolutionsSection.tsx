@@ -50,23 +50,23 @@ export function EnterpriseSolutionsSection() {
     ];
 
     return (
-        <section className="py-16 sm:py-20 bg-[#090a0e] relative overflow-hidden border-t border-[#16191f]/10">
+        <section className="py-16 sm:py-20 bg-[#090a0e] relative overflow-hidden border-t border-ink/10">
             {/* Ambient Backlight */}
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[50rem] h-[20rem] bg-[#f5761a]/[0.03] rounded-full blur-[200px] pointer-events-none" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[50rem] h-[20rem] bg-primary/[0.03] rounded-full blur-[200px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Simplified, Clean Section Header */}
                 <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 space-y-2.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-[#16191f]/10 text-[11px] font-mono uppercase tracking-[0.18em] text-[#c4540a] font-semibold">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-ink/10 text-[11px] font-mono uppercase tracking-[0.18em] text-primary-ink font-semibold">
                         <Sparkles className="w-3 h-3" />
                         <span>Enterprise Capacity</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-[#16191f] tracking-tight">
-                        Enterprise & <span className="text-[#c4540a]">Volume Partnerships</span>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-ink tracking-tight">
+                        Enterprise & <span className="text-primary-ink">Volume Partnerships</span>
                     </h2>
 
-                    <p className="text-xs sm:text-sm text-[#4a505b] font-sans leading-relaxed">
+                    <p className="text-xs sm:text-sm text-muted font-sans leading-relaxed">
                         Dedicated retouching pods, custom rush SLAs, and direct pipeline integrations for high-volume catalogs.
                     </p>
                 </div>
@@ -78,33 +78,33 @@ export function EnterpriseSolutionsSection() {
                         return (
                             <div
                                 key={idx}
-                                className="group rounded-2xl sm:rounded-3xl border border-[#16191f]/10 bg-[#0f1118]/90 hover:bg-[#131520] hover:border-[#f5761a]/40 transition-all duration-300 p-6 sm:p-7 relative flex flex-col justify-between hover:shadow-[0_15px_40px_rgba(245,166,35,0.08)]"
+                                className="group rounded-2xl sm:rounded-3xl border border-ink/10 bg-[#0f1118]/90 hover:bg-[#131520] hover:border-primary/40 transition-all duration-300 p-6 sm:p-7 relative flex flex-col justify-between hover:shadow-[0_15px_40px_color-mix(in_srgb,var(--color-primary)_8%,transparent)]"
                             >
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <div className="w-10 h-10 rounded-xl bg-[#f5761a]/10 border border-[#f5761a]/20 flex items-center justify-center text-[#c4540a] group-hover:bg-[#f5761a] group-hover:text-white transition-colors duration-300">
+                                        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary-ink group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                                             <Icon className="w-5 h-5" />
                                         </div>
-                                        <span className="px-2.5 py-1 rounded-md bg-white/[0.03] border border-[#16191f]/10 text-[10px] font-mono uppercase tracking-wider text-[#4a505b] font-medium">
+                                        <span className="px-2.5 py-1 rounded-md bg-white/[0.03] border border-ink/10 text-[10px] font-mono uppercase tracking-wider text-muted font-medium">
                                             {pillar.badge}
                                         </span>
                                     </div>
 
-                                    <h3 className="text-lg sm:text-xl font-display font-bold text-[#16191f] group-hover:text-[#c4540a] transition-colors">
+                                    <h3 className="text-lg sm:text-xl font-display font-bold text-ink group-hover:text-primary-ink transition-colors">
                                         {pillar.title}
                                     </h3>
 
-                                    <p className="text-xs sm:text-sm text-[#4a505b] leading-relaxed font-sans">
+                                    <p className="text-xs sm:text-sm text-muted leading-relaxed font-sans">
                                         {pillar.description}
                                     </p>
                                 </div>
 
                                 {/* Scannable Feature Chips */}
-                                <div className="flex flex-wrap items-center gap-2 pt-5 mt-4 border-t border-[#16191f]/10">
+                                <div className="flex flex-wrap items-center gap-2 pt-5 mt-4 border-t border-ink/10">
                                     {pillar.tags.map((tag, i) => (
                                         <span
                                             key={i}
-                                            className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-[#16191f]/10 text-[11px] font-mono text-[#2f333a]"
+                                            className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-ink/10 text-[11px] font-mono text-ink-2"
                                         >
                                             {tag}
                                         </span>
@@ -116,16 +116,16 @@ export function EnterpriseSolutionsSection() {
                 </div>
 
                 {/* Streamlined, High-Impact Enterprise Action Banner */}
-                <div className="rounded-2xl sm:rounded-3xl border border-[#f5761a]/40 bg-gradient-to-r from-white via-[#f2f2f1] to-white p-6 sm:p-8 relative overflow-hidden shadow-[0_15px_50px_rgba(245,166,35,0.08)]">
+                <div className="rounded-2xl sm:rounded-3xl border border-primary/40 bg-gradient-to-r from-white via-page to-white p-6 sm:p-8 relative overflow-hidden shadow-[0_15px_50px_color-mix(in_srgb,var(--color-primary)_8%,transparent)]">
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
                         <div className="space-y-1.5 text-center lg:text-left">
-                            <span className="text-[10px] font-mono uppercase tracking-widest text-[#c4540a] font-bold">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-primary-ink font-bold">
                                 [ Tailored B2B Consultation ]
                             </span>
-                            <h3 className="text-xl sm:text-2xl font-display font-bold text-[#16191f] tracking-tight">
+                            <h3 className="text-xl sm:text-2xl font-display font-bold text-ink tracking-tight">
                                 Need a custom volume contract or dedicated SLA?
                             </h3>
-                            <p className="text-xs sm:text-sm text-[#4a505b] max-w-xl">
+                            <p className="text-xs sm:text-sm text-muted max-w-xl">
                                 Speak directly with our production director to calibrate a custom pilot around your exact drop schedule.
                             </p>
                         </div>
@@ -134,7 +134,7 @@ export function EnterpriseSolutionsSection() {
                             <button
                                 type="button"
                                 onClick={handleOpenDiscoveryCall}
-                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#f5761a] text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#ffb834] hover:shadow-[0_0_25px_rgba(245,166,35,0.35)] transition-all cursor-pointer"
+                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#ffb834] hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_35%,transparent)] transition-all cursor-pointer"
                             >
                                 <Calendar className="w-4 h-4" />
                                 <span>Book 15-Min Discovery Call</span>

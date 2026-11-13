@@ -13,6 +13,24 @@
     --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'Space Grotesk', monospace;
 
+    /*
+     * Site theme tokens. Change a value here and every page, the chat widget and the menus follow.
+     * Use them as utilities: bg-primary, text-ink, border-ink/10, bg-page, text-muted ...
+     */
+    --color-primary: #f5761a; /* brand colour: buttons, highlights */
+    --color-primary-hover: #e0650c; /* primary on hover / pressed */
+    --color-primary-ink: #c4540a; /* primary used as text on light backgrounds (readable) */
+    --color-primary-foreground: #ffffff; /* text on primary */
+    --color-secondary: #141a26; /* deep navy: side menu, dark panels, contact card */
+    --color-secondary-foreground: #ffffff; /* text on secondary */
+    --color-ink: #16191f; /* headings, dark buttons */
+    --color-ink-2: #2f333a; /* body text */
+    --color-muted: #4a505b; /* secondary text */
+    --color-subtle: #5d6572; /* captions, labels */
+    --color-faint: #8a919c; /* placeholders */
+    --color-page: #f2f2f1; /* page background */
+    --color-surface: #ffffff; /* cards, panels */
+
     --color-accent: #f5a623;
     --color-accent-hover: #e09214;
     --color-accent-dim: rgba(245, 166, 35, 0.15);

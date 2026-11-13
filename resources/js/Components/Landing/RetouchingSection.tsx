@@ -92,7 +92,7 @@ function BeforeAfter({ active }: { active: boolean }) {
                 Delivered
             </span>
             <div className={`absolute inset-y-0 w-0.5 bg-white transition-[left] ${glide}`} style={{ left: `${position}%` }}>
-                <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-[#1d1d1d] shadow-xl">
+                <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-xl">
                     <MoveHorizontal size={20} />
                 </span>
             </div>
@@ -104,21 +104,21 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
     return (
         <div
             data-scrollable
-            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-[#f2f2f1] px-5 pb-8 pt-24 sm:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-16"
+            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 pb-8 pt-24 sm:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-16"
         >
             <div>
                 <Reveal active={active}>
                     <Eyebrow>Retouching · Artifact remedy</Eyebrow>
                 </Reveal>
                 <Reveal active={active} delay={0.08}>
-                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#1d1d1d]">
+                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-ink">
                         Every flaw,
                         <br />
                         quietly fixed.
                     </h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
-                    <p className="mt-4 max-w-md text-sm leading-relaxed text-[#3a3a3a]">
+                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-2">
                         AI finds the artifacts. Senior retouchers finish them. Drag the handle to compare the raw capture
                         with the delivered file.
                     </p>
@@ -131,7 +131,7 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                             active={active}
                             delay={0.26 + i * 0.05}
                             y="14px"
-                            className="rounded-full border border-[#1d1d1d]/20 bg-white px-4 py-2 text-xs font-medium text-[#1d1d1d]"
+                            className="rounded-full border border-ink/20 bg-white px-4 py-2 text-xs font-medium text-ink"
                         >
                             {fix}
                         </Reveal>

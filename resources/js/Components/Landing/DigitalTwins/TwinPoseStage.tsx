@@ -13,7 +13,7 @@ interface TwinPoseStageProps {
 }
 
 const STEP_BUTTON =
-    'grid h-9 w-9 place-items-center rounded-full border border-[#16191f]/20 bg-white/85 text-[#16191f] shadow-xs transition-colors hover:bg-[#16191f] hover:text-white';
+    'grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-white/85 text-ink shadow-xs transition-colors hover:bg-ink hover:text-white';
 
 /** Direct, clean pose names (Front, Side, Close-Up, Back, Detail, Stride) instead of POSE 01, POSE 02. */
 export function getShortPoseName(id: string): string {
@@ -47,13 +47,13 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
         >
             <div className="relative z-10 flex items-start justify-between gap-2">
                 <div>
-                    <span className="font-michroma inline-flex items-center gap-1.5 rounded-full bg-[#16191f] px-3.5 py-1 text-[9px] font-bold tracking-[0.18em] text-white shadow-xs uppercase">
+                    <span className="font-michroma inline-flex items-center gap-1.5 rounded-full bg-ink px-3.5 py-1 text-[9px] font-bold tracking-[0.18em] text-white shadow-xs uppercase">
                         {poseName}
                     </span>
-                    <p className="mt-2 text-base font-bold text-[#16191f] sm:text-lg">{pose.title}</p>
-                    <p className="text-xs text-[#5d6572]">{pose.angle}</p>
+                    <p className="mt-2 text-base font-bold text-ink sm:text-lg">{pose.title}</p>
+                    <p className="text-xs text-subtle">{pose.angle}</p>
                 </div>
-                <span className="rounded-full border border-[#16191f]/15 bg-white/85 px-3 py-1 text-[11px] font-medium text-[#16191f] shadow-xs">
+                <span className="rounded-full border border-ink/15 bg-white/85 px-3 py-1 text-[11px] font-medium text-ink shadow-xs">
                     {pose.lens}
                 </span>
             </div>
@@ -75,8 +75,8 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
                 </motion.div>
             </div>
 
-            <div className="relative z-10 flex items-center justify-between border-t border-[#16191f]/10 pt-3">
-                <span className="font-michroma text-[10px] tracking-[0.14em] text-[#5d6572] uppercase">
+            <div className="relative z-10 flex items-center justify-between border-t border-ink/10 pt-3">
+                <span className="font-michroma text-[10px] tracking-[0.14em] text-subtle uppercase">
                     {poseName} · {poseIndex + 1} / {twin.poses.length}
                 </span>
                 <div className="flex items-center gap-2">
@@ -110,17 +110,17 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                             style={{ background: pose.backdrop }}
                             className={`group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden rounded-2xl border p-2.5 text-left transition-all duration-300 ${
                                 selected
-                                    ? 'border-[#16191f] shadow-lg ring-2 ring-[#16191f]/20 scale-[1.01]'
-                                    : 'border-[#d8e1ec] hover:border-[#16191f]/50 hover:shadow-md'
+                                    ? 'border-ink shadow-lg ring-2 ring-ink/20 scale-[1.01]'
+                                    : 'border-[#d8e1ec] hover:border-ink/50 hover:shadow-md'
                             }`}
                         >
                             {/* Top badge row: Direct pose name (Front, Side, Close-Up, Back, Detail, Stride) */}
                             <div className="relative z-10 flex w-full items-center justify-between">
-                                <span className="font-michroma rounded-full bg-white/95 px-2.5 py-0.5 text-[8.5px] font-bold tracking-[0.14em] text-[#16191f] shadow-xs backdrop-blur-xs uppercase">
+                                <span className="font-michroma rounded-full bg-white/95 px-2.5 py-0.5 text-[8.5px] font-bold tracking-[0.14em] text-ink shadow-xs backdrop-blur-xs uppercase">
                                     {poseName}
                                 </span>
                                 {selected && (
-                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-[#16191f] text-white shadow-xs">
+                                    <span className="grid h-5 w-5 place-items-center rounded-full bg-ink text-white shadow-xs">
                                         <Check size={11} strokeWidth={3} />
                                     </span>
                                 )}

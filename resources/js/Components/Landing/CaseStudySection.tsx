@@ -19,7 +19,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             <Reveal active={active} className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <Eyebrow>Case study</Eyebrow>
-                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[#141A26]">
+                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-secondary">
                         Results, not promises.
                     </h2>
                 </div>
@@ -32,7 +32,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                             aria-selected={i === index}
                             onClick={() => setIndex(i)}
                             className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
-                                i === index ? 'bg-[#2B4BFF] text-white' : 'border border-[#CBD2DE] text-[#5A6478] hover:border-[#141A26]'
+                                i === index ? 'bg-[#2B4BFF] text-white' : 'border border-[#CBD2DE] text-[#5A6478] hover:border-secondary'
                             }`}
                         >
                             {c.client}
@@ -66,7 +66,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                             </dl>
                             <Link
                                 href={linked ? `/case-studies/${linked.slug}` : '/case-studies'}
-                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-5 py-3 text-sm font-semibold text-[#141A26] transition-transform duration-300 hover:-translate-y-0.5"
+                                className="mt-1 w-fit rounded-full bg-[#F2F4F8] px-5 py-3 text-sm font-semibold text-secondary transition-transform duration-300 hover:-translate-y-0.5"
                             >
                                 Read the case study
                             </Link>

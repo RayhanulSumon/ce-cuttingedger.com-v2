@@ -21,7 +21,7 @@ export default function DigitalTwinsIndex() {
     const twins = category === ALL ? DIGITAL_TWINS : DIGITAL_TWINS.filter((twin) => twin.archetype === category);
 
     return (
-        <div className="bg-white text-[#16191f]">
+        <div className="bg-white text-ink">
             <SeoHead
                 title="Digital Twins — AI Fashion Models"
                 description="Browse every photoreal AI digital twin. Filter by style and order a model for your next collection."
@@ -31,12 +31,12 @@ export default function DigitalTwinsIndex() {
                 <h1 className="font-michroma text-[clamp(26px,3.4vw,48px)] font-normal leading-[1.15] tracking-[0.14em]">
                     Digital Twins
                 </h1>
-                <p className="mt-4 max-w-[52ch] text-sm leading-[1.6] text-[#5d6572] sm:text-base">
+                <p className="mt-4 max-w-[52ch] text-sm leading-[1.6] text-subtle sm:text-base">
                     Shoot a garment once. Our photoreal AI models wear it in every pose, light and angle. Filter by style and pick your twin.
                 </p>
             </section>
 
-            <div className={`border-y border-[#16191f]/10 bg-white/85 py-4 ${PAD_X}`}>
+            <div className={`border-y border-ink/10 bg-white/85 py-4 ${PAD_X}`}>
                 <div role="tablist" aria-label="Filter digital twins by category" className="flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-center gap-2 overflow-x-auto">
                     {categories.map((name) => (
                         <button
@@ -47,8 +47,8 @@ export default function DigitalTwinsIndex() {
                             onClick={() => setCategory(name)}
                             className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-300 ${
                                 category === name
-                                    ? 'border-[#16191f] bg-[#16191f] text-white'
-                                    : 'border-[#16191f]/15 bg-white text-[#5d6572] hover:border-[#f5761a]/60 hover:text-[#f5761a]'
+                                    ? 'border-ink bg-ink text-white'
+                                    : 'border-ink/15 bg-white text-subtle hover:border-primary/60 hover:text-primary'
                             }`}
                         >
                             {name}
@@ -58,7 +58,7 @@ export default function DigitalTwinsIndex() {
             </div>
 
             <main className={`py-10 sm:py-14 ${PAD_X}`}>
-                <p className="mb-8 text-xs font-semibold uppercase tracking-[0.18em] text-[#5d6572]">
+                <p className="mb-8 text-xs font-semibold uppercase tracking-[0.18em] text-subtle">
                     {twins.length} {twins.length === 1 ? 'model' : 'models'}
                 </p>
 
@@ -72,7 +72,7 @@ export default function DigitalTwinsIndex() {
                                 type="button"
                                 onClick={() => setModalTwinIndex(twin.index)}
                                 aria-label={`View ${name} poses`}
-                                className="group cursor-pointer overflow-hidden rounded-2xl border border-[#16191f]/10 bg-white text-left shadow-[0_8px_22px_-16px_rgba(22,25,31,0.2)] transition-all duration-300 hover:-translate-y-1 hover:border-[#f5761a]/50 hover:shadow-[0_14px_34px_-16px_rgba(245,118,26,0.35)]"
+                                className="group cursor-pointer overflow-hidden rounded-2xl border border-ink/10 bg-white text-left shadow-[0_8px_22px_-16px_color-mix(in_srgb,var(--color-ink)_20%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_14px_34px_-16px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]"
                             >
                                 <div className="relative aspect-[3/4] overflow-hidden" style={{ background: PAGE_BACKGROUND }}>
                                     <TwinSpriteCrop
@@ -84,26 +84,26 @@ export default function DigitalTwinsIndex() {
                                             Sold out
                                         </span>
                                     )}
-                                    <span className="absolute inset-x-2 bottom-2 grid place-items-center rounded-full bg-[#f5761a] py-1.5 text-[10px] font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
+                                    <span className="absolute inset-x-2 bottom-2 grid place-items-center rounded-full bg-primary py-1.5 text-[10px] font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
                                         View poses
                                     </span>
                                 </div>
                                 <div className="space-y-0.5 p-3">
                                     <h3 className="truncate text-sm font-semibold">{name}</h3>
-                                    <p className="truncate text-[11px] text-[#5d6572]">{style}</p>
-                                    <p className="pt-1 text-[11px] text-[#5d6572]">
-                                        from <span className="font-bold text-[#16191f]">{twin.presetPrice}</span>
+                                    <p className="truncate text-[11px] text-subtle">{style}</p>
+                                    <p className="pt-1 text-[11px] text-subtle">
+                                        from <span className="font-bold text-ink">{twin.presetPrice}</span>
                                     </p>
                                     {!twin.isCopyrightSold && (
 <>
-                                        <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#f6f8fb] px-2.5 py-1 ring-1 ring-[#16191f]/10">
-                                            <span className="inline-flex items-center gap-1 text-xs font-extrabold leading-none text-[#16191f]">
-                                                <Download size={12} strokeWidth={2.5} className="text-[#f5761a]" />
+                                        <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-[#f6f8fb] px-2.5 py-1 ring-1 ring-ink/10">
+                                            <span className="inline-flex items-center gap-1 text-xs font-extrabold leading-none text-ink">
+                                                <Download size={12} strokeWidth={2.5} className="text-primary" />
                                                 {formatDownloadCount(twin.downloadCount)}
                                             </span>
-                                            <span className="text-[10px] font-medium text-[#5d6572]">downloads</span>
+                                            <span className="text-[10px] font-medium text-subtle">downloads</span>
                                         </div>
-                                        <p className="pt-1.5 text-[11px] text-[#5d6572]">{formatTwinAge(twin.listedAt)} old</p>
+                                        <p className="pt-1.5 text-[11px] text-subtle">{formatTwinAge(twin.listedAt)} old</p>
 </>
                                     )}
                                 </div>

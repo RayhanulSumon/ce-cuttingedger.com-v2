@@ -117,40 +117,40 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
     const progressPercent = confirmedCloudLink ? 100 : Math.min(100, Math.round((uploadedCount / Math.max(1, quantity)) * 100));
 
     return (
-        <div className="my-2.5 p-4 rounded-2xl bg-[#12141c]/95 border border-accent/40 shadow-2xl backdrop-blur-md text-left space-y-3.5">
+        <div className="my-2.5 p-4 rounded-2xl bg-white/95 border border-primary/40 shadow-2xl backdrop-blur-md text-left space-y-3.5">
             {/* Header: Order Number & Status */}
-            <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5">
+            <div className="flex items-start justify-between gap-2 border-b border-ink/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-accent text-black">
+                    <span className="p-1.5 rounded-lg bg-primary text-white">
                         <Package className="w-4 h-4" />
                     </span>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h4 className="text-sm font-bold text-white tracking-tight font-mono">{orderNumber}</h4>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30 font-semibold">
+                            <h4 className="text-sm font-bold text-ink tracking-tight font-mono">{orderNumber}</h4>
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/20 text-primary-ink border border-primary/30 font-semibold">
                                 Queued
                             </span>
                         </div>
-                        <p className="text-[11px] text-white/60">
+                        <p className="text-[11px] text-ink/60">
                             {card.service_name || 'Commercial Retouching'} • <span className="capitalize">{card.complexity || 'Simple'}</span>
                         </p>
                     </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                    <span className="text-sm font-bold text-accent font-mono block">
+                    <span className="text-sm font-bold text-primary-ink font-mono block">
                         ${card.total_price || '0.00'}
                     </span>
-                    <span className="text-[10px] text-white/50 font-mono">
+                    <span className="text-[10px] text-ink/50 font-mono">
                         {card.unit_price ? `$${card.unit_price}/img` : 'USD'}
                     </span>
                 </div>
             </div>
 
             {/* Validation & Discrepancy Status */}
-            <div className="rounded-xl p-3 bg-white/[0.03] border border-white/10 space-y-2">
+            <div className="rounded-xl p-3 bg-white/[0.03] border border-ink/10 space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-white/60 text-[11px]">Upload Validation:</span>
+                    <span className="text-ink/60 text-[11px]">Upload Validation:</span>
                     {confirmedCloudLink ? (
                         <span className="text-purple-300 font-bold flex items-center gap-1">
                             <Folder className="w-3.5 h-3.5" />
@@ -167,7 +167,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                             {uploadedCount} files (Batch Expanded)
                         </span>
                     ) : (
-                        <span className="text-accent font-bold flex items-center gap-1">
+                        <span className="text-primary-ink font-bold flex items-center gap-1">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             All {quantity} files uploaded
                         </span>
@@ -175,10 +175,10 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-ink/[0.05] rounded-full h-1.5 overflow-hidden">
                     <div
                         className={`h-full transition-all duration-500 rounded-full ${
-                            confirmedCloudLink ? 'bg-purple-400' : discrepancyStatus === 'under' ? 'bg-amber-400' : 'bg-accent'
+                            confirmedCloudLink ? 'bg-purple-400' : discrepancyStatus === 'under' ? 'bg-amber-400' : 'bg-primary'
                         }`}
                         style={{ width: `${progressPercent}%` }}
                     />
@@ -218,7 +218,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                             <span className="text-[10px] font-mono text-purple-300 block uppercase tracking-wider font-semibold">
                                 Cloud Drive Folder
                             </span>
-                            <span className="text-xs font-mono text-white/90 truncate block">
+                            <span className="text-xs font-mono text-ink/90 truncate block">
                                 {confirmedCloudLink}
                             </span>
                         </div>
@@ -227,7 +227,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                         href={confirmedCloudLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="px-2.5 py-1 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-mono text-xs font-medium flex items-center gap-1 shrink-0 transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-purple-500 hover:bg-purple-600 text-ink font-mono text-xs font-medium flex items-center gap-1 shrink-0 transition-colors"
                     >
                         <span>Open</span>
                         <ExternalLink className="w-3 h-3" />
@@ -245,12 +245,12 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                             onChange={(e) => setCloudLinkInput(e.target.value)}
                             placeholder="https://drive.google.com/drive/folders/..."
                             disabled={isSubmittingCloud}
-                            className="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-purple-400/30 text-white placeholder-white/30 text-xs focus:outline-none focus:border-purple-400 transition-colors font-mono"
+                            className="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-purple-400/30 text-ink placeholder-white/30 text-xs focus:outline-none focus:border-purple-400 transition-colors font-mono"
                         />
                         <button
                             type="submit"
                             disabled={isSubmittingCloud || !cloudLinkInput.trim()}
-                            className="px-3 py-1.5 rounded-xl bg-purple-500 hover:bg-purple-600 disabled:opacity-40 text-white font-semibold text-xs font-mono flex items-center gap-1 transition-all cursor-pointer shrink-0"
+                            className="px-3 py-1.5 rounded-xl bg-purple-500 hover:bg-purple-600 disabled:opacity-40 text-ink font-semibold text-xs font-mono flex items-center gap-1 transition-all cursor-pointer shrink-0"
                         >
                             {isSubmittingCloud ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <span>Attach</span>}
                         </button>
@@ -263,8 +263,8 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
             {card.images && card.images.length > 0 && (
                 <div>
                     <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[11px] text-white/50 font-mono flex items-center gap-1">
-                            <ImageIcon className="w-3 h-3 text-accent" />
+                        <span className="text-[11px] text-ink/50 font-mono flex items-center gap-1">
+                            <ImageIcon className="w-3 h-3 text-primary-ink" />
                             Received Files ({card.images.length}):
                         </span>
                     </div>
@@ -275,7 +275,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                                 href={imgUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-black/40 shrink-0 hover:border-accent transition-colors"
+                                className="relative w-12 h-12 rounded-lg overflow-hidden border border-ink/10 bg-ink/[0.04] shrink-0 hover:border-primary transition-colors"
                             >
                                 <img
                                     src={imgUrl}
@@ -285,7 +285,7 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                             </a>
                         ))}
                         {card.images.length > 8 && (
-                            <div className="w-12 h-12 rounded-lg border border-white/10 bg-white/5 shrink-0 flex items-center justify-center text-[10px] font-mono text-white/70">
+                            <div className="w-12 h-12 rounded-lg border border-ink/10 bg-ink/[0.03] shrink-0 flex items-center justify-center text-[10px] font-mono text-ink/70">
                                 +{card.images.length - 8}
                             </div>
                         )}
@@ -294,17 +294,17 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
             )}
 
             {/* Email Capture / Confirmation */}
-            <div className="pt-2 border-t border-white/10">
+            <div className="pt-2 border-t border-ink/10">
                 {confirmedEmail ? (
-                    <div className="flex items-center gap-2 p-2 rounded-xl bg-accent/10 border border-accent/30 text-xs text-white">
-                        <Mail className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <div className="flex items-center gap-2 p-2 rounded-xl bg-primary/10 border border-primary/30 text-xs text-ink">
+                        <Mail className="w-3.5 h-3.5 text-primary-ink shrink-0" />
                         <span className="truncate">
-                            Files & invoice will be sent to: <strong className="text-accent">{confirmedEmail}</strong>
+                            Files & invoice will be sent to: <strong className="text-primary-ink">{confirmedEmail}</strong>
                         </span>
                     </div>
                 ) : (
                     <form onSubmit={handleEmailSubmit} className="space-y-1.5">
-                        <label className="text-[11px] text-white/70 block">
+                        <label className="text-[11px] text-ink/70 block">
                             Where should we email your completed files and invoice?
                         </label>
                         <div className="flex gap-1.5">
@@ -314,12 +314,12 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="name@company.com"
                                 disabled={isSubmittingEmail}
-                                className="flex-1 px-3 py-1.5 rounded-xl bg-black/50 border border-white/20 text-white placeholder-white/30 text-xs focus:outline-none focus:border-accent transition-colors font-mono"
+                                className="flex-1 px-3 py-1.5 rounded-xl bg-black/50 border border-ink/20 text-ink placeholder-white/30 text-xs focus:outline-none focus:border-primary transition-colors font-mono"
                             />
                             <button
                                 type="submit"
                                 disabled={isSubmittingEmail || !email.trim()}
-                                className="px-3 py-1.5 rounded-xl bg-accent hover:bg-[#b8dd00] disabled:opacity-40 text-black font-semibold text-xs font-mono flex items-center gap-1 transition-all cursor-pointer shrink-0"
+                                className="px-3 py-1.5 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-40 text-white font-semibold text-xs font-mono flex items-center gap-1 transition-all cursor-pointer shrink-0"
                             >
                                 {isSubmittingEmail ? (
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -337,9 +337,9 @@ export function OrderConfirmedCard({ card, onSendPrompt, onUploadClick }: OrderC
             </div>
 
             {/* Footer SLAs */}
-            <div className="flex items-center justify-between text-[10px] font-mono text-white/50 pt-1">
+            <div className="flex items-center justify-between text-[10px] font-mono text-ink/50 pt-1">
                 <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-accent" />
+                    <Clock className="w-3 h-3 text-primary-ink" />
                     {card.turnaround || '24h Standard Turnaround'}
                 </span>
                 <span>Max 25MB/img (Or Cloud Drive)</span>

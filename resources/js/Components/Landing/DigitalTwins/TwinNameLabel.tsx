@@ -10,7 +10,7 @@ export function TwinNameLabel({ twin }: { twin: DigitalTwinModel }) {
 
     return (
         <div className="pointer-events-none absolute left-1/2 top-[98%] mt-5 flex gap-2.5 -translate-x-1/2 flex-col items-center text-center whitespace-nowrap">
-            <p className="font-michroma text-base sm:text-xl font-bold tracking-[0.08em] text-[#16191f] leading-none drop-shadow-sm">
+            <p className="font-michroma text-base sm:text-xl font-bold tracking-[0.08em] text-ink leading-none drop-shadow-sm">
                 {name}
             </p>
             {twin.isCopyrightSold && (

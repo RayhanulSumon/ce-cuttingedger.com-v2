@@ -79,23 +79,23 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
     }
 
     return (
-        <div className="my-2.5 p-4 rounded-2xl bg-accent/10 border border-accent/40 shadow-2xl backdrop-blur-md text-left space-y-3">
-            <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5">
+        <div className="my-2.5 p-4 rounded-2xl bg-primary/10 border border-primary/40 shadow-2xl backdrop-blur-md text-left space-y-3">
+            <div className="flex items-start justify-between gap-2 border-b border-ink/10 pb-2.5">
                 <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-accent text-black">
+                    <span className="p-1.5 rounded-lg bg-primary text-white">
                         <Sparkles className="w-4 h-4" />
                     </span>
                     <div>
-                        <h4 className="text-sm font-bold text-white tracking-tight">
+                        <h4 className="text-sm font-bold text-ink tracking-tight">
                             {card.title || '100% Free Trial Activated'}
                         </h4>
-                        <span className="text-[10px] text-accent font-mono uppercase tracking-wider block">
+                        <span className="text-[10px] text-primary-ink font-mono uppercase tracking-wider block">
                             Zero Cost • No Credit Card Required
                         </span>
                     </div>
                 </div>
 
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-accent/20 text-accent border border-accent/30 shrink-0">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-primary/20 text-primary-ink border border-primary/30 shrink-0">
                     {card.status || 'In Production Queue'}
                 </span>
             </div>
@@ -106,14 +106,14 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
                     {card.images.map((imgUrl, i) => (
                         <div
                             key={i}
-                            className="relative w-14 h-14 rounded-xl overflow-hidden border border-white/15 bg-black/40 shrink-0 group"
+                            className="relative w-14 h-14 rounded-xl overflow-hidden border border-ink/15 bg-ink/[0.04] shrink-0 group"
                         >
                             <img
                                 src={imgUrl}
                                 alt={`Sample ${i + 1}`}
                                 className="w-full h-full object-cover"
                             />
-                            <span className="absolute bottom-0 right-0 bg-black/80 text-[8px] font-mono text-white/70 px-1 rounded-tl">
+                            <span className="absolute bottom-0 right-0 bg-black/80 text-[8px] font-mono text-ink/70 px-1 rounded-tl">
                                 #{i + 1}
                             </span>
                         </div>
@@ -122,42 +122,42 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
             )}
 
             {/* Trial Specs Grid */}
-            <div className="bg-black/40 p-3 rounded-xl border border-white/5 space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between text-white/70">
-                    <span className="text-white/40 text-[10px] uppercase">Sample Batch</span>
-                    <span className="font-semibold text-white">
+            <div className="bg-ink/[0.04] p-3 rounded-xl border border-ink/10 space-y-2 text-xs font-mono">
+                <div className="flex items-center justify-between text-ink/70">
+                    <span className="text-ink/40 text-[10px] uppercase">Sample Batch</span>
+                    <span className="font-semibold text-ink">
                         {imagesCount} {imagesCount === 1 ? 'image' : 'images'} submitted ({imagesCount} of 3 free trial quota)
                     </span>
                 </div>
-                <div className="flex items-center justify-between text-white/70">
-                    <span className="text-white/40 text-[10px] uppercase">Total Billing</span>
-                    <span className="font-bold text-accent text-sm">$0.00 USD (FREE)</span>
+                <div className="flex items-center justify-between text-ink/70">
+                    <span className="text-ink/40 text-[10px] uppercase">Total Billing</span>
+                    <span className="font-bold text-primary-ink text-sm">$0.00 USD (FREE)</span>
                 </div>
-                <div className="flex items-center justify-between text-white/70">
-                    <span className="text-white/40 text-[10px] uppercase">Turnaround SLA</span>
-                    <span className="text-white flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-[#00f5ff]" />
+                <div className="flex items-center justify-between text-ink/70">
+                    <span className="text-ink/40 text-[10px] uppercase">Turnaround SLA</span>
+                    <span className="text-ink flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-primary-ink" />
                         {card.turnaround || 'Sub-12 Hours Rapid SLA'}
                     </span>
                 </div>
             </div>
 
             {/* Deliverables */}
-            <div className="space-y-1 text-[11px] font-mono text-white/80">
-                <span className="text-[9px] uppercase tracking-wider text-white/40 font-bold block">
+            <div className="space-y-1 text-[11px] font-mono text-ink/80">
+                <span className="text-[9px] uppercase tracking-wider text-ink/40 font-bold block">
                     What You Will Receive
                 </span>
                 <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <div className="flex items-center gap-1.5 text-ink/80">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary-ink shrink-0" />
                         <span>100% Hand-Drawn Pen Tool Vector Clipping Paths</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <div className="flex items-center gap-1.5 text-ink/80">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary-ink shrink-0" />
                         <span>Layered Master PSD with Clipping Mask & Alpha Channel</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-white/80">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <div className="flex items-center gap-1.5 text-ink/80">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary-ink shrink-0" />
                         <span>High-Resolution Transparent Web PNG</span>
                     </div>
                 </div>
@@ -165,19 +165,19 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
 
             {/* Delivery Destination Section */}
             {confirmedEmail ? (
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2 text-xs text-white/90 font-mono">
-                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
+                <div className="p-3 rounded-xl bg-ink/[0.03] border border-ink/10 flex items-center gap-2 text-xs text-ink/90 font-mono">
+                    <CheckCircle2 className="w-4 h-4 text-primary-ink shrink-0" />
                     <div>
-                        <span className="text-[10px] text-white/40 uppercase block">Delivery Destination</span>
-                        <span className="text-[#00f5ff] font-semibold">{confirmedEmail}</span>
+                        <span className="text-[10px] text-ink/40 uppercase block">Delivery Destination</span>
+                        <span className="text-primary-ink font-semibold">{confirmedEmail}</span>
                     </div>
                 </div>
             ) : (
                 <form
                     onSubmit={handleEmailSubmit}
-                    className="p-3 rounded-xl bg-black/40 border border-[#00f5ff]/30 space-y-2 animate-in fade-in"
+                    className="p-3 rounded-xl bg-ink/[0.04] border border-primary/30 space-y-2 animate-in fade-in"
                 >
-                    <div className="flex items-center gap-1.5 text-xs text-[#00f5ff] font-mono">
+                    <div className="flex items-center gap-1.5 text-xs text-primary-ink font-mono">
                         <Mail className="w-3.5 h-3.5" />
                         <span className="font-semibold">Where should we deliver your retouched master files?</span>
                     </div>
@@ -188,12 +188,12 @@ export function FreeTrialConfirmedCard({ card, onSendPrompt }: FreeTrialConfirme
                             placeholder="Enter your email (e.g. alex@brand.com)"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#00f5ff]"
+                            className="flex-1 px-3 py-1.5 rounded-lg bg-ink/[0.03] border border-ink/10 text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary"
                         />
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="py-1.5 px-3 rounded-lg bg-[#00f5ff] hover:bg-[#00d8e6] text-black font-semibold text-xs font-mono whitespace-nowrap cursor-pointer transition-colors flex items-center gap-1 disabled:opacity-50"
+                            className="py-1.5 px-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono whitespace-nowrap cursor-pointer transition-colors flex items-center gap-1 disabled:opacity-50"
                         >
                             {isSubmitting ? (
                                 <>

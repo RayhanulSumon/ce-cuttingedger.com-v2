@@ -108,8 +108,8 @@ const SERVICES = Object.entries(COPY).map(([slug, copy]) => ({ slug, label: copy
 const VOLUMES = ['1 – 10 images', '10 – 50 images', '50 – 500 images', '500+ images / month'];
 
 const FIELD =
-    'w-full rounded-xl border border-[#16191f]/15 bg-white px-3.5 py-2.5 text-sm text-[#16191f] placeholder-[#8a919c] outline-none transition-colors hover:border-[#16191f]/30 focus:border-[#f5761a] focus:ring-2 focus:ring-[#f5761a]/20';
-const LABEL = 'flex items-center justify-between text-xs font-semibold text-[#3a3f48]';
+    'w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink placeholder-faint outline-none transition-colors hover:border-ink/30 focus:border-primary focus:ring-2 focus:ring-primary/20';
+const LABEL = 'flex items-center justify-between text-xs font-semibold text-ink-2';
 const ERROR = 'text-xs text-rose-600';
 
 export default function Order({ service = '', reference = '' }: OrderProps) {
@@ -161,7 +161,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
             <section className={`pb-16 pt-28 sm:pt-32 ${PAD_X}`}>
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-xs font-semibold text-[#5d6572] transition-colors hover:text-[#f5761a]"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-subtle transition-colors hover:text-primary"
                 >
                     <ArrowLeft size={14} />
                     Back to home
@@ -169,21 +169,21 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
 
                 <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
                     <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#5d6572]">{copy.eyebrow}</p>
-                        <h1 className="mt-3 text-[clamp(30px,4.2vw,56px)] font-extrabold leading-[1] tracking-[-0.03em] text-[#16191f]">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-subtle">{copy.eyebrow}</p>
+                        <h1 className="mt-3 text-[clamp(30px,4.2vw,56px)] font-extrabold leading-[1] tracking-[-0.03em] text-ink">
                             {copy.title}
                         </h1>
-                        <p className="mt-4 max-w-xl text-base leading-relaxed text-[#2f333a] sm:text-lg">{copy.description}</p>
+                        <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-2 sm:text-lg">{copy.description}</p>
 
                         <ol className="mt-10 space-y-6">
                             {copy.steps.map((step, i) => (
                                 <li key={step.title} className="flex gap-4">
-                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#16191f] text-sm font-bold text-white">
+                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-bold text-white">
                                         {i + 1}
                                     </span>
                                     <div>
-                                        <h2 className="text-base font-bold text-[#16191f]">{step.title}</h2>
-                                        <p className="mt-1 text-sm leading-relaxed text-[#4a505b]">{step.body}</p>
+                                        <h2 className="text-base font-bold text-ink">{step.title}</h2>
+                                        <p className="mt-1 text-sm leading-relaxed text-muted">{step.body}</p>
                                     </div>
                                 </li>
                             ))}
@@ -192,7 +192,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
 
                     <form
                         onSubmit={submit}
-                        className="space-y-4 rounded-3xl border border-[#16191f]/10 bg-white p-6 shadow-[0_24px_50px_-34px_rgba(22,25,31,0.35)] sm:p-8"
+                        className="space-y-4 rounded-3xl border border-ink/10 bg-white p-6 shadow-[0_24px_50px_-34px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] sm:p-8"
                     >
                         {flash?.success && (
                             <div role="status" className="flex items-start gap-3.5 rounded-2xl border border-emerald-300 bg-emerald-50 p-4">
@@ -219,7 +219,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
                             <div className="space-y-1.5">
                                 <label htmlFor="order-name" className={LABEL}>
                                     <span>Your name</span>
-                                    <span className="text-[#f5761a]">*</span>
+                                    <span className="text-primary">*</span>
                                 </label>
                                 <input
                                     id="order-name"
@@ -235,7 +235,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
                             <div className="space-y-1.5">
                                 <label htmlFor="order-email" className={LABEL}>
                                     <span>Work email</span>
-                                    <span className="text-[#f5761a]">*</span>
+                                    <span className="text-primary">*</span>
                                 </label>
                                 <input
                                     id="order-email"
@@ -318,7 +318,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
                         <div className="space-y-1.5">
                             <label htmlFor="order-message" className={LABEL}>
                                 <span>{copy.messageLabel}</span>
-                                <span className="text-[#f5761a]">*</span>
+                                <span className="text-primary">*</span>
                             </label>
                             <textarea
                                 id="order-message"
@@ -335,7 +335,7 @@ export default function Order({ service = '', reference = '' }: OrderProps) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#f5761a] px-6 py-3.5 text-sm font-bold text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-[#e0650c] disabled:opacity-60"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover disabled:opacity-60"
                         >
                             {processing ? 'Sending…' : copy.submit}
                             <ArrowUpRight size={18} />

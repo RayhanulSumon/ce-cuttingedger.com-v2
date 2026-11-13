@@ -77,7 +77,7 @@ export function FullpageStage({ index, sections }: FullpageStageProps) {
 
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[2px] bg-black/8">
                 <div
-                    className={`fp-progress absolute inset-0 ${dark ? 'bg-white/50' : 'bg-[#1b1b1b]/35'}`}
+                    className={`fp-progress absolute inset-0 ${dark ? 'bg-white/50' : 'bg-ink/35'}`}
                     style={{ transform: `scaleX(${progress})` }}
                 />
             </div>

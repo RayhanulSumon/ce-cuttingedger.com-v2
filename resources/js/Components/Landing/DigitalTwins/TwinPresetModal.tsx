@@ -32,7 +32,7 @@ export function TwinPresetModal({ twinIndex, onSelectTwin, onClose }: TwinPreset
 }
 
 const MODEL_ARROW =
-    'absolute top-1/3 z-20 grid h-11 w-11 place-items-center rounded-full border border-[#16191f]/20 bg-white/90 text-[#16191f] shadow-[0_8px_28px_-8px_rgba(22,25,31,0.3)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-[#16191f] hover:text-white lg:top-1/2 lg:-translate-y-1/2';
+    'absolute top-1/3 z-20 grid h-11 w-11 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white lg:top-1/2 lg:-translate-y-1/2';
 
 const FALLBACK_EMAIL = 'hello@cuttingedger.com';
 
@@ -175,7 +175,7 @@ function TwinPresetPanel({ twinIndex, onSelectTwin, onClose }: TwinPresetModalPr
                 type="button"
                 onClick={onClose}
                 aria-label="Close pose preset view"
-                className="absolute right-5 top-5 z-10 grid h-10 w-10 place-items-center rounded-full bg-[#16191f] text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 sm:right-7 sm:top-5"
+                className="absolute right-5 top-5 z-10 grid h-10 w-10 place-items-center rounded-full bg-ink text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 sm:right-7 sm:top-5"
             >
                 <X size={18} />
             </button>

@@ -59,11 +59,11 @@ function Lane({
 
 function LogoCard({ name, src }: Logo) {
     return (
-        <div className="flex aspect-[5/3] w-full shrink-0 items-center justify-center rounded-3xl border border-[#1d1d1d]/10 bg-white p-6 transition-shadow duration-300 hover:shadow-[0_18px_34px_-22px_rgba(22,25,31,0.4)]">
+        <div className="flex aspect-[5/3] w-full shrink-0 items-center justify-center rounded-3xl border border-ink/10 bg-white p-6 transition-shadow duration-300 hover:shadow-[0_18px_34px_-22px_color-mix(in_srgb,var(--color-ink)_40%,transparent)]">
             {src ? (
                 <img src={src} alt={name} loading="lazy" decoding="async" className="max-h-full max-w-[88%] object-contain" />
             ) : (
-                <span className="text-center text-2xl font-extrabold tracking-tight text-[#1d1d1d]/75 sm:text-3xl">{name}</span>
+                <span className="text-center text-2xl font-extrabold tracking-tight text-ink/75 sm:text-3xl">{name}</span>
             )}
         </div>
     );
@@ -71,16 +71,16 @@ function LogoCard({ name, src }: Logo) {
 
 function ReviewCard({ quote, name, role, rating }: ReviewEntry & { rating?: number }) {
     return (
-        <figure className="w-full shrink-0 rounded-3xl border border-[#1d1d1d]/10 bg-white p-6">
-            <div className="flex gap-0.5 text-[#f5761a]" aria-label={`${rating ?? 5} out of 5 stars`}>
+        <figure className="w-full shrink-0 rounded-3xl border border-ink/10 bg-white p-6">
+            <div className="flex gap-0.5 text-primary" aria-label={`${rating ?? 5} out of 5 stars`}>
                 {Array.from({ length: rating ?? 5 }, (_, i) => (
                     <Star key={i} size={14} fill="currentColor" />
                 ))}
             </div>
             <blockquote className="mt-3 text-[15px] leading-relaxed text-[#2a2d33]">&ldquo;{quote}&rdquo;</blockquote>
             <figcaption className="mt-4 text-sm">
-                <span className="font-bold text-[#16191f]">{name}</span>
-                {role && <span className="text-[#5d6572]"> · {role}</span>}
+                <span className="font-bold text-ink">{name}</span>
+                {role && <span className="text-subtle"> · {role}</span>}
             </figcaption>
         </figure>
     );
@@ -105,15 +105,15 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
     const reviewList = fill(reviews, 3);
 
     return (
-        <div className="grid h-full w-full grid-rows-[minmax(0,1fr)_minmax(0,1fr)] overflow-hidden bg-[#f2f2f1] md:grid-cols-2 md:grid-rows-1">
+        <div className="grid h-full w-full grid-rows-[minmax(0,1fr)_minmax(0,1fr)] overflow-hidden bg-page md:grid-cols-2 md:grid-rows-1">
             <div className={`relative flex min-h-0 flex-col pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
                 <Reveal active={active}>
-                    <h2 className="max-w-xl text-[clamp(28px,4.2vw,60px)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[#1d1d1d]">
+                    <h2 className="max-w-xl text-[clamp(28px,4.2vw,60px)] font-extrabold leading-[0.98] tracking-[-0.03em] text-ink">
                         Trusted by brands that ship at scale.
                     </h2>
                 </Reveal>
                 <Reveal active={active} delay={0.1}>
-                    <p className="mt-3 max-w-md text-sm leading-relaxed text-[#2f333a] sm:text-base">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-2 sm:text-base">
                         Fashion, footwear and jewelry teams rely on us for catalogs, campaigns and digital twins.
                     </p>
                 </Reveal>

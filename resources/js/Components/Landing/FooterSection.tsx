@@ -44,7 +44,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
 
                 <Reveal active={active} className="relative z-10 flex flex-col items-center justify-between gap-2 text-xs text-[#f9f4e8] sm:flex-row">
                     <span className="font-mono text-[11px] text-[#f9f4e8]/90">AI-Driven Visual Performance Agency</span>
-                    <Link href="/" className="inline-flex items-center gap-2.5 text-xl font-extrabold uppercase tracking-tight text-white transition-colors hover:text-[#f5a623] sm:text-2xl">
+                    <Link href="/" className="inline-flex items-center gap-2.5 text-xl font-extrabold uppercase tracking-tight text-white transition-colors hover:text-primary sm:text-2xl">
                         <img src="/images/ce/ce_icon_white.png" alt="" className="h-6 w-6 object-contain" />
                         cutting edger
                     </Link>
@@ -52,7 +52,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                 </Reveal>
 
                 <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-6 text-center">
-                    <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-[#f5a623] sm:mb-5">
+                    <span className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-primary sm:mb-5">
                         Ready to elevate your catalog craft &amp; velocity?
                     </span>
                     <Link
@@ -108,7 +108,7 @@ export const FooterSection = memo(function FooterSection({ active, goTo }: Secti
                         type="button"
                         onClick={() => goTo(0)}
                         aria-label="Back to top"
-                        className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-black shadow-xl transition-colors hover:bg-[#f5a623]"
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-black shadow-xl transition-colors hover:bg-primary"
                     >
                         <ChevronUp size={20} strokeWidth={2.5} />
                     </button>

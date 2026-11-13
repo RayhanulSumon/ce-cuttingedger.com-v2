@@ -189,23 +189,23 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
             }}
         >
             <div
-                className="w-full max-w-2xl bg-[#0e1017] border border-white/15 rounded-3xl shadow-2xl overflow-hidden relative text-white animate-in zoom-in-95 duration-200"
+                className="w-full max-w-2xl bg-white border border-ink/15 rounded-3xl shadow-2xl overflow-hidden relative text-ink animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header Strip */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-ink/10 bg-white/[0.02]">
                     <div className="flex items-center gap-2">
-                        <div className="p-2 rounded-xl bg-accent/10 border border-accent/30 text-accent">
+                        <div className="p-2 rounded-xl bg-primary/10 border border-primary/30 text-primary-ink">
                             <Video className="w-4 h-4" />
                         </div>
                         <div>
-                            <h3 className="font-display font-bold text-sm tracking-tight text-white flex items-center gap-2">
+                            <h3 className="font-display font-bold text-sm tracking-tight text-ink flex items-center gap-2">
                                 <span>Schedule a Visual Performance Discovery Call</span>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-accent/15 text-accent border border-accent/30 font-semibold">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-primary/15 text-primary-ink border border-primary/30 font-semibold">
                                     15-Min Live Screen Share
                                 </span>
                             </h3>
-                            <p className="text-[11px] text-neutral-400">
+                            <p className="text-[11px] text-muted">
                                 Review catalog standards, SLA turnaround, and custom volume pricing.
                             </p>
                         </div>
@@ -214,7 +214,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                     <button
                         type="button"
                         onClick={onClose}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+                        className="p-1.5 rounded-lg text-muted hover:text-ink hover:bg-ink/[0.05] transition-colors"
                         aria-label="Close modal"
                     >
                         <X className="w-5 h-5" />
@@ -231,24 +231,24 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                             </div>
 
                             <div className="space-y-1">
-                                <h4 className="text-xl font-display font-bold text-white">
+                                <h4 className="text-xl font-display font-bold text-ink">
                                     Consultation Call Confirmed!
                                 </h4>
-                                <p className="text-xs text-neutral-300 max-w-md mx-auto">
-                                    We have reserved your slot for <span className="text-accent font-mono font-semibold">{confirmedBooking.datetime_formatted}</span>. A calendar invitation with screen-share details has been queued for <span className="text-white font-mono">{confirmedBooking.email}</span>.
+                                <p className="text-xs text-ink-2 max-w-md mx-auto">
+                                    We have reserved your slot for <span className="text-primary-ink font-mono font-semibold">{confirmedBooking.datetime_formatted}</span>. A calendar invitation with screen-share details has been queued for <span className="text-ink font-mono">{confirmedBooking.email}</span>.
                                 </p>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 max-w-sm mx-auto text-left text-xs font-mono space-y-2">
-                                <div className="flex items-center justify-between text-neutral-400">
+                            <div className="p-4 rounded-2xl bg-white/[0.03] border border-ink/10 max-w-sm mx-auto text-left text-xs font-mono space-y-2">
+                                <div className="flex items-center justify-between text-muted">
                                     <span>Host:</span>
-                                    <span className="text-white">Cutting Edger Studio Leads</span>
+                                    <span className="text-ink">Cutting Edger Studio Leads</span>
                                 </div>
-                                <div className="flex items-center justify-between text-neutral-400">
+                                <div className="flex items-center justify-between text-muted">
                                     <span>Client Name:</span>
-                                    <span className="text-white">{confirmedBooking.name}</span>
+                                    <span className="text-ink">{confirmedBooking.name}</span>
                                 </div>
-                                <div className="flex items-center justify-between text-neutral-400">
+                                <div className="flex items-center justify-between text-muted">
                                     <span>Duration:</span>
                                     <span className="text-emerald-400 font-semibold">15 Minutes (Google Meet / Zoom)</span>
                                 </div>
@@ -258,7 +258,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="px-8 py-3 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors"
+                                    className="px-8 py-3 rounded-xl bg-primary text-white font-semibold text-xs uppercase tracking-wider hover:bg-primary-hover transition-colors"
                                 >
                                     Done
                                 </button>
@@ -277,18 +277,18 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                             {/* Slot Selection */}
                             <div className="space-y-2.5">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-mono uppercase text-accent font-bold flex items-center gap-1.5">
+                                    <label className="text-xs font-mono uppercase text-primary-ink font-bold flex items-center gap-1.5">
                                         <Calendar className="w-3.5 h-3.5" />
                                         <span>1. Select Preferred Date & Time</span>
                                     </label>
-                                    <span className="text-[11px] font-mono text-neutral-400">
+                                    <span className="text-[11px] font-mono text-muted">
                                         All times auto-adjusted to your local timezone
                                     </span>
                                 </div>
 
                                 {isLoadingSlots ? (
-                                    <div className="p-8 text-center text-xs text-neutral-400 font-mono flex items-center justify-center gap-2">
-                                        <Loader2 className="w-4 h-4 animate-spin text-accent" />
+                                    <div className="p-8 text-center text-xs text-muted font-mono flex items-center justify-center gap-2">
+                                        <Loader2 className="w-4 h-4 animate-spin text-primary-ink" />
                                         <span>Loading live calendar availability...</span>
                                     </div>
                                 ) : (
@@ -309,8 +309,8 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                                         }}
                                                         className={`px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-all shrink-0 cursor-pointer ${
                                                             isSelected
-                                                                ? 'bg-accent text-black font-bold shadow-md shadow-accent/10'
-                                                                : 'bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white border border-white/5'
+                                                                ? 'bg-primary text-white font-bold shadow-md shadow-primary/10'
+                                                                : 'bg-ink/[0.03] text-ink-2 hover:bg-ink/[0.05] hover:text-ink border border-ink/10'
                                                         }`}
                                                     >
                                                         {day.label}
@@ -330,8 +330,8 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                                         onClick={() => setSelectedSlot(slot)}
                                                         className={`px-3 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                                             isSlotSelected
-                                                                ? 'bg-accent/15 text-accent border-2 border-accent font-bold shadow-sm'
-                                                                : 'bg-white/[0.04] text-neutral-300 hover:bg-white/10 hover:text-white border border-white/10'
+                                                                ? 'bg-primary/15 text-primary-ink border-2 border-primary font-bold shadow-sm'
+                                                                : 'bg-white/[0.04] text-ink-2 hover:bg-ink/[0.05] hover:text-ink border border-ink/10'
                                                         }`}
                                                     >
                                                         <Clock className="w-3 h-3" />
@@ -345,14 +345,14 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                             </div>
 
                             {/* Contact Details Grid */}
-                            <div className="space-y-3 pt-2 border-t border-white/10">
-                                <label className="text-xs font-mono uppercase text-accent font-bold block">
+                            <div className="space-y-3 pt-2 border-t border-ink/10">
+                                <label className="text-xs font-mono uppercase text-primary-ink font-bold block">
                                     2. Your Information & Brief
                                 </label>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1">
-                                        <label className="text-[11px] font-mono uppercase text-neutral-400">
+                                        <label className="text-[11px] font-mono uppercase text-muted">
                                             Full Name *
                                         </label>
                                         <input
@@ -361,12 +361,12 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="e.g. Sarah Jenkins"
                                             required
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
+                                            className="w-full h-9 rounded-xl bg-white border border-ink/10 text-xs px-3 text-ink focus:outline-none focus:border-primary"
                                         />
                                     </div>
 
                                     <div className="space-y-1">
-                                        <label className="text-[11px] font-mono uppercase text-neutral-400">
+                                        <label className="text-[11px] font-mono uppercase text-muted">
                                             Work Email *
                                         </label>
                                         <input
@@ -375,14 +375,14 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="sarah@brand.com"
                                             required
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
+                                            className="w-full h-9 rounded-xl bg-white border border-ink/10 text-xs px-3 text-ink focus:outline-none focus:border-primary"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1">
-                                        <label className="text-[11px] font-mono uppercase text-neutral-400">
+                                        <label className="text-[11px] font-mono uppercase text-muted">
                                             Phone / WhatsApp (Optional)
                                         </label>
                                         <input
@@ -390,18 +390,18 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
                                             placeholder="+1 (555) 000-0000"
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
+                                            className="w-full h-9 rounded-xl bg-white border border-ink/10 text-xs px-3 text-ink focus:outline-none focus:border-primary"
                                         />
                                     </div>
 
                                     <div className="space-y-1">
-                                        <label className="text-[11px] font-mono uppercase text-neutral-400">
+                                        <label className="text-[11px] font-mono uppercase text-muted">
                                             Service Discipline
                                         </label>
                                         <select
                                             value={service}
                                             onChange={(e) => setService(e.target.value)}
-                                            className="w-full h-9 rounded-xl bg-neutral-900 border border-white/10 text-xs px-3 text-white focus:outline-none focus:border-accent"
+                                            className="w-full h-9 rounded-xl bg-white border border-ink/10 text-xs px-3 text-ink focus:outline-none focus:border-primary"
                                         >
                                             <option value="Catalog Optimization & Retouching">1. Catalog Optimization & Retouching</option>
                                             <option value="Color Standardization">2. Color Standardization & Multi-Colorways</option>
@@ -413,7 +413,7 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-[11px] font-mono uppercase text-neutral-400">
+                                    <label className="text-[11px] font-mono uppercase text-muted">
                                         Project Scope or Questions (Optional)
                                     </label>
                                     <textarea
@@ -421,15 +421,15 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                         onChange={(e) => setNotes(e.target.value)}
                                         placeholder="e.g. We have ~2,500 apparel SKUs per month requiring ghost mannequin and delta-E matching..."
                                         rows={2}
-                                        className="w-full rounded-xl bg-neutral-900 border border-white/10 text-xs p-3 text-white focus:outline-none focus:border-accent resize-none"
+                                        className="w-full rounded-xl bg-white border border-ink/10 text-xs p-3 text-ink focus:outline-none focus:border-primary resize-none"
                                     />
                                 </div>
                             </div>
 
                             {/* Trust & Submit */}
-                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
-                                <div className="flex items-center gap-1.5 text-[11px] text-neutral-400 font-mono">
-                                    <Shield className="w-3.5 h-3.5 text-accent" />
+                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-ink/10">
+                                <div className="flex items-center gap-1.5 text-[11px] text-muted font-mono">
+                                    <Shield className="w-3.5 h-3.5 text-primary-ink" />
                                     <span>Protected under Strict Mutual NDA</span>
                                 </div>
 
@@ -437,14 +437,14 @@ export function DiscoveryCallModal({ isOpen, onClose }: DiscoveryCallModalProps)
                                     <button
                                         type="button"
                                         onClick={onClose}
-                                        className="px-4 py-2.5 rounded-xl text-xs font-mono text-neutral-400 hover:text-white transition-colors"
+                                        className="px-4 py-2.5 rounded-xl text-xs font-mono text-muted hover:text-ink transition-colors"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !selectedSlot}
-                                        className="px-6 py-2.5 rounded-xl bg-accent text-black font-semibold text-xs uppercase tracking-wider hover:bg-accent-hover transition-colors flex items-center gap-2 shadow-lg shadow-accent/15 disabled:opacity-50 cursor-pointer"
+                                        className="px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-xs uppercase tracking-wider hover:bg-primary-hover transition-colors flex items-center gap-2 shadow-lg shadow-primary/15 disabled:opacity-50 cursor-pointer"
                                     >
                                         {isSubmitting ? (
                                             <>

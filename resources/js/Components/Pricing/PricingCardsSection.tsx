@@ -152,36 +152,36 @@ export function PricingCardsSection() {
     return (
         <section
             id="pricing-plans-section"
-            className="relative py-16 sm:py-20 bg-[#f2f2f1] border-t border-[#16191f]/[0.06] select-none overflow-hidden"
+            className="relative py-16 sm:py-20 bg-page border-t border-ink/[0.06] select-none overflow-hidden"
         >
             {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[25rem] bg-[#f5761a]/[0.04] rounded-full blur-[180px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[25rem] bg-primary/[0.04] rounded-full blur-[180px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
                 {/* Minimalist Centered Header */}
                 <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-12 space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-[#16191f]/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-[#c4540a] font-semibold">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-ink/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-primary-ink font-semibold">
                         <span>Production Capacity & SLAs</span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-[#16191f] tracking-tight">
-                        Bespoke <span className="text-[#c4540a]">Production Tiers</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-ink tracking-tight">
+                        Bespoke <span className="text-primary-ink">Production Tiers</span>
                     </h2>
 
-                    <p className="text-sm sm:text-base text-[#4a505b] font-sans leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-sm sm:text-base text-muted font-sans leading-relaxed max-w-2xl mx-auto">
                         Select between high-volume 2D catalog retouching or full 3D CGI and spatial asset pipelines.
                     </p>
 
                     {/* Interactive 2D vs 3D Tab Switcher */}
                     <div className="pt-4 flex items-center justify-center">
-                        <div className="inline-flex p-1.5 rounded-2xl bg-white/[0.03] border border-[#16191f]/10 backdrop-blur-md shadow-lg">
+                        <div className="inline-flex p-1.5 rounded-2xl bg-white/[0.03] border border-ink/10 backdrop-blur-md shadow-lg">
                             <button
                                 type="button"
                                 onClick={() => setActiveTab('2d')}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
                                     activeTab === '2d'
-                                        ? 'bg-[#f5761a] text-white shadow-[0_0_20px_rgba(245,166,35,0.35)]'
-                                        : 'text-[#4a505b] hover:text-[#16191f] hover:bg-white/[0.04]'
+                                        ? 'bg-primary text-white shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
+                                        : 'text-muted hover:text-ink hover:bg-white/[0.04]'
                                 }`}
                             >
                                 <Layers className="w-4 h-4" />
@@ -193,8 +193,8 @@ export function PricingCardsSection() {
                                 onClick={() => setActiveTab('3d')}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
                                     activeTab === '3d'
-                                        ? 'bg-[#f5761a] text-white shadow-[0_0_20px_rgba(245,166,35,0.35)]'
-                                        : 'text-[#4a505b] hover:text-[#16191f] hover:bg-white/[0.04]'
+                                        ? 'bg-primary text-white shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
+                                        : 'text-muted hover:text-ink hover:bg-white/[0.04]'
                                 }`}
                             >
                                 <Box className="w-4 h-4" />
@@ -215,14 +215,14 @@ export function PricingCardsSection() {
                                 key={tier.id}
                                 className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 ${
                                     isFeatured
-                                        ? 'bg-gradient-to-b from-[#f5761a]/10 to-white border-2 border-[#f5761a]/50 shadow-[0_0_40px_rgba(245,166,35,0.12)]'
-                                        : 'bg-gradient-to-b from-white to-white border border-[#16191f]/[0.08] hover:border-[#16191f]/20'
+                                        ? 'bg-gradient-to-b from-primary/10 to-white border-2 border-primary/50 shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary)_12%,transparent)]'
+                                        : 'bg-gradient-to-b from-white to-white border border-ink/[0.08] hover:border-ink/20'
                                 }`}
                             >
                                 {/* Featured Ribbon */}
                                 {isFeatured && (
                                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
-                                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#f5761a] text-white text-[10px] font-mono uppercase tracking-widest font-black shadow-lg">
+                                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary text-white text-[10px] font-mono uppercase tracking-widest font-black shadow-lg">
                                             <Zap className="w-3 h-3 fill-white text-white" />
                                             <span>Most Requested Tier</span>
                                         </span>
@@ -232,47 +232,47 @@ export function PricingCardsSection() {
                                 <div>
                                     {/* Header: Icon + Badge + Title */}
                                     <div className="flex items-center justify-between gap-3 mb-4">
-                                        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-[#16191f]/[0.08] flex items-center justify-center text-[#c4540a]">
+                                        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-ink/[0.08] flex items-center justify-center text-primary-ink">
                                             <Icon className="w-5 h-5" />
                                         </div>
-                                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#4a505b] px-2.5 py-1 rounded-md bg-white/[0.03] border border-[#16191f]/[0.06]">
+                                        <span className="text-[10px] font-mono uppercase tracking-wider text-muted px-2.5 py-1 rounded-md bg-white/[0.03] border border-ink/[0.06]">
                                             {tier.badge}
                                         </span>
                                     </div>
 
-                                    <h3 className="text-xl sm:text-2xl font-display font-bold text-[#16191f] mb-2">
+                                    <h3 className="text-xl sm:text-2xl font-display font-bold text-ink mb-2">
                                         {tier.name}
                                     </h3>
 
-                                    <p className="text-xs sm:text-sm text-[#4a505b] font-sans leading-relaxed mb-6">
+                                    <p className="text-xs sm:text-sm text-muted font-sans leading-relaxed mb-6">
                                         {tier.description}
                                     </p>
 
                                     {/* Distinct Engagement & Billing Model */}
-                                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-[#16191f]/[0.06] mb-5">
-                                        <div className="text-sm sm:text-base font-display font-bold text-[#16191f]">
+                                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-ink/[0.06] mb-5">
+                                        <div className="text-sm sm:text-base font-display font-bold text-ink">
                                             {tier.pricingLabel}
                                         </div>
-                                        <div className="text-[11px] font-sans text-[#4a505b] mt-0.5">
+                                        <div className="text-[11px] font-sans text-muted mt-0.5">
                                             {tier.pricingSubtext}
                                         </div>
                                     </div>
 
                                     {/* High-Contrast 2-Column SLA & Capacity Spec Bar */}
-                                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[#16191f]/[0.04] border border-[#16191f]/[0.05] mb-6 text-xs font-mono">
+                                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-ink/[0.04] border border-ink/[0.05] mb-6 text-xs font-mono">
                                         <div>
-                                            <span className="text-[10px] text-[#4a505b] uppercase tracking-wider block mb-0.5">
+                                            <span className="text-[10px] text-muted uppercase tracking-wider block mb-0.5">
                                                 Turnaround SLA
                                             </span>
-                                            <span className="text-[#16191f] font-bold">
+                                            <span className="text-ink font-bold">
                                                 {tier.sla}
                                             </span>
                                         </div>
-                                        <div className="border-l border-[#16191f]/[0.07] pl-3">
-                                            <span className="text-[10px] text-[#4a505b] uppercase tracking-wider block mb-0.5">
+                                        <div className="border-l border-ink/[0.07] pl-3">
+                                            <span className="text-[10px] text-muted uppercase tracking-wider block mb-0.5">
                                                 Throughput
                                             </span>
-                                            <span className="text-[#16191f] font-bold">
+                                            <span className="text-ink font-bold">
                                                 {tier.capacity}
                                             </span>
                                         </div>
@@ -283,11 +283,11 @@ export function PricingCardsSection() {
                                         {tier.features.map((feature, idx) => (
                                             <div
                                                 key={idx}
-                                                className="flex items-start gap-2.5 text-xs sm:text-[13px] text-[#2f333a] font-sans leading-snug"
+                                                className="flex items-start gap-2.5 text-xs sm:text-[13px] text-ink-2 font-sans leading-snug"
                                             >
-                                                <Check className="w-3.5 h-3.5 text-[#c4540a] shrink-0 mt-0.5" />
+                                                <Check className="w-3.5 h-3.5 text-primary-ink shrink-0 mt-0.5" />
                                                 <span>
-                                                    <strong className="text-[#16191f] font-medium">{feature.bold}</strong> {feature.text}
+                                                    <strong className="text-ink font-medium">{feature.bold}</strong> {feature.text}
                                                 </span>
                                             </div>
                                         ))}
@@ -301,8 +301,8 @@ export function PricingCardsSection() {
                                         onClick={() => handleOpenContact(tier.name)}
                                         className={`group w-full py-3.5 px-5 rounded-xl font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                                             isFeatured
-                                                ? 'bg-[#f5761a] text-white hover:bg-[#16191f] shadow-[0_4px_20px_rgba(245,166,35,0.3)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
-                                                : 'bg-white/[0.05] hover:bg-[#16191f] hover:text-white text-[#16191f] border border-[#16191f]/10 hover:border-[#16191f]'
+                                                ? 'bg-primary text-white hover:bg-ink shadow-[0_4px_20px_color-mix(in_srgb,var(--color-primary)_30%,transparent)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
+                                                : 'bg-white/[0.05] hover:bg-ink hover:text-white text-ink border border-ink/10 hover:border-ink'
                                         }`}
                                     >
                                         <span>{tier.buttonText}</span>
@@ -315,16 +315,16 @@ export function PricingCardsSection() {
                 </div>
 
                 {/* Minimalist Bottom Assurance Strip */}
-                <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-[#16191f]/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-ink/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[#f5761a]/10 border border-[#f5761a]/25 flex items-center justify-center text-[#c4540a] shrink-0">
-                            <ShieldCheck className="w-4 h-4 text-[#c4540a]" />
+                        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center text-primary-ink shrink-0">
+                            <ShieldCheck className="w-4 h-4 text-primary-ink" />
                         </div>
                         <div>
-                            <h4 className="text-xs sm:text-sm font-display font-bold text-[#16191f]">
+                            <h4 className="text-xs sm:text-sm font-display font-bold text-ink">
                                 Risk-Free Proof Of Concept Pilot
                             </h4>
-                            <p className="text-[11px] sm:text-xs text-[#4a505b] font-sans">
+                            <p className="text-[11px] sm:text-xs text-muted font-sans">
                                 Test our turnaround and precision on 3 of your actual production files with zero commitment.
                             </p>
                         </div>
@@ -332,7 +332,7 @@ export function PricingCardsSection() {
 
                     <a
                         href="#free-trial"
-                        className="px-4 py-2 rounded-xl bg-[#16191f]/[0.03] hover:bg-[#f5761a] hover:text-white border border-[#16191f]/10 hover:border-[#f5761a] text-xs font-mono uppercase tracking-wider text-[#16191f] font-semibold transition-all duration-300 shrink-0 cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-ink/[0.03] hover:bg-primary hover:text-white border border-ink/10 hover:border-primary text-xs font-mono uppercase tracking-wider text-ink font-semibold transition-all duration-300 shrink-0 cursor-pointer"
                     >
                         Try 3 Files Free →
                     </a>

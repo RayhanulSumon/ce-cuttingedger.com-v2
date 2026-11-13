@@ -597,14 +597,14 @@ export function ChatWidget() {
         return parts.map((part, i) => {
             if (part.startsWith('**') && part.endsWith('**')) {
                 return (
-                    <strong key={i} className="text-white font-semibold">
+                    <strong key={i} className="text-ink font-semibold">
                         {part.slice(2, -2)}
                     </strong>
                 );
             }
             if (part.startsWith('`') && part.endsWith('`')) {
                 return (
-                    <code key={i} className="px-1.5 py-0.5 rounded bg-white/10 text-accent font-mono text-[11px]">
+                    <code key={i} className="px-1.5 py-0.5 rounded bg-ink/[0.05] text-primary-ink font-mono text-[11px]">
                         {part.slice(1, -1)}
                     </code>
                 );
@@ -617,7 +617,7 @@ export function ChatWidget() {
     const renderVisualMessage = (content: string, isUser: boolean) => {
         if (isUser) {
             return (
-                <p className="whitespace-pre-wrap text-xs font-semibold text-[#0a0c10] leading-relaxed select-text">
+                <p className="whitespace-pre-wrap text-xs font-semibold text-ink leading-relaxed select-text">
                     {content}
                 </p>
             );
@@ -642,12 +642,12 @@ export function ChatWidget() {
                 elements.push(
                     <div
                         key={`step-${idx}`}
-                        className="flex items-start gap-2.5 my-1.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/15 transition-all shadow-sm"
+                        className="flex items-start gap-2.5 my-1.5 p-2.5 rounded-xl bg-white/[0.03] border border-ink/10 hover:border-ink/15 transition-all shadow-sm"
                     >
-                        <span className="w-5 h-5 rounded-md bg-accent/15 text-accent font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-accent/30 shadow-sm shadow-accent/10">
+                        <span className="w-5 h-5 rounded-md bg-primary/15 text-primary-ink font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-primary/30 shadow-sm shadow-primary/10">
                             {num.padStart(2, '0')}
                         </span>
-                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                        <div className="text-xs leading-relaxed text-ink-2 flex-1">
                             {formatInline(text)}
                         </div>
                     </div>
@@ -661,8 +661,8 @@ export function ChatWidget() {
                 const text = bulletMatch[1];
                 elements.push(
                     <div key={`bullet-${idx}`} className="flex items-start gap-2 my-1 pl-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0 shadow-sm shadow-accent/50" />
-                        <div className="text-xs leading-relaxed text-neutral-200 flex-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0 shadow-sm shadow-primary/50" />
+                        <div className="text-xs leading-relaxed text-ink-2 flex-1">
                             {formatInline(text)}
                         </div>
                     </div>
@@ -681,10 +681,10 @@ export function ChatWidget() {
                 elements.push(
                     <div
                         key={`hl-${idx}`}
-                        className="my-2 p-2.5 rounded-xl bg-gradient-to-r from-accent/15 via-white/[0.02] to-transparent border border-accent/25 flex items-center gap-2.5 shadow-sm"
+                        className="my-2 p-2.5 rounded-xl bg-gradient-to-r from-primary/15 via-ink/[0.02] to-transparent border border-primary/25 flex items-center gap-2.5 shadow-sm"
                     >
                         <span className="text-sm shrink-0">{icon}</span>
-                        <div className="text-xs font-medium text-white/95 flex-1">
+                        <div className="text-xs font-medium text-ink/95 flex-1">
                             {formatInline(text)}
                         </div>
                     </div>
@@ -695,7 +695,7 @@ export function ChatWidget() {
             // 4. Section Headers (e.g. "### Header")
             if (line.startsWith('### ')) {
                 elements.push(
-                    <h5 key={`h3-${idx}`} className="text-xs font-mono font-bold uppercase tracking-wider text-accent mt-3 mb-1">
+                    <h5 key={`h3-${idx}`} className="text-xs font-mono font-bold uppercase tracking-wider text-primary-ink mt-3 mb-1">
                         {line.replace('### ', '')}
                     </h5>
                 );
@@ -704,7 +704,7 @@ export function ChatWidget() {
 
             // 5. Standard paragraph (clean, natural rendering for greetings like "👋 Hi there!" without tool boxes)
             elements.push(
-                <p key={`p-${idx}`} className="text-xs leading-relaxed text-neutral-200 my-0.5">
+                <p key={`p-${idx}`} className="text-xs leading-relaxed text-ink-2 my-0.5">
                     {formatInline(line)}
                 </p>
             );
@@ -723,10 +723,10 @@ export function ChatWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         onClick={() => setIsOpen(true)}
-                        className="mb-3 mr-2 p-3.5 max-w-[290px] rounded-2xl bg-[#12141a]/95 border border-accent/40 shadow-2xl backdrop-blur-md cursor-pointer hover:border-accent transition-all"
+                        className="mb-3 mr-2 p-3.5 max-w-[290px] rounded-2xl bg-white/95 border border-primary/40 shadow-2xl backdrop-blur-md cursor-pointer hover:border-primary transition-all"
                     >
                         <div className="flex items-center justify-between gap-2 mb-1">
-                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent flex items-center gap-1">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary-ink flex items-center gap-1">
                                 <Sparkles className="w-3 h-3" /> Quick Question?
                             </span>
                             <button
@@ -735,12 +735,12 @@ export function ChatWidget() {
                                     e.stopPropagation();
                                     setShowNudgeBubble(false);
                                 }}
-                                className="text-white/40 hover:text-white"
+                                className="text-ink/40 hover:text-ink"
                             >
                                 <X className="w-3 h-3" />
                             </button>
                         </div>
-                        <p className="text-xs text-white/90 leading-relaxed">
+                        <p className="text-xs text-ink/90 leading-relaxed">
                             {nudgeMessage || "Test our quality with 3 free image edits! Zero cost, zero commitment."}
                         </p>
                     </motion.div>
@@ -771,7 +771,7 @@ export function ChatWidget() {
                             );
                             if (files.length > 0) uploadFiles(files);
                         }}
-                        className={`relative flex flex-col rounded-3xl bg-[#0b0c10]/95 border border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden mb-3 transition-all duration-300 ${
+                        className={`relative flex flex-col rounded-3xl bg-[#0b0c10]/95 border border-ink/10 shadow-2xl backdrop-blur-xl overflow-hidden mb-3 transition-all duration-300 ${
                             isExpanded
                                 ? 'w-[calc(100vw-2rem)] sm:w-[720px] h-[min(700px,80vh)]'
                                 : 'w-[calc(100vw-2rem)] sm:w-[380px] md:w-[410px] h-[min(540px,78vh)]'
@@ -779,27 +779,27 @@ export function ChatWidget() {
                     >
                         {/* Drag and Drop Active Overlay */}
                         {isDragOver && (
-                            <div className="absolute inset-0 z-50 bg-[#0b0c10]/90 border-2 border-dashed border-accent rounded-3xl flex flex-col items-center justify-center gap-3 backdrop-blur-md p-6 text-center animate-in fade-in duration-200">
-                                <div className="p-4 rounded-2xl bg-accent/10 text-accent">
+                            <div className="absolute inset-0 z-50 bg-white/90 border-2 border-dashed border-primary rounded-3xl flex flex-col items-center justify-center gap-3 backdrop-blur-md p-6 text-center animate-in fade-in duration-200">
+                                <div className="p-4 rounded-2xl bg-primary/10 text-primary-ink">
                                     <UploadCloud className="w-12 h-12 animate-bounce" />
                                 </div>
-                                <h4 className="text-base font-bold text-white font-mono">
+                                <h4 className="text-base font-bold text-ink font-mono">
                                     Drop Photos Here
                                 </h4>
-                                <p className="text-xs text-white/60 max-w-[280px]">
+                                <p className="text-xs text-ink/60 max-w-[280px]">
                                     We will analyze the complexity and provide an instant price estimate.
                                 </p>
                             </div>
                         )}
 
                         {/* Header */}
-                        <div className="px-5 py-3.5 border-b border-white/10 bg-[#12141a]/90 flex items-center justify-between shrink-0">
+                        <div className="px-5 py-3.5 border-b border-ink/10 bg-white/90 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                                         chatMode === 'operator'
-                                            ? 'bg-gradient-to-tr from-[#00f5ff]/30 to-accent/20 border border-[#00f5ff]/40 text-[#00f5ff]'
-                                            : 'bg-gradient-to-tr from-accent/25 to-[#00f5ff]/20 border border-white/20 text-accent'
+                                            ? 'bg-gradient-to-tr from-primary/30 to-primary/20 border border-primary/40 text-primary-ink'
+                                            : 'bg-gradient-to-tr from-primary/25 to-primary/20 border border-ink/20 text-primary-ink'
                                     }`}>
                                         {chatMode === 'operator' ? (
                                             <User className="w-5 h-5" />
@@ -807,19 +807,19 @@ export function ChatWidget() {
                                             <Bot className="w-5 h-5" />
                                         )}
                                     </div>
-                                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-[#0b0c10] ${
-                                        chatMode === 'operator' ? 'bg-[#00f5ff]' : 'bg-accent'
+                                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
+                                        chatMode === 'operator' ? 'bg-primary' : 'bg-primary'
                                     }`} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-sm font-bold text-white tracking-tight">
+                                        <h3 className="text-sm font-bold text-ink tracking-tight">
                                             {chatMode === 'operator' ? 'CuttingEdger Live Studio' : 'CuttingEdger Assistant'}
                                         </h3>
                                     </div>
-                                    <p className="text-[10px] text-white/50 font-mono flex items-center gap-1.5">
+                                    <p className="text-[10px] text-ink/50 font-mono flex items-center gap-1.5">
                                         <span className={`w-1.5 h-1.5 rounded-full ${
-                                            chatMode === 'operator' ? 'bg-[#00f5ff] animate-pulse' : 'bg-accent animate-pulse'
+                                            chatMode === 'operator' ? 'bg-primary animate-pulse' : 'bg-primary animate-pulse'
                                         }`} />
                                         <span>
                                             {chatMode === 'operator'
@@ -834,16 +834,16 @@ export function ChatWidget() {
                                     type="button"
                                     onClick={handleResetChat}
                                     disabled={isResetting}
-                                    className="px-2 py-1 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center gap-1.5 text-[11px] font-mono border border-white/5 hover:border-white/15"
+                                    className="px-2 py-1 rounded-lg text-ink/50 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer flex items-center gap-1.5 text-[11px] font-mono border border-ink/10 hover:border-ink/15"
                                     title="Start fresh conversation"
                                 >
-                                    <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-accent' : ''}`} />
+                                    <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-primary-ink' : ''}`} />
                                     <span className="hidden sm:inline">{isResetting ? 'Resetting...' : 'New Chat'}</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors cursor-pointer hidden sm:block"
+                                    className="p-1.5 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer hidden sm:block"
                                     title={isExpanded ? 'Collapse' : 'Expand full view'}
                                 >
                                     {isExpanded ? (
@@ -855,7 +855,7 @@ export function ChatWidget() {
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                    className="p-1.5 rounded-lg text-ink/40 hover:text-ink hover:bg-ink/[0.05] transition-colors cursor-pointer"
                                     title="Close chat"
                                 >
                                     <X className="w-4 h-4" />
@@ -865,12 +865,12 @@ export function ChatWidget() {
 
                         {/* Live Operator Active Banner */}
                         {chatMode === 'operator' && (
-                            <div className="px-4 py-1.5 bg-[#00f5ff]/10 border-b border-[#00f5ff]/20 text-[11px] font-mono text-[#00f5ff] flex items-center justify-between">
+                            <div className="px-4 py-1.5 bg-primary/10 border-b border-primary/20 text-[11px] font-mono text-primary-ink flex items-center justify-between">
                                 <span className="flex items-center gap-1.5 font-semibold">
-                                    <span className="w-2 h-2 rounded-full bg-[#00f5ff] animate-ping" />
+                                    <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
                                     Live Specialist Active ({operatorName || 'Production Lead'})
                                 </span>
-                                <span className="text-[10px] text-white/50">Direct Chat</span>
+                                <span className="text-[10px] text-ink/50">Direct Chat</span>
                             </div>
                         )}
                         {needsHuman && chatMode !== 'operator' && (
@@ -891,7 +891,7 @@ export function ChatWidget() {
                             onWheel={(e) => e.stopPropagation()}
                             onTouchMove={(e) => e.stopPropagation()}
                             style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
-                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
+                            className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4 scrollbar-thin scrollbar-thumb-ink/20"
                         >
                             {messages.map((msg, index) => {
                                 const isUser = msg.sender === 'user';
@@ -905,8 +905,8 @@ export function ChatWidget() {
                                         className={`flex flex-col group ${isUser ? 'items-end' : 'items-start'}`}
                                     >
                                         {isOperator && (
-                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-[#00f5ff] font-mono">
-                                                <User className="w-3 h-3 text-[#00f5ff]" />
+                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-primary-ink font-mono">
+                                                <User className="w-3 h-3 text-primary-ink" />
                                                 <span className="font-semibold">{operatorName || 'Live Studio Specialist'}</span>
                                             </div>
                                         )}
@@ -915,10 +915,10 @@ export function ChatWidget() {
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
-                                                        ? 'bg-gradient-to-r from-accent to-[#ffe484] text-[#0a0c10] font-semibold rounded-br-xs shadow-md shadow-accent/20 border border-accent/40'
+                                                        ? 'bg-gradient-to-r from-primary to-primary-hover text-white font-semibold rounded-br-xs shadow-md shadow-primary/20 border border-primary/40'
                                                         : isOperator
-                                                        ? 'bg-[#0e1724] text-white/95 border border-[#00f5ff]/30 rounded-bl-xs shadow-md shadow-[#00f5ff]/5'
-                                                        : 'bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs shadow-md'
+                                                        ? 'bg-[#0e1724] text-ink/95 border border-primary/30 rounded-bl-xs shadow-md shadow-primary/5'
+                                                        : 'bg-white text-ink/90 border border-ink/10 rounded-bl-xs shadow-md'
                                                 }`}
                                             >
                                                 {/* Attached Images */}
@@ -929,7 +929,7 @@ export function ChatWidget() {
                                                                 key={i}
                                                                 src={url}
                                                                 alt="Attached sample"
-                                                                className="w-20 h-20 object-cover rounded-lg border border-white/20 shadow-md"
+                                                                className="w-20 h-20 object-cover rounded-lg border border-ink/20 shadow-md"
                                                             />
                                                         ))}
                                                     </div>
@@ -941,11 +941,11 @@ export function ChatWidget() {
 
                                             {/* Edit & Delete controls for user messages */}
                                             {isUser && (
-                                                <div className="opacity-0 group-hover:opacity-100 absolute -bottom-5 right-1 flex items-center gap-2 text-[10px] text-white/50 transition-opacity">
+                                                <div className="opacity-0 group-hover:opacity-100 absolute -bottom-5 right-1 flex items-center gap-2 text-[10px] text-ink/50 transition-opacity">
                                                     <button
                                                         type="button"
                                                         onClick={() => handleEditUserMessage(msg.id, msg.content, index)}
-                                                        className="hover:text-accent flex items-center gap-1 cursor-pointer transition-colors"
+                                                        className="hover:text-primary-ink flex items-center gap-1 cursor-pointer transition-colors"
                                                         title="Edit & fix typo in message"
                                                     >
                                                         <Pencil className="w-2.5 h-2.5" />
@@ -1008,19 +1008,19 @@ export function ChatWidget() {
                                                     }
                                                     if (card.type === 'reset_chat_prompt_card') {
                                                         return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-[#151720] border border-accent/30 shadow-lg text-left space-y-2.5 animate-in fade-in duration-200">
+                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-white border border-primary/30 shadow-lg text-left space-y-2.5 animate-in fade-in duration-200">
                                                                 <div className="flex items-center gap-2">
-                                                                    <div className="p-1.5 rounded-lg bg-accent/10 text-accent">
+                                                                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary-ink">
                                                                         <RotateCcw className="w-4 h-4" />
                                                                     </div>
-                                                                    <h4 className="text-xs font-bold text-white tracking-tight">{card.title || 'Start Fresh Conversation'}</h4>
+                                                                    <h4 className="text-xs font-bold text-ink tracking-tight">{card.title || 'Start Fresh Conversation'}</h4>
                                                                 </div>
-                                                                <p className="text-[11px] text-white/70 leading-relaxed">{card.description}</p>
+                                                                <p className="text-[11px] text-ink/70 leading-relaxed">{card.description}</p>
                                                                 <button
                                                                     type="button"
                                                                     onClick={handleResetChat}
                                                                     disabled={isResetting}
-                                                                    className="w-full py-2 px-3 rounded-xl bg-accent hover:bg-[#b8dd00] text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                                                    className="w-full py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                                                                 >
                                                                     <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
                                                                     <span>{isResetting ? 'Resetting...' : (card.cta || 'Start Fresh Chat')}</span>
@@ -1030,21 +1030,21 @@ export function ChatWidget() {
                                                     }
                                                     if (card.type === 'upload_prompt_card') {
                                                         return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-accent/10 border border-accent/40 shadow-xl backdrop-blur-md text-left">
+                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-primary/10 border border-primary/40 shadow-xl backdrop-blur-md text-left">
                                                                 <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="p-1.5 rounded-lg bg-accent text-black">
+                                                                    <span className="p-1.5 rounded-lg bg-primary text-white">
                                                                         <UploadCloud className="w-4 h-4" />
                                                                     </span>
                                                                     <div>
-                                                                        <h4 className="text-sm font-bold text-white tracking-tight">{card.title}</h4>
-                                                                        <span className="text-[10px] text-accent font-mono">Ready to process</span>
+                                                                        <h4 className="text-sm font-bold text-ink tracking-tight">{card.title}</h4>
+                                                                        <span className="text-[10px] text-primary-ink font-mono">Ready to process</span>
                                                                     </div>
                                                                 </div>
-                                                                <p className="text-xs text-white/80 my-2 leading-relaxed">{card.description}</p>
+                                                                <p className="text-xs text-ink/80 my-2 leading-relaxed">{card.description}</p>
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => fileInputRef.current?.click()}
-                                                                    className="w-full py-2.5 px-4 rounded-xl bg-accent hover:bg-accent-hover text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-accent/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                                                                    className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
                                                                 >
                                                                     <UploadCloud className="w-3.5 h-3.5" />
                                                                     <span>{card.cta || 'Select Images to Upload'}</span>
@@ -1099,29 +1099,29 @@ export function ChatWidget() {
                                                         }
 
                                                         return (
-                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-[#151720] border border-white/10 text-left space-y-2.5">
+                                                            <div key={cIdx} className="my-2 p-4 rounded-2xl bg-white border border-ink/10 text-left space-y-2.5">
                                                                 {hasServices && (
                                                                     <div>
-                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent block mb-1">
+                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink block mb-1">
                                                                             Studio Services
                                                                         </span>
                                                                         {card.services.map((s: any, sI: number) => (
-                                                                            <div key={sI} className="bg-white/5 p-2 rounded-lg my-1">
-                                                                                <p className="text-xs font-bold text-white">{s.title}</p>
-                                                                                <p className="text-[11px] text-white/60">{s.subtitle}</p>
+                                                                            <div key={sI} className="bg-ink/[0.03] p-2 rounded-lg my-1">
+                                                                                <p className="text-xs font-bold text-ink">{s.title}</p>
+                                                                                <p className="text-[11px] text-ink/60">{s.subtitle}</p>
                                                                             </div>
                                                                         ))}
                                                                     </div>
                                                                 )}
                                                                 {hasFaqs && (
                                                                     <div>
-                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#00f5ff] block mb-1">
+                                                                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink block mb-1">
                                                                             FAQ Answers
                                                                         </span>
                                                                         {card.faqs.map((f: any, fI: number) => (
-                                                                            <div key={fI} className="bg-white/5 p-2 rounded-lg my-1">
-                                                                                <p className="text-xs font-semibold text-white">Q: {f.q}</p>
-                                                                                <p className="text-[11px] text-white/70 mt-0.5">{f.a}</p>
+                                                                            <div key={fI} className="bg-ink/[0.03] p-2 rounded-lg my-1">
+                                                                                <p className="text-xs font-semibold text-ink">Q: {f.q}</p>
+                                                                                <p className="text-[11px] text-ink/70 mt-0.5">{f.a}</p>
                                                                             </div>
                                                                         ))}
                                                                     </div>
@@ -1145,7 +1145,7 @@ export function ChatWidget() {
                                                             key={rIdx}
                                                             type="button"
                                                             onClick={() => handleSendMessage(reply)}
-                                                            className="text-[11px] font-mono px-3 py-1.5 rounded-xl bg-white/5 hover:bg-accent/15 hover:text-accent hover:border-accent/30 text-white/80 border border-white/10 transition-all text-left flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                                                            className="text-[11px] font-mono px-3 py-1.5 rounded-xl bg-ink/[0.03] hover:bg-primary/15 hover:text-primary-ink hover:border-primary/30 text-ink/80 border border-ink/10 transition-all text-left flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                                                         >
                                                             <span>{reply}</span>
                                                             <ArrowRight className="w-2.5 h-2.5 opacity-50 shrink-0" />
@@ -1160,16 +1160,16 @@ export function ChatWidget() {
                             {/* Realistic Typing Indicator Bubble with Progressive Status */}
                             {isTypingVisible && (
                                 <div className="flex items-start gap-2 max-w-[85%] animate-in fade-in duration-200">
-                                    <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-accent/20 to-[#00f5ff]/20 border border-white/15 flex items-center justify-center text-accent shrink-0 mt-0.5">
+                                    <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-primary/20 to-primary/20 border border-ink/15 flex items-center justify-center text-primary-ink shrink-0 mt-0.5">
                                         <Bot className="w-3.5 h-3.5" />
                                     </div>
-                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-[#151720] border border-white/10 shadow-md flex items-center gap-2.5">
+                                    <div className="rounded-2xl rounded-tl-xs px-3.5 py-2.5 bg-white border border-ink/10 shadow-md flex items-center gap-2.5">
                                         <div className="flex items-center gap-1">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
-                                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
-                                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
                                         </div>
-                                        <span className="text-[11px] font-mono text-white/60">
+                                        <span className="text-[11px] font-mono text-ink/60">
                                             {typingPhase === 'analyzing' && 'CuttingEdger is analyzing request...'}
                                             {typingPhase === 'checking' && 'Reviewing studio schedule & specs...'}
                                             {typingPhase === 'composing' && 'Composing response...'}
@@ -1179,7 +1179,7 @@ export function ChatWidget() {
                             )}
 
                             {isUploading && (
-                                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[#151720] border border-[#00f5ff]/30 text-[#00f5ff] text-xs w-fit">
+                                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-primary/30 text-primary-ink text-xs w-fit">
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     <span className="font-mono text-[11px]">Uploading sample photo batch...</span>
                                 </div>
@@ -1189,7 +1189,7 @@ export function ChatWidget() {
                         </div>
 
                         {/* Input Box with + Quick Actions Menu */}
-                        <div className="p-3 border-t border-white/10 bg-[#12141a] relative">
+                        <div className="p-3 border-t border-ink/10 bg-white relative">
                             {/* Quick Actions Popover Menu */}
                             <AnimatePresence>
                                 {showQuickMenu && (
@@ -1197,39 +1197,39 @@ export function ChatWidget() {
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute bottom-full left-3 mb-2 w-72 rounded-2xl bg-[#151720]/95 border border-white/15 shadow-2xl backdrop-blur-xl p-2 z-50 space-y-1 font-mono text-xs"
+                                        className="absolute bottom-full left-3 mb-2 w-72 rounded-2xl bg-white/95 border border-ink/15 shadow-2xl backdrop-blur-xl p-2 z-50 space-y-1 font-mono text-xs"
                                     >
-                                        <div className="px-2.5 py-1.5 text-[10px] text-white/40 uppercase tracking-wider font-bold border-b border-white/5">
+                                        <div className="px-2.5 py-1.5 text-[10px] text-ink/40 uppercase tracking-wider font-bold border-b border-ink/10">
                                             Quick Actions
                                         </div>
                                         <button
                                             type="button"
                                             onClick={() => handleSendMessage('Get an Instant Quote')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
                                         >
-                                            <Tag className="w-3.5 h-3.5 text-accent" />
+                                            <Tag className="w-3.5 h-3.5 text-primary-ink" />
                                             <span>Get Instant Quote</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => handleSendMessage('Claim 3 Free Sample Edits')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
                                         >
-                                            <Sparkles className="w-3.5 h-3.5 text-accent" />
+                                            <Sparkles className="w-3.5 h-3.5 text-primary-ink" />
                                             <span>Claim 3 Free Sample Edits</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => handleSendMessage('Schedule Consultation Call')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
                                         >
-                                            <Calendar className="w-3.5 h-3.5 text-[#00f5ff]" />
+                                            <Calendar className="w-3.5 h-3.5 text-primary-ink" />
                                             <span>Book 15-Min Technical Call</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => handleSendMessage('Turnaround SLAs')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
                                         >
                                             <Clock className="w-3.5 h-3.5 text-[#ff3e8a]" />
                                             <span>Turnaround & SLAs</span>
@@ -1237,9 +1237,9 @@ export function ChatWidget() {
                                         <button
                                             type="button"
                                             onClick={() => handleSendMessage('Can I speak with a live specialist?')}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer"
                                         >
-                                            <User className="w-3.5 h-3.5 text-[#00f5ff]" />
+                                            <User className="w-3.5 h-3.5 text-primary-ink" />
                                             <span>Talk to Live Specialist</span>
                                         </button>
                                         <button
@@ -1248,9 +1248,9 @@ export function ChatWidget() {
                                                 setShowQuickMenu(false);
                                                 fileInputRef.current?.click();
                                             }}
-                                            className="w-full px-2.5 py-2 rounded-xl text-left text-white/80 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer border-t border-white/5 pt-2"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-ink/80 hover:text-ink hover:bg-ink/[0.05] flex items-center gap-2.5 transition-colors cursor-pointer border-t border-ink/10 pt-2"
                                         >
-                                            <UploadCloud className="w-3.5 h-3.5 text-white/60" />
+                                            <UploadCloud className="w-3.5 h-3.5 text-ink/60" />
                                             <span>Upload Batch Photos</span>
                                         </button>
                                     </motion.div>
@@ -1280,8 +1280,8 @@ export function ChatWidget() {
                                     title="Quick Actions Menu"
                                     className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer ${
                                         showQuickMenu
-                                            ? 'bg-accent text-black rotate-45'
-                                            : 'bg-white/5 hover:bg-white/10 text-white/60 hover:text-white'
+                                            ? 'bg-primary text-white rotate-45'
+                                            : 'bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/60 hover:text-ink'
                                     }`}
                                 >
                                     <Plus className="w-4 h-4 transition-transform" />
@@ -1292,7 +1292,7 @@ export function ChatWidget() {
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
                                     title="Attach sample photos"
-                                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors shrink-0 cursor-pointer"
+                                    className="p-2 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/60 hover:text-ink transition-colors shrink-0 cursor-pointer"
                                 >
                                     <Paperclip className="w-4 h-4" />
                                 </button>
@@ -1302,22 +1302,22 @@ export function ChatWidget() {
                                     value={inputText}
                                     onChange={(e) => setInputText(e.target.value)}
                                     placeholder="Ask a question, pricing, turnaround, or edits..."
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-accent transition-colors"
+                                    className="flex-1 bg-ink/[0.03] border border-ink/10 rounded-xl px-3.5 py-2 text-xs text-ink placeholder-white/30 focus:outline-none focus:border-primary transition-colors"
                                 />
 
                                 <button
                                     type="submit"
                                     disabled={!inputText.trim() || isLoading}
-                                    className="p-2 rounded-xl bg-accent hover:bg-accent-hover text-black transition-all disabled:opacity-30 disabled:hover:bg-accent shrink-0 cursor-pointer shadow-md shadow-accent/20"
+                                    className="p-2 rounded-xl bg-primary hover:bg-primary-hover text-white transition-all disabled:opacity-30 disabled:hover:bg-primary shrink-0 cursor-pointer shadow-md shadow-primary/20"
                                 >
                                     <Send className="w-4 h-4" />
                                 </button>
                             </form>
 
-                            <div className="flex items-center justify-between text-[10px] text-white/40 pt-1.5 px-1 font-mono">
+                            <div className="flex items-center justify-between text-[10px] text-ink/40 pt-1.5 px-1 font-mono">
                                 <span>We reply instantly • Ask us anything</span>
-                                <span className="flex items-center gap-1 text-white/50">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent" /> 100% Confidential
+                                <span className="flex items-center gap-1 text-ink/50">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary" /> 100% Confidential
                                 </span>
                             </div>
                         </div>
@@ -1330,24 +1330,24 @@ export function ChatWidget() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-3.5 sm:p-4 rounded-2xl bg-gradient-to-tr from-[#12141a] to-[#1c1f2b] border border-accent/40 text-accent shadow-2xl hover:border-accent transition-all flex items-center justify-center group cursor-pointer"
+                className="relative p-3.5 sm:p-4 rounded-2xl bg-gradient-to-tr from-primary to-primary-hover border border-primary text-white shadow-2xl hover:border-primary transition-all flex items-center justify-center group cursor-pointer"
                 aria-label="Toggle AI Chat Dialog"
             >
                 {/* Glow ring */}
-                <span className="absolute inset-0 rounded-2xl bg-accent/20 blur-md group-hover:bg-accent/30 transition-all -z-10" />
+                <span className="absolute inset-0 rounded-2xl bg-primary/20 blur-md group-hover:bg-primary/30 transition-all -z-10" />
 
                 {isOpen ? (
-                    <Minimize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <Minimize2 className="w-5 h-5 sm:w-6 sm:h-6 text-ink" />
                 ) : (
                     <>
-                        <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+                        <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-primary-ink" />
                         {/* Status dot */}
-                        <span className="absolute -top-1 -right-1 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-accent border-2 border-[#0a0b0e]" />
+                        <span className="absolute -top-1 -right-1 w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-primary border-2 border-white" />
                     </>
                 )}
 
                 {unreadCount > 0 && !isOpen && (
-                    <span className="absolute -top-2 -left-2 px-1.5 py-0.5 rounded-full bg-red-500 text-white font-mono text-[10px] font-bold shadow-md">
+                    <span className="absolute -top-2 -left-2 px-1.5 py-0.5 rounded-full bg-red-500 text-ink font-mono text-[10px] font-bold shadow-md">
                         {unreadCount}
                     </span>
                 )}

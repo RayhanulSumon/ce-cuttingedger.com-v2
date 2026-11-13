@@ -107,26 +107,26 @@ export function CompactSlotProposalCard({
     };
 
     return (
-        <div className="my-2 p-3.5 rounded-2xl bg-[#151720] border border-[#00f5ff]/30 shadow-xl text-left">
+        <div className="my-2 p-3.5 rounded-2xl bg-white border border-primary/30 shadow-xl text-left">
             {/* Header */}
             <div className="flex items-center gap-2 mb-2">
-                <span className="p-1.5 rounded-lg bg-[#00f5ff]/20 text-[#00f5ff] border border-[#00f5ff]/30">
+                <span className="p-1.5 rounded-lg bg-primary/20 text-primary-ink border border-primary/30">
                     <Calendar className="w-4 h-4" />
                 </span>
                 <div>
-                    <h4 className="text-xs font-bold text-white tracking-tight">
+                    <h4 className="text-xs font-bold text-ink tracking-tight">
                         {formatHeaderTime()}
                     </h4>
-                    <span className="text-[10px] text-[#00f5ff] font-mono">15-min Technical Intake Call</span>
+                    <span className="text-[10px] text-primary-ink font-mono">15-min Technical Intake Call</span>
                 </div>
             </div>
 
-            <p className="text-[11px] text-white/80 mb-2.5 leading-relaxed">{card.message}</p>
+            <p className="text-[11px] text-ink/80 mb-2.5 leading-relaxed">{card.message}</p>
 
             {/* Quick Slot Selector Chips */}
             {card.available_slots && card.available_slots.length > 0 && (
-                <div className="my-2.5 p-2 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5">
-                    <span className="text-[10px] text-white/50 uppercase font-mono tracking-wider block">
+                <div className="my-2.5 p-2 rounded-xl bg-white/[0.03] border border-ink/10 space-y-1.5">
+                    <span className="text-[10px] text-ink/50 uppercase font-mono tracking-wider block">
                         Available Times for {card.date_label}:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
@@ -142,8 +142,8 @@ export function CompactSlotProposalCard({
                                     }}
                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${
                                         isSelected
-                                            ? 'bg-[#00f5ff] text-black font-bold shadow-md shadow-[#00f5ff]/20 scale-[1.02]'
-                                            : 'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white border border-white/10'
+                                            ? 'bg-primary text-white font-bold shadow-md shadow-primary/20 scale-[1.02]'
+                                            : 'bg-ink/[0.03] text-ink/80 hover:bg-ink/[0.05] hover:text-ink border border-ink/10'
                                     }`}
                                 >
                                     {slot.time}
@@ -166,7 +166,7 @@ export function CompactSlotProposalCard({
                 <form onSubmit={handleConfirm} className="space-y-2 mb-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="relative">
-                            <User className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-white/40" />
+                            <User className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-ink/40" />
                             <input
                                 type="text"
                                 placeholder="Your Name"
@@ -176,11 +176,11 @@ export function CompactSlotProposalCard({
                                     if (error) setError(null);
                                 }}
                                 required
-                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-black/40 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-[#00f5ff]"
+                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-white/40 focus:outline-none focus:border-primary"
                             />
                         </div>
                         <div className="relative">
-                            <Mail className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-white/40" />
+                            <Mail className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-ink/40" />
                             <input
                                 type="email"
                                 placeholder="Work Email"
@@ -190,7 +190,7 @@ export function CompactSlotProposalCard({
                                     if (error) setError(null);
                                 }}
                                 required
-                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-black/40 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-[#00f5ff]"
+                                className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-xl bg-ink/[0.04] border border-ink/10 text-ink placeholder-white/40 focus:outline-none focus:border-primary"
                             />
                         </div>
                     </div>
@@ -199,7 +199,7 @@ export function CompactSlotProposalCard({
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 py-2 px-3 rounded-xl bg-[#00f5ff] hover:bg-[#00d0db] disabled:opacity-50 text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#00f5ff]/20"
+                            className="flex-1 py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-primary/20"
                         >
                             {isSubmitting ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -211,7 +211,7 @@ export function CompactSlotProposalCard({
                         <button
                             type="button"
                             onClick={onShowAllTimes}
-                            className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-mono transition-all border border-white/10 cursor-pointer"
+                            className="py-2 px-2.5 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/70 hover:text-ink text-xs font-mono transition-all border border-ink/10 cursor-pointer"
                         >
                             All Dates
                         </button>
@@ -223,7 +223,7 @@ export function CompactSlotProposalCard({
                         type="button"
                         onClick={() => handleConfirm()}
                         disabled={isSubmitting}
-                        className="flex-1 py-2 px-3 rounded-xl bg-[#00f5ff] hover:bg-[#00d0db] disabled:opacity-50 text-black font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#00f5ff]/20"
+                        className="flex-1 py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-semibold text-xs font-mono tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-primary/20"
                     >
                         {isSubmitting ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -235,7 +235,7 @@ export function CompactSlotProposalCard({
                     <button
                         type="button"
                         onClick={onShowAllTimes}
-                        className="py-2 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-mono transition-all border border-white/10 cursor-pointer"
+                        className="py-2 px-2.5 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink/70 hover:text-ink text-xs font-mono transition-all border border-ink/10 cursor-pointer"
                     >
                         All Dates
                     </button>

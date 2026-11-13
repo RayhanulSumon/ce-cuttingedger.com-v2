@@ -131,10 +131,10 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
     const show = active && mounted;
 
     return (
-        <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#f2f2f1] pb-10 pt-20 ${PAD_X}`}>
+        <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-page pb-10 pt-20 ${PAD_X}`}>
             <BackgroundSlider playing={active} />
 
-            <h1 className="hero-title relative z-10 w-full text-[#1d1d1d]" aria-label="Cutting Edger">
+            <h1 className="hero-title relative z-10 w-full text-ink" aria-label="Cutting Edger">
                 {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line. */}
                 <span
                     ref={rowRef}
@@ -204,7 +204,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
             <Reveal
                 active={show}
                 delay={1.1}
-                className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-[#3a3a3a]/60 sm:block"
+                className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-ink-2/60 sm:block"
             >
                 Scroll to explore
             </Reveal>

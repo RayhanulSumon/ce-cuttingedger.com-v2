@@ -11,7 +11,7 @@ interface DemoModalProps {
 }
 
 const inputClass =
-    'w-full rounded-xl border border-[#CBD2DE] bg-white px-4 py-3 text-sm text-[#141A26] outline-none transition-colors focus:border-[#2B4BFF]';
+    'w-full rounded-xl border border-[#CBD2DE] bg-white px-4 py-3 text-sm text-secondary outline-none transition-colors focus:border-[#2B4BFF]';
 
 export function DemoModal({ open, onClose }: DemoModalProps) {
     const fileInput = useRef<HTMLInputElement>(null);
@@ -87,15 +87,15 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
                         {submitted ? (
                             <div className="py-10 text-center">
                                 <CheckCircle2 className="mx-auto text-[#2B4BFF]" size={48} />
-                                <h3 className="mt-4 text-2xl font-extrabold text-[#141A26]">Request received</h3>
+                                <h3 className="mt-4 text-2xl font-extrabold text-secondary">Request received</h3>
                                 <p className="mt-2 text-sm text-[#5A6478]">We will be in touch shortly with your sample and a time to talk.</p>
-                                <button type="button" onClick={onClose} className="mt-6 rounded-full bg-[#141A26] px-7 py-3 text-sm font-semibold text-white">
+                                <button type="button" onClick={onClose} className="mt-6 rounded-full bg-secondary px-7 py-3 text-sm font-semibold text-white">
                                     Close
                                 </button>
                             </div>
                         ) : (
                             <form onSubmit={submit} className="space-y-3" noValidate>
-                                <h3 className="text-2xl font-extrabold tracking-tight text-[#141A26]">Book a demo</h3>
+                                <h3 className="text-2xl font-extrabold tracking-tight text-secondary">Book a demo</h3>
                                 <p className="pb-2 text-sm text-[#5A6478]">Tell us about your project and attach a few sample files.</p>
 
                                 <input type="text" tabIndex={-1} autoComplete="off" value={data.honeypot} onChange={(e) => setData('honeypot', e.target.value)} className="hidden" aria-hidden="true" />

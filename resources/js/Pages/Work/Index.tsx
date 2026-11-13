@@ -45,7 +45,7 @@ export default function Index({
             {/* Category Filter Pills */}
             <section
                 style={{ top: 'var(--header-height)' }}
-                className="py-8 bg-white border-b border-[#16191f]/10 sticky top-[var(--header-height,61px)] z-30 backdrop-blur-xl bg-white/90"
+                className="py-8 bg-white border-b border-ink/10 sticky top-[var(--header-height,61px)] z-30 backdrop-blur-xl bg-white/90"
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
@@ -54,8 +54,8 @@ export default function Index({
                             onClick={() => handleFilter('all')}
                             className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                                 activeCategory === 'all'
-                                    ? 'bg-[#f5761a] text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
-                                    : 'bg-[#16191f]/[0.03] text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.05] border border-[#16191f]/10'
+                                    ? 'bg-primary text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
+                                    : 'bg-ink/[0.03] text-muted hover:text-ink hover:bg-ink/[0.05] border border-ink/10'
                             }`}
                         >
                             All Results ({projects.length})
@@ -68,8 +68,8 @@ export default function Index({
                                 onClick={() => handleFilter(cat.slug)}
                                 className={`px-5 py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                                     activeCategory === cat.slug
-                                        ? 'bg-[#f5761a] text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
-                                        : 'bg-[#16191f]/[0.03] text-[#4a505b] hover:text-[#16191f] hover:bg-[#16191f]/[0.05] border border-[#16191f]/10'
+                                        ? 'bg-primary text-white font-bold shadow-[0_0_15px_rgba(251, 183, 24, 0.3)]'
+                                        : 'bg-ink/[0.03] text-muted hover:text-ink hover:bg-ink/[0.05] border border-ink/10'
                                 }`}
                             >
                                 {cat.name}
@@ -80,17 +80,17 @@ export default function Index({
             </section>
 
             {/* Case Studies Grid */}
-            <section className="py-20 bg-[#f2f2f1]">
+            <section className="py-20 bg-page">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
                         {projects.map((project, idx) => (
                             <article
                                 key={project.id || project.slug}
-                                className="group p-6 sm:p-8 rounded-3xl bg-white border border-[#16191f]/10 hover:border-[#f5761a]/40 transition-all shadow-xl flex flex-col justify-between"
+                                className="group p-6 sm:p-8 rounded-3xl bg-white border border-ink/10 hover:border-primary/40 transition-all shadow-xl flex flex-col justify-between"
                             >
                                 <div className="space-y-4">
                                     {/* Cover Image Container */}
-                                    <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-white border border-[#16191f]/10">
+                                    <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-white border border-ink/10">
                                         <img
                                             src={project.cover_image}
                                             alt={project.title}
@@ -112,40 +112,40 @@ export default function Index({
                                             )}
                                         </div>
 
-                                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-[#16191f]/90">
-                                            <span className="font-bold text-[#c4540a]">{project.client_name}</span>
+                                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-ink/90">
+                                            <span className="font-bold text-primary-ink">{project.client_name}</span>
                                             <span>{project.year}</span>
                                         </div>
                                     </div>
 
-                                    <h2 className="text-2xl font-display font-bold text-[#16191f] group-hover:text-[#c4540a] transition-colors">
+                                    <h2 className="text-2xl font-display font-bold text-ink group-hover:text-primary-ink transition-colors">
                                         <Link href={`/case-studies/${project.slug}`}>
                                             {project.title}
                                         </Link>
                                     </h2>
 
-                                    <p className="text-[#4a505b] text-sm leading-relaxed line-clamp-3">
+                                    <p className="text-muted text-sm leading-relaxed line-clamp-3">
                                         {project.summary}
                                     </p>
 
                                     {/* Quantified Metrics Pills */}
                                     {project.metrics && project.metrics.length > 0 && (
-                                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#16191f]/10">
+                                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-ink/10">
                                             {project.metrics.slice(0, 3).map((m, i) => (
                                                 <div key={i} className="text-center p-2 rounded-xl bg-white/[0.02]">
-                                                    <p className="font-display font-black text-sm text-[#c4540a]">{m.value}</p>
-                                                    <p className="text-[10px] font-mono text-[#4a505b] truncate">{m.label}</p>
+                                                    <p className="font-display font-black text-sm text-primary-ink">{m.value}</p>
+                                                    <p className="text-[10px] font-mono text-muted truncate">{m.label}</p>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="pt-6 mt-4 border-t border-[#16191f]/10 flex items-center justify-between text-xs font-mono">
-                                    <span className="text-[#4a505b]">{project.category?.name || 'Production'}</span>
+                                <div className="pt-6 mt-4 border-t border-ink/10 flex items-center justify-between text-xs font-mono">
+                                    <span className="text-muted">{project.category?.name || 'Production'}</span>
                                     <Link
                                         href={`/case-studies/${project.slug}`}
-                                        className="text-[#c4540a] font-bold inline-flex items-center gap-1 group-hover:underline"
+                                        className="text-primary-ink font-bold inline-flex items-center gap-1 group-hover:underline"
                                     >
                                         <span>Read Full Study</span>
                                         <ArrowUpRight className="w-3.5 h-3.5" />

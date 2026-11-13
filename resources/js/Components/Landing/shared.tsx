@@ -113,12 +113,12 @@ export function SectionIntro({
     return (
         <div className={className}>
             <Reveal active={active}>
-                <h2 className="font-michroma text-[clamp(22px,2.6vw,36px)] font-normal leading-[1.15] tracking-[0.14em] text-[#16191f]">
+                <h2 className="font-michroma text-[clamp(22px,2.6vw,36px)] font-normal leading-[1.15] tracking-[0.14em] text-ink">
                     {title}
                 </h2>
             </Reveal>
             <Reveal active={active} delay={0.1}>
-                <p className="mt-3 max-w-[36ch] text-sm leading-[1.6] text-[#5d6572]">{children}</p>
+                <p className="mt-3 max-w-[36ch] text-sm leading-[1.6] text-subtle">{children}</p>
             </Reveal>
         </div>
     );
@@ -150,7 +150,7 @@ export function OrderCta({
         <Link
             href={href}
             aria-label={ariaLabel}
-            className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full bg-[#f5761a] px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_rgba(245,118,26,0.9)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#e0650c] hover:shadow-[0_18px_36px_-12px_rgba(245,118,26,0.95)] active:translate-y-0 active:scale-95"
+            className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
         >
             <span
                 aria-hidden="true"
@@ -184,8 +184,8 @@ export function CustomOrderCta({
     return (
         <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`}>
             <Reveal active={active} delay={delay} className="flex flex-col items-start gap-3">
-                <p className="flex items-center gap-2 text-sm font-semibold text-[#16191f] sm:text-base">
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-[#f5761a]/12 text-[#f5761a]">
+                <p className="flex items-center gap-2 text-sm font-semibold text-ink sm:text-base">
+                    <span className="grid h-7 w-7 place-items-center rounded-full bg-primary/12 text-primary">
                         <Sparkles size={14} />
                     </span>
                     {question}
@@ -198,7 +198,7 @@ export function CustomOrderCta({
 
 export function Eyebrow({ children }: { children: React.ReactNode }) {
     return (
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#3a3a3a]/70">{children}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-ink-2/70">{children}</p>
     );
 }
 
@@ -222,8 +222,8 @@ export function PillButton({
             disabled={disabled}
             className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-[transform,background-color,color,box-shadow] duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 ${
                 dark
-                    ? 'bg-[#1b1b1b] text-white hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)]'
-                    : 'border border-[#1b1b1b] text-[#1b1b1b] hover:bg-[#1b1b1b] hover:text-white'
+                    ? 'bg-ink text-white hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)]'
+                    : 'border border-ink text-ink hover:bg-ink hover:text-white'
             }`}
         >
             {children}

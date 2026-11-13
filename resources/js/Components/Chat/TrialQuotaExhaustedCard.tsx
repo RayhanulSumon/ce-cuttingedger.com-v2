@@ -23,13 +23,13 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
     return (
         <div className="my-2.5 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 shadow-2xl backdrop-blur-md text-left space-y-3.5">
             {/* Header */}
-            <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-2.5">
+            <div className="flex items-start justify-between gap-2 border-b border-ink/10 pb-2.5">
                 <div className="flex items-center gap-2">
                     <span className="p-1.5 rounded-lg bg-amber-400 text-black">
                         <AlertTriangle className="w-4 h-4" />
                     </span>
                     <div>
-                        <h4 className="text-sm font-bold text-white tracking-tight">
+                        <h4 className="text-sm font-bold text-ink tracking-tight">
                             {card.title || 'Free Trial Quota Limit Reached'}
                         </h4>
                         <span className="text-[10px] text-amber-300 font-mono uppercase tracking-wider block">
@@ -44,30 +44,30 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
             </div>
 
             {/* Explanation Notice */}
-            <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1.5 text-xs font-mono">
-                <p className="text-white/90 leading-relaxed">
+            <div className="p-3 rounded-xl bg-ink/[0.04] border border-ink/10 space-y-1.5 text-xs font-mono">
+                <p className="text-ink/90 leading-relaxed">
                     {card.message || 'You have already redeemed your 100% Free Trial sample quota under this email address. Free trials are limited to one trial batch per client / studio.'}
                 </p>
                 {card.client_email && (
-                    <div className="text-[11px] text-white/50 pt-1">
-                        Registered Email: <span className="text-[#00f5ff] font-semibold">{card.client_email}</span>
+                    <div className="text-[11px] text-ink/50 pt-1">
+                        Registered Email: <span className="text-primary-ink font-semibold">{card.client_email}</span>
                     </div>
                 )}
             </div>
 
             {/* Standard Rates Breakdown */}
             <div className="space-y-1.5">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block font-semibold">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-ink/40 block font-semibold">
                     Standard Studio Production Pricing
                 </span>
                 <div className="grid grid-cols-1 gap-1.5">
                     {services.map((svc, idx) => (
                         <div
                             key={idx}
-                            className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5 text-xs font-mono"
+                            className="flex items-center justify-between p-2 rounded-lg bg-ink/[0.03] border border-ink/10 text-xs font-mono"
                         >
-                            <span className="text-neutral-300 text-[11px]">{svc.name}</span>
-                            <span className="font-bold text-accent text-xs">{svc.rate}</span>
+                            <span className="text-ink-2 text-[11px]">{svc.name}</span>
+                            <span className="font-bold text-primary-ink text-xs">{svc.rate}</span>
                         </div>
                     ))}
                 </div>
@@ -78,7 +78,7 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
                 <button
                     type="button"
                     onClick={() => onSendPrompt?.('Schedule 15-Min Technical Call')}
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#00f5ff] hover:bg-[#00d8e6] text-black font-semibold text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-md"
+                    className="flex-1 py-2 px-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-md"
                 >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Book Technical Call</span>
@@ -86,9 +86,9 @@ export function TrialQuotaExhaustedCard({ card, onSendPrompt }: TrialQuotaExhaus
                 <button
                     type="button"
                     onClick={() => onSendPrompt?.('Show Pricing Calculator')}
-                    className="flex-1 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer transition-colors border border-white/10"
+                    className="flex-1 py-2 px-3 rounded-xl bg-ink/[0.05] hover:bg-ink/10 text-ink font-semibold text-xs font-mono flex items-center justify-center gap-1.5 cursor-pointer transition-colors border border-ink/10"
                 >
-                    <Calculator className="w-3.5 h-3.5 text-accent" />
+                    <Calculator className="w-3.5 h-3.5 text-primary-ink" />
                     <span>Volume Calculator</span>
                 </button>
             </div>
