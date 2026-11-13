@@ -103,8 +103,8 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
             <footer className={`border-t border-ink/10 bg-white pb-8 pt-12 ${PAD_X}`}>
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
                     <div className="max-w-xs">
-                        <Link href="/" prefetch className="text-lg font-extrabold tracking-[-0.04em]">
-                            CUTTING  EDGER
+                        <Link href="/" prefetch aria-label="CuttingEdger home">
+                            <img src="/images/ce/ce_logo_word.png" alt="CuttingEdger" width={459} height={70} className="h-7 w-auto" />
                         </Link>
                         <p className="mt-3 text-sm leading-relaxed text-muted">
                             AI-integrated image editing and post-production for fashion and e-commerce brands.

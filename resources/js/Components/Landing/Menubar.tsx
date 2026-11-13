@@ -201,11 +201,23 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                         className="text-base font-extrabold tracking-[-0.04em]"
                         aria-label="CuttingEdger home"
                     >
-                        CUTTING  EDGER
+                        <img
+                            src="/images/ce/ce_logo_word.png"
+                            alt="CuttingEdger"
+                            width={459}
+                            height={70}
+                            className={`h-6 w-auto transition-[filter] duration-500 sm:h-7 ${dark ? 'brightness-0 invert' : ''}`}
+                        />
                     </button>
                 ) : (
-                    <Link href="/" prefetch className="text-base font-extrabold tracking-[-0.04em]" aria-label="CuttingEdger home">
-                        CUTTING  EDGER
+                    <Link href="/" prefetch aria-label="CuttingEdger home">
+                        <img
+                            src="/images/ce/ce_logo_word.png"
+                            alt="CuttingEdger"
+                            width={459}
+                            height={70}
+                            className={`h-6 w-auto transition-[filter] duration-500 sm:h-7 ${dark ? 'brightness-0 invert' : ''}`}
+                        />
                     </Link>
                 )}
 
@@ -256,7 +268,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                             transition={{ duration: 0.55, ease: EASE_OUT_EXPO }}
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-extrabold tracking-[-0.04em] text-white/60">CUTTING  EDGER</span>
+                                <img src="/images/ce/ce_logo_word.png" alt="CuttingEdger" width={459} height={70} className="h-5 w-auto brightness-0 invert" />
                                 <button
                                     type="button"
                                     onClick={closeDrawer}
