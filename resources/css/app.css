@@ -617,3 +617,14 @@ select option {
         clip-path: none;
     }
 }
+
+/* Digital Twins drag cursor: the arrows breathe outward while idle, inviting a drag. */
+@keyframes twin-nudge-left {
+    0%, 100% { transform: translateX(0); opacity: 0.55; }
+    50% { transform: translateX(-4px); opacity: 1; }
+}
+
+@keyframes twin-nudge-right {
+    0%, 100% { transform: translateX(0); opacity: 0.55; }
+    50% { transform: translateX(4px); opacity: 1; }
+}

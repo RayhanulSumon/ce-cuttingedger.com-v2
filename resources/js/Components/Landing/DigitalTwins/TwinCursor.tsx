@@ -5,9 +5,9 @@ import { TwinCursorMode } from './useTwinRunway';
 const SHAPE: Record<TwinCursorMode, string> = {
     hidden: 'h-[96px] w-[96px] scale-50 opacity-0',
     ring: 'h-[42px] w-[42px] scale-100 border-[2px] border-ink/50 opacity-100',
-    drag: 'h-[42px] w-[100px] scale-100 border-[2px] border-ink/40 bg-white/70 opacity-100 shadow-[0_6px_16px_-10px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]',
+    drag: 'h-[46px] w-[116px] scale-100 border border-white/70 bg-white/60 opacity-100 backdrop-blur-md shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-ink)_45%,transparent),inset_0_1px_0_rgba(255,255,255,0.9)]',
     dragging:
-        'h-[42px] w-[112px] scale-[0.94] border-[2px] border-primary/45 bg-primary/25 opacity-100 shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-primary)_55%,transparent)]',
+        'h-[46px] w-[138px] scale-[0.96] border border-white/40 bg-gradient-to-b from-[color-mix(in_srgb,var(--color-primary)_78%,white)] to-primary opacity-100 shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_80%,transparent),inset_0_1px_0_rgba(255,255,255,0.5)]',
     view: 'h-[92px] w-[92px] scale-100 border border-white/30 bg-gradient-to-br from-ink/90 to-ink opacity-100 shadow-[0_16px_36px_-12px_color-mix(in_srgb,var(--color-ink)_65%,transparent),inset_0_1px_0_rgba(255,255,255,0.28)]',
     buy: 'h-[92px] w-[92px] scale-100 border border-white/40 bg-gradient-to-b from-[color-mix(in_srgb,var(--color-primary)_78%,white)] to-primary opacity-100 shadow-[0_22px_44px_-10px_color-mix(in_srgb,var(--color-primary)_80%,transparent),0_6px_14px_-6px_color-mix(in_srgb,var(--color-primary)_60%,transparent),inset_0_1px_0_rgba(255,255,255,0.55)]',
 };
@@ -40,27 +40,31 @@ export function TwinCursor({ cursorRef, mode }: { cursorRef: React.Ref<HTMLDivEl
 
                 {isDrag && (
                     <>
-                        <ChevronLeft
-                            size={13}
-                            strokeWidth={2.6}
-                            className={`absolute left-2.5 transition-all duration-500 ${SPRING} ${
-                                isDragging ? '-translate-x-0.5 text-primary opacity-100' : 'translate-x-0 text-ink/45 opacity-80'
-                            }`}
-                        />
                         <span
-                            className={`font-michroma pl-[0.18em] text-[8px] text-ink transition-all duration-500 ${SPRING} ${
-                                isDragging ? 'tracking-[0.28em] opacity-90' : 'tracking-[0.2em] opacity-100'
+                            className={`absolute left-3 grid transition-[left,color] duration-500 ${SPRING} ${isDragging ? '!left-2 text-white' : 'text-ink/70'}`}
+                        >
+                            <ChevronLeft
+                                size={15}
+                                strokeWidth={2.8}
+                                style={isDragging ? undefined : { animation: 'twin-nudge-left 1.4s ease-in-out infinite' }}
+                            />
+                        </span>
+                        <span
+                            className={`select-none pl-[0.2em] text-[10px] font-extrabold transition-[letter-spacing,color] duration-500 ${SPRING} ${
+                                isDragging ? 'tracking-[0.34em] text-white' : 'tracking-[0.22em] text-ink'
                             }`}
                         >
                             DRAG
                         </span>
-                        <ChevronRight
-                            size={13}
-                            strokeWidth={2.6}
-                            className={`absolute right-2.5 transition-all duration-500 ${SPRING} ${
-                                isDragging ? 'translate-x-0.5 text-primary opacity-100' : 'translate-x-0 text-ink/45 opacity-80'
-                            }`}
-                        />
+                        <span
+                            className={`absolute right-3 grid transition-[right,color] duration-500 ${SPRING} ${isDragging ? '!right-2 text-white' : 'text-ink/70'}`}
+                        >
+                            <ChevronRight
+                                size={15}
+                                strokeWidth={2.8}
+                                style={isDragging ? undefined : { animation: 'twin-nudge-right 1.4s ease-in-out infinite' }}
+                            />
+                        </span>
                     </>
                 )}
             </div>
