@@ -53,7 +53,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                 ref={runway.stageRef}
                 aria-label="Digital Twins runway. Hover a model to preview its poses, click to see every pose and buy, or drag to step through the models."
                 {...runway.stageHandlers}
-                className="relative h-full w-full touch-pan-y select-none overflow-hidden lg:cursor-none"
+                className={`relative h-full w-full touch-pan-y select-none overflow-hidden ${runway.cursorMode === 'hidden' ? '' : 'lg:cursor-none'}`}
                 style={{ background: STAGE_BACKGROUND }}
             >
                 <div className="absolute inset-0 overflow-hidden">
@@ -78,7 +78,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, o
                                         openModal(i);
                                     }
                                 }}
-                                className="absolute left-0 top-0 origin-top-left will-change-transform lg:cursor-none"
+                                className="absolute left-0 top-0 origin-top-left will-change-transform"
                             >
                                 {/* Ground shadow */}
                                 <span
