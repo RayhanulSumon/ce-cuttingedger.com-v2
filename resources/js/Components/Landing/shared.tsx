@@ -106,6 +106,7 @@ export function SectionIntro({
     className = '',
     titleClassName = 'text-[clamp(22px,2.6vw,36px)] font-normal',
     bodyClassName = 'text-sm text-subtle',
+    cursorFree = false,
 }: {
     active: boolean;
     title: string;
@@ -113,9 +114,11 @@ export function SectionIntro({
     className?: string;
     titleClassName?: string;
     bodyClassName?: string;
+    /** Marks the block so custom cursors step aside while it is hovered. */
+    cursorFree?: boolean;
 }) {
     return (
-        <div className={className}>
+        <div className={className} data-twin-cursor-free={cursorFree ? '' : undefined}>
             <Reveal active={active}>
                 <h2 className={`font-michroma leading-[1.15] tracking-[0.14em] text-ink ${titleClassName}`}>
                     {title}

@@ -70,6 +70,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
     const path = url.split('?')[0];
     const [drawer, setDrawer] = useState(false);
     const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
+    const collapsed = index !== undefined && index > 0;
     const dark = onDark ?? (index !== undefined && DARK_SECTIONS.includes(index));
     /** Inner pages scroll under the bar, so it fades in a backdrop; the homepage stage does not scroll. */
     const solid = !goTo;
@@ -198,15 +199,28 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                     <button
                         type="button"
                         onClick={() => goTo(0)}
-                        className="text-base font-extrabold tracking-[-0.04em]"
+                        className="relative flex h-7 items-center text-base font-extrabold tracking-[-0.04em]"
                         aria-label="CuttingEdger home"
                     >
+                        {/* Full wordmark on the first section, shrinking to the small mark everywhere else. */}
                         <img
                             src="/images/ce/ce_logo_word.png"
                             alt="CuttingEdger"
                             width={459}
                             height={70}
-                            className={`h-6 w-auto transition-[filter] duration-500 sm:h-7 ${dark ? 'brightness-0 invert' : ''}`}
+                            className={`h-6 w-auto origin-left transition-[filter,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:h-7 ${
+                                dark ? 'brightness-0 invert' : ''
+                            } ${collapsed ? 'pointer-events-none scale-75 opacity-0' : 'scale-100 opacity-100'}`}
+                        />
+                        <img
+                            src={dark ? '/images/ce/ce_icon_white.png' : '/images/ce/ce_icon.png'}
+                            alt=""
+                            aria-hidden="true"
+                            width={512}
+                            height={512}
+                            className={`absolute left-0 top-1/2 h-8 w-8 origin-left -translate-y-1/2 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                                collapsed ? 'scale-100 opacity-100' : 'pointer-events-none scale-75 opacity-0'
+                            }`}
                         />
                     </button>
                 ) : (

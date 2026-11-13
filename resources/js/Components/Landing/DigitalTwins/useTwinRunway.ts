@@ -224,6 +224,13 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
         setHoveredTwinIndex(index >= 0 ? index : null);
     };
 
+    /** Text blocks marked `data-twin-cursor-free` (heading, description) keep the normal pointer. */
+    const isOverCursorFreeZone = (x: number, y: number): boolean =>
+        Array.from(document.querySelectorAll<HTMLElement>('[data-twin-cursor-free]')).some((el) => {
+            const r = el.getBoundingClientRect();
+            return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+        });
+
     const modelIndexAt = (target: EventTarget | null): number => {
         const el = (target as HTMLElement | null)?.closest<HTMLElement>('[data-twin-model]');
         return el ? Number(el.dataset.twinModel) : -1;
@@ -279,7 +286,7 @@ export function useTwinRunway({ running, onOpenTwin }: TwinRunwayOptions) {
 
         if (event.pointerType === 'mouse') {
             // Over a real button or link (arrows, order button), the normal pointer is shown and the custom cursor steps aside.
-            if ((event.target as HTMLElement | null)?.closest('button, a')) {
+            if ((event.target as HTMLElement | null)?.closest('button, a') || isOverCursorFreeZone(event.clientX, event.clientY)) {
                 setHoveredModel(-1);
                 setCursorMode('hidden');
             } else {
