@@ -3,28 +3,38 @@
 namespace App\Services\Media;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * Domain-specific presets for Digital Twins and Virtual Try-On media,
+ * powered by the centralized ImageUploadService (Intervention Image -> WebP).
+ */
 class ImageOptimizationService
 {
+    public function __construct(public ImageUploadService $imageUploadService) {}
+
     /**
      * Store a Digital Twin main full-body image as optimized 640w + 1600w alpha-preserving WebP files.
      *
      * @return array{runway_image: string, hi_res_image: string, aspect_ratio: float}
      */
-    public function storeTwinModelImage(UploadedFile $file): array
+    public function storeTwinModelImage(UploadedFile $file, ?string $oldRunway = null, ?string $oldHiRes = null): array
     {
         $baseName = 'twin-'.Str::random(12);
-        $runwayRel = "digital-twins/{$baseName}-640.webp";
-        $hiResRel = "digital-twins/{$baseName}-1600.webp";
+        $runwayRel = ImageUploadService::PATH_DIGITAL_TWINS."/{$baseName}-640.webp";
+        $hiResRel = ImageUploadService::PATH_DIGITAL_TWINS."/{$baseName}-1600.webp";
 
-        $dimensions = $this->encodeResizedWebp($file, $runwayRel, 640, 86);
-        $this->encodeResizedWebp($file, $hiResRel, 1600, 88);
+        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 86);
+        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1600, 88);
 
-        if (! $dimensions) {
-            $path = $file->store('digital-twins', 'public');
-            $url = '/storage/'.$path;
+        if (! $runway || ! $hiRes) {
+            $url = $this->imageUploadService->uploadAsWebp(
+                $file,
+                ImageUploadService::PATH_DIGITAL_TWINS,
+                1600,
+                88,
+            );
+            $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
 
             return [
                 'runway_image' => $url,
@@ -33,13 +43,15 @@ class ImageOptimizationService
             ];
         }
 
-        $aspectRatio = $dimensions['height'] > 0
-            ? round($dimensions['width'] / $dimensions['height'], 4)
+        $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
+
+        $aspectRatio = $runway['height'] > 0
+            ? round($runway['width'] / $runway['height'], 4)
             : 0.36;
 
         return [
-            'runway_image' => '/storage/'.$runwayRel,
-            'hi_res_image' => '/storage/'.$hiResRel,
+            'runway_image' => $runway['url'],
+            'hi_res_image' => $hiRes['url'],
             'aspect_ratio' => max(0.2, min(1.2, $aspectRatio)),
         ];
     }
@@ -47,14 +59,16 @@ class ImageOptimizationService
     /**
      * Store a Digital Twin individual pose image as an optimized 1080w WebP file.
      */
-    public function storeTwinPoseImage(UploadedFile $file): string
+    public function storeTwinPoseImage(UploadedFile $file, ?string $oldUrl = null): string
     {
-        $rel = 'digital-twins/poses/pose-'.Str::random(12).'.webp';
-        if ($this->encodeResizedWebp($file, $rel, 1080, 86)) {
-            return '/storage/'.$rel;
-        }
-
-        return '/storage/'.$file->store('digital-twins/poses', 'public');
+        return $this->imageUploadService->uploadAsWebp(
+            $file,
+            ImageUploadService::PATH_DIGITAL_TWIN_POSES,
+            1080,
+            86,
+            $oldUrl,
+            'pose',
+        );
     }
 
     /**
@@ -62,18 +76,23 @@ class ImageOptimizationService
      *
      * @return array{runway_image: string, hi_res_image: string}
      */
-    public function storeTryOnModelImage(UploadedFile $file): array
+    public function storeTryOnModelImage(UploadedFile $file, ?string $oldRunway = null, ?string $oldHiRes = null): array
     {
         $baseName = 'look-'.Str::random(12);
-        $runwayRel = "try-on/{$baseName}-640.webp";
-        $hiResRel = "try-on/{$baseName}-1080.webp";
+        $runwayRel = ImageUploadService::PATH_TRY_ON."/{$baseName}-640.webp";
+        $hiResRel = ImageUploadService::PATH_TRY_ON."/{$baseName}-1080.webp";
 
-        $okRunway = $this->encodeResizedWebp($file, $runwayRel, 640, 85);
-        $okHiRes = $this->encodeResizedWebp($file, $hiResRel, 1080, 88);
+        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 85);
+        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1080, 88);
 
-        if (! $okRunway || ! $okHiRes) {
-            $path = $file->store('try-on', 'public');
-            $url = '/storage/'.$path;
+        if (! $runway || ! $hiRes) {
+            $url = $this->imageUploadService->uploadAsWebp(
+                $file,
+                ImageUploadService::PATH_TRY_ON,
+                1080,
+                88,
+            );
+            $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
 
             return [
                 'runway_image' => $url,
@@ -81,82 +100,26 @@ class ImageOptimizationService
             ];
         }
 
+        $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
+
         return [
-            'runway_image' => '/storage/'.$runwayRel,
-            'hi_res_image' => '/storage/'.$hiResRel,
+            'runway_image' => $runway['url'],
+            'hi_res_image' => $hiRes['url'],
         ];
     }
 
     /**
      * Store a Virtual Try-On garment piece cutout as an optimized 600w WebP file.
      */
-    public function storeTryOnPieceImage(UploadedFile $file): string
+    public function storeTryOnPieceImage(UploadedFile $file, ?string $oldUrl = null): string
     {
-        $rel = 'try-on/pieces/piece-'.Str::random(12).'.webp';
-        if ($this->encodeResizedWebp($file, $rel, 600, 86)) {
-            return '/storage/'.$rel;
-        }
-
-        return '/storage/'.$file->store('try-on/pieces', 'public');
-    }
-
-    /**
-     * Resize and convert an uploaded image to alpha-preserving WebP using GD.
-     *
-     * @return array{width: int, height: int}|null
-     */
-    private function encodeResizedWebp(UploadedFile $file, string $relativeStoragePath, int $maxWidth, int $quality = 85): ?array
-    {
-        if (! function_exists('imagecreatefromstring') || ! function_exists('imagewebp')) {
-            return null;
-        }
-
-        $raw = @file_get_contents($file->getRealPath());
-        if (! $raw) {
-            return null;
-        }
-
-        $src = @imagecreatefromstring($raw);
-        if (! $src) {
-            return null;
-        }
-
-        $origWidth = imagesx($src);
-        $origHeight = imagesy($src);
-
-        if ($origWidth <= 0 || $origHeight <= 0) {
-            imagedestroy($src);
-
-            return null;
-        }
-
-        $targetWidth = min($origWidth, $maxWidth);
-        $targetHeight = (int) max(1, round($origHeight * ($targetWidth / $origWidth)));
-
-        $dst = imagecreatetruecolor($targetWidth, $targetHeight);
-        imagealphablending($dst, false);
-        imagesavealpha($dst, true);
-        $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
-        imagefilledrectangle($dst, 0, 0, $targetWidth, $targetHeight, $transparent);
-
-        imagecopyresampled($dst, $src, 0, 0, 0, 0, $targetWidth, $targetHeight, $origWidth, $origHeight);
-
-        ob_start();
-        $encoded = imagewebp($dst, null, $quality);
-        $webpBytes = ob_get_clean();
-
-        imagedestroy($src);
-        imagedestroy($dst);
-
-        if (! $encoded || ! $webpBytes) {
-            return null;
-        }
-
-        Storage::disk('public')->put($relativeStoragePath, $webpBytes);
-
-        return [
-            'width' => $origWidth,
-            'height' => $origHeight,
-        ];
+        return $this->imageUploadService->uploadAsWebp(
+            $file,
+            ImageUploadService::PATH_TRY_ON_PIECES,
+            600,
+            86,
+            $oldUrl,
+            'piece',
+        );
     }
 }

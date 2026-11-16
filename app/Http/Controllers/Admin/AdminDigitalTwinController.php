@@ -161,7 +161,11 @@ class AdminDigitalTwinController extends Controller
         ];
 
         if ($request->hasFile('model_image') && $request->file('model_image')->isValid()) {
-            $imageMeta = $optimizer->storeTwinModelImage($request->file('model_image'));
+            $imageMeta = $optimizer->storeTwinModelImage(
+                $request->file('model_image'),
+                $digitalTwin->runway_image,
+                $digitalTwin->hi_res_image,
+            );
             $updates['runway_image'] = $imageMeta['runway_image'];
             $updates['hi_res_image'] = $imageMeta['hi_res_image'];
             $updates['aspect_ratio'] = $imageMeta['aspect_ratio'];
@@ -171,7 +175,8 @@ class AdminDigitalTwinController extends Controller
         if ($request->hasFile('pose_images')) {
             foreach ($request->file('pose_images') as $poseIdx => $poseFile) {
                 if ($poseFile && $poseFile->isValid() && isset($poses[$poseIdx])) {
-                    $poses[$poseIdx]['imageUrl'] = $optimizer->storeTwinPoseImage($poseFile);
+                    $oldPoseUrl = $poses[$poseIdx]['imageUrl'] ?? null;
+                    $poses[$poseIdx]['imageUrl'] = $optimizer->storeTwinPoseImage($poseFile, $oldPoseUrl);
                 }
             }
         }
@@ -197,9 +202,15 @@ class AdminDigitalTwinController extends Controller
     /**
      * Delete a Digital Twin model.
      */
-    public function destroy(DigitalTwin $digitalTwin): RedirectResponse
+    public function destroy(DigitalTwin $digitalTwin, ImageOptimizationService $optimizer): RedirectResponse
     {
         $name = $digitalTwin->name;
+        $poseUrls = array_map(fn ($pose) => $pose['imageUrl'] ?? null, $digitalTwin->poses ?? []);
+        $optimizer->imageUploadService->deleteMany([
+            $digitalTwin->runway_image,
+            $digitalTwin->hi_res_image,
+            ...$poseUrls,
+        ]);
         $digitalTwin->delete();
 
         return redirect()->back()->with('success', "Digital Twin [{$name}] removed.");

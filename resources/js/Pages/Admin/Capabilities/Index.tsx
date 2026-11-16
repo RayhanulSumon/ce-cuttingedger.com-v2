@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router, useForm } from "@inertiajs/react";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, ImagePlus, Plus, Trash2, X } from "lucide-react";
 import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
 import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
 import { CAPABILITY_ICON_NAMES, capabilityIcon } from "@/Components/Common/capabilityIcons";
@@ -39,6 +39,8 @@ interface FormData {
     subtitle: string;
     description: string;
     icon: string;
+    image_file: File | null;
+    remove_image: boolean;
     features: string;
     deliverables: string;
     process_steps: string;
@@ -71,6 +73,8 @@ const emptyForm = (parentId = ""): FormData => ({
     subtitle: "",
     description: "",
     icon: "Layers",
+    image_file: null,
+    remove_image: false,
     features: "",
     deliverables: "",
     process_steps: "",
@@ -89,6 +93,8 @@ const toForm = (capability: Capability): FormData => ({
     subtitle: capability.subtitle,
     description: capability.description,
     icon: capability.icon,
+    image_file: null,
+    remove_image: false,
     features: (capability.features ?? []).join("\n"),
     deliverables: (capability.deliverables ?? []).join("\n"),
     process_steps: (capability.process_steps ?? []).map((s) => `${s.title} | ${s.description}`).join("\n"),
@@ -103,12 +109,31 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
     const [editing, setEditing] = useState<Capability | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [toDelete, setToDelete] = useState<Capability | null>(null);
+    const [imageError, setImageError] = useState<string | null>(null);
+    const [objectPreview, setObjectPreview] = useState<string | null>(null);
 
     const form = useForm<FormData>(emptyForm());
     const isSub = form.data.parent_id !== "";
 
+    useEffect(() => {
+        return () => {
+            if (objectPreview) {
+                URL.revokeObjectURL(objectPreview);
+            }
+        };
+    }, [objectPreview]);
+
+    const resetImageState = () => {
+        setImageError(null);
+        if (objectPreview) {
+            URL.revokeObjectURL(objectPreview);
+        }
+        setObjectPreview(null);
+    };
+
     const openCreate = (parentId = "") => {
         setEditing(null);
+        resetImageState();
         form.setData(emptyForm(parentId));
         form.clearErrors();
         setIsOpen(true);
@@ -116,9 +141,39 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
 
     const openEdit = (capability: Capability) => {
         setEditing(capability);
+        resetImageState();
         form.setData(toForm(capability));
         form.clearErrors();
         setIsOpen(true);
+    };
+
+    const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";
+        if (!file) {
+            return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+            setImageError("Please select a valid image file (JPG, PNG, WebP, AVIF, or GIF).");
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            setImageError("Image must be 10 MB or smaller.");
+            return;
+        }
+
+        setImageError(null);
+        if (objectPreview) {
+            URL.revokeObjectURL(objectPreview);
+        }
+        setObjectPreview(URL.createObjectURL(file));
+        form.setData((prev) => ({ ...prev, image_file: file, remove_image: false }));
+    };
+
+    const clearImage = () => {
+        resetImageState();
+        form.setData((prev) => ({ ...prev, image_file: null, remove_image: Boolean(editing?.image) }));
     };
 
     const submit = (event: React.FormEvent) => {
@@ -126,6 +181,7 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
 
         form.transform((data) => ({
             ...data,
+            ...(editing ? { _method: "PUT" } : {}),
             parent_id: data.parent_id || null,
             tag: data.parent_id ? null : data.tag || null,
             features: lines(data.features),
@@ -134,13 +190,16 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
             faqs: pairs(data.faqs).map(([question, answer]) => ({ question, answer })),
         }));
 
-        const options = { preserveScroll: true, onSuccess: () => setIsOpen(false) };
+        const options = {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => {
+                resetImageState();
+                setIsOpen(false);
+            },
+        };
 
-        if (editing) {
-            form.put(`/admin/capabilities/${editing.id}`, options);
-        } else {
-            form.post("/admin/capabilities", options);
-        }
+        form.post(editing ? `/admin/capabilities/${editing.id}` : "/admin/capabilities", options);
     };
 
     const confirmDelete = () => {
@@ -153,6 +212,8 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
         });
     };
 
+    const activePreview = objectPreview ?? (!form.data.remove_image ? editing?.image ?? null : null);
+
     const row = (capability: Capability, nested: boolean) => {
         const Icon = capabilityIcon(capability.icon);
 
@@ -161,9 +222,17 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
                 key={capability.id}
                 className={`flex items-center gap-3 ${nested ? "rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3" : ""}`}
             >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/5 text-accent">
-                    <Icon size={17} />
-                </span>
+                {capability.image ? (
+                    <img
+                        src={capability.image}
+                        alt={capability.title}
+                        className="h-11 w-9 shrink-0 rounded-lg border border-white/10 object-cover"
+                    />
+                ) : (
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/5 text-accent">
+                        <Icon size={17} />
+                    </span>
+                )}
                 <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-white">
                         {capability.tag && <span className="mr-2 font-mono text-xs text-accent">{capability.tag}</span>}
@@ -276,6 +345,53 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
                             <label className={FIELD_LABEL}>Description</label>
                             <Textarea rows={4} value={form.data.description} onChange={(e) => form.setData("description", e.target.value)} required />
                             {form.errors.description && <p className="text-xs text-rose-400">{form.errors.description}</p>}
+                        </div>
+
+                        <div className="space-y-2 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <label className={FIELD_LABEL}>Cover image</label>
+                                    <p className="mt-1 text-xs text-neutral-400">
+                                        Recommended size: <span className="font-semibold text-white">900 × 1200 px</span> (3:4 portrait) · Any image (JPG, PNG, WebP, AVIF, GIF) —{" "}
+                                        <span className="font-semibold text-accent">auto-converted to .webp</span> · Max 10 MB
+                                    </p>
+                                </div>
+                                {activePreview && (
+                                    <Button type="button" variant="ghost" size="sm" onClick={clearImage} className="h-8 text-xs text-rose-400 hover:text-rose-300">
+                                        <X className="mr-1 h-3.5 w-3.5" />
+                                        Remove
+                                    </Button>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-4 pt-1">
+                                {activePreview ? (
+                                    <img
+                                        src={activePreview}
+                                        alt="Capability preview"
+                                        className="aspect-[3/4] w-20 shrink-0 rounded-lg border border-white/10 object-cover"
+                                    />
+                                ) : (
+                                    <div className="grid aspect-[3/4] w-20 shrink-0 place-items-center rounded-lg border border-dashed border-white/15 bg-white/[0.02] text-neutral-500">
+                                        <ImagePlus className="h-5 w-5" />
+                                    </div>
+                                )}
+
+                                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-white/15 bg-white/[0.04] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:border-accent hover:bg-white/[0.08]">
+                                    <ImagePlus className="h-4 w-4 text-accent" />
+                                    <span>{activePreview ? "Replace image" : "Upload image"}</span>
+                                    <input
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                                        className="sr-only"
+                                        onChange={handleImageSelect}
+                                    />
+                                </label>
+                            </div>
+
+                            {(imageError || form.errors.image_file) && (
+                                <p className="text-xs text-rose-400">{imageError || form.errors.image_file}</p>
+                            )}
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">

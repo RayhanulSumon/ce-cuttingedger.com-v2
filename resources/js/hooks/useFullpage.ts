@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { useRemember } from '@inertiajs/react';
 
 /** Accumulated wheel travel (px) that counts as one deliberate "next section" gesture. */
 const WHEEL_THRESHOLD = 40;
@@ -48,12 +49,16 @@ function innerScrollerCanScroll(target: EventTarget | null, direction: 1 | -1): 
  * @param initialIndex section to open on (e.g. when arriving from another page's menu)
  */
 export function useFullpage(count: number, transitionMs: number, enabled = true, initialIndex = 0) {
-    const [index, setIndex] = useState(initialIndex);
-    const indexRef = useRef(initialIndex);
+    const [index, setIndex] = useRemember(initialIndex, 'home:section-index');
+    const indexRef = useRef(index);
     const lockedUntil = useRef(0);
     const queuedTimer = useRef(0);
     const touchStartY = useRef<number | null>(null);
     const wheel = useRef({ sum: 0, lastTime: 0, lastAbs: 0, consumed: false });
+
+    useEffect(() => {
+        indexRef.current = index;
+    }, [index]);
 
     const goTo = useCallback(
         (nextIndex: number) => {

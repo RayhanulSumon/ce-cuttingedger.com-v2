@@ -55,7 +55,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active, o
 
             <ul className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:mt-8 lg:grid-cols-4">
                 {capabilities_nav.map((capability, i) => {
-                    const imageSrc = CAPABILITY_IMAGES[i % CAPABILITY_IMAGES.length];
+                    const imageSrc = capability.image || CAPABILITY_IMAGES[i % CAPABILITY_IMAGES.length];
 
                     return (
                         <li key={capability.id}>

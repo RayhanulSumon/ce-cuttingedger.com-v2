@@ -50,6 +50,7 @@ export interface Capability {
     subtitle: string;
     description: string;
     icon: string;
+    image?: string | null;
     features: string[] | null;
     deliverables: string[] | null;
     process_steps: { title: string; description: string }[] | null;

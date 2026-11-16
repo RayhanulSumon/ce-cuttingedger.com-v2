@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, useRemember } from '@inertiajs/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Project } from '@/types/models';
 import { CASE_STUDIES } from './content';
@@ -91,6 +91,7 @@ function applyCardStyle(el: HTMLElement, cache: CardCache, next: CardCache) {
 
 export const CaseStudySection = memo(function CaseStudySection({ active, projects }: CaseStudyProps) {
     const isMobile = useMediaQuery('(max-width: 767px)') === true;
+    const [rememberedScrollTop, setRememberedScrollTop] = useRemember(0, 'home:case-study-scroll');
     const scrollerRef = useRef<HTMLDivElement>(null);
     const csRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<HTMLDivElement>(null);
@@ -410,10 +411,35 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
         const scroller = scrollerRef.current;
         if (scroller) {
-            scroller.addEventListener('scroll', req, { passive: true });
-        } else {
-            window.addEventListener('scroll', req, { passive: true });
+            if (rememberedScrollTop > 0 && scroller.scrollTop === 0) {
+                scroller.scrollTop = rememberedScrollTop;
+            }
+            const onInnerScroll = () => {
+                setRememberedScrollTop(scroller.scrollTop);
+                req();
+            };
+            scroller.addEventListener('scroll', onInnerScroll, { passive: true });
+            window.addEventListener('resize', onResize);
+
+            const resizeObserver = new ResizeObserver(onResize);
+            resizeObserver.observe(stage);
+            measure();
+            req();
+
+            return () => {
+                disposed = true;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                }
+                cs.classList.remove('anim');
+                scroller.removeEventListener('scroll', onInnerScroll);
+                window.removeEventListener('resize', onResize);
+                resizeObserver.disconnect();
+                cleanups.forEach((fn) => fn());
+            };
         }
+
+        window.addEventListener('scroll', req, { passive: true });
         window.addEventListener('resize', onResize);
 
         const resizeObserver = new ResizeObserver(onResize);
@@ -427,11 +453,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 cancelAnimationFrame(rafId);
             }
             cs.classList.remove('anim');
-            if (scroller) {
-                scroller.removeEventListener('scroll', req);
-            } else {
-                window.removeEventListener('scroll', req);
-            }
+            window.removeEventListener('scroll', req);
             window.removeEventListener('resize', onResize);
             resizeObserver.disconnect();
             cleanups.forEach((fn) => fn());

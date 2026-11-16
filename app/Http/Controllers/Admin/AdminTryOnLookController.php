@@ -122,7 +122,11 @@ class AdminTryOnLookController extends Controller
         ];
 
         if ($request->hasFile('model_image') && $request->file('model_image')->isValid()) {
-            $modelImages = $optimizer->storeTryOnModelImage($request->file('model_image'));
+            $modelImages = $optimizer->storeTryOnModelImage(
+                $request->file('model_image'),
+                $tryOnLook->runway_image,
+                $tryOnLook->hi_res_image,
+            );
             $updates['runway_image'] = $modelImages['runway_image'];
             $updates['hi_res_image'] = $modelImages['hi_res_image'];
         }
@@ -131,7 +135,8 @@ class AdminTryOnLookController extends Controller
         if ($request->hasFile('piece_images')) {
             foreach ($request->file('piece_images') as $idx => $pieceFile) {
                 if ($pieceFile && $pieceFile->isValid() && isset($pieces[$idx])) {
-                    $pieces[$idx]['image'] = $optimizer->storeTryOnPieceImage($pieceFile);
+                    $oldPieceUrl = $pieces[$idx]['image'] ?? null;
+                    $pieces[$idx]['image'] = $optimizer->storeTryOnPieceImage($pieceFile, $oldPieceUrl);
                 }
             }
         }
@@ -150,9 +155,15 @@ class AdminTryOnLookController extends Controller
     /**
      * Delete a Virtual Try-On Look.
      */
-    public function destroy(TryOnLook $tryOnLook): RedirectResponse
+    public function destroy(TryOnLook $tryOnLook, ImageOptimizationService $optimizer): RedirectResponse
     {
         $name = $tryOnLook->name;
+        $pieceUrls = array_map(fn ($piece) => $piece['image'] ?? null, $tryOnLook->pieces ?? []);
+        $optimizer->imageUploadService->deleteMany([
+            $tryOnLook->runway_image,
+            $tryOnLook->hi_res_image,
+            ...$pieceUrls,
+        ]);
         $tryOnLook->delete();
 
         return redirect()->back()->with('success', "Virtual Try-On Look [{$name}] deleted.");

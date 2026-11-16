@@ -106,6 +106,7 @@ class HandleInertiaRequests extends Middleware
                             'path' => $main->path,
                             'subtitle' => $main->subtitle,
                             'icon' => $main->icon,
+                            'image' => $main->image,
                             'children' => $main->children->map(fn (Capability $child) => [
                                 'id' => $child->id,
                                 'title' => $child->title,
@@ -113,6 +114,7 @@ class HandleInertiaRequests extends Middleware
                                 'path' => $child->path,
                                 'subtitle' => $child->subtitle,
                                 'icon' => $child->icon,
+                                'image' => $child->image,
                             ])->values()->all(),
                         ])->values()->all();
                 } catch (\Throwable) {

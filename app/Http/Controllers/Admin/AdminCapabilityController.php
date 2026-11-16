@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Capability;
+use App\Services\Media\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class AdminCapabilityController extends Controller
 {
+    public function __construct(public ImageUploadService $imageUploadService) {}
+
     /**
      * Main capabilities with their sub-capabilities.
      */
@@ -46,6 +49,7 @@ class AdminCapabilityController extends Controller
     public function destroy(Capability $capability): RedirectResponse
     {
         $title = $capability->title;
+        $this->deleteStoredImage($capability->image);
         $capability->delete();
 
         return redirect()->back()->with('success', "Capability [{$title}] removed.");
@@ -69,6 +73,8 @@ class AdminCapabilityController extends Controller
             'subtitle' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'icon' => ['required', 'string', 'max:50'],
+            'image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
+            'remove_image' => ['nullable', 'boolean'],
             'features' => ['nullable', 'array'],
             'features.*' => ['string', 'max:255'],
             'deliverables' => ['nullable', 'array'],
@@ -85,11 +91,32 @@ class AdminCapabilityController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
+        unset($validated['image_file'], $validated['remove_image']);
+
+        if ($request->hasFile('image_file')) {
+            $validated['image'] = $this->imageUploadService->uploadAsWebp(
+                $request->file('image_file'),
+                ImageUploadService::PATH_CAPABILITIES,
+                1200,
+                85,
+                $capability?->image,
+                $validated['title'],
+            );
+        } elseif ($request->boolean('remove_image') && $capability?->image) {
+            $this->imageUploadService->delete($capability->image);
+            $validated['image'] = null;
+        }
+
         $validated['parent_id'] = ! empty($validated['parent_id']) ? $validated['parent_id'] : null;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
         return $validated;
+    }
+
+    private function deleteStoredImage(?string $url): void
+    {
+        $this->imageUploadService->delete($url);
     }
 
     private function uniqueSlug(string $requested, string $title, ?Capability $ignore = null): string

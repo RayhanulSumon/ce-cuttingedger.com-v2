@@ -8,6 +8,7 @@ export interface CapabilityNavChild {
     path: string;
     subtitle: string;
     icon: string;
+    image?: string | null;
 }
 
 export interface CapabilityNavItem extends CapabilityNavChild {

@@ -6,19 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\TeamMember;
+use App\Services\Media\ImageUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Intervention\Image\Format;
-use Intervention\Image\Laravel\Facades\Image;
 
 class AdminBlogController extends Controller
 {
+    public function __construct(public ImageUploadService $imageUploadService) {}
+
     /**
      * Display a listing of blog posts.
      */
@@ -67,7 +67,12 @@ class AdminBlogController extends Controller
         ]);
 
         $file = $request->file('image');
-        $url = $this->optimizeAndStoreCoverImage($file);
+        $url = $this->imageUploadService->uploadAsWebp(
+            $file,
+            ImageUploadService::PATH_BLOG_COVERS,
+            1920,
+            85,
+        );
         $relativeStoragePath = str_replace('/storage/', '', $url);
 
         return response()->json([
@@ -76,34 +81,6 @@ class AdminBlogController extends Controller
             'filename' => $file->getClientOriginalName(),
             'size' => Storage::disk('public')->size($relativeStoragePath),
         ]);
-    }
-
-    /**
-     * Optimize and store an uploaded blog cover image using Intervention Image.
-     */
-    protected function optimizeAndStoreCoverImage(UploadedFile $file): string
-    {
-        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $cleanName = Str::slug($originalName);
-        $filename = ($cleanName ? Str::limit($cleanName, 35, '') : 'cover').'-'.Str::random(8).'.webp';
-        $path = 'blogs/covers/'.$filename;
-
-        // Decode image from uploaded file
-        $image = Image::decode($file->getRealPath());
-
-        // Correct orientation based on EXIF metadata
-        $image->orient();
-
-        // Scale down proportionally to 1920px max width (preventing upscaling)
-        $image->scaleDown(width: 1920);
-
-        // Encode as lightweight modern WebP at 85% quality
-        $encoded = $image->encodeUsingFormat(Format::WEBP, quality: 85);
-
-        // Store into public disk
-        Storage::disk('public')->put($path, (string) $encoded);
-
-        return '/storage/'.$path;
     }
 
     /**
@@ -134,7 +111,12 @@ class AdminBlogController extends Controller
         ]);
 
         if ($request->hasFile('cover_image_file')) {
-            $validated['cover_image'] = $this->optimizeAndStoreCoverImage($request->file('cover_image_file'));
+            $validated['cover_image'] = $this->imageUploadService->uploadAsWebp(
+                $request->file('cover_image_file'),
+                ImageUploadService::PATH_BLOG_COVERS,
+                1920,
+                85,
+            );
         }
         unset($validated['cover_image_file']);
 
@@ -216,7 +198,13 @@ class AdminBlogController extends Controller
         ]);
 
         if ($request->hasFile('cover_image_file')) {
-            $validated['cover_image'] = $this->optimizeAndStoreCoverImage($request->file('cover_image_file'));
+            $validated['cover_image'] = $this->imageUploadService->uploadAsWebp(
+                $request->file('cover_image_file'),
+                ImageUploadService::PATH_BLOG_COVERS,
+                1920,
+                85,
+                $blog->cover_image,
+            );
         }
         unset($validated['cover_image_file']);
 
@@ -287,6 +275,7 @@ class AdminBlogController extends Controller
     {
         $blog = Blog::onlyTrashed()->findOrFail($id);
         $title = $blog->title;
+        $this->imageUploadService->delete($blog->cover_image);
         $blog->forceDelete();
 
         return redirect()->back()->with('success', "Article [{$title}] permanently deleted.");
