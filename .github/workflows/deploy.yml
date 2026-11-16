@@ -119,6 +119,11 @@ jobs:
           # 7. Restart NSSM Services (Octane + Reverb)
           Write-Host "--> Starting CuttingEdger-Dev (Octane) & restarting CuttingEdger-Reverb..." -ForegroundColor Green
           & $nssm start CuttingEdger-Dev
-          & $nssm restart CuttingEdger-Reverb
+          & $nssm stop CuttingEdger-Reverb 2>$null
+          $deadline = (Get-Date).AddSeconds(15)
+          while ((Get-Service -Name "CuttingEdger-Reverb" -ErrorAction SilentlyContinue).Status -ne 'Stopped' -and (Get-Date) -lt $deadline) {
+            Start-Sleep -Milliseconds 500
+          }
+          & $nssm start CuttingEdger-Reverb
 
           Write-Host "[SUCCESS] Deployment completed successfully!" -ForegroundColor Green
