@@ -1,15 +1,44 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { MoveHorizontal } from 'lucide-react';
-import { Eyebrow, Reveal, SectionProps, STAGE_TRANSITION_MS } from './shared';
+import { MoveHorizontal, Sparkles } from 'lucide-react';
+import { Eyebrow, OrderCta, Reveal, SectionProps, STAGE_TRANSITION_MS } from './shared';
 
-const IMAGE = '/images/portfolio/portfolio-1.jpg';
-const FIXES = [
-    'Dust & lint removal',
-    'Wrinkle & crease smoothing',
-    'Ghost mannequin jointing',
-    'Colour-match to swatch',
-    'Shadow & reflection repair',
-    'Skin & fabric texture',
+interface RetouchFix {
+    label: string;
+    image: string;
+    rawFilter: string;
+}
+
+const FIXES: RetouchFix[] = [
+    {
+        label: 'Dust & lint removal',
+        image: '/images/portfolio/portfolio-1.jpg',
+        rawFilter: '[filter:contrast(0.7)_brightness(0.82)_saturate(0.45)_sepia(0.35)_blur(0.6px)]',
+    },
+    {
+        label: 'Wrinkle & crease smoothing',
+        image: '/images/portfolio/portfolio-2.jpg',
+        rawFilter: '[filter:contrast(0.75)_brightness(0.86)_saturate(0.5)_sepia(0.2)_blur(0.5px)]',
+    },
+    {
+        label: 'Ghost mannequin jointing',
+        image: '/images/portfolio/portfolio-3.jpg',
+        rawFilter: '[filter:contrast(0.72)_brightness(0.84)_saturate(0.4)_sepia(0.28)_blur(0.6px)]',
+    },
+    {
+        label: 'Colour-match to swatch',
+        image: '/images/portfolio/portfolio-4.jpg',
+        rawFilter: '[filter:contrast(0.74)_brightness(0.85)_saturate(0.35)_hue-rotate(-18deg)_blur(0.5px)]',
+    },
+    {
+        label: 'Shadow & reflection repair',
+        image: '/images/portfolio/portfolio-1.jpg',
+        rawFilter: '[filter:contrast(0.68)_brightness(0.78)_saturate(0.5)_sepia(0.25)_blur(0.7px)]',
+    },
+    {
+        label: 'Skin & fabric texture',
+        image: '/images/portfolio/portfolio-2.jpg',
+        rawFilter: '[filter:contrast(0.76)_brightness(0.84)_saturate(0.45)_sepia(0.3)_blur(0.5px)]',
+    },
 ];
 
 /** Divider position (%) the comparison rests at, and where it sweeps in from on entry. */
@@ -19,8 +48,8 @@ const KEY_STEP = 4;
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
-/** Draggable before / after comparison. Sweeps open each time the section becomes active. */
-function BeforeAfter({ active }: { active: boolean }) {
+/** Draggable before / after comparison. Sweeps open each time the section becomes active or the preset changes. */
+function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
     const [position, setPosition] = useState(ENTRY_POSITION);
     const [dragging, setDragging] = useState(false);
     const box = useRef<HTMLDivElement>(null);
@@ -30,9 +59,10 @@ function BeforeAfter({ active }: { active: boolean }) {
             const reset = window.setTimeout(() => setPosition(ENTRY_POSITION), STAGE_TRANSITION_MS);
             return () => window.clearTimeout(reset);
         }
-        const sweep = window.setTimeout(() => setPosition(REST_POSITION), STAGE_TRANSITION_MS * 0.7);
+        setPosition(ENTRY_POSITION);
+        const sweep = window.setTimeout(() => setPosition(REST_POSITION), STAGE_TRANSITION_MS * 0.45);
         return () => window.clearTimeout(sweep);
-    }, [active]);
+    }, [active, fix.label]);
 
     const moveTo = useCallback((clientX: number) => {
         const rect = box.current?.getBoundingClientRect();
@@ -45,66 +75,74 @@ function BeforeAfter({ active }: { active: boolean }) {
     const glide = dragging ? '' : 'duration-[1100ms] ease-[cubic-bezier(0.65,0,0.35,1)]';
 
     return (
-        <div
-            ref={box}
-            className="relative mx-auto aspect-[4/3] max-h-[62vh] w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-[28px] bg-[#d8d3cf] shadow-2xl"
-            onPointerDown={(event) => {
-                event.currentTarget.setPointerCapture(event.pointerId);
-                setDragging(true);
-                moveTo(event.clientX);
-            }}
-            onPointerMove={(event) => {
-                if (dragging) {
-                    moveTo(event.clientX);
-                }
-            }}
-            onPointerUp={() => setDragging(false)}
-            onPointerCancel={() => setDragging(false)}
-            role="slider"
-            aria-label="Before and after retouching comparison"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(position)}
-            tabIndex={0}
-            onKeyDown={(event) => {
-                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-                    event.preventDefault();
-                    setPosition((current) => clampPercent(current + (event.key === 'ArrowLeft' ? -KEY_STEP : KEY_STEP)));
-                }
-            }}
-        >
-            <img src={IMAGE} alt="Retouched result" draggable={false} className="absolute inset-0 h-full w-full object-cover" />
+        <div>
             <div
-                className={`absolute inset-0 transition-[clip-path] ${glide}`}
-                style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+                ref={box}
+                className="relative mx-auto aspect-[4/3] max-h-[62vh] w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-[28px] border border-ink/10 bg-[#d8d3cf] shadow-[0_28px_60px_-24px_rgba(17,19,24,0.35)]"
+                onPointerDown={(event) => {
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                    setDragging(true);
+                    moveTo(event.clientX);
+                }}
+                onPointerMove={(event) => {
+                    if (dragging) {
+                        moveTo(event.clientX);
+                    }
+                }}
+                onPointerUp={() => setDragging(false)}
+                onPointerCancel={() => setDragging(false)}
+                role="slider"
+                aria-label={`Before and after retouching comparison for ${fix.label}`}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(position)}
+                tabIndex={0}
+                onKeyDown={(event) => {
+                    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                        event.preventDefault();
+                        setPosition((current) => clampPercent(current + (event.key === 'ArrowLeft' ? -KEY_STEP : KEY_STEP)));
+                    }
+                }}
             >
-                <img
-                    src={IMAGE}
-                    alt="Raw capture"
-                    draggable={false}
-                    className="h-full w-full object-cover [filter:contrast(0.7)_brightness(0.82)_saturate(0.45)_sepia(0.35)_blur(0.6px)]"
-                />
-            </div>
-            <span className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
-                Raw
-            </span>
-            <span className="absolute right-4 top-4 rounded-full bg-white/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-black">
-                Delivered
-            </span>
-            <div className={`absolute inset-y-0 w-0.5 bg-white transition-[left] ${glide}`} style={{ left: `${position}%` }}>
-                <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-xl">
-                    <MoveHorizontal size={20} />
+                <img src={fix.image} alt={`${fix.label} — delivered result`} draggable={false} className="absolute inset-0 h-full w-full object-cover" />
+                <div
+                    className={`absolute inset-0 transition-[clip-path] ${glide}`}
+                    style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+                >
+                    <img
+                        src={fix.image}
+                        alt={`${fix.label} — raw capture`}
+                        draggable={false}
+                        className={`h-full w-full object-cover ${fix.rawFilter}`}
+                    />
+                </div>
+                <span className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white backdrop-blur-sm">
+                    Raw
                 </span>
+                <span className="absolute right-4 top-4 rounded-full bg-white/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-black backdrop-blur-sm">
+                    Delivered
+                </span>
+                <div className={`absolute inset-y-0 w-0.5 bg-white transition-[left] ${glide}`} style={{ left: `${position}%` }}>
+                    <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-xl">
+                        <MoveHorizontal size={20} />
+                    </span>
+                </div>
             </div>
+            <p className="mt-3 text-center text-xs font-medium text-subtle">
+                {fix.label} · Drag or click anywhere to compare
+            </p>
         </div>
     );
 }
 
 export const RetouchingSection = memo(function RetouchingSection({ active }: SectionProps) {
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const activeFix = FIXES[selectedIndex] ?? FIXES[0];
+
     return (
         <div
             data-scrollable
-            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 py-12 sm:px-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-24"
+            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 py-12 sm:px-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-24"
         >
             <div>
                 <Reveal active={active}>
@@ -118,29 +156,43 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                     </h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
-                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-2">
-                        AI finds the artifacts. Senior retouchers finish them. Drag the handle to compare the raw capture
-                        with the delivered file.
+                    <p className="mt-4 max-w-md text-base leading-relaxed text-ink-2 sm:text-lg">
+                        AI finds the artifacts. Senior retouchers finish them. Pick a specialty or drag the handle to
+                        compare the raw capture with the delivered file.
                     </p>
                 </Reveal>
-                <div className="mt-6 flex flex-wrap gap-2">
-                    {FIXES.map((fix, i) => (
-                        <Reveal
-                            key={fix}
-                            as="span"
-                            active={active}
-                            delay={0.26 + i * 0.05}
-                            y="14px"
-                            className="rounded-full border border-ink/20 bg-white px-4 py-2 text-xs font-medium text-ink"
-                        >
-                            {fix}
-                        </Reveal>
-                    ))}
+                <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Retouching specialties">
+                    {FIXES.map((fix, i) => {
+                        const isSelected = i === selectedIndex;
+                        return (
+                            <Reveal key={fix.label} as="span" active={active} delay={0.22 + i * 0.04} y="14px">
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={isSelected}
+                                    onClick={() => setSelectedIndex(i)}
+                                    className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                                        isSelected
+                                            ? 'border-ink bg-ink text-white shadow-sm'
+                                            : 'border-ink/20 bg-white text-ink hover:border-ink/50'
+                                    }`}
+                                >
+                                    {fix.label}
+                                </button>
+                            </Reveal>
+                        );
+                    })}
                 </div>
+
+                <Reveal active={active} delay={0.38} className="mt-7">
+                    <OrderCta href="/contact" icon={<Sparkles size={16} />}>
+                        Request Retouching Quote
+                    </OrderCta>
+                </Reveal>
             </div>
 
             <Reveal active={active} delay={0.12} className="min-h-0">
-                <BeforeAfter active={active} />
+                <BeforeAfter active={active} fix={activeFix} />
             </Reveal>
         </div>
     );
