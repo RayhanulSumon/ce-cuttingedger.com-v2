@@ -50,11 +50,11 @@ jobs:
           Start-Sleep -Seconds 2
 
           # 2. Pull latest code
-          Write-Host "--> Pulling latest code from main..." -ForegroundColor Green
+          Write-Host "--> Pulling latest code from production..." -ForegroundColor Green
           $env:GIT_TERMINAL_PROMPT = "0"
           $repoUrl = "https://x-access-token:$($env:GITHUB_TOKEN)@github.com/$($env:REPO_NAME).git"
           $prevCommit = git rev-parse HEAD
-          git fetch $repoUrl main
+          git fetch $repoUrl production
           if ($LASTEXITCODE -ne 0) { throw "git fetch failed (exit code $LASTEXITCODE)" }
           git reset --hard FETCH_HEAD
           if ($LASTEXITCODE -ne 0) { throw "git reset failed (exit code $LASTEXITCODE)" }
