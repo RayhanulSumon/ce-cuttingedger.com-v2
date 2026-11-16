@@ -742,7 +742,7 @@ select option {
 .cs {
     position: relative;
     height: 480vh;
-    background: var(--color-surface, #ffffff);
+    background: var(--color-page, #f2f2f1);
 }
 
 .cs-stage {
@@ -764,6 +764,10 @@ select option {
     background: var(--cb, var(--color-secondary, #141a26));
     color: var(--ci, #ffffff);
     will-change: transform, width, height;
+}
+
+.cs-card.c2 {
+    box-shadow: inset 0 0 0 1px rgba(22, 25, 31, 0.08);
 }
 
 .cs-in {
@@ -802,6 +806,13 @@ select option {
     pointer-events: none;
 }
 
+.cs-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--cb, #141a26) 28%, transparent 100%);
+}
+
 .cs-copy {
     display: grid;
     gap: 14px;
@@ -812,7 +823,7 @@ select option {
 
 .cs-copy .cs-tag {
     color: inherit;
-    opacity: 0.72;
+    opacity: 0.85;
     font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0.14em;
@@ -828,7 +839,7 @@ select option {
 }
 
 .cs-copy p {
-    opacity: 0.82;
+    opacity: 0.9;
     max-width: 52ch;
     margin: 0;
 }
@@ -852,7 +863,7 @@ select option {
     border: 0;
     background: var(--color-primary, #f5761a);
     color: var(--color-primary-foreground, #ffffff);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
     padding: 13px 26px;
     border-radius: 999px;

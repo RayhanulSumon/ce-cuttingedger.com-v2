@@ -16,7 +16,7 @@ interface CardTheme {
 
 const CARD_THEMES: readonly CardTheme[] = [
     { bg: 'var(--color-secondary, #141A26)', ink: '#FFFFFF' },
-    { bg: 'var(--color-page, #F2F2F1)', ink: 'var(--color-ink, #16191F)' },
+    { bg: 'var(--color-surface, #FFFFFF)', ink: 'var(--color-ink, #16191F)' },
     { bg: 'var(--color-ink, #16191F)', ink: '#FFFFFF' },
 ];
 
@@ -444,13 +444,17 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 {CASE_STUDIES.slice(0, 3).map((study, i) => {
                     const linked = projects[i];
                     const theme = CARD_THEMES[i] ?? CARD_THEMES[0];
+                    const title = linked?.title || study.title;
+                    const category = linked?.category?.name || study.category;
+                    const summary = linked?.summary || study.summary;
+                    const metrics = linked?.metrics?.length ? linked.metrics : study.metrics;
                     const imageUrl = linked?.cover_image || study.image;
                     const href = linked ? `/case-studies/${linked.slug}` : '/case-studies';
                     const cardClass = `cs-card c${i + 1}`;
 
                     return (
                         <article
-                            key={study.title}
+                            key={linked?.id ?? study.title}
                             ref={(el) => {
                                 cardRefs.current[i] = el;
                             }}
@@ -470,12 +474,12 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                             <div className="cs-in">
                                 <div className="cs-copy">
                                     <span className="cs-tag">
-                                        Case study 0{i + 1} · {study.category}
+                                        Case study 0{i + 1} · {category}
                                     </span>
-                                    <h3>{study.title}</h3>
-                                    <p>{study.summary}</p>
+                                    <h3>{title}</h3>
+                                    <p>{summary}</p>
                                     <div className="cs-nums">
-                                        {study.metrics.slice(0, 2).map((metric) => {
+                                        {metrics.slice(0, 2).map((metric) => {
                                             const parsed = parseMetricValue(metric.value);
                                             return (
                                                 <div key={metric.label}>
@@ -499,7 +503,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                                     className="cs-media"
                                     style={{ backgroundImage: `url(${imageUrl})` }}
                                     role="img"
-                                    aria-label={study.title}
+                                    aria-label={title}
                                 />
                             </div>
                             <div className="cs-glow" aria-hidden="true" />
@@ -533,7 +537,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
     }
 
     return (
-        <div ref={scrollerRef} data-scrollable className="h-full w-full overflow-y-auto bg-white">
+        <div ref={scrollerRef} data-scrollable className="h-full w-full overflow-y-auto bg-page">
             {content}
         </div>
     );
