@@ -115,4 +115,22 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Notification Recipients
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of studio team emails notified on every form or
+    | order submission.
+    |
+    */
+
+    'admin_recipients' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env(
+            'MAIL_ADMIN_RECIPIENTS',
+            'biz@cuttingedger.com,cs@cuttingedger.com,operation@cuttingedger.com,enamul@cuttingedger.com,delwar@cuttingedger.com,info@cuttingedger.com,rayhanul.ce@gmail.com'
+        ))
+    ))),
+
 ];

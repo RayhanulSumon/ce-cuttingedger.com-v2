@@ -331,10 +331,10 @@ export function PricingCardsSection() {
                     </div>
 
                     <a
-                        href="#free-trial"
+                        href="/contact"
                         className="px-4 py-2 rounded-xl bg-ink/[0.03] hover:bg-primary hover:text-white border border-ink/10 hover:border-primary text-xs font-mono uppercase tracking-wider text-ink font-semibold transition-all duration-300 shrink-0 cursor-pointer"
                     >
-                        Try 3 Files Free →
+                        Contact Studio →
                     </a>
                 </div>
             </div>

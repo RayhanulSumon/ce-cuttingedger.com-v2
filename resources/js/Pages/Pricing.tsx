@@ -6,7 +6,6 @@ import { PricingPlan, Faq } from '@/types/models';
 import { Accordion } from '@/Components/ui/Accordion';
 import { PricingCardsSection } from '@/Components/Pricing/PricingCardsSection';
 import { EnterpriseSolutionsSection } from '@/Components/Pricing/EnterpriseSolutionsSection';
-import { FreeTrialDropzone } from '@/Components/Home/FreeTrialDropzone';
 import { Check, Sparkles, ArrowUpRight } from 'lucide-react';
 
 interface PricingProps {
@@ -35,9 +34,6 @@ export default function Pricing({ plans = [], faqs = [] }: PricingProps) {
 
             {/* 2. Enterprise & B2B Volume Solutions Showcase */}
             <EnterpriseSolutionsSection />
-
-            {/* 3. Instant Batch Trial Dropzone */}
-            <FreeTrialDropzone />
 
             {/* Pricing FAQ Section */}
             {faqs.length > 0 && (

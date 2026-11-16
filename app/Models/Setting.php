@@ -42,4 +42,22 @@ class Setting extends Model
 
         return json_last_error() === JSON_ERROR_NONE ? $decoded : $setting->value;
     }
+
+    /**
+     * Resolve all admin notification email recipients, deduplicated.
+     *
+     * @return array<int, string>
+     */
+    public static function adminNotificationRecipients(): array
+    {
+        $configured = (array) config('mail.admin_recipients', []);
+        $primary = static::where('key', 'contact_email')->value('value');
+
+        $all = array_filter(array_map(
+            fn (?string $email): string => strtolower(trim((string) $email)),
+            [$primary, ...$configured]
+        ), fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false);
+
+        return array_values(array_unique($all));
+    }
 }

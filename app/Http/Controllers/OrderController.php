@@ -355,12 +355,14 @@ class OrderController extends Controller
      */
     private function notifyOrderCreated(Order $order): void
     {
-        $adminEmail = Setting::where('key', 'contact_email')->value('value') ?: config('mail.from.address', 'hello@cuttingedger.com');
+        $adminEmails = Setting::adminNotificationRecipients();
         $calendlyUrl = Setting::where('key', 'calendly_url')->value('value') ?: 'https://calendly.com/cuttingedger/discovery-call';
 
         try {
-            Mail::to($order->client_email)->send(new FreeTrialConfirmationMail($order, $calendlyUrl));
-            Mail::to($adminEmail)->send(new FreeTrialAdminNotificationMail($order));
+            Mail::to($order->client_email)->queue(new FreeTrialConfirmationMail($order, $calendlyUrl));
+            if ($adminEmails !== []) {
+                Mail::to($adminEmails)->queue(new FreeTrialAdminNotificationMail($order));
+            }
         } catch (\Throwable $e) {
             report($e);
         }

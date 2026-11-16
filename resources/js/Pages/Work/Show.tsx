@@ -223,11 +223,11 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                             <Link
-                                href="/#free-trial"
+                                href="/contact"
                                 className="px-8 py-3.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-lg flex items-center gap-2"
                             >
                                 <Sparkles className="w-4 h-4" />
-                                <span>Request Free 3-Asset Pilot</span>
+                                <span>Start a Project</span>
                             </Link>
                             <button
                                 type="button"

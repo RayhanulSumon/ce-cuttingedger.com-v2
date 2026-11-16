@@ -1,20 +1,25 @@
 <x-mail::message>
-# New Project Brief Inbound
+# New Contact Inquiry Inbound
 
-A prospective client has submitted an inquiry through the Cutting Edger website.
+A prospective client has submitted an inquiry through the Cutting Edger contact form.
 
-### Contact Profile:
-- **Name:** {{ $contactMessage->name }} ([{{ $contactMessage->email }}](mailto:{{ $contactMessage->email }}))
-- **Phone:** {{ $contactMessage->phone ?? 'N/A' }}
-- **Company:** {{ $contactMessage->company ?? 'N/A' }}
-- **Website:** {{ $contactMessage->website ?? 'N/A' }}
-- **Service Focus:** {{ $contactMessage->service_interest ?? 'General' }}
-- **IP Address:** {{ $contactMessage->ip_address ?? 'N/A' }}
+<x-mail::table>
+| Field | Details |
+| :--- | :--- |
+| **Name** | {{ $contactMessage->name }} |
+| **Email** | [{{ $contactMessage->email }}](mailto:{{ $contactMessage->email }}) |
+| **Phone** | {{ $contactMessage->phone ?? 'N/A' }} |
+| **Company** | {{ $contactMessage->company ?? 'N/A' }} |
+| **Website** | {{ $contactMessage->website ?? 'N/A' }} |
+| **Capability Needed** | {{ $contactMessage->service_interest ?? 'General' }} |
+| **IP & Location** | `{{ $contactMessage->ip_address ?? 'N/A' }}` ({{ $ipLocation ?? 'Unknown' }}) |
+</x-mail::table>
 
----
+<x-mail::panel>
+**Description / Message:**
 
-### Project Message:
 {{ $contactMessage->message }}
+</x-mail::panel>
 
 <x-mail::button :url="url('/admin/messages')">
 View Messages in Admin

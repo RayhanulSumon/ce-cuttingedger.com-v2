@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, Paperclip, X } from 'lucide-react';
-import { getAttributionData } from '@/lib/attribution';
 import { EASE_OUT_QUART } from './shared';
 
 interface DemoModalProps {
@@ -38,17 +37,12 @@ export function DemoModal({ open, onClose }: DemoModalProps) {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        const attr = getAttributionData();
         transform((current) => ({
             ...current,
-            submission_page_url: window.location.href,
-            landing_page_url: attr.landing_page_url || window.location.href,
-            utm_source: attr.utm_source || '',
-            utm_medium: attr.utm_medium || '',
-            utm_campaign: attr.utm_campaign || '',
+            message: current.instructions || 'Demo / Pilot Request',
+            service_interest: 'Demo Request',
         }));
-        post('/free-trial', {
-            forceFormData: true,
+        post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
