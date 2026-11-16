@@ -135,7 +135,13 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
             />
 
             <div className="relative flex min-h-[60svh] flex-col lg:min-h-0">
-                <SectionIntro active={active} title="Virtual Try-On" className={`relative z-10 ${fadeWhenOpen}`}>
+                <SectionIntro
+                    active={active}
+                    title="Virtual Try-On"
+                    titleClassName="text-[clamp(28px,3.6vw,52px)] font-bold"
+                    bodyClassName="text-base font-semibold text-ink-2 sm:text-lg"
+                    className={`relative z-10 ${fadeWhenOpen}`}
+                >
                     Styled looks, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
                 </SectionIntro>
 
