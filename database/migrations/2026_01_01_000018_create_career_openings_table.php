@@ -24,6 +24,8 @@ return new class extends Migration
             $table->json('benefits')->nullable();
             $table->boolean('is_open')->default(true);
             $table->timestamps();
+
+            $table->index(['is_open', 'department']);
         });
     }
 

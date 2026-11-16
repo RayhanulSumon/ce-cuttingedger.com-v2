@@ -37,6 +37,9 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['status', 'published_at']);
+            $table->index(['status', 'is_featured', 'published_at']);
         });
     }
 

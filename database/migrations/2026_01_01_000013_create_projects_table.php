@@ -39,6 +39,9 @@ return new class extends Migration
             $table->string('og_image')->nullable();
             $table->string('live_url')->nullable();
             $table->timestamps();
+
+            $table->index(['featured', 'sort_order']);
+            $table->index(['is_concept', 'sort_order']);
         });
     }
 

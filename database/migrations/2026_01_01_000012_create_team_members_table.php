@@ -24,6 +24,8 @@ return new class extends Migration
             $table->boolean('featured')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
+
+            $table->index(['featured', 'sort_order']);
         });
     }
 

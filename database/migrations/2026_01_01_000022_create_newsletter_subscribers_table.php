@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('ip_address')->nullable();
-            $table->string('status')->default('active');
+            $table->string('status')->default('active')->index();
             $table->timestamps();
         });
     }

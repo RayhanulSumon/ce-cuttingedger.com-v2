@@ -21,7 +21,7 @@ return new class extends Migration
             $table->json('features')->nullable();
             $table->boolean('is_popular')->default(false);
             $table->string('cta_text')->default('Initiate Sprint');
-            $table->integer('sort_order')->default(0);
+            $table->integer('sort_order')->default(0)->index();
             $table->timestamps();
         });
     }

@@ -38,6 +38,10 @@ return new class extends Migration
             $table->string('output_format')->nullable();
             $table->json('attachments')->nullable();
             $table->timestamps();
+
+            $table->index(['status', 'created_at']);
+            $table->index('inquiry_type');
+            $table->index('email');
         });
     }
 

@@ -250,14 +250,14 @@ class OrderController extends Controller
         }
 
         $modelSummary = $validated['model_source'] === 'our_model'
-            ? ($look ? "{$look->model_name} ({$look->name})" : ($validated['selected_look_name'] ?: 'Studio Model'))
+            ? ($look ? $look->model_name : ($validated['selected_look_name'] ?: 'Studio Model'))
             : 'Client Uploaded Model';
 
         $specifications = [
             'model_source' => $validated['model_source'],
             'try_on_look_id' => $look?->id,
             'selected_model_name' => $look?->model_name,
-            'selected_look_name' => $look?->name ?? ($validated['selected_look_name'] ?? null),
+            'selected_look_name' => $look?->model_name ?? ($validated['selected_look_name'] ?? null),
             'selected_model_image' => $look?->runway_image,
             'labeled_files' => $labeledFiles,
             'other_description' => $validated['instructions'] ?? null,

@@ -19,9 +19,11 @@ return new class extends Migration
             $table->boolean('is_regex')->default(false);
             $table->unsignedBigInteger('hit_count')->default(0);
             $table->timestamp('last_hit_at')->nullable();
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->string('notes')->nullable();
             $table->timestamps();
+
+            $table->index(['is_active', 'is_regex']);
         });
 
         Schema::create('not_found_logs', function (Blueprint $table) {
@@ -34,6 +36,8 @@ return new class extends Migration
             $table->foreignId('resolved_redirect_id')->nullable()->constrained('redirects')->nullOnDelete();
             $table->timestamp('last_seen_at')->nullable();
             $table->timestamps();
+
+            $table->index(['resolved_redirect_id', 'hit_count']);
         });
     }
 

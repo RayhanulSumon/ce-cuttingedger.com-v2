@@ -200,7 +200,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
 
             <CustomOrderCta
                 active={active}
-                href={tryOnQuoteUrl(look.name)}
+                href={tryOnQuoteUrl(look.modelName)}
                 question="Want this look on your own garments?"
                 buttonLabel="Request Try-On Quote"
                 className={`${fadeWhenOpen} max-lg:static`}

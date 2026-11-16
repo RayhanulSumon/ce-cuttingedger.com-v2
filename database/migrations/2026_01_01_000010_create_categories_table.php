@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('type')->default('work'); // work
+            $table->string('type')->default('work')->index(); // work
             $table->timestamps();
         });
     }

@@ -166,9 +166,8 @@ export default function TryOnQuote({
             looks.find(
                 (l) =>
                     l.slug?.toLowerCase() === needle ||
-                    l.name.toLowerCase() === needle ||
                     l.modelName.toLowerCase() === needle ||
-                    l.name.toLowerCase().includes(needle)
+                    l.modelName.toLowerCase().includes(needle)
             ) ??
             looks[0] ??
             null
@@ -178,7 +177,7 @@ export default function TryOnQuote({
     const [modelSource, setModelSource] = useState<'our_model' | 'custom_model'>('our_model');
     const [selectedLookId, setSelectedLookId] = useState<number | null>(matchedInitialLook?.id ?? null);
     const [selectedLookName, setSelectedLookName] = useState<string>(
-        matchedInitialLook?.name ?? looks[0]?.name ?? ''
+        matchedInitialLook?.modelName ?? looks[0]?.modelName ?? ''
     );
 
     const activeLook = useMemo(() => {
@@ -186,7 +185,7 @@ export default function TryOnQuote({
             const byId = looks.find((l) => l.id === selectedLookId);
             if (byId) return byId;
         }
-        return looks.find((l) => l.name === selectedLookName) ?? looks[0] ?? null;
+        return looks.find((l) => l.modelName === selectedLookName) ?? looks[0] ?? null;
     }, [selectedLookId, selectedLookName, looks]);
 
     // Custom Model file state (when modelSource === 'custom_model')
@@ -230,7 +229,7 @@ export default function TryOnQuote({
 
     const handleSelectLook = (look: Look) => {
         setSelectedLookId(look.id ?? null);
-        setSelectedLookName(look.name);
+        setSelectedLookName(look.modelName);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -242,7 +241,7 @@ export default function TryOnQuote({
             {
                 model_source: modelSource,
                 try_on_look_id: modelSource === 'our_model' ? (activeLook?.id ?? null) : null,
-                selected_look_name: modelSource === 'our_model' ? (activeLook?.name ?? '') : 'Client Uploaded Model',
+                selected_look_name: modelSource === 'our_model' ? (activeLook?.modelName ?? '') : 'Client Uploaded Model',
                 model_file: modelSource === 'custom_model' ? modelFile : null,
                 garment_top: garmentTop,
                 garment_bottom: garmentBottom,
@@ -387,11 +386,11 @@ export default function TryOnQuote({
                                             {looks.map((look) => {
                                                 const isSelected =
                                                     (activeLook?.id && activeLook.id === look.id) ||
-                                                    activeLook?.name === look.name;
+                                                    activeLook?.modelName === look.modelName;
 
                                                 return (
                                                     <button
-                                                        key={look.id ?? look.name}
+                                                        key={look.id ?? look.modelName}
                                                         type="button"
                                                         onClick={() => handleSelectLook(look)}
                                                         className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all ${
@@ -406,7 +405,7 @@ export default function TryOnQuote({
                                                         >
                                                             <img
                                                                 src={look.model}
-                                                                alt={`${look.modelName} — ${look.name}`}
+                                                                alt={look.modelName}
                                                                 className="h-full w-full object-contain object-bottom transition-transform duration-300 group-hover:scale-105"
                                                             />
                                                             {isSelected && (
@@ -418,9 +417,6 @@ export default function TryOnQuote({
                                                         <div className="p-2.5">
                                                             <p className="truncate text-xs font-bold text-ink">
                                                                 {look.modelName}
-                                                            </p>
-                                                            <p className="truncate text-[10px] text-subtle">
-                                                                {look.name}
                                                             </p>
                                                         </div>
                                                     </button>
@@ -640,7 +636,6 @@ export default function TryOnQuote({
                                             <p className="truncate text-sm font-bold text-ink">
                                                 {activeLook.modelName}
                                             </p>
-                                            <p className="truncate text-xs text-subtle">{activeLook.name}</p>
                                         </div>
                                     </div>
                                 ) : (

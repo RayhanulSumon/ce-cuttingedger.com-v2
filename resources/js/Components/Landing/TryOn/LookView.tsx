@@ -214,7 +214,7 @@ export function LookView({
                             <img
                                 ref={magnifier.imageRef}
                                 src={look.modelHiRes}
-                                alt={look.name}
+                                alt={look.modelName}
                                 draggable={false}
                                 decoding="async"
                                 className="pointer-events-none h-full w-full select-none object-contain object-bottom"
@@ -240,7 +240,7 @@ export function LookView({
                     <span className="text-[10px] uppercase tabular-nums tracking-[0.2em] text-[#66625c]">
                         Look {String(lookIndex + 1).padStart(2, '0')}
                     </span>
-                    <span className="text-lg font-normal leading-[1.1] text-[#151413] sm:text-xl">{look.name}</span>
+                    <span className="text-lg font-normal leading-[1.1] text-[#151413] sm:text-xl">{look.modelName}</span>
                 </p>
                 <button
                     type="button"

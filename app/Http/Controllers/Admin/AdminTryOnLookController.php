@@ -35,7 +35,6 @@ class AdminTryOnLookController extends Controller
     public function store(Request $request, ImageOptimizationService $optimizer): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'model_name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'model_image' => ['required', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
@@ -69,10 +68,9 @@ class AdminTryOnLookController extends Controller
             'top' => round((float) $pin['top'], 1),
         ], $validated['pins']);
 
-        $slug = Str::slug($validated['name'].'-'.$validated['model_name']).'-'.Str::lower(Str::random(4));
+        $slug = Str::slug($validated['model_name']).'-'.Str::lower(Str::random(4));
 
         TryOnLook::create([
-            'name' => $validated['name'],
             'slug' => $slug,
             'model_name' => $validated['model_name'],
             'description' => $validated['description'] ?? null,
@@ -85,7 +83,7 @@ class AdminTryOnLookController extends Controller
             'sort_order' => (int) ($validated['sort_order'] ?? 0),
         ]);
 
-        return redirect()->back()->with('success', "Virtual Try-On Look [{$validated['name']}] created and cached.");
+        return redirect()->back()->with('success', "Virtual Try-On Look [{$validated['model_name']}] created and cached.");
     }
 
     /**
@@ -94,7 +92,6 @@ class AdminTryOnLookController extends Controller
     public function update(Request $request, TryOnLook $tryOnLook, ImageOptimizationService $optimizer): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'model_name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'model_image' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
@@ -113,7 +110,6 @@ class AdminTryOnLookController extends Controller
         ]);
 
         $updates = [
-            'name' => $validated['name'],
             'model_name' => $validated['model_name'],
             'description' => $validated['description'] ?? null,
             'is_featured_on_home' => $request->boolean('is_featured_on_home', true),
@@ -149,7 +145,7 @@ class AdminTryOnLookController extends Controller
 
         $tryOnLook->update($updates);
 
-        return redirect()->back()->with('success', "Virtual Try-On Look [{$tryOnLook->name}] updated and cache refreshed.");
+        return redirect()->back()->with('success', "Virtual Try-On Look [{$tryOnLook->model_name}] updated and cache refreshed.");
     }
 
     /**
@@ -157,7 +153,7 @@ class AdminTryOnLookController extends Controller
      */
     public function destroy(TryOnLook $tryOnLook, ImageOptimizationService $optimizer): RedirectResponse
     {
-        $name = $tryOnLook->name;
+        $name = $tryOnLook->model_name;
         $pieceUrls = array_map(fn ($piece) => $piece['image'] ?? null, $tryOnLook->pieces ?? []);
         $optimizer->imageUploadService->deleteMany([
             $tryOnLook->runway_image,

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->tinyInteger('marquee_row')->default(1);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
+
+            $table->index(['marquee_row', 'sort_order']);
         });
     }
 

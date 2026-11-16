@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->text('quote');
             $table->integer('rating')->default(5);
-            $table->boolean('featured')->default(true);
+            $table->boolean('featured')->default(true)->index();
             $table->timestamps();
         });
     }

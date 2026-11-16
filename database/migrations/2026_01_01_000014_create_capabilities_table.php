@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('subtitle');
             $table->text('description');
             $table->string('icon', 50)->default('Layers');
+            $table->string('image')->nullable();
             $table->json('features')->nullable(); // ["Feature", ...]
             $table->json('deliverables')->nullable(); // ["Deliverable", ...]
             $table->json('process_steps')->nullable(); // [{"title": "", "description": ""}, ...]
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['parent_id', 'sort_order']);
+            $table->index(['is_active', 'parent_id', 'sort_order']);
         });
     }
 

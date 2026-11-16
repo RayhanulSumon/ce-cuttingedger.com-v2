@@ -37,7 +37,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
     const [isSaving, setIsSaving] = useState(false);
 
     // Form state
-    const [name, setName] = useState('');
     const [modelName, setModelName] = useState('');
     const [description, setDescription] = useState('');
     const [sortOrder, setSortOrder] = useState(1);
@@ -55,7 +54,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
     const openCreateLook = () => {
         setEditingLook(null);
-        setName('');
         setModelName('');
         setDescription('3 pieces · 1 shot');
         setSortOrder(looks.length + 1);
@@ -80,7 +78,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
     const openEditLook = (look: AdminTryOnLookItem) => {
         setEditingLook(look);
-        setName(look.name);
         setModelName(look.modelName);
         setDescription(look.description || '3 pieces · 1 shot');
         setSortOrder(look.sortOrder ?? 1);
@@ -155,7 +152,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         router.post(
             url,
             {
-                name,
                 model_name: modelName,
                 description,
                 sort_order: sortOrder,
@@ -177,7 +173,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
     const handleDeleteLook = (look: AdminTryOnLookItem) => {
         if (!look.id) return;
-        if (!window.confirm(`Delete Virtual Try-On Look "${look.name}" (${look.modelName})?`)) {
+        if (!window.confirm(`Delete Virtual Try-On Look "${look.modelName}"?`)) {
             return;
         }
         router.delete(`/admin/try-on-looks/${look.id}`, { preserveScroll: true });
@@ -205,14 +201,14 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {looks.map((look) => (
                         <div
-                            key={look.id ?? look.name}
+                            key={look.id ?? look.modelName}
                             className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#12141a] p-4"
                         >
                             <div className="flex gap-4">
                                 <div className="relative h-40 w-28 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#eef3f9]">
                                     <img
                                         src={look.model}
-                                        alt={`${look.modelName} — ${look.name}`}
+                                        alt={look.modelName}
                                         className="h-full w-full object-contain object-bottom"
                                     />
                                     {/* Mini pin indicators */}
@@ -239,7 +235,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         )}
                                     </div>
 
-                                    <h3 className="truncate text-base font-bold text-white">{look.name}</h3>
+                                    <h3 className="truncate text-base font-bold text-white">{look.modelName}</h3>
                                     <p className="font-mono text-xs text-white/50">{look.description}</p>
 
                                     {/* Pieces list */}
@@ -300,7 +296,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                     <DialogHeader>
                         <DialogTitle className="font-mono text-base font-bold">
                             {editingLook
-                                ? `Edit Virtual Try-On Look — ${editingLook.modelName} (${editingLook.name})`
+                                ? `Edit Virtual Try-On Look — ${editingLook.modelName}`
                                 : 'Add New Virtual Try-On Look'}
                         </DialogTitle>
                         <DialogDescription className="font-mono text-xs text-white/60">
@@ -393,33 +389,18 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
                         {/* Right 7 Columns: Look Info & Garment Pieces Repeater */}
                         <div className="space-y-4 lg:col-span-7">
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div>
-                                    <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
-                                        Model Name (Shown on Quote Selector) *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={modelName}
-                                        onChange={(e) => setModelName(e.target.value)}
-                                        placeholder="e.g. Elena"
-                                        className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white focus:border-accent focus:outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
-                                        Look Title *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder="e.g. Look 01 — Trench"
-                                        className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white focus:border-accent focus:outline-none"
-                                    />
-                                </div>
+                            <div>
+                                <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
+                                    Model Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={modelName}
+                                    onChange={(e) => setModelName(e.target.value)}
+                                    placeholder="e.g. Jonah K."
+                                    className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white focus:border-accent focus:outline-none"
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">

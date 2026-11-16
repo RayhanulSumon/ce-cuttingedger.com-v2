@@ -24,6 +24,9 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->string('external_calendar_event_id')->nullable();
             $table->timestamps();
+
+            $table->index(['status', 'scheduled_at']);
+            $table->index('email');
         });
     }
 

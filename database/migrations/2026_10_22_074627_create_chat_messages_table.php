@@ -22,6 +22,9 @@ return new class extends Migration
             $table->json('suggested_replies')->nullable();
             $table->boolean('is_read')->default(false);
             $table->timestamps();
+
+            $table->index(['chat_session_id', 'is_read']);
+            $table->index(['chat_session_id', 'created_at']);
         });
     }
 

@@ -33,10 +33,13 @@ return new class extends Migration
             $table->json('deliverables')->nullable();
             $table->json('featured_pieces')->nullable();
             $table->json('poses')->nullable();
-            $table->boolean('is_featured_on_home')->default(true)->index();
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('sort_order')->default(0)->index();
+            $table->boolean('is_featured_on_home')->default(true);
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
+
+            $table->index(['is_active', 'is_featured_on_home', 'sort_order']);
+            $table->index(['is_active', 'sort_order']);
         });
 
         Schema::create('digital_twin_attributes', function (Blueprint $table): void {
@@ -49,9 +52,11 @@ return new class extends Migration
             $table->string('custom_label')->nullable();
             $table->string('placeholder')->nullable();
             $table->boolean('is_required')->default(false);
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('sort_order')->default(0)->index();
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
+
+            $table->index(['is_active', 'sort_order']);
         });
     }
 

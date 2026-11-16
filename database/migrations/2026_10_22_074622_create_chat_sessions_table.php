@@ -33,6 +33,10 @@ return new class extends Migration
             $table->unsignedInteger('follow_up_count')->default(0);
             $table->json('metadata')->nullable();
             $table->timestamps();
+
+            $table->index(['status', 'last_active_at']);
+            $table->index(['needs_human', 'mode']);
+            $table->index('lead_email');
         });
     }
 
