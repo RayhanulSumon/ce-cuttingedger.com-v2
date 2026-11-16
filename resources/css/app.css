@@ -751,6 +751,7 @@ select option {
     height: 100vh;
     height: 100svh;
     overflow: hidden;
+    contain: layout style paint;
 }
 
 .cs-card {

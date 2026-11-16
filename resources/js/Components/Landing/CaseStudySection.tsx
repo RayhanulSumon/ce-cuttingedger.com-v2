@@ -28,6 +28,7 @@ const seg = (p: number, a: number, b: number): number => {
     return t * t * (3 - 2 * t);
 };
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
+const snapPx = (v: number): number => Math.round(v * 2) / 2;
 
 interface ParsedMetric {
     prefix: string;
@@ -47,6 +48,45 @@ function parseMetricValue(raw: string): ParsedMetric {
         suffix: match[3] ?? '',
         raw,
     };
+}
+
+interface CardCache {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    transform: string;
+    visible: boolean;
+}
+
+function applyCardStyle(el: HTMLElement, cache: CardCache, next: CardCache) {
+    if (cache.visible !== next.visible) {
+        cache.visible = next.visible;
+        el.style.visibility = next.visible ? 'visible' : 'hidden';
+    }
+    if (!next.visible) {
+        return;
+    }
+    if (cache.left !== next.left) {
+        cache.left = next.left;
+        el.style.left = `${next.left}px`;
+    }
+    if (cache.top !== next.top) {
+        cache.top = next.top;
+        el.style.top = `${next.top}px`;
+    }
+    if (cache.width !== next.width) {
+        cache.width = next.width;
+        el.style.width = `${next.width}px`;
+    }
+    if (cache.height !== next.height) {
+        cache.height = next.height;
+        el.style.height = `${next.height}px`;
+    }
+    if (cache.transform !== next.transform) {
+        cache.transform = next.transform;
+        el.style.transform = next.transform;
+    }
 }
 
 export const CaseStudySection = memo(function CaseStudySection({ active, projects }: CaseStudyProps) {
@@ -125,37 +165,64 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             });
         };
 
+        // Cached layout metrics — updated only on resize so scroll frames never force reflows.
+        let W = 0;
+        let H = 0;
+        let vh = window.innerHeight;
+        let maxScroll = 1;
+        let csDocTop = 0;
+        let csHeight = 1;
+
+        const measure = () => {
+            W = stage.clientWidth;
+            H = stage.clientHeight;
+            vh = window.innerHeight;
+            const scroller = scrollerRef.current;
+            if (scroller) {
+                maxScroll = Math.max(1, scroller.scrollHeight - scroller.clientHeight);
+            } else {
+                const r = cs.getBoundingClientRect();
+                csDocTop = r.top + window.scrollY;
+                csHeight = r.height;
+                maxScroll = Math.max(1, csHeight - vh);
+            }
+        };
+
         let ent = 0;
+        let entryStart = 0;
         let entered = false;
         let cur = -1;
-        let rafScheduled = false;
+        let lastTime = 0;
+        let lastDot = -1;
+        let lastHintVisible: boolean | null = null;
+        let rafId = 0;
         let disposed = false;
 
-        const startEntry = () => {
+        const caches: CardCache[] = [
+            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
+            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
+            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
+        ];
+
+        const startEntry = (now: number) => {
             entered = true;
+            entryStart = now;
+            ent = 0;
             cards[0].classList.add('in');
-            const t0 = performance.now();
-            const frame = (now: number) => {
-                if (disposed || !entered) {
-                    return;
-                }
-                const k = Math.min(1, (now - t0) / 1100);
-                ent = 1 - Math.pow(1 - k, 4);
-                layout();
-                if (k < 1) {
-                    requestAnimationFrame(frame);
-                }
-            };
-            requestAnimationFrame(frame);
         };
 
         const syncUi = (p: number, e1: number, e3: number) => {
             const stepIndex = p < 0.17 ? 0 : p < 0.5 ? 1 : 2;
-            dotRefs.current.forEach((btn, i) => {
-                btn?.classList.toggle('on', i === stepIndex);
-            });
-            if (hintRef.current) {
-                hintRef.current.style.opacity = p < 0.03 && ent > 0.8 ? '1' : '0';
+            if (stepIndex !== lastDot) {
+                lastDot = stepIndex;
+                dotRefs.current.forEach((btn, i) => {
+                    btn?.classList.toggle('on', i === stepIndex);
+                });
+            }
+            const hintVisible = p < 0.03 && ent > 0.8;
+            if (hintRef.current && hintVisible !== lastHintVisible) {
+                lastHintVisible = hintVisible;
+                hintRef.current.style.opacity = hintVisible ? '1' : '0';
             }
             if (ent > 0.8) {
                 countUp(0);
@@ -168,47 +235,55 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             }
         };
 
-        const layout = () => {
+        const frame = (now: number) => {
+            rafId = 0;
             if (disposed) {
                 return;
             }
+            const dt = lastTime ? Math.min(0.05, (now - lastTime) / 1000) : 0.016;
+            lastTime = now;
+
             const scroller = scrollerRef.current;
             let tgt = 0;
             if (scroller) {
-                const max = scroller.scrollHeight - scroller.clientHeight;
-                tgt = max > 0 ? clamp(scroller.scrollTop / max) : 0;
+                tgt = clamp(scroller.scrollTop / maxScroll);
                 if (active && !entered) {
-                    startEntry();
+                    startEntry(now);
                 } else if (!active && entered) {
                     entered = false;
                     ent = 0;
                     cards[0].classList.remove('in');
                 }
             } else {
-                const r = cs.getBoundingClientRect();
-                const max = r.height - window.innerHeight;
-                tgt = max > 0 ? clamp(-r.top / max) : 0;
-                const vh = window.innerHeight;
-                if (!entered && r.top < vh * 0.9) {
-                    startEntry();
-                } else if (entered && r.top > vh * 0.98) {
+                const relTop = csDocTop - window.scrollY;
+                tgt = clamp(-relTop / maxScroll);
+                if (!entered && relTop < vh * 0.9) {
+                    startEntry(now);
+                } else if (entered && relTop > vh * 0.98) {
                     entered = false;
                     ent = 0;
                     cards[0].classList.remove('in');
                 }
             }
 
+            let animatingEntry = false;
+            if (entered && ent < 1) {
+                const k = Math.min(1, (now - entryStart) / 1100);
+                ent = 1 - Math.pow(1 - k, 4);
+                animatingEntry = k < 1;
+            }
+
             if (cur < 0) {
                 cur = tgt;
-            }
-            cur += (tgt - cur) * 0.1;
-            if (Math.abs(tgt - cur) < 0.0004) {
-                cur = tgt;
+            } else {
+                const alpha = 1 - Math.exp(-14 * dt);
+                cur += (tgt - cur) * alpha;
+                if (Math.abs(tgt - cur) < 0.0008) {
+                    cur = tgt;
+                }
             }
             const p = cur;
 
-            const W = stage.clientWidth;
-            const H = stage.clientHeight;
             const g = 16;
             const m = Math.max(12, W * 0.03);
             const mob = W < 820;
@@ -227,48 +302,56 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
             const [a, b, c] = cards;
 
-            // Card 1: full screen -> half
-            a.style.left = `${m}px`;
-            a.style.top = `${topM}px`;
-            a.style.width = `${mob ? iw : lerp(iw, hw, e1)}px`;
-            a.style.height = `${mob ? lerp(ih, hh, e1) : ih}px`;
-            a.style.transform = `scale(${0.95 + 0.05 * ent})`;
+            applyCardStyle(a, caches[0], {
+                left: snapPx(m),
+                top: snapPx(topM),
+                width: snapPx(mob ? iw : lerp(iw, hw, e1)),
+                height: snapPx(mob ? lerp(ih, hh, e1) : ih),
+                transform: ent < 1 ? `scale(${(0.95 + 0.05 * ent).toFixed(4)})` : 'none',
+                visible: f < 0.999 && e4 < 0.999,
+            });
 
-            // Card 2: rises into the other half, expands full screen, then shrinks back
-            if (mob) {
-                b.style.left = `${m}px`;
-                b.style.width = `${iw}px`;
-                b.style.top = `${lerp(topM + hh + g, topM, f)}px`;
-                b.style.height = `${lerp(hh, ih, f)}px`;
-            } else {
-                b.style.top = `${topM}px`;
-                b.style.height = `${ih}px`;
-                b.style.left = `${lerp(m + hw + g, m, f)}px`;
-                b.style.width = `${lerp(hw, iw, f)}px`;
-            }
-            b.style.transform = `translate(${(1 - e1) * (mob ? W : 0)}px, ${(1 - e1) * (mob ? 0 : H)}px)`;
+            applyCardStyle(b, caches[1], {
+                left: snapPx(mob ? m : lerp(m + hw + g, m, f)),
+                top: snapPx(mob ? lerp(topM + hh + g, topM, f) : topM),
+                width: snapPx(mob ? iw : lerp(hw, iw, f)),
+                height: snapPx(mob ? lerp(hh, ih, f) : ih),
+                transform:
+                    e1 < 1
+                        ? `translate3d(${snapPx((1 - e1) * (mob ? W : 0))}px, ${snapPx((1 - e1) * (mob ? 0 : H))}px, 0)`
+                        : 'none',
+                visible: e1 > 0.001 && e4 < 0.999,
+            });
 
-            // Card 3: rises from the bottom into the left slot, then expands full screen
-            c.style.left = `${m}px`;
-            c.style.top = `${topM}px`;
-            c.style.width = `${mob ? iw : lerp(hw, iw, e4)}px`;
-            c.style.height = `${mob ? lerp(hh, ih, e4) : ih}px`;
-            c.style.transform = `translate(${mob ? -(1 - e3) * W : 0}px, ${mob ? 0 : (1 - e3) * (H + 40)}px)`;
+            applyCardStyle(c, caches[2], {
+                left: snapPx(m),
+                top: snapPx(topM),
+                width: snapPx(mob ? iw : lerp(hw, iw, e4)),
+                height: snapPx(mob ? lerp(hh, ih, e4) : ih),
+                transform:
+                    e3 < 1
+                        ? `translate3d(${snapPx(mob ? -(1 - e3) * W : 0)}px, ${snapPx(mob ? 0 : (1 - e3) * (H + 40))}px, 0)`
+                        : 'none',
+                visible: e3 > 0.001,
+            });
 
             syncUi(p, e1, e3);
-            if (cur !== tgt) {
+            if (cur !== tgt || animatingEntry) {
                 req();
+            } else {
+                lastTime = 0;
             }
         };
 
         const req = () => {
-            if (!rafScheduled && !disposed) {
-                rafScheduled = true;
-                requestAnimationFrame(() => {
-                    rafScheduled = false;
-                    layout();
-                });
+            if (!rafId && !disposed) {
+                rafId = requestAnimationFrame(frame);
             }
+        };
+
+        const onResize = () => {
+            measure();
+            req();
         };
 
         const cleanups: (() => void)[] = [];
@@ -278,28 +361,48 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             if (!inn || !glow) {
                 return;
             }
-            const onMove = (e: PointerEvent) => {
-                if (e.pointerType !== 'mouse') {
+            let hoverRaf = 0;
+            let lastEvent: PointerEvent | null = null;
+            const applyHover = () => {
+                hoverRaf = 0;
+                if (!lastEvent || disposed) {
                     return;
                 }
                 const r = card.getBoundingClientRect();
-                const x = (e.clientX - r.left) / r.width;
-                const y = (e.clientY - r.top) / r.height;
+                const x = (lastEvent.clientX - r.left) / r.width;
+                const y = (lastEvent.clientY - r.top) / r.height;
                 card.classList.add('hov');
-                glow.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, rgba(127, 140, 255, 0.28), transparent 60%)`;
+                glow.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, rgba(245, 118, 26, 0.22), transparent 60%)`;
                 inn.style.transform = `perspective(1000px) rotateX(${(0.5 - y) * 6}deg) rotateY(${(x - 0.5) * 8}deg)`;
                 card.style.setProperty('--tx', `${(0.5 - x) * 18}px`);
                 card.style.setProperty('--ty', `${(0.5 - y) * 18}px`);
             };
+            const onMove = (e: PointerEvent) => {
+                if (e.pointerType !== 'mouse') {
+                    return;
+                }
+                lastEvent = e;
+                if (!hoverRaf) {
+                    hoverRaf = requestAnimationFrame(applyHover);
+                }
+            };
             const onLeave = () => {
+                lastEvent = null;
+                if (hoverRaf) {
+                    cancelAnimationFrame(hoverRaf);
+                    hoverRaf = 0;
+                }
                 card.classList.remove('hov');
                 inn.style.transform = '';
                 card.style.setProperty('--tx', '0px');
                 card.style.setProperty('--ty', '0px');
             };
-            card.addEventListener('pointermove', onMove);
+            card.addEventListener('pointermove', onMove, { passive: true });
             card.addEventListener('pointerleave', onLeave);
             cleanups.push(() => {
+                if (hoverRaf) {
+                    cancelAnimationFrame(hoverRaf);
+                }
                 card.removeEventListener('pointermove', onMove);
                 card.removeEventListener('pointerleave', onLeave);
             });
@@ -311,18 +414,26 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         } else {
             window.addEventListener('scroll', req, { passive: true });
         }
-        window.addEventListener('resize', req);
-        layout();
+        window.addEventListener('resize', onResize);
+
+        const resizeObserver = new ResizeObserver(onResize);
+        resizeObserver.observe(stage);
+        measure();
+        req();
 
         return () => {
             disposed = true;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
             cs.classList.remove('anim');
             if (scroller) {
                 scroller.removeEventListener('scroll', req);
             } else {
                 window.removeEventListener('scroll', req);
             }
-            window.removeEventListener('resize', req);
+            window.removeEventListener('resize', onResize);
+            resizeObserver.disconnect();
             cleanups.forEach((fn) => fn());
         };
     }, [active, isMobile]);
