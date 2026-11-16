@@ -425,12 +425,14 @@ select option {
     to { transform: translate3d(0, 0, 0); }
 }
 
-.landing-col-down {
-    animation: landing-col-down var(--landing-col-speed, 36s) linear infinite;
-}
+@layer components {
+    .landing-col-down {
+        animation: landing-col-down var(--landing-col-speed, 36s) linear infinite;
+    }
 
-.landing-col-up {
-    animation: landing-col-up var(--landing-col-speed, 36s) linear infinite;
+    .landing-col-up {
+        animation: landing-col-up var(--landing-col-speed, 36s) linear infinite;
+    }
 }
 
 @keyframes rw-ring {
