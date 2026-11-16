@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
@@ -15,7 +15,19 @@ import {
     UserCheck,
     UserPlus,
 } from 'lucide-react';
+import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { SeoHead } from '@/Components/Common/SeoHead';
+import {
+    clearOrderDraft,
+    clearOrderDraftFiles,
+    consumeAuthReturn,
+    currentRedirectUrl,
+    markAuthReturn,
+    readOrderDraft,
+    readOrderDraftFiles,
+    writeOrderDraft,
+    writeOrderDraftFiles,
+} from '@/lib/orderDraft';
 import { LOOKS, Look } from '@/Components/Landing/TryOn/looks';
 import { PAD_X } from '@/Components/Landing/shared';
 import { LandingLayout } from '@/Layouts/LandingLayout';
@@ -150,6 +162,7 @@ export default function TryOnQuote({
                 email: string;
                 company?: string | null;
                 phone?: string | null;
+                email_verified_at?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
@@ -174,10 +187,34 @@ export default function TryOnQuote({
         );
     }, [initialLook, looks]);
 
-    const [modelSource, setModelSource] = useState<'our_model' | 'custom_model'>('our_model');
-    const [selectedLookId, setSelectedLookId] = useState<number | null>(matchedInitialLook?.id ?? null);
+    const DRAFT_KEY = 'ce_draft_try_on_quote';
+    const FILES_DRAFT_KEY = 'ce_draft_try_on_quote_files';
+    const filesHydratedRef = useRef(false);
+    const initialDraft = useMemo(
+        () =>
+            readOrderDraft<{
+                modelSource: 'our_model' | 'custom_model';
+                selectedLookId: number | null;
+                selectedLookName: string;
+                instructions: string;
+                cloudLink: string;
+                monthlyVolume: string;
+                name: string;
+                email: string;
+                company: string;
+                phone: string;
+            }>(DRAFT_KEY),
+        []
+    );
+
+    const [modelSource, setModelSource] = useState<'our_model' | 'custom_model'>(
+        initialDraft?.modelSource ?? 'our_model'
+    );
+    const [selectedLookId, setSelectedLookId] = useState<number | null>(
+        initialDraft?.selectedLookId !== undefined ? initialDraft.selectedLookId : (matchedInitialLook?.id ?? null)
+    );
     const [selectedLookName, setSelectedLookName] = useState<string>(
-        matchedInitialLook?.modelName ?? looks[0]?.modelName ?? ''
+        initialDraft?.selectedLookName ?? matchedInitialLook?.modelName ?? looks[0]?.modelName ?? ''
     );
 
     const activeLook = useMemo(() => {
@@ -192,6 +229,15 @@ export default function TryOnQuote({
     const [modelFile, setModelFile] = useState<File | null>(null);
     const [modelPreview, setModelPreview] = useState<string | null>(null);
     const customModelInputRef = useRef<HTMLInputElement | null>(null);
+    const submitCardRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (auth?.user?.email_verified_at && consumeAuthReturn()) {
+            requestAnimationFrame(() => {
+                submitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }, [auth?.user?.email_verified_at]);
 
     // 3 Dedicated Garment Upload Slots: 1. Top, 2. Bottom / Below, 3. Shoes
     const [garmentTop, setGarmentTop] = useState<File | null>(null);
@@ -203,15 +249,76 @@ export default function TryOnQuote({
     const [garmentShoes, setGarmentShoes] = useState<File | null>(null);
     const [shoesPreview, setShoesPreview] = useState<string | null>(null);
 
-    // Description for Other + Contact Fields (pre-filled from authenticated client account)
-    const [instructions, setInstructions] = useState('');
-    const [cloudLink, setCloudLink] = useState('');
-    const [monthlyVolume, setMonthlyVolume] = useState(VOLUME_OPTIONS[0]);
-    const [name, setName] = useState(auth?.user?.name || '');
-    const [email, setEmail] = useState(auth?.user?.email || '');
-    const [company, setCompany] = useState(auth?.user?.company || '');
-    const [phone, setPhone] = useState(auth?.user?.phone || '');
+    // Description for Other + Contact Fields (pre-filled from draft or authenticated client account)
+    const [instructions, setInstructions] = useState(initialDraft?.instructions ?? '');
+    const [cloudLink, setCloudLink] = useState(initialDraft?.cloudLink ?? '');
+    const [monthlyVolume, setMonthlyVolume] = useState(initialDraft?.monthlyVolume ?? VOLUME_OPTIONS[0]);
+    const [name, setName] = useState(initialDraft?.name || auth?.user?.name || '');
+    const [email, setEmail] = useState(initialDraft?.email || auth?.user?.email || '');
+    const [company, setCompany] = useState(initialDraft?.company || auth?.user?.company || '');
+    const [phone, setPhone] = useState(initialDraft?.phone || auth?.user?.phone || '');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const saveDraft = useCallback(() => {
+        writeOrderDraft(DRAFT_KEY, {
+            modelSource,
+            selectedLookId,
+            selectedLookName,
+            instructions,
+            cloudLink,
+            monthlyVolume,
+            name,
+            email,
+            company,
+            phone,
+        });
+    }, [modelSource, selectedLookId, selectedLookName, instructions, cloudLink, monthlyVolume, name, email, company, phone]);
+
+    useEffect(() => {
+        saveDraft();
+    }, [saveDraft]);
+
+    useEffect(() => {
+        let active = true;
+        readOrderDraftFiles<{
+            modelFile?: File | null;
+            garmentTop?: File | null;
+            garmentBottom?: File | null;
+            garmentShoes?: File | null;
+        }>(FILES_DRAFT_KEY).then((saved) => {
+            if (!active) return;
+            if (saved?.modelFile instanceof File) {
+                setModelFile(saved.modelFile);
+                setModelPreview(URL.createObjectURL(saved.modelFile));
+            }
+            if (saved?.garmentTop instanceof File) {
+                setGarmentTop(saved.garmentTop);
+                setTopPreview(URL.createObjectURL(saved.garmentTop));
+            }
+            if (saved?.garmentBottom instanceof File) {
+                setGarmentBottom(saved.garmentBottom);
+                setBottomPreview(URL.createObjectURL(saved.garmentBottom));
+            }
+            if (saved?.garmentShoes instanceof File) {
+                setGarmentShoes(saved.garmentShoes);
+                setShoesPreview(URL.createObjectURL(saved.garmentShoes));
+            }
+            filesHydratedRef.current = true;
+        });
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!filesHydratedRef.current) return;
+        writeOrderDraftFiles(FILES_DRAFT_KEY, {
+            modelFile,
+            garmentTop,
+            garmentBottom,
+            garmentShoes,
+        });
+    }, [modelFile, garmentTop, garmentBottom, garmentShoes]);
 
     const handleFileWithPreview = (
         file: File | null,
@@ -234,6 +341,21 @@ export default function TryOnQuote({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!auth?.user) {
+            saveDraft();
+            markAuthReturn();
+            router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/virtual-try-on/quote'))}`);
+            return;
+        }
+
+        if (!auth.user.email_verified_at) {
+            saveDraft();
+            markAuthReturn();
+            router.visit('/verify-email');
+            return;
+        }
+
         setIsSubmitting(true);
 
         router.post(
@@ -258,6 +380,24 @@ export default function TryOnQuote({
             {
                 forceFormData: true,
                 preserveScroll: true,
+                onSuccess: () => {
+                    setModelFile(null);
+                    setModelPreview(null);
+                    setGarmentTop(null);
+                    setTopPreview(null);
+                    setGarmentBottom(null);
+                    setBottomPreview(null);
+                    setGarmentShoes(null);
+                    setShoesPreview(null);
+                    setInstructions('');
+                    setCloudLink('');
+                    setMonthlyVolume(VOLUME_OPTIONS[0]);
+                    if (customModelInputRef.current) {
+                        customModelInputRef.current.value = '';
+                    }
+                    clearOrderDraft(DRAFT_KEY);
+                    clearOrderDraftFiles(FILES_DRAFT_KEY);
+                },
                 onFinish: () => setIsSubmitting(false),
             }
         );
@@ -603,7 +743,10 @@ export default function TryOnQuote({
 
                         {/* Right 4 Columns: Sticky Quote Summary & Contact Form */}
                         <div className="lg:col-span-4">
-                            <div className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-[#f8fafc] p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7">
+                            <div
+                                ref={submitCardRef}
+                                className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-[#f8fafc] p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7"
+                            >
                                 <div>
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                                         Virtual Try-On Summary
@@ -754,12 +897,18 @@ export default function TryOnQuote({
                                     </div>
                                 </div>
 
+                                <OrderAuthNotice user={auth?.user} fallbackPath="/virtual-try-on/quote" onBeforeNavigate={saveDraft} />
+
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
                                     className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? 'Submitting Request...' : 'Request Virtual Try-On Quote'}
+                                    {isSubmitting
+                                        ? 'Submitting Request...'
+                                        : !auth?.user
+                                          ? 'Sign in & Request Quote'
+                                          : 'Request Virtual Try-On Quote'}
                                 </button>
                             </div>
                         </div>

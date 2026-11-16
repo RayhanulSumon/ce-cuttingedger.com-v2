@@ -216,23 +216,23 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 
-// Digital Twins Public Catalogue & Legacy Redirect
+// Digital Twins Public Catalogue, Configurator & Virtual Try-On Quote Views
 Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
+Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
+Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
 
-// Protected Client Portal & Order / Quote Routes (Requires Verified Account)
+// Protected Client Portal & Order / Quote Submission Routes (Requires Verified Account)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
     Route::get('/dashboard', fn () => redirect()->route('client.portal'))->name('dashboard');
     Route::post('/portal/profile', [ClientPortalController::class, 'updateProfile'])->name('client.portal.profile');
     Route::post('/portal/password', [ClientPortalController::class, 'updatePassword'])->name('client.portal.password');
 
-    Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
     Route::post('/digital-twins/order', [OrderController::class, 'storeDigitalTwinOrder'])
         ->middleware('throttle:public-contact')
         ->name('digital-twins.order.store');
 
-    Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
     Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
         ->middleware('throttle:public-contact')
         ->name('try-on.quote.store');

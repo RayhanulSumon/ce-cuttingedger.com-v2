@@ -95,12 +95,15 @@ class DigitalTwinsAndTryOnTest extends TestCase
             ->assertJsonCount(6, 'data');
     }
 
-    public function test_guests_must_login_and_verify_email_before_ordering(): void
+    public function test_guests_can_view_order_pages_but_must_login_and_verify_email_before_submitting(): void
     {
         Notification::fake();
 
-        $this->get('/digital-twins/order')->assertRedirect(route('login'));
-        $this->get('/virtual-try-on/quote')->assertRedirect(route('login'));
+        $this->get('/digital-twins/order')->assertOk();
+        $this->get('/virtual-try-on/quote')->assertOk();
+
+        $this->post('/digital-twins/order', [])->assertRedirect(route('login'));
+        $this->post('/virtual-try-on/quote', [])->assertRedirect(route('login'));
 
         $this->post('/register', [
             'name' => 'Elena Rossi',
@@ -115,7 +118,8 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $this->assertNull($newUser->email_verified_at);
         Notification::assertSentTo($newUser, VerifyEmail::class);
 
-        $this->actingAs($newUser)->get('/digital-twins/order')->assertRedirect(route('verification.notice'));
+        $this->actingAs($newUser)->get('/digital-twins/order')->assertOk();
+        $this->actingAs($newUser)->post('/digital-twins/order', [])->assertRedirect(route('verification.notice'));
 
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',

@@ -71,14 +71,7 @@ class PageControllerTest extends TestCase
 
     public function test_renders_digital_twin_order_page_prefilled_from_query_string(): void
     {
-        $this->get('/digital-twins/order?mode=custom&ref=Look%2016')
-            ->assertRedirect(route('login'));
-
-        $client = User::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($client)->get('/digital-twins/order?mode=custom&ref=Look%2016');
+        $response = $this->get('/digital-twins/order?mode=custom&ref=Look%2016');
 
         $response->assertStatus(200);
         $response->assertInertia(

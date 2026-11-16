@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
@@ -13,7 +13,19 @@ import {
     UserCheck,
     Wand2,
 } from 'lucide-react';
+import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { SeoHead } from '@/Components/Common/SeoHead';
+import {
+    clearOrderDraft,
+    clearOrderDraftFiles,
+    consumeAuthReturn,
+    currentRedirectUrl,
+    markAuthReturn,
+    readOrderDraft,
+    readOrderDraftFiles,
+    writeOrderDraft,
+    writeOrderDraftFiles,
+} from '@/lib/orderDraft';
 import { TwinSpriteCrop } from '@/Components/Landing/DigitalTwins/TwinSpriteCrop';
 import {
     DIGITAL_TWINS,
@@ -129,6 +141,7 @@ export default function DigitalTwinOrder({
                 email: string;
                 company?: string | null;
                 phone?: string | null;
+                email_verified_at?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
@@ -155,9 +168,34 @@ export default function DigitalTwinOrder({
         );
     }, [initialTwinSlug, initialReference, initialMode, twins]);
 
-    const [mode, setMode] = useState<'custom' | 'preset' | 'lifetime'>(initialMode);
-    const [selectedTwinId, setSelectedTwinId] = useState<number | null>(initialTwin?.id ?? null);
-    const [selectedTwinIndex, setSelectedTwinIndex] = useState<number | null>(initialTwin ? initialTwin.index : null);
+    const DRAFT_KEY = 'ce_draft_digital_twin_order';
+    const FILES_DRAFT_KEY = 'ce_draft_digital_twin_order_files';
+    const filesHydratedRef = useRef(false);
+    const initialDraft = useMemo(
+        () =>
+            readOrderDraft<{
+                mode: 'custom' | 'preset' | 'lifetime';
+                selectedTwinId: number | null;
+                selectedTwinIndex: number | null;
+                attrValues: Record<string, any>;
+                selectedPoses: string[];
+                name: string;
+                email: string;
+                company: string;
+                phone: string;
+                cloudLink: string;
+                instructions: string;
+            }>(DRAFT_KEY),
+        []
+    );
+
+    const [mode, setMode] = useState<'custom' | 'preset' | 'lifetime'>(initialDraft?.mode ?? initialMode);
+    const [selectedTwinId, setSelectedTwinId] = useState<number | null>(
+        initialDraft?.selectedTwinId !== undefined ? initialDraft.selectedTwinId : (initialTwin?.id ?? null)
+    );
+    const [selectedTwinIndex, setSelectedTwinIndex] = useState<number | null>(
+        initialDraft?.selectedTwinIndex !== undefined ? initialDraft.selectedTwinIndex : (initialTwin ? initialTwin.index : null)
+    );
 
     const activeTwin = useMemo(() => {
         if (selectedTwinId !== null) {
@@ -171,20 +209,70 @@ export default function DigitalTwinOrder({
     }, [selectedTwinId, selectedTwinIndex, twins]);
 
     // Dynamic attribute states keyed by attribute.slug
-    const [attrValues, setAttrValues] = useState<Record<string, any>>({});
-    const [selectedPoses, setSelectedPoses] = useState<string[]>(DEFAULT_POSES);
+    const [attrValues, setAttrValues] = useState<Record<string, any>>(initialDraft?.attrValues ?? {});
+    const [selectedPoses, setSelectedPoses] = useState<string[]>(
+        initialDraft?.selectedPoses && initialDraft.selectedPoses.length > 0 ? initialDraft.selectedPoses : DEFAULT_POSES
+    );
 
-    // Client & submission fields (pre-filled from authenticated client account)
-    const [name, setName] = useState(auth?.user?.name || '');
-    const [email, setEmail] = useState(auth?.user?.email || '');
-    const [company, setCompany] = useState(auth?.user?.company || '');
-    const [phone, setPhone] = useState(auth?.user?.phone || '');
-    const [cloudLink, setCloudLink] = useState('');
-    const [instructions, setInstructions] = useState('');
+    // Client & submission fields (pre-filled from draft or authenticated client account)
+    const [name, setName] = useState(initialDraft?.name || auth?.user?.name || '');
+    const [email, setEmail] = useState(initialDraft?.email || auth?.user?.email || '');
+    const [company, setCompany] = useState(initialDraft?.company || auth?.user?.company || '');
+    const [phone, setPhone] = useState(initialDraft?.phone || auth?.user?.phone || '');
+    const [cloudLink, setCloudLink] = useState(initialDraft?.cloudLink ?? '');
+    const [instructions, setInstructions] = useState(initialDraft?.instructions ?? '');
     const [attachments, setAttachments] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const saveDraft = useCallback(() => {
+        writeOrderDraft(DRAFT_KEY, {
+            mode,
+            selectedTwinId,
+            selectedTwinIndex,
+            attrValues,
+            selectedPoses,
+            name,
+            email,
+            company,
+            phone,
+            cloudLink,
+            instructions,
+        });
+    }, [mode, selectedTwinId, selectedTwinIndex, attrValues, selectedPoses, name, email, company, phone, cloudLink, instructions]);
+
+    useEffect(() => {
+        saveDraft();
+    }, [saveDraft]);
+
+    useEffect(() => {
+        let active = true;
+        readOrderDraftFiles<{ attachments?: File[] }>(FILES_DRAFT_KEY).then((saved) => {
+            if (!active) return;
+            if (Array.isArray(saved?.attachments) && saved.attachments.length > 0) {
+                setAttachments(saved.attachments.filter((f): f is File => f instanceof File));
+            }
+            filesHydratedRef.current = true;
+        });
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!filesHydratedRef.current) return;
+        writeOrderDraftFiles(FILES_DRAFT_KEY, { attachments });
+    }, [attachments]);
+
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const submitCardRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (auth?.user?.email_verified_at && consumeAuthReturn()) {
+            requestAnimationFrame(() => {
+                submitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }, [auth?.user?.email_verified_at]);
 
     const handleSelectTwin = (twin: DigitalTwinModel | null) => {
         if (!twin) {
@@ -266,6 +354,21 @@ export default function DigitalTwinOrder({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!auth?.user) {
+            saveDraft();
+            markAuthReturn();
+            router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/digital-twins/order'))}`);
+            return;
+        }
+
+        if (!auth.user.email_verified_at) {
+            saveDraft();
+            markAuthReturn();
+            router.visit('/verify-email');
+            return;
+        }
+
         setIsSubmitting(true);
 
         // Normalize attributes payload for clean storage in specifications
@@ -310,6 +413,18 @@ export default function DigitalTwinOrder({
             {
                 forceFormData: true,
                 preserveScroll: true,
+                onSuccess: () => {
+                    setAttrValues({});
+                    setSelectedPoses(DEFAULT_POSES);
+                    setCloudLink('');
+                    setInstructions('');
+                    setAttachments([]);
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+                    clearOrderDraft(DRAFT_KEY);
+                    clearOrderDraftFiles(FILES_DRAFT_KEY);
+                },
                 onFinish: () => setIsSubmitting(false),
             }
         );
@@ -828,7 +943,10 @@ export default function DigitalTwinOrder({
 
                         {/* Right Column: Sticky Order Summary & Client Details */}
                         <div className="lg:col-span-4">
-                            <div className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-[#f8fafc] p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7">
+                            <div
+                                ref={submitCardRef}
+                                className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-[#f8fafc] p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7"
+                            >
                                 <div>
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                                         Order Summary
@@ -958,6 +1076,8 @@ export default function DigitalTwinOrder({
                                     </div>
                                 </div>
 
+                                <OrderAuthNotice user={auth?.user} fallbackPath="/digital-twins/order" onBeforeNavigate={saveDraft} />
+
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
@@ -965,11 +1085,13 @@ export default function DigitalTwinOrder({
                                 >
                                     {isSubmitting
                                         ? 'Submitting Order...'
-                                        : mode === 'custom'
-                                          ? 'Request Custom Twin Quote'
-                                          : mode === 'preset'
-                                            ? `Order Pose Preset (${activeTwin?.presetPrice ?? '$149'})`
-                                            : `Order Lifetime Copyright (${activeTwin?.lifetimePrice ?? '$490'})`}
+                                        : !auth?.user
+                                          ? 'Sign in & Submit Order'
+                                          : mode === 'custom'
+                                            ? 'Request Custom Twin Quote'
+                                            : mode === 'preset'
+                                              ? `Order Pose Preset (${activeTwin?.presetPrice ?? '$149'})`
+                                              : `Order Lifetime Copyright (${activeTwin?.lifetimePrice ?? '$490'})`}
                                 </button>
                             </div>
                         </div>
