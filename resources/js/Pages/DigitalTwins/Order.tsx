@@ -14,6 +14,7 @@ import {
     UserPlus,
     Wand2,
 } from 'lucide-react';
+import { AiPreviewPanel } from '@/Components/Common/AiPreviewPanel';
 import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { OrderSuccessCard } from '@/Components/Common/OrderSuccessCard';
 import { SeoHead } from '@/Components/Common/SeoHead';
@@ -1165,9 +1166,38 @@ export default function DigitalTwinOrder({
                                         </span>
                                     </div>
                                 ) : (
-                                    <div className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-2.5 text-xs font-semibold text-primary">
-                                        Custom Digital Twin Order — Built to your specification
-                                    </div>
+                                    <AiPreviewPanel
+                                        feature="digital_twin"
+                                        buildFormData={() => {
+                                            const fd = new FormData();
+                                            if (activeTwin?.id) {
+                                                fd.set('digital_twin_id', String(activeTwin.id));
+                                            }
+                                            if (!showStudioModels && customModelFile) {
+                                                fd.set('model_file', customModelFile);
+                                            }
+                                            if (instructions) {
+                                                fd.set('instructions', instructions);
+                                            }
+                                            twinAttributes.forEach((attr) => {
+                                                const raw = attrValues[attr.slug];
+                                                if (!raw) return;
+                                                if (attr.inputType === 'unit_input' && raw.value) {
+                                                    fd.set(`attributes[${attr.name}]`, `${raw.value} ${raw.unit || ''}`.trim());
+                                                } else if (attr.inputType === 'select' && raw.selected) {
+                                                    const val = raw.selected === attr.customLabel && raw.customValue
+                                                        ? `${raw.selected}: ${raw.customValue}`
+                                                        : raw.selected;
+                                                    fd.set(`attributes[${attr.name}]`, val);
+                                                } else if (attr.inputType === 'multi_input' && typeof raw === 'object') {
+                                                    Object.entries(raw).forEach(([k, v]) => {
+                                                        if (v) fd.set(`attributes[${attr.name}][${k}]`, String(v));
+                                                    });
+                                                }
+                                            });
+                                            return fd;
+                                        }}
+                                    />
                                 )}
 
                                 {/* Contact Details */}

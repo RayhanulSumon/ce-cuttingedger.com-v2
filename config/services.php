@@ -49,4 +49,12 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
+    'vertex_ai' => [
+        'driver' => env('AI_PREVIEW_DRIVER', 'vertex'),
+        'credentials_path' => env('VERTEX_AI_CREDENTIALS_PATH', storage_path('google-vertex.key')),
+        'location' => env('VERTEX_AI_LOCATION', 'us-central1'),
+        'model' => env('VERTEX_AI_IMAGE_MODEL', 'gemini-2.5-flash-image'),
+        'preview_limit' => (int) env('AI_PREVIEW_FREE_LIMIT', 2),
+    ],
+
 ];

@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\Admin\AdminTrackingScriptController;
 use App\Http\Controllers\Admin\AdminTryOnLookController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\AiPreviewController;
 use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CapabilityController;
@@ -221,6 +222,12 @@ Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('dig
 Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
 Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
+
+// Real-Time AI Preview (Max 2 Free per Account / IP)
+Route::get('/ai-preview/quota', [AiPreviewController::class, 'quota'])->name('ai-preview.quota');
+Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
+    ->middleware('throttle:public-contact')
+    ->name('ai-preview.generate');
 
 // Protected Client Portal & Order / Quote Submission Routes (Requires Verified Account)
 Route::middleware(['auth', 'verified'])->group(function () {

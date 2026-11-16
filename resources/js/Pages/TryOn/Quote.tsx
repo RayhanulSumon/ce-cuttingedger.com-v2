@@ -15,6 +15,7 @@ import {
     UserCheck,
     UserPlus,
 } from 'lucide-react';
+import { AiPreviewPanel } from '@/Components/Common/AiPreviewPanel';
 import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { OrderSuccessCard } from '@/Components/Common/OrderSuccessCard';
 import { SeoHead } from '@/Components/Common/SeoHead';
@@ -819,6 +820,31 @@ export default function TryOnQuote({
                                         </div>
                                     ))}
                                 </div>
+
+                                <AiPreviewPanel
+                                    feature="virtual_try_on"
+                                    disabledReason={
+                                        !garmentTop && !garmentBottom && !garmentShoes
+                                            ? 'Upload at least 1 garment photo to preview.'
+                                            : modelSource === 'custom_model' && !modelFile
+                                              ? 'Upload your model photo in Step 01.'
+                                              : null
+                                    }
+                                    buildFormData={() => {
+                                        const fd = new FormData();
+                                        if (modelSource === 'our_model' && activeLook?.id) {
+                                            fd.set('try_on_look_id', String(activeLook.id));
+                                        }
+                                        if (modelSource === 'custom_model' && modelFile) {
+                                            fd.set('model_file', modelFile);
+                                        }
+                                        if (garmentTop) fd.set('garment_top', garmentTop);
+                                        if (garmentBottom) fd.set('garment_bottom', garmentBottom);
+                                        if (garmentShoes) fd.set('garment_shoes', garmentShoes);
+                                        if (instructions) fd.set('instructions', instructions);
+                                        return fd;
+                                    }}
+                                />
 
                                 {/* Monthly Volume */}
                                 <div>
