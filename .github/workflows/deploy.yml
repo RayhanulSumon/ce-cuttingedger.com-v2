@@ -1,0 +1,119 @@
+name: Deploy to Windows Live Server
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Production Deployment (HP-Server)
+    runs-on: [self-hosted, Windows]
+
+    steps:
+      - name: Deploy Application
+        shell: powershell
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: ${{ github.repository }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $projectDir = "C:\xampp\htdocs\laravel\cuttingedger"
+          $phpDir = "C:\php84"
+          $php = "$phpDir\php.exe"
+          $nssm = "C:\nssm\nssm-2.24\win64\nssm.exe"
+
+          if (-not (Test-Path $php)) {
+              throw "PHP 8.4 executable not found at $php"
+          }
+
+          # Prepend PHP 8.4 ONLY for this session (do not modify machine PATH used by XAMPP PHP 8.2)
+          $env:PATH = "$phpDir;$env:PATH"
+
+          Write-Host "[DEPLOY] Deploying to $projectDir using $(& $php -v | Select-Object -First 1)..." -ForegroundColor Cyan
+          git config --global --add safe.directory $projectDir
+          Set-Location $projectDir
+
+          # 1. Stop Octane/RoadRunner service so Windows unlocks rr.exe before git/composer updates
+          Write-Host "--> Stopping CuttingEdger-Dev service..." -ForegroundColor Yellow
+          & $nssm stop CuttingEdger-Dev
+          Start-Sleep -Seconds 2
+
+          # 2. Pull latest code
+          Write-Host "--> Pulling latest code from main..." -ForegroundColor Green
+          $env:GIT_TERMINAL_PROMPT = "0"
+          $repoUrl = "https://x-access-token:$($env:GITHUB_TOKEN)@github.com/$($env:REPO_NAME).git"
+          $prevCommit = git rev-parse HEAD
+          git fetch $repoUrl main
+          git reset --hard FETCH_HEAD
+          $newCommit = git rev-parse HEAD
+          $changed = git diff --name-only $prevCommit $newCommit
+
+          # 3. Composer dependencies
+          if ($changed -match "composer\.lock" -or -not (Test-Path "$projectDir\vendor")) {
+              Write-Host "--> Updating Composer dependencies..." -ForegroundColor Yellow
+              composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-reqs
+              & $php artisan package:discover --ansi
+          }
+
+          # 4. Database migrations
+          if ($changed -match "database/migrations") {
+              Write-Host "--> Running database migrations..." -ForegroundColor Yellow
+              & $php artisan migrate --force
+          }
+
+          # 5. Frontend assets (Vite)
+          Write-Host "--> Building frontend assets..." -ForegroundColor Yellow
+
+          # Always remove leftover Vite dev server flag
+          Remove-Item -Force "$projectDir\public\hot" -ErrorAction SilentlyContinue
+
+          # Ensure Node.js and npm are in PATH
+          if (Test-Path "C:\Program Files\nodejs") {
+              $env:PATH = "C:\Program Files\nodejs;$env:PATH"
+          }
+          $npm = if (Get-Command npm.cmd -ErrorAction SilentlyContinue) { "npm.cmd" } else { "npm" }
+
+          if (($changed -match "package.*json") -or (-not (Test-Path "$projectDir\node_modules"))) {
+              Write-Host "--> Updating npm packages..." -ForegroundColor Yellow
+              & $npm install --prefer-offline --no-audit --no-fund
+          }
+
+          Write-Host "--> Running $npm run build..." -ForegroundColor Yellow
+          & $npm run build
+          if ($LASTEXITCODE -ne 0) {
+              Write-Host "[WARN] Build attempt 1 failed (exit code $LASTEXITCODE). Retrying after 2s..." -ForegroundColor Magenta
+              Start-Sleep -Seconds 2
+              & $npm run build
+          }
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path "$projectDir\public\build\manifest.json")) {
+              throw "Frontend build failed or manifest.json was not generated!"
+          }
+
+          # 6. Cache & Permissions
+          Write-Host "--> Optimizing application cache..." -ForegroundColor Green
+          icacls "$projectDir\bootstrap\cache" /grant "Everyone:(OI)(CI)F" /T /Q | Out-Null
+          icacls "$projectDir\storage" /grant "Everyone:(OI)(CI)F" /T /Q | Out-Null
+          attrib -R "$projectDir\bootstrap\cache\*.*" /S /D 2>$null
+
+          & $php artisan optimize:clear
+          Remove-Item -Force "$projectDir\bootstrap\cache\*.tmp" -ErrorAction SilentlyContinue
+          Remove-Item -Force "$projectDir\bootstrap\cache\packages.php" -ErrorAction SilentlyContinue
+          Remove-Item -Force "$projectDir\bootstrap\cache\services.php" -ErrorAction SilentlyContinue
+
+          & $php artisan optimize
+          & $php artisan queue:restart
+
+          # 7. Restart NSSM Services (Octane + Reverb)
+          Write-Host "--> Starting CuttingEdger-Dev (Octane) & restarting CuttingEdger-Reverb..." -ForegroundColor Green
+          & $nssm start CuttingEdger-Dev
+          & $nssm restart CuttingEdger-Reverb
+
+          Write-Host "[SUCCESS] Deployment completed successfully!" -ForegroundColor Green
