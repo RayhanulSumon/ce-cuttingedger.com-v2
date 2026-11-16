@@ -44,7 +44,6 @@ const STAGE_BOUNDED_SECTIONS = new Set<number>([
     SECTION_INDEX.hero,
     SECTION_INDEX['digital-twins'],
     SECTION_INDEX.showcase,
-    SECTION_INDEX.clients,
 ]);
 
 export default function Home({
