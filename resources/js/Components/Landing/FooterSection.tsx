@@ -255,7 +255,7 @@ export const FooterSection = memo(function FooterSection({ active }: SectionProp
                         <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
                             <span>© {new Date().getFullYear()} Cutting Edger</span>
                             {POLICY.map((item) => (
-                                <Link key={item.href} href={item.href} className="transition-colors hover:text-ink">
+                                <Link key={item.href} href={item.href} prefetch className="transition-colors hover:text-ink">
                                     {item.label}
                                 </Link>
                             ))}

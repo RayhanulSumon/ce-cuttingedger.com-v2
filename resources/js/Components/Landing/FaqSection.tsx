@@ -43,6 +43,7 @@ export const FaqSection = memo(function FaqSection({ active, openDemo }: Section
                         </button>
                         <Link
                             href="/contact"
+                            prefetch
                             className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition-colors duration-300 hover:bg-white/10"
                         >
                             <Mail size={15} />

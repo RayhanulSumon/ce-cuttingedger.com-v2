@@ -152,6 +152,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                         <Reveal active={active} delay={0.32}>
                             <Link
                                 href="/digital-twins"
+                                prefetch
                                 className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-white/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-white hover:text-primary active:scale-95 sm:text-sm"
                             >
                                 Explore more

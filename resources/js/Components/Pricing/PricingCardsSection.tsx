@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import { Check, ArrowUpRight, ShieldCheck, Zap, Sparkles, Layers, Box, Cpu, Eye } from 'lucide-react';
 
 interface PricingTier {
@@ -330,12 +331,13 @@ export function PricingCardsSection() {
                         </div>
                     </div>
 
-                    <a
+                    <Link
                         href="/contact"
+                        prefetch
                         className="px-4 py-2 rounded-xl bg-ink/[0.03] hover:bg-primary hover:text-white border border-ink/10 hover:border-primary text-xs font-mono uppercase tracking-wider text-ink font-semibold transition-all duration-300 shrink-0 cursor-pointer"
                     >
                         Contact Studio →
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>

@@ -75,6 +75,18 @@ function renderInlineFormatting(text: string): React.ReactNode {
         if (linkMatch) {
             const [, linkText, linkUrl] = linkMatch;
             const isExternal = linkUrl.startsWith('http');
+            if (!isExternal && linkUrl.startsWith('/')) {
+                return (
+                    <Link
+                        key={index}
+                        href={linkUrl}
+                        prefetch
+                        className="text-primary-ink underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
+                    >
+                        <span>{linkText}</span>
+                    </Link>
+                );
+            }
             return (
                 <a
                     key={index}

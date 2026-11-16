@@ -191,6 +191,7 @@ export function OrderCta({
     return (
         <Link
             href={href}
+            prefetch
             aria-label={ariaLabel}
             className="group relative inline-flex h-11 cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
         >

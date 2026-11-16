@@ -242,6 +242,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                                     <Link
                                         key={action.href}
                                         href={action.href}
+                                        prefetch
                                         className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 ${
                                             i === 0
                                                 ? 'bg-primary text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)]'
@@ -325,7 +326,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, openDemo,
                     </p>
                 </Reveal>
                 <Reveal active={active} delay={0.26} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
-                    <Link href="/case-studies" className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
+                    <Link href="/case-studies" prefetch className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
                         View case studies
                     </Link>
                     <button type="button" onClick={openDemo} className="group flex items-center gap-3 text-sm font-bold">

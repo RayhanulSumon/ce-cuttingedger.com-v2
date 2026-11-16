@@ -517,7 +517,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                                             );
                                         })}
                                     </div>
-                                    <Link className="cs-btn" href={href}>
+                                    <Link className="cs-btn" href={href} prefetch>
                                         Read the full case
                                     </Link>
                                 </div>
