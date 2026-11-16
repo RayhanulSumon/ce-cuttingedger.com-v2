@@ -737,3 +737,327 @@ select option {
     0%, 100% { transform: translateX(0); opacity: 0.55; }
     50% { transform: translateX(4px); opacity: 1; }
 }
+
+/* ── Landing: Case study scroll-driven cards ─────────────────────────────── */
+.cs {
+    position: relative;
+    height: 480vh;
+    background: var(--color-surface, #ffffff);
+}
+
+.cs-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+}
+
+.cs-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    container-type: size;
+    background: var(--cb, var(--color-secondary, #141a26));
+    color: var(--ci, #ffffff);
+    will-change: transform, width, height;
+}
+
+.cs-in {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    gap: 24px;
+    padding: clamp(20px, 3vw, 44px);
+    padding-top: clamp(84px, 12vh, 120px);
+    align-content: end;
+    grid-template-rows: 1fr auto;
+    transition: transform 0.25s ease-out;
+    transform-origin: 50% 50%;
+}
+
+.cs-in .cs-media {
+    border-radius: 16px;
+    min-height: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transform: translate(var(--tx, 0px), var(--ty, 0px));
+    transition: transform 0.25s ease-out;
+}
+
+.cs-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.cs-copy {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    transform: translate(calc(var(--tx, 0px) * -0.4), calc(var(--ty, 0px) * -0.4));
+    transition: transform 0.25s ease-out;
+}
+
+.cs-copy .cs-tag {
+    color: inherit;
+    opacity: 0.72;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.cs-copy h3 {
+    font-size: clamp(28px, 4.2vw, 60px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.cs-copy p {
+    opacity: 0.82;
+    max-width: 52ch;
+    margin: 0;
+}
+
+.cs-nums {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.cs-nums b {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.05;
+}
+
+.cs-btn {
+    display: inline-block;
+    border: 0;
+    background: var(--color-primary, #f5761a);
+    color: var(--color-primary-foreground, #ffffff);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.25s ease, background-color 0.2s ease;
+}
+
+.cs-btn:hover {
+    background: var(--color-primary-hover, #e0650c);
+    transform: translateY(-2px);
+}
+
+@container (min-width: 920px) {
+    .cs-in {
+        grid-template-columns: 1fr 1.1fr;
+        grid-template-rows: 1fr;
+        align-items: end;
+    }
+
+    .cs-in .cs-media {
+        order: 2;
+        height: 100%;
+    }
+}
+
+@container (max-width: 919px) {
+    .cs-bg {
+        opacity: 0.2;
+    }
+
+    .cs-copy p,
+    .cs-nums {
+        display: none;
+    }
+
+    .cs-in .cs-media {
+        display: none;
+    }
+
+    .cs-in {
+        grid-template-rows: 1fr;
+    }
+
+    .cs-copy {
+        align-content: end;
+    }
+}
+
+@media (max-width: 819px) {
+    @container (min-height: 540px) {
+        .cs-bg {
+            opacity: 0;
+        }
+
+        .cs-in {
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr auto;
+            gap: 16px;
+            padding-top: 84px;
+        }
+
+        .cs-in .cs-media {
+            display: block;
+            order: 1;
+            height: 100%;
+            min-height: 180px;
+        }
+
+        .cs-copy {
+            order: 2;
+            gap: 10px;
+        }
+
+        .cs-copy h3 {
+            font-size: clamp(24px, 6vw, 36px);
+        }
+
+        .cs-copy p {
+            display: block;
+            font-size: 14px;
+        }
+
+        .cs-nums {
+            display: flex;
+            gap: 20px;
+        }
+
+        .cs-nums b {
+            font-size: 24px;
+        }
+    }
+}
+
+.cs-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.cs-card.hov .cs-glow {
+    opacity: 1;
+}
+
+.cs-dots {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: grid;
+    gap: 14px;
+}
+
+.cs-dots button {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid #16191f;
+    background: #ffffff;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.cs-dots button:hover {
+    transform: scale(1.3);
+}
+
+.cs-dots button.on {
+    background: var(--color-primary, #f5761a);
+    border-color: var(--color-primary, #f5761a);
+    transform: scale(1.35);
+}
+
+.cs-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    z-index: 5;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #f2f4f8;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.cs.anim .c1 .cs-copy > * {
+    transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cs.anim .c1:not(.in) .cs-copy > * {
+    opacity: 0;
+    transform: translateY(32px);
+}
+
+.cs.anim .c1:not(.in) .cs-in .cs-media {
+    opacity: 0;
+}
+
+.cs.anim .c1 .cs-in .cs-media {
+    transition: transform 0.25s ease-out, opacity 0.9s ease 0.5s;
+}
+
+.cs.anim .c1.in .cs-copy > :nth-child(1) { transition-delay: 0.35s; }
+.cs.anim .c1.in .cs-copy > :nth-child(2) { transition-delay: 0.45s; }
+.cs.anim .c1.in .cs-copy > :nth-child(3) { transition-delay: 0.55s; }
+.cs.anim .c1.in .cs-copy > :nth-child(4) { transition-delay: 0.65s; }
+.cs.anim .c1.in .cs-copy > :nth-child(5) { transition-delay: 0.75s; }
+
+@media (prefers-reduced-motion: reduce) {
+    .cs {
+        height: auto;
+        padding: 5vw;
+    }
+
+    .cs-stage {
+        position: static;
+        height: auto;
+        display: grid;
+        gap: 18px;
+        overflow: visible;
+    }
+
+    .cs-card {
+        position: static;
+        width: auto !important;
+        height: auto !important;
+        transform: none !important;
+        min-height: 70vh;
+        container-type: inline-size;
+    }
+
+    .cs-copy p,
+    .cs-nums {
+        display: flex !important;
+    }
+
+    .cs-copy p {
+        display: block !important;
+    }
+
+    .cs-dots,
+    .cs-hint {
+        display: none;
+    }
+}
