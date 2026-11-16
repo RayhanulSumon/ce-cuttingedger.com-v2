@@ -901,7 +901,25 @@ select option {
 }
 
 @media (max-width: 819px) {
-    @container (min-height: 540px) {
+    .cs-card {
+        border-radius: 22px;
+    }
+
+    .cs-in {
+        padding: 18px;
+    }
+
+    .cs-dots {
+        display: none;
+    }
+
+    .cs-hint {
+        bottom: 5px;
+        font-size: 12px;
+        color: var(--color-muted, #4a505b);
+    }
+
+    @container (min-height: 460px) {
         .cs-bg {
             opacity: 0;
         }
@@ -909,38 +927,41 @@ select option {
         .cs-in {
             grid-template-columns: 1fr;
             grid-template-rows: 1fr auto;
-            gap: 16px;
-            padding-top: 84px;
+            gap: 14px;
+            padding: 20px;
         }
 
         .cs-in .cs-media {
             display: block;
             order: 1;
             height: 100%;
-            min-height: 180px;
+            min-height: 160px;
+            border-radius: 14px;
         }
 
         .cs-copy {
             order: 2;
-            gap: 10px;
+            gap: 8px;
         }
 
         .cs-copy h3 {
-            font-size: clamp(24px, 6vw, 36px);
+            font-size: clamp(22px, 5.8vw, 32px);
         }
 
         .cs-copy p {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.45;
         }
 
         .cs-nums {
             display: flex;
             gap: 20px;
+            font-size: 12px;
         }
 
         .cs-nums b {
-            font-size: 24px;
+            font-size: 22px;
         }
     }
 }

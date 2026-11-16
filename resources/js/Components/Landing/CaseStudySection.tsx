@@ -212,8 +212,10 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             const g = 16;
             const m = Math.max(12, W * 0.03);
             const mob = W < 820;
+            const topM = mob ? 74 : m;
+            const botM = mob ? 28 : m;
             const iw = W - 2 * m;
-            const ih = H - 2 * m;
+            const ih = H - topM - botM;
 
             const e1 = seg(p, 0.06, 0.2);
             const e2 = seg(p, 0.28, 0.42);
@@ -227,7 +229,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
             // Card 1: full screen -> half
             a.style.left = `${m}px`;
-            a.style.top = `${m}px`;
+            a.style.top = `${topM}px`;
             a.style.width = `${mob ? iw : lerp(iw, hw, e1)}px`;
             a.style.height = `${mob ? lerp(ih, hh, e1) : ih}px`;
             a.style.transform = `scale(${0.95 + 0.05 * ent})`;
@@ -236,10 +238,10 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             if (mob) {
                 b.style.left = `${m}px`;
                 b.style.width = `${iw}px`;
-                b.style.top = `${lerp(m + hh + g, m, f)}px`;
+                b.style.top = `${lerp(topM + hh + g, topM, f)}px`;
                 b.style.height = `${lerp(hh, ih, f)}px`;
             } else {
-                b.style.top = `${m}px`;
+                b.style.top = `${topM}px`;
                 b.style.height = `${ih}px`;
                 b.style.left = `${lerp(m + hw + g, m, f)}px`;
                 b.style.width = `${lerp(hw, iw, f)}px`;
@@ -248,7 +250,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
             // Card 3: rises from the bottom into the left slot, then expands full screen
             c.style.left = `${m}px`;
-            c.style.top = `${m}px`;
+            c.style.top = `${topM}px`;
             c.style.width = `${mob ? iw : lerp(hw, iw, e4)}px`;
             c.style.height = `${mob ? lerp(hh, ih, e4) : ih}px`;
             c.style.transform = `translate(${mob ? -(1 - e3) * W : 0}px, ${mob ? 0 : (1 - e3) * (H + 40)}px)`;
