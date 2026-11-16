@@ -56,6 +56,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
     callbacks.current = { onLookChange, onFrontActorClick };
 
     const [cursor, setCursor] = useState<RunwayCursorState>({ on: false, mode: 'drag', dragging: false });
+    const [onScreen, setOnScreen] = useState(true);
 
     const sim = useRef({
         width: 0,
@@ -132,7 +133,11 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
             style.opacity = opacity.toFixed(3);
             style.zIndex = String(Math.round(scale * 1000));
             style.pointerEvents = opacity < 0.5 ? 'none' : 'auto';
-            style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+            const nextFilter = blur > 0 ? `blur(${blur}px)` : 'none';
+            if (el.dataset.lastFilter !== nextFilter) {
+                el.dataset.lastFilter = nextFilter;
+                style.filter = nextFilter;
+            }
             el.dataset.frontActor = slotsFromFront < 0.35 ? 'true' : 'false';
         }
     }, [actorCount, actorStep]);
@@ -182,7 +187,20 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
     }, [measure]);
 
     useEffect(() => {
-        if (!running) {
+        const stage = stageRef.current;
+        if (!stage || typeof IntersectionObserver === 'undefined') {
+            return;
+        }
+        const observer = new IntersectionObserver(
+            ([entry]) => setOnScreen(entry.isIntersecting),
+            { threshold: 0.05 },
+        );
+        observer.observe(stage);
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!running || !onScreen) {
             return;
         }
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -229,7 +247,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
 
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
-    }, [running, placeRing]);
+    }, [running, onScreen, placeRing]);
 
     const reportLook = useCallback(
         (target: number) => {

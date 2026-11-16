@@ -61,6 +61,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
     const [activeTwinIndex, setActiveTwinIndex] = useState(0);
     const [cursorMode, setCursorMode] = useState<TwinCursorMode>('hidden');
     const [hoveredTwinIndex, setHoveredTwinIndex] = useState<number | null>(null);
+    const [onScreen, setOnScreen] = useState(true);
 
     const sim = useRef({
         width: 0,
@@ -120,7 +121,11 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
             el.style.visibility = 'visible';
             el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${scale.toFixed(4)})`;
-            el.style.filter = blur < 0.5 ? 'none' : `blur(${(blur / scale).toFixed(1)}px)`;
+            const nextFilter = blur < 0.5 ? 'none' : `blur(${(blur / scale).toFixed(1)}px)`;
+            if (el.dataset.lastFilter !== nextFilter) {
+                el.dataset.lastFilter = nextFilter;
+                el.style.filter = nextFilter;
+            }
             el.style.opacity = opacity.toFixed(3);
             el.style.zIndex = String(100 - Math.round(depth * 10));
         });
@@ -163,7 +168,20 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
     }, [measure]);
 
     useEffect(() => {
-        if (!running) {
+        const stage = stageRef.current;
+        if (!stage || typeof IntersectionObserver === 'undefined') {
+            return;
+        }
+        const observer = new IntersectionObserver(
+            ([entry]) => setOnScreen(entry.isIntersecting),
+            { threshold: 0.05 },
+        );
+        observer.observe(stage);
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!running || !onScreen) {
             return;
         }
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -199,10 +217,10 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
         frame = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frame);
-    }, [running, paint]);
+    }, [running, onScreen, paint]);
 
     useEffect(() => {
-        if (!running) {
+        if (!running || !onScreen) {
             return;
         }
         const timer = window.setInterval(() => {
@@ -212,7 +230,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             }
         }, AUTO_ADVANCE_MS);
         return () => window.clearInterval(timer);
-    }, [running]);
+    }, [running, onScreen]);
 
     const stepLook = useCallback((delta: number) => {
         sim.current.target = Math.round(sim.current.target) + delta;

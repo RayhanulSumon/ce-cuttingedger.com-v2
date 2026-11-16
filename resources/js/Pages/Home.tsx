@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
@@ -101,7 +101,7 @@ export default function Home({
     }, [isMobile, initialSection]);
 
     const isActive = (id: keyof typeof SECTION_INDEX) => isMobile || index === SECTION_INDEX[id];
-    const common = { goTo, openDemo };
+    const common = useMemo(() => ({ goTo, openDemo }), [goTo, openDemo]);
 
     // Order must match SECTIONS in Components/Landing/shared.tsx.
     const sections = [
