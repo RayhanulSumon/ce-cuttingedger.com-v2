@@ -1,91 +1,85 @@
 import React, { memo } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
-import { capabilityIcon } from '@/Components/Common/capabilityIcons';
 import { PageProps } from '@/types';
-import { PAD_X, Reveal, SectionProps } from './shared';
+import { Eyebrow, PAD_X, Reveal, SectionProps } from './shared';
 
-/** The main capabilities (2D, 3D, DTP, Video) as cards, each opening its own page. Content comes from the admin panel. */
+const CAPABILITY_IMAGES = [
+    '/images/portfolio/portfolio-1.jpg',
+    '/images/portfolio/portfolio-2.jpg',
+    '/images/portfolio/portfolio-3.jpg',
+    '/images/portfolio/portfolio-4.jpg',
+] as const;
+
+/** The main capabilities (2D, 3D, DTP, Video) as clean editorial grid tiles. Content comes from the admin panel. */
 export const CapabilitiesSection = memo(function CapabilitiesSection({ active, openDemo }: SectionProps) {
     const { capabilities_nav = [] } = usePage<PageProps>().props;
 
     return (
-        <div data-scrollable className={`flex h-full w-full flex-col justify-center overflow-y-auto bg-page pb-8 pt-24 ${PAD_X}`}>
-            <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+        <div
+            data-scrollable
+            className={`flex h-full w-full flex-col justify-center overflow-y-auto bg-page pb-8 pt-24 ${PAD_X}`}
+        >
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div>
                     <Reveal active={active}>
-                        <h2 className="text-[clamp(32px,5.4vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">
-                            Capabilities
-                            <br />
-                            built for scale.
+                        <Eyebrow>Capabilities</Eyebrow>
+                        <h2 className="mt-2 text-[clamp(22px,2.8vw,38px)] font-extrabold leading-[1.08] tracking-[-0.025em] text-ink">
+                            What can we help you with
                         </h2>
                     </Reveal>
-                    <Reveal active={active} delay={0.1}>
-                        <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-2 sm:text-lg">
-                            Four capabilities, many specialities. Pick one to see exactly what we deliver and how it works.
+                    <Reveal active={active} delay={0.08}>
+                        <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted">
+                            Four core capabilities, many specialities. Pick one to see what we deliver and how it works.
                         </p>
                     </Reveal>
                 </div>
-                <Reveal active={active} delay={0.16} className="flex flex-wrap items-center gap-3">
+
+                <Reveal active={active} delay={0.14} className="flex shrink-0 flex-wrap items-center gap-2.5">
                     <Link
                         href="/capabilities"
                         prefetch
-                        className="rounded-full border border-ink px-6 py-3 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
+                        className="rounded-full border border-ink/20 bg-surface px-5 py-2.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-white sm:text-sm"
                     >
                         All capabilities
                     </Link>
                     <button
                         type="button"
                         onClick={openDemo}
-                        className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5"
+                        className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover sm:text-sm"
                     >
                         Book a Demo
                     </button>
                 </Reveal>
             </div>
 
-            <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-4">
+            <ul className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:mt-8 lg:grid-cols-4">
                 {capabilities_nav.map((capability, i) => {
-                    const Icon = capabilityIcon(capability.icon);
+                    const imageSrc = CAPABILITY_IMAGES[i % CAPABILITY_IMAGES.length];
 
                     return (
                         <li key={capability.id}>
-                            <Reveal active={active} delay={0.2 + i * 0.07} y="24px" className="h-full">
-                                <Link
-                                    href={capability.path}
-                                    prefetch
-                                    className="group flex h-full min-h-[260px] flex-col justify-between rounded-3xl border border-ink/10 bg-surface p-6 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_22px_40px_-24px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] sm:p-7"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-ink text-white transition-[background-color,transform] duration-300 group-hover:-rotate-6 group-hover:bg-primary">
-                                            <Icon size={22} />
-                                        </span>
-                                        <span className="grid h-9 w-9 place-items-center rounded-full bg-page text-ink transition-[background-color,color,transform] duration-300 group-hover:rotate-45 group-hover:bg-primary group-hover:text-white">
-                                            <ArrowUpRight size={16} />
+                            <Reveal active={active} delay={0.18 + i * 0.06} y="20px" className="h-full">
+                                <Link href={capability.path} prefetch className="group block h-full">
+                                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-ink/10 bg-surface">
+                                        <img
+                                            src={imageSrc}
+                                            alt={capability.title}
+                                            loading="lazy"
+                                            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                                        />
+                                        <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-surface/90 text-ink opacity-0 shadow-sm backdrop-blur-sm transition-[opacity,transform,background-color,color] duration-200 group-hover:rotate-45 group-hover:bg-primary group-hover:text-white group-hover:opacity-100">
+                                            <ArrowUpRight size={15} />
                                         </span>
                                     </div>
 
-                                    <div className="mt-8">
-                                        {capability.tag && (
-                                            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary-ink">{capability.tag}</p>
-                                        )}
-                                        <h3 className="mt-1 text-xl font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-2xl">{capability.title}</h3>
-                                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{capability.subtitle}</p>
-
-                                        {capability.children.length > 0 && (
-                                            <div className="mt-4 flex flex-wrap gap-1.5">
-                                                {capability.children.slice(0, 3).map((child) => (
-                                                    <span key={child.id} className="rounded-full bg-page px-2.5 py-1 text-[11px] font-medium text-ink-2">
-                                                        {child.title}
-                                                    </span>
-                                                ))}
-                                                {capability.children.length > 3 && (
-                                                    <span className="rounded-full bg-page px-2.5 py-1 text-[11px] font-semibold text-subtle">
-                                                        +{capability.children.length - 3} more
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
+                                    <div className="mt-3">
+                                        <h3 className="truncate text-xs font-bold uppercase tracking-[0.08em] text-ink transition-colors duration-200 group-hover:text-primary sm:text-sm">
+                                            {capability.title}
+                                        </h3>
+                                        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted">
+                                            {capability.subtitle}
+                                        </p>
                                     </div>
                                 </Link>
                             </Reveal>
