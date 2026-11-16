@@ -12,32 +12,32 @@ const FIXES: RetouchFix[] = [
     {
         label: 'Dust & lint removal',
         image: '/images/portfolio/portfolio-1.jpg',
-        rawFilter: '[filter:contrast(0.7)_brightness(0.82)_saturate(0.45)_sepia(0.35)_blur(0.6px)]',
+        rawFilter: '[filter:contrast(0.7)_brightness(0.82)_saturate(0.45)_sepia(0.35)]',
     },
     {
         label: 'Wrinkle & crease smoothing',
         image: '/images/portfolio/portfolio-2.jpg',
-        rawFilter: '[filter:contrast(0.75)_brightness(0.86)_saturate(0.5)_sepia(0.2)_blur(0.5px)]',
+        rawFilter: '[filter:contrast(0.75)_brightness(0.86)_saturate(0.5)_sepia(0.2)]',
     },
     {
         label: 'Ghost mannequin jointing',
         image: '/images/portfolio/portfolio-3.jpg',
-        rawFilter: '[filter:contrast(0.72)_brightness(0.84)_saturate(0.4)_sepia(0.28)_blur(0.6px)]',
+        rawFilter: '[filter:contrast(0.72)_brightness(0.84)_saturate(0.4)_sepia(0.28)]',
     },
     {
         label: 'Colour-match to swatch',
         image: '/images/portfolio/portfolio-4.jpg',
-        rawFilter: '[filter:contrast(0.74)_brightness(0.85)_saturate(0.35)_hue-rotate(-18deg)_blur(0.5px)]',
+        rawFilter: '[filter:contrast(0.74)_brightness(0.85)_saturate(0.35)_hue-rotate(-18deg)]',
     },
     {
         label: 'Shadow & reflection repair',
         image: '/images/portfolio/portfolio-1.jpg',
-        rawFilter: '[filter:contrast(0.68)_brightness(0.78)_saturate(0.5)_sepia(0.25)_blur(0.7px)]',
+        rawFilter: '[filter:contrast(0.68)_brightness(0.78)_saturate(0.5)_sepia(0.25)]',
     },
     {
         label: 'Skin & fabric texture',
         image: '/images/portfolio/portfolio-2.jpg',
-        rawFilter: '[filter:contrast(0.76)_brightness(0.84)_saturate(0.45)_sepia(0.3)_blur(0.5px)]',
+        rawFilter: '[filter:contrast(0.76)_brightness(0.84)_saturate(0.45)_sepia(0.3)]',
     },
 ];
 
@@ -52,26 +52,60 @@ const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
     const [position, setPosition] = useState(ENTRY_POSITION);
     const [dragging, setDragging] = useState(false);
+    const posRef = useRef(ENTRY_POSITION);
     const box = useRef<HTMLDivElement>(null);
+    const clipRef = useRef<HTMLDivElement>(null);
+    const lineRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (!active) {
-            const reset = window.setTimeout(() => setPosition(ENTRY_POSITION), STAGE_TRANSITION_MS);
-            return () => window.clearTimeout(reset);
+    const applyPosition = useCallback((next: number, instant: boolean) => {
+        posRef.current = next;
+        const transition = instant ? 'none' : '';
+        if (clipRef.current) {
+            clipRef.current.style.transition = transition;
+            clipRef.current.style.clipPath = `inset(0 ${100 - next}% 0 0)`;
         }
-        setPosition(ENTRY_POSITION);
-        const sweep = window.setTimeout(() => setPosition(REST_POSITION), STAGE_TRANSITION_MS * 0.45);
-        return () => window.clearTimeout(sweep);
-    }, [active, fix.label]);
-
-    const moveTo = useCallback((clientX: number) => {
-        const rect = box.current?.getBoundingClientRect();
-        if (rect?.width) {
-            setPosition(clampPercent(((clientX - rect.left) / rect.width) * 100));
+        if (lineRef.current) {
+            lineRef.current.style.transition = transition;
+            lineRef.current.style.left = `${next}%`;
         }
     }, []);
 
-    // Follow the pointer 1:1 while dragging; glide for the entry sweep and keyboard steps.
+    useEffect(() => {
+        if (!active) {
+            const reset = window.setTimeout(() => {
+                applyPosition(ENTRY_POSITION, false);
+                setPosition(ENTRY_POSITION);
+            }, STAGE_TRANSITION_MS);
+            return () => window.clearTimeout(reset);
+        }
+        applyPosition(ENTRY_POSITION, true);
+        setPosition(ENTRY_POSITION);
+        const sweep = window.setTimeout(() => {
+            applyPosition(REST_POSITION, false);
+            setPosition(REST_POSITION);
+        }, STAGE_TRANSITION_MS * 0.45);
+        return () => window.clearTimeout(sweep);
+    }, [active, fix.label, applyPosition]);
+
+    const moveTo = useCallback(
+        (clientX: number) => {
+            const rect = box.current?.getBoundingClientRect();
+            if (rect?.width) {
+                applyPosition(clampPercent(((clientX - rect.left) / rect.width) * 100), true);
+            }
+        },
+        [applyPosition],
+    );
+
+    const endDrag = () => {
+        if (!dragging) {
+            return;
+        }
+        setDragging(false);
+        setPosition(posRef.current);
+    };
+
+    // Follow the pointer 1:1 via direct DOM writes while dragging; glide for the entry sweep and keyboard steps.
     const glide = dragging ? '' : 'duration-[1100ms] ease-[cubic-bezier(0.65,0,0.35,1)]';
 
     return (
@@ -89,8 +123,8 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
                         moveTo(event.clientX);
                     }
                 }}
-                onPointerUp={() => setDragging(false)}
-                onPointerCancel={() => setDragging(false)}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
                 role="slider"
                 aria-label={`Before and after retouching comparison for ${fix.label}`}
                 aria-valuemin={0}
@@ -100,13 +134,16 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
                 onKeyDown={(event) => {
                     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
                         event.preventDefault();
-                        setPosition((current) => clampPercent(current + (event.key === 'ArrowLeft' ? -KEY_STEP : KEY_STEP)));
+                        const next = clampPercent(posRef.current + (event.key === 'ArrowLeft' ? -KEY_STEP : KEY_STEP));
+                        applyPosition(next, false);
+                        setPosition(next);
                     }
                 }}
             >
                 <img src={fix.image} alt={`${fix.label} — delivered result`} draggable={false} className="absolute inset-0 h-full w-full object-cover" />
                 <div
-                    className={`absolute inset-0 transition-[clip-path] ${glide}`}
+                    ref={clipRef}
+                    className={`absolute inset-0 will-change-[clip-path] transition-[clip-path] ${glide}`}
                     style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
                 >
                     <img
@@ -116,13 +153,13 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
                         className={`h-full w-full object-cover ${fix.rawFilter}`}
                     />
                 </div>
-                <span className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white backdrop-blur-sm">
+                <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
                     Raw
                 </span>
-                <span className="absolute right-4 top-4 rounded-full bg-white/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-black backdrop-blur-sm">
+                <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-black">
                     Delivered
                 </span>
-                <div className={`absolute inset-y-0 w-0.5 bg-white transition-[left] ${glide}`} style={{ left: `${position}%` }}>
+                <div ref={lineRef} className={`pointer-events-none absolute inset-y-0 w-0.5 bg-white will-change-[left] transition-[left] ${glide}`} style={{ left: `${position}%` }}>
                     <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-xl">
                         <MoveHorizontal size={20} />
                     </span>
