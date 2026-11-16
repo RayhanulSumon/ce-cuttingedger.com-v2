@@ -26,7 +26,7 @@ export function useMagnifier({ zoom = 2.2, size = 190, align = 'center' }: Magni
         }
     }, []);
 
-    const onPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const updateLens = (event: React.PointerEvent<HTMLElement>) => {
         const image = imageRef.current;
         const lens = lensRef.current;
         if (!image || !lens || !image.naturalWidth || (event.target as HTMLElement).closest('button')) {
@@ -62,11 +62,30 @@ export function useMagnifier({ zoom = 2.2, size = 190, align = 'center' }: Magni
         lens.style.opacity = '1';
     };
 
+    const onPointerDown = (event: React.PointerEvent<HTMLElement>) => {
+        if (event.pointerType === 'touch') {
+            event.currentTarget.setPointerCapture?.(event.pointerId);
+            updateLens(event);
+        }
+    };
+
+    const onPointerUp = (event: React.PointerEvent<HTMLElement>) => {
+        if (event.pointerType === 'touch') {
+            hide();
+        }
+    };
+
     return {
         imageRef,
         lensRef,
         hide,
-        areaHandlers: { onPointerMove, onPointerLeave: hide, onPointerCancel: hide },
+        areaHandlers: {
+            onPointerDown,
+            onPointerMove: updateLens,
+            onPointerUp,
+            onPointerLeave: hide,
+            onPointerCancel: hide,
+        },
     };
 }
 

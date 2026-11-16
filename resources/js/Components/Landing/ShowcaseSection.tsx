@@ -342,7 +342,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, openDemo,
                 delay={0.1}
                 x="48px"
                 y="0px"
-                className="relative min-h-0 overflow-hidden pb-6 pr-6 pt-20 sm:pr-10 md:pb-8 md:pr-14 md:pt-24 lg:pr-20"
+                className="relative min-h-0 overflow-hidden pb-6 pr-6 pt-4 sm:pr-10 md:pb-8 md:pr-14 md:pt-24 lg:pr-20"
             >
                 <div className="flex h-full gap-3.5 pl-5 sm:pl-10 md:pl-0">
                     <Column tiles={columns[0]} direction="down" speed={38} onOpen={open} />

@@ -43,7 +43,6 @@ const NO_TESTIMONIALS: Testimonial[] = [];
 const STAGE_BOUNDED_SECTIONS = new Set<number>([
     SECTION_INDEX.hero,
     SECTION_INDEX['digital-twins'],
-    SECTION_INDEX['try-on'],
     SECTION_INDEX.showcase,
     SECTION_INDEX.clients,
 ]);
@@ -134,7 +133,7 @@ export default function Home({
                         <section
                             key={SECTIONS[i].id}
                             id={SECTIONS[i].id}
-                            className={STAGE_BOUNDED_SECTIONS.has(i) ? 'h-[100svh] w-full overflow-hidden' : 'min-h-[100svh] w-full'}
+                            className={STAGE_BOUNDED_SECTIONS.has(i) ? 'h-[100svh] w-full overflow-hidden' : 'w-full'}
                         >
                             {section}
                         </section>

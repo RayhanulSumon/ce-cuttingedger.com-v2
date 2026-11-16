@@ -200,13 +200,13 @@ export function LookView({
                         onDismiss();
                     }
                 }}
-                className="absolute inset-x-4 bottom-4 top-8 flex cursor-zoom-out select-none items-end justify-center sm:inset-x-8 sm:bottom-6 sm:top-10"
+                className="absolute inset-x-4 bottom-4 top-16 flex cursor-zoom-out select-none items-end justify-center sm:inset-x-8 sm:bottom-6 sm:top-10"
             >
                 {/* figure: flight · inner: slides aside for the garment · innermost: magnifier area */}
                 <div ref={figureRef} className="relative aspect-[9/16] h-full max-h-full origin-bottom will-change-transform">
                     <div
                         className={`h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                            piece ? '-translate-x-[24%] lg:-translate-x-[48%] xl:-translate-x-[50%]' : 'translate-x-0'
+                            piece ? '-translate-x-[28%] sm:-translate-x-[24%] lg:-translate-x-[48%] xl:-translate-x-[50%]' : 'translate-x-0'
                         }`}
                     >
                         <div {...magnifier.areaHandlers} className="relative h-full w-full cursor-zoom-in touch-none">

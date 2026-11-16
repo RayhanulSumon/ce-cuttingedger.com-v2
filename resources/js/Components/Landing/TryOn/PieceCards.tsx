@@ -31,7 +31,7 @@ export function PieceCards({
     onSelect,
 }: PieceCardsProps) {
     return (
-        <ul role="list" className="flex h-44 flex-row gap-3 overflow-x-auto [scrollbar-width:none] lg:h-full lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
+        <ul role="list" className="grid h-32 grid-cols-3 gap-2 sm:flex sm:h-44 sm:flex-row sm:gap-3 sm:overflow-x-auto [scrollbar-width:none] lg:h-full lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden">
             {look.pieces.map((piece, i) => {
                 const pieceKey = `${lookIndex}-${i}`;
                 const isHot = hotPin === i;
@@ -47,7 +47,7 @@ export function PieceCards({
                         onMouseEnter={() => onHotPinChange(i)}
                         onMouseLeave={() => onHotPinChange(null)}
                         onClick={() => onSelect(i)}
-                        className={`group relative flex min-h-0 min-w-[170px] flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-4 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 lg:min-w-0 ${
+                        className={`group relative flex min-h-0 min-w-0 flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-2.5 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 sm:min-w-[170px] sm:p-4 lg:min-w-0 ${
                             isSelected
                                 ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-primary'
                                 : isHot

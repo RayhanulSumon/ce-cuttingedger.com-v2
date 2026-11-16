@@ -126,7 +126,7 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                 </Reveal>
             </div>
 
-            <Reveal active={active} delay={0.12} x="40px" y="0px" className={`flex min-h-0 gap-4 pb-4 pr-5 pt-4 sm:pr-10 md:pb-8 md:pr-14 md:pt-24 lg:pr-16`}>
+            <Reveal active={active} delay={0.12} x="40px" y="0px" className={`flex min-h-0 gap-4 pb-4 pl-5 pr-5 pt-4 sm:pl-10 sm:pr-10 md:pb-8 md:pl-0 md:pr-14 md:pt-24 lg:pr-16`}>
                 <Lane direction="up" speed={36}>
                     {laneOne.map((logo, i) => (
                         <LogoCard key={logo.name + i} {...logo} />

@@ -59,7 +59,7 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
             </div>
 
             {/* Main model showcase — properly framed so head, dress and shoes fit without clipping */}
-            <div className="relative my-2 flex flex-1 items-center justify-center min-h-[300px]">
+            <div className="relative my-2 flex flex-1 items-center justify-center min-h-[260px] sm:min-h-[300px]">
                 <span
                     aria-hidden="true"
                     className="pointer-events-none absolute bottom-3 left-1/2 h-6 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.22),transparent)]"
@@ -69,7 +69,7 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
                     initial={{ opacity: 0, scale: 0.98, y: 8 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.45, ease: EASE_OUT_QUART }}
-                    className="relative flex h-full max-h-[460px] w-full items-center justify-center p-2"
+                    className="relative flex h-full max-h-[340px] w-full items-center justify-center p-2 sm:max-h-[460px]"
                 >
                     <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
                 </motion.div>

@@ -138,24 +138,27 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     </button>
                 </Reveal>
 
-                <CustomOrderCta
-                    active={active}
-                    href={digitalTwinOrderUrl({ mode: 'custom', twin: activeTwin.slug, ref: activeTwin.name })}
-                    question="Want a custom model?"
-                    buttonLabel="Order now"
-                />
+                <div className="max-sm:absolute max-sm:bottom-5 max-sm:left-5 max-sm:right-24 max-sm:z-20 max-sm:flex max-sm:flex-col max-sm:items-start max-sm:gap-2.5 sm:contents">
+                    <CustomOrderCta
+                        active={active}
+                        href={digitalTwinOrderUrl({ mode: 'custom', twin: activeTwin.slug, ref: activeTwin.name })}
+                        question="Want a custom model?"
+                        buttonLabel="Order now"
+                        className="max-sm:static"
+                    />
 
-                {/* Right side bottom: Explore more -> full catalogue */}
-                <div className="absolute bottom-6 right-[8rem] z-20 sm:bottom-10 sm:right-[9.5rem]">
-                    <Reveal active={active} delay={0.32}>
-                        <Link
-                            href="/digital-twins"
-                            className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-white/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-white hover:text-primary active:scale-95 sm:text-sm"
-                        >
-                            Explore more
-                            <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </Link>
-                    </Reveal>
+                    {/* Right side bottom: Explore more -> full catalogue */}
+                    <div className="sm:absolute sm:bottom-10 sm:right-[9.5rem] sm:z-20">
+                        <Reveal active={active} delay={0.32}>
+                            <Link
+                                href="/digital-twins"
+                                className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-white/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-white hover:text-primary active:scale-95 sm:text-sm"
+                            >
+                                Explore more
+                                <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </Link>
+                        </Reveal>
+                    </div>
                 </div>
 
                 <TwinCursor cursorRef={runway.cursorRef} mode={runway.cursorMode} />

@@ -108,11 +108,14 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
                 return;
             }
 
-            const height = mix(DEPTH_HEIGHT) * s.height;
+            const isNarrow = s.width < 768;
+            const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? 0.62 : 1);
             const scale = height / s.baseHeight;
             const aspect = twinAspects[i] ?? 0.36;
-            const x = mix(DEPTH_X) * s.width - height * aspect * 0.5;
-            const y = mix(DEPTH_FEET) * s.height - height;
+            const xRatio = isNarrow ? 0.54 + (mix(DEPTH_X) - 0.744) * 0.85 : mix(DEPTH_X);
+            const feetRatio = isNarrow ? mix(DEPTH_FEET) - 0.13 : mix(DEPTH_FEET);
+            const x = xRatio * s.width - height * aspect * 0.5;
+            const y = feetRatio * s.height - height;
             const blur = Math.round(mix(DEPTH_BLUR) * 2) / 2;
 
             el.style.visibility = 'visible';

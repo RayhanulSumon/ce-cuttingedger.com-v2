@@ -33,7 +33,7 @@ export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose }: Twi
 }
 
 const MODEL_ARROW =
-    'absolute top-1/3 z-20 grid h-11 w-11 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white lg:top-1/2 lg:-translate-y-1/2';
+    'absolute top-[220px] z-20 grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white sm:top-1/3 sm:h-11 sm:w-11 lg:top-1/2 lg:-translate-y-1/2';
 
 function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
     const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
@@ -97,7 +97,7 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
 
     return (
         <motion.div
-            className="absolute inset-0 z-[500] flex flex-col overflow-y-auto bg-[#f4f7fb] lg:grid lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_410px] lg:overflow-hidden"
+            className="fixed inset-0 z-[500] flex flex-col overflow-y-auto bg-[#f4f7fb] lg:absolute lg:grid lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_410px] lg:overflow-hidden"
             data-scrollable
             role="dialog"
             aria-modal="true"
@@ -110,7 +110,7 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
             {/* Left side: pose stage with previous / next model arrows on either side */}
             <motion.div
                 data-scrollable
-                className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-14 pb-6 pt-16 sm:px-16 lg:px-16 lg:pt-6"
+                className="relative flex shrink-0 flex-col px-4 pb-6 pt-16 sm:px-16 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pt-6"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 16, opacity: 0 }}
@@ -124,23 +124,23 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
                 type="button"
                 onClick={() => stepTwin(-1)}
                 aria-label="Previous digital twin"
-                className={`${MODEL_ARROW} left-3 sm:left-5`}
+                className={`${MODEL_ARROW} left-2 sm:left-5`}
             >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={18} />
             </button>
             <button
                 type="button"
                 onClick={() => stepTwin(1)}
                 aria-label="Next digital twin"
-                className={`${MODEL_ARROW} right-3 sm:right-5 lg:right-[396px] xl:right-[426px]`}
+                className={`${MODEL_ARROW} right-2 sm:right-5 lg:right-[396px] xl:right-[426px]`}
             >
-                <ArrowRight size={20} />
+                <ArrowRight size={18} />
             </button>
 
             {/* Right side: Clean action sidebar with model name, description, and action buttons */}
             <motion.aside
                 data-scrollable
-                className="flex flex-col justify-center overflow-y-auto border-t border-[#d8e1ec] bg-white p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10"
+                className="flex shrink-0 flex-col justify-center border-t border-[#d8e1ec] bg-white p-5 pb-10 sm:p-8 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-10"
                 aria-label="Digital twin preset actions"
                 initial={{ x: 40, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -156,7 +156,7 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
                 type="button"
                 onClick={onClose}
                 aria-label="Close pose preset view"
-                className="absolute right-5 top-5 z-10 grid h-10 w-10 place-items-center rounded-full bg-ink text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 sm:right-7 sm:top-5"
+                className="fixed right-4 top-4 z-30 grid h-10 w-10 place-items-center rounded-full bg-ink text-white shadow-xl transition-transform duration-300 hover:rotate-90 hover:scale-110 lg:absolute lg:right-7 lg:top-5"
             >
                 <X size={18} />
             </button>

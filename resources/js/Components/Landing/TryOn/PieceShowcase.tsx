@@ -17,7 +17,7 @@ export function PieceShowcase({ piece }: { piece: LookPiece }) {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="absolute bottom-4 left-[38%] right-0 top-20 z-20 flex select-none flex-col items-center justify-center p-2 sm:left-[42%]"
+            className="absolute bottom-4 left-[44%] right-0 top-20 z-20 flex select-none flex-col items-center justify-center p-2 sm:left-[42%]"
         >
             <div className="animate-dress-reveal flex h-full w-full flex-col items-center justify-center">
                 <div className="pointer-events-none mb-1 flex flex-col items-center text-center">
@@ -38,7 +38,7 @@ export function PieceShowcase({ piece }: { piece: LookPiece }) {
                         src={piece.image}
                         alt={piece.name}
                         draggable={false}
-                        className="max-h-[94%] max-w-[94%] select-none object-contain"
+                        className="max-h-[94%] max-w-[94%] select-none object-contain mix-blend-multiply"
                     />
                     <MagnifierLens lensRef={magnifier.lensRef} />
                 </div>

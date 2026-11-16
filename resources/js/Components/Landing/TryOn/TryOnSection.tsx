@@ -126,7 +126,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
 
     return (
         <div
-            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-4 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 pt-20 text-[#151413] sm:pb-8 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${PAD_X}`}
+            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 pt-20 text-[#151413] sm:gap-4 sm:pb-8 sm:pt-24 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${PAD_X}`}
         >
             {/* Floor shade spans the whole section, so the runway and its controls sit on one seamless backdrop. */}
             <div
@@ -134,7 +134,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
                 className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(to_top,rgba(21,20,19,0.08),rgba(21,20,19,0.025)_55%,transparent)]"
             />
 
-            <div className="relative flex min-h-0 flex-col">
+            <div className="relative flex min-h-[60svh] flex-col lg:min-h-0">
                 <SectionIntro active={active} title="Virtual Try-On" className={`relative z-10 ${fadeWhenOpen}`}>
                     Styled looks, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
                 </SectionIntro>
@@ -178,14 +178,6 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
                 />
             </div>
 
-            <CustomOrderCta
-                active={active}
-                href={tryOnQuoteUrl(look.name)}
-                question="Want this look on your own garments?"
-                buttonLabel="Request Try-On Quote"
-                className={fadeWhenOpen}
-            />
-
             <aside aria-label="In this look" className="relative min-h-0 lg:pt-2">
                 <Reveal active={active} delay={0.2} x="36px" y="0px" className="h-full">
                     <PieceCards
@@ -199,6 +191,14 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, onOverla
                     />
                 </Reveal>
             </aside>
+
+            <CustomOrderCta
+                active={active}
+                href={tryOnQuoteUrl(look.name)}
+                question="Want this look on your own garments?"
+                buttonLabel="Request Try-On Quote"
+                className={`${fadeWhenOpen} max-lg:static`}
+            />
         </div>
     );
 });
