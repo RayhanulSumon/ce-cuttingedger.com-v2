@@ -10,7 +10,6 @@ One of our Senior Production Directors will review your brief and follow up with
 ### Your Transmission Summary:
 - **Service Interest:** {{ $contactMessage->service_interest ?? 'General Inquiries' }}
 - **Company:** {{ $contactMessage->company ?? 'N/A' }}
-- **Estimated Volume:** {{ $contactMessage->monthly_volume ?? 'N/A' }}
 
 ---
 

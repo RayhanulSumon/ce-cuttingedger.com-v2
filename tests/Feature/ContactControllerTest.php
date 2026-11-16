@@ -38,8 +38,9 @@ class ContactControllerTest extends TestCase
         $payload = [
             'name' => 'Aria Thorne',
             'email' => 'aria@hyperion-audio.com',
+            'phone' => '+1 555-0199',
             'company' => 'Hyperion Acoustic Labs',
-            'budget' => '$30k - $60k',
+            'website' => 'https://hyperion-audio.com',
             'service_interest' => 'Kinetic 3D & Motion',
             'message' => 'Need 3D WebGL product configurator and 2D branding.',
         ];
@@ -52,6 +53,7 @@ class ContactControllerTest extends TestCase
         $this->assertDatabaseHas('contact_messages', [
             'email' => 'aria@hyperion-audio.com',
             'name' => 'Aria Thorne',
+            'phone' => '+1 555-0199',
         ]);
     }
 

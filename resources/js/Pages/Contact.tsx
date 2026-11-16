@@ -18,7 +18,6 @@ import {
     Users,
     Sparkles,
 } from 'lucide-react';
-import { getAttributionData } from '@/lib/attribution';
 import { PageProps } from '@/types';
 
 
@@ -30,29 +29,17 @@ export default function Contact() {
     const contactAddress = (settings as any)?.company_address || 'Artisan Center, Panthapath, Dhaka 1215';
     const [copiedEmail, setCopiedEmail] = useState(false);
 
-    const { data, setData, post, processing, errors, reset, transform } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        phone: '',
         company: '',
-        role: '',
         website: '',
-        monthly_volume: '500 – 2,000 SKUs / month',
-        platform: 'Shopify / Shopify Plus',
         service_interest: capabilityOptions[0],
-        budget: '$1,500 – $5,000 / mo Retainer',
         message: '',
         honeypot: '',
         captcha_answer: '',
         captcha_token: '',
-        // Attribution
-        landing_page_url: '',
-        submission_page_url: '',
-        utm_source: '',
-        utm_medium: '',
-        utm_campaign: '',
-        utm_term: '',
-        utm_content: '',
-        click_id: '',
     });
 
     const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
@@ -74,19 +61,6 @@ export default function Contact() {
     };
 
     useEffect(() => {
-        const attr = getAttributionData();
-        setData((prev) => ({
-            ...prev,
-            landing_page_url: attr.landing_page_url,
-            submission_page_url: attr.submission_page_url,
-            utm_source: attr.utm_source || '',
-            utm_medium: attr.utm_medium || '',
-            utm_campaign: attr.utm_campaign || '',
-            utm_term: attr.utm_term || '',
-            utm_content: attr.utm_content || '',
-            click_id: attr.click_id || '',
-        }));
-
         refreshCaptcha();
     }, []);
 
@@ -98,24 +72,11 @@ export default function Contact() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const attr = getAttributionData();
-
-        transform((currentData) => ({
-            ...currentData,
-            submission_page_url: window.location.href,
-            landing_page_url: attr.landing_page_url || currentData.landing_page_url || window.location.href,
-            utm_source: attr.utm_source || currentData.utm_source || '',
-            utm_medium: attr.utm_medium || currentData.utm_medium || '',
-            utm_campaign: attr.utm_campaign || currentData.utm_campaign || '',
-            utm_term: attr.utm_term || currentData.utm_term || '',
-            utm_content: attr.utm_content || currentData.utm_content || '',
-            click_id: attr.click_id || currentData.click_id || '',
-        }));
 
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
-                reset('name', 'email', 'company', 'website', 'message', 'captcha_answer');
+                reset('name', 'email', 'phone', 'company', 'website', 'message', 'captcha_answer');
                 refreshCaptcha();
             },
             onError: () => refreshCaptcha(),
@@ -350,8 +311,22 @@ export default function Contact() {
                                     </div>
                                 </div>
 
-                                {/* Row 2: Company & Store URL */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Row 2: Phone, Company & Store URL */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs text-muted font-medium">
+                                            Phone <span className="text-subtle font-normal">(Optional)</span>
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            value={data.phone}
+                                            onChange={(e) => setData('phone', e.target.value)}
+                                            placeholder="+1 (555) 000-0000"
+                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
+                                        />
+                                        {errors.phone && <p className="text-xs text-rose-400 font-mono">{errors.phone}</p>}
+                                    </div>
+
                                     <div className="space-y-1.5">
                                         <label className="text-xs text-muted font-medium">
                                             Company / Brand <span className="text-subtle font-normal">(Optional)</span>

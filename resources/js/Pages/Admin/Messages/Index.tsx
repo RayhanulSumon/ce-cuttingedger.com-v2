@@ -72,20 +72,22 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                 <div>
                     <div className="font-semibold text-white">{m.name}</div>
                     <div className="text-xs text-neutral-400 font-mono">
-                        {m.email} {m.company ? `• ${m.company}` : ""}
+                        {m.email}
+                        {m.phone ? ` • ${m.phone}` : ""}
+                        {m.company ? ` • ${m.company}` : ""}
                     </div>
                 </div>
             ),
         },
         {
-            header: "DISCIPLINE & BUDGET",
+            header: "CAPABILITY & WEBSITE",
             cell: (m) => (
                 <div>
                     <div className="text-xs text-white font-medium">
                         {m.service_interest || "General Consultation"}
                     </div>
                     <div className="text-[11px] font-mono text-accent">
-                        {m.budget || "Budget Unspecified"}
+                        {m.website || "No Website"}
                     </div>
                 </div>
             ),
@@ -93,6 +95,14 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
         {
             header: "STATUS",
             cell: (m) => getStatusBadge(m.status),
+        },
+        {
+            header: "IP ADDRESS",
+            cell: (m) => (
+                <span className="text-xs font-mono text-neutral-400">
+                    {m.ip_address || "Hidden"}
+                </span>
+            ),
         },
         {
             header: "RECEIVED",
@@ -163,7 +173,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
         <AdminLayout title="INBOUND INQUIRIES">
             <AdminPageHeader
                 title="Inquiries Inbox"
-                description="Client project requests, budget specifications, and enterprise briefs."
+                description="Client contact inquiries and capability requests."
                 badge={`${messages.filter((m) => m.status === "new").length} UNREAD`}
             />
 
@@ -183,7 +193,8 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                     <DialogHeader>
                         <DialogTitle>Project Brief Dossier</DialogTitle>
                         <DialogDescription>
-                            From {selectedMessage?.name} ({selectedMessage?.email})
+                            From {selectedMessage?.name} ({selectedMessage?.email}
+                            {selectedMessage?.phone ? ` • ${selectedMessage.phone}` : ""})
                         </DialogDescription>
                     </DialogHeader>
 
@@ -196,9 +207,9 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                                 </span>
                             </div>
                             <div>
-                                <span className="text-neutral-500 block">BUDGET TIER</span>
+                                <span className="text-neutral-500 block">WEBSITE</span>
                                 <span className="text-accent block mt-0.5">
-                                    {selectedMessage?.budget || "Not provided"}
+                                    {selectedMessage?.website || "Not provided"}
                                 </span>
                             </div>
                             <div>
