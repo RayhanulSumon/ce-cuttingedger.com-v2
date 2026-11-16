@@ -44,6 +44,9 @@ jobs:
           # 1. Stop Octane/RoadRunner service so Windows unlocks rr.exe before git/composer updates
           Write-Host "--> Stopping CuttingEdger-Dev service..." -ForegroundColor Yellow
           & $nssm stop CuttingEdger-Dev
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to stop CuttingEdger-Dev (exit code $LASTEXITCODE). Ensure the GitHub Runner service runs as LocalSystem or Administrator."
+          }
           Start-Sleep -Seconds 2
 
           # 2. Pull latest code
@@ -52,7 +55,9 @@ jobs:
           $repoUrl = "https://x-access-token:$($env:GITHUB_TOKEN)@github.com/$($env:REPO_NAME).git"
           $prevCommit = git rev-parse HEAD
           git fetch $repoUrl main
+          if ($LASTEXITCODE -ne 0) { throw "git fetch failed (exit code $LASTEXITCODE)" }
           git reset --hard FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw "git reset failed (exit code $LASTEXITCODE)" }
           $newCommit = git rev-parse HEAD
           $changed = git diff --name-only $prevCommit $newCommit
 
