@@ -16,6 +16,7 @@ import {
     UserPlus,
 } from 'lucide-react';
 import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
+import { OrderSuccessCard } from '@/Components/Common/OrderSuccessCard';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
     clearOrderDraft,
@@ -258,6 +259,14 @@ export default function TryOnQuote({
     const [company, setCompany] = useState(initialDraft?.company || auth?.user?.company || '');
     const [phone, setPhone] = useState(initialDraft?.phone || auth?.user?.phone || '');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(flash?.success ?? null);
+
+    useEffect(() => {
+        if (flash?.success) {
+            setSuccessMessage(flash.success);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [flash?.success]);
 
     const saveDraft = useCallback(() => {
         writeOrderDraft(DRAFT_KEY, {
@@ -451,17 +460,15 @@ export default function TryOnQuote({
             {/* Main Form Content */}
             <main className={`py-10 sm:py-14 ${PAD_X}`}>
                 <div className="mx-auto max-w-7xl">
-                    {flash?.success && (
-                        <div className="mb-8 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-50/90 p-5 text-emerald-950 shadow-sm">
-                            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                            <div>
-                                <h3 className="text-sm font-bold">Virtual Try-On Quote Submitted</h3>
-                                <p className="mt-1 text-xs leading-relaxed text-emerald-800">{flash.success}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+                    {successMessage ? (
+                        <OrderSuccessCard
+                            title="Virtual Try-On Quote Submitted"
+                            message={successMessage}
+                            onReset={() => setSuccessMessage(null)}
+                            resetLabel="Submit Another Try-On Quote"
+                        />
+                    ) : (
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-10 lg:grid-cols-12">
                         {/* Left 8 Columns: Step 1 (Model), Step 2 (3 Garment Slots), Step 3 (Other Description) */}
                         <div className="space-y-10 lg:col-span-8">
                             {/* STEP 1: Select Model Source (Our Model vs Your Model) */}
@@ -913,6 +920,7 @@ export default function TryOnQuote({
                             </div>
                         </div>
                     </form>
+                    )}
                 </div>
             </main>
         </div>
