@@ -28,6 +28,8 @@ class ImageUploadService
 
     public const PATH_ORDERS_TRY_ON = 'orders/try-on';
 
+    public const PATH_AVATARS = 'avatars';
+
     /**
      * Directory map keyed by domain identifier for easy management.
      *
@@ -41,6 +43,7 @@ class ImageUploadService
         'try_on' => self::PATH_TRY_ON,
         'try_on_pieces' => self::PATH_TRY_ON_PIECES,
         'orders_try_on' => self::PATH_ORDERS_TRY_ON,
+        'avatars' => self::PATH_AVATARS,
     ];
 
     /**

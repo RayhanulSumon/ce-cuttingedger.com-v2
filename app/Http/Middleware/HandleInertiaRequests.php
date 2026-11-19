@@ -29,6 +29,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
+        if (file_exists(public_path('hot'))) {
+            return null;
+        }
+
         return parent::version($request);
     }
 
@@ -97,6 +101,12 @@ class HandleInertiaRequests extends Middleware
                 'pending_consultations' => ChatConsultation::where('status', 'pending')->count(),
                 'unread_leads' => ContactMessage::where('inquiry_type', 'chat_lead')->where('status', 'new')->count(),
                 'new_messages' => ContactMessage::where('inquiry_type', '!=', 'chat_lead')->where('status', 'new')->count(),
+            ] : null,
+            'client_badges' => fn () => $request->is('portal', 'portal/*') && $request->user() && ! $request->user()->isAdmin() ? [
+                'orders_count' => Order::where('user_id', $request->user()->id)
+                    ->orWhere('client_email', strtolower($request->user()->email))
+                    ->count(),
+                'available_credits' => (int) ($request->user()->credits_balance ?? 0),
             ] : null,
             'capabilities_nav' => function () {
                 try {

@@ -43,6 +43,10 @@ export interface PageProps<T extends Record<string, unknown> = Record<string, un
         success?: string;
         error?: string;
     };
+    client_badges?: {
+        orders_count: number;
+        available_credits: number;
+    } | null;
     ziggy?: {
         location: string;
         [key: string]: unknown;

@@ -239,8 +239,13 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
 // Protected Client Portal & Order / Quote Submission Routes (Requires Verified Client Account)
 Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
+    Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
+    Route::get('/portal/credits', [ClientPortalController::class, 'credits'])->name('client.portal.credits');
+    Route::get('/portal/settings', [ClientPortalController::class, 'settings'])->name('client.portal.settings');
     Route::get('/dashboard', fn () => redirect()->route('client.portal'))->name('dashboard');
     Route::post('/portal/profile', [ClientPortalController::class, 'updateProfile'])->name('client.portal.profile');
+    Route::post('/portal/avatar', [ClientPortalController::class, 'updateAvatar'])->name('client.portal.avatar');
+    Route::delete('/portal/avatar', [ClientPortalController::class, 'destroyAvatar'])->name('client.portal.avatar.destroy');
     Route::post('/portal/password', [ClientPortalController::class, 'updatePassword'])->name('client.portal.password');
 
     Route::post('/digital-twins/order', [OrderController::class, 'storeDigitalTwinOrder'])
