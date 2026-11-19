@@ -12,6 +12,8 @@ const MAIN_LINKS = [
     { label: 'Capabilities', href: '/capabilities' },
     { label: 'Case Studies', href: '/case-studies' },
     { label: 'About', href: '/about' },
+    { label: 'Team', href: '/team' },
+    { label: 'Pricing', href: '/pricing' },
     { label: 'Blog', href: '/blog' },
     { label: 'Careers', href: '/careers' },
     { label: 'Contact', href: '/contact' },
@@ -22,6 +24,7 @@ const POLICY = [
     { label: 'Terms', href: '/terms' },
     { label: 'Cookies', href: '/cookie-policy' },
     { label: 'NDA', href: '/nda-compliance' },
+    { label: 'ESG', href: '/esg-policy' },
 ];
 
 const DEFAULT_SOCIALS = [
@@ -115,8 +118,11 @@ function NewsletterSignup() {
     );
 }
 
-/** The giant "CONTACT US" footer card, sized to fit one screen. */
-export const FooterSection = memo(function FooterSection({ active }: SectionProps) {
+/** The giant "CONTACT US" footer card, sized to fit one screen on the landing page or flow naturally in inner layouts. */
+export const FooterSection = memo(function FooterSection({
+    active = true,
+    fullpage = true,
+}: Partial<SectionProps> & { fullpage?: boolean }) {
     const { settings } = usePage<PageProps>().props;
     const [hovered, setHovered] = useState<number | null>(null);
     const [groupHover, setGroupHover] = useState(false);
@@ -130,12 +136,15 @@ export const FooterSection = memo(function FooterSection({ active }: SectionProp
     const phones = settings?.contact_phones ?? [];
     const office = settings?.office_address;
     const whatsapp = (settings?.whatsapp_number ?? '').replace(/\D/g, '');
+    const Outer = fullpage ? 'div' : 'footer';
 
     return (
-        <div className="h-full w-full bg-page p-3 pt-16 sm:p-5 sm:pt-20">
+        <Outer className={fullpage ? 'h-full w-full bg-page p-3 pt-16 sm:p-5 sm:pt-20' : 'w-full bg-page p-3 sm:p-5'}>
             <div
-                data-scrollable
-                className="relative flex h-full flex-col justify-between gap-6 overflow-y-auto rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10"
+                data-scrollable={fullpage ? '' : undefined}
+                className={`relative flex flex-col justify-between rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10 ${
+                    fullpage ? 'h-full gap-6 overflow-y-auto' : 'gap-8 overflow-hidden'
+                }`}
                 style={{ backgroundImage: FOOTER_GRADIENT }}
             >
                 {/* Soft grid that fades out towards the glow, for a little texture. */}
@@ -263,6 +272,6 @@ export const FooterSection = memo(function FooterSection({ active }: SectionProp
                     </div>
                 </Reveal>
             </div>
-        </div>
+        </Outer>
     );
 });

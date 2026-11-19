@@ -1,38 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
 import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
 import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
 import { DemoModal } from '@/Components/Landing/DemoModal';
+import { FooterSection } from '@/Components/Landing/FooterSection';
 import { Menubar } from '@/Components/Landing/Menubar';
-import { EASE_OUT_QUART, PAD_X } from '@/Components/Landing/shared';
+import { EASE_OUT_QUART } from '@/Components/Landing/shared';
 import { Toaster, toast } from '@/Components/ui/sonner';
 import { initializeAttribution } from '@/lib/attribution';
 import { PageProps } from '@/types';
 import { SlideOverContact } from './SlideOverContact';
-
-const COMPANY_LINKS: [string, string][] = [
-    ['About', '/about'],
-    ['Team', '/team'],
-    ['Careers', '/careers'],
-    ['Case Studies', '/case-studies'],
-    ['Blog', '/blog'],
-    ['Pricing', '/pricing'],
-    ['Contact', '/contact'],
-];
-
-const LEGAL_LINKS: [string, string][] = [
-    ['Privacy', '/privacy'],
-    ['Terms', '/terms'],
-    ['Cookies', '/cookie-policy'],
-    ['NDA', '/nda-compliance'],
-    ['ESG', '/esg-policy'],
-];
-
-const FOOTER_HEADING = 'text-[11px] font-semibold uppercase tracking-[0.22em] text-subtle';
-const FOOTER_LINK = 'text-sm text-ink-2 transition-colors hover:text-primary';
 
 /**
  * Light page shell shared by every inner page and persistent across Inertia visits: the menubar, modals
@@ -40,7 +20,7 @@ const FOOTER_LINK = 'text-sm text-ink-2 transition-colors hover:text-primary';
  */
 export function LandingLayout({ children }: { children: React.ReactNode }) {
     const { url } = usePage();
-    const { settings, flash, capabilities_nav = [] } = usePage<PageProps>().props;
+    const { settings, flash } = usePage<PageProps>().props;
     const [demoOpen, setDemoOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
     const [discoveryOpen, setDiscoveryOpen] = useState(false);
@@ -77,8 +57,6 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
         }
     }, [flash, url]);
 
-    const email = settings?.contact_email || 'hello@cuttingedger.com';
-
     return (
         <div className="flex min-h-screen flex-col bg-page text-ink selection:bg-primary selection:text-white">
             <a
@@ -102,69 +80,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                 {children}
             </motion.main>
 
-            <footer className={`border-t border-ink/10 bg-white pb-8 pt-12 ${PAD_X}`}>
-                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
-                    <div className="max-w-xs">
-                        <Link href="/" prefetch aria-label="CuttingEdger home">
-                            <img src="/images/ce/ce_logo_word.png" alt="CuttingEdger" width={459} height={70} className="h-7 w-auto" />
-                        </Link>
-                        <p className="mt-3 text-sm leading-relaxed text-muted">
-                            AI-integrated image editing and post-production for fashion and e-commerce brands.
-                        </p>
-                        <a href={`mailto:${email}`} className="mt-4 inline-block text-sm font-semibold text-ink hover:text-primary">
-                            {email}
-                        </a>
-                    </div>
-
-                    <div>
-                        <p className={FOOTER_HEADING}>Capabilities</p>
-                        <ul className="mt-4 space-y-2.5">
-                            {capabilities_nav.map((capability) => (
-                                <li key={capability.id}>
-                                    <Link href={capability.path} prefetch className={FOOTER_LINK}>
-                                        {capability.title}
-                                    </Link>
-                                </li>
-                            ))}
-                            <li>
-                                <Link href="/capabilities" prefetch className={FOOTER_LINK}>
-                                    All capabilities
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p className={FOOTER_HEADING}>Company</p>
-                        <ul className="mt-4 space-y-2.5">
-                            {COMPANY_LINKS.map(([label, href]) => (
-                                <li key={href}>
-                                    <Link href={href} prefetch className={FOOTER_LINK}>
-                                        {label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p className={FOOTER_HEADING}>Legal</p>
-                        <ul className="mt-4 space-y-2.5">
-                            {LEGAL_LINKS.map(([label, href]) => (
-                                <li key={href}>
-                                    <Link href={href} className={FOOTER_LINK}>
-                                        {label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-                <p className="mt-10 border-t border-ink/10 pt-6 text-xs text-subtle">
-                    &copy; {new Date().getFullYear()} CuttingEdger. All rights reserved.
-                </p>
-            </footer>
+            <FooterSection fullpage={false} />
 
             <DemoModal open={demoOpen} onClose={closeDemo} />
             <DiscoveryCallModal isOpen={discoveryOpen} onClose={() => setDiscoveryOpen(false)} />
