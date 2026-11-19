@@ -31,7 +31,7 @@ const piece = (name: string, image: string, brand = 'Nike', tag?: string): LookP
 
 export const LOOKS: Look[] = [
     {
-        modelName: 'Jonah K.',
+        modelName: 'John',
         description: 'A charcoal knit and easy denim.',
         model: `${BASE}/model-1-640.webp`,
         modelHiRes: `${BASE}/original-look-1.webp`,
@@ -47,7 +47,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        modelName: 'Marcus T.',
+        modelName: 'Paul',
         description: 'A clean white tee and relaxed denim.',
         model: `${BASE}/model-5-640.webp`,
         modelHiRes: `${BASE}/original-look-5.webp`,
@@ -63,7 +63,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        modelName: 'Theo R.',
+        modelName: 'Nooh',
         description: 'Olive knitwear. A grounded palette.',
         model: `${BASE}/model-4-640.webp`,
         modelHiRes: `${BASE}/original-look-4.webp`,
@@ -79,7 +79,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        modelName: 'Kai M.',
+        modelName: 'David',
         description: 'Black, white and laid-back denim.',
         model: `${BASE}/model-6-640.webp`,
         modelHiRes: `${BASE}/original-look-6.webp`,
@@ -95,7 +95,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        modelName: 'Rafael D.',
+        modelName: 'Joseph',
         description: 'Burgundy layers. A tailored perspective.',
         model: `${BASE}/model-3-640.webp`,
         modelHiRes: `${BASE}/original-look-3.webp`,
@@ -111,7 +111,7 @@ export const LOOKS: Look[] = [
         ],
     },
     {
-        modelName: 'Elias V.',
+        modelName: 'Issac',
         description: 'A grey crew and your favourite denim.',
         model: `${BASE}/model-2-640.webp`,
         modelHiRes: `${BASE}/original-look-2.webp`,

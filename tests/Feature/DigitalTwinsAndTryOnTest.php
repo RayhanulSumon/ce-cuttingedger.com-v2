@@ -72,7 +72,13 @@ class DigitalTwinsAndTryOnTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Capabilities/Show')
-                ->has('digitalTwins', 6)
+                ->has('digitalTwins', 24)
+                ->where('digitalTwins.0.name', 'Laura')
+                ->where('digitalTwins.0.archetype', 'Female')
+                ->where('digitalTwins.11.name', 'John')
+                ->where('digitalTwins.11.archetype', 'Male')
+                ->where('digitalTwins.23.name', 'Upcoming Model')
+                ->where('digitalTwins.23.archetype', 'Upcoming')
             );
 
         $this->get('/digital-twins')
@@ -84,7 +90,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
     {
         $twinsResponse = $this->getJson('/api/catalog/digital-twins');
         $twinsResponse->assertOk()
-            ->assertJsonCount(6, 'data')
+            ->assertJsonCount(24, 'data')
             ->assertJsonCount(7, 'attributes');
 
         $etag = $twinsResponse->headers->get('ETag');
@@ -283,7 +289,7 @@ class DigitalTwinsAndTryOnTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Admin/DigitalTwins/Index')
-                ->has('twins', 6)
+                ->has('twins', 24)
                 ->has('attributes', 7)
             );
 

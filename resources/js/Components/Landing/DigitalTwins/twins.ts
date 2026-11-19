@@ -53,6 +53,7 @@ export interface DigitalTwinModel {
     featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
     poses: TwinPosePreset[];
     isFeaturedOnHome?: boolean;
+    isUpcoming?: boolean;
     isActive?: boolean;
     sortOrder?: number;
 }
@@ -155,146 +156,309 @@ export const DEFAULT_POSES: TwinPosePreset[] = [
     },
 ];
 
-export const DIGITAL_TWINS: DigitalTwinModel[] = [
+const DEFAULT_DELIVERABLES = [
+    '6 Multi-Angle Pose Presets (8K PNG/TIFF)',
+    'Layered PSD + Garment UV Smart Masks',
+    'Commercial Global Campaign License',
+];
+
+const SPRITE_SLOTS: {
+    x0: number;
+    x1: number;
+    featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
+}[] = [
     {
-        index: 0,
-        lookNumber: 15,
         x0: 12,
         x1: 176,
-        name: 'Aurelia V. — Feather & Satin Twin',
-        archetype: 'High-Fashion Editorial Twin',
-        collection: 'Spring Summer 2027 · Look 15',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
-        isCopyrightSold: false,
-        listedAt: '2026-06-20',
-        downloadCount: 1284,
-        description:
-            'Photoreal AI digital twin trained for structured outerwear, feather textures, and fluid satin trousers with 6 pre-lit studio pose rigs.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
         featuredPieces: [
             { name: 'Feather Jacket', price: '$2,900', box: [26, 224, 28, 214] },
             { name: 'Satin Wide Leg Trousers', price: '$1,450', box: [304, 412, 22, 236] },
         ],
-        poses: DEFAULT_POSES,
     },
     {
-        index: 1,
-        lookNumber: 16,
         x0: 178,
         x1: 330,
-        name: 'Celeste M. — Pleated Couture Twin',
-        archetype: 'Runway & Lookbook Twin',
-        collection: 'Spring Summer 2027 · Look 16',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
+        featuredPieces: [
+            { name: 'Pleated Dress', price: '$2,200', box: [530, 666, 12, 242] },
+            { name: 'Gold Waist Belt', price: '$420', box: [752, 922, 100, 146] },
+        ],
+    },
+    {
+        x0: 331,
+        x1: 470,
+        featuredPieces: [
+            { name: 'Satin Trench Dress', price: '$2,350', box: [70, 176, 246, 466] },
+            { name: 'Top Handle Bag', price: '$980', box: [294, 422, 294, 432] },
+        ],
+    },
+    {
+        x0: 476,
+        x1: 633,
+        featuredPieces: [
+            { name: 'Billow Sleeve Blouse', price: '$860', box: [508, 688, 240, 452] },
+            { name: 'Tie Waist Trousers', price: '$740', box: [780, 890, 252, 466] },
+        ],
+    },
+    {
+        x0: 634,
+        x1: 767,
+        featuredPieces: [
+            { name: 'Powder Long Coat', price: '$1,980', box: [64, 178, 484, 698] },
+            { name: 'Ivory Straight Trousers', price: '$690', box: [316, 396, 482, 698] },
+        ],
+    },
+    {
+        x0: 767,
+        x1: 956,
+        featuredPieces: [
+            { name: 'Sculpted Ruffle Top', price: '$1,120', box: [530, 672, 508, 682] },
+            { name: 'Pleated Maxi Skirt', price: '$1,340', box: [754, 916, 484, 700] },
+        ],
+    },
+];
+
+interface TwinSeedEntry {
+    name: string;
+    archetype: 'Female' | 'Male' | 'Upcoming';
+    isCopyrightSold?: boolean;
+    listedAt: string;
+    downloadCount: number;
+    description: string;
+    presetPrice?: string;
+    isUpcoming?: boolean;
+}
+
+const TWIN_SEED_ENTRIES: TwinSeedEntry[] = [
+    // Female (11 models — first 6 featured on Home runway)
+    {
+        name: 'Laura',
+        archetype: 'Female',
+        listedAt: '2026-06-20',
+        downloadCount: 1284,
+        description:
+            'Photoreal AI digital twin trained for structured outerwear, feather textures, and fluid satin trousers with 6 pre-lit studio pose rigs.',
+    },
+    {
+        name: 'Pamela',
+        archetype: 'Female',
         isCopyrightSold: true,
         listedAt: '2026-03-09',
         downloadCount: 3416,
         description:
             'Engineered for micro-pleated dresses, metallic waist accents, and soft evening movement across e-commerce and lookbook campaigns.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
-        featuredPieces: [
-            { name: 'Pleated Dress', price: '$2,200', box: [530, 666, 12, 242] },
-            { name: 'Gold Waist Belt', price: '$420', box: [752, 922, 100, 146] },
-        ],
-        poses: DEFAULT_POSES,
     },
     {
-        index: 2,
-        lookNumber: 17,
-        x0: 331,
-        x1: 470,
-        name: 'Sora K. — Trench & Leather Twin',
-        archetype: 'Luxury Tailoring Twin',
-        collection: 'Spring Summer 2027 · Look 17',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
-        isCopyrightSold: false,
+        name: 'Moon',
+        archetype: 'Female',
         listedAt: '2026-09-02',
         downloadCount: 542,
         description:
             'Calibrated for satin trench silhouettes, structured leather accessories, and crisp architectural shadows in full-frame studio lighting.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
-        featuredPieces: [
-            { name: 'Satin Trench Dress', price: '$2,350', box: [70, 176, 246, 466] },
-            { name: 'Top Handle Bag', price: '$980', box: [294, 422, 294, 432] },
-        ],
-        poses: DEFAULT_POSES,
     },
     {
-        index: 3,
-        lookNumber: 18,
-        x0: 476,
-        x1: 633,
-        name: 'Elena R. — Silk & Drape Twin',
-        archetype: 'Soft Silhouette Twin',
-        collection: 'Spring Summer 2027 · Look 18',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
-        isCopyrightSold: false,
+        name: 'Jia',
+        archetype: 'Female',
         listedAt: '2026-01-15',
         downloadCount: 2871,
         description:
             'Designed for billow-sleeve organza, sheer silk blouses, and tie-waist resort trousers with natural skin-to-fabric subsurface scattering.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
-        featuredPieces: [
-            { name: 'Billow Sleeve Blouse', price: '$860', box: [508, 688, 240, 452] },
-            { name: 'Tie Waist Trousers', price: '$740', box: [780, 890, 252, 466] },
-        ],
-        poses: DEFAULT_POSES,
     },
     {
-        index: 4,
-        lookNumber: 19,
-        x0: 634,
-        x1: 767,
-        name: 'Noemi L. — Overcoat & Tailored Twin',
-        archetype: 'Minimalist Runway Twin',
-        collection: 'Spring Summer 2027 · Look 19',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
+        name: 'Aumo',
+        archetype: 'Female',
         isCopyrightSold: true,
         listedAt: '2025-11-28',
         downloadCount: 4903,
         description:
             'Built for longline powder coats, ivory straight-leg tailoring, and clean Scandinavian studio aesthetics with zero reshoot overhead.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
-        featuredPieces: [
-            { name: 'Powder Long Coat', price: '$1,980', box: [64, 178, 484, 698] },
-            { name: 'Ivory Straight Trousers', price: '$690', box: [316, 396, 482, 698] },
-        ],
-        poses: DEFAULT_POSES,
     },
     {
-        index: 5,
-        lookNumber: 20,
-        x0: 767,
-        x1: 956,
-        name: 'Valentina D. — Sculpted Ruffle Twin',
-        archetype: 'Avant-Garde Campaign Twin',
-        collection: 'Spring Summer 2027 · Look 20',
-        presetPrice: '$149',
-        customOrderPrice: '$290',
-        lifetimePrice: '$490',
-        isCopyrightSold: false,
+        name: 'Pauli',
+        archetype: 'Female',
         listedAt: '2026-10-05',
         downloadCount: 187,
         description:
             'Optimized for voluminous ruffle tops, pleated maxi skirts, and wide-stance hero campaign framing across web, print, and lookbooks.',
-        deliverables: ['6 Multi-Angle Pose Presets (8K PNG/TIFF)', 'Layered PSD + Garment UV Smart Masks', 'Commercial Global Campaign License'],
-        featuredPieces: [
-            { name: 'Sculpted Ruffle Top', price: '$1,120', box: [530, 672, 508, 682] },
-            { name: 'Pleated Maxi Skirt', price: '$1,340', box: [754, 916, 484, 700] },
-        ],
-        poses: DEFAULT_POSES,
+    },
+    {
+        name: 'Mooha',
+        archetype: 'Female',
+        listedAt: '2026-07-14',
+        downloadCount: 912,
+        description:
+            'Versatile studio digital twin tuned for contemporary womenswear, draped knitwear, and high-key editorial lookbooks.',
+    },
+    {
+        name: 'Jolly',
+        archetype: 'Female',
+        listedAt: '2026-08-03',
+        downloadCount: 745,
+        description:
+            'Balanced full-body proportion rig calibrated for resortwear, tailored separates, and crisp color-accurate e-commerce PDP shots.',
+    },
+    {
+        name: 'Lily',
+        archetype: 'Female',
+        listedAt: '2026-08-19',
+        downloadCount: 1104,
+        description:
+            'Soft-lit studio model trained for delicate silk, lace overlays, and multi-angle runway lookbook production.',
+    },
+    {
+        name: 'Roza',
+        archetype: 'Female',
+        listedAt: '2026-09-11',
+        downloadCount: 628,
+        description:
+            'Poised campaign digital twin tailored for structured blazers, luxury leather goods, and refined seasonal lookbooks.',
+    },
+    {
+        name: 'Julia',
+        archetype: 'Female',
+        listedAt: '2026-09-25',
+        downloadCount: 830,
+        description:
+            'Expressive editorial digital twin crafted for evening silhouettes, layered coats, and seamless multi-pose garment fitting.',
+    },
+    // Male (12 models)
+    {
+        name: 'John',
+        archetype: 'Male',
+        listedAt: '2026-05-18',
+        downloadCount: 1420,
+        description:
+            'Classic menswear digital twin built for structured suiting, wool overcoats, and razor-sharp tailoring presentations.',
+    },
+    {
+        name: 'Paul',
+        archetype: 'Male',
+        listedAt: '2026-06-04',
+        downloadCount: 1085,
+        description:
+            'Editorial menswear model calibrated for relaxed shirting, linen resort sets, and clean studio e-commerce poses.',
+    },
+    {
+        name: 'Nooh',
+        archetype: 'Male',
+        listedAt: '2026-06-29',
+        downloadCount: 760,
+        description:
+            'Contemporary runway digital twin tuned for layered outerwear, utility cargo silhouettes, and dynamic stride framing.',
+    },
+    {
+        name: 'David',
+        archetype: 'Male',
+        listedAt: '2026-07-08',
+        downloadCount: 1590,
+        description:
+            'Refined athletic menswear rig designed for performance knitwear, denim jackets, and consistent front-to-back SKU renders.',
+    },
+    {
+        name: 'Joseph',
+        archetype: 'Male',
+        listedAt: '2026-07-22',
+        downloadCount: 695,
+        description:
+            'Minimalist campaign twin tailored for monochrome suiting, cashmere sweaters, and high-contrast luxury lookbooks.',
+    },
+    {
+        name: 'Issac',
+        archetype: 'Male',
+        listedAt: '2026-08-10',
+        downloadCount: 840,
+        description:
+            'Precision studio twin optimized for tailored trousers, leather trench silhouettes, and macro collar detail views.',
+    },
+    {
+        name: 'Luke',
+        archetype: 'Male',
+        listedAt: '2026-08-24',
+        downloadCount: 512,
+        description:
+            'Modern streetwear and outerwear twin engineered for puffer jackets, hoodies, and crisp 3/4 editorial stances.',
+    },
+    {
+        name: 'Elijah',
+        archetype: 'Male',
+        listedAt: '2026-09-05',
+        downloadCount: 930,
+        description:
+            'Sculptural menswear digital twin ready for avant-garde layering, longline coats, and global campaign assets.',
+    },
+    {
+        name: 'Andrew',
+        archetype: 'Male',
+        listedAt: '2026-09-17',
+        downloadCount: 418,
+        description:
+            'Studio-calibrated twin built for crisp dress shirts, lightweight tailoring, and consistent multi-angle catalog shoots.',
+    },
+    {
+        name: 'Top',
+        archetype: 'Male',
+        listedAt: '2026-09-29',
+        downloadCount: 604,
+        description:
+            'Sharp runway posture digital twin tailored for contemporary jackets, structured knits, and hero product drops.',
+    },
+    {
+        name: 'Asher',
+        archetype: 'Male',
+        listedAt: '2026-10-08',
+        downloadCount: 375,
+        description:
+            'Effortless editorial model trained for relaxed tailoring, tonal separates, and natural drape across 6 studio poses.',
+    },
+    {
+        name: 'Sam',
+        archetype: 'Male',
+        listedAt: '2026-10-14',
+        downloadCount: 289,
+        description:
+            'Clean e-commerce menswear twin engineered for everyday essentials, overshirts, and rapid seasonal catalog scaling.',
+    },
+    // Upcoming (1 model)
+    {
+        name: 'Upcoming Model',
+        archetype: 'Upcoming',
+        listedAt: '2026-11-19',
+        downloadCount: 0,
+        presetPrice: 'Upcoming',
+        isUpcoming: true,
+        description:
+            'Next-generation digital twin currently in final studio lighting calibration and multi-angle pose verification.',
     },
 ];
+
+export const DIGITAL_TWINS: DigitalTwinModel[] = TWIN_SEED_ENTRIES.map((entry, index) => {
+    const slot = SPRITE_SLOTS[index % SPRITE_SLOTS.length];
+    const lookNumber = TWIN_FIRST_LOOK + index;
+
+    return {
+        index,
+        slug: entry.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        lookNumber,
+        x0: slot.x0,
+        x1: slot.x1,
+        name: entry.name,
+        archetype: entry.archetype,
+        collection: entry.isUpcoming ? 'Upcoming Drop · Preview' : `Spring Summer 2027 · Look ${lookNumber}`,
+        presetPrice: entry.presetPrice ?? '$149',
+        customOrderPrice: '$290',
+        lifetimePrice: '$490',
+        isCopyrightSold: Boolean(entry.isCopyrightSold),
+        listedAt: entry.listedAt,
+        downloadCount: entry.downloadCount,
+        description: entry.description,
+        deliverables: DEFAULT_DELIVERABLES,
+        featuredPieces: slot.featuredPieces,
+        poses: DEFAULT_POSES,
+        isFeaturedOnHome: index < 6,
+        isUpcoming: Boolean(entry.isUpcoming),
+        isActive: true,
+        sortOrder: index + 1,
+    };
+});
 
 /** Human-readable time since a twin was listed, e.g. "5 months" or "12 days". */
 export function formatTwinAge(listedAt: string, now: Date = new Date()): string {
