@@ -96,6 +96,10 @@ interface CapabilityNavItem {
 interface CreditSummary {
     available_credits: number;
     active_plan_name?: string | null;
+    expires_at?: string | null;
+    expires_at_formatted?: string | null;
+    days_remaining?: number | null;
+    is_expired?: boolean;
     total_purchased_credits: number;
     pending_credits: number;
     total_used_credits: number;
@@ -110,9 +114,29 @@ interface CreditHistoryEntry {
     credits_delta: number;
     balance_after: number | null;
     is_activated: boolean;
+    validity_days?: number | null;
+    expires_at_formatted?: string | null;
     status_label: string;
     amount_usd: number;
     created_at_formatted: string;
+}
+
+function formatCreditExpiryText(
+    expiresAtFormatted: string | null | undefined,
+    daysRemaining: number | null | undefined,
+    isExpired: boolean | undefined,
+    fallback: string
+): string {
+    if (!expiresAtFormatted) {
+        return fallback;
+    }
+    if (isExpired) {
+        return `Expired on ${expiresAtFormatted}`;
+    }
+    if (daysRemaining !== null && daysRemaining !== undefined) {
+        return `Expires ${expiresAtFormatted} (${daysRemaining}d left)`;
+    }
+    return `Expires ${expiresAtFormatted}`;
 }
 
 interface ClientDashboardProps {
@@ -151,6 +175,8 @@ export default function ClientDashboard({
                 avatar?: string | null;
                 credits_balance?: number;
                 active_plan_name?: string | null;
+                credits_expires_at?: string | null;
+                credits_expires_at_formatted?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
@@ -165,6 +191,10 @@ export default function ClientDashboard({
 
     const availableCredits = creditSummary?.available_credits ?? user?.credits_balance ?? 0;
     const activePlanName = creditSummary?.active_plan_name ?? user?.active_plan_name ?? null;
+    const expiresAtFormatted =
+        creditSummary?.expires_at_formatted ?? user?.credits_expires_at_formatted ?? null;
+    const daysRemaining = creditSummary?.days_remaining ?? null;
+    const isExpired = Boolean(creditSummary?.is_expired);
     const totalPurchasedCredits = creditSummary?.total_purchased_credits ?? 0;
     const pendingCredits = creditSummary?.pending_credits ?? 0;
     const totalUsedCredits = creditSummary?.total_used_credits ?? 0;
@@ -509,6 +539,22 @@ export default function ClientDashboard({
                                                         <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
                                                             {activePlanName || 'No active plan'}
                                                         </span>
+                                                        {expiresAtFormatted && (
+                                                            <span
+                                                                className={`rounded-full px-3 py-1 text-[11px] font-semibold border ${
+                                                                    isExpired
+                                                                        ? 'bg-rose-50 border-rose-200 text-rose-700'
+                                                                        : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                                                                }`}
+                                                            >
+                                                                {formatCreditExpiryText(
+                                                                    expiresAtFormatted,
+                                                                    daysRemaining,
+                                                                    isExpired,
+                                                                    ''
+                                                                )}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <div className="flex flex-wrap items-baseline gap-6 pt-1">
                                                         <div>
@@ -653,9 +699,16 @@ export default function ClientDashboard({
                                                 </div>
                                                 <div className="flex items-center justify-between text-xs pt-1">
                                                     <span className="text-primary font-semibold truncate pr-2">
-                                                        {pendingCredits > 0
-                                                            ? `+${pendingCredits.toLocaleString()} pending approval`
-                                                            : activePlanName || 'Studio credit balance'}
+                                                        {expiresAtFormatted
+                                                            ? formatCreditExpiryText(
+                                                                  expiresAtFormatted,
+                                                                  daysRemaining,
+                                                                  isExpired,
+                                                                  'Studio credit balance'
+                                                              )
+                                                            : pendingCredits > 0
+                                                              ? `+${pendingCredits.toLocaleString()} pending approval`
+                                                              : activePlanName || 'Studio credit balance'}
                                                     </span>
                                                     <ArrowUpRight className="w-3.5 h-3.5 shrink-0 text-slate-400 group-hover:text-primary transition-colors" />
                                                 </div>
@@ -794,6 +847,20 @@ export default function ClientDashboard({
                                                 <span className="text-xs font-semibold text-primary block">
                                                     {activePlanName || 'No active plan'}
                                                 </span>
+                                                {expiresAtFormatted && (
+                                                    <span
+                                                        className={`text-[11px] font-semibold block ${
+                                                            isExpired ? 'text-rose-600' : 'text-emerald-700'
+                                                        }`}
+                                                    >
+                                                        {formatCreditExpiryText(
+                                                            expiresAtFormatted,
+                                                            daysRemaining,
+                                                            isExpired,
+                                                            ''
+                                                        )}
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1.5">
@@ -931,6 +998,14 @@ export default function ClientDashboard({
                                                                             {entry.balance_after !== null && (
                                                                                 <span className="block text-[11px] text-slate-500 mt-0.5 tabular-nums">
                                                                                     Balance after: {entry.balance_after.toLocaleString()}
+                                                                                </span>
+                                                                            )}
+                                                                            {isPurchase && entry.validity_days && (
+                                                                                <span className="block text-[11px] text-slate-500 mt-0.5">
+                                                                                    Valid {entry.validity_days} days ·{' '}
+                                                                                    {entry.expires_at_formatted
+                                                                                        ? `Expires ${entry.expires_at_formatted}`
+                                                                                        : 'Starts on approval'}
                                                                                 </span>
                                                                             )}
                                                                         </td>
@@ -1534,6 +1609,19 @@ export default function ClientDashboard({
                                                         </strong>
                                                     </div>
                                                 </div>
+                                                {selectedOrder.specifications.validity_days && (
+                                                    <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                        <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                            Validity &amp; Expiry
+                                                        </span>
+                                                        <strong className="text-ink">
+                                                            Valid for {Number(selectedOrder.specifications.validity_days)} days ·{' '}
+                                                            {selectedOrder.specifications.expires_at_formatted
+                                                                ? `Expires ${selectedOrder.specifications.expires_at_formatted}`
+                                                                : 'Starts upon admin approval'}
+                                                        </strong>
+                                                    </div>
+                                                )}
                                                 {Array.isArray(selectedOrder.specifications.features_snapshot) &&
                                                     selectedOrder.specifications.features_snapshot.length > 0 && (
                                                         <div className="rounded-xl border border-slate-200 bg-white p-2.5">

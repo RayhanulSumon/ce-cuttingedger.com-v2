@@ -21,6 +21,7 @@ interface SelectedPlanPayload {
     bonus_credits: number;
     total_price: number;
     billing_type: BillingType;
+    validity_days: number;
     features: string[];
     notes: string;
 }
@@ -33,6 +34,7 @@ interface PresetCreditPlan {
     baseCredits: number;
     bonusCredits: number;
     totalPrice: number;
+    validityDays: number;
     effectiveRate: string;
     popular?: boolean;
     buttonLabel: string;
@@ -48,10 +50,11 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         baseCredits: 500,
         bonusCredits: 0,
         totalPrice: 250,
+        validityDays: 90,
         effectiveRate: '$0.50 / credit',
         buttonLabel: 'Buy Starter Plan',
         features: [
-            '500 studio credits never expire',
+            'Valid for 90 days from activation',
             'Use across 2D, 3D, DTP & Try-On',
             'Unlimited revisions with 2-step QA',
         ],
@@ -64,13 +67,14 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         baseCredits: 2000,
         bonusCredits: 300,
         totalPrice: 900,
+        validityDays: 180,
         effectiveRate: '$0.39 / credit',
         popular: true,
         buttonLabel: 'Buy Studio Plan',
         features: [
             '2,000 + 300 bonus = 2,300 credits',
+            'Valid for 180 days from activation',
             '12–18h priority studio turnaround',
-            'Saved brand presets & dedicated QA',
         ],
     },
     {
@@ -81,12 +85,13 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         baseCredits: 5000,
         bonusCredits: 1250,
         totalPrice: 2000,
+        validityDays: 365,
         effectiveRate: '$0.32 / credit',
         buttonLabel: 'Buy Scale Plan',
         features: [
             '5,000 + 1,250 bonus = 6,250 credits',
-            'Sub-6h rush lane & multi-team access',
-            'Dedicated pod & SFTP / S3 delivery',
+            'Valid for 365 days (12 months) from activation',
+            'Sub-6h rush lane & dedicated pod',
         ],
     },
 ];
@@ -141,6 +146,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                 baseCredits,
                 bonusCredits,
                 totalPrice,
+                validityDays: plan.validity_days ?? 90,
                 effectiveRate: `$${(totalPrice / totalCredits).toFixed(2)} / credit`,
                 popular: Boolean(plan.is_popular),
                 buttonLabel: plan.cta_text || `Buy ${plan.name}`,
@@ -155,6 +161,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
         bonus_credits: 0,
         total_price: 250,
         billing_type: 'one_time',
+        validity_days: 90,
         features: [],
         notes: '',
     });
@@ -167,6 +174,8 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
         const totalCredits = customCredits + bonusCredits;
         const totalPrice = Number((customCredits * 0.5).toFixed(2));
         const effectivePerCredit = totalPrice / Math.max(1, totalCredits);
+        const validityDays =
+            billingType === 'monthly' ? 30 : customCredits >= 5000 ? 365 : customCredits >= 2000 ? 180 : 90;
 
         return {
             volumeBonusPct,
@@ -175,6 +184,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
             bonusCredits,
             totalCredits,
             totalPrice,
+            validityDays,
             effectivePerCredit: effectivePerCredit.toFixed(2),
         };
     }, [customCredits, billingType]);
@@ -285,6 +295,9 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                                 </span>
                                             )}
                                         </p>
+                                        <p className="mt-1 text-xs font-medium text-subtle">
+                                            Valid for {plan.validityDays} days from activation
+                                        </p>
                                     </div>
 
                                     <ul className="mt-6 space-y-3">
@@ -309,6 +322,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                             bonus_credits: plan.bonusCredits,
                                             total_price: plan.totalPrice,
                                             billing_type: 'one_time',
+                                            validity_days: plan.validityDays,
                                             features: plan.features,
                                         })
                                     }
@@ -458,6 +472,12 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                             +{customQuote.bonusCredits.toLocaleString()}
                                         </dd>
                                     </div>
+                                    <div className="flex justify-between">
+                                        <dt className="text-muted">Credit validity</dt>
+                                        <dd className="font-semibold text-ink">
+                                            {customQuote.validityDays} days from activation
+                                        </dd>
+                                    </div>
                                     <div className="flex justify-between border-t border-ink/10 pt-2">
                                         <dt className="font-bold text-ink">Total studio credits</dt>
                                         <dd className="font-extrabold tabular-nums text-ink">
@@ -476,12 +496,13 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                         bonus_credits: customQuote.bonusCredits,
                                         total_price: customQuote.totalPrice,
                                         billing_type: billingType,
+                                        validity_days: customQuote.validityDays,
                                         features: [
                                             `${customCredits.toLocaleString()} base studio credits`,
                                             customQuote.totalBonusPct > 0
                                                 ? `+${customQuote.totalBonusPct}% bonus (${customQuote.bonusCredits.toLocaleString()} extra credits)`
                                                 : 'Standard pay-as-you-go credit rate',
-                                            'Valid across 2D, 3D, DTP & Virtual Try-On',
+                                            `Valid for ${customQuote.validityDays} days from activation`,
                                         ],
                                     })
                                 }
@@ -532,6 +553,12 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                     <span className="font-semibold text-ink tabular-nums">
                                         {checkoutPlan.base_credits.toLocaleString()} + {checkoutPlan.bonus_credits.toLocaleString()} ={' '}
                                         {(checkoutPlan.base_credits + checkoutPlan.bonus_credits).toLocaleString()} Credits
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-muted">
+                                    <span>Credit Validity</span>
+                                    <span className="font-semibold text-ink">
+                                        {checkoutPlan.validity_days} Days (starts upon activation)
                                     </span>
                                 </div>
                                 <div className="flex justify-between border-t border-ink/10 pt-2">

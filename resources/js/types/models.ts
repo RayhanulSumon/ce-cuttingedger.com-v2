@@ -162,6 +162,7 @@ export interface PricingPlan {
     base_credits?: number;
     bonus_credits?: number;
     price_amount?: number;
+    validity_days?: number;
     price: string;
     billing_cycle: string;
     features: string[];

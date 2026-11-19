@@ -74,6 +74,7 @@ class AdminPricingPlanController extends Controller
             'base_credits' => ['required', 'integer', 'min:10', 'max:500000'],
             'bonus_credits' => ['required', 'integer', 'min:0', 'max:500000'],
             'price_amount' => ['required', 'numeric', 'min:1', 'max:500000'],
+            'validity_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'cta_text' => ['required', 'string', 'max:60'],
             'features' => ['nullable', 'array'],
             'features.*' => ['string', 'max:255'],

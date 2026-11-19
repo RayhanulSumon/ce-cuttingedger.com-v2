@@ -154,13 +154,24 @@ class AdminOrderController extends Controller
 
                 if ($clientUser) {
                     $creditsToAdd = (int) ($specs['total_credits'] ?? $order->quantity);
+                    $validityDays = max(1, (int) ($specs['validity_days'] ?? 90));
+                    $activatedAt = now();
+                    $expiresAt = $activatedAt->copy()->addDays($validityDays);
+
+                    $nextExpiry = $clientUser->credits_expires_at && $clientUser->credits_expires_at->isFuture() && $clientUser->credits_expires_at->gt($expiresAt)
+                        ? $clientUser->credits_expires_at
+                        : $expiresAt;
+
                     $clientUser->increment('credits_balance', $creditsToAdd);
                     $clientUser->update([
                         'active_plan_name' => (string) ($specs['plan_name'] ?? $order->service_name),
+                        'credits_expires_at' => $nextExpiry,
                     ]);
 
                     $specs['credits_activated'] = true;
-                    $specs['activated_at'] = now()->toISOString();
+                    $specs['activated_at'] = $activatedAt->toISOString();
+                    $specs['expires_at'] = $expiresAt->toISOString();
+                    $specs['expires_at_formatted'] = $expiresAt->format('M j, Y');
 
                     $order->update([
                         'user_id' => $clientUser->id,

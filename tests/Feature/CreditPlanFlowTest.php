@@ -263,13 +263,14 @@ class CreditPlanFlowTest extends TestCase
     {
         $plan = PricingPlan::where('slug', 'studio-credit-pack')->firstOrFail();
 
-        // Client buys Studio Credit Pack at original values ($900 for 2,000 + 300 bonus = 2,300 credits)
+        // Client buys Studio Credit Pack at original values ($900 for 2,000 + 300 bonus = 2,300 credits, 180-day validity)
         $this->actingAs($this->client)->post('/pricing/buy-plan', [
             'plan_name' => $plan->name,
             'base_credits' => $plan->base_credits,
             'bonus_credits' => $plan->bonus_credits,
             'total_price' => $plan->price_amount,
             'billing_type' => 'one_time',
+            'validity_days' => $plan->validity_days,
             'features' => $plan->features,
         ])->assertRedirect(route('client.portal'));
 
@@ -278,7 +279,10 @@ class CreditPlanFlowTest extends TestCase
             ->latest('id')
             ->firstOrFail();
 
-        // Admin updates Studio Credit Pack price and credits for future buyers
+        $this->assertSame(180, $order->specifications['validity_days']);
+        $this->assertNull($order->specifications['expires_at']);
+
+        // Admin updates Studio Credit Pack price, credits, and validity for future buyers
         $this->actingAs($this->admin)->put("/admin/pricing/{$plan->id}", [
             'name' => 'Studio Credit Pack',
             'badge' => 'Updated Popular',
@@ -286,6 +290,7 @@ class CreditPlanFlowTest extends TestCase
             'base_credits' => 3000,
             'bonus_credits' => 500,
             'price_amount' => 1200,
+            'validity_days' => 365,
             'cta_text' => 'Buy Updated Plan',
             'features' => ['3,000 + 500 bonus = 3,500 credits'],
             'is_popular' => true,
@@ -296,6 +301,7 @@ class CreditPlanFlowTest extends TestCase
         $this->assertSame(3000, $plan->base_credits);
         $this->assertSame(500, $plan->bonus_credits);
         $this->assertSame(1200.0, $plan->price_amount);
+        $this->assertSame(365, $plan->validity_days);
 
         // Public /pricing shows the updated plan values for future purchases
         $this->get('/pricing')->assertOk()->assertInertia(fn (Assert $page) => $page
@@ -303,6 +309,7 @@ class CreditPlanFlowTest extends TestCase
             ->where('plans.1.price_amount', 1200)
             ->where('plans.1.base_credits', 3000)
             ->where('plans.1.bonus_credits', 500)
+            ->where('plans.1.validity_days', 365)
         );
 
         // Client's existing purchase retains its exact purchase-time snapshot
@@ -313,22 +320,34 @@ class CreditPlanFlowTest extends TestCase
         $this->assertSame(300, $order->specifications['bonus_credits']);
         $this->assertSame(2300, $order->specifications['total_credits']);
         $this->assertSame(900, $order->specifications['total_price']);
-        $this->assertSame(['2,000 + 300 bonus = 2,300 credits', '12–18h priority studio turnaround', 'Saved brand presets & dedicated QA'], $order->specifications['features_snapshot']);
+        $this->assertSame(180, $order->specifications['validity_days']);
+        $this->assertSame(['2,000 + 300 bonus = 2,300 credits', 'Valid for 180 days from activation', '12–18h priority studio turnaround'], $order->specifications['features_snapshot']);
 
-        // When Admin marks the existing order paid, client receives their exact 2,300 snapshot credits
+        // When Admin marks the existing order paid, client receives their exact 2,300 snapshot credits and 180-day expiry
         $this->actingAs($this->admin)->put("/admin/orders/{$order->id}", [
             'status' => 'completed',
             'payment_status' => 'paid',
         ])->assertRedirect();
 
         $this->client->refresh();
+        $order->refresh();
         $this->assertSame(2300, $this->client->credits_balance);
+        $this->assertNotNull($this->client->credits_expires_at);
+        $this->assertNotNull($order->specifications['expires_at']);
+        $this->assertNotNull($order->specifications['expires_at_formatted']);
+
+        $expectedExpiryFormatted = $this->client->credits_expires_at->format('M j, Y');
+        $this->assertSame($expectedExpiryFormatted, $order->specifications['expires_at_formatted']);
 
         $this->actingAs($this->client)->get('/portal')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('creditSummary.available_credits', 2300)
             ->where('creditSummary.total_purchased_credits', 2300)
+            ->where('creditSummary.expires_at_formatted', $expectedExpiryFormatted)
+            ->where('creditSummary.is_expired', false)
             ->where('creditHistory.0.credits_delta', 2300)
             ->where('creditHistory.0.amount_usd', 900)
+            ->where('creditHistory.0.validity_days', 180)
+            ->where('creditHistory.0.expires_at_formatted', $expectedExpiryFormatted)
         );
     }
 }

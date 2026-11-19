@@ -315,6 +315,7 @@ class OrderController extends Controller
             'bonus_credits' => ['required', 'integer', 'min:0', 'max:500000'],
             'total_price' => ['required', 'numeric', 'min:1', 'max:500000'],
             'billing_type' => ['required', 'in:one_time,monthly'],
+            'validity_days' => ['nullable', 'integer', 'min:1', 'max:3650'],
             'features' => ['nullable', 'array'],
             'features.*' => ['string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
@@ -324,6 +325,7 @@ class OrderController extends Controller
         $totalPrice = (float) $validated['total_price'];
         $totalCredits = (int) $validated['base_credits'] + (int) $validated['bonus_credits'];
         $effectiveRate = round($totalPrice / max(1, $totalCredits), 4);
+        $validityDays = (int) ($validated['validity_days'] ?? ($validated['billing_type'] === 'monthly' ? 30 : 180));
         $featuresSnapshot = array_values(array_filter(
             array_map('trim', (array) ($validated['features'] ?? [])),
             fn (string $item): bool => $item !== ''
@@ -354,6 +356,9 @@ class OrderController extends Controller
                 'total_price' => $totalPrice,
                 'effective_rate_per_credit' => $effectiveRate,
                 'billing_type' => $validated['billing_type'],
+                'validity_days' => $validityDays,
+                'expires_at' => null,
+                'expires_at_formatted' => null,
                 'features_snapshot' => $featuresSnapshot,
                 'snapshot_captured_at' => now()->toISOString(),
                 'credits_activated' => false,

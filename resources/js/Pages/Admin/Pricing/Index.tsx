@@ -45,6 +45,7 @@ interface PlanFormState {
     base_credits: number;
     bonus_credits: number;
     price_amount: number;
+    validity_days: number;
     cta_text: string;
     features: string[];
     is_popular: boolean;
@@ -58,8 +59,9 @@ const DEFAULT_FORM_STATE: PlanFormState = {
     base_credits: 500,
     bonus_credits: 0,
     price_amount: 250,
+    validity_days: 90,
     cta_text: "Buy Plan",
-    features: ["Credits never expire", "Use across 2D, 3D, DTP & Try-On"],
+    features: ["Valid for 90 days from activation", "Use across 2D, 3D, DTP & Try-On"],
     is_popular: false,
     sort_order: 0,
 };
@@ -99,6 +101,7 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
             base_credits: plan.base_credits ?? 500,
             bonus_credits: plan.bonus_credits ?? 0,
             price_amount: plan.price_amount ?? 250,
+            validity_days: plan.validity_days ?? 90,
             cta_text: plan.cta_text,
             features,
             is_popular: Boolean(plan.is_popular),
@@ -175,7 +178,8 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
                             <span>{total.toLocaleString()} Total Credits</span>
                         </div>
                         <div className="text-[11px] text-slate-500 tabular-nums">
-                            {base.toLocaleString()} base{bonus > 0 ? ` + ${bonus.toLocaleString()} bonus` : ""}
+                            {base.toLocaleString()} base{bonus > 0 ? ` + ${bonus.toLocaleString()} bonus` : ""} · Valid{" "}
+                            {plan.validity_days ?? 90} days
                         </div>
                     </div>
                 );
@@ -306,7 +310,7 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-700">Base Credits</label>
                                 <Input
@@ -341,12 +345,27 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
                                     required
                                 />
                             </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-700">Validity (Days)</label>
+                                <Input
+                                    type="number"
+                                    min={1}
+                                    max={3650}
+                                    value={form.data.validity_days}
+                                    onChange={(e) => form.setData("validity_days", Number(e.target.value) || 1)}
+                                    required
+                                />
+                            </div>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs">
+                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs">
                             <span className="text-slate-600">
                                 Total Credits:{" "}
                                 <strong className="text-ink">{preview.totalCredits.toLocaleString()}</strong>
+                            </span>
+                            <span className="text-slate-600">
+                                Validity:{" "}
+                                <strong className="text-ink">{form.data.validity_days} days</strong>
                             </span>
                             <span className="text-slate-600">
                                 Effective Rate:{" "}

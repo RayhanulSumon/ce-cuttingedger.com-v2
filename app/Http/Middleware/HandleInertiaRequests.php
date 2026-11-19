@@ -82,6 +82,8 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions()->pluck('name')->values()->all(),
                     'credits_balance' => (int) ($request->user()->credits_balance ?? 0),
                     'active_plan_name' => $request->user()->active_plan_name,
+                    'credits_expires_at' => $request->user()->credits_expires_at?->toISOString(),
+                    'credits_expires_at_formatted' => $request->user()->credits_expires_at?->format('M j, Y'),
                 ] : null,
             ],
             'flash' => [

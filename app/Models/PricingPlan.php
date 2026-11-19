@@ -18,5 +18,6 @@ class PricingPlan extends Model
         'base_credits' => 'integer',
         'bonus_credits' => 'integer',
         'price_amount' => 'float',
+        'validity_days' => 'integer',
     ];
 }

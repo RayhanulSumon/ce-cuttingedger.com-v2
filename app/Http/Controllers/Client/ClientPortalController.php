@@ -67,6 +67,12 @@ class ClientPortalController extends Controller
         $creditSummary = [
             'available_credits' => (int) ($user->credits_balance ?? 0),
             'active_plan_name' => $user->active_plan_name,
+            'expires_at' => $user->credits_expires_at?->toISOString(),
+            'expires_at_formatted' => $user->credits_expires_at?->format('M j, Y'),
+            'days_remaining' => $user->credits_expires_at
+                ? max(0, (int) now()->startOfDay()->diffInDays($user->credits_expires_at->copy()->startOfDay(), false))
+                : null,
+            'is_expired' => $user->credits_expires_at ? $user->credits_expires_at->isPast() : false,
             'total_purchased_credits' => $creditOrders
                 ->filter(fn (array $o): bool => $o['order_type'] === 'credit_plan' && ! empty($o['specifications']['credits_activated']))
                 ->sum(fn (array $o): int => (int) ($o['specifications']['total_credits'] ?? $o['quantity'])),
@@ -97,6 +103,8 @@ class ClientPortalController extends Controller
                         'credits_delta' => (int) ($specs['total_credits'] ?? $o['quantity']),
                         'balance_after' => null,
                         'is_activated' => $isActivated,
+                        'validity_days' => (int) ($specs['validity_days'] ?? 90),
+                        'expires_at_formatted' => $specs['expires_at_formatted'] ?? null,
                         'status_label' => $isActivated ? 'Credited' : ($o['status'] === 'cancelled' ? 'Cancelled' : 'Pending Approval'),
                         'amount_usd' => (float) $o['total_price'],
                         'created_at_formatted' => $o['created_at_formatted'],
@@ -114,6 +122,8 @@ class ClientPortalController extends Controller
                     'credits_delta' => -1 * $creditsSpent,
                     'balance_after' => isset($specs['remaining_credits']) ? (int) $specs['remaining_credits'] : null,
                     'is_activated' => true,
+                    'validity_days' => null,
+                    'expires_at_formatted' => null,
                     'status_label' => $o['status'] === 'completed' ? 'Completed' : 'Redeemed · In Production',
                     'amount_usd' => (float) $o['total_price'],
                     'created_at_formatted' => $o['created_at_formatted'],

@@ -29,6 +29,8 @@ export interface AuthUser {
     permissions?: string[];
     credits_balance?: number;
     active_plan_name?: string | null;
+    credits_expires_at?: string | null;
+    credits_expires_at_formatted?: string | null;
 }
 
 export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> {
