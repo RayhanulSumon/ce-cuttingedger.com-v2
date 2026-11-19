@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
-import { capabilityIcon } from '@/Components/Common/capabilityIcons';
 import { PageProps } from '@/types';
 import { DARK_SECTIONS, EASE_OUT_EXPO, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
 
@@ -35,8 +34,6 @@ type NavItem = { label: string; href: string; section?: keyof typeof SECTION_IND
 /** Main navigation. `section` entries jump in place when the menu is opened on the homepage. */
 const MAIN_NAV: NavItem[] = [
     { label: 'Home', href: '/', section: 'hero' },
-    { label: 'Digital Twins', href: '/digital-twins', section: 'digital-twins' },
-    { label: 'Virtual Try-On', href: sectionUrl('try-on'), section: 'try-on' },
     { label: 'Capabilities', href: '/capabilities', section: 'capabilities', capabilities: true },
     { label: 'Case Studies', href: '/case-studies' },
     { label: 'Pricing', href: '/pricing' },
@@ -69,12 +66,19 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
     const { capabilities_nav = [], auth } = usePage<PageProps>().props;
     const { url } = usePage();
     const path = url.split('?')[0];
+    const activeCapabilityId =
+        capabilities_nav.find((cap) => path === cap.path || path.startsWith(`${cap.path}/`))?.id ?? null;
     const [drawer, setDrawer] = useState(false);
     const [capabilitiesOpen, setCapabilitiesOpen] = useState(false);
+    const [openCapability, setOpenCapability] = useState<number | null>(activeCapabilityId);
     const collapsed = index !== undefined && index > 0;
     const dark = onDark ?? (index !== undefined && DARK_SECTIONS.includes(index));
     /** Inner pages scroll under the bar, so it fades in a backdrop; the homepage stage does not scroll. */
     const solid = !goTo;
+
+    useEffect(() => {
+        setOpenCapability(activeCapabilityId);
+    }, [activeCapabilityId]);
 
     const closeDrawer = () => setDrawer(false);
 
@@ -106,43 +110,71 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.4, ease: EASE_OUT_QUART }}
+                                transition={{ duration: 0.35, ease: EASE_OUT_QUART }}
                                 className="overflow-hidden"
                             >
-                                <motion.ul
-                                    className="grid gap-1 px-2 pb-2 pt-1"
-                                    initial="hidden"
-                                    animate="show"
-                                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } } }}
-                                >
+                                <ul className="space-y-0.5 px-2 pb-2 pt-1">
                                     {capabilities_nav.map((capability) => {
-                                        const Icon = capabilityIcon(capability.icon);
+                                        const isExpanded = openCapability === capability.id;
+                                        const isActive = path === capability.path || path.startsWith(`${capability.path}/`);
 
                                         return (
-                                            <motion.li
-                                                key={capability.id}
-                                                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE_OUT_QUART } } }}
-                                            >
-                                                <Link
-                                                    href={capability.path}
-                                                    prefetch
-                                                    onClick={closeDrawer}
-                                                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/10"
+                                            <li key={capability.id}>
+                                                <button
+                                                    type="button"
+                                                    aria-expanded={isExpanded}
+                                                    onClick={() => setOpenCapability(isExpanded ? null : capability.id)}
+                                                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white ${
+                                                        isActive || isExpanded ? 'text-white' : 'text-white/75'
+                                                    }`}
                                                 >
-                                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-primary transition-[background-color,color] duration-300 group-hover:bg-primary group-hover:text-white">
-                                                        <Icon size={18} />
-                                                    </span>
-                                                    <span className="min-w-0">
-                                                        <span className="block text-[15px] font-semibold leading-tight">
-                                                            {capability.tag && <span className="text-primary">{capability.tag} · </span>}
-                                                            {capability.title}
-                                                        </span>
-                                                        <span className="mt-0.5 block text-xs leading-snug text-white/50">
-                                                            {capability.children.length} {capability.children.length === 1 ? 'speciality' : 'specialities'}
-                                                        </span>
-                                                    </span>
-                                                </Link>
-                                            </motion.li>
+                                                    <span className="truncate">{capability.title}</span>
+                                                    <ChevronDown
+                                                        size={15}
+                                                        className={`shrink-0 text-white/50 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                                                    />
+                                                </button>
+
+                                                <AnimatePresence initial={false}>
+                                                    {isExpanded && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.3, ease: EASE_OUT_QUART }}
+                                                            className="overflow-hidden"
+                                                        >
+                                                            <ul className="my-1 ml-3 space-y-0.5 border-l border-white/15 pl-3">
+                                                                {capability.children.map((child) => (
+                                                                    <li key={child.id}>
+                                                                        <Link
+                                                                            href={child.path}
+                                                                            prefetch
+                                                                            onClick={closeDrawer}
+                                                                            className={`block rounded-lg px-2.5 py-1.5 text-[13.5px] transition-colors duration-200 hover:bg-white/10 hover:text-white ${
+                                                                                path === child.path ? 'font-semibold text-white' : 'text-white/60'
+                                                                            }`}
+                                                                        >
+                                                                            {child.title}
+                                                                        </Link>
+                                                                    </li>
+                                                                ))}
+                                                                <li>
+                                                                    <Link
+                                                                        href={capability.path}
+                                                                        prefetch
+                                                                        onClick={closeDrawer}
+                                                                        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors duration-200 hover:text-white"
+                                                                    >
+                                                                        All {capability.tag ?? capability.title}
+                                                                        <ArrowUpRight size={12} />
+                                                                    </Link>
+                                                                </li>
+                                                            </ul>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </li>
                                         );
                                     })}
                                     <li>
@@ -150,12 +182,12 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                             href="/capabilities"
                                             prefetch
                                             onClick={closeDrawer}
-                                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-white/70 transition-colors hover:text-white"
+                                            className="mt-1 flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white/60 transition-colors hover:text-white"
                                         >
-                                            All capabilities <ArrowUpRight size={14} />
+                                            All capabilities <ArrowUpRight size={13} />
                                         </Link>
                                     </li>
-                                </motion.ul>
+                                </ul>
                             </motion.div>
                         )}
                     </AnimatePresence>
