@@ -16,6 +16,7 @@ import { PricingPlan } from '@/types/models';
 type BillingType = 'one_time' | 'monthly';
 
 interface SelectedPlanPayload {
+    pricing_plan_id?: number | null;
     plan_name: string;
     base_credits: number;
     bonus_credits: number;
@@ -28,6 +29,7 @@ interface SelectedPlanPayload {
 
 interface PresetCreditPlan {
     id: string;
+    presetPlanId?: number | null;
     eyebrow: string;
     name: string;
     description: string;
@@ -140,6 +142,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
 
             return {
                 id: String(plan.id || plan.slug),
+                presetPlanId: typeof plan.id === 'number' ? plan.id : null,
                 eyebrow: plan.badge || (plan.is_popular ? 'Most Popular' : 'Credit Pack'),
                 name: plan.name,
                 description: plan.headline,
@@ -156,6 +159,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
     }, [plans]);
 
     const buyForm = useForm<SelectedPlanPayload>({
+        pricing_plan_id: null,
         plan_name: '',
         base_credits: 500,
         bonus_credits: 0,
@@ -317,6 +321,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                     type="button"
                                     onClick={() =>
                                         openBuyModal({
+                                            pricing_plan_id: plan.presetPlanId ?? null,
                                             plan_name: plan.name,
                                             base_credits: plan.baseCredits,
                                             bonus_credits: plan.bonusCredits,
@@ -491,6 +496,7 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                 type="button"
                                 onClick={() =>
                                     openBuyModal({
+                                        pricing_plan_id: null,
                                         plan_name: 'Custom Credit Plan',
                                         base_credits: customCredits,
                                         bonus_credits: customQuote.bonusCredits,

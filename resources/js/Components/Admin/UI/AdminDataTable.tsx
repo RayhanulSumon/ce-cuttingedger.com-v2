@@ -20,6 +20,7 @@ interface AdminDataTableProps<T> {
     searchKey?: keyof T;
     searchPlaceholder?: string;
     emptyMessage?: string;
+    pageSize?: number;
 }
 
 export function AdminDataTable<T extends { id?: number | string }>({
@@ -28,10 +29,10 @@ export function AdminDataTable<T extends { id?: number | string }>({
     searchKey,
     searchPlaceholder = "Search records...",
     emptyMessage = "No records found.",
+    pageSize = 10,
 }: AdminDataTableProps<T>) {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-    const pageSize = 10;
 
     const filteredData = React.useMemo(() => {
         if (!search || !searchKey) return data;

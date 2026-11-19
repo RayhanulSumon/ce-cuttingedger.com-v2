@@ -949,10 +949,12 @@ export default function ClientDashboard({
                                                         <tbody className="divide-y divide-slate-100">
                                                             {filteredCreditHistory.map((entry) => {
                                                                 const isPurchase = entry.entry_type === 'purchase';
-                                                                const matchingOrder = orders.find((o) => o.id === entry.id) || null;
+                                                                const matchingOrder = !isPurchase
+                                                                    ? orders.find((o) => o.id === entry.id) || null
+                                                                    : null;
 
                                                                 return (
-                                                                    <tr key={entry.id} className="hover:bg-slate-50/70 transition-colors">
+                                                                    <tr key={`${entry.entry_type}-${entry.id}`} className="hover:bg-slate-50/70 transition-colors">
                                                                         <td className="px-5 py-4 font-bold text-ink whitespace-nowrap">
                                                                             #{entry.order_number}
                                                                         </td>

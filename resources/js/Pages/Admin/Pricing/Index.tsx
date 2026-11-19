@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { router, useForm } from "@inertiajs/react";
-import { Coins, Edit, MoreHorizontal, ShieldCheck, Trash2 } from "lucide-react";
+import { Link, router, useForm } from "@inertiajs/react";
+import { ArrowRight, Clock, Coins, Edit, MoreHorizontal, ShieldCheck, Trash2 } from "lucide-react";
 import { AdminDataTable, Column } from "@/Components/Admin/UI/AdminDataTable";
 import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
 import {
@@ -36,6 +36,8 @@ import { PricingPlan } from "@/types/models";
 
 interface PricingIndexProps {
     plans: PricingPlan[];
+    pendingCreditOrdersCount?: number;
+    totalCreditOrdersCount?: number;
 }
 
 interface PlanFormState {
@@ -66,7 +68,11 @@ const DEFAULT_FORM_STATE: PlanFormState = {
     sort_order: 0,
 };
 
-export default function PricingIndex({ plans = [] }: PricingIndexProps) {
+export default function PricingIndex({
+    plans = [],
+    pendingCreditOrdersCount = 0,
+    totalCreditOrdersCount = 0,
+}: PricingIndexProps) {
     const [modalOpen, setModalOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState<PricingPlan | null>(null);
     const [planToDelete, setPlanToDelete] = useState<PricingPlan | null>(null);
@@ -259,14 +265,47 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
                 onActionClick={openCreate}
             />
 
-            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-3.5 text-xs text-emerald-900">
-                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
-                <div>
-                    <span className="font-bold">Immutable Purchase Snapshots Active:</span>{" "}
-                    Updating or deleting a plan here updates the public{" "}
-                    <code className="font-mono font-semibold">/pricing</code> page immediately. All
-                    previous client purchases retain their exact price, base/bonus credits, and
-                    features snapshot at the time of checkout.
+            <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-3.5 text-xs text-emerald-900">
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
+                    <div>
+                        <span className="font-bold">Immutable Purchase Snapshots Active:</span>{" "}
+                        Updating or deleting a plan here updates the public{" "}
+                        <code className="font-mono font-semibold">/pricing</code> page immediately. All
+                        previous client purchases retain their exact price, base/bonus credits, and
+                        features snapshot at the time of checkout.
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-xs shadow-xs">
+                    <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                            <Clock className="w-4 h-4 text-amber-600" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-ink flex items-center gap-2">
+                                <span>Client Credit Plan Requests</span>
+                                {pendingCreditOrdersCount > 0 && (
+                                    <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold tabular-nums">
+                                        {pendingCreditOrdersCount} pending
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-slate-500 mt-0.5">
+                                {totalCreditOrdersCount} total credit plan{" "}
+                                {totalCreditOrdersCount === 1 ? "request" : "requests"} submitted by
+                                clients
+                            </p>
+                        </div>
+                    </div>
+
+                    <Link
+                        href="/admin/credit-purchases"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-colors shrink-0"
+                    >
+                        <span>Review &amp; Approve Requests</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                 </div>
             </div>
 

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminChatSessionController;
 use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
+use App\Http\Controllers\Admin\AdminCreditPurchaseController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDigitalTwinController;
 use App\Http\Controllers\Admin\AdminFaqController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Client\ClientPortalController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CreditPurchaseController;
 use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
@@ -131,6 +133,10 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::get('free-trials', fn () => redirect()->route('admin.orders.index', ['type' => 'free_trial']))->name('free-trials.index');
     Route::get('orders/{order}/download-zip', [AdminOrderController::class, 'downloadZip'])->name('orders.download-zip');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
+    Route::get('credit-purchases', [AdminCreditPurchaseController::class, 'index'])->name('credit-purchases.index');
+    Route::post('credit-purchases/{creditPurchase}/approve', [AdminCreditPurchaseController::class, 'approve'])->name('credit-purchases.approve');
+    Route::put('credit-purchases/{creditPurchase}', [AdminCreditPurchaseController::class, 'update'])->name('credit-purchases.update');
+    Route::delete('credit-purchases/{creditPurchase}', [AdminCreditPurchaseController::class, 'destroy'])->name('credit-purchases.destroy');
     Route::delete('chat-sessions-bulk/destroy-all', [AdminChatSessionController::class, 'destroyAll'])->name('chat-sessions.destroy-all');
     Route::post('chat-sessions/mark-all-read', [AdminChatSessionController::class, 'markAllLeadsRead'])->name('chat-sessions.mark-all-read');
     Route::post('chat-sessions/{chatSession}/takeover', [AdminChatSessionController::class, 'takeover'])->name('chat-sessions.takeover');
@@ -245,7 +251,7 @@ Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(funct
         ->middleware('throttle:public-contact')
         ->name('try-on.quote.store');
 
-    Route::post('/pricing/buy-plan', [OrderController::class, 'storeCreditPlanOrder'])
+    Route::post('/pricing/buy-plan', [CreditPurchaseController::class, 'store'])
         ->middleware('throttle:public-contact')
         ->name('pricing.buy-plan');
 

@@ -47,6 +47,7 @@ import {
     Building2,
     Phone,
     ShoppingBag,
+    Coins,
 } from "lucide-react";
 
 interface ClientAccountRecord {
@@ -61,6 +62,10 @@ interface ClientAccountRecord {
     email_verified?: boolean;
     email_verified_at?: string | null;
     orders_count?: number;
+    credits_balance?: number;
+    active_plan_name?: string | null;
+    credits_expires_at_formatted?: string | null;
+    is_credits_expired?: boolean;
     last_login_at?: string;
     created_at?: string;
 }
@@ -235,10 +240,43 @@ export default function ClientAccountsIndex({
                 ),
         },
         {
+            header: "Account Credits",
+            cell: (client) => {
+                const balance = client.credits_balance ?? 0;
+                return (
+                    <Link
+                        href={`/admin/credit-purchases?search=${encodeURIComponent(client.email)}`}
+                        className="block space-y-1 text-xs group"
+                    >
+                        <div className="font-bold text-ink tabular-nums flex items-center gap-1.5 group-hover:text-primary transition-colors">
+                            <Coins className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <span>{balance.toLocaleString()} Credits</span>
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                            {client.active_plan_name || "No active plan"}
+                        </div>
+                        {client.credits_expires_at_formatted && (
+                            <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                                    client.is_credits_expired
+                                        ? "bg-rose-50 text-rose-700 border-rose-200"
+                                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                }`}
+                            >
+                                {client.is_credits_expired
+                                    ? `Expired ${client.credits_expires_at_formatted}`
+                                    : `Expires ${client.credits_expires_at_formatted}`}
+                            </span>
+                        )}
+                    </Link>
+                );
+            },
+        },
+        {
             header: "Orders",
             cell: (client) => (
                 <Link
-                    href="/admin/orders"
+                    href={`/admin/orders?search=${encodeURIComponent(client.email)}`}
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-xs font-bold text-ink transition-colors"
                 >
                     <ShoppingBag className="w-3.5 h-3.5 text-primary" />

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
 import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
 import { AdminDataTable, Column } from "@/Components/Admin/UI/AdminDataTable";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
+import { Input } from "@/Components/ui/input";
 import {
     Dialog,
     DialogContent,
@@ -33,22 +34,17 @@ import {
     Download,
     Eye,
     Clock,
-    User,
-    Mail,
-    Phone,
     MoreHorizontal,
     CheckCircle2,
     XCircle,
     Trash2,
     Layers,
-    FileText,
     ExternalLink,
-    AlertCircle,
     AlertTriangle,
-    DollarSign,
-    CreditCard,
-    FileArchive,
     Folder,
+    Search,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -128,44 +124,44 @@ export default function OrdersIndex({
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [adminNote, setAdminNote] = useState("");
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(searchTerm || "");
+
+    useEffect(() => {
+        setSearchQuery(searchTerm || "");
+    }, [searchTerm]);
+
+    const visitWithFilters = (overrides: Record<string, string | number | undefined>) => {
+        const merged: Record<string, string | number> = {};
+        const nextType = "type" in overrides ? overrides.type : currentType;
+        const nextStatus = "status" in overrides ? overrides.status : currentStatus;
+        const nextPayment =
+            "payment_status" in overrides ? overrides.payment_status : currentPaymentStatus;
+        const nextSearch = "search" in overrides ? overrides.search : searchTerm;
+        const nextPage = overrides.page;
+
+        if (nextType) merged.type = nextType;
+        if (nextStatus) merged.status = nextStatus;
+        if (nextPayment) merged.payment_status = nextPayment;
+        if (nextSearch && String(nextSearch).trim() !== "") merged.search = String(nextSearch).trim();
+        if (nextPage) merged.page = nextPage;
+
+        router.get("/admin/orders", merged, { preserveState: true, preserveScroll: true });
+    };
 
     const handleStatusFilter = (status?: string) => {
-        router.get(
-            "/admin/orders",
-            {
-                ...(status ? { status } : {}),
-                ...(currentType ? { type: currentType } : {}),
-                ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
-                ...(searchTerm ? { search: searchTerm } : {}),
-            },
-            { preserveState: true }
-        );
+        visitWithFilters({ status, page: undefined });
     };
 
     const handleTypeFilter = (type?: string) => {
-        router.get(
-            "/admin/orders",
-            {
-                ...(type ? { type } : {}),
-                ...(currentStatus ? { status: currentStatus } : {}),
-                ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
-                ...(searchTerm ? { search: searchTerm } : {}),
-            },
-            { preserveState: true }
-        );
+        visitWithFilters({ type, page: undefined });
     };
 
     const handleSearch = (query: string) => {
-        router.get(
-            "/admin/orders",
-            {
-                ...(currentType ? { type: currentType } : {}),
-                ...(currentStatus ? { status: currentStatus } : {}),
-                ...(currentPaymentStatus ? { payment_status: currentPaymentStatus } : {}),
-                ...(query ? { search: query } : {}),
-            },
-            { preserveState: true }
-        );
+        visitWithFilters({ search: query, page: undefined });
+    };
+
+    const handlePageChange = (page: number) => {
+        visitWithFilters({ page });
     };
 
     const handleUpdateStatus = (
@@ -175,21 +171,24 @@ export default function OrdersIndex({
         notes?: string
     ) => {
         setIsUpdatingStatus(true);
-        router.put(
-            `/admin/orders/${orderId}`,
-            {
-                status: newStatus,
-                payment_status: newPayment ?? selectedOrder?.payment_status,
-                admin_notes: notes ?? adminNote ?? selectedOrder?.admin_notes,
+        const payload: Record<string, string> = {
+            status: newStatus,
+        };
+        if (newPayment !== undefined) {
+            payload.payment_status = newPayment;
+        }
+        if (notes !== undefined) {
+            payload.admin_notes = notes;
+        }
+
+        router.put(`/admin/orders/${orderId}`, payload, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsDetailOpen(false);
+                setSelectedOrder(null);
             },
-            {
-                onSuccess: () => {
-                    setIsDetailOpen(false);
-                    setSelectedOrder(null);
-                },
-                onFinish: () => setIsUpdatingStatus(false),
-            }
-        );
+            onFinish: () => setIsUpdatingStatus(false),
+        });
     };
 
     const handleDelete = (order: OrderItem) => {
@@ -200,6 +199,7 @@ export default function OrdersIndex({
     const confirmDelete = () => {
         if (!orderToDelete) return;
         router.delete(`/admin/orders/${orderToDelete.id}`, {
+            preserveScroll: true,
             onSuccess: () => {
                 setIsDeleteOpen(false);
                 setOrderToDelete(null);
@@ -211,31 +211,31 @@ export default function OrdersIndex({
         switch (status) {
             case "pending":
                 return (
-                    <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                    <Badge className="bg-amber-50 text-amber-700 border border-amber-200">
                         <Clock className="w-3 h-3 mr-1" /> Pending Review
                     </Badge>
                 );
             case "in_production":
                 return (
-                    <Badge className="bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                    <Badge className="bg-blue-50 text-blue-700 border border-blue-200">
                         <Layers className="w-3 h-3 mr-1" /> In Production
                     </Badge>
                 );
             case "review":
                 return (
-                    <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
                         <Eye className="w-3 h-3 mr-1" /> Quality Review
                     </Badge>
                 );
             case "completed":
                 return (
-                    <Badge className="bg-accent/10 text-accent border border-accent/30">
+                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                     </Badge>
                 );
             case "cancelled":
                 return (
-                    <Badge className="bg-red-500/10 text-red-400 border border-red-500/30">
+                    <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
                         <XCircle className="w-3 h-3 mr-1" /> Cancelled
                     </Badge>
                 );
@@ -246,37 +246,42 @@ export default function OrdersIndex({
         switch (status) {
             case "paid":
                 return (
-                    <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
                         Paid
                     </Badge>
                 );
             case "invoice_sent":
                 return (
-                    <Badge className="bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                    <Badge className="bg-sky-50 text-sky-700 border border-sky-200">
                         Invoiced
+                    </Badge>
+                );
+            case "free_trial":
+                return (
+                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
+                        Free Trial
                     </Badge>
                 );
             default:
                 return (
-                    <Badge className="bg-white/10 text-white/60 border border-white/20">
+                    <Badge className="bg-slate-100 text-slate-600 border border-slate-200">
                         Unpaid
                     </Badge>
                 );
         }
     };
 
-    // Columns configuration for DataTable
     const columns: Column<OrderItem>[] = [
         {
             header: "Order / Date",
             accessorKey: "order_number",
             cell: (row) => (
-                <div className="flex flex-col gap-0.5 font-mono">
-                    <span className="font-bold text-white tracking-wider flex items-center gap-1.5">
-                        <ShoppingBag className="w-3.5 h-3.5 text-accent" />
+                <div className="flex flex-col gap-0.5">
+                    <span className="font-mono font-bold text-ink tracking-wide flex items-center gap-1.5 text-xs">
+                        <ShoppingBag className="w-3.5 h-3.5 text-primary shrink-0" />
                         {row.order_number}
                     </span>
-                    <span className="text-[10px] text-white/50">{row.created_at_formatted}</span>
+                    <span className="text-[11px] text-slate-500">{row.created_at_formatted}</span>
                 </div>
             ),
         },
@@ -285,8 +290,8 @@ export default function OrdersIndex({
             accessorKey: "client_name",
             cell: (row) => (
                 <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-white">{row.client_name}</span>
-                    <span className="text-[11px] text-[#00f5ff] font-mono">{row.client_email}</span>
+                    <span className="font-semibold text-ink text-xs">{row.client_name}</span>
+                    <span className="text-[11px] text-slate-500 font-mono">{row.client_email}</span>
                 </div>
             ),
         },
@@ -294,9 +299,11 @@ export default function OrdersIndex({
             header: "Service & Complexity",
             accessorKey: "service_name",
             cell: (row) => (
-                <div className="flex flex-col gap-0.5 font-mono text-xs">
-                    <span className="font-semibold text-white truncate max-w-[180px]">{row.service_name}</span>
-                    <span className="text-[10px] text-white/60 capitalize">
+                <div className="flex flex-col gap-0.5 text-xs">
+                    <span className="font-semibold text-ink truncate max-w-[200px]">
+                        {row.service_name}
+                    </span>
+                    <span className="text-[11px] text-slate-500 capitalize">
                         {row.complexity} complexity • {row.turnaround}
                     </span>
                 </div>
@@ -311,31 +318,31 @@ export default function OrdersIndex({
                 return (
                     <div className="flex flex-col gap-1 font-mono text-xs">
                         <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-white">{row.uploaded_count}</span>
-                            <span className="text-white/40">/</span>
-                            <span className="text-white/70">{row.quantity} quoted</span>
+                            <span className="font-bold text-ink">{row.uploaded_count}</span>
+                            <span className="text-slate-400">/</span>
+                            <span className="text-slate-600">{row.quantity} quoted</span>
                         </div>
                         {row.cloud_link ? (
                             <a
                                 href={row.cloud_link}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-[10px] text-purple-300 bg-purple-500/15 hover:bg-purple-500/25 px-1.5 py-0.5 rounded border border-purple-500/30 w-fit transition-colors"
+                                className="inline-flex items-center gap-1 text-[10px] text-purple-700 bg-purple-50 hover:bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200 w-fit transition-colors"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <Folder className="w-2.5 h-2.5 shrink-0" /> Drive Link ↗
                             </a>
                         ) : isUnder ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 w-fit">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 w-fit">
                                 <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
                                 {row.quantity - row.uploaded_count} pending
                             </span>
                         ) : isOver ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded border border-sky-500/20 w-fit">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200 w-fit">
                                 +{row.uploaded_count - row.quantity} extra
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded border border-accent/20 w-fit">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 w-fit">
                                 <CheckCircle2 className="w-2.5 h-2.5 shrink-0" /> Complete
                             </span>
                         )}
@@ -347,8 +354,10 @@ export default function OrdersIndex({
             header: "Total / Payment",
             accessorKey: "total_price",
             cell: (row) => (
-                <div className="flex flex-col gap-1 font-mono text-xs">
-                    <span className="font-bold text-accent">${row.total_price.toFixed(2)}</span>
+                <div className="flex flex-col gap-1 text-xs">
+                    <span className="font-bold text-ink tabular-nums">
+                        ${row.total_price.toFixed(2)}
+                    </span>
                     <div>{getPaymentBadge(row.payment_status)}</div>
                 </div>
             ),
@@ -370,17 +379,17 @@ export default function OrdersIndex({
                             setAdminNote(row.admin_notes || "");
                             setIsDetailOpen(true);
                         }}
-                        className="h-8 px-2.5 bg-white/5 border-white/10 hover:bg-white/10 text-white font-mono text-xs"
+                        className="h-8 px-2.5 border-slate-200 bg-white hover:bg-slate-50 text-ink text-xs"
                     >
-                        <Eye className="w-3.5 h-3.5 mr-1 text-[#00f5ff]" /> Review
+                        <Eye className="w-3.5 h-3.5 mr-1 text-slate-500" /> Review
                     </Button>
 
                     <a
                         href={`/admin/orders/${row.id}/download-zip`}
                         title="Download All Files (ZIP)"
-                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-accent/10 border border-accent/30 hover:bg-accent/20 text-accent text-xs font-mono transition-colors"
+                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-slate-100 border border-slate-200 hover:bg-slate-200/80 text-ink text-xs font-medium transition-colors"
                     >
-                        <Download className="w-3.5 h-3.5 mr-1" /> ZIP
+                        <Download className="w-3.5 h-3.5 mr-1 text-slate-500" /> ZIP
                     </a>
 
                     <DropdownMenu>
@@ -388,27 +397,29 @@ export default function OrdersIndex({
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-8 w-8 p-0 text-white/60 hover:text-white"
+                                className="h-8 w-8 p-0 text-slate-500 hover:text-ink"
                             >
                                 <MoreHorizontal className="w-4 h-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-[#12141a] border-white/10 text-white font-mono text-xs">
+                        <DropdownMenuContent align="end" className="text-xs">
                             <DropdownMenuItem
                                 onClick={() => handleUpdateStatus(row.id, "in_production")}
-                                className="hover:bg-white/10 cursor-pointer"
+                                className="cursor-pointer"
                             >
-                                <Layers className="w-3.5 h-3.5 mr-2 text-blue-400" /> Start Production
+                                <Layers className="w-3.5 h-3.5 mr-2 text-blue-600" /> Start
+                                Production
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => handleUpdateStatus(row.id, "completed")}
-                                className="hover:bg-white/10 cursor-pointer"
+                                className="cursor-pointer"
                             >
-                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent" /> Mark Completed
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-emerald-600" /> Mark
+                                Completed
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => handleDelete(row)}
-                                className="hover:bg-rose-500/10 text-rose-400 cursor-pointer"
+                                className="text-rose-600 focus:text-rose-600 cursor-pointer"
                             >
                                 <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete Order
                             </DropdownMenuItem>
@@ -420,11 +431,11 @@ export default function OrdersIndex({
     ];
 
     return (
-        <AdminLayout title="Client Orders">
+        <AdminLayout title="Orders & Quotes">
             <div className="space-y-6">
                 <AdminPageHeader
                     title="Client Production Orders"
-                    description="Manage commercial batch retouching orders, inspect client file uploads, validate quantities, and download production assets."
+                    description="Manage commercial batch retouching orders, Digital Twins, Virtual Try-On quotes, inspect client uploads, and download production assets."
                 />
 
                 {/* Metric Summary Cards */}
@@ -433,72 +444,96 @@ export default function OrdersIndex({
                         type="button"
                         onClick={() => handleStatusFilter(undefined)}
                         className={cn(
-                            "p-3 rounded-xl border text-left transition-all cursor-pointer",
+                            "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             !currentStatus
-                                ? "bg-white/10 border-white/30 shadow-md"
-                                : "bg-[#12141a] border-white/10 hover:border-white/20"
+                                ? "bg-white border-primary ring-2 ring-primary/15 shadow-xs"
+                                : "bg-white border-slate-200 hover:border-slate-300"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-white/50 block">All Orders</span>
-                        <span className="text-xl font-bold font-mono text-white">{stats.total}</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block">
+                            All Orders
+                        </span>
+                        <span className="text-2xl font-extrabold text-ink tabular-nums mt-0.5 block">
+                            {stats.total}
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         onClick={() => handleStatusFilter("pending")}
                         className={cn(
-                            "p-3 rounded-xl border text-left transition-all cursor-pointer",
+                            "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "pending"
-                                ? "bg-amber-500/15 border-amber-500/40 shadow-md"
-                                : "bg-[#12141a] border-white/10 hover:border-white/20"
+                                ? "bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/15 shadow-xs"
+                                : "bg-white border-slate-200 hover:border-slate-300"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-amber-400/70 block">Pending Review</span>
-                        <span className="text-xl font-bold font-mono text-amber-400">{stats.pending}</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 block">
+                            Pending Review
+                        </span>
+                        <span className="text-2xl font-extrabold text-amber-700 tabular-nums mt-0.5 block">
+                            {stats.pending}
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         onClick={() => handleStatusFilter("in_production")}
                         className={cn(
-                            "p-3 rounded-xl border text-left transition-all cursor-pointer",
+                            "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "in_production"
-                                ? "bg-blue-500/15 border-blue-500/40 shadow-md"
-                                : "bg-[#12141a] border-white/10 hover:border-white/20"
+                                ? "bg-blue-50/70 border-blue-400 ring-2 ring-blue-400/15 shadow-xs"
+                                : "bg-white border-slate-200 hover:border-slate-300"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-blue-400/70 block">In Production</span>
-                        <span className="text-xl font-bold font-mono text-blue-400">{stats.in_production}</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 block">
+                            In Production
+                        </span>
+                        <span className="text-2xl font-extrabold text-blue-700 tabular-nums mt-0.5 block">
+                            {stats.in_production}
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         onClick={() => handleStatusFilter("completed")}
                         className={cn(
-                            "p-3 rounded-xl border text-left transition-all cursor-pointer",
+                            "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "completed"
-                                ? "bg-accent/15 border-accent/40 shadow-md"
-                                : "bg-[#12141a] border-white/10 hover:border-white/20"
+                                ? "bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/15 shadow-xs"
+                                : "bg-white border-slate-200 hover:border-slate-300"
                         )}
                     >
-                        <span className="text-[10px] font-mono uppercase text-accent/70 block">Completed</span>
-                        <span className="text-xl font-bold font-mono text-accent">{stats.completed}</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                            Completed
+                        </span>
+                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
+                            {stats.completed}
+                        </span>
                     </button>
 
-                    <div className="p-3 rounded-xl border border-white/10 bg-[#12141a] text-left">
-                        <span className="text-[10px] font-mono uppercase text-emerald-400/70 block">Paid Revenue</span>
-                        <span className="text-xl font-bold font-mono text-emerald-400">
+                    <div className="p-3.5 rounded-2xl border border-slate-200 bg-white text-left">
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                            Paid Revenue
+                        </span>
+                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
                             ${stats.total_revenue.toFixed(2)}
                         </span>
                     </div>
                 </div>
 
-                {/* Order Type Filter Pills (Digital Twins, Virtual Try-On, Free Trials, All) */}
+                {/* Order Type Filter Pills */}
                 <div className="flex flex-wrap items-center gap-2">
                     {[
                         { key: undefined, label: `All Orders (${stats.total})` },
-                        { key: "digital_twin", label: `Digital Twins (${stats.digital_twin_orders ?? 0})` },
-                        { key: "virtual_try_on", label: `Virtual Try-On Quotes (${stats.try_on_quotes ?? 0})` },
+                        {
+                            key: "digital_twin",
+                            label: `Digital Twins (${stats.digital_twin_orders ?? 0})`,
+                        },
+                        {
+                            key: "virtual_try_on",
+                            label: `Virtual Try-On Quotes (${stats.try_on_quotes ?? 0})`,
+                        },
                         { key: "free_trial", label: `Free Trials (${stats.total_trials ?? 0})` },
                     ].map((tab) => {
                         const active = (currentType || undefined) === tab.key;
@@ -508,10 +543,10 @@ export default function OrdersIndex({
                                 type="button"
                                 onClick={() => handleTypeFilter(tab.key)}
                                 className={cn(
-                                    "px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold border transition-all cursor-pointer",
+                                    "px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer",
                                     active
-                                        ? "bg-accent text-black border-accent"
-                                        : "bg-[#12141a] text-white/70 border-white/10 hover:border-white/25 hover:text-white"
+                                        ? "bg-primary text-white border-primary shadow-xs"
+                                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink"
                                 )}
                             >
                                 {tab.label}
@@ -520,77 +555,176 @@ export default function OrdersIndex({
                     })}
                 </div>
 
+                {/* Server-side Search Form */}
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSearch(searchQuery);
+                    }}
+                    className="flex flex-wrap items-center justify-between gap-3"
+                >
+                    <div className="flex items-center gap-2 w-full max-w-md">
+                        <div className="relative flex-1">
+                            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <Input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search by order #, client, email, or service..."
+                                className="pl-9 bg-white border-slate-200 text-ink"
+                            />
+                        </div>
+                        <Button type="submit" variant="outline" size="sm" className="h-9 px-3.5">
+                            Search
+                        </Button>
+                        {(searchTerm || searchQuery) && (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    setSearchQuery("");
+                                    handleSearch("");
+                                }}
+                                className="h-9 px-3 text-slate-500 hover:text-ink"
+                            >
+                                Clear
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="text-xs font-mono text-slate-500">
+                        Showing {orders.from ?? 0}–{orders.to ?? orders.data.length} of{" "}
+                        {orders.total} orders
+                    </div>
+                </form>
+
                 {/* Orders Data Table */}
                 <AdminDataTable
                     columns={columns}
                     data={orders.data}
-                    pagination={orders}
-                    onSearch={handleSearch}
-                    searchPlaceholder="Search by order #, client, email, or service..."
+                    pageSize={orders.per_page || 15}
+                    emptyMessage="No orders match the current filters."
                 />
+
+                {/* Server Pagination Footer */}
+                {orders.last_page > 1 && (
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+                        <span className="font-mono">
+                            Page {orders.current_page} of {orders.last_page}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handlePageChange(orders.current_page - 1)}
+                                disabled={orders.current_page <= 1}
+                                className="h-8 px-2.5"
+                            >
+                                <ChevronLeft className="w-4 h-4 mr-1" /> Prev
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handlePageChange(orders.current_page + 1)}
+                                disabled={orders.current_page >= orders.last_page}
+                                className="h-8 px-2.5"
+                            >
+                                Next <ChevronRight className="w-4 h-4 ml-1" />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Order Detail & Process Modal */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="max-w-2xl bg-[#0f1117] border-white/15 text-white max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl bg-white border-slate-200 text-ink max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-base font-bold">
-                            <ShoppingBag className="w-4 h-4 text-accent" />
+                        <DialogTitle className="flex items-center gap-2 text-base font-bold text-ink">
+                            <ShoppingBag className="w-4 h-4 text-primary" />
                             <span>Order #{selectedOrder?.order_number}</span>
                         </DialogTitle>
-                        <DialogDescription className="text-xs text-white/60 font-mono">
-                            Created on {selectedOrder?.created_at_formatted} • Source: {selectedOrder?.source?.toUpperCase()}
+                        <DialogDescription className="text-xs text-slate-500">
+                            Created on {selectedOrder?.created_at_formatted} • Source:{" "}
+                            {selectedOrder?.source?.toUpperCase()}
                         </DialogDescription>
                     </DialogHeader>
 
                     {selectedOrder && (
                         <div className="space-y-4 py-2 text-xs">
                             {/* Client & Production Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 bg-white/5 p-3 rounded-xl border border-white/10 font-mono">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Client Name</span>
-                                    <span className="font-semibold text-white">{selectedOrder.client_name}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Client Name
+                                    </span>
+                                    <span className="font-semibold text-ink">
+                                        {selectedOrder.client_name}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Delivery Email</span>
-                                    <span className="font-semibold text-[#00f5ff]">{selectedOrder.client_email}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Delivery Email
+                                    </span>
+                                    <span className="font-semibold text-primary-ink font-mono break-all">
+                                        {selectedOrder.client_email}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Phone / WhatsApp</span>
-                                    <span className="text-white/80">{selectedOrder.client_phone || "Not provided"}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Phone / WhatsApp
+                                    </span>
+                                    <span className="text-slate-700">
+                                        {selectedOrder.client_phone || "Not provided"}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Service Type</span>
-                                    <span className="text-white font-semibold uppercase">{selectedOrder.service_name}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Service Type
+                                    </span>
+                                    <span className="text-ink font-semibold">
+                                        {selectedOrder.service_name}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Complexity</span>
-                                    <span className="text-accent font-bold capitalize">{selectedOrder.complexity}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Complexity
+                                    </span>
+                                    <span className="text-primary-ink font-bold capitalize">
+                                        {selectedOrder.complexity}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-white/40 uppercase block">Turnaround SLA</span>
-                                    <span className="text-white">{selectedOrder.turnaround}</span>
+                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                        Turnaround SLA
+                                    </span>
+                                    <span className="text-ink">{selectedOrder.turnaround}</span>
                                 </div>
                             </div>
 
                             {/* Quantity Validation Banner */}
-                            <div className={cn(
-                                "p-3 rounded-xl border flex items-center justify-between gap-3 font-mono",
-                                selectedOrder.uploaded_count < selectedOrder.quantity
-                                    ? "bg-amber-500/10 border-amber-500/30 text-amber-300"
-                                    : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-                            )}>
+                            <div
+                                className={cn(
+                                    "p-3 rounded-xl border flex items-center justify-between gap-3",
+                                    selectedOrder.uploaded_count < selectedOrder.quantity
+                                        ? "bg-amber-50 border-amber-200 text-amber-900"
+                                        : "bg-emerald-50 border-emerald-200 text-emerald-900"
+                                )}
+                            >
                                 <div className="flex items-center gap-2">
                                     {selectedOrder.uploaded_count < selectedOrder.quantity ? (
-                                        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                                     ) : (
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                                     )}
                                     <div>
-                                        <span className="font-bold text-white block">
-                                            {selectedOrder.uploaded_count} of {selectedOrder.quantity} files uploaded
+                                        <span className="font-bold text-ink block">
+                                            {selectedOrder.uploaded_count} of {selectedOrder.quantity}{" "}
+                                            files uploaded
                                         </span>
-                                        <span className="text-[11px] opacity-80">
+                                        <span className="text-[11px] text-slate-600">
                                             {selectedOrder.uploaded_count < selectedOrder.quantity
                                                 ? `Client quoted for ${selectedOrder.quantity} images, but has only uploaded ${selectedOrder.uploaded_count} files (${selectedOrder.quantity - selectedOrder.uploaded_count} pending).`
                                                 : `All ${selectedOrder.quantity} files received for this production batch.`}
@@ -600,7 +734,7 @@ export default function OrdersIndex({
 
                                 <a
                                     href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                    className="px-3 py-1.5 rounded-lg bg-accent text-black font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-[#b8dd00] transition-colors"
+                                    className="px-3 py-1.5 rounded-lg bg-primary text-white font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-primary-hover transition-colors"
                                 >
                                     <Download className="w-3.5 h-3.5" />
                                     <span>Download All (ZIP)</span>
@@ -608,124 +742,164 @@ export default function OrdersIndex({
                             </div>
 
                             {/* Financial Summary */}
-                            <div className="p-3 rounded-xl bg-black/40 border border-white/10 font-mono flex items-center justify-between text-xs">
+                            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
                                 <div>
-                                    <span className="text-white/50 block text-[10px]">Pricing Breakdown</span>
-                                    <span className="text-white">
-                                        ${selectedOrder.unit_price.toFixed(2)}/image × {selectedOrder.quantity} images
-                                        {selectedOrder.discount_percent > 0 && ` (${selectedOrder.discount_percent}% Volume Discount)`}
+                                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                                        Pricing Breakdown
+                                    </span>
+                                    <span className="text-ink font-medium">
+                                        ${selectedOrder.unit_price.toFixed(2)}/image ×{" "}
+                                        {selectedOrder.quantity} images
+                                        {selectedOrder.discount_percent > 0 &&
+                                            ` (${selectedOrder.discount_percent}% Volume Discount)`}
                                     </span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-white/50 block text-[10px]">Total Order Amount</span>
-                                    <span className="text-base font-bold text-accent">${selectedOrder.total_price.toFixed(2)} USD</span>
+                                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                                        Total Order Amount
+                                    </span>
+                                    <span className="text-base font-bold text-primary-ink">
+                                        ${selectedOrder.total_price.toFixed(2)} USD
+                                    </span>
                                 </div>
                             </div>
 
-                            {/* Specifications Breakdown (Digital Twin Attributes or Virtual Try-On Model & Labeled Garments) */}
+                            {/* Specifications Breakdown (Digital Twin or Virtual Try-On) */}
                             {selectedOrder.specifications &&
                                 Object.keys(selectedOrder.specifications).length > 0 && (
-                                    <div className="p-3.5 rounded-xl bg-[#141824] border border-[#00f5ff]/30 space-y-2.5 font-mono">
-                                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#00f5ff] block">
+                                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                                        <span className="text-[11px] font-bold uppercase tracking-wider text-primary-ink block">
                                             {selectedOrder.order_type?.startsWith("digital_twin")
                                                 ? "Digital Twin Specification & Custom Attributes"
                                                 : selectedOrder.order_type === "virtual_try_on_quote"
-                                                    ? "Virtual Try-On Model & Garment Slots"
-                                                    : "Order Specifications"}
+                                                  ? "Virtual Try-On Model & Garment Slots"
+                                                  : "Order Specifications"}
                                         </span>
 
-                                        {/* Digital Twin Specification */}
                                         {selectedOrder.order_type?.startsWith("digital_twin") && (
                                             <div className="space-y-2 text-xs">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <span className="text-white/40 text-[10px] block">Order Mode</span>
-                                                        <span className="text-accent font-bold uppercase">
+                                                        <span className="text-slate-500 text-[10px] block">
+                                                            Order Mode
+                                                        </span>
+                                                        <span className="text-primary-ink font-bold uppercase">
                                                             {selectedOrder.specifications.mode}
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-white/40 text-[10px] block">Reference / Licensed Twin</span>
-                                                        <span className="text-white font-semibold">
-                                                            {selectedOrder.specifications.reference_twin_name || "Build from scratch"}
+                                                        <span className="text-slate-500 text-[10px] block">
+                                                            Reference / Licensed Twin
+                                                        </span>
+                                                        <span className="text-ink font-semibold">
+                                                            {selectedOrder.specifications
+                                                                .reference_twin_name ||
+                                                                "Build from scratch"}
                                                         </span>
                                                     </div>
                                                 </div>
 
-                                                {Array.isArray(selectedOrder.specifications.selected_poses) &&
-                                                    selectedOrder.specifications.selected_poses.length > 0 && (
+                                                {Array.isArray(
+                                                    selectedOrder.specifications.selected_poses
+                                                ) &&
+                                                    selectedOrder.specifications.selected_poses
+                                                        .length > 0 && (
                                                         <div>
-                                                            <span className="text-white/40 text-[10px] block">Requested Pose Angles</span>
-                                                            <span className="text-white/90">
-                                                                {selectedOrder.specifications.selected_poses.join(", ")}
+                                                            <span className="text-slate-500 text-[10px] block">
+                                                                Requested Pose Angles
+                                                            </span>
+                                                            <span className="text-slate-800">
+                                                                {selectedOrder.specifications.selected_poses.join(
+                                                                    ", "
+                                                                )}
                                                             </span>
                                                         </div>
                                                     )}
 
                                                 {selectedOrder.specifications.attributes &&
-                                                    Object.keys(selectedOrder.specifications.attributes).length > 0 && (
-                                                        <div className="pt-2 border-t border-white/10 grid grid-cols-2 gap-2">
-                                                            {Object.entries(selectedOrder.specifications.attributes).map(
-                                                                ([attrKey, attrVal]) => (
-                                                                    <div key={attrKey} className="bg-black/40 p-2 rounded-lg border border-white/5">
-                                                                        <span className="text-[10px] text-white/50 block">{attrKey}</span>
-                                                                        <span className="text-white font-semibold">
-                                                                            {typeof attrVal === "object" && attrVal !== null
-                                                                                ? Object.entries(attrVal)
-                                                                                    .map(([k, v]) => `${k}: ${v}`)
-                                                                                    .join(" | ")
-                                                                                : String(attrVal)}
-                                                                        </span>
-                                                                    </div>
-                                                                )
-                                                            )}
+                                                    Object.keys(
+                                                        selectedOrder.specifications.attributes
+                                                    ).length > 0 && (
+                                                        <div className="pt-2 border-t border-slate-200 grid grid-cols-2 gap-2">
+                                                            {Object.entries(
+                                                                selectedOrder.specifications
+                                                                    .attributes
+                                                            ).map(([attrKey, attrVal]) => (
+                                                                <div
+                                                                    key={attrKey}
+                                                                    className="bg-white p-2 rounded-lg border border-slate-200"
+                                                                >
+                                                                    <span className="text-[10px] text-slate-500 block">
+                                                                        {attrKey}
+                                                                    </span>
+                                                                    <span className="text-ink font-semibold">
+                                                                        {typeof attrVal === "object" &&
+                                                                        attrVal !== null
+                                                                            ? Object.entries(attrVal)
+                                                                                  .map(
+                                                                                      ([k, v]) =>
+                                                                                          `${k}: ${v}`
+                                                                                  )
+                                                                                  .join(" | ")
+                                                                            : String(attrVal)}
+                                                                    </span>
+                                                                </div>
+                                                            ))}
                                                         </div>
                                                     )}
                                             </div>
                                         )}
 
-                                        {/* Virtual Try-On Specification */}
                                         {selectedOrder.order_type === "virtual_try_on_quote" && (
                                             <div className="space-y-2 text-xs">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <span className="text-white/40 text-[10px] block">Model Source</span>
-                                                        <span className="text-accent font-bold uppercase">
-                                                            {selectedOrder.specifications.model_source === "our_model"
+                                                        <span className="text-slate-500 text-[10px] block">
+                                                            Model Source
+                                                        </span>
+                                                        <span className="text-primary-ink font-bold uppercase">
+                                                            {selectedOrder.specifications
+                                                                .model_source === "our_model"
                                                                 ? "Our Studio Model"
                                                                 : "Client Uploaded Model"}
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-white/40 text-[10px] block">Selected Model / Look</span>
-                                                        <span className="text-white font-semibold">
-                                                            {selectedOrder.specifications.selected_model_name
+                                                        <span className="text-slate-500 text-[10px] block">
+                                                            Selected Model / Look
+                                                        </span>
+                                                        <span className="text-ink font-semibold">
+                                                            {selectedOrder.specifications
+                                                                .selected_model_name
                                                                 ? `${selectedOrder.specifications.selected_model_name} (${selectedOrder.specifications.selected_look_name})`
-                                                                : selectedOrder.specifications.selected_look_name || "Client Custom Talent"}
+                                                                : selectedOrder.specifications
+                                                                      .selected_look_name ||
+                                                                  "Client Custom Talent"}
                                                         </span>
                                                     </div>
                                                 </div>
 
                                                 {selectedOrder.specifications.labeled_files && (
-                                                    <div className="pt-2 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                                        {Object.entries(selectedOrder.specifications.labeled_files).map(
-                                                            ([slotKey, fileUrl]) => (
-                                                                <a
-                                                                    key={slotKey}
-                                                                    href={String(fileUrl)}
-                                                                    target="_blank"
-                                                                    rel="noreferrer"
-                                                                    className="bg-black/40 hover:bg-black/60 p-2 rounded-lg border border-white/10 flex flex-col gap-1 transition-colors"
-                                                                >
-                                                                    <span className="text-[10px] uppercase text-accent font-bold">
-                                                                        {slotKey.replace("_", " ")}
-                                                                    </span>
-                                                                    <span className="text-[10px] text-[#00f5ff] underline">
-                                                                        View / Download ↗
-                                                                    </span>
-                                                                </a>
-                                                            )
-                                                        )}
+                                                    <div className="pt-2 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                        {Object.entries(
+                                                            selectedOrder.specifications
+                                                                .labeled_files
+                                                        ).map(([slotKey, fileUrl]) => (
+                                                            <a
+                                                                key={slotKey}
+                                                                href={String(fileUrl)}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className="bg-white hover:bg-slate-50 p-2 rounded-lg border border-slate-200 flex flex-col gap-1 transition-colors"
+                                                            >
+                                                                <span className="text-[10px] uppercase text-primary-ink font-bold">
+                                                                    {slotKey.replace("_", " ")}
+                                                                </span>
+                                                                <span className="text-[10px] text-sky-600 underline">
+                                                                    View / Download ↗
+                                                                </span>
+                                                            </a>
+                                                        ))}
                                                     </div>
                                                 )}
                                             </div>
@@ -735,23 +909,23 @@ export default function OrdersIndex({
 
                             {/* Cloud Drive / Google Drive Folder */}
                             {selectedOrder.cloud_link && (
-                                <div className="p-3.5 bg-purple-500/10 rounded-xl border border-purple-500/30 space-y-2">
+                                <div className="p-3.5 bg-purple-50 rounded-xl border border-purple-200 space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-xs font-bold text-purple-200 flex items-center gap-1.5 font-mono">
-                                            <Folder className="w-4 h-4 text-purple-400" />
+                                        <span className="text-xs font-bold text-purple-900 flex items-center gap-1.5">
+                                            <Folder className="w-4 h-4 text-purple-600" />
                                             Google Drive / Cloud Folder
                                         </span>
                                         <a
                                             href={selectedOrder.cloud_link}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="px-2.5 py-1 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-mono text-xs font-semibold flex items-center gap-1 transition-colors"
+                                            className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold flex items-center gap-1 transition-colors"
                                         >
                                             <span>Open Cloud Link</span>
                                             <ExternalLink className="w-3 h-3" />
                                         </a>
                                     </div>
-                                    <p className="text-[11px] font-mono text-purple-200/90 break-all select-all bg-black/40 p-2 rounded-lg border border-purple-500/20">
+                                    <p className="text-[11px] font-mono text-purple-900 break-all select-all bg-white p-2 rounded-lg border border-purple-200">
                                         {selectedOrder.cloud_link}
                                     </p>
                                 </div>
@@ -759,25 +933,28 @@ export default function OrdersIndex({
 
                             {/* Client Instructions */}
                             {selectedOrder.instructions && (
-                                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-[10px] text-white/40 uppercase font-mono block mb-1">
+                                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                    <span className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">
                                         Client Instructions
                                     </span>
-                                    <p className="text-white/90 leading-relaxed font-sans">{selectedOrder.instructions}</p>
+                                    <p className="text-slate-700 leading-relaxed">
+                                        {selectedOrder.instructions}
+                                    </p>
                                 </div>
                             )}
 
                             {/* Uploaded Images Gallery */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[11px] font-mono text-white/70 uppercase tracking-wider font-bold">
+                                    <span className="text-[11px] text-slate-600 uppercase tracking-wider font-bold">
                                         Client Uploaded Files ({selectedOrder.images.length})
                                     </span>
                                     <a
                                         href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                        className="text-[10px] font-mono text-accent hover:underline flex items-center gap-1"
+                                        className="text-[11px] font-semibold text-primary-ink hover:underline flex items-center gap-1"
                                     >
-                                        <Download className="w-3 h-3" /> Download All ({selectedOrder.images.length})
+                                        <Download className="w-3 h-3" /> Download All (
+                                        {selectedOrder.images.length})
                                     </a>
                                 </div>
 
@@ -785,7 +962,7 @@ export default function OrdersIndex({
                                     {selectedOrder.images.map((imgUrl, i) => (
                                         <div
                                             key={i}
-                                            className="group relative rounded-xl border border-white/15 bg-black/50 overflow-hidden"
+                                            className="group relative rounded-xl border border-slate-200 bg-slate-50 overflow-hidden"
                                         >
                                             <div className="aspect-square w-full">
                                                 <img
@@ -794,13 +971,13 @@ export default function OrdersIndex({
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                                 />
                                             </div>
-                                            <div className="p-2 bg-[#12141a] flex items-center justify-between border-t border-white/10 text-[11px] font-mono">
+                                            <div className="p-2 bg-white flex items-center justify-between border-t border-slate-200 text-[11px]">
                                                 <span>File #{i + 1}</span>
                                                 <div className="flex items-center gap-1.5">
                                                     <button
                                                         type="button"
                                                         onClick={() => setPreviewImage(imgUrl)}
-                                                        className="p-1 hover:text-[#00f5ff] text-white/60"
+                                                        className="p-1 hover:text-primary text-slate-500"
                                                         title="Preview"
                                                     >
                                                         <Eye className="w-3 h-3" />
@@ -810,7 +987,7 @@ export default function OrdersIndex({
                                                         download
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-1 hover:text-accent text-white/60"
+                                                        className="p-1 hover:text-primary text-slate-500"
                                                         title="Download File"
                                                     >
                                                         <Download className="w-3 h-3" />
@@ -824,40 +1001,54 @@ export default function OrdersIndex({
 
                             {/* Internal Studio Notes */}
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-mono uppercase text-white/60">
+                                <label className="text-[11px] font-semibold uppercase text-slate-500">
                                     Internal Studio Notes
                                 </label>
                                 <textarea
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
                                     placeholder="Add notes on progress, retouch crew assigned, or delivery links..."
-                                    className="w-full h-20 bg-white/5 border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-accent transition-colors"
+                                    className="w-full h-20 bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-ink focus:outline-none focus:border-primary transition-colors"
                                 />
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
+                            <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => handleUpdateStatus(selectedOrder.id, "in_production", undefined, adminNote)}
+                                        onClick={() =>
+                                            handleUpdateStatus(
+                                                selectedOrder.id,
+                                                "in_production",
+                                                selectedOrder.payment_status,
+                                                adminNote
+                                            )
+                                        }
                                         disabled={isUpdatingStatus}
-                                        className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 font-mono text-xs"
+                                        className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 text-xs"
                                     >
                                         <Layers className="w-3.5 h-3.5 mr-1" /> Set In Production
                                     </Button>
 
                                     <Button
                                         type="button"
-                                        variant="outline"
                                         size="sm"
-                                        onClick={() => handleUpdateStatus(selectedOrder.id, "completed", "paid", adminNote)}
+                                        onClick={() =>
+                                            handleUpdateStatus(
+                                                selectedOrder.id,
+                                                "completed",
+                                                "paid",
+                                                adminNote
+                                            )
+                                        }
                                         disabled={isUpdatingStatus}
-                                        className="bg-accent/10 border-accent/30 text-accent hover:bg-accent/20 font-mono text-xs"
+                                        className="bg-primary text-white hover:bg-primary-hover text-xs font-semibold"
                                     >
-                                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Mark Delivered & Paid
+                                        <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Mark Delivered
+                                        &amp; Paid
                                     </Button>
                                 </div>
 
@@ -865,9 +1056,16 @@ export default function OrdersIndex({
                                     type="button"
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => handleUpdateStatus(selectedOrder.id, selectedOrder.status, selectedOrder.payment_status, adminNote)}
+                                    onClick={() =>
+                                        handleUpdateStatus(
+                                            selectedOrder.id,
+                                            selectedOrder.status,
+                                            selectedOrder.payment_status,
+                                            adminNote
+                                        )
+                                    }
                                     disabled={isUpdatingStatus}
-                                    className="text-white/60 hover:text-white font-mono text-xs"
+                                    className="text-slate-600 hover:text-ink text-xs"
                                 >
                                     Save Notes Only
                                 </Button>
@@ -879,7 +1077,7 @@ export default function OrdersIndex({
 
             {/* Image Preview Modal */}
             <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
-                <DialogContent className="max-w-4xl bg-black/95 border-white/20 p-2 text-white">
+                <DialogContent className="max-w-4xl bg-white border-slate-200 p-3 text-ink">
                     {previewImage && (
                         <div className="relative flex flex-col items-center">
                             <img
@@ -888,13 +1086,15 @@ export default function OrdersIndex({
                                 className="max-h-[80vh] w-auto object-contain rounded-lg"
                             />
                             <div className="mt-2 flex items-center justify-between w-full px-2 text-xs font-mono">
-                                <span className="text-white/60 truncate max-w-md">{previewImage}</span>
+                                <span className="text-slate-500 truncate max-w-md">
+                                    {previewImage}
+                                </span>
                                 <a
                                     href={previewImage}
                                     download
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1 rounded bg-accent text-black font-semibold flex items-center gap-1"
+                                    className="px-3 py-1.5 rounded-lg bg-primary text-white font-semibold flex items-center gap-1"
                                 >
                                     <Download className="w-3 h-3" /> Download High-Res
                                 </a>
@@ -906,21 +1106,17 @@ export default function OrdersIndex({
 
             {/* Delete Alert Dialog */}
             <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                <AlertDialogContent className="bg-[#12141a] border-white/10 text-white font-mono">
+                <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Delete Order #{orderToDelete?.order_number}?</AlertDialogTitle>
-                        <AlertDialogDescription className="text-white/60 text-xs">
-                            This will permanently remove the order record and references to uploaded client files.
+                        <AlertDialogDescription>
+                            This will permanently remove the order record and references to uploaded
+                            client files.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-                            Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={confirmDelete}
-                            className="bg-rose-600 hover:bg-rose-700 text-white"
-                        >
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-rose-600 text-white">
                             Delete Order
                         </AlertDialogAction>
                     </AlertDialogFooter>

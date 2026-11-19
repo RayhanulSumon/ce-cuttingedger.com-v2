@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DigitalTwin;
 use App\Models\Order;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -139,46 +138,6 @@ class AdminOrderController extends Controller
             DigitalTwin::find($order->digital_twin_id)?->update([
                 'is_copyright_sold' => true,
             ]);
-        }
-
-        if (
-            $order->order_type === 'credit_plan' &&
-            ($order->payment_status === 'paid' || $order->status === 'completed')
-        ) {
-            $specs = (array) ($order->specifications ?? []);
-
-            if (empty($specs['credits_activated'])) {
-                $clientUser = $order->user_id
-                    ? User::find($order->user_id)
-                    : User::where('email', strtolower($order->client_email))->first();
-
-                if ($clientUser) {
-                    $creditsToAdd = (int) ($specs['total_credits'] ?? $order->quantity);
-                    $validityDays = max(1, (int) ($specs['validity_days'] ?? 90));
-                    $activatedAt = now();
-                    $expiresAt = $activatedAt->copy()->addDays($validityDays);
-
-                    $nextExpiry = $clientUser->credits_expires_at && $clientUser->credits_expires_at->isFuture() && $clientUser->credits_expires_at->gt($expiresAt)
-                        ? $clientUser->credits_expires_at
-                        : $expiresAt;
-
-                    $clientUser->increment('credits_balance', $creditsToAdd);
-                    $clientUser->update([
-                        'active_plan_name' => (string) ($specs['plan_name'] ?? $order->service_name),
-                        'credits_expires_at' => $nextExpiry,
-                    ]);
-
-                    $specs['credits_activated'] = true;
-                    $specs['activated_at'] = $activatedAt->toISOString();
-                    $specs['expires_at'] = $expiresAt->toISOString();
-                    $specs['expires_at_formatted'] = $expiresAt->format('M j, Y');
-
-                    $order->update([
-                        'user_id' => $clientUser->id,
-                        'specifications' => $specs,
-                    ]);
-                }
-            }
         }
 
         return redirect()->back()->with('success', "Order #{$order->order_number} updated successfully.");

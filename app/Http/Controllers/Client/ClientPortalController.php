@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\CreditPurchase;
 use App\Models\Order;
 use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Http\RedirectResponse;
@@ -49,6 +50,7 @@ class ClientPortalController extends Controller
                 'status' => $order->status,
                 'payment_status' => $order->payment_status,
                 'created_at' => $order->created_at->toISOString(),
+                'created_at_timestamp' => $order->created_at->timestamp,
                 'created_at_formatted' => $order->created_at->format('M j, Y \a\t g:i A'),
             ]);
 
@@ -60,8 +62,12 @@ class ClientPortalController extends Controller
             'try_on_quotes' => $orders->where('order_type', 'virtual_try_on_quote')->count(),
         ];
 
-        $creditOrders = $orders->filter(
-            fn (array $o): bool => in_array($o['order_type'], ['credit_plan', 'credit_usage'], true)
+        $creditPurchases = CreditPurchase::where('user_id', $user->id)
+            ->latest('id')
+            ->get();
+
+        $usageOrders = $orders->filter(
+            fn (array $o): bool => $o['order_type'] === 'credit_usage'
         );
 
         $creditSummary = [
@@ -73,61 +79,78 @@ class ClientPortalController extends Controller
                 ? max(0, (int) now()->startOfDay()->diffInDays($user->credits_expires_at->copy()->startOfDay(), false))
                 : null,
             'is_expired' => $user->credits_expires_at ? $user->credits_expires_at->isPast() : false,
-            'total_purchased_credits' => $creditOrders
-                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_plan' && ! empty($o['specifications']['credits_activated']))
-                ->sum(fn (array $o): int => (int) ($o['specifications']['total_credits'] ?? $o['quantity'])),
-            'pending_credits' => $creditOrders
-                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_plan' && empty($o['specifications']['credits_activated']) && $o['status'] !== 'cancelled')
-                ->sum(fn (array $o): int => (int) ($o['specifications']['total_credits'] ?? $o['quantity'])),
-            'total_used_credits' => $creditOrders
-                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_usage')
+            'total_purchased_credits' => (int) $creditPurchases
+                ->where('credits_activated', true)
+                ->sum('total_credits'),
+            'pending_credits' => (int) $creditPurchases
+                ->filter(fn (CreditPurchase $purchase): bool => ! $purchase->credits_activated && ! in_array($purchase->status, ['cancelled', 'refunded'], true))
+                ->sum('total_credits'),
+            'total_used_credits' => $usageOrders
                 ->sum(fn (array $o): int => (int) ($o['specifications']['credits_spent'] ?? 0)),
         ];
 
-        $creditHistory = $creditOrders
-            ->map(function (array $o): array {
-                $specs = $o['specifications'];
+        $purchaseEntries = $creditPurchases->map(function (CreditPurchase $purchase): array {
+            $billingLabel = $purchase->billing_type === 'monthly' ? 'Monthly Plan' : 'One-Time Pack';
 
-                if ($o['order_type'] === 'credit_plan') {
-                    $baseCredits = (int) ($specs['base_credits'] ?? $o['quantity']);
-                    $bonusCredits = (int) ($specs['bonus_credits'] ?? 0);
-                    $billingLabel = ($specs['billing_type'] ?? 'one_time') === 'monthly' ? 'Monthly Plan' : 'One-Time Pack';
-                    $isActivated = ! empty($specs['credits_activated']);
+            $statusLabel = match (true) {
+                $purchase->credits_activated => 'Credited',
+                $purchase->status === 'cancelled' => 'Cancelled',
+                $purchase->status === 'refunded' => 'Refunded',
+                default => 'Pending Approval',
+            };
 
-                    return [
-                        'id' => $o['id'],
-                        'order_number' => $o['order_number'],
-                        'entry_type' => 'purchase',
-                        'title' => (string) ($specs['plan_name'] ?? $o['service_name']),
-                        'subtitle' => sprintf('%s base + %s bonus credits · %s', number_format($baseCredits), number_format($bonusCredits), $billingLabel),
-                        'credits_delta' => (int) ($specs['total_credits'] ?? $o['quantity']),
-                        'balance_after' => null,
-                        'is_activated' => $isActivated,
-                        'validity_days' => (int) ($specs['validity_days'] ?? 90),
-                        'expires_at_formatted' => $specs['expires_at_formatted'] ?? null,
-                        'status_label' => $isActivated ? 'Credited' : ($o['status'] === 'cancelled' ? 'Cancelled' : 'Pending Approval'),
-                        'amount_usd' => (float) $o['total_price'],
-                        'created_at_formatted' => $o['created_at_formatted'],
-                    ];
-                }
+            return [
+                'id' => $purchase->id,
+                'order_number' => $purchase->reference_number,
+                'entry_type' => 'purchase',
+                'title' => $purchase->plan_name,
+                'subtitle' => sprintf(
+                    '%s base + %s bonus credits · %s',
+                    number_format($purchase->base_credits),
+                    number_format($purchase->bonus_credits),
+                    $billingLabel
+                ),
+                'credits_delta' => $purchase->total_credits,
+                'balance_after' => null,
+                'is_activated' => (bool) $purchase->credits_activated,
+                'validity_days' => $purchase->validity_days,
+                'expires_at_formatted' => $purchase->expires_at?->format('M j, Y'),
+                'status_label' => $statusLabel,
+                'amount_usd' => (float) $purchase->amount_usd,
+                'created_at_formatted' => $purchase->created_at?->format('M j, Y \a\t g:i A') ?? '',
+                '_sort_ts' => $purchase->created_at?->timestamp ?? 0,
+            ];
+        });
 
-                $creditsSpent = (int) ($specs['credits_spent'] ?? 0);
+        $usageEntries = $usageOrders->map(function (array $o): array {
+            $specs = $o['specifications'];
+            $creditsSpent = (int) ($specs['credits_spent'] ?? 0);
 
-                return [
-                    'id' => $o['id'],
-                    'order_number' => $o['order_number'],
-                    'entry_type' => 'usage',
-                    'title' => (string) ($specs['service_category'] ?? $o['service_name']),
-                    'subtitle' => sprintf('%s asset(s) · %s', number_format((int) $o['quantity']), $o['turnaround']),
-                    'credits_delta' => -1 * $creditsSpent,
-                    'balance_after' => isset($specs['remaining_credits']) ? (int) $specs['remaining_credits'] : null,
-                    'is_activated' => true,
-                    'validity_days' => null,
-                    'expires_at_formatted' => null,
-                    'status_label' => $o['status'] === 'completed' ? 'Completed' : 'Redeemed · In Production',
-                    'amount_usd' => (float) $o['total_price'],
-                    'created_at_formatted' => $o['created_at_formatted'],
-                ];
+            return [
+                'id' => $o['id'],
+                'order_number' => $o['order_number'],
+                'entry_type' => 'usage',
+                'title' => (string) ($specs['service_category'] ?? $o['service_name']),
+                'subtitle' => sprintf('%s asset(s) · %s', number_format((int) $o['quantity']), $o['turnaround']),
+                'credits_delta' => -1 * $creditsSpent,
+                'balance_after' => isset($specs['remaining_credits']) ? (int) $specs['remaining_credits'] : null,
+                'is_activated' => true,
+                'validity_days' => null,
+                'expires_at_formatted' => null,
+                'status_label' => $o['status'] === 'completed' ? 'Completed' : 'Redeemed · In Production',
+                'amount_usd' => (float) $o['total_price'],
+                'created_at_formatted' => $o['created_at_formatted'],
+                '_sort_ts' => (int) ($o['created_at_timestamp'] ?? 0),
+            ];
+        });
+
+        $creditHistory = collect($purchaseEntries->all())
+            ->merge($usageEntries->all())
+            ->sortByDesc('_sort_ts')
+            ->map(function (array $entry): array {
+                unset($entry['_sort_ts']);
+
+                return $entry;
             })
             ->values()
             ->all();

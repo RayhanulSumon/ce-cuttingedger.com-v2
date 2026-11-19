@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Capability;
 use App\Models\ChatConsultation;
 use App\Models\ContactMessage;
+use App\Models\CreditPurchase;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -92,6 +93,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'admin_badges' => fn () => $request->user()?->isAdmin() ? [
                 'pending_orders' => Order::where('status', 'pending')->count(),
+                'pending_credit_purchases' => CreditPurchase::where('status', 'pending')->count(),
                 'pending_consultations' => ChatConsultation::where('status', 'pending')->count(),
                 'unread_leads' => ContactMessage::where('inquiry_type', 'chat_lead')->where('status', 'new')->count(),
                 'new_messages' => ContactMessage::where('inquiry_type', '!=', 'chat_lead')->where('status', 'new')->count(),

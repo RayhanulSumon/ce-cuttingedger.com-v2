@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'company', 'phone', 'email_verified_at', 'role_id', 'status', 'last_login_at', 'credits_balance', 'active_plan_name', 'credits_expires_at'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'company', 'phone', 'email_verified_at', 'role_id', 'status', 'last_login_at', 'credits_balance', 'active_plan_name', 'credits_expires_at', 'stripe_customer_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -126,5 +126,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Credit pack purchases and subscriptions owned by this user.
+     *
+     * @return HasMany<CreditPurchase, $this>
+     */
+    public function creditPurchases(): HasMany
+    {
+        return $this->hasMany(CreditPurchase::class);
     }
 }

@@ -27,6 +27,7 @@ import {
     ArrowLeftRight,
     Globe,
     Shirt,
+    Coins,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster, toast } from "@/Components/ui/sonner";
@@ -93,6 +94,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         flash: { success?: string; error?: string };
         admin_badges?: {
             pending_orders?: number;
+            pending_credit_purchases?: number;
             pending_consultations: number;
             unread_leads: number;
             new_messages: number;
@@ -150,6 +152,15 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     active: url.startsWith("/admin/orders"),
                     badge: admin_badges?.pending_orders
                         ? `${admin_badges.pending_orders}`
+                        : null,
+                },
+                {
+                    name: "Credit Purchases",
+                    href: "/admin/credit-purchases",
+                    icon: Coins,
+                    active: url.startsWith("/admin/credit-purchases"),
+                    badge: admin_badges?.pending_credit_purchases
+                        ? `${admin_badges.pending_credit_purchases}`
                         : null,
                 },
                 {

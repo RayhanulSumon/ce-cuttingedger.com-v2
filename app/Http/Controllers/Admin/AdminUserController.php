@@ -146,6 +146,11 @@ class AdminUserController extends Controller
                 'email_verified' => $user->hasVerifiedEmail(),
                 'email_verified_at' => $user->email_verified_at?->format('M d, Y'),
                 'orders_count' => $user->orders_count,
+                'credits_balance' => (int) ($user->credits_balance ?? 0),
+                'active_plan_name' => $user->active_plan_name,
+                'credits_expires_at' => $user->credits_expires_at?->toISOString(),
+                'credits_expires_at_formatted' => $user->credits_expires_at?->format('M j, Y'),
+                'is_credits_expired' => $user->credits_expires_at ? $user->credits_expires_at->isPast() : false,
                 'last_login_at' => $user->last_login_at?->diffForHumans(),
                 'created_at' => $user->created_at?->format('M d, Y'),
             ]);

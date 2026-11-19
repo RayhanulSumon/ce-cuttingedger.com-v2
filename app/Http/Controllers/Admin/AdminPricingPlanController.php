@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CreditPurchase;
 use App\Models\PricingPlan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ class AdminPricingPlanController extends Controller
 
         return Inertia::render('Admin/Pricing/Index', [
             'plans' => $plans,
+            'pendingCreditOrdersCount' => CreditPurchase::where('status', 'pending')->count(),
+            'totalCreditOrdersCount' => CreditPurchase::count(),
         ]);
     }
 
