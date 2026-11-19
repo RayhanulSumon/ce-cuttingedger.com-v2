@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Look } from './looks';
 import { MagnifierLens, useMagnifier } from './Magnifier';
 import { PieceShowcase } from './PieceShowcase';
@@ -13,6 +14,7 @@ interface LookViewProps {
     hotPin: number | null;
     onHotPinChange: (pinIndex: number | null) => void;
     onPinClick: (pinIndex: number) => void;
+    onStepLook: (delta: number) => void;
     /** Click on empty space: closes the open garment first, then the look view. */
     onDismiss: () => void;
     onClose: () => void;
@@ -27,6 +29,9 @@ const STUDIO_BACKDROP = 'bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7ef
 
 const CONTACT_SHADOW =
     'pointer-events-none absolute bottom-0 left-[58%] h-[9%] max-h-[46px] min-h-[14px] w-[150%] -translate-x-1/2 translate-y-1/2 bg-[radial-gradient(closest-side,rgba(20,16,12,0.30),rgba(20,16,12,0.14)_45%,rgba(20,16,12,0.04)_75%,transparent)] blur-[2px]';
+
+const MODEL_ARROW =
+    'pointer-events-auto absolute top-1/2 z-50 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white active:scale-95 sm:h-12 sm:w-12';
 
 /**
  * Shared-element flight: the big model grows out of the runway's front model on open
@@ -167,6 +172,7 @@ export function LookView({
     hotPin,
     onHotPinChange,
     onPinClick,
+    onStepLook,
     onDismiss,
     onClose,
     getOriginRect,
@@ -234,6 +240,30 @@ export function LookView({
             </div>
 
             <AnimatePresence>{piece && <PieceShowcase key={`${lookIndex}-${selectedPiece}`} piece={piece} />}</AnimatePresence>
+
+            <button
+                type="button"
+                onClick={(event) => {
+                    event.stopPropagation();
+                    onStepLook(-1);
+                }}
+                aria-label="Previous model look"
+                className={`${MODEL_ARROW} left-3 sm:left-6`}
+            >
+                <ArrowLeft size={20} />
+            </button>
+
+            <button
+                type="button"
+                onClick={(event) => {
+                    event.stopPropagation();
+                    onStepLook(1);
+                }}
+                aria-label="Next model look"
+                className={`${MODEL_ARROW} right-3 sm:right-6`}
+            >
+                <ArrowRight size={20} />
+            </button>
 
             <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-4 px-6 pt-4 sm:px-10 sm:pt-5">
                 <p className="flex flex-col gap-1">

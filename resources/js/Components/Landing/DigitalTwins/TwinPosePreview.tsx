@@ -31,9 +31,6 @@ export function TwinPosePreview({ twin, visible }: { twin: DigitalTwinModel; vis
                     <span className="absolute inset-2 block">
                         <TwinSpriteCrop twin={twin} pose={pose} />
                     </span>
-                    <span className="font-michroma absolute bottom-2 left-2 right-2 rounded-full bg-white/92 py-1.5 text-center text-[8px] tracking-[0.12em] text-ink shadow-sm">
-                        {pose.code}
-                    </span>
                 </div>
             ))}
         </div>

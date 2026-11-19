@@ -28,6 +28,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
 
     const handleLookChange = useCallback((index: number) => {
         setLookIndex(index);
+        setSelectedPiece(null);
         setHotPin(null);
     }, []);
 
@@ -67,7 +68,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
             return;
         }
         preloaded.current = true;
-        new Set(activeLooks.flatMap((item) => item.pieces.map((piece) => piece.image))).forEach((src) => {
+        new Set(activeLooks.flatMap((item) => [item.modelHiRes, ...item.pieces.map((piece) => piece.image)])).forEach((src) => {
             new Image().src = src;
         });
     }, [active, activeLooks]);
@@ -102,11 +103,14 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                 event.preventDefault();
                 event.stopPropagation();
                 dismiss();
+            } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+                stepLook(event.key === 'ArrowRight' ? 1 : -1);
             }
         };
         window.addEventListener('keydown', onKey, true);
         return () => window.removeEventListener('keydown', onKey, true);
-    }, [lookOpen, dismiss]);
+    }, [lookOpen, dismiss, stepLook]);
 
     /** Shared by the markers on the model and the sidebar cards: toggles a garment's large view. */
     const selectPiece = (pieceIndex: number) => {
@@ -157,17 +161,11 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                     handlers={runway.stageHandlers}
                 />
 
-                <div className={`relative z-10 flex flex-col items-center gap-1 pt-1 ${fadeWhenOpen}`}>
-                    <Reveal active={active} delay={0.2} className="flex flex-col items-center gap-2 text-center">
-                        <p className="font-michroma text-sm tracking-[0.14em] text-ink sm:text-base">{look.modelName}</p>
-                        <div className="flex items-center gap-1.5" role="img" aria-label={`Look ${lookIndex + 1} of ${activeLooks.length}`}>
-                            {activeLooks.map((_, i) => (
-                                <span
-                                    key={i}
-                                    className={`h-1 rounded-full transition-all duration-500 ${i === lookIndex ? 'w-6 bg-primary' : 'w-1.5 bg-ink/20'}`}
-                                />
-                            ))}
-                        </div>
+                <div className={`pointer-events-none relative z-10 -mt-2 flex flex-col items-center pb-1 ${fadeWhenOpen}`}>
+                    <Reveal active={active} delay={0.2} className="flex flex-col items-center text-center whitespace-nowrap">
+                        <p className="font-michroma text-xs sm:text-sm font-bold tracking-[0.08em] text-ink leading-none drop-shadow-sm">
+                            {look.modelName}
+                        </p>
                     </Reveal>
                 </div>
 
@@ -179,6 +177,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                     hotPin={hotPin}
                     onHotPinChange={setHotPin}
                     onPinClick={selectPiece}
+                    onStepLook={stepLook}
                     onDismiss={dismiss}
                     onClose={closeLook}
                     getOriginRect={runway.getFrontActorRect}
