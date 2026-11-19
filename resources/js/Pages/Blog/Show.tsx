@@ -1,35 +1,98 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Link } from '@inertiajs/react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
+import { SocialIcon } from '@/Components/Landing/SocialIcon';
+import { PageProps } from '@/types';
 import { Blog } from '@/types/models';
 import {
-    Clock,
-    Calendar,
     ArrowUpRight,
-    ArrowRight,
-    Share2,
-    Tag,
-    CornerDownRight,
-    ArrowLeft,
-    Copy,
+    Calendar,
     Check,
-    Sparkles,
+    ChevronLeft,
     ChevronRight,
-    Quote,
+    Copy,
     ExternalLink,
-    BookOpen,
-    Layers,
-    FileText,
+    Heart,
+    Mail,
+    Quote,
+    Share2,
+    User,
 } from 'lucide-react';
+
+type AdjacentBlog = Pick<Blog, 'id' | 'title' | 'slug' | 'cover_image' | 'published_at'>;
 
 interface BlogShowProps {
     blog: Blog;
     relatedBlogs: Blog[];
+    previousBlog?: AdjacentBlog | null;
+    nextBlog?: AdjacentBlog | null;
 }
 
-/**
- * Slugify a heading string into a valid URL anchor id
- */
+interface TocItem {
+    id: string;
+    label: string;
+    level: number;
+}
+
+interface ServiceSlide {
+    id: string | number;
+    tag: string;
+    title: string;
+    subtitle: string;
+    href: string;
+    image: string;
+}
+
+const FALLBACK_SERVICE_IMAGES = [
+    '/images/portfolio/portfolio-1.jpg',
+    '/images/portfolio/portfolio-2.jpg',
+    '/images/portfolio/portfolio-3.jpg',
+    '/images/portfolio/portfolio-4.jpg',
+];
+
+const DEFAULT_SOCIALS = [
+    { name: 'Facebook', url: 'https://facebook.com/CuttingEdgerInc' },
+    { name: 'Twitter', url: 'https://twitter.com/cutting_edger' },
+    { name: 'Instagram', url: 'https://instagram.com/cuttingedgerinc' },
+    { name: 'LinkedIn', url: 'https://linkedin.com/company/cutting-edger' },
+    { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
+];
+
+const FALLBACK_SERVICES: ServiceSlide[] = [
+    {
+        id: 'fallback-2d',
+        tag: '2D Studio',
+        title: '2D Retouching & Post-Production',
+        subtitle: 'Clean, consistent product and model imagery edited by hand and verified twice.',
+        href: '/capabilities/2d',
+        image: '/images/portfolio/portfolio-1.jpg',
+    },
+    {
+        id: 'fallback-3d',
+        tag: '3D & CGI',
+        title: '3D Modeling & Virtual Staging',
+        subtitle: 'Photorealistic product renders, lookbooks, and architectural scenes at scale.',
+        href: '/capabilities/3d',
+        image: '/images/portfolio/portfolio-2.jpg',
+    },
+    {
+        id: 'fallback-dtp',
+        tag: 'DTP & Layout',
+        title: 'Desktop Publishing & Catalogs',
+        subtitle: 'Print-ready lookbooks, packaging artwork, and automated multi-language layouts.',
+        href: '/capabilities/dtp',
+        image: '/images/portfolio/portfolio-3.jpg',
+    },
+    {
+        id: 'fallback-video',
+        tag: 'Video',
+        title: 'Video Editing & Motion',
+        subtitle: 'High-impact e-commerce video reels, color grading, and campaign cutdowns.',
+        href: '/capabilities/video',
+        image: '/images/portfolio/portfolio-4.jpg',
+    },
+];
+
 function slugify(text: string): string {
     return text
         .toLowerCase()
@@ -39,11 +102,64 @@ function slugify(text: string): string {
         .replace(/^-+|-+$/g, '');
 }
 
-/**
- * Renders inline markdown text (bold, italic, links, inline code)
- */
+function stripHtmlTags(html: string): string {
+    return html.replace(/<[^>]*>/g, '').trim();
+}
+
+function extractTableOfContents(body: string): TocItem[] {
+    if (!body) {
+        return [];
+    }
+
+    const withoutCodeBlocks = body.replace(/```[\s\S]*?```/g, '');
+    const items: TocItem[] = [];
+    const seenIds = new Map<string, number>();
+
+    const registerHeading = (rawTitle: string, level: number) => {
+        const cleanTitle = stripHtmlTags(rawTitle).replace(/[*_`]/g, '').trim();
+        if (!cleanTitle) {
+            return;
+        }
+        const baseId = slugify(cleanTitle) || `section-${items.length + 1}`;
+        const count = (seenIds.get(baseId) ?? 0) + 1;
+        seenIds.set(baseId, count);
+        const id = count > 1 ? `${baseId}-${count}` : baseId;
+        items.push({ id, label: cleanTitle, level });
+    };
+
+    const lines = withoutCodeBlocks.split('\n');
+    for (const line of lines) {
+        const trimmed = line.trim();
+        const mdMatch = trimmed.match(/^(#{1,3})\s+(.+)$/);
+        if (mdMatch) {
+            registerHeading(mdMatch[2], mdMatch[1].length);
+            continue;
+        }
+
+        const htmlRegex = /<h([1-3])(?:\s[^>]*)?>([\s\S]*?)<\/h\1>/gi;
+        let htmlMatch: RegExpExecArray | null;
+        while ((htmlMatch = htmlRegex.exec(trimmed)) !== null) {
+            registerHeading(htmlMatch[2], Number(htmlMatch[1]));
+        }
+    }
+
+    return items;
+}
+
+function injectHtmlHeadingIds(html: string): string {
+    return html.replace(/<h([1-3])([^>]*)>([\s\S]*?)<\/h\1>/gi, (fullMatch, level, attrs, inner) => {
+        if (/\sid\s*=/.test(attrs)) {
+            return fullMatch;
+        }
+        const id = slugify(stripHtmlTags(inner));
+        if (!id) {
+            return fullMatch;
+        }
+        return `<h${level}${attrs} id="${id}">${inner}</h${level}>`;
+    });
+}
+
 function renderInlineFormatting(text: string): React.ReactNode {
-    // Split by markdown inline tokens
     const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\))/g);
 
     return parts.map((part, index) => {
@@ -65,7 +181,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
             return (
                 <code
                     key={index}
-                    className="px-1.5 py-0.5 rounded bg-[#12131a] text-primary-ink border border-ink/10 font-mono text-[0.875em]"
+                    className="px-1.5 py-0.5 rounded bg-page text-primary-ink border border-ink/10 font-mono text-[0.875em]"
                 >
                     {part.slice(1, -1)}
                 </code>
@@ -81,7 +197,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
                         key={index}
                         href={linkUrl}
                         prefetch
-                        className="text-primary-ink underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
+                        className="text-primary-ink underline decoration-primary/40 hover:decoration-primary underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
                     >
                         <span>{linkText}</span>
                     </Link>
@@ -93,7 +209,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
                     href={linkUrl}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
-                    className="text-primary-ink underline decoration-accent/40 hover:decoration-accent underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
+                    className="text-primary-ink underline decoration-primary/40 hover:decoration-primary underline-offset-4 transition-colors font-medium inline-flex items-center gap-0.5"
                 >
                     <span>{linkText}</span>
                     {isExternal && <ExternalLink className="w-3 h-3 inline-block" />}
@@ -104,9 +220,6 @@ function renderInlineFormatting(text: string): React.ReactNode {
     });
 }
 
-/**
- * Interactive Code Snippet with Copy Confirmation
- */
 function CodeBlock({ code, language }: { code: string; language?: string }) {
     const [copied, setCopied] = useState(false);
 
@@ -117,22 +230,22 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
     };
 
     return (
-        <div className="my-6 rounded-2xl overflow-hidden border border-ink/10 bg-[#07080c] shadow-2xl group">
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#0d0f16] border-b border-ink/10 text-xs font-mono text-muted">
+        <div className="my-6 rounded-2xl overflow-hidden border border-ink/15 bg-secondary shadow-md">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-black/25 border-b border-white/10 text-xs font-mono text-white/75">
                 <div className="flex items-center gap-2">
                     <span className="flex gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                     </span>
-                    <span className="ml-2 uppercase text-[11px] font-semibold text-primary-ink">
+                    <span className="ml-2 uppercase text-[11px] font-semibold text-primary">
                         {language || 'CODE SNIPPET'}
                     </span>
                 </div>
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-ink/[0.03] hover:bg-ink/[0.05] text-ink-2 hover:text-ink transition-colors cursor-pointer text-[11px]"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/85 hover:text-white transition-colors cursor-pointer text-[11px]"
                     title="Copy snippet"
                 >
                     {copied ? (
@@ -148,25 +261,166 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
                     )}
                 </button>
             </div>
-            <pre className="p-5 font-mono text-xs sm:text-sm text-ink-2 overflow-x-auto leading-relaxed">
+            <pre className="p-5 font-mono text-xs sm:text-sm text-slate-100 overflow-x-auto leading-relaxed">
                 <code>{code}</code>
             </pre>
         </div>
     );
 }
 
-export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
+function ServiceCardSlider({ slides }: { slides: ServiceSlide[] }) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [paused, setPaused] = useState(false);
+
+    useEffect(() => {
+        if (slides.length <= 1 || paused) {
+            return;
+        }
+        const timer = window.setInterval(() => {
+            setActiveIndex((prev) => (prev + 1) % slides.length);
+        }, 5000);
+        return () => window.clearInterval(timer);
+    }, [slides.length, paused]);
+
+    const current = slides[activeIndex] ?? slides[0];
+    if (!current) {
+        return null;
+    }
+
+    const prevSlide = () => setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    const nextSlide = () => setActiveIndex((prev) => (prev + 1) % slides.length);
+
+    return (
+        <div
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            className="rounded-2xl bg-surface border border-ink/10 overflow-hidden shadow-sm"
+        >
+            <div className="relative aspect-[16/11] bg-secondary overflow-hidden">
+                <img
+                    src={current.image}
+                    alt={current.title}
+                    className="w-full h-full object-cover transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 pointer-events-none" />
+
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2 z-10">
+                    <span className="px-2.5 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                        {current.tag}
+                    </span>
+
+                    {slides.length > 1 && (
+                        <div className="flex items-center gap-1.5">
+                            <button
+                                type="button"
+                                onClick={prevSlide}
+                                aria-label="Previous service"
+                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={nextSlide}
+                                aria-label="Next service"
+                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="absolute bottom-3.5 left-4 right-4 z-10 text-white">
+                    <h4 className="text-base sm:text-lg font-display font-bold leading-snug">
+                        {current.title}
+                    </h4>
+                    <p className="mt-1 text-xs text-white/80 line-clamp-2 leading-relaxed">
+                        {current.subtitle}
+                    </p>
+                    <Link
+                        href={current.href}
+                        prefetch
+                        className="mt-2.5 inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-white transition-colors"
+                    >
+                        <span>Explore Service</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                    </Link>
+                </div>
+            </div>
+
+            {slides.length > 1 && (
+                <div className="px-4 py-2.5 bg-surface border-t border-ink/10 flex items-center justify-between">
+                    <span className="text-[11px] font-medium text-subtle uppercase tracking-wider">
+                        Our Capabilities
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                        {slides.map((slide, idx) => (
+                            <button
+                                key={slide.id}
+                                type="button"
+                                onClick={() => setActiveIndex(idx)}
+                                aria-label={`Show ${slide.title}`}
+                                className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                                    idx === activeIndex ? 'w-5 bg-primary' : 'w-1.5 bg-ink/20 hover:bg-ink/40'
+                                }`}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function Show({
+    blog,
+    relatedBlogs = [],
+    previousBlog = null,
+    nextBlog = null,
+}: BlogShowProps) {
+    const { settings, capabilities_nav = [] } = usePage<PageProps>().props;
     const [copiedLink, setCopiedLink] = useState(false);
     const [readingProgress, setReadingProgress] = useState(0);
 
-    // Word count calculation
-    const wordCount = useMemo(() => {
-        if (!blog.body) return 0;
-        const clean = blog.body.replace(/<[^>]*>/g, ' ');
-        return clean.split(/\s+/).filter(Boolean).length;
-    }, [blog.body]);
+    const likeStorageKey = `ce_blog_like_${blog.slug}`;
+    const [liked, setLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(() => 18 + ((blog.id || 1) % 15));
 
-    // Scroll reading progress tracker
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+        const storedLiked = window.localStorage.getItem(likeStorageKey) === '1';
+        setLiked(storedLiked);
+        const baseCount = 18 + ((blog.id || 1) % 15);
+        setLikesCount(storedLiked ? baseCount + 1 : baseCount);
+    }, [blog.id, likeStorageKey]);
+
+    const handleToggleLike = () => {
+        const nextLiked = !liked;
+        setLiked(nextLiked);
+        setLikesCount((prev) => (nextLiked ? prev + 1 : Math.max(0, prev - 1)));
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem(likeStorageKey, nextLiked ? '1' : '0');
+        }
+    };
+
+    const { data, setData, post, processing, errors, reset } = useForm({ email: '' });
+    const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+
+    const handleNewsletterSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        post('/newsletter', {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                reset('email');
+                setNewsletterSubscribed(true);
+            },
+        });
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -189,18 +443,73 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
         }
     }, []);
 
-    const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://cuttingedger.com/blog/${blog.slug}`;
+    const shareUrl =
+        typeof window !== 'undefined'
+            ? window.location.href
+            : `https://cuttingedger.com/blog/${blog.slug}`;
+
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
     const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(blog.title)}&url=${encodeURIComponent(shareUrl)}`;
     const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+    const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(blog.cover_image || '')}&description=${encodeURIComponent(blog.title)}`;
+    const emailShareUrl = `mailto:?subject=${encodeURIComponent(blog.title)}&body=${encodeURIComponent(shareUrl)}`;
 
     const formattedPublishDate = useMemo(() => {
-        if (!blog.published_at) return 'Draft Blog';
+        if (!blog.published_at) {
+            return 'Editorial Dispatch';
+        }
         return new Date(blog.published_at).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric',
         });
     }, [blog.published_at]);
+
+    const tocItems = useMemo(() => {
+        const parsed = extractTableOfContents(blog.body);
+        if (parsed.length > 0) {
+            return parsed;
+        }
+        return [
+            { id: 'article-content', label: 'Article Overview', level: 2 },
+            { id: 'author-bio', label: 'About the Author', level: 2 },
+            ...(relatedBlogs.length > 0 ? [{ id: 'related-posts', label: 'Related Posts', level: 2 }] : []),
+        ];
+    }, [blog.body, relatedBlogs.length]);
+
+    const serviceSlides: ServiceSlide[] = useMemo(() => {
+        if (!capabilities_nav || capabilities_nav.length === 0) {
+            return FALLBACK_SERVICES;
+        }
+
+        return capabilities_nav.map((cap, idx) => ({
+            id: cap.id,
+            tag: cap.tag || 'Service',
+            title: cap.title,
+            subtitle: cap.subtitle,
+            href: cap.path || `/capabilities/${cap.slug}`,
+            image: cap.image || FALLBACK_SERVICE_IMAGES[idx % FALLBACK_SERVICE_IMAGES.length],
+        }));
+    }, [capabilities_nav]);
+
+    const socials = useMemo(() => {
+        const configured = Object.entries(settings?.socials ?? {})
+            .filter(([, url]) => Boolean(url))
+            .map(([name, url]) => ({
+                name: name.charAt(0).toUpperCase() + name.slice(1),
+                url: url as string,
+            }));
+
+        return configured.length > 0 ? configured : DEFAULT_SOCIALS;
+    }, [settings?.socials]);
+
+    const handleTocClick = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        const target = document.getElementById(id);
+        if (target) {
+            event.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     const articleJsonLd = {
         '@context': 'https://schema.org',
@@ -211,14 +520,14 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
         keywords: blog.meta_keywords || (Array.isArray(blog.tags) ? blog.tags.join(', ') : ''),
         author: {
             '@type': 'Person',
-            name: blog.author?.name || 'CuttingEdger Lead Architect',
+            name: blog.author?.name || 'CE Production',
         },
         publisher: {
             '@type': 'Organization',
             name: 'CuttingEdger',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://cuttingedger.com/logo.png',
+                url: 'https://cuttingedger.com/images/ce/ce_logo_word.png',
             },
         },
         datePublished: blog.published_at,
@@ -238,645 +547,456 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                 canonicalUrl={blog.canonical_url || `https://cuttingedger.com/blog/${blog.slug}`}
                 image={blog.og_image || blog.cover_image}
                 type="article"
+                breadcrumbs={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Blog', url: '/blog' },
+                    { name: blog.title, url: `/blog/${blog.slug}` },
+                ]}
                 jsonLd={articleJsonLd}
             />
 
             {/* Scroll Reading Progress Bar */}
             <div className="fixed top-0 left-0 right-0 h-[3px] bg-transparent z-[60] pointer-events-none">
                 <div
-                    className="h-full bg-primary shadow-[0_0_12px_rgba(251, 183, 24, 0.8)] transition-all duration-100 ease-out"
+                    className="h-full bg-primary shadow-[0_0_12px_rgba(245,118,26,0.75)] transition-all duration-100 ease-out"
                     style={{ width: `${readingProgress}%` }}
                 />
             </div>
 
-            {/* EDITORIAL HERO SECTION */}
-            <header className="relative pt-24 sm:pt-28 pb-8 sm:pb-10 bg-page border-b border-ink/10 overflow-hidden">
-                {/* Ambient Kinetic Glows */}
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[320px] bg-gradient-to-b from-primary/15 via-primary/5 to-transparent rounded-full blur-[110px] pointer-events-none" />
-                <div className="absolute top-1/4 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(251, 183, 24, 0.06),rgba(255,255,255,0))] pointer-events-none" />
+            {/* TOP FULL-WIDTH HERO BANNER */}
+            <header className="relative min-h-[360px] sm:min-h-[440px] lg:min-h-[480px] flex items-center overflow-hidden bg-secondary pt-28 pb-12 sm:pb-16">
+                {blog.cover_image ? (
+                    <img
+                        src={blog.cover_image}
+                        alt={blog.title}
+                        className="absolute inset-0 w-full h-full object-cover object-center"
+                    />
+                ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary to-primary/30" />
+                )}
 
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    {/* Navigation Bar / Breadcrumb Strip */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4 text-xs font-mono">
-                        <Link
-                            href="/blog"
-                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ink/[0.03] hover:bg-ink/[0.05] border border-ink/10 text-ink-2 hover:text-ink transition-all group shadow-xs text-[11px]"
-                        >
-                            <ArrowLeft className="w-3 h-3 text-primary-ink group-hover:-translate-x-1 transition-transform" />
-                            <span>Return to Blog</span>
-                        </Link>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/40 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
 
-                        <div className="flex items-center gap-2 text-muted bg-ink/[0.04] px-3 py-1 rounded-full border border-ink/10 backdrop-blur-xs text-[11px]">
-                            <Link href="/" className="text-primary-ink hover:underline font-medium transition-colors">
-                                Home
-                            </Link>
-                            <ChevronRight className="w-3 h-3 text-subtle" />
-                            <Link href="/blog" className="text-ink/90 hover:text-ink transition-colors">
-                                Blog
-                            </Link>
-                            {blog.category && (
-                                <>
-                                    <ChevronRight className="w-3 h-3 text-subtle" />
-                                    <Link
-                                        href={`/blog?category=${blog.category.slug}`}
-                                        className="text-primary-ink hover:underline"
-                                    >
-                                        {blog.category.name}
-                                    </Link>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Taxonomy Category Badges */}
-                    <div className="flex flex-wrap items-center gap-2 mb-3.5">
-                        {blog.category && (
-                            <Link
-                                href={`/blog?category=${blog.category.slug}`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-primary/10 text-primary-ink border border-primary/30 hover:bg-primary hover:text-white transition-all shadow-[0_0_12px_color-mix(in_srgb,var(--color-primary)_15%,transparent)] group"
-                            >
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_var(--color-accent)] group-hover:bg-white transition-colors" />
-                                <span>{blog.category.name}</span>
-                            </Link>
-                        )}
-                        {blog.subcategory && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase bg-white/[0.04] text-ink-2 border border-ink/10 backdrop-blur-xs">
-                                <CornerDownRight className="w-3 h-3 text-primary-ink" />
-                                <span>{blog.subcategory.name}</span>
-                            </span>
-                        )}
-                        {blog.is_featured && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-amber-400/10 text-amber-300 border border-amber-400/30 shadow-[0_0_12px_rgba(251,191,36,0.15)]">
-                                <Sparkles className="w-3 h-3 text-amber-300" />
-                                <span>FEATURED BLOG</span>
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Main Headline */}
-                    <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-display font-extrabold tracking-tight leading-[1.14] max-w-3xl bg-gradient-to-br from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
+                <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 relative z-10">
+                    <h1 className="max-w-3xl text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-white leading-[1.15] tracking-tight">
                         {blog.title}
                     </h1>
 
-                    {/* Executive Synopsis Callout */}
-                    {blog.excerpt && (
-                        <div className="relative mt-4 sm:mt-5 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-primary/[0.08] via-ink/[0.02] to-transparent border-l-4 border-primary border-y border-r border-ink/10 backdrop-blur-md shadow-md max-w-3xl">
-                            <span className="text-[9px] font-mono text-primary-ink uppercase tracking-widest block mb-1 font-bold flex items-center gap-1.5">
-                                <Quote className="w-2.5 h-2.5 rotate-180 inline-block text-primary-ink" />
-                                EXECUTIVE SYNOPSIS
-                            </span>
-                            <p className="text-sm sm:text-base text-ink-2 font-light leading-relaxed">
-                                {blog.excerpt}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Editorial Attribution & Action Deck */}
-                    <div className="mt-5 sm:mt-6 p-2.5 sm:p-3 px-4 rounded-xl bg-white/90 border border-ink/10 backdrop-blur-xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-                        {/* Author Credentials */}
-                        {blog.author ? (
-                            <Link
-                                href={`/team/${blog.author.slug}`}
-                                className="group flex items-center gap-3 text-left shrink-0"
-                            >
-                                {blog.author.avatar ? (
-                                    <div className="relative">
-                                        <img
-                                            src={blog.author.avatar}
-                                            alt={blog.author.name}
-                                            className="w-9 h-9 rounded-full object-cover border border-primary/40 group-hover:border-primary transition-colors shadow-[0_0_8px_rgba(251, 183, 24, 0.2)]"
-                                        />
-                                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white" title="Verified Author" />
-                                    </div>
-                                ) : (
-                                    <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/40 flex items-center justify-center text-primary-ink font-mono font-bold text-xs shadow-[0_0_8px_rgba(251, 183, 24, 0.15)]">
-                                        {blog.author.name.charAt(0)}
-                                    </div>
-                                )}
-                                <div className="space-y-0.5">
-                                    <div className="text-xs sm:text-sm font-display font-bold text-ink group-hover:text-primary-ink transition-colors flex items-center gap-1">
-                                        <span>{blog.author.name}</span>
-                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary-ink" />
-                                    </div>
-                                    <div className="text-[10px] font-mono text-muted">
-                                        {blog.author.role}
-                                    </div>
-                                </div>
-                            </Link>
-                        ) : (
-                            <div className="flex items-center gap-2.5 shrink-0">
-                                <div className="w-8 h-8 rounded-full bg-ink/[0.03] border border-ink/10 flex items-center justify-center text-primary-ink font-mono font-bold text-[10px]">
-                                    CE
-                                </div>
-                                <div className="text-[11px] font-mono text-muted">
-                                    Editorial Team • CuttingEdger
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Metadata Counters (Unified Capsule) */}
-                        <div className="flex items-center flex-wrap gap-2 text-[11px] font-mono text-ink-2 bg-ink/[0.04] px-3 py-1.5 rounded-lg border border-ink/10">
-                            <span className="flex items-center gap-1.5">
-                                <Calendar className="w-3 h-3 text-primary-ink" />
-                                <span>{formattedPublishDate}</span>
-                            </span>
-
-                            <span className="text-subtle font-bold">•</span>
-
-                            <span className="flex items-center gap-1.5">
-                                <Clock className="w-3 h-3 text-primary-ink" />
-                                <span>{blog.reading_time || 5} min read</span>
-                            </span>
-
-                            {wordCount > 0 && (
-                                <>
-                                    <span className="text-subtle font-bold">•</span>
-                                    <span className="flex items-center gap-1.5">
-                                        <FileText className="w-3 h-3 text-muted" />
-                                        <span>{wordCount.toLocaleString()} words</span>
-                                    </span>
-                                </>
-                            )}
-                        </div>
-
-                        {/* Interactive Share Actions */}
-                        <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                                type="button"
-                                onClick={handleCopyUrl}
-                                className="h-8 px-3 rounded-lg bg-ink/[0.03] hover:bg-primary text-ink-2 hover:text-white border border-ink/10 hover:border-primary font-mono text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs group"
-                                title="Copy article URL"
-                            >
-                                {copiedLink ? (
-                                    <>
-                                        <Check className="w-3 h-3 text-emerald-400 group-hover:text-white" />
-                                        <span className="text-emerald-400 group-hover:text-white font-bold">Copied!</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Copy className="w-3 h-3 text-primary-ink group-hover:text-white" />
-                                        <span>Copy Link</span>
-                                    </>
-                                )}
-                            </button>
-
-                            <a
-                                href={twitterShareUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-ink/[0.03] hover:bg-primary text-ink-2 hover:text-white border border-ink/10 hover:border-primary flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                                title="Share on X (Twitter)"
-                                aria-label="Share on X"
-                            >
-                                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
-                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                </svg>
-                            </a>
-
-                            <a
-                                href={linkedinShareUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-ink/[0.03] hover:bg-primary text-ink-2 hover:text-white border border-ink/10 hover:border-primary flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                                title="Share on LinkedIn"
-                                aria-label="Share on LinkedIn"
-                            >
-                                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
-                                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.3a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
-                                </svg>
-                            </a>
-                        </div>
+                    <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm font-medium text-white/90">
+                        <span className="inline-flex items-center gap-1.5">
+                            <User className="w-4 h-4 text-primary" />
+                            <span>by {blog.author?.name || 'CE Production'}</span>
+                        </span>
+                        <span className="text-white/40">|</span>
+                        <span className="inline-flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            <span>{formattedPublishDate}</span>
+                        </span>
                     </div>
                 </div>
             </header>
 
-            {/* MAIN ARTICLE EDITORIAL GRID */}
-            <main className="py-10 lg:py-14 bg-page">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-                        {/* MAIN PROSE COLUMN (8 Cols) */}
-                        <article className="lg:col-span-8 space-y-8">
-                            {/* Blog Cover Image at the top of the article column */}
-                            {blog.cover_image && (
-                                <div className="relative group">
-                                    <div
-                                        className="absolute -inset-1 bg-gradient-to-r from-primary/15 via-cyan-500/10 to-primary/15 rounded-2xl sm:rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
-                                    />
-                                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] border border-ink/15 bg-page shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
-                                        <img
-                                            src={blog.cover_image}
-                                            alt={blog.title}
-                                            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                                    </div>
-                                </div>
-                            )}
+            {/* MAIN 2-COLUMN EDITORIAL SECTION */}
+            <main className="py-12 sm:py-16 bg-page">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+                        {/* LEFT COLUMN: ARTICLE BODY, AUTHOR CARD, SHARE BAR */}
+                        <div className="lg:col-span-8 space-y-6 min-w-0">
+                            <article
+                                id="article-content"
+                                className="rounded-3xl bg-surface border border-ink/10 p-6 sm:p-10 lg:p-12 shadow-sm"
+                            >
+                                <div className="space-y-6 text-ink-2 font-sans text-base sm:text-[17px] leading-[1.85] font-normal">
+                                    {blog.body.split('\n\n').map((block, idx) => {
+                                        const trimmed = block.trim();
+                                        if (!trimmed) {
+                                            return null;
+                                        }
 
-                            <div className="space-y-6 text-ink-2 font-sans text-base sm:text-lg lg:text-[19px] leading-[1.8] font-normal">
-                                {blog.body.split('\n\n').map((block, idx) => {
-                                    const trimmed = block.trim();
-                                    if (!trimmed) return null;
+                                        // Raw HTML block support with injected anchor IDs on headings
+                                        if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
+                                            const htmlWithIds = injectHtmlHeadingIds(trimmed);
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    dangerouslySetInnerHTML={{ __html: htmlWithIds }}
+                                                    className="prose-html space-y-4 [&_h1]:scroll-mt-28 [&_h1]:text-2xl [&_h1]:sm:text-3xl [&_h1]:font-display [&_h1]:font-extrabold [&_h1]:text-ink [&_h1]:pt-4 [&_h2]:scroll-mt-28 [&_h2]:text-xl [&_h2]:sm:text-2xl [&_h2]:font-display [&_h2]:font-bold [&_h2]:text-ink [&_h2]:pt-4 [&_h3]:scroll-mt-28 [&_h3]:text-lg [&_h3]:font-display [&_h3]:font-semibold [&_h3]:text-ink [&_h3]:pt-2 [&_a]:text-primary-ink [&_a]:underline [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_img]:rounded-2xl"
+                                                />
+                                            );
+                                        }
 
-                                    // Raw HTML block support
-                                    if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
-                                        return (
-                                            <div
-                                                key={idx}
-                                                dangerouslySetInnerHTML={{ __html: trimmed }}
-                                                className="prose-html space-y-4"
-                                            />
-                                        );
-                                    }
-
-                                    // Heading 1
-                                    if (trimmed.startsWith('# ')) {
-                                        const headingText = trimmed.replace(/^#\s+/, '');
-                                        const headingId = slugify(headingText);
-                                        return (
-                                            <h2
-                                                key={idx}
-                                                id={headingId}
-                                                className="scroll-mt-32 text-2xl sm:text-4xl font-display font-extrabold text-ink pt-8 pb-3 border-b border-ink/10 group flex items-center justify-between"
-                                            >
-                                                <span>{headingText}</span>
-                                                <a
-                                                    href={`#${headingId}`}
-                                                    className="opacity-0 group-hover:opacity-100 text-primary-ink text-sm font-mono transition-opacity ml-2"
-                                                    title="Direct section link"
+                                        // Heading 1
+                                        if (trimmed.startsWith('# ')) {
+                                            const headingText = trimmed.replace(/^#\s+/, '');
+                                            const headingId = slugify(headingText);
+                                            return (
+                                                <h2
+                                                    key={idx}
+                                                    id={headingId}
+                                                    className="scroll-mt-28 text-2xl sm:text-3xl font-display font-extrabold text-ink pt-4 pb-2 border-b border-ink/10 group flex items-center justify-between"
                                                 >
-                                                    #
-                                                </a>
-                                            </h2>
-                                        );
-                                    }
-
-                                    // Heading 2
-                                    if (trimmed.startsWith('## ')) {
-                                        const headingText = trimmed.replace(/^##\s+/, '');
-                                        const headingId = slugify(headingText);
-                                        return (
-                                            <h3
-                                                key={idx}
-                                                id={headingId}
-                                                className="scroll-mt-32 text-xl sm:text-2xl lg:text-3xl font-display font-bold text-ink pt-6 pb-1 text-primary-ink group flex items-center justify-between"
-                                            >
-                                                <span>{headingText}</span>
-                                                <a
-                                                    href={`#${headingId}`}
-                                                    className="opacity-0 group-hover:opacity-100 text-primary-ink text-xs font-mono transition-opacity ml-2"
-                                                    title="Direct section link"
-                                                >
-                                                    #
-                                                </a>
-                                            </h3>
-                                        );
-                                    }
-
-                                    // Heading 3
-                                    if (trimmed.startsWith('### ')) {
-                                        const headingText = trimmed.replace(/^###\s+/, '');
-                                        const headingId = slugify(headingText);
-                                        return (
-                                            <h4
-                                                key={idx}
-                                                id={headingId}
-                                                className="scroll-mt-32 text-lg sm:text-xl font-display font-semibold text-ink pt-4"
-                                            >
-                                                {headingText}
-                                            </h4>
-                                        );
-                                    }
-
-                                    // Blockquote
-                                    if (trimmed.startsWith('> ')) {
-                                        const quoteText = trimmed.replace(/^>\s+/, '');
-                                        return (
-                                            <blockquote
-                                                key={idx}
-                                                className="relative my-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-ink/[0.02] to-transparent border-l-4 border-primary border-y border-r border-ink/10"
-                                            >
-                                                <Quote className="w-8 h-8 text-primary-ink/40 absolute top-4 right-4 pointer-events-none" />
-                                                <p className="font-display italic text-lg sm:text-xl text-ink-2 leading-relaxed">
-                                                    &ldquo;{quoteText}&rdquo;
-                                                </p>
-                                            </blockquote>
-                                        );
-                                    }
-
-                                    // Code Blocks
-                                    if (trimmed.startsWith('```')) {
-                                        const firstLineEnd = trimmed.indexOf('\n');
-                                        const lang = firstLineEnd !== -1 ? trimmed.slice(3, firstLineEnd).trim() : '';
-                                        const codeContent = trimmed
-                                            .replace(/^```[a-z]*\n?/, '')
-                                            .replace(/\n?```$/, '');
-                                        return (
-                                            <CodeBlock
-                                                key={idx}
-                                                code={codeContent}
-                                                language={lang}
-                                            />
-                                        );
-                                    }
-
-                                    // Unordered List
-                                    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-                                        const items = trimmed
-                                            .split('\n')
-                                            .map((l) => l.replace(/^[-*]\s+/, '').trim())
-                                            .filter(Boolean);
-                                        return (
-                                            <ul key={idx} className="my-6 space-y-3 pl-2">
-                                                {items.map((item, itemIdx) => (
-                                                    <li
-                                                        key={itemIdx}
-                                                        className="flex items-start gap-3 text-ink-2"
+                                                    <span>{headingText}</span>
+                                                    <a
+                                                        href={`#${headingId}`}
+                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-sm font-mono transition-opacity ml-2"
+                                                        title="Direct section link"
                                                     >
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0 shadow-[0_0_6px_var(--color-accent)]" />
-                                                        <span className="flex-1">
-                                                            {renderInlineFormatting(item)}
-                                                        </span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                                        #
+                                                    </a>
+                                                </h2>
+                                            );
+                                        }
+
+                                        // Heading 2
+                                        if (trimmed.startsWith('## ')) {
+                                            const headingText = trimmed.replace(/^##\s+/, '');
+                                            const headingId = slugify(headingText);
+                                            return (
+                                                <h3
+                                                    key={idx}
+                                                    id={headingId}
+                                                    className="scroll-mt-28 text-xl sm:text-2xl font-display font-bold text-ink pt-4 group flex items-center justify-between"
+                                                >
+                                                    <span>{headingText}</span>
+                                                    <a
+                                                        href={`#${headingId}`}
+                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-xs font-mono transition-opacity ml-2"
+                                                        title="Direct section link"
+                                                    >
+                                                        #
+                                                    </a>
+                                                </h3>
+                                            );
+                                        }
+
+                                        // Heading 3
+                                        if (trimmed.startsWith('### ')) {
+                                            const headingText = trimmed.replace(/^###\s+/, '');
+                                            const headingId = slugify(headingText);
+                                            return (
+                                                <h4
+                                                    key={idx}
+                                                    id={headingId}
+                                                    className="scroll-mt-28 text-lg sm:text-xl font-display font-semibold text-ink pt-3"
+                                                >
+                                                    {headingText}
+                                                </h4>
+                                            );
+                                        }
+
+                                        // Blockquote
+                                        if (trimmed.startsWith('> ')) {
+                                            const quoteText = trimmed.replace(/^>\s+/, '');
+                                            return (
+                                                <blockquote
+                                                    key={idx}
+                                                    className="relative my-6 p-6 sm:p-7 rounded-2xl bg-page border-l-4 border-primary"
+                                                >
+                                                    <Quote className="w-7 h-7 text-primary/30 absolute top-4 right-4 pointer-events-none" />
+                                                    <p className="font-display italic text-lg sm:text-xl text-ink leading-relaxed">
+                                                        &ldquo;{quoteText}&rdquo;
+                                                    </p>
+                                                </blockquote>
+                                            );
+                                        }
+
+                                        // Code Blocks
+                                        if (trimmed.startsWith('```')) {
+                                            const firstLineEnd = trimmed.indexOf('\n');
+                                            const lang = firstLineEnd !== -1 ? trimmed.slice(3, firstLineEnd).trim() : '';
+                                            const codeContent = trimmed
+                                                .replace(/^```[a-zA-Z0-9_-]*\n?/, '')
+                                                .replace(/\n?```$/, '');
+                                            return (
+                                                <CodeBlock
+                                                    key={idx}
+                                                    code={codeContent}
+                                                    language={lang}
+                                                />
+                                            );
+                                        }
+
+                                        // Unordered List
+                                        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                                            const items = trimmed
+                                                .split('\n')
+                                                .map((line) => line.replace(/^[-*]\s+/, '').trim())
+                                                .filter(Boolean);
+                                            return (
+                                                <ul key={idx} className="my-5 space-y-2.5 pl-1">
+                                                    {items.map((item, itemIdx) => (
+                                                        <li
+                                                            key={itemIdx}
+                                                            className="flex items-start gap-3 text-ink-2"
+                                                        >
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0" />
+                                                            <span className="flex-1">
+                                                                {renderInlineFormatting(item)}
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            );
+                                        }
+
+                                        // Standard Paragraph
+                                        return (
+                                            <p key={idx} className="leading-relaxed">
+                                                {renderInlineFormatting(trimmed)}
+                                            </p>
                                         );
-                                    }
+                                    })}
+                                </div>
 
-                                    // Standard Paragraph with Markdown formatting
-                                    return (
-                                        <p key={idx} className="leading-relaxed">
-                                            {renderInlineFormatting(trimmed)}
-                                        </p>
-                                    );
-                                })}
-                            </div>
-
-                            {/* Tags Section */}
-                            {Array.isArray(blog.tags) && blog.tags.length > 0 && (
-                                <div className="mt-14 pt-8 border-t border-ink/10 space-y-3">
-                                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted">
-                                        <Tag className="w-3.5 h-3.5 text-primary-ink" />
-                                        <span>Categorized Topics & Tags</span>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2">
+                                {/* Optional Tags Row */}
+                                {Array.isArray(blog.tags) && blog.tags.length > 0 && (
+                                    <div className="mt-10 pt-6 border-t border-ink/10 flex flex-wrap items-center gap-2">
                                         {blog.tags.map((tag, i) => (
                                             <Link
                                                 key={i}
-                                                href={`/blog?category=all`}
-                                                className="px-3.5 py-1.5 rounded-full bg-ink/[0.03] hover:bg-primary/10 border border-ink/10 hover:border-primary/40 text-ink-2 hover:text-primary-ink font-mono text-xs transition-all"
+                                                href="/blog"
+                                                prefetch
+                                                className="px-3 py-1 rounded-full bg-page hover:bg-primary/10 border border-ink/10 hover:border-primary/40 text-xs font-medium text-muted hover:text-primary-ink transition-colors"
                                             >
                                                 #{tag}
                                             </Link>
                                         ))}
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </article>
 
-                            {/* Author Spotlight Profile Card */}
-                            {blog.author && (
-                                <div className="mt-14 p-8 rounded-3xl bg-gradient-to-br from-white via-white to-page border border-ink/10 shadow-2xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+                            {/* AUTHOR BIO CARD */}
+                            <section
+                                id="author-bio"
+                                className="rounded-2xl bg-surface border border-ink/10 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-5"
+                            >
+                                {blog.author?.avatar ? (
+                                    <img
+                                        src={blog.author.avatar}
+                                        alt={blog.author.name}
+                                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-ink/15 shrink-0"
+                                    />
+                                ) : (
+                                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink font-display font-bold text-xl shrink-0">
+                                        {(blog.author?.name || 'C').charAt(0)}
+                                    </div>
+                                )}
 
-                                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10 text-center sm:text-left">
-                                        {blog.author.avatar ? (
-                                            <img
-                                                src={blog.author.avatar}
-                                                alt={blog.author.name}
-                                                className="w-20 h-20 rounded-2xl object-cover border-2 border-primary/40 group-hover:border-primary transition-colors shrink-0 shadow-xl"
-                                            />
+                                <div className="text-center sm:text-left space-y-1.5 flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
+                                        {blog.author?.slug ? (
+                                            <Link
+                                                href={`/team/${blog.author.slug}`}
+                                                prefetch
+                                                className="text-base sm:text-lg font-display font-bold text-ink hover:text-primary-ink transition-colors"
+                                            >
+                                                {blog.author.name}
+                                            </Link>
                                         ) : (
-                                            <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/40 flex items-center justify-center text-primary-ink font-mono font-bold text-xl shrink-0">
-                                                {blog.author.name.charAt(0)}
-                                            </div>
+                                            <h3 className="text-base sm:text-lg font-display font-bold text-ink">
+                                                {blog.author?.name || 'CE Production'}
+                                            </h3>
                                         )}
-
-                                        <div className="space-y-3 flex-1 min-w-0">
-                                            <div className="space-y-1">
-                                                <h3 className="font-display font-extrabold text-2xl text-ink">
-                                                    {blog.author.name}
-                                                </h3>
-                                                <p className="text-xs font-mono text-muted">
-                                                    {blog.author.role}
-                                                </p>
-                                            </div>
-
-                                            {blog.author.bio && (
-                                                <p className="text-sm text-ink-2 leading-relaxed">
-                                                    {blog.author.bio}
-                                                </p>
-                                            )}
-
-                                            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                                                <Link
-                                                    href={`/team/${blog.author.slug}`}
-                                                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary text-white font-mono text-xs font-bold hover:bg-[#b8dd00] transition-all shadow-md"
-                                                >
-                                                    <span>View Member Profile</span>
-                                                    <ArrowUpRight className="w-3.5 h-3.5" />
-                                                </Link>
-
-                                                {blog.author.social_links?.twitter && (
-                                                    <a
-                                                        href={blog.author.social_links.twitter}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="w-8 h-8 rounded-full bg-ink/[0.03] border border-ink/10 flex items-center justify-center text-muted hover:text-ink hover:bg-ink/[0.05] transition-colors"
-                                                        aria-label="Author Twitter"
-                                                    >
-                                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-                                                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                                        </svg>
-                                                    </a>
-                                                )}
-
-                                                {blog.author.social_links?.linkedin && (
-                                                    <a
-                                                        href={blog.author.social_links.linkedin}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="w-8 h-8 rounded-full bg-ink/[0.03] border border-ink/10 flex items-center justify-center text-muted hover:text-ink hover:bg-ink/[0.05] transition-colors"
-                                                        aria-label="Author LinkedIn"
-                                                    >
-                                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-                                                            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.3a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
-                                                        </svg>
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
+                                        {blog.author?.role && (
+                                            <span className="text-xs font-medium text-primary-ink">
+                                                {blog.author.role}
+                                            </span>
+                                        )}
                                     </div>
-                                </div>
-                            )}
 
-                            {/* POST-AUTHOR: SHARE ARTICLE */}
-                            <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-white border border-ink/10 shadow-xl space-y-6 relative overflow-hidden group">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-ink/10">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink shrink-0">
-                                            <Share2 className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-display font-bold text-xl text-ink">
-                                                Share Article
-                                            </h4>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-muted font-mono">
-                                        Distribute this blog across your network
+                                    <p className="text-xs sm:text-sm text-muted leading-relaxed">
+                                        {blog.author?.bio ||
+                                            'Visual production specialists and creative engineers at CuttingEdger sharing insights on 2D retouching, 3D CGI, and high-volume e-commerce workflows.'}
                                     </p>
                                 </div>
+                            </section>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {/* SHARE BAR */}
+                            <div className="rounded-2xl bg-surface border border-ink/10 px-5 py-3.5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-ink">
+                                    <Share2 className="w-4 h-4 text-ink" />
+                                    <span>Share</span>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={handleCopyUrl}
-                                        className="h-11 rounded-xl bg-ink/[0.03] hover:bg-primary text-ink-2 hover:text-white border border-ink/10 hover:border-primary font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group"
+                                        onClick={handleToggleLike}
+                                        aria-pressed={liked}
+                                        className={`h-9 px-3 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
+                                            liked
+                                                ? 'bg-primary text-white'
+                                                : 'bg-ink text-white hover:bg-primary'
+                                        }`}
+                                        title="Like this article"
                                     >
-                                        {copiedLink ? (
-                                            <>
-                                                <Check className="w-4 h-4 text-emerald-400 group-hover:text-white" />
-                                                <span className="text-emerald-400 group-hover:text-white font-bold">
-                                                    Link Copied!
-                                                </span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Copy className="w-4 h-4 text-primary-ink group-hover:text-white" />
-                                                <span>Copy Link</span>
-                                            </>
-                                        )}
+                                        <span>{likesCount}</span>
+                                        <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
                                     </button>
+
+                                    <a
+                                        href={facebookShareUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Share on Facebook"
+                                        title="Share on Facebook"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                    >
+                                        <SocialIcon name="facebook" size={14} />
+                                    </a>
 
                                     <a
                                         href={twitterShareUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-11 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink-2 hover:text-ink border border-ink/10 hover:border-ink/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+                                        aria-label="Share on X"
+                                        title="Share on X"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
                                     >
-                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-                                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                                        </svg>
-                                        <span>Share on X</span>
+                                        <SocialIcon name="twitter" size={14} />
                                     </a>
 
                                     <a
                                         href={linkedinShareUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-11 rounded-xl bg-ink/[0.03] hover:bg-ink/[0.05] text-ink-2 hover:text-ink border border-ink/10 hover:border-ink/20 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+                                        aria-label="Share on LinkedIn"
+                                        title="Share on LinkedIn"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
                                     >
-                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-                                            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.3a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
-                                        </svg>
-                                        <span>Share on LinkedIn</span>
+                                        <SocialIcon name="linkedin" size={14} />
                                     </a>
+
+                                    <a
+                                        href={pinterestShareUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Share on Pinterest"
+                                        title="Share on Pinterest"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" aria-hidden="true">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.18-5.01 1.18-5.01s-.3-.6-.3-1.49c0-1.4.81-2.44 1.82-2.44.86 0 1.27.64 1.27 1.42 0 .86-.55 2.15-.84 3.35-.24 1 .5 1.82 1.49 1.82 1.79 0 3.17-1.89 3.17-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .86.33 1.79.75 2.3.08.1.09.19.07.29-.08.31-.25 1-.28 1.14-.04.18-.14.22-.33.13-1.24-.58-2.01-2.39-2.01-3.85 0-3.13 2.28-6.01 6.57-6.01 3.45 0 6.13 2.46 6.13 5.75 0 3.43-2.16 6.19-5.16 6.19-1.01 0-1.96-.52-2.28-1.14l-.62 2.37c-.22.86-.83 1.94-1.24 2.6.93.29 1.92.44 2.95.44 5.52 0 10-4.48 10-10S17.52 2 12 2z" />
+                                        </svg>
+                                    </a>
+
+                                    <a
+                                        href={emailShareUrl}
+                                        aria-label="Share via Email"
+                                        title="Share via Email"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                    >
+                                        <Mail className="w-3.5 h-3.5" />
+                                    </a>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleCopyUrl}
+                                        aria-label="Copy article link"
+                                        title="Copy article link"
+                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors cursor-pointer"
+                                    >
+                                        {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+                                    </button>
                                 </div>
                             </div>
-                        </article>
+                        </div>
 
-                        {/* RIGHT STICKY EDITORIAL SIDEBAR (4 Cols) */}
-                        <aside className="lg:col-span-4 sticky top-28 space-y-6">
-                            <div className="p-6 rounded-3xl bg-white border border-ink/10 shadow-2xl relative overflow-hidden space-y-5">
-                                <div className="absolute top-0 right-0 w-44 h-44 bg-primary/5 rounded-full blur-[60px] pointer-events-none" />
+                        {/* RIGHT SIDEBAR: TOC, SERVICE SLIDER, CONNECT & NEWSLETTER */}
+                        <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+                            {/* Widget 1: Table of Content */}
+                            <div className="rounded-2xl bg-surface border border-ink/10 p-6 shadow-sm">
+                                <h3 className="text-sm font-display font-bold text-ink pb-3 mb-2 border-b border-ink/10">
+                                    Table of Content
+                                </h3>
+                                <nav aria-label="Table of contents">
+                                    {tocItems.map((item) => (
+                                        <a
+                                            key={item.id}
+                                            href={`#${item.id}`}
+                                            onClick={(event) => handleTocClick(event, item.id)}
+                                            className={`block border-b border-ink/10 py-2.5 last:border-b-0 text-xs sm:text-sm text-ink-2 hover:text-primary-ink transition-colors ${
+                                                item.level >= 3 ? 'pl-3 text-muted' : ''
+                                            }`}
+                                        >
+                                            {item.label}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </div>
 
-                                {/* Sidebar Header */}
-                                <div className="flex items-center justify-between pb-4 border-b border-ink/10 relative z-10">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink">
-                                            <BookOpen className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display font-bold text-base text-ink">
-                                                Other Blogs
-                                            </h3>
-                                        </div>
+                            {/* Widget 2: Service Card Slider */}
+                            <ServiceCardSlider slides={serviceSlides} />
+
+                            {/* Widget 3: Connect & Follow + Newsletter */}
+                            <div className="rounded-2xl bg-surface border border-ink/10 p-6 shadow-sm space-y-6">
+                                <div className="space-y-4">
+                                    <div className="bg-ink text-white text-center py-2.5 px-4 rounded-lg text-[11px] font-bold uppercase tracking-[0.2em]">
+                                        Connect &amp; Follow
                                     </div>
 
-                                    <Link
-                                        href="/blog"
-                                        className="text-[11px] font-mono text-muted hover:text-primary-ink flex items-center gap-1 transition-colors"
-                                    >
-                                        <span>View All</span>
-                                        <ArrowUpRight className="w-3 h-3" />
-                                    </Link>
+                                    <ul className="flex items-center justify-center flex-wrap gap-2.5">
+                                        {socials.map((social) => (
+                                            <li key={social.name}>
+                                                <a
+                                                    href={social.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    aria-label={social.name}
+                                                    title={social.name}
+                                                    className="w-9 h-9 rounded-full border border-ink/10 bg-page text-ink hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center transition-colors"
+                                                >
+                                                    <SocialIcon name={social.name} size={15} />
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
 
-                                {/* Other Blogs List */}
-                                <div className="space-y-3 relative z-10">
-                                    {relatedBlogs.length > 0 ? (
-                                        relatedBlogs.map((otherBlog) => (
-                                            <Link
-                                                key={otherBlog.id}
-                                                href={`/blog/${otherBlog.slug}`}
-                                                className="group flex gap-3.5 p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-ink/10 hover:border-primary/40 transition-all duration-300"
-                                            >
-                                                {/* Thumbnail */}
-                                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-white border border-ink/10 shrink-0 relative">
-                                                    {otherBlog.cover_image ? (
-                                                        <img
-                                                            src={otherBlog.cover_image}
-                                                            alt={otherBlog.title}
-                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full bg-white flex items-center justify-center text-subtle">
-                                                            <FileText className="w-5 h-5" />
-                                                        </div>
-                                                    )}
-                                                    {otherBlog.category && (
-                                                        <span className="absolute bottom-1 left-1 right-1 px-1 py-0.5 rounded bg-white/90 backdrop-blur-xs text-[8px] font-mono text-primary-ink uppercase tracking-wider truncate text-center">
-                                                            {otherBlog.category.name}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                <div className="border-t border-ink/10 pt-6 text-center space-y-3">
+                                    <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-ink">
+                                        Newsletter
+                                    </h4>
+                                    <p className="text-xs text-muted leading-relaxed">
+                                        Enter your email address below to subscribe to our newsletter
+                                    </p>
 
-                                                {/* Info */}
-                                                <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                                    <div className="space-y-1">
-                                                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted">
-                                                            <Clock className="w-3 h-3 text-primary-ink" />
-                                                            <span>{otherBlog.reading_time || 5}m read</span>
-                                                            {otherBlog.author && (
-                                                                <>
-                                                                    <span>•</span>
-                                                                    <span className="truncate">{otherBlog.author.name}</span>
-                                                                </>
-                                                            )}
-                                                        </div>
-
-                                                        <h4 className="font-display font-bold text-xs sm:text-sm text-ink-2 group-hover:text-primary-ink transition-colors line-clamp-2 leading-snug">
-                                                            {otherBlog.title}
-                                                        </h4>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-1 text-[10px] font-mono text-muted group-hover:text-ink transition-colors pt-1">
-                                                        <span>Read Article</span>
-                                                        <ArrowUpRight className="w-3 h-3 text-primary-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        ))
+                                    {newsletterSubscribed ? (
+                                        <p
+                                            role="status"
+                                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-4 py-3 text-xs font-semibold text-white w-full"
+                                        >
+                                            <Check className="w-4 h-4 text-primary" />
+                                            <span>You are subscribed!</span>
+                                        </p>
                                     ) : (
-                                        <div className="p-6 text-center space-y-3 rounded-2xl bg-white/[0.02] border border-ink/10">
-                                            <BookOpen className="w-8 h-8 text-subtle mx-auto" />
-                                            <p className="text-xs font-mono text-muted">
-                                                No additional blogs available.
-                                            </p>
-                                        </div>
+                                        <form onSubmit={handleNewsletterSubmit} className="space-y-2.5">
+                                            <label htmlFor="blog-sidebar-newsletter" className="sr-only">
+                                                Email address
+                                            </label>
+                                            <input
+                                                id="blog-sidebar-newsletter"
+                                                type="email"
+                                                required
+                                                value={data.email}
+                                                onChange={(event) => setData('email', event.target.value)}
+                                                placeholder="Your email address"
+                                                autoComplete="email"
+                                                className="w-full rounded-lg border border-ink/15 bg-page px-3.5 py-2.5 text-sm text-ink placeholder:text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            />
+                                            {errors.email && (
+                                                <p className="text-xs text-rose-600 text-left">{errors.email}</p>
+                                            )}
+                                            <button
+                                                type="submit"
+                                                disabled={processing}
+                                                className="w-full rounded-lg bg-primary hover:bg-primary-hover text-white font-bold text-xs uppercase tracking-[0.18em] py-3 transition-colors cursor-pointer disabled:opacity-60"
+                                            >
+                                                {processing ? 'Subscribing...' : 'Subscribe'}
+                                            </button>
+                                        </form>
                                     )}
-                                </div>
-
-                                {/* Sidebar Footer Link */}
-                                <div className="pt-2 relative z-10">
-                                    <Link
-                                        href="/blog"
-                                        className="w-full h-10 rounded-xl bg-ink/[0.03] hover:bg-primary text-ink-2 hover:text-white border border-ink/10 hover:border-primary font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all duration-300 group"
-                                    >
-                                        <span>Explore Complete Journal</span>
-                                        <ArrowUpRight className="w-3.5 h-3.5 text-primary-ink group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                    </Link>
                                 </div>
                             </div>
                         </aside>
@@ -884,45 +1004,104 @@ export default function Show({ blog, relatedBlogs = [] }: BlogShowProps) {
                 </div>
             </main>
 
-            {/* CONTINUED READING / EXPLORATION STRIP */}
-            <section className="py-16 sm:py-20 bg-[#07080b] border-t border-ink/10 relative overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-gradient-to-r from-primary/10 to-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+            {/* PREVIOUS POST / NEXT POST NAVIGATION STRIP */}
+            {(previousBlog || nextBlog) && (
+                <section className="bg-surface border-y border-ink/10 py-7 sm:py-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            {previousBlog ? (
+                                <Link
+                                    href={`/blog/${previousBlog.slug}`}
+                                    prefetch
+                                    className="group flex items-center gap-4 text-left"
+                                >
+                                    <ChevronLeft className="w-5 h-5 text-subtle group-hover:text-primary-ink group-hover:-translate-x-0.5 transition-all shrink-0" />
+                                    {previousBlog.cover_image ? (
+                                        <img
+                                            src={previousBlog.cover_image}
+                                            alt={previousBlog.title}
+                                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border border-ink/15 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-page border border-ink/15 shrink-0" />
+                                    )}
+                                    <div className="min-w-0">
+                                        <span className="block text-xs font-medium text-subtle">
+                                            Previous Post:
+                                        </span>
+                                        <span className="mt-0.5 block text-sm sm:text-base font-display font-bold text-ink group-hover:text-primary-ink transition-colors line-clamp-2">
+                                            {previousBlog.title}
+                                        </span>
+                                    </div>
+                                </Link>
+                            ) : (
+                                <div className="hidden md:block" />
+                            )}
 
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-ink/[0.03] border border-ink/10 text-xs font-mono text-ink-2">
-                        <Sparkles className="w-3.5 h-3.5 text-primary-ink" />
-                        <span>CONTINUE EXPLORING ARCHITECTURAL BLOGS</span>
+                            {nextBlog && (
+                                <Link
+                                    href={`/blog/${nextBlog.slug}`}
+                                    prefetch
+                                    className="group flex items-center justify-end gap-4 text-right md:col-start-2"
+                                >
+                                    <div className="min-w-0">
+                                        <span className="block text-xs font-medium text-subtle">
+                                            Next Post:
+                                        </span>
+                                        <span className="mt-0.5 block text-sm sm:text-base font-display font-bold text-ink group-hover:text-primary-ink transition-colors line-clamp-2">
+                                            {nextBlog.title}
+                                        </span>
+                                    </div>
+                                    {nextBlog.cover_image ? (
+                                        <img
+                                            src={nextBlog.cover_image}
+                                            alt={nextBlog.title}
+                                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border border-ink/15 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-page border border-ink/15 shrink-0" />
+                                    )}
+                                    <ChevronRight className="w-5 h-5 text-subtle group-hover:text-primary-ink group-hover:translate-x-0.5 transition-all shrink-0" />
+                                </Link>
+                            )}
+                        </div>
                     </div>
+                </section>
+            )}
 
-                    <h2 className="text-2xl sm:text-4xl font-display font-extrabold text-ink tracking-tight">
-                        Dive Deeper Into Kinetic Code & Brand Gravity
-                    </h2>
+            {/* RELATED POSTS SECTION (3-COLUMN GRID) */}
+            {relatedBlogs.length > 0 && (
+                <section id="related-posts" className="bg-page py-14 sm:py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-xl sm:text-2xl font-display font-extrabold text-ink tracking-tight mb-7">
+                            Related Posts:
+                        </h2>
 
-                    <p className="max-w-2xl mx-auto text-sm sm:text-base text-muted font-light leading-relaxed">
-                        Browse our full archive of long-form essays, system post-mortems, and engineering manifestos.
-                    </p>
-
-                    <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-                        <Link
-                            href="/blog"
-                            className="px-6 py-3 rounded-full bg-primary hover:bg-[#b8dd00] text-white font-mono text-xs font-bold transition-all shadow-[0_0_20px_rgba(251, 183, 24, 0.3)] inline-flex items-center gap-2"
-                        >
-                            <span>Browse All Blogs</span>
-                            <ArrowUpRight className="w-4 h-4" />
-                        </Link>
-
-                        {blog.category && (
-                            <Link
-                                href={`/blog?category=${blog.category.slug}`}
-                                className="px-6 py-3 rounded-full bg-ink/[0.03] hover:bg-ink/[0.05] border border-ink/10 text-ink-2 hover:text-ink font-mono text-xs font-medium transition-all inline-flex items-center gap-2"
-                            >
-                                <span>More in {blog.category.name}</span>
-                                <ArrowRight className="w-4 h-4 text-primary-ink" />
-                            </Link>
-                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 sm:gap-8">
+                            {relatedBlogs.slice(0, 3).map((related) => (
+                                <Link
+                                    key={related.id || related.slug}
+                                    href={`/blog/${related.slug}`}
+                                    prefetch
+                                    className="group block space-y-3.5"
+                                >
+                                    <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-surface border border-ink/10 shadow-sm">
+                                        <img
+                                            src={related.cover_image}
+                                            alt={related.title}
+                                            loading="lazy"
+                                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                                        />
+                                    </div>
+                                    <h3 className="text-base sm:text-lg font-display font-bold text-ink group-hover:text-primary-ink transition-colors leading-snug line-clamp-2">
+                                        {related.title}
+                                    </h3>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
         </>
     );
 }

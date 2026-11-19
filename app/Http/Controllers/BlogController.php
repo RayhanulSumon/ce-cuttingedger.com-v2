@@ -40,8 +40,15 @@ class BlogController extends Controller
             ->withCount('blogs')
             ->get();
 
+        $featuredBlog = Blog::with(['category', 'subcategory', 'author'])
+            ->where('status', 'published')
+            ->orderByDesc('is_featured')
+            ->latest('published_at')
+            ->first();
+
         return Inertia::render('Blog/Index', [
             'blogs' => $blogs,
+            'featuredBlog' => $featuredBlog,
             'categories' => $categories,
             'activeCategory' => $selectedCategory ?: 'all',
             'activeSubcategory' => $selectedSubcategory ?: 'all',
@@ -63,9 +70,41 @@ class BlogController extends Controller
             ->take(5)
             ->get();
 
+        $previousBlog = Blog::where('status', 'published')
+            ->where('id', '!=', $blog->id)
+            ->where('published_at', '<=', $blog->published_at ?? now())
+            ->where('id', '<', $blog->id)
+            ->latest('published_at')
+            ->first(['id', 'title', 'slug', 'cover_image', 'published_at'])
+            ?? Blog::where('status', 'published')
+                ->where('id', '!=', $blog->id)
+                ->latest('published_at')
+                ->first(['id', 'title', 'slug', 'cover_image', 'published_at']);
+
+        $nextBlog = Blog::where('status', 'published')
+            ->where('id', '!=', $blog->id)
+            ->when($previousBlog, function ($query) use ($previousBlog): void {
+                $query->where('id', '!=', $previousBlog->id);
+            })
+            ->where(function ($query) use ($blog): void {
+                $query->where('published_at', '>', $blog->published_at ?? now())
+                    ->orWhere('id', '>', $blog->id);
+            })
+            ->oldest('published_at')
+            ->first(['id', 'title', 'slug', 'cover_image', 'published_at'])
+            ?? Blog::where('status', 'published')
+                ->where('id', '!=', $blog->id)
+                ->when($previousBlog, function ($query) use ($previousBlog): void {
+                    $query->where('id', '!=', $previousBlog->id);
+                })
+                ->oldest('published_at')
+                ->first(['id', 'title', 'slug', 'cover_image', 'published_at']);
+
         return Inertia::render('Blog/Show', [
             'blog' => $blog,
             'relatedBlogs' => $relatedBlogs,
+            'previousBlog' => $previousBlog,
+            'nextBlog' => $nextBlog,
         ]);
     }
 }

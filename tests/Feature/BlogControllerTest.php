@@ -25,6 +25,7 @@ class BlogControllerTest extends TestCase
         $response->assertInertia(fn (Assert $page) => $page
             ->component('Blog/Index')
             ->has('blogs')
+            ->has('featuredBlog')
             ->has('categories')
             ->where('activeCategory', 'all')
         );
@@ -41,6 +42,8 @@ class BlogControllerTest extends TestCase
             ->component('Blog/Show')
             ->where('blog.slug', $blog->slug)
             ->has('relatedBlogs')
+            ->has('previousBlog')
+            ->has('nextBlog')
         );
     }
 }
