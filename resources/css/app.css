@@ -277,6 +277,7 @@ select option {
 [data-slot="dropdown-menu-content"],
 [data-slot="select-content"] {
     color: #16191f;
+    color-scheme: light;
 }
 
 .admin-shell .bg-\[\#08090c\],
@@ -285,41 +286,92 @@ select option {
     background-color: #f4f7fb !important;
 }
 
+.admin-shell .bg-\[\#0b0c10\],
+.admin-shell .bg-\[\#0c0d12\],
 .admin-shell .bg-\[\#0c0e14\],
 .admin-shell .bg-\[\#0f1117\],
 .admin-shell .bg-\[\#0f1118\],
 .admin-shell .bg-\[\#10121a\],
+.admin-shell .bg-\[\#12131a\],
 .admin-shell .bg-\[\#12141a\],
 .admin-shell .bg-\[\#12141c\],
+.admin-shell .bg-neutral-950,
+[data-slot="dialog-content"].bg-\[\#0b0c10\],
+[data-slot="dialog-content"].bg-\[\#0c0d12\],
 [data-slot="dialog-content"].bg-\[\#0f1117\],
 [data-slot="dialog-content"].bg-\[\#12141a\],
 [data-slot="dialog-content"].bg-\[\#12141c\],
+[data-slot="dialog-content"].bg-black\/95,
+[data-slot="dialog-content"].bg-neutral-950,
+[data-slot="alert-dialog-content"].bg-\[\#0b0c10\],
 [data-slot="alert-dialog-content"].bg-\[\#12141a\],
 [data-slot="alert-dialog-content"].bg-\[\#12141c\],
+[data-slot="alert-dialog-content"].bg-neutral-950,
 [data-slot="dropdown-menu-content"].bg-\[\#0c0e14\],
 [data-slot="dropdown-menu-content"].bg-\[\#12141a\],
-[data-slot="dropdown-menu-content"].bg-\[\#12141c\] {
+[data-slot="dropdown-menu-content"].bg-\[\#12141c\],
+[data-slot="select-content"].bg-\[\#0f1118\],
+[data-slot="select-content"].bg-\[\#12141c\] {
     background-color: #ffffff !important;
     color: #16191f !important;
     border-color: #e2e8f0 !important;
-    box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 20px 44px -16px rgba(15, 23, 42, 0.14) !important;
 }
 
+.admin-shell .bg-black\/80 {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+.admin-shell .bg-\[\#0d0f15\],
+.admin-shell .bg-\[\#0e1b29\],
+.admin-shell .bg-\[\#12131a\]\/60,
 .admin-shell .bg-\[\#141824\],
+.admin-shell .bg-\[\#151720\],
+.admin-shell .bg-\[\#161822\],
 .admin-shell .bg-\[\#161922\],
 .admin-shell .bg-\[\#181b24\],
 .admin-shell .bg-\[\#0e1017\],
+.admin-shell .bg-neutral-900,
+.admin-shell .bg-neutral-900\/60,
+.admin-shell .bg-black\/20,
+.admin-shell .bg-black\/30,
 .admin-shell .bg-black\/40,
 .admin-shell .bg-black\/50,
+.admin-shell .bg-black\/60,
+.admin-shell .bg-white\/\[0\.02\],
+.admin-shell .bg-white\/\[0\.03\],
+.admin-shell .bg-white\/\[0\.04\],
+.admin-shell .bg-white\/\[0\.08\],
 .admin-shell .bg-white\/5,
 .admin-shell .bg-white\/10,
+[data-slot="dialog-content"] .bg-\[\#0b0c10\],
+[data-slot="dialog-content"] .bg-\[\#0c0d12\],
+[data-slot="dialog-content"] .bg-\[\#0d0f15\],
+[data-slot="dialog-content"] .bg-\[\#0e1b29\],
+[data-slot="dialog-content"] .bg-\[\#10121a\],
+[data-slot="dialog-content"] .bg-\[\#12131a\],
 [data-slot="dialog-content"] .bg-\[\#12141a\],
 [data-slot="dialog-content"] .bg-\[\#141824\],
+[data-slot="dialog-content"] .bg-\[\#151720\],
+[data-slot="dialog-content"] .bg-\[\#161822\],
 [data-slot="dialog-content"] .bg-\[\#161922\],
+[data-slot="dialog-content"] .bg-neutral-900,
+[data-slot="dialog-content"] .bg-black\/20,
+[data-slot="dialog-content"] .bg-black\/30,
 [data-slot="dialog-content"] .bg-black\/40,
 [data-slot="dialog-content"] .bg-black\/50,
+[data-slot="dialog-content"] .bg-black\/60,
+[data-slot="dialog-content"] .bg-white\/\[0\.02\],
+[data-slot="dialog-content"] .bg-white\/\[0\.03\],
+[data-slot="dialog-content"] .bg-white\/\[0\.04\],
+[data-slot="dialog-content"] .bg-white\/\[0\.08\],
 [data-slot="dialog-content"] .bg-white\/5,
-[data-slot="dialog-content"] .bg-white\/10 {
+[data-slot="dialog-content"] .bg-white\/10,
+[data-slot="alert-dialog-content"] .bg-white\/5,
+[data-slot="alert-dialog-content"] .bg-white\/10,
+[data-slot="dropdown-menu-content"] .bg-\[\#10121a\],
+[data-slot="dropdown-menu-content"] .bg-white\/5,
+[data-slot="dropdown-menu-content"] .bg-white\/10 {
     background-color: #f8fafc !important;
 }
 
@@ -334,10 +386,16 @@ select option {
     border-color: #cbd5e1 !important;
 }
 
+.admin-shell input[type="file"],
+[data-slot="dialog-content"] input[type="file"] {
+    color: #475569 !important;
+}
+
 .admin-shell .text-white,
 [data-slot="dialog-content"] .text-white,
 [data-slot="alert-dialog-content"] .text-white,
-[data-slot="dropdown-menu-content"] .text-white {
+[data-slot="dropdown-menu-content"] .text-white,
+[data-slot="select-content"] .text-white {
     color: #16191f !important;
 }
 
@@ -345,13 +403,23 @@ select option {
 .admin-shell .bg-accent,
 .admin-shell .bg-accent.text-black,
 .admin-shell .bg-ink.text-white,
+.admin-shell .bg-black.text-white,
+.admin-shell .bg-slate-900.text-white,
+.admin-shell .bg-rose-500.text-white,
 .admin-shell .bg-rose-600.text-white,
 .admin-shell .bg-emerald-600.text-white,
+.admin-shell .bg-blue-600.text-white,
 .admin-shell .bg-purple-500.text-white,
 [data-slot="dialog-content"] .bg-primary,
 [data-slot="dialog-content"] .bg-accent,
 [data-slot="dialog-content"] .bg-accent.text-black,
+[data-slot="dialog-content"] .bg-ink.text-white,
+[data-slot="dialog-content"] .bg-black.text-white,
+[data-slot="dialog-content"] .bg-rose-500.text-white,
 [data-slot="dialog-content"] .bg-rose-600.text-white,
+[data-slot="dialog-content"] .bg-emerald-600.text-white,
+[data-slot="dialog-content"] .bg-purple-500.text-white,
+[data-slot="alert-dialog-content"] .bg-rose-500.text-white,
 [data-slot="alert-dialog-content"] .bg-rose-600.text-white {
     color: #ffffff !important;
 }
@@ -363,7 +431,15 @@ select option {
 .admin-shell .text-neutral-300,
 [data-slot="dialog-content"] .text-white\/90,
 [data-slot="dialog-content"] .text-white\/80,
-[data-slot="dialog-content"] .text-white\/70 {
+[data-slot="dialog-content"] .text-white\/70,
+[data-slot="dialog-content"] .text-neutral-200,
+[data-slot="dialog-content"] .text-neutral-300,
+[data-slot="alert-dialog-content"] .text-neutral-200,
+[data-slot="alert-dialog-content"] .text-neutral-300,
+[data-slot="dropdown-menu-content"] .text-neutral-200,
+[data-slot="dropdown-menu-content"] .text-neutral-300,
+[data-slot="select-content"] .text-neutral-200,
+[data-slot="select-content"] .text-neutral-300 {
     color: #334155 !important;
 }
 
@@ -372,10 +448,20 @@ select option {
 .admin-shell .text-white\/40,
 .admin-shell .text-neutral-400,
 .admin-shell .text-neutral-500,
+.admin-shell .text-neutral-600,
 [data-slot="dialog-content"] .text-white\/60,
 [data-slot="dialog-content"] .text-white\/50,
 [data-slot="dialog-content"] .text-white\/40,
-[data-slot="alert-dialog-content"] .text-white\/60 {
+[data-slot="dialog-content"] .text-neutral-400,
+[data-slot="dialog-content"] .text-neutral-500,
+[data-slot="dialog-content"] .text-neutral-600,
+[data-slot="alert-dialog-content"] .text-white\/60,
+[data-slot="alert-dialog-content"] .text-neutral-400,
+[data-slot="alert-dialog-content"] .text-neutral-500,
+[data-slot="dropdown-menu-content"] .text-neutral-400,
+[data-slot="dropdown-menu-content"] .text-neutral-500,
+[data-slot="dropdown-menu-content"] .text-neutral-600,
+[data-slot="select-content"] .text-neutral-400 {
     color: #64748b !important;
 }
 
@@ -383,6 +469,34 @@ select option {
 [data-slot="dialog-content"] .text-\[\#00f5ff\],
 [data-slot="dropdown-menu-content"] .text-\[\#00f5ff\] {
     color: #0284c7 !important;
+}
+
+.admin-shell .text-emerald-300,
+.admin-shell .text-emerald-400,
+[data-slot="dialog-content"] .text-emerald-300,
+[data-slot="dialog-content"] .text-emerald-400 {
+    color: #047857 !important;
+}
+
+.admin-shell .text-amber-300,
+.admin-shell .text-amber-400,
+[data-slot="dialog-content"] .text-amber-300,
+[data-slot="dialog-content"] .text-amber-400 {
+    color: #b45309 !important;
+}
+
+.admin-shell .text-rose-300,
+.admin-shell .text-rose-400,
+[data-slot="dialog-content"] .text-rose-300,
+[data-slot="dialog-content"] .text-rose-400 {
+    color: #be123c !important;
+}
+
+.admin-shell .text-purple-200,
+.admin-shell .text-purple-200\/90,
+[data-slot="dialog-content"] .text-purple-200,
+[data-slot="dialog-content"] .text-purple-200\/90 {
+    color: #6d28d9 !important;
 }
 
 .admin-shell .border-white\/5,
@@ -394,13 +508,45 @@ select option {
 [data-slot="dialog-content"] .border-white\/15,
 [data-slot="dialog-content"] .border-white\/20,
 [data-slot="alert-dialog-content"] .border-white\/10,
-[data-slot="dropdown-menu-content"] .border-white\/10 {
+[data-slot="dropdown-menu-content"] .border-white\/5,
+[data-slot="dropdown-menu-content"] .border-white\/10,
+[data-slot="select-content"] .border-white\/10 {
     border-color: #e2e8f0 !important;
 }
 
 .admin-shell .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
-.admin-shell .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+.admin-shell .divide-white\/10 > :not([hidden]) ~ :not([hidden]),
+[data-slot="dropdown-menu-content"] .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
     border-color: #f1f5f9 !important;
+}
+
+.admin-shell .hover\:bg-white\/5:hover,
+.admin-shell .hover\:bg-white\/10:hover,
+.admin-shell .hover\:bg-white\/\[0\.08\]:hover,
+[data-slot="dialog-content"] .hover\:bg-white\/5:hover,
+[data-slot="dialog-content"] .hover\:bg-white\/10:hover,
+[data-slot="dialog-content"] .hover\:bg-white\/\[0\.08\]:hover,
+[data-slot="alert-dialog-content"] .hover\:bg-white\/10:hover,
+[data-slot="dropdown-menu-content"] .hover\:bg-white\/5:hover {
+    background-color: #f1f5f9 !important;
+}
+
+.admin-shell .hover\:text-white:not(.hover\:bg-primary):not(.hover\:bg-primary-hover):not(.hover\:bg-rose-600):not(.hover\:bg-ink):hover,
+[data-slot="dialog-content"] .hover\:text-white:not(.hover\:bg-primary):not(.hover\:bg-rose-600):hover,
+[data-slot="alert-dialog-content"] .hover\:text-white:not(.hover\:bg-rose-600):hover {
+    color: #16191f !important;
+}
+
+.admin-shell .file\:bg-white\/10::file-selector-button,
+[data-slot="dialog-content"] .file\:bg-white\/10::file-selector-button {
+    background-color: #e2e8f0 !important;
+    color: #16191f !important;
+}
+
+.admin-shell .file\:bg-accent::file-selector-button,
+[data-slot="dialog-content"] .file\:bg-accent::file-selector-button {
+    background-color: #f5761a !important;
+    color: #ffffff !important;
 }
 
 @theme inline {

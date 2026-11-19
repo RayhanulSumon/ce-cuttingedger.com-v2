@@ -11,15 +11,18 @@ import {
     DialogTitle,
     DialogDescription,
 } from '@/Components/ui/dialog';
-import { Look, OutfitPiece, Pin } from '@/Components/Landing/TryOn/looks';
+import { Look, LookPiece } from '@/Components/Landing/TryOn/looks';
 import {
     Crosshair,
     Edit3,
     Plus,
-    Shirt,
-    Sparkles,
     Trash2,
 } from 'lucide-react';
+
+interface Pin {
+    left: number;
+    top: number;
+}
 
 interface AdminTryOnLookItem extends Look {
     isFeaturedOnHome?: boolean;
@@ -30,6 +33,12 @@ interface AdminTryOnLookItem extends Look {
 interface PageProps {
     looks: AdminTryOnLookItem[];
 }
+
+const LABEL_CLASS = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-slate-500';
+const INPUT_CLASS =
+    'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
+const SMALL_INPUT_CLASS =
+    'rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none';
 
 export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,7 +54,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
     const [modelImageFile, setModelImageFile] = useState<File | null>(null);
     const [modelPreviewUrl, setModelPreviewUrl] = useState<string>('');
 
-    const [pieces, setPieces] = useState<OutfitPiece[]>([]);
+    const [pieces, setPieces] = useState<LookPiece[]>([]);
     const [pieceFiles, setPieceFiles] = useState<Record<number, File | null>>({});
     const [pins, setPins] = useState<Pin[]>([]);
     const [activePinIndex, setActivePinIndex] = useState<number>(0);
@@ -118,7 +127,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         }
     };
 
-    const handlePieceFieldChange = (idx: number, field: keyof OutfitPiece, val: string) => {
+    const handlePieceFieldChange = (idx: number, field: keyof LookPiece, val: string) => {
         setPieces((prev) =>
             prev.map((item, i) => (i === idx ? { ...item, [field]: val } : item))
         );
@@ -190,7 +199,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
                     <Button
                         onClick={openCreateLook}
-                        className="bg-accent font-mono text-xs font-bold text-black hover:bg-accent/90"
+                        className="cursor-pointer bg-primary text-xs font-semibold text-white shadow-xs hover:bg-primary-hover"
                     >
                         <Plus className="mr-1.5 h-4 w-4" />
                         Add Try-On Look
@@ -202,10 +211,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                     {looks.map((look) => (
                         <div
                             key={look.id ?? look.modelName}
-                            className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#12141a] p-4"
+                            className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
                         >
                             <div className="flex gap-4">
-                                <div className="relative h-40 w-28 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#eef3f9]">
+                                <div className="relative h-40 w-28 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
                                     <img
                                         src={look.model}
                                         alt={look.modelName}
@@ -216,7 +225,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         <span
                                             key={idx}
                                             style={{ left: `${pin.left}%`, top: `${pin.top}%` }}
-                                            className="absolute -translate-x-1/2 -translate-y-1/2 grid h-4 w-4 place-items-center rounded-full bg-black text-[9px] font-bold text-white ring-1 ring-white"
+                                            className="absolute grid h-4 w-4 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-ink text-[9px] font-bold text-white ring-1 ring-white"
                                         >
                                             {idx + 1}
                                         </span>
@@ -225,33 +234,33 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
                                 <div className="min-w-0 flex-1 space-y-2">
                                     <div className="flex flex-wrap items-center gap-1.5">
-                                        <Badge className="border-accent/40 bg-accent/15 font-mono text-[10px] text-accent">
+                                        <Badge variant="accent" className="text-[10px]">
                                             MODEL: {look.modelName}
                                         </Badge>
                                         {look.isFeaturedOnHome && (
-                                            <Badge className="border-[#00f5ff]/40 bg-[#00f5ff]/10 font-mono text-[10px] text-[#00f5ff]">
+                                            <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
                                                 HOMEPAGE
                                             </Badge>
                                         )}
                                     </div>
 
-                                    <h3 className="truncate text-base font-bold text-white">{look.modelName}</h3>
-                                    <p className="font-mono text-xs text-white/50">{look.description}</p>
+                                    <h3 className="truncate text-base font-bold text-ink">{look.modelName}</h3>
+                                    <p className="text-xs text-slate-500">{look.description}</p>
 
                                     {/* Pieces list */}
                                     <div className="space-y-1 pt-1">
                                         {look.pieces.map((piece, i) => (
                                             <div
                                                 key={i}
-                                                className="flex items-center gap-2 rounded-lg border border-white/5 bg-white/5 px-2 py-1 text-[11px]"
+                                                className="flex items-center gap-2 rounded-lg border border-slate-200/80 bg-slate-50 px-2 py-1 text-[11px]"
                                             >
-                                                <span className="font-mono font-bold text-accent">
+                                                <span className="font-bold text-primary">
                                                     #{i + 1}
                                                 </span>
-                                                <span className="truncate font-medium text-white">
+                                                <span className="truncate font-medium text-ink">
                                                     {piece.name}
                                                 </span>
-                                                <span className="ml-auto shrink-0 font-mono text-[10px] text-white/50">
+                                                <span className="ml-auto shrink-0 text-[10px] text-slate-500">
                                                     {piece.tag}
                                                 </span>
                                             </div>
@@ -260,8 +269,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                 </div>
                             </div>
 
-                            <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
-                                <span className="font-mono text-[11px] text-white/50">
+                            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+                                <span className="text-[11px] font-medium text-slate-500">
                                     Sort #{look.sortOrder ?? 1} • {look.pieces.length} Pins
                                 </span>
 
@@ -270,16 +279,16 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         size="sm"
                                         variant="outline"
                                         onClick={() => openEditLook(look)}
-                                        className="h-8 border-white/10 bg-white/5 font-mono text-xs text-white hover:bg-white/10"
+                                        className="h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
                                     >
-                                        <Edit3 className="mr-1 h-3.5 w-3.5 text-[#00f5ff]" />
+                                        <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
                                         Edit &amp; Pins
                                     </Button>
                                     <Button
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => handleDeleteLook(look)}
-                                        className="h-8 w-8 p-0 text-rose-400 hover:bg-rose-500/10"
+                                        className="h-8 w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" />
                                     </Button>
@@ -292,23 +301,23 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
             {/* CREATE / EDIT VIRTUAL TRY-ON LOOK + VISUAL CLICK-TO-PIN DIALOG */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="max-h-[92vh] max-w-4xl overflow-y-auto border-white/15 bg-[#0f1117] text-white">
+                <DialogContent className="max-h-[88vh] sm:max-w-3xl">
                     <DialogHeader>
-                        <DialogTitle className="font-mono text-base font-bold">
+                        <DialogTitle>
                             {editingLook
                                 ? `Edit Virtual Try-On Look — ${editingLook.modelName}`
                                 : 'Add New Virtual Try-On Look'}
                         </DialogTitle>
-                        <DialogDescription className="font-mono text-xs text-white/60">
+                        <DialogDescription>
                             Select an outfit piece (#1, #2, #3) and click directly on the model image preview to place its callout pin.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleSaveLook} className="grid grid-cols-1 gap-6 py-2 text-xs lg:grid-cols-12">
+                    <form onSubmit={handleSaveLook} className="grid grid-cols-1 gap-6 pt-1 text-xs lg:grid-cols-12">
                         {/* Left 5 Columns: Visual Interactive Pin Editor */}
                         <div className="space-y-3 lg:col-span-5">
                             <div className="flex items-center justify-between">
-                                <span className="flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase text-accent">
+                                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
                                     <Crosshair className="h-3.5 w-3.5" />
                                     Click Model to Place Pin #{activePinIndex + 1}
                                 </span>
@@ -321,10 +330,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         key={idx}
                                         type="button"
                                         onClick={() => setActivePinIndex(idx)}
-                                        className={`cursor-pointer rounded-lg border px-2.5 py-1 font-mono text-[11px] font-bold transition-all ${
+                                        className={`cursor-pointer rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-all ${
                                             activePinIndex === idx
-                                                ? 'border-accent bg-accent text-black'
-                                                : 'border-white/15 bg-white/5 text-white/70 hover:text-white'
+                                                ? 'border-primary bg-primary text-white shadow-xs'
+                                                : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-ink'
                                         }`}
                                     >
                                         Pin #{idx + 1}: {piece.tag || piece.name}
@@ -336,7 +345,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             <div
                                 ref={previewBoxRef}
                                 onClick={handlePreviewClick}
-                                className="relative aspect-[3/4] w-full cursor-crosshair select-none overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-b from-[#eef3f9] to-[#dce6f2]"
+                                className="relative aspect-[3/4] w-full cursor-crosshair select-none overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-[#eef3f9] to-[#dce6f2]"
                             >
                                 {modelPreviewUrl ? (
                                     <img
@@ -345,7 +354,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         className="pointer-events-none h-full w-full object-contain object-bottom"
                                     />
                                 ) : (
-                                    <div className="grid h-full place-items-center p-6 text-center font-mono text-xs text-slate-600">
+                                    <div className="grid h-full place-items-center p-6 text-center text-xs text-slate-600">
                                         Upload a Model Cutout Image on the right to preview &amp; place pins
                                     </div>
                                 )}
@@ -361,10 +370,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 setActivePinIndex(idx);
                                             }}
                                             style={{ left: `${pin.left}%`, top: `${pin.top}%` }}
-                                            className={`absolute -translate-x-1/2 -translate-y-1/2 grid h-6 w-6 place-items-center rounded-full font-mono text-xs font-bold shadow-lg transition-transform ${
+                                            className={`absolute grid h-6 w-6 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-xs font-bold shadow-lg transition-transform ${
                                                 isActivePin
-                                                    ? 'scale-125 bg-accent text-black ring-2 ring-black'
-                                                    : 'bg-black text-white ring-2 ring-white'
+                                                    ? 'scale-125 bg-primary text-white ring-2 ring-white'
+                                                    : 'bg-ink text-white ring-2 ring-white'
                                             }`}
                                         >
                                             {idx + 1}
@@ -374,7 +383,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             </div>
 
                             <div>
-                                <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
+                                <label className={LABEL_CLASS}>
                                     Model Cutout Image (PNG / WebP) {editingLook ? '' : '*'}
                                 </label>
                                 <input
@@ -382,7 +391,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     required={!editingLook}
                                     accept=".png,.webp,.jpg,.jpeg"
                                     onChange={handleModelFileChange}
-                                    className="block w-full text-xs text-white file:mr-2 file:rounded-lg file:border-0 file:bg-accent file:px-3 file:py-1.5 file:font-mono file:text-xs file:font-bold file:text-black"
+                                    className="block w-full text-xs text-slate-600 file:mr-2 file:cursor-pointer file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-primary-hover"
                                 />
                             </div>
                         </div>
@@ -390,7 +399,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                         {/* Right 7 Columns: Look Info & Garment Pieces Repeater */}
                         <div className="space-y-4 lg:col-span-7">
                             <div>
-                                <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
+                                <label className={LABEL_CLASS}>
                                     Model Name *
                                 </label>
                                 <input
@@ -399,71 +408,72 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     value={modelName}
                                     onChange={(e) => setModelName(e.target.value)}
                                     placeholder="e.g. John"
-                                    className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white focus:border-accent focus:outline-none"
+                                    className={INPUT_CLASS}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                                 <div>
-                                    <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
+                                    <label className={LABEL_CLASS}>
                                         Subtitle
                                     </label>
                                     <input
                                         type="text"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-white"
+                                        className={INPUT_CLASS}
                                     />
                                 </div>
                                 <div>
-                                    <label className="mb-1 block font-mono text-[10px] uppercase text-white/60">
+                                    <label className={LABEL_CLASS}>
                                         Sort Order
                                     </label>
                                     <input
                                         type="number"
                                         value={sortOrder}
                                         onChange={(e) => setSortOrder(Number(e.target.value))}
-                                        className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-white"
+                                        className={INPUT_CLASS}
                                     />
                                 </div>
-                                <label className="flex cursor-pointer items-center gap-2 pt-4 font-mono text-xs">
+                                <label className="flex cursor-pointer items-center gap-2 pt-5 text-xs font-medium text-ink">
                                     <input
                                         type="checkbox"
                                         checked={isFeaturedOnHome}
                                         onChange={(e) => setIsFeaturedOnHome(e.target.checked)}
+                                        className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
                                     />
                                     Homepage Runway
                                 </label>
                             </div>
 
                             {/* Outfit Pieces Repeater */}
-                            <div className="space-y-2.5 rounded-xl border border-white/10 bg-black/40 p-3.5">
+                            <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
                                 <div className="flex items-center justify-between">
-                                    <span className="font-mono text-[11px] font-bold uppercase text-[#00f5ff]">
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-ink">
                                         Outfit Pieces &amp; Callout Cards ({pieces.length})
                                     </span>
                                     <button
                                         type="button"
                                         onClick={handleAddPiece}
-                                        className="cursor-pointer rounded-lg border border-accent/30 bg-accent/10 px-2.5 py-1 font-mono text-[11px] font-bold text-accent hover:bg-accent/20"
+                                        className="cursor-pointer rounded-lg border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary transition-colors hover:bg-primary/15"
                                     >
                                         + Add Piece
                                     </button>
                                 </div>
 
-                                <div className="space-y-2.5 max-h-[42vh] overflow-y-auto pr-1">
+                                <div className="max-h-[42vh] space-y-2.5 overflow-y-auto pr-1">
                                     {pieces.map((piece, idx) => (
                                         <div
                                             key={idx}
                                             onClick={() => setActivePinIndex(idx)}
                                             className={`rounded-xl border p-3 transition-colors ${
                                                 activePinIndex === idx
-                                                    ? 'border-accent/60 bg-accent/5'
-                                                    : 'border-white/10 bg-white/5'
+                                                    ? 'border-primary/50 bg-primary/5'
+                                                    : 'border-slate-200 bg-white'
                                             }`}
                                         >
-                                            <div className="mb-2 flex items-center justify-between font-mono text-[11px]">
-                                                <span className="font-bold text-accent">
+                                            <div className="mb-2 flex items-center justify-between text-[11px]">
+                                                <span className="font-bold text-primary">
                                                     Piece #{idx + 1} — Pin ({pins[idx]?.left ?? 50}%, {pins[idx]?.top ?? 50}%)
                                                 </span>
                                                 {pieces.length > 1 && (
@@ -473,7 +483,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                             e.stopPropagation();
                                                             handleRemovePiece(idx);
                                                         }}
-                                                        className="cursor-pointer text-rose-400 hover:underline"
+                                                        className="cursor-pointer font-semibold text-rose-600 hover:underline"
                                                     >
                                                         Remove
                                                     </button>
@@ -489,7 +499,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         handlePieceFieldChange(idx, 'name', e.target.value)
                                                     }
                                                     placeholder="Garment Name"
-                                                    className="rounded-lg border border-white/10 bg-black/50 px-2.5 py-1.5 text-xs text-white"
+                                                    className={SMALL_INPUT_CLASS}
                                                 />
                                                 <input
                                                     type="text"
@@ -499,7 +509,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         handlePieceFieldChange(idx, 'brand', e.target.value)
                                                     }
                                                     placeholder="Brand"
-                                                    className="rounded-lg border border-white/10 bg-black/50 px-2.5 py-1.5 text-xs text-white"
+                                                    className={SMALL_INPUT_CLASS}
                                                 />
                                                 <input
                                                     type="text"
@@ -508,7 +518,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         handlePieceFieldChange(idx, 'tag', e.target.value)
                                                     }
                                                     placeholder="Zone (Top / Bottom / Shoes)"
-                                                    className="rounded-lg border border-white/10 bg-black/50 px-2.5 py-1.5 text-xs text-white"
+                                                    className={SMALL_INPUT_CLASS}
                                                 />
                                             </div>
 
@@ -517,7 +527,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     <img
                                                         src={piece.image}
                                                         alt={piece.name}
-                                                        className="h-9 w-9 rounded border border-white/10 bg-white object-contain p-0.5"
+                                                        className="h-9 w-9 rounded border border-slate-200 bg-white object-contain p-0.5"
                                                     />
                                                 )}
                                                 <input
@@ -529,7 +539,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                             [idx]: e.target.files?.[0] ?? null,
                                                         }))
                                                     }
-                                                    className="block w-full text-[10px] text-white/70 file:mr-2 file:rounded file:border-0 file:bg-white/10 file:px-2 file:py-1 file:text-[10px] file:text-white"
+                                                    className="block w-full text-[11px] text-slate-600 file:mr-2 file:cursor-pointer file:rounded file:border-0 file:bg-slate-100 file:px-2.5 file:py-1 file:text-[11px] file:font-semibold file:text-ink hover:file:bg-slate-200"
                                                 />
                                             </div>
                                         </div>
@@ -537,19 +547,19 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-2 border-t border-white/10 pt-3">
+                            <div className="flex justify-end gap-2 border-t border-slate-200 pt-3">
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     onClick={() => setIsDialogOpen(false)}
-                                    className="font-mono text-xs text-white/60"
+                                    className="cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={isSaving}
-                                    className="bg-accent font-mono text-xs font-bold text-black hover:bg-accent/90"
+                                    className="cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
                                 >
                                     {isSaving ? 'Saving...' : 'Save Try-On Look'}
                                 </Button>
