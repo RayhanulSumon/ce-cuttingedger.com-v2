@@ -69,6 +69,9 @@ class CapabilityController extends Controller
             'tryOnLooks' => $capability->slug === 'virtual-try-on'
                 ? CatalogCacheService::getHomeTryOnLooks()
                 : [],
+            'digitalTwins' => $capability->slug === 'digital-twins'
+                ? CatalogCacheService::getAllDigitalTwins()
+                : [],
         ]);
     }
 }

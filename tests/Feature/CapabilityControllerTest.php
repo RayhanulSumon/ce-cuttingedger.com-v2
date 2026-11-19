@@ -100,6 +100,7 @@ class CapabilityControllerTest extends TestCase
                 ->component('Capabilities/Show')
                 ->where('capability.slug', 'digital-twins')
                 ->where('capability.parent.slug', '2d')
+                ->has('digitalTwins')
             );
 
         $this->get('/capabilities/3d/digital-twins')

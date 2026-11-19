@@ -7,7 +7,6 @@ import { CAPABILITY_ICON_NAMES, capabilityIcon } from "@/Components/Common/capab
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Textarea } from "@/Components/ui/textarea";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -37,14 +36,9 @@ interface FormData {
     slug: string;
     tag: string;
     subtitle: string;
-    description: string;
     icon: string;
     image_file: File | null;
     remove_image: boolean;
-    features: string;
-    deliverables: string;
-    process_steps: string;
-    faqs: string;
     meta_title: string;
     meta_description: string;
     is_active: boolean;
@@ -55,30 +49,15 @@ const FIELD_LABEL = "text-xs font-mono uppercase text-neutral-400";
 const SELECT =
     "w-full h-10 rounded-md border border-white/10 bg-white/[0.03] px-3 text-sm text-white outline-none focus:border-accent";
 
-const lines = (text: string): string[] =>
-    text.split("\n").map((line) => line.trim()).filter(Boolean);
-
-/** "Left | Right" lines to pairs. */
-const pairs = (text: string): [string, string][] =>
-    lines(text).map((line) => {
-        const [left, ...rest] = line.split("|");
-        return [left.trim(), rest.join("|").trim()];
-    });
-
 const emptyForm = (parentId = ""): FormData => ({
     parent_id: parentId,
     title: "",
     slug: "",
     tag: "",
     subtitle: "",
-    description: "",
     icon: "Layers",
     image_file: null,
     remove_image: false,
-    features: "",
-    deliverables: "",
-    process_steps: "",
-    faqs: "",
     meta_title: "",
     meta_description: "",
     is_active: true,
@@ -91,14 +70,9 @@ const toForm = (capability: Capability): FormData => ({
     slug: capability.slug,
     tag: capability.tag ?? "",
     subtitle: capability.subtitle,
-    description: capability.description,
     icon: capability.icon,
     image_file: null,
     remove_image: false,
-    features: (capability.features ?? []).join("\n"),
-    deliverables: (capability.deliverables ?? []).join("\n"),
-    process_steps: (capability.process_steps ?? []).map((s) => `${s.title} | ${s.description}`).join("\n"),
-    faqs: (capability.faqs ?? []).map((f) => `${f.question} | ${f.answer}`).join("\n"),
     meta_title: capability.meta_title ?? "",
     meta_description: capability.meta_description ?? "",
     is_active: capability.is_active,
@@ -184,10 +158,6 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
             ...(editing ? { _method: "PUT" } : {}),
             parent_id: data.parent_id || null,
             tag: data.parent_id ? null : data.tag || null,
-            features: lines(data.features),
-            deliverables: lines(data.deliverables),
-            process_steps: pairs(data.process_steps).map(([title, description]) => ({ title, description })),
-            faqs: pairs(data.faqs).map(([question, answer]) => ({ question, answer })),
         }));
 
         const options = {
@@ -280,7 +250,7 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
                 <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>{editing ? `Edit ${editing.title}` : isSub ? "Add sub-capability" : "Add main capability"}</DialogTitle>
-                        <DialogDescription>No prices here. Pricing is quoted per project.</DialogDescription>
+                        <DialogDescription>Manage listing details, cover image and SEO metadata. Internal pages use custom visual layouts.</DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={submit} className="space-y-4 pt-2">
@@ -341,12 +311,6 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
                             {form.errors.subtitle && <p className="text-xs text-rose-400">{form.errors.subtitle}</p>}
                         </div>
 
-                        <div className="space-y-1.5">
-                            <label className={FIELD_LABEL}>Description</label>
-                            <Textarea rows={4} value={form.data.description} onChange={(e) => form.setData("description", e.target.value)} required />
-                            {form.errors.description && <p className="text-xs text-rose-400">{form.errors.description}</p>}
-                        </div>
-
                         <div className="space-y-2 rounded-xl border border-white/10 bg-white/[0.02] p-4">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
@@ -394,35 +358,17 @@ export default function CapabilitiesIndex({ capabilities = [] }: CapabilitiesInd
                             )}
                         </div>
 
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="space-y-1.5">
-                                <label className={FIELD_LABEL}>What you get (one per line)</label>
-                                <Textarea rows={4} value={form.data.features} onChange={(e) => form.setData("features", e.target.value)} />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className={FIELD_LABEL}>Deliverables (one per line)</label>
-                                <Textarea rows={4} value={form.data.deliverables} onChange={(e) => form.setData("deliverables", e.target.value)} />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className={FIELD_LABEL}>How it works (one step per line: Title | Description)</label>
-                            <Textarea rows={4} value={form.data.process_steps} onChange={(e) => form.setData("process_steps", e.target.value)} />
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className={FIELD_LABEL}>Questions (one per line: Question | Answer)</label>
-                            <Textarea rows={4} value={form.data.faqs} onChange={(e) => form.setData("faqs", e.target.value)} />
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="space-y-1.5">
-                                <label className={FIELD_LABEL}>Search title (optional)</label>
-                                <Input value={form.data.meta_title} onChange={(e) => form.setData("meta_title", e.target.value)} />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className={FIELD_LABEL}>Search description (optional)</label>
-                                <Input value={form.data.meta_description} onChange={(e) => form.setData("meta_description", e.target.value)} />
+                        <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                            <p className={FIELD_LABEL}>SEO metadata</p>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="space-y-1.5">
+                                    <label className={FIELD_LABEL}>Search title (optional)</label>
+                                    <Input value={form.data.meta_title} onChange={(e) => form.setData("meta_title", e.target.value)} />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className={FIELD_LABEL}>Search description (optional)</label>
+                                    <Input value={form.data.meta_description} onChange={(e) => form.setData("meta_description", e.target.value)} />
+                                </div>
                             </div>
                         </div>
 

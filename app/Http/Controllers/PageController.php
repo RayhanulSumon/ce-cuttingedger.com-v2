@@ -7,7 +7,6 @@ use App\Models\Faq;
 use App\Models\PricingPlan;
 use App\Models\Setting;
 use App\Models\TeamMember;
-use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,16 +38,6 @@ class PageController extends Controller
         return Inertia::render('Pricing', [
             'plans' => $plans,
             'faqs' => $faqs,
-        ]);
-    }
-
-    /**
-     * Display the full Digital Twins catalogue backed by the cached database catalog.
-     */
-    public function digitalTwins(): Response
-    {
-        return Inertia::render('DigitalTwins/Index', [
-            'digitalTwins' => CatalogCacheService::getAllDigitalTwins(),
         ]);
     }
 

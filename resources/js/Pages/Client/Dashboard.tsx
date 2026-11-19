@@ -887,7 +887,7 @@ export default function ClientDashboard({
                                                         </p>
                                                     </div>
                                                     <Link
-                                                        href="/digital-twins"
+                                                        href="/capabilities/2d/digital-twins"
                                                         className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
                                                     >
                                                         Full Catalog <ArrowUpRight size={14} />

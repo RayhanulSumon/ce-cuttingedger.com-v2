@@ -60,7 +60,7 @@ const COLORED_TILES = [
         title: 'Digital twins',
         description: 'Photoreal AI digital twins and studio models, ready for any pose, colour or setting.',
         actions: [
-            { label: 'Browse digital twins', href: '/digital-twins' },
+            { label: 'Browse digital twins', href: '/capabilities/2d/digital-twins' },
             { label: 'Order a custom model', href: orderUrl('digital-twins') },
         ],
     },

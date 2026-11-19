@@ -217,8 +217,8 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 
-// Digital Twins Public Catalogue, Configurator & Virtual Try-On Quote Views
-Route::get('/digital-twins', [PageController::class, 'digitalTwins'])->name('digital-twins.index');
+// Digital Twins Capability Redirect, Configurator & Virtual Try-On Quote Views
+Route::get('/digital-twins', fn () => redirect()->to('/capabilities/2d/digital-twins', 301))->name('digital-twins.index');
 Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
 Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');

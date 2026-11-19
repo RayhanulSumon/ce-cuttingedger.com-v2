@@ -485,7 +485,7 @@ export default function DigitalTwinOrder({
             <section style={{ background: PAGE_BACKGROUND }} className={`border-b border-ink/10 pb-6 pt-24 sm:pt-28 ${PAD_X}`}>
                 <div className="mx-auto max-w-7xl">
                     <Link
-                        href="/digital-twins"
+                        href="/capabilities/2d/digital-twins"
                         prefetch
                         className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
                     >

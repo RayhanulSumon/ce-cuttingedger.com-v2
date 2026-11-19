@@ -71,7 +71,7 @@ class AdminCapabilityController extends Controller
             'slug' => ['nullable', 'string', 'max:255'],
             'tag' => ['nullable', 'string', 'max:20'],
             'subtitle' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'icon' => ['required', 'string', 'max:50'],
             'image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
             'remove_image' => ['nullable', 'boolean'],
@@ -110,6 +110,9 @@ class AdminCapabilityController extends Controller
         $validated['parent_id'] = ! empty($validated['parent_id']) ? $validated['parent_id'] : null;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['description'] = ! empty($validated['description'])
+            ? $validated['description']
+            : ($capability?->description ?: $validated['subtitle']);
 
         return $validated;
     }

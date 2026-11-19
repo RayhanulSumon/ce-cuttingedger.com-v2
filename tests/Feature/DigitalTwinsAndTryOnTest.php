@@ -68,12 +68,16 @@ class DigitalTwinsAndTryOnTest extends TestCase
                 ->has('tryOnLooks', 6)
             );
 
-        $this->get('/digital-twins')
+        $this->get('/capabilities/2d/digital-twins')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('DigitalTwins/Index')
+                ->component('Capabilities/Show')
                 ->has('digitalTwins', 6)
             );
+
+        $this->get('/digital-twins')
+            ->assertRedirect('/capabilities/2d/digital-twins')
+            ->assertStatus(301);
     }
 
     public function test_catalog_json_apis_return_etag_and_304_when_unchanged(): void
