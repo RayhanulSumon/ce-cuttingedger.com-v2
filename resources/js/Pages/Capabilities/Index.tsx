@@ -16,7 +16,7 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
         <>
             <SeoHead
                 title="Capabilities: 2D, 3D, DTP and Video"
-                description="Explore CuttingEdger capabilities: 2D retouching, 3D and digital twins, DTP and catalog layout, and video, each with its own specialities."
+                description="Explore CuttingEdger capabilities: 2D retouching, digital twins and virtual try-on, 3D modeling and CGI, DTP and catalog layout, and video, each with its own specialities."
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
                     { name: 'Capabilities', url: '/capabilities' },

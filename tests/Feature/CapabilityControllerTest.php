@@ -23,7 +23,7 @@ class CapabilityControllerTest extends TestCase
         $this->assertSame(['2d', '3d', 'dtp', 'video'], Capability::main()->orderBy('sort_order')->pluck('slug')->all());
 
         foreach (Capability::main()->get() as $main) {
-            $this->assertGreaterThanOrEqual(4, $main->children()->count(), "{$main->slug} needs sub-capabilities");
+            $this->assertGreaterThanOrEqual(3, $main->children()->count(), "{$main->slug} needs sub-capabilities");
         }
     }
 
@@ -89,6 +89,21 @@ class CapabilityControllerTest extends TestCase
 
         $this->get('/capabilities/3d/virtual-try-on')
             ->assertRedirect('/capabilities/2d/virtual-try-on')
+            ->assertStatus(301);
+    }
+
+    public function test_digital_twins_lives_under_2d_and_redirects_from_3d(): void
+    {
+        $this->get('/capabilities/2d/digital-twins')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Capabilities/Show')
+                ->where('capability.slug', 'digital-twins')
+                ->where('capability.parent.slug', '2d')
+            );
+
+        $this->get('/capabilities/3d/digital-twins')
+            ->assertRedirect('/capabilities/2d/digital-twins')
             ->assertStatus(301);
     }
 

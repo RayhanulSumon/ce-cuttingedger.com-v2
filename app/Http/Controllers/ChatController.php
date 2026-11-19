@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Capability;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Services\Chat\ChatOrchestrator;
 use App\Services\Chat\ChatSessionManager;
 use App\Services\Chat\InfoResponder;
+use App\Services\Chat\Tools\CapabilityCatalogTool;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,7 +19,8 @@ class ChatController extends Controller
 {
     public function __construct(
         protected ChatSessionManager $sessionManager,
-        protected ChatOrchestrator $orchestrator
+        protected ChatOrchestrator $orchestrator,
+        protected CapabilityCatalogTool $catalogTool
     ) {}
 
     /**
@@ -130,11 +133,31 @@ class ChatController extends Controller
      */
     private function present(ChatMessage $msg): array
     {
+        $toolCards = array_map(function ($card) {
+            if (! is_array($card)) {
+                return $card;
+            }
+
+            if (($card['type'] ?? null) === 'capability_catalog_card') {
+                return $this->catalogTool->catalog();
+            }
+
+            if (($card['type'] ?? null) === 'capability_detail_card' && ! empty($card['id'])) {
+                $capability = Capability::active()->find($card['id']);
+
+                if ($capability) {
+                    return $this->catalogTool->detail($capability);
+                }
+            }
+
+            return $card;
+        }, $msg->tool_results ?? []);
+
         return [
             'id' => $msg->id,
             'sender' => $msg->sender,
             'content' => $msg->content,
-            'tool_cards' => $msg->tool_results ?? [],
+            'tool_cards' => $toolCards,
             'suggested_replies' => $msg->suggested_replies ?? [],
             'created_at' => $msg->created_at->toISOString(),
         ];

@@ -49,7 +49,7 @@ class CapabilitySeeder extends Seeder
                 'tag' => '2D',
                 'title' => '2D Retouching & Post-Production',
                 'subtitle' => 'Clean, consistent product and model images, edited by hand and checked twice.',
-                'description' => 'From cutouts and masking to fashion, beauty and jewelry retouching, our 2D studio turns raw photography into marketplace-ready images. Every file follows your style guide so a catalog of thousands looks like one shoot.',
+                'description' => 'From cutouts, ghost mannequin, digital twins and virtual try-on to fashion, beauty and jewelry retouching, our 2D studio turns raw photography into marketplace-ready images. Every file follows your style guide so a catalog of thousands looks like one shoot.',
                 'icon' => 'Layers',
                 'features' => ['Hand-finished edges with no colour halos', 'Consistent look across the whole catalog', 'Style guide and preset set-up for your brand', 'Two-step quality control on every file'],
                 'deliverables' => ['Layered master PSD files', 'Transparent PNG assets', 'Web-ready JPG and WebP', 'Print-ready TIFF'],
@@ -59,7 +59,7 @@ class CapabilitySeeder extends Seeder
                     ['question' => 'Can you match our existing style?', 'answer' => 'Yes. We build a preset from your guidelines and sample files so every batch matches.'],
                 ],
                 'meta_title' => '2D Image Retouching & Post-Production | CuttingEdger',
-                'meta_description' => 'Clipping paths, masking, ghost mannequin, virtual try-on, fashion and jewelry retouching and colour correction for e-commerce brands.',
+                'meta_description' => 'Clipping paths, masking, ghost mannequin, digital twins, virtual try-on, fashion and jewelry retouching and colour correction for e-commerce brands.',
                 'children' => [
                     [
                         'slug' => 'background-removal',
@@ -108,6 +108,25 @@ class CapabilitySeeder extends Seeder
                         ],
                     ],
                     [
+                        'slug' => 'digital-twins',
+                        'title' => 'Digital Twins',
+                        'subtitle' => 'Photoreal AI models that wear your garments in any pose.',
+                        'description' => 'Digital twins are lifelike AI models available in many poses and styles. Dress them in your collection and publish images without booking a shoot.',
+                        'icon' => 'Users',
+                        'features' => ['Photoreal models in many poses', 'Custom models built for your brand', 'Usage rights to suit your needs'],
+                        'deliverables' => ['Model images in every pose', 'Web and print sizes', 'Usage agreement'],
+                        'process_steps' => [
+                            ['title' => 'Brief', 'description' => 'License a ready-made 6-pose digital twin or configure custom model attributes and share your garment references.'],
+                            ['title' => 'Production', 'description' => 'Our 2D AI studio and retouchers generate and finish your digital twin assets to match your brand lookbook.'],
+                            ['title' => 'Quality control', 'description' => 'Every pose is checked twice for natural skin texture, accurate proportions and consistent lighting.'],
+                            ['title' => 'Delivery', 'description' => 'You receive high-resolution web and print files together with your selected usage rights.'],
+                        ],
+                        'faqs' => [
+                            ['question' => 'Can I customize a digital twin for our brand?', 'answer' => 'Yes. You can license a ready-made 6-pose preset model immediately or configure a custom digital twin with your exact attributes and exclusive copyright options.'],
+                            ['question' => 'How do I dress a digital twin in our collection?', 'answer' => 'Send flat-lay, mannequin or hanger photos of your garments and our 2D retouching team will fit and drape them onto your chosen model.'],
+                        ],
+                    ],
+                    [
                         'slug' => 'fashion-beauty-retouching',
                         'title' => 'Fashion & Beauty Retouching',
                         'subtitle' => 'Natural skin, clean fabric and polished campaign images.',
@@ -148,9 +167,9 @@ class CapabilitySeeder extends Seeder
             [
                 'slug' => '3d',
                 'tag' => '3D',
-                'title' => '3D, CGI & Digital Twins',
-                'subtitle' => 'Photoreal 3D models, renders and AI digital twins without a studio shoot.',
-                'description' => 'We turn product designs and photos into 3D models, renders and digital twins that can be shown in any colour, pose or setting. Create once and reuse across every channel.',
+                'title' => '3D Modeling & CGI Rendering',
+                'subtitle' => 'Photoreal 3D models, CGI renders and 360° spins without a studio shoot.',
+                'description' => 'We turn product designs and photos into 3D models, renders and interactive 360° spins that can be shown in any colour, angle or setting. Create once and reuse across every channel.',
                 'icon' => 'Box',
                 'features' => ['Photoreal materials and lighting', 'One model, unlimited variants', 'Formats for web, AR and print', 'Faster launches with no physical shoot'],
                 'deliverables' => ['High-resolution renders', '3D model files', 'Web-optimised models for your store', 'Turntable and 360° spins'],
@@ -159,8 +178,8 @@ class CapabilitySeeder extends Seeder
                     ['question' => 'Do I need a physical sample?', 'answer' => 'Not always. We can work from CAD files, design packs or good reference photos. A sample helps for materials.'],
                     ['question' => 'Can the models be used on my store?', 'answer' => 'Yes. We export lightweight web models and render sets that work on common storefront platforms.'],
                 ],
-                'meta_title' => '3D Modeling, CGI Rendering & Digital Twins | CuttingEdger',
-                'meta_description' => 'Photoreal 3D product models, CGI renders, digital twins and 360° product spins for fashion and e-commerce brands.',
+                'meta_title' => '3D Modeling, CGI Rendering & 360° Product Spins | CuttingEdger',
+                'meta_description' => 'Photoreal 3D product models, CGI renders and 360° product spins for fashion and e-commerce brands.',
                 'children' => [
                     [
                         'slug' => '3d-modeling',
@@ -179,15 +198,6 @@ class CapabilitySeeder extends Seeder
                         'icon' => 'Camera',
                         'features' => ['Photoreal lighting and materials', 'Unlimited colourways and scenes', 'Consistent look across a range'],
                         'deliverables' => ['High-resolution renders', 'Transparent PNG', 'Lifestyle scene images'],
-                    ],
-                    [
-                        'slug' => 'digital-twins',
-                        'title' => 'Digital Twins',
-                        'subtitle' => 'Photoreal AI models that wear your garments in any pose.',
-                        'description' => 'Digital twins are lifelike AI models available in many poses and styles. Dress them in your collection and publish images without booking a shoot.',
-                        'icon' => 'Users',
-                        'features' => ['Photoreal models in many poses', 'Custom models built for your brand', 'Usage rights to suit your needs'],
-                        'deliverables' => ['Model images in every pose', 'Web and print sizes', 'Usage agreement'],
                     ],
                     [
                         'slug' => '360-product-spin',

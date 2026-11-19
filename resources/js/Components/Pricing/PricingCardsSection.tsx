@@ -54,7 +54,7 @@ export function PricingCardsSection() {
             buttonText: 'Request Retainer Quote',
             features: [
                 { bold: 'Everything in Essential', text: 'included as standard' },
-                { bold: '3D Ghost mannequin', text: 'neckline jointing & symmetry' },
+                { bold: 'Ghost mannequin & 2D Virtual Try-On', text: 'neckline jointing & AI model draping' },
                 { bold: 'Frequency separation', text: 'high-end skin & apparel retouching' },
                 { bold: 'Colorway swaps', text: '& delta-E fabric swatch matching' },
             ],

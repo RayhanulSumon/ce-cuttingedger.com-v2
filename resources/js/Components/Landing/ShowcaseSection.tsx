@@ -56,9 +56,9 @@ const COLORED_TILES = [
     {
         bg: '#fcdd71',
         fg: 'var(--color-ink)',
-        label: '3D',
-        title: 'CGI & Twins',
-        description: 'Photoreal digital twins and 3D product renders, ready for any pose, colour or setting.',
+        label: '2D',
+        title: 'Digital twins',
+        description: 'Photoreal AI digital twins and studio models, ready for any pose, colour or setting.',
         actions: [
             { label: 'Browse digital twins', href: '/digital-twins' },
             { label: 'Order a custom model', href: orderUrl('digital-twins') },

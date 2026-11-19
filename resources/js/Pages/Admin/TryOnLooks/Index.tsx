@@ -185,7 +185,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <AdminPageHeader
                         title="Virtual Try-On Runway & Models"
-                        description="Manage 3D ring-runway models, outfit pieces, and interactive callout pins for Section 02 & the Virtual Try-On Quote page."
+                        description="Manage 2D Virtual Try-On runway models, outfit pieces, and interactive callout pins for Section 02 & the Virtual Try-On Quote page."
                     />
 
                     <Button

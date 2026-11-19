@@ -60,7 +60,7 @@ export const CASE_STUDIES: CaseStudyEntry[] = [
     },
     {
         client: 'Footwear brand',
-        category: '3D · Digital twins',
+        category: '2D · Digital twins',
         title: 'Seasonal launch without a studio',
         summary: 'Digital twins of 140 sneakers replaced two physical shoots and shipped the campaign three weeks early.',
         image: '/images/portfolio/portfolio-3.jpg',

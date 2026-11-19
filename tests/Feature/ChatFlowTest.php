@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Capability;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\ContactMessage;
@@ -222,5 +223,60 @@ class ChatFlowTest extends TestCase
         $this->assertContains($this->postJson('/api/chat/lead')->status(), [404, 405]);
         $this->assertContains($this->postJson('/api/chat/upload')->status(), [404, 405]);
         $this->getJson('/api/chat/available-slots')->assertStatus(404);
+    }
+
+    public function test_resumed_chat_session_refreshes_stale_capability_cards(): void
+    {
+        $session = ChatSession::create([
+            'id' => (string) Str::uuid(),
+            'status' => 'active',
+            'last_active_at' => now(),
+        ]);
+
+        $virtualTryOn = Capability::where('slug', 'virtual-try-on')->firstOrFail();
+
+        ChatMessage::create([
+            'chat_session_id' => $session->id,
+            'sender' => 'assistant',
+            'content' => 'Here are our capabilities.',
+            'tool_results' => [
+                [
+                    'type' => 'capability_catalog_card',
+                    'capabilities' => [
+                        [
+                            'id' => 9,
+                            'tag' => '3D',
+                            'path' => '/capabilities/3d',
+                            'title' => '3D, CGI & Digital Twins',
+                            'children' => [
+                                ['path' => '/capabilities/3d/virtual-try-on', 'title' => 'Virtual Try-On'],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'capability_detail_card',
+                    'id' => $virtualTryOn->id,
+                    'tag' => '3D',
+                    'title' => 'Virtual Try-On',
+                    'path' => '/capabilities/3d/virtual-try-on',
+                ],
+            ],
+        ]);
+
+        $response = $this->withHeader('X-Chat-Session-Id', $session->id)
+            ->postJson('/api/chat/session');
+
+        $response->assertStatus(200);
+        $cards = $response->json('messages.0.tool_cards');
+
+        $catalogCaps = collect($cards[0]['capabilities']);
+        $cap2d = $catalogCaps->firstWhere('tag', '2D');
+        $cap3d = $catalogCaps->firstWhere('tag', '3D');
+
+        $this->assertContains('/capabilities/2d/virtual-try-on', array_column($cap2d['children'], 'path'));
+        $this->assertNotContains('/capabilities/3d/virtual-try-on', array_column($cap3d['children'], 'path'));
+        $this->assertSame('2D', $cards[1]['tag']);
+        $this->assertSame('/capabilities/2d/virtual-try-on', $cards[1]['path']);
     }
 }
