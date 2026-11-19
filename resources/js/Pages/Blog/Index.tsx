@@ -60,21 +60,49 @@ const heroContentVariants = {
 const blogCardVariants = {
     hidden: (isEven: boolean) => ({
         opacity: 0,
-        rotateY: isEven ? -72 : 72,
-        rotateZ: isEven ? -4 : 4,
-        x: isEven ? -110 : 110,
-        y: 28,
-        scale: 0.94,
+        x: isEven ? -72 : 72,
+        y: 16,
     }),
     visible: {
         opacity: 1,
-        rotateY: 0,
-        rotateZ: 0,
         x: 0,
         y: 0,
+        transition: {
+            duration: 0.75,
+            ease: EASE_OUT_EXPO,
+        },
+    },
+};
+
+const blogImageVariants = {
+    hidden: (isEven: boolean) => ({
+        clipPath: isEven
+            ? 'inset(0 100% 0 0 round 16px)'
+            : 'inset(0 0 0 100% round 16px)',
+        scale: 1.06,
+    }),
+    visible: {
+        clipPath: 'inset(0 0% 0 0% round 16px)',
         scale: 1,
         transition: {
             duration: 0.85,
+            delay: 0.08,
+            ease: EASE_OUT_EXPO,
+        },
+    },
+};
+
+const blogTextVariants = {
+    hidden: (isEven: boolean) => ({
+        opacity: 0,
+        x: isEven ? 24 : -24,
+    }),
+    visible: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            duration: 0.65,
+            delay: 0.14,
             ease: EASE_OUT_EXPO,
         },
     },
@@ -459,22 +487,22 @@ export default function Index({
                                             key={blog.id || blog.slug}
                                             initial="hidden"
                                             whileInView="visible"
-                                            viewport={{ once: false, amount: 0.15 }}
-                                            className="[perspective:1600px]"
+                                            viewport={{
+                                                once: true,
+                                                amount: 0.18,
+                                                margin: '0px 0px -40px 0px',
+                                            }}
                                         >
                                             <motion.article
                                                 custom={isEven}
                                                 variants={blogCardVariants}
-                                                style={{
-                                                    transformOrigin: isEven
-                                                        ? 'left center'
-                                                        : 'right center',
-                                                }}
                                                 className="group rounded-[28px] bg-surface border border-ink/10 p-5 sm:p-7 lg:p-8 shadow-[0_20px_48px_-20px_rgba(15,23,42,0.08)] hover:border-primary/40 transition-colors duration-300"
                                             >
                                                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-center">
                                                     {/* Cover Image */}
-                                                    <div
+                                                    <motion.div
+                                                        custom={isEven}
+                                                        variants={blogImageVariants}
                                                         className={`lg:col-span-6 ${
                                                             isEven ? 'lg:order-1' : 'lg:order-2'
                                                         }`}
@@ -491,10 +519,12 @@ export default function Index({
                                                                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                                                             />
                                                         </Link>
-                                                    </div>
+                                                    </motion.div>
 
                                                     {/* Content Block */}
-                                                    <div
+                                                    <motion.div
+                                                        custom={isEven}
+                                                        variants={blogTextVariants}
                                                         className={`lg:col-span-6 ${
                                                             isEven ? 'lg:order-2' : 'lg:order-1'
                                                         } space-y-4 sm:space-y-5 lg:px-3`}
@@ -530,7 +560,7 @@ export default function Index({
                                                                 <ArrowUpRight className="w-3.5 h-3.5" />
                                                             </Link>
                                                         </div>
-                                                    </div>
+                                                    </motion.div>
                                                 </div>
                                             </motion.article>
                                         </motion.div>
