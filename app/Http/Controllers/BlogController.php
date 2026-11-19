@@ -40,15 +40,27 @@ class BlogController extends Controller
             ->withCount('blogs')
             ->get();
 
-        $featuredBlog = Blog::with(['category', 'subcategory', 'author'])
+        $featuredBlogs = Blog::with(['category', 'subcategory', 'author'])
             ->where('status', 'published')
-            ->orderByDesc('is_featured')
+            ->where('is_featured', true)
             ->latest('published_at')
-            ->first();
+            ->take(5)
+            ->get();
+
+        if ($featuredBlogs->isEmpty()) {
+            $featuredBlogs = Blog::with(['category', 'subcategory', 'author'])
+                ->where('status', 'published')
+                ->latest('published_at')
+                ->take(1)
+                ->get();
+        }
+
+        $featuredBlog = $featuredBlogs->first();
 
         return Inertia::render('Blog/Index', [
             'blogs' => $blogs,
             'featuredBlog' => $featuredBlog,
+            'featuredBlogs' => $featuredBlogs,
             'categories' => $categories,
             'activeCategory' => $selectedCategory ?: 'all',
             'activeSubcategory' => $selectedSubcategory ?: 'all',

@@ -26,6 +26,7 @@ class BlogControllerTest extends TestCase
             ->component('Blog/Index')
             ->has('blogs')
             ->has('featuredBlog')
+            ->has('featuredBlogs')
             ->has('categories')
             ->where('activeCategory', 'all')
         );
