@@ -1,146 +1,99 @@
 import React from 'react';
-import {
-    Users,
-    Cpu,
-    Zap,
-    ShieldCheck,
-    Calendar,
-    ArrowUpRight,
-    Sparkles,
-} from 'lucide-react';
+import { ArrowUpRight, Calendar, Cpu, ShieldCheck, Users, Zap } from 'lucide-react';
 
+const ENTERPRISE_PILLARS = [
+    {
+        icon: Users,
+        title: 'Dedicated Artist Squads',
+        description:
+            'Artists calibrated exclusively to your brand guidelines, lighting ratios, and custom presets.',
+    },
+    {
+        icon: Cpu,
+        title: 'Automated Pipeline & API',
+        description:
+            'Hands-free asset synchronization via SFTP hotfolders, AWS S3 buckets, or direct REST API.',
+    },
+    {
+        icon: Zap,
+        title: 'Guaranteed Rush SLAs',
+        description:
+            'Round-the-clock shifts across global time zones with sub-6h priority delivery for peak launches.',
+    },
+    {
+        icon: ShieldCheck,
+        title: 'Security & Corporate Terms',
+        description:
+            'Bilateral NDAs, encrypted asset vaults, and consolidated Net-30 corporate monthly invoicing.',
+    },
+];
+
+/** Enterprise capacity pillars and discovery call CTA banner styled for the light studio theme. */
 export function EnterpriseSolutionsSection() {
     const handleOpenDiscoveryCall = () => {
         window.dispatchEvent(new CustomEvent('ce:open-discovery-call'));
     };
 
-    const pillars = [
-        {
-            icon: Users,
-            badge: 'Dedicated Pods',
-            title: 'Dedicated Artist Squads',
-            description:
-                'Photoshop artists calibrated exclusively to your brand guidelines, lighting ratios, and custom PSD action sets.',
-            tags: ['Named Senior QA Lead', 'Zero Style Drift', 'Dedicated Allocation'],
-        },
-        {
-            icon: Cpu,
-            badge: 'Headless Flow',
-            title: 'Automated Pipeline & API',
-            description:
-                'Hands-free asset synchronization via automated SFTP hotfolders, AWS S3 buckets, or our direct REST API.',
-            tags: ['SFTP / S3 Hotfolders', 'REST API & Webhooks', 'Raw & TIFF Batches'],
-        },
-        {
-            icon: Zap,
-            badge: '24/7 Production',
-            title: 'Guaranteed Rush SLAs',
-            description:
-                'Round-the-clock shifts across global timezones with sub-6h priority delivery during peak seasonal launches.',
-            tags: ['Sub-6h Emergency SLA', '10K+ Daily Volume', 'Overnight Delivery'],
-        },
-        {
-            icon: ShieldCheck,
-            badge: 'Enterprise Compliance',
-            title: 'Security & Corporate Terms',
-            description:
-                'Enterprise-grade security with bilateral NDAs, encrypted cloud vaults, and consolidated Net-30 monthly billing.',
-            tags: ['Strict Mutual NDA', 'Encrypted TLS Vault', 'Net-30 Corporate Terms'],
-        },
-    ];
-
     return (
-        <section className="py-16 sm:py-20 bg-[#090a0e] relative overflow-hidden border-t border-ink/10">
-            {/* Ambient Backlight */}
-            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[50rem] h-[20rem] bg-primary/[0.03] rounded-full blur-[200px] pointer-events-none" />
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Simplified, Clean Section Header */}
-                <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 space-y-2.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-ink/10 text-[11px] font-mono uppercase tracking-[0.18em] text-primary-ink font-semibold">
-                        <Sparkles className="w-3 h-3" />
-                        <span>Enterprise Capacity</span>
-                    </div>
-
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-ink tracking-tight">
-                        Enterprise & <span className="text-primary-ink">Volume Partnerships</span>
+        <section className="border-t border-ink/10 bg-surface py-16 sm:py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto mb-12 max-w-2xl space-y-3 text-center">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary-ink">
+                        Enterprise Capacity
+                    </p>
+                    <h2 className="text-3xl font-display font-extrabold tracking-tight text-ink sm:text-4xl">
+                        Built for high-volume <span className="text-primary">partnerships</span>
                     </h2>
-
-                    <p className="text-xs sm:text-sm text-muted font-sans leading-relaxed">
-                        Dedicated retouching pods, custom rush SLAs, and direct pipeline integrations for high-volume catalogs.
+                    <p className="text-sm leading-relaxed text-muted sm:text-base">
+                        Dedicated production pods, rush SLAs, and direct pipeline integrations for global retail teams.
                     </p>
                 </div>
 
-                {/* 4 Clean, Concise Enterprise Pillars */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-10 sm:mb-12">
-                    {pillars.map((pillar, idx) => {
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    {ENTERPRISE_PILLARS.map((pillar) => {
                         const Icon = pillar.icon;
                         return (
                             <div
-                                key={idx}
-                                className="group rounded-2xl sm:rounded-3xl border border-ink/10 bg-[#0f1118]/90 hover:bg-[#131520] hover:border-primary/40 transition-all duration-300 p-6 sm:p-7 relative flex flex-col justify-between hover:shadow-[0_15px_40px_color-mix(in_srgb,var(--color-primary)_8%,transparent)]"
+                                key={pillar.title}
+                                className="rounded-3xl border border-ink/10 bg-page p-6 transition-colors duration-300 hover:border-primary/40"
                             >
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary-ink group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                                            <Icon className="w-5 h-5" />
-                                        </div>
-                                        <span className="px-2.5 py-1 rounded-md bg-white/[0.03] border border-ink/10 text-[10px] font-mono uppercase tracking-wider text-muted font-medium">
-                                            {pillar.badge}
-                                        </span>
-                                    </div>
-
-                                    <h3 className="text-lg sm:text-xl font-display font-bold text-ink group-hover:text-primary-ink transition-colors">
-                                        {pillar.title}
-                                    </h3>
-
-                                    <p className="text-xs sm:text-sm text-muted leading-relaxed font-sans">
-                                        {pillar.description}
-                                    </p>
+                                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-ink/10 bg-surface text-primary-ink">
+                                    <Icon className="h-5 w-5" />
                                 </div>
-
-                                {/* Scannable Feature Chips */}
-                                <div className="flex flex-wrap items-center gap-2 pt-5 mt-4 border-t border-ink/10">
-                                    {pillar.tags.map((tag, i) => (
-                                        <span
-                                            key={i}
-                                            className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-ink/10 text-[11px] font-mono text-ink-2"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+                                <h3 className="text-lg font-display font-bold leading-snug text-ink">
+                                    {pillar.title}
+                                </h3>
+                                <p className="mt-2 text-sm leading-relaxed text-muted">
+                                    {pillar.description}
+                                </p>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* Streamlined, High-Impact Enterprise Action Banner */}
-                <div className="rounded-2xl sm:rounded-3xl border border-primary/40 bg-gradient-to-r from-white via-page to-white p-6 sm:p-8 relative overflow-hidden shadow-[0_15px_50px_color-mix(in_srgb,var(--color-primary)_8%,transparent)]">
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+                <div className="mt-10 rounded-3xl border border-ink/10 bg-page p-6 sm:p-9">
+                    <div className="flex flex-col items-center justify-between gap-6 lg:flex-row">
                         <div className="space-y-1.5 text-center lg:text-left">
-                            <span className="text-[10px] font-mono uppercase tracking-widest text-primary-ink font-bold">
-                                [ Tailored B2B Consultation ]
-                            </span>
-                            <h3 className="text-xl sm:text-2xl font-display font-bold text-ink tracking-tight">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-ink">
+                                Tailored B2B Consultation
+                            </p>
+                            <h3 className="text-xl font-display font-bold tracking-tight text-ink sm:text-2xl">
                                 Need a custom volume contract or dedicated SLA?
                             </h3>
-                            <p className="text-xs sm:text-sm text-muted max-w-xl">
-                                Speak directly with our production director to calibrate a custom pilot around your exact drop schedule.
+                            <p className="max-w-xl text-sm text-muted">
+                                Speak directly with our production lead to scope a custom pilot around your launch schedule.
                             </p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-                            <button
-                                type="button"
-                                onClick={handleOpenDiscoveryCall}
-                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#ffb834] hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_35%,transparent)] transition-all cursor-pointer"
-                            >
-                                <Calendar className="w-4 h-4" />
-                                <span>Book 15-Min Discovery Call</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={handleOpenDiscoveryCall}
+                            className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-hover"
+                        >
+                            <Calendar className="h-4 w-4" />
+                            <span>Book 15-Min Discovery Call</span>
+                            <ArrowUpRight className="h-4 w-4" />
+                        </button>
                     </div>
                 </div>
             </div>

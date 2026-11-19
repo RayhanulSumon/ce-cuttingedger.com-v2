@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
+import { isClientUser } from '@/Components/Common/OrderAuthNotice';
 import { PageProps } from '@/types';
 import { DARK_SECTIONS, EASE_OUT_EXPO, EASE_OUT_QUART, SECTION_INDEX, SECTIONS } from './shared';
 
@@ -64,6 +65,7 @@ const ROW =
 
 export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
     const { capabilities_nav = [], auth } = usePage<PageProps>().props;
+    const isClient = isClientUser(auth?.user);
     const { url } = usePage();
     const path = url.split('?')[0];
     const activeCapabilityId =
@@ -270,14 +272,14 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
 
                 <div className="flex items-center gap-2.5 sm:gap-3">
                     <Link
-                        href={auth?.user ? (auth.user.role === 'super_admin' || auth.user.role === 'admin' ? '/admin' : '/portal') : '/login'}
+                        href={isClient ? '/portal' : '/login'}
                         className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${
                             dark
                                 ? 'border-white/25 text-white hover:bg-white/15'
                                 : 'border-ink/20 text-ink hover:border-primary hover:text-primary'
                         }`}
                     >
-                        {auth?.user ? 'My Portal' : 'Client Login'}
+                        {isClient ? 'My Portal' : 'Client Login'}
                     </Link>
 
                     <button

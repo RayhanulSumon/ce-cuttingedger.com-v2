@@ -1,98 +1,139 @@
-import React, { useState } from "react";
-import { useForm, router } from "@inertiajs/react";
-import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
-import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
+import React, { useMemo, useState } from "react";
+import { router, useForm } from "@inertiajs/react";
+import { Coins, Edit, MoreHorizontal, ShieldCheck, Trash2 } from "lucide-react";
 import { AdminDataTable, Column } from "@/Components/Admin/UI/AdminDataTable";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
+import { AdminPageHeader } from "@/Components/Admin/UI/AdminPageHeader";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 import { Badge } from "@/Components/ui/badge";
-import { Switch } from "@/Components/ui/switch";
+import { Button } from "@/Components/ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
     DialogDescription,
     DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/Components/ui/dialog";
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogCancel,
-    AlertDialogAction,
-} from "@/Components/ui/alert-dialog";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Input } from "@/Components/ui/input";
+import { Switch } from "@/Components/ui/switch";
+import { AdminLayout } from "@/Layouts/Admin/AdminLayout";
 import { PricingPlan } from "@/types/models";
 
 interface PricingIndexProps {
     plans: PricingPlan[];
 }
 
+interface PlanFormState {
+    name: string;
+    badge: string;
+    headline: string;
+    base_credits: number;
+    bonus_credits: number;
+    price_amount: number;
+    cta_text: string;
+    features: string[];
+    is_popular: boolean;
+    sort_order: number;
+}
+
+const DEFAULT_FORM_STATE: PlanFormState = {
+    name: "",
+    badge: "Credit Pack",
+    headline: "",
+    base_credits: 500,
+    bonus_credits: 0,
+    price_amount: 250,
+    cta_text: "Buy Plan",
+    features: ["Credits never expire", "Use across 2D, 3D, DTP & Try-On"],
+    is_popular: false,
+    sort_order: 0,
+};
+
 export default function PricingIndex({ plans = [] }: PricingIndexProps) {
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState<PricingPlan | null>(null);
     const [planToDelete, setPlanToDelete] = useState<PricingPlan | null>(null);
+    const [featuresText, setFeaturesText] = useState(DEFAULT_FORM_STATE.features.join("\n"));
 
-    const createForm = useForm({
-        name: "",
-        headline: "",
-        price: "$14,500",
-        billing_cycle: "per sprint",
-        cta_text: "Initiate Sprint",
-        is_popular: false,
-        sort_order: 0,
-    });
+    const form = useForm<PlanFormState>(DEFAULT_FORM_STATE);
 
-    const editForm = useForm({
-        name: "",
-        headline: "",
-        price: "",
-        billing_cycle: "",
-        cta_text: "",
-        is_popular: false,
-        sort_order: 0,
-    });
+    const preview = useMemo(() => {
+        const base = Math.max(0, Number(form.data.base_credits) || 0);
+        const bonus = Math.max(0, Number(form.data.bonus_credits) || 0);
+        const totalCredits = base + bonus;
+        const price = Math.max(0, Number(form.data.price_amount) || 0);
+        const rate = totalCredits > 0 ? price / totalCredits : 0;
+        return { totalCredits, price, rate: rate.toFixed(2) };
+    }, [form.data.base_credits, form.data.bonus_credits, form.data.price_amount]);
 
-    const handleCreate = (e: React.FormEvent) => {
-        e.preventDefault();
-        createForm.post(route("admin.pricing.store"), {
-            onSuccess: () => {
-                setIsCreateOpen(false);
-                createForm.reset();
-            },
-        });
+    const openCreate = () => {
+        setEditingPlan(null);
+        form.setData({ ...DEFAULT_FORM_STATE, sort_order: plans.length + 1 });
+        setFeaturesText(DEFAULT_FORM_STATE.features.join("\n"));
+        form.clearErrors();
+        setModalOpen(true);
     };
 
-    const openEdit = (p: PricingPlan) => {
-        setEditingPlan(p);
-        editForm.setData({
-            name: p.name,
-            headline: p.headline,
-            price: p.price,
-            billing_cycle: p.billing_cycle,
-            cta_text: p.cta_text,
-            is_popular: p.is_popular,
-            sort_order: p.sort_order,
+    const openEdit = (plan: PricingPlan) => {
+        const features = Array.isArray(plan.features) ? plan.features : [];
+        setEditingPlan(plan);
+        form.setData({
+            name: plan.name,
+            badge: plan.badge || (plan.is_popular ? "Most Popular" : "Credit Pack"),
+            headline: plan.headline,
+            base_credits: plan.base_credits ?? 500,
+            bonus_credits: plan.bonus_credits ?? 0,
+            price_amount: plan.price_amount ?? 250,
+            cta_text: plan.cta_text,
+            features,
+            is_popular: Boolean(plan.is_popular),
+            sort_order: plan.sort_order ?? 0,
         });
+        setFeaturesText(features.join("\n"));
+        form.clearErrors();
+        setModalOpen(true);
     };
 
-    const handleUpdate = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!editingPlan) return;
-        editForm.put(route("admin.pricing.update", editingPlan.id), {
+        const parsedFeatures = featuresText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+        form.transform((data) => ({
+            ...data,
+            features: parsedFeatures,
+        }));
+
+        if (editingPlan) {
+            form.put(route("admin.pricing.update", editingPlan.id), {
+                onSuccess: () => {
+                    setModalOpen(false);
+                    setEditingPlan(null);
+                },
+            });
+            return;
+        }
+
+        form.post(route("admin.pricing.store"), {
             onSuccess: () => {
-                setEditingPlan(null);
-                editForm.reset();
+                setModalOpen(false);
             },
         });
     };
@@ -106,67 +147,98 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
 
     const columns: Column<PricingPlan>[] = [
         {
-            header: "TIER & HEADLINE",
-            cell: (p) => (
-                <div>
-                    <div className="font-semibold text-white">{p.name}</div>
-                    <div className="text-xs text-neutral-400 font-mono">
-                        {p.headline}
+            header: "PLAN & BADGE",
+            cell: (plan) => (
+                <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-ink">{plan.name}</span>
+                        <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                            {plan.badge || "Credit Pack"}
+                        </span>
+                    </div>
+                    <div className="text-xs text-slate-500 max-w-md truncate">
+                        {plan.headline}
                     </div>
                 </div>
             ),
         },
         {
-            header: "INVESTMENT",
-            cell: (p) => (
-                <div className="font-mono text-xs">
-                    <span className="text-accent font-bold">{p.price}</span>{" "}
-                    <span className="text-neutral-500">/{p.billing_cycle}</span>
-                </div>
-            ),
+            header: "STUDIO CREDITS",
+            cell: (plan) => {
+                const base = plan.base_credits ?? 0;
+                const bonus = plan.bonus_credits ?? 0;
+                const total = base + bonus;
+                return (
+                    <div className="text-xs space-y-0.5">
+                        <div className="font-bold text-ink tabular-nums flex items-center gap-1.5">
+                            <Coins className="w-3.5 h-3.5 text-primary" />
+                            <span>{total.toLocaleString()} Total Credits</span>
+                        </div>
+                        <div className="text-[11px] text-slate-500 tabular-nums">
+                            {base.toLocaleString()} base{bonus > 0 ? ` + ${bonus.toLocaleString()} bonus` : ""}
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            header: "PRICE & EFFECTIVE RATE",
+            cell: (plan) => {
+                const total = Math.max(1, (plan.base_credits ?? 0) + (plan.bonus_credits ?? 0));
+                const priceAmount = plan.price_amount ?? 0;
+                const rate = priceAmount > 0 ? `$${(priceAmount / total).toFixed(2)} / credit` : plan.billing_cycle;
+                return (
+                    <div className="text-xs space-y-0.5">
+                        <div className="font-extrabold text-primary tabular-nums">
+                            {priceAmount > 0 ? `$${priceAmount.toLocaleString()}` : plan.price}
+                        </div>
+                        <div className="text-[11px] text-slate-500 tabular-nums">{rate}</div>
+                    </div>
+                );
+            },
         },
         {
             header: "STATUS",
-            cell: (p) =>
-                p.is_popular ? (
-                    <Badge variant="accent">MOST POPULAR</Badge>
+            cell: (plan) =>
+                plan.is_popular ? (
+                    <Badge className="bg-primary text-white">MOST POPULAR</Badge>
                 ) : (
-                    <Badge variant="outline">STANDARD</Badge>
+                    <Badge variant="outline" className="text-slate-600 border-slate-300">
+                        STANDARD
+                    </Badge>
                 ),
         },
         {
             header: "ORDER",
-            cell: (p) => (
-                <span className="font-mono text-xs text-neutral-400">
-                    #{p.sort_order}
-                </span>
+            cell: (plan) => (
+                <span className="font-mono text-xs text-slate-500">#{plan.sort_order}</span>
             ),
         },
         {
             header: "",
             className: "text-right",
-            cell: (p) => (
+            cell: (plan) => (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-neutral-400 hover:text-white"
+                            className="h-8 w-8 text-slate-500 hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openEdit(p)} className="gap-2">
+                        <DropdownMenuItem onClick={() => openEdit(plan)} className="gap-2 cursor-pointer">
                             <Edit className="w-3.5 h-3.5" />
-                            <span>Edit Tier</span>
+                            <span>Edit Plan</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => setPlanToDelete(p)}
-                            className="gap-2 text-rose-400 focus:text-rose-400"
+                            onClick={() => setPlanToDelete(plan)}
+                            className="gap-2 text-rose-600 focus:text-rose-600 cursor-pointer"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
-                            <span>Purge Tier</span>
+                            <span>Delete Plan</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -175,251 +247,185 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
     ];
 
     return (
-        <AdminLayout title="COMMERCIAL TIERS">
+        <AdminLayout title="PRICING & CREDIT PLANS">
             <AdminPageHeader
-                title="Pricing & Sprint Plans"
-                description="Studio sprint agreements, recurring retainer terms, and enterprise contracts."
-                actionLabel="Create Tier"
-                onActionClick={() => setIsCreateOpen(true)}
+                title="Pricing & Credit Plans"
+                description="Manage the preset credit packs shown on /pricing. Price and credit edits only affect future purchases."
+                actionLabel="Create Credit Plan"
+                onActionClick={openCreate}
             />
+
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-3.5 text-xs text-emerald-900">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
+                <div>
+                    <span className="font-bold">Immutable Purchase Snapshots Active:</span>{" "}
+                    Updating or deleting a plan here updates the public{" "}
+                    <code className="font-mono font-semibold">/pricing</code> page immediately. All
+                    previous client purchases retain their exact price, base/bonus credits, and
+                    features snapshot at the time of checkout.
+                </div>
+            </div>
 
             <AdminDataTable
                 columns={columns}
                 data={plans}
                 searchKey="name"
-                searchPlaceholder="Search tiers by name..."
+                searchPlaceholder="Search credit plans by name..."
             />
 
-            {/* Create Plan Modal */}
-            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogContent>
+            {/* Create / Edit Plan Modal */}
+            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+                <DialogContent className="sm:max-w-xl">
                     <DialogHeader>
-                        <DialogTitle>Create Commercial Tier</DialogTitle>
+                        <DialogTitle>
+                            {editingPlan ? `Edit ${editingPlan.name}` : "Create Studio Credit Plan"}
+                        </DialogTitle>
+                        <DialogDescription>
+                            Configure credit quantities, bonus credits, USD price, and card display copy.
+                        </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleCreate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                    <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Tier Name
-                                </label>
+                                <label className="text-xs font-semibold text-slate-700">Plan Name</label>
                                 <Input
-                                    value={createForm.data.name}
-                                    onChange={(e) =>
-                                        createForm.setData("name", e.target.value)
-                                    }
-                                    placeholder="e.g. Velocity Sprint"
+                                    value={form.data.name}
+                                    onChange={(e) => form.setData("name", e.target.value)}
+                                    placeholder="e.g. Studio Credit Pack"
                                     required
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Price Amount
-                                </label>
+                                <label className="text-xs font-semibold text-slate-700">Badge Label</label>
                                 <Input
-                                    value={createForm.data.price}
-                                    onChange={(e) =>
-                                        createForm.setData("price", e.target.value)
-                                    }
-                                    placeholder="$14,500"
+                                    value={form.data.badge}
+                                    onChange={(e) => form.setData("badge", e.target.value)}
+                                    placeholder="e.g. Most Popular"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-700">Base Credits</label>
+                                <Input
+                                    type="number"
+                                    min={10}
+                                    max={500000}
+                                    value={form.data.base_credits}
+                                    onChange={(e) => form.setData("base_credits", Number(e.target.value) || 0)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-700">Bonus Credits</label>
+                                <Input
+                                    type="number"
+                                    min={0}
+                                    max={500000}
+                                    value={form.data.bonus_credits}
+                                    onChange={(e) => form.setData("bonus_credits", Number(e.target.value) || 0)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-slate-700">Price (USD)</label>
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    min={1}
+                                    max={500000}
+                                    value={form.data.price_amount}
+                                    onChange={(e) => form.setData("price_amount", Number(e.target.value) || 0)}
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs">
+                            <span className="text-slate-600">
+                                Total Credits:{" "}
+                                <strong className="text-ink">{preview.totalCredits.toLocaleString()}</strong>
+                            </span>
+                            <span className="text-slate-600">
+                                Effective Rate:{" "}
+                                <strong className="text-primary">${preview.rate} / credit</strong>
+                            </span>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-slate-700">Short Headline</label>
+                            <Input
+                                value={form.data.headline}
+                                onChange={(e) => form.setData("headline", e.target.value)}
+                                placeholder="Built for growing fashion and e-commerce brands..."
+                                required
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Billing Cycle
-                                </label>
+                                <label className="text-xs font-semibold text-slate-700">CTA Button Text</label>
                                 <Input
-                                    value={createForm.data.billing_cycle}
-                                    onChange={(e) =>
-                                        createForm.setData(
-                                            "billing_cycle",
-                                            e.target.value
-                                        )
-                                    }
-                                    placeholder="per sprint / monthly"
+                                    value={form.data.cta_text}
+                                    onChange={(e) => form.setData("cta_text", e.target.value)}
+                                    placeholder="Buy Studio Plan"
                                     required
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    CTA Button Label
-                                </label>
+                                <label className="text-xs font-semibold text-slate-700">Display Order</label>
                                 <Input
-                                    value={createForm.data.cta_text}
-                                    onChange={(e) =>
-                                        createForm.setData("cta_text", e.target.value)
-                                    }
-                                    placeholder="Initiate Sprint"
-                                    required
+                                    type="number"
+                                    value={form.data.sort_order}
+                                    onChange={(e) => form.setData("sort_order", Number(e.target.value) || 0)}
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
-                                Headline Description
+                            <label className="text-xs font-semibold text-slate-700">
+                                Bullet Features (one per line)
                             </label>
-                            <Input
-                                value={createForm.data.headline}
-                                onChange={(e) =>
-                                    createForm.setData("headline", e.target.value)
-                                }
-                                placeholder="High-velocity 2-week execution block..."
-                                required
+                            <textarea
+                                rows={3}
+                                value={featuresText}
+                                onChange={(e) => setFeaturesText(e.target.value)}
+                                placeholder={"500 studio credits never expire\nUse across 2D, 3D, DTP & Try-On"}
+                                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-ink focus:border-primary focus:outline-none"
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
-                                    Flagship / Popular Tier
+                                <span className="text-xs font-semibold text-ink block">
+                                    Highlight as Popular Plan
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
-                                    Highlight card with prominent lime accent borders.
+                                <span className="text-[11px] text-slate-500 block">
+                                    Adds primary border emphasis on /pricing.
                                 </span>
                             </div>
                             <Switch
-                                checked={createForm.data.is_popular}
-                                onCheckedChange={(val) =>
-                                    createForm.setData("is_popular", val)
-                                }
+                                checked={form.data.is_popular}
+                                onCheckedChange={(val) => form.setData("is_popular", val)}
                             />
                         </div>
 
                         <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setIsCreateOpen(false)}
-                            >
+                            <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                disabled={createForm.processing}
+                                disabled={form.processing}
+                                className="bg-primary hover:bg-primary-hover text-white"
                             >
-                                {createForm.processing ? "Publishing..." : "Publish Tier"}
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
-
-            {/* Edit Plan Modal */}
-            <Dialog
-                open={!!editingPlan}
-                onOpenChange={(open) => !open && setEditingPlan(null)}
-            >
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Edit Commercial Tier</DialogTitle>
-                    </DialogHeader>
-
-                    <form onSubmit={handleUpdate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Tier Name
-                                </label>
-                                <Input
-                                    value={editForm.data.name}
-                                    onChange={(e) =>
-                                        editForm.setData("name", e.target.value)
-                                    }
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Price Amount
-                                </label>
-                                <Input
-                                    value={editForm.data.price}
-                                    onChange={(e) =>
-                                        editForm.setData("price", e.target.value)
-                                    }
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    Billing Cycle
-                                </label>
-                                <Input
-                                    value={editForm.data.billing_cycle}
-                                    onChange={(e) =>
-                                        editForm.setData(
-                                            "billing_cycle",
-                                            e.target.value
-                                        )
-                                    }
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
-                                    CTA Button Label
-                                </label>
-                                <Input
-                                    value={editForm.data.cta_text}
-                                    onChange={(e) =>
-                                        editForm.setData("cta_text", e.target.value)
-                                    }
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
-                                Headline Description
-                            </label>
-                            <Input
-                                value={editForm.data.headline}
-                                onChange={(e) =>
-                                    editForm.setData("headline", e.target.value)
-                                }
-                                required
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
-                            <div>
-                                <span className="text-xs font-semibold text-white block">
-                                    Flagship / Popular Tier
-                                </span>
-                                <span className="text-[11px] text-neutral-400 block">
-                                    Highlight card with prominent lime accent borders.
-                                </span>
-                            </div>
-                            <Switch
-                                checked={editForm.data.is_popular}
-                                onCheckedChange={(val) =>
-                                    editForm.setData("is_popular", val)
-                                }
-                            />
-                        </div>
-
-                        <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setEditingPlan(null)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                disabled={editForm.processing}
-                            >
-                                {editForm.processing ? "Saving..." : "Save Modifications"}
+                                {form.processing
+                                    ? "Saving..."
+                                    : editingPlan
+                                      ? "Save Changes"
+                                      : "Publish Credit Plan"}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -433,20 +439,17 @@ export default function PricingIndex({ plans = [] }: PricingIndexProps) {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Purge Commercial Tier?</AlertDialogTitle>
+                        <AlertDialogTitle>Delete Credit Plan?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you certain you wish to purge tier{" "}
-                            <span className="text-white font-semibold">
-                                {planToDelete?.name}
-                            </span>
-                            ?
+                            Remove{" "}
+                            <span className="font-semibold text-ink">{planToDelete?.name}</span>{" "}
+                            from <code className="font-mono">/pricing</code>? Existing client purchases
+                            will keep their historical credit snapshot unchanged.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete}>
-                            Purge
-                        </AlertDialogAction>
+                        <AlertDialogAction onClick={handleDelete}>Delete Plan</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

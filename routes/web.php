@@ -40,6 +40,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkController;
+use App\Http\Middleware\EnsureClientAccount;
 use App\Models\Project;
 use App\Services\Security\EmailAndSpamGuard;
 use Illuminate\Http\Request;
@@ -229,8 +230,8 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
     ->middleware('throttle:public-contact')
     ->name('ai-preview.generate');
 
-// Protected Client Portal & Order / Quote Submission Routes (Requires Verified Account)
-Route::middleware(['auth', 'verified'])->group(function () {
+// Protected Client Portal & Order / Quote Submission Routes (Requires Verified Client Account)
+Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
     Route::get('/dashboard', fn () => redirect()->route('client.portal'))->name('dashboard');
     Route::post('/portal/profile', [ClientPortalController::class, 'updateProfile'])->name('client.portal.profile');
@@ -243,6 +244,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
         ->middleware('throttle:public-contact')
         ->name('try-on.quote.store');
+
+    Route::post('/pricing/buy-plan', [OrderController::class, 'storeCreditPlanOrder'])
+        ->middleware('throttle:public-contact')
+        ->name('pricing.buy-plan');
+
+    Route::post('/portal/use-credits', [OrderController::class, 'storeCreditUsageOrder'])
+        ->middleware('throttle:public-contact')
+        ->name('portal.use-credits');
 });
 
 // Agency Team & Careers

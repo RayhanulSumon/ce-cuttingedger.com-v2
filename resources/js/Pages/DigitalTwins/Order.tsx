@@ -15,7 +15,7 @@ import {
     Wand2,
 } from 'lucide-react';
 import { AiPreviewPanel } from '@/Components/Common/AiPreviewPanel';
-import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
+import { isClientUser, isVerifiedClient, OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { OrderSuccessCard } from '@/Components/Common/OrderSuccessCard';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
@@ -145,11 +145,13 @@ export default function DigitalTwinOrder({
                 company?: string | null;
                 phone?: string | null;
                 email_verified_at?: string | null;
+                role?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
         errors?: Record<string, string>;
     }>().props;
+    const clientUser = isClientUser(auth?.user) ? auth?.user ?? null : null;
 
     const twins = digitalTwins && digitalTwins.length > 0 ? digitalTwins : DIGITAL_TWINS;
     const twinAttributes = attributes && attributes.length > 0 ? attributes : DEFAULT_ATTRIBUTES;
@@ -237,10 +239,10 @@ export default function DigitalTwinOrder({
     );
 
     // Client & submission fields (pre-filled from draft or authenticated client account)
-    const [name, setName] = useState(initialDraft?.name || auth?.user?.name || '');
-    const [email, setEmail] = useState(initialDraft?.email || auth?.user?.email || '');
-    const [company, setCompany] = useState(initialDraft?.company || auth?.user?.company || '');
-    const [phone, setPhone] = useState(initialDraft?.phone || auth?.user?.phone || '');
+    const [name, setName] = useState(initialDraft?.name || clientUser?.name || '');
+    const [email, setEmail] = useState(initialDraft?.email || clientUser?.email || '');
+    const [company, setCompany] = useState(initialDraft?.company || clientUser?.company || '');
+    const [phone, setPhone] = useState(initialDraft?.phone || clientUser?.phone || '');
     const [cloudLink, setCloudLink] = useState(initialDraft?.cloudLink ?? '');
     const [instructions, setInstructions] = useState(initialDraft?.instructions ?? '');
     const [attachments, setAttachments] = useState<File[]>([]);
@@ -304,12 +306,12 @@ export default function DigitalTwinOrder({
     const submitCardRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (auth?.user?.email_verified_at && consumeAuthReturn()) {
+        if (isVerifiedClient(clientUser) && consumeAuthReturn()) {
             requestAnimationFrame(() => {
                 submitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         }
-    }, [auth?.user?.email_verified_at]);
+    }, [clientUser?.email_verified_at]);
 
     const handleSelectTwin = (twin: DigitalTwinModel | null) => {
         if (!twin) {
@@ -398,14 +400,14 @@ export default function DigitalTwinOrder({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!auth?.user) {
+        if (!clientUser) {
             saveDraft();
             markAuthReturn();
             router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/digital-twins/order'))}`);
             return;
         }
 
-        if (!auth.user.email_verified_at) {
+        if (!isVerifiedClient(clientUser)) {
             saveDraft();
             markAuthReturn();
             router.visit('/verify-email');
@@ -1281,7 +1283,7 @@ export default function DigitalTwinOrder({
                                 >
                                     {isSubmitting
                                         ? 'Submitting Order...'
-                                        : !auth?.user
+                                        : !clientUser
                                           ? 'Sign in & Submit Order'
                                           : mode === 'custom'
                                             ? 'Submit Order'

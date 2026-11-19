@@ -8,12 +8,15 @@ use App\Models\DigitalTwin;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\TryOnLook;
+use App\Models\User;
 use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -299,6 +302,141 @@ class OrderController extends Controller
         $this->notifyOrderCreated($order);
 
         return back()->with('success', "Virtual Try-On Quote Request #{$order->order_number} received! Our specialists will review your garments and return a quote and proof within one business day.");
+    }
+
+    /**
+     * Store a Credit Plan purchase request that activates studio credits upon admin approval.
+     */
+    public function storeCreditPlanOrder(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'plan_name' => ['required', 'string', 'max:120'],
+            'base_credits' => ['required', 'integer', 'min:10', 'max:500000'],
+            'bonus_credits' => ['required', 'integer', 'min:0', 'max:500000'],
+            'total_price' => ['required', 'numeric', 'min:1', 'max:500000'],
+            'billing_type' => ['required', 'in:one_time,monthly'],
+            'features' => ['nullable', 'array'],
+            'features.*' => ['string', 'max:255'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $user = $request->user();
+        $totalPrice = (float) $validated['total_price'];
+        $totalCredits = (int) $validated['base_credits'] + (int) $validated['bonus_credits'];
+        $effectiveRate = round($totalPrice / max(1, $totalCredits), 4);
+        $featuresSnapshot = array_values(array_filter(
+            array_map('trim', (array) ($validated['features'] ?? [])),
+            fn (string $item): bool => $item !== ''
+        ));
+
+        $order = Order::create([
+            'order_type' => 'credit_plan',
+            'user_id' => $user->id,
+            'client_name' => $user->name,
+            'client_email' => strtolower($user->email),
+            'client_phone' => $user->phone,
+            'company' => $user->company,
+            'ip_address' => $request->ip(),
+            'service_name' => "{$validated['plan_name']} ({$totalCredits} Credits)",
+            'service_slug' => 'credit-plan',
+            'complexity' => $validated['billing_type'],
+            'quantity' => $totalCredits,
+            'uploaded_count' => 0,
+            'unit_price' => round($totalPrice / max(1, $totalCredits), 2),
+            'total_price' => $totalPrice,
+            'currency' => 'USD',
+            'turnaround' => 'Instant on Approval',
+            'specifications' => [
+                'plan_name' => $validated['plan_name'],
+                'base_credits' => (int) $validated['base_credits'],
+                'bonus_credits' => (int) $validated['bonus_credits'],
+                'total_credits' => $totalCredits,
+                'total_price' => $totalPrice,
+                'effective_rate_per_credit' => $effectiveRate,
+                'billing_type' => $validated['billing_type'],
+                'features_snapshot' => $featuresSnapshot,
+                'snapshot_captured_at' => now()->toISOString(),
+                'credits_activated' => false,
+            ],
+            'instructions' => $validated['notes'] ?? null,
+            'status' => 'pending',
+            'payment_status' => 'unpaid',
+            'source' => 'pricing_credit_plan',
+        ]);
+
+        $this->notifyOrderCreated($order);
+
+        return redirect()->route('client.portal')->with(
+            'success',
+            "Credit plan order #{$order->order_number} submitted for {$totalCredits} studio credits! Your credits will activate as soon as our team confirms your plan."
+        );
+    }
+
+    /**
+     * Spend active studio credits from the client's wallet to launch a production order.
+     */
+    public function storeCreditUsageOrder(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'service_category' => ['required', 'string', 'max:120'],
+            'asset_quantity' => ['required', 'integer', 'min:1', 'max:50000'],
+            'credits_to_spend' => ['required', 'integer', 'min:1', 'max:100000'],
+            'turnaround' => ['required', 'string', 'max:80'],
+            'cloud_link' => ['nullable', 'string', 'max:1000'],
+            'instructions' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $creditsToSpend = (int) $validated['credits_to_spend'];
+
+        $order = DB::transaction(function () use ($request, $validated, $creditsToSpend): Order {
+            $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
+
+            if ($user->credits_balance < $creditsToSpend) {
+                throw ValidationException::withMessages([
+                    'credits_to_spend' => 'Insufficient studio credits in your wallet for this order.',
+                ]);
+            }
+
+            $user->credits_balance -= $creditsToSpend;
+            $user->save();
+
+            return Order::create([
+                'order_type' => 'credit_usage',
+                'user_id' => $user->id,
+                'client_name' => $user->name,
+                'client_email' => strtolower($user->email),
+                'client_phone' => $user->phone,
+                'company' => $user->company,
+                'ip_address' => $request->ip(),
+                'service_name' => "{$validated['service_category']} ({$creditsToSpend} Credits)",
+                'service_slug' => Str::slug($validated['service_category']),
+                'complexity' => 'credit_redemption',
+                'quantity' => (int) $validated['asset_quantity'],
+                'uploaded_count' => 0,
+                'unit_price' => 0,
+                'total_price' => 0,
+                'currency' => 'USD',
+                'turnaround' => $validated['turnaround'],
+                'cloud_link' => $validated['cloud_link'] ?? null,
+                'instructions' => $validated['instructions'],
+                'specifications' => [
+                    'paid_with_credits' => true,
+                    'credits_spent' => $creditsToSpend,
+                    'remaining_credits' => (int) $user->credits_balance,
+                    'service_category' => $validated['service_category'],
+                ],
+                'status' => 'in_production',
+                'payment_status' => 'paid',
+                'source' => 'portal_credit_redemption',
+            ]);
+        });
+
+        $this->notifyOrderCreated($order);
+
+        return redirect()->route('client.portal')->with(
+            'success',
+            "Order #{$order->order_number} launched using {$creditsToSpend} studio credits!"
+        );
     }
 
     /**

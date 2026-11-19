@@ -16,7 +16,7 @@ import {
     UserPlus,
 } from 'lucide-react';
 import { AiPreviewPanel } from '@/Components/Common/AiPreviewPanel';
-import { OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
+import { isClientUser, isVerifiedClient, OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
 import { OrderSuccessCard } from '@/Components/Common/OrderSuccessCard';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
@@ -156,11 +156,13 @@ export default function TryOnQuote({
                 company?: string | null;
                 phone?: string | null;
                 email_verified_at?: string | null;
+                role?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
         errors?: Record<string, string>;
     }>().props;
+    const clientUser = isClientUser(auth?.user) ? auth?.user ?? null : null;
 
     const looks = tryOnLooks && tryOnLooks.length > 0 ? tryOnLooks : LOOKS;
 
@@ -225,12 +227,12 @@ export default function TryOnQuote({
     const submitCardRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (auth?.user?.email_verified_at && consumeAuthReturn()) {
+        if (isVerifiedClient(clientUser) && consumeAuthReturn()) {
             requestAnimationFrame(() => {
                 submitCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         }
-    }, [auth?.user?.email_verified_at]);
+    }, [clientUser?.email_verified_at]);
 
     // 3 Dedicated Garment Upload Slots: 1. Top, 2. Bottom / Below, 3. Shoes
     const [garmentTop, setGarmentTop] = useState<File | null>(null);
@@ -246,10 +248,10 @@ export default function TryOnQuote({
     const [instructions, setInstructions] = useState(initialDraft?.instructions ?? '');
     const [cloudLink, setCloudLink] = useState(initialDraft?.cloudLink ?? '');
     const [monthlyVolume, setMonthlyVolume] = useState(initialDraft?.monthlyVolume ?? VOLUME_OPTIONS[0]);
-    const [name, setName] = useState(initialDraft?.name || auth?.user?.name || '');
-    const [email, setEmail] = useState(initialDraft?.email || auth?.user?.email || '');
-    const [company, setCompany] = useState(initialDraft?.company || auth?.user?.company || '');
-    const [phone, setPhone] = useState(initialDraft?.phone || auth?.user?.phone || '');
+    const [name, setName] = useState(initialDraft?.name || clientUser?.name || '');
+    const [email, setEmail] = useState(initialDraft?.email || clientUser?.email || '');
+    const [company, setCompany] = useState(initialDraft?.company || clientUser?.company || '');
+    const [phone, setPhone] = useState(initialDraft?.phone || clientUser?.phone || '');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(flash?.success ?? null);
 
@@ -343,14 +345,14 @@ export default function TryOnQuote({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!auth?.user) {
+        if (!clientUser) {
             saveDraft();
             markAuthReturn();
             router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/virtual-try-on/quote'))}`);
             return;
         }
 
-        if (!auth.user.email_verified_at) {
+        if (!isVerifiedClient(clientUser)) {
             saveDraft();
             markAuthReturn();
             router.visit('/verify-email');
@@ -933,7 +935,7 @@ export default function TryOnQuote({
                                 >
                                     {isSubmitting
                                         ? 'Submitting Order...'
-                                        : !auth?.user
+                                        : !clientUser
                                           ? 'Sign in & Submit Order'
                                           : 'Submit Order'}
                                 </button>

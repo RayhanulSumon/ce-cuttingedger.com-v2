@@ -16,7 +16,25 @@ export interface CapabilityNavItem extends CapabilityNavChild {
     children: CapabilityNavChild[];
 }
 
+export interface AuthUser {
+    id: number;
+    name: string;
+    email: string;
+    company?: string | null;
+    phone?: string | null;
+    avatar?: string | null;
+    email_verified_at?: string | null;
+    status?: string | null;
+    role?: string | null;
+    permissions?: string[];
+    credits_balance?: number;
+    active_plan_name?: string | null;
+}
+
 export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> {
+    auth?: {
+        user?: AuthUser | null;
+    };
     settings: SiteSettings;
     capabilities_nav?: CapabilityNavItem[];
     flash?: {

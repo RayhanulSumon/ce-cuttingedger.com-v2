@@ -32,6 +32,8 @@ class Order extends Model
             if (empty($order->order_number)) {
                 $prefix = match (true) {
                     $order->payment_status === 'free_trial' || $order->source === 'web_trial' || $order->source === 'chat_trial' => 'CE-TRL-',
+                    $order->order_type === 'credit_plan' => 'CE-CRD-',
+                    $order->order_type === 'credit_usage' => 'CE-USE-',
                     str_starts_with((string) $order->order_type, 'digital_twin') => 'CE-TWN-',
                     $order->order_type === 'virtual_try_on_quote' => 'CE-VTO-',
                     default => 'CE-ORD-',

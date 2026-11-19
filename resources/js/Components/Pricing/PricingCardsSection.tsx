@@ -1,345 +1,584 @@
-import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
-import { Check, ArrowUpRight, ShieldCheck, Zap, Sparkles, Layers, Box, Cpu, Eye } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { ArrowUpRight, Check, Coins, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { isClientUser, isVerifiedClient, OrderAuthNotice } from '@/Components/Common/OrderAuthNotice';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/Components/ui/dialog';
+import { PageProps } from '@/types';
+import { PricingPlan } from '@/types/models';
 
-interface PricingTier {
-    id: string;
-    name: string;
-    badge: string;
-    description: string;
-    pricingLabel: string;
-    pricingSubtext: string;
-    sla: string;
-    capacity: string;
-    popular?: boolean;
-    buttonText: string;
-    icon: React.ComponentType<{ className?: string }>;
-    features: { bold: string; text: string }[];
+type BillingType = 'one_time' | 'monthly';
+
+interface SelectedPlanPayload {
+    plan_name: string;
+    base_credits: number;
+    bonus_credits: number;
+    total_price: number;
+    billing_type: BillingType;
+    features: string[];
+    notes: string;
 }
 
-export function PricingCardsSection() {
-    const [activeTab, setActiveTab] = useState<'2d' | '3d'>('2d');
+interface PresetCreditPlan {
+    id: string;
+    eyebrow: string;
+    name: string;
+    description: string;
+    baseCredits: number;
+    bonusCredits: number;
+    totalPrice: number;
+    effectiveRate: string;
+    popular?: boolean;
+    buttonLabel: string;
+    features: string[];
+}
 
-    // 2D Catalog Retouching & Post-Production Tiers
-    const tiers2D: PricingTier[] = [
-        {
-            id: 'starter-2d',
-            name: 'Essential Studio',
-            badge: 'Catalog Prep',
-            icon: Layers,
-            description: 'Spotless product cutouts, vector clipping paths, and clean catalog delivery.',
-            pricingLabel: 'Per-Asset Volume Quote',
-            pricingSubtext: 'No monthly minimum • Pay as you go',
-            sla: '24h Standard SLA',
-            capacity: 'Up to 500 assets/day',
-            buttonText: 'Request Volume Quote',
-            features: [
-                { bold: '100% Hand-drawn', text: 'pen clipping paths & alpha masks' },
-                { bold: 'Pure white (RGB 255)', text: '& transparent format exports' },
-                { bold: 'Natural drop shadows', text: '& studio reflection sculpting' },
-                { bold: '3-Stage human QA', text: 'with unlimited free revisions' },
-            ],
-        },
-        {
-            id: 'pro-2d',
-            name: 'Pro Commercial',
-            badge: 'High-Velocity Retail',
-            popular: true,
-            icon: Sparkles,
-            description: 'Master retouching for fashion, apparel brands, and fast-moving creative agencies.',
-            pricingLabel: 'Studio Monthly Retainer',
-            pricingSubtext: 'Guaranteed daily throughput • Priority rush',
-            sla: '12–18h Rush SLA',
-            capacity: '500 to 3,000+ assets/day',
-            buttonText: 'Request Retainer Quote',
-            features: [
-                { bold: 'Everything in Essential', text: 'included as standard' },
-                { bold: 'Ghost mannequin & 2D Virtual Try-On', text: 'neckline jointing & AI model draping' },
-                { bold: 'Frequency separation', text: 'high-end skin & apparel retouching' },
-                { bold: 'Colorway swaps', text: '& delta-E fabric swatch matching' },
-            ],
-        },
-        {
-            id: 'enterprise-2d',
-            name: 'Enterprise Vanguard',
-            badge: 'Bespoke 24/7',
-            icon: ShieldCheck,
-            description: 'Dedicated infrastructure for global retailers, marketplaces, and high-volume catalogs.',
-            pricingLabel: 'Custom Enterprise Contract',
-            pricingSubtext: 'Dedicated artist squad • Executive SLA',
-            sla: 'Sub-6h Priority SLA',
-            capacity: 'Unlimited dedicated shifts',
-            buttonText: 'Contact Enterprise',
-            features: [
-                { bold: 'Everything in Pro Commercial', text: 'included' },
-                { bold: 'Dedicated 24/7 squad', text: 'synchronized across global timezones' },
-                { bold: 'Automated SFTP / S3', text: '& direct API pipeline integration' },
-                { bold: 'Guaranteed peak burst', text: 'capacity during seasonal drops' },
-            ],
-        },
-    ];
+const PRESET_PLANS: PresetCreditPlan[] = [
+    {
+        id: 'starter',
+        eyebrow: 'Starter Pack',
+        name: 'Starter Credit Pack',
+        description: 'Ideal for boutique shoots, product launches, and testing studio workflows.',
+        baseCredits: 500,
+        bonusCredits: 0,
+        totalPrice: 250,
+        effectiveRate: '$0.50 / credit',
+        buttonLabel: 'Buy Starter Plan',
+        features: [
+            '500 studio credits never expire',
+            'Use across 2D, 3D, DTP & Try-On',
+            'Unlimited revisions with 2-step QA',
+        ],
+    },
+    {
+        id: 'studio',
+        eyebrow: 'Most Popular',
+        name: 'Studio Credit Pack',
+        description: 'Built for growing fashion and e-commerce brands with recurring catalog drops.',
+        baseCredits: 2000,
+        bonusCredits: 300,
+        totalPrice: 900,
+        effectiveRate: '$0.39 / credit',
+        popular: true,
+        buttonLabel: 'Buy Studio Plan',
+        features: [
+            '2,000 + 300 bonus = 2,300 credits',
+            '12–18h priority studio turnaround',
+            'Saved brand presets & dedicated QA',
+        ],
+    },
+    {
+        id: 'scale',
+        eyebrow: 'High Volume',
+        name: 'Scale Credit Pack',
+        description: 'Maximum per-credit value for multi-season rollouts and enterprise teams.',
+        baseCredits: 5000,
+        bonusCredits: 1250,
+        totalPrice: 2000,
+        effectiveRate: '$0.32 / credit',
+        buttonLabel: 'Buy Scale Plan',
+        features: [
+            '5,000 + 1,250 bonus = 6,250 credits',
+            'Sub-6h rush lane & multi-team access',
+            'Dedicated pod & SFTP / S3 delivery',
+        ],
+    },
+];
 
-    // 3D CGI & Spatial Assets Tiers
-    const tiers3D: PricingTier[] = [
-        {
-            id: 'starter-3d',
-            name: '3D Product Modeling',
-            badge: 'CAD & Mesh Topology',
-            icon: Box,
-            description: 'High-fidelity 3D mesh reconstruction from industrial CAD, sketches, or 2D photo references.',
-            pricingLabel: 'Per-Model Volume Quote',
-            pricingSubtext: 'Commercial ownership • Multi-format exports',
-            sla: '48h Initial Turnaround',
-            capacity: 'Up to 50 models/month',
-            buttonText: 'Request 3D Model Quote',
-            features: [
-                { bold: 'Industrial CAD conversion', text: 'from STEP, IGES, Rhino & SolidWorks' },
-                { bold: 'Clean quad topology', text: 'optimized for real-time web & mobile' },
-                { bold: 'Accurate micron scale', text: 'exact dimension matching to spec sheets' },
-                { bold: 'Multi-format exports', text: 'GLTF, USDZ, FBX, OBJ & Blender source' },
-            ],
-        },
-        {
-            id: 'pro-3d',
-            name: 'Photorealistic CGI',
-            badge: 'Virtual Photography',
-            popular: true,
-            icon: Sparkles,
-            description: 'Hyper-realistic virtual studio renders with infinite camera angles and zero physical reshoots.',
-            pricingLabel: 'CGI Catalog Retainer',
-            pricingSubtext: 'Multi-angle batch outputs • Photoreal 8K PBR',
-            sla: '24–48h Render Delivery',
-            capacity: '100 to 500+ renders/month',
-            buttonText: 'Request CGI Quote',
-            features: [
-                { bold: 'Everything in 3D Modeling', text: 'included' },
-                { bold: '8K PBR material maps', text: 'procedural leather, glass, metals & fabrics' },
-                { bold: 'Virtual studio lighting', text: 'cyclorama, architectural & studio HDRI' },
-                { bold: 'Infinite colorway swaps', text: 'instant digital variations on demand' },
-            ],
-        },
-        {
-            id: 'enterprise-3d',
-            name: '3D Configurator & AR',
-            badge: 'Spatial & Web3D',
-            icon: Cpu,
-            description: 'Interactive web 3D product configurators, 360° spin viewers, and Apple Vision / iOS AR spatial assets.',
-            pricingLabel: 'Custom Spatial Contract',
-            pricingSubtext: 'Dedicated 3D pipeline squad • Engine integration',
-            sla: 'Continuous Sprint SLA',
-            capacity: 'Full enterprise integration',
-            buttonText: 'Contact Spatial Team',
-            features: [
-                { bold: 'Everything in Photorealistic CGI', text: 'included' },
-                { bold: 'Interactive 3D viewers', text: 'lightweight WebGL / Three.js / Babylon' },
-                { bold: 'QuickLook & WebXR AR', text: 'instant 1-tap mobile augmented reality' },
-                { bold: 'Headless PIM / CMS', text: 'automated 3D asset syndication' },
-            ],
-        },
-    ];
+const SLIDER_PRESETS = [500, 1000, 2500, 5000, 10000];
 
-    const currentTiers = activeTab === '2d' ? tiers2D : tiers3D;
+const CREDIT_USAGE_GUIDE = [
+    { service: '2D Retouching', cost: '1 credit / image' },
+    { service: 'Ghost Mannequin', cost: '2 credits / image' },
+    { service: 'Virtual Try-On / DTP', cost: '4 credits' },
+    { service: '3D / Digital Twin', cost: '50 credits' },
+];
 
-    const handleOpenContact = (planName: string) => {
-        if (typeof window !== 'undefined') {
-            window.dispatchEvent(
-                new CustomEvent('ce:open-contact', {
-                    detail: { plan: planName },
-                })
-            );
+function getVolumeBonusPercent(credits: number): number {
+    if (credits >= 10000) return 30;
+    if (credits >= 5000) return 25;
+    if (credits >= 3500) return 20;
+    if (credits >= 2000) return 15;
+    if (credits >= 1000) return 10;
+    return 0;
+}
+
+/** Studio Credit Plans: admin-managed packs, a customizable credit slider builder, and direct purchase checkout. */
+export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
+    const { auth } = usePage<PageProps>().props;
+    const user = auth?.user ?? null;
+    const clientUser = isClientUser(user) ? user : null;
+    const isVerified = isVerifiedClient(user);
+
+    const [customCredits, setCustomCredits] = useState<number>(2500);
+    const [billingType, setBillingType] = useState<BillingType>('one_time');
+    const [checkoutPlan, setCheckoutPlan] = useState<SelectedPlanPayload | null>(null);
+
+    const displayPlans = useMemo<PresetCreditPlan[]>(() => {
+        if (!plans || plans.length === 0) {
+            return PRESET_PLANS;
         }
+
+        return plans.map((plan) => {
+            const baseCredits = plan.base_credits ?? 500;
+            const bonusCredits = plan.bonus_credits ?? 0;
+            const totalCredits = Math.max(1, baseCredits + bonusCredits);
+            const totalPrice = Number(
+                plan.price_amount ?? (Number(String(plan.price).replace(/[^0-9.]/g, '')) || 250)
+            );
+
+            return {
+                id: String(plan.id || plan.slug),
+                eyebrow: plan.badge || (plan.is_popular ? 'Most Popular' : 'Credit Pack'),
+                name: plan.name,
+                description: plan.headline,
+                baseCredits,
+                bonusCredits,
+                totalPrice,
+                effectiveRate: `$${(totalPrice / totalCredits).toFixed(2)} / credit`,
+                popular: Boolean(plan.is_popular),
+                buttonLabel: plan.cta_text || `Buy ${plan.name}`,
+                features: Array.isArray(plan.features) ? plan.features : [],
+            };
+        });
+    }, [plans]);
+
+    const buyForm = useForm<SelectedPlanPayload>({
+        plan_name: '',
+        base_credits: 500,
+        bonus_credits: 0,
+        total_price: 250,
+        billing_type: 'one_time',
+        features: [],
+        notes: '',
+    });
+
+    const customQuote = useMemo(() => {
+        const volumeBonusPct = getVolumeBonusPercent(customCredits);
+        const monthlyBonusPct = billingType === 'monthly' ? 10 : 0;
+        const totalBonusPct = volumeBonusPct + monthlyBonusPct;
+        const bonusCredits = Math.round((customCredits * totalBonusPct) / 100);
+        const totalCredits = customCredits + bonusCredits;
+        const totalPrice = Number((customCredits * 0.5).toFixed(2));
+        const effectivePerCredit = totalPrice / Math.max(1, totalCredits);
+
+        return {
+            volumeBonusPct,
+            monthlyBonusPct,
+            totalBonusPct,
+            bonusCredits,
+            totalCredits,
+            totalPrice,
+            effectivePerCredit: effectivePerCredit.toFixed(2),
+        };
+    }, [customCredits, billingType]);
+
+    const openBuyModal = (plan: Omit<SelectedPlanPayload, 'notes'>) => {
+        const payload: SelectedPlanPayload = { ...plan, notes: '' };
+        setCheckoutPlan(payload);
+        buyForm.setData(payload);
+        buyForm.clearErrors();
     };
 
+    const handleConfirmPurchase = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!checkoutPlan || !isVerified) return;
+
+        buyForm.post(route('pricing.buy-plan'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setCheckoutPlan(null);
+                buyForm.reset();
+            },
+        });
+    };
+
+    const sliderProgress = ((customCredits - 250) / (20000 - 250)) * 100;
+
     return (
-        <section
-            id="pricing-plans-section"
-            className="relative py-16 sm:py-20 bg-page border-t border-ink/[0.06] select-none overflow-hidden"
-        >
-            {/* Ambient Lighting */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[25rem] bg-primary/[0.04] rounded-full blur-[180px] pointer-events-none" />
-
-            <div className="max-w-7xl mx-auto px-4 xs:px-6 lg:px-8 relative z-10">
-                {/* Minimalist Centered Header */}
-                <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-12 space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-ink/[0.08] text-[11px] font-mono uppercase tracking-[0.2em] text-primary-ink font-semibold">
-                        <span>Production Capacity & SLAs</span>
-                    </div>
-
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-ink tracking-tight">
-                        Bespoke <span className="text-primary-ink">Production Tiers</span>
-                    </h2>
-
-                    <p className="text-sm sm:text-base text-muted font-sans leading-relaxed max-w-2xl mx-auto">
-                        Select between high-volume 2D catalog retouching or full 3D CGI and spatial asset pipelines.
-                    </p>
-
-                    {/* Interactive 2D vs 3D Tab Switcher */}
-                    <div className="pt-4 flex items-center justify-center">
-                        <div className="inline-flex p-1.5 rounded-2xl bg-white/[0.03] border border-ink/10 backdrop-blur-md shadow-lg">
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab('2d')}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
-                                    activeTab === '2d'
-                                        ? 'bg-primary text-white shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
-                                        : 'text-muted hover:text-ink hover:bg-white/[0.04]'
-                                }`}
-                            >
-                                <Layers className="w-4 h-4" />
-                                <span>2D Retouching (3 Tiers)</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab('3d')}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer ${
-                                    activeTab === '3d'
-                                        ? 'bg-primary text-white shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
-                                        : 'text-muted hover:text-ink hover:bg-white/[0.04]'
-                                }`}
-                            >
-                                <Box className="w-4 h-4" />
-                                <span>3D CGI & Spatial (3 Tiers)</span>
-                            </button>
+        <section id="pricing-plans-section" className="bg-page py-14 sm:py-18">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                {/* Active Client Credit Wallet Status */}
+                {clientUser && (
+                    <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-3xl border border-primary/25 bg-surface px-6 py-4 shadow-xs sm:flex-row sm:items-center">
+                        <div className="flex items-center gap-3.5">
+                            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
+                                <Coins className="h-5 w-5" />
+                            </span>
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">
+                                    Your Studio Credit Wallet
+                                </p>
+                                <p className="mt-0.5 text-base font-extrabold text-ink">
+                                    {(clientUser.credits_balance ?? 0).toLocaleString()} Credits Available
+                                    {clientUser.active_plan_name && (
+                                        <span className="ml-2 text-xs font-semibold text-primary-ink">
+                                            · {clientUser.active_plan_name}
+                                        </span>
+                                    )}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                {/* 3 Minimalist Tier Cards for Selected Tab */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                    {currentTiers.map((tier) => {
-                        const isFeatured = tier.popular;
-                        const Icon = tier.icon;
+                        <Link
+                            href="/portal"
+                            prefetch
+                            className="inline-flex items-center gap-1.5 rounded-full border border-ink/15 bg-page px-5 py-2 text-xs font-bold text-ink transition-colors hover:border-primary hover:text-primary-ink"
+                        >
+                            <span>Manage & Use Credits</span>
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                    </div>
+                )}
+
+                {/* 3 Simple Preset Credit Plan Cards */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    {displayPlans.map((plan) => {
+                        const isPopular = Boolean(plan.popular);
+                        const totalCredits = plan.baseCredits + plan.bonusCredits;
 
                         return (
-                            <div
-                                key={tier.id}
-                                className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 ${
-                                    isFeatured
-                                        ? 'bg-gradient-to-b from-primary/10 to-white border-2 border-primary/50 shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary)_12%,transparent)]'
-                                        : 'bg-gradient-to-b from-white to-white border border-ink/[0.08] hover:border-ink/20'
+                            <article
+                                key={plan.id}
+                                className={`flex flex-col justify-between rounded-3xl p-7 sm:p-8 transition-colors duration-300 ${
+                                    isPopular
+                                        ? 'border-2 border-primary bg-surface shadow-[0_20px_50px_-24px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
+                                        : 'border border-ink/10 bg-surface hover:border-ink/25'
                                 }`}
                             >
-                                {/* Featured Ribbon */}
-                                {isFeatured && (
-                                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
-                                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary text-white text-[10px] font-mono uppercase tracking-widest font-black shadow-lg">
-                                            <Zap className="w-3 h-3 fill-white text-white" />
-                                            <span>Most Requested Tier</span>
-                                        </span>
-                                    </div>
-                                )}
-
                                 <div>
-                                    {/* Header: Icon + Badge + Title */}
-                                    <div className="flex items-center justify-between gap-3 mb-4">
-                                        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-ink/[0.08] flex items-center justify-center text-primary-ink">
-                                            <Icon className="w-5 h-5" />
-                                        </div>
-                                        <span className="text-[10px] font-mono uppercase tracking-wider text-muted px-2.5 py-1 rounded-md bg-white/[0.03] border border-ink/[0.06]">
-                                            {tier.badge}
-                                        </span>
-                                    </div>
-
-                                    <h3 className="text-xl sm:text-2xl font-display font-bold text-ink mb-2">
-                                        {tier.name}
-                                    </h3>
-
-                                    <p className="text-xs sm:text-sm text-muted font-sans leading-relaxed mb-6">
-                                        {tier.description}
-                                    </p>
-
-                                    {/* Distinct Engagement & Billing Model */}
-                                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-ink/[0.06] mb-5">
-                                        <div className="text-sm sm:text-base font-display font-bold text-ink">
-                                            {tier.pricingLabel}
-                                        </div>
-                                        <div className="text-[11px] font-sans text-muted mt-0.5">
-                                            {tier.pricingSubtext}
-                                        </div>
-                                    </div>
-
-                                    {/* High-Contrast 2-Column SLA & Capacity Spec Bar */}
-                                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-ink/[0.04] border border-ink/[0.05] mb-6 text-xs font-mono">
-                                        <div>
-                                            <span className="text-[10px] text-muted uppercase tracking-wider block mb-0.5">
-                                                Turnaround SLA
-                                            </span>
-                                            <span className="text-ink font-bold">
-                                                {tier.sla}
-                                            </span>
-                                        </div>
-                                        <div className="border-l border-ink/[0.07] pl-3">
-                                            <span className="text-[10px] text-muted uppercase tracking-wider block mb-0.5">
-                                                Throughput
-                                            </span>
-                                            <span className="text-ink font-bold">
-                                                {tier.capacity}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Scannable Feature List with Bold Keywords */}
-                                    <div className="space-y-2.5 mb-6">
-                                        {tier.features.map((feature, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-start gap-2.5 text-xs sm:text-[13px] text-ink-2 font-sans leading-snug"
-                                            >
-                                                <Check className="w-3.5 h-3.5 text-primary-ink shrink-0 mt-0.5" />
-                                                <span>
-                                                    <strong className="text-ink font-medium">{feature.bold}</strong> {feature.text}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Action Button */}
-                                <div className="pt-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => handleOpenContact(tier.name)}
-                                        className={`group w-full py-3.5 px-5 rounded-xl font-mono text-xs uppercase tracking-wider font-bold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
-                                            isFeatured
-                                                ? 'bg-primary text-white hover:bg-ink shadow-[0_4px_20px_color-mix(in_srgb,var(--color-primary)_30%,transparent)] hover:shadow-[0_4px_25px_rgba(255,255,255,0.4)]'
-                                                : 'bg-white/[0.05] hover:bg-ink hover:text-white text-ink border border-ink/10 hover:border-ink'
+                                    <span
+                                        className={`inline-block rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] ${
+                                            isPopular ? 'bg-primary text-white' : 'bg-page text-subtle'
                                         }`}
                                     >
-                                        <span>{tier.buttonText}</span>
-                                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                                    </button>
+                                        {plan.eyebrow}
+                                    </span>
+
+                                    <h2 className="mt-5 text-2xl font-display font-extrabold tracking-tight text-ink">
+                                        {plan.name}
+                                    </h2>
+                                    <p className="mt-2 text-sm leading-relaxed text-muted">
+                                        {plan.description}
+                                    </p>
+
+                                    <div className="mt-6 border-y border-ink/10 py-5">
+                                        <div className="flex items-baseline justify-between gap-3">
+                                            <p className="text-3xl font-display font-extrabold tracking-tight text-ink">
+                                                ${plan.totalPrice.toLocaleString()}
+                                            </p>
+                                            <span className="text-xs font-semibold text-primary-ink">
+                                                {plan.effectiveRate}
+                                            </span>
+                                        </div>
+                                        <p className="mt-1.5 text-sm font-bold text-ink-2">
+                                            {totalCredits.toLocaleString()} Total Credits
+                                            {plan.bonusCredits > 0 && (
+                                                <span className="ml-1.5 text-xs font-semibold text-primary-ink">
+                                                    (incl. +{plan.bonusCredits.toLocaleString()} bonus)
+                                                </span>
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <ul className="mt-6 space-y-3">
+                                        {plan.features.map((feature) => (
+                                            <li
+                                                key={feature}
+                                                className="flex items-start gap-2.5 text-sm leading-snug text-ink-2"
+                                            >
+                                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-ink" />
+                                                <span>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
-                            </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        openBuyModal({
+                                            plan_name: plan.name,
+                                            base_credits: plan.baseCredits,
+                                            bonus_credits: plan.bonusCredits,
+                                            total_price: plan.totalPrice,
+                                            billing_type: 'one_time',
+                                            features: plan.features,
+                                        })
+                                    }
+                                    className={`group mt-8 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all duration-300 ${
+                                        isPopular
+                                            ? 'bg-primary text-white hover:bg-primary-hover'
+                                            : 'bg-ink text-white hover:bg-primary'
+                                    }`}
+                                >
+                                    <span>{plan.buttonLabel}</span>
+                                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                                </button>
+                            </article>
                         );
                     })}
                 </div>
 
-                {/* Minimalist Bottom Assurance Strip */}
-                <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-ink/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center text-primary-ink shrink-0">
-                            <ShieldCheck className="w-4 h-4 text-primary-ink" />
+                {/* Interactive Custom Credit Plan Builder */}
+                <div className="mt-10 rounded-3xl border border-ink/10 bg-surface p-6 sm:p-9 shadow-xs">
+                    <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
+                        <div className="space-y-6 lg:col-span-7">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-ink">
+                                        <SlidersHorizontal className="h-3.5 w-3.5" />
+                                        Customize Your Credit Plan
+                                    </span>
+                                    <h3 className="mt-1 text-2xl font-display font-extrabold tracking-tight text-ink">
+                                        Build an exact credit bundle
+                                    </h3>
+                                </div>
+
+                                {/* One-Time vs Monthly Auto-Topup Toggle */}
+                                <div className="inline-flex rounded-full border border-ink/10 bg-page p-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setBillingType('one_time')}
+                                        className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                                            billingType === 'one_time'
+                                                ? 'bg-ink text-white'
+                                                : 'text-muted hover:text-ink'
+                                        }`}
+                                    >
+                                        One-Time Pack
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setBillingType('monthly')}
+                                        className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                                            billingType === 'monthly'
+                                                ? 'bg-primary text-white'
+                                                : 'text-muted hover:text-ink'
+                                        }`}
+                                    >
+                                        Monthly (+10% Bonus)
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Range Slider */}
+                            <div className="space-y-3">
+                                <div className="flex items-baseline justify-between">
+                                    <label
+                                        htmlFor="custom-credits-slider"
+                                        className="text-sm font-semibold text-ink-2"
+                                    >
+                                        Base Credits
+                                    </label>
+                                    <span className="text-2xl font-display font-extrabold tabular-nums text-ink">
+                                        {customCredits.toLocaleString()} Credits
+                                    </span>
+                                </div>
+
+                                <input
+                                    id="custom-credits-slider"
+                                    type="range"
+                                    min={250}
+                                    max={20000}
+                                    step={250}
+                                    value={customCredits}
+                                    onChange={(e) => setCustomCredits(Number(e.target.value))}
+                                    className="h-2.5 w-full cursor-pointer appearance-none rounded-lg accent-primary"
+                                    style={{
+                                        background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${sliderProgress}%, color-mix(in srgb, var(--color-ink) 12%, transparent) ${sliderProgress}%, color-mix(in srgb, var(--color-ink) 12%, transparent) 100%)`,
+                                    }}
+                                />
+
+                                <div className="flex justify-between text-[11px] font-medium text-subtle">
+                                    <span>250 credits</span>
+                                    <span>20,000 credits</span>
+                                </div>
+                            </div>
+
+                            {/* Quick Credit Preset Pills */}
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="mr-1 text-xs font-semibold text-subtle">Quick select:</span>
+                                {SLIDER_PRESETS.map((amount) => (
+                                    <button
+                                        key={amount}
+                                        type="button"
+                                        onClick={() => setCustomCredits(amount)}
+                                        className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                                            customCredits === amount
+                                                ? 'bg-primary text-white'
+                                                : 'border border-ink/10 bg-page text-ink-2 hover:border-primary/40 hover:text-ink'
+                                        }`}
+                                    >
+                                        {amount.toLocaleString()}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        <div>
-                            <h4 className="text-xs sm:text-sm font-display font-bold text-ink">
-                                Risk-Free Proof Of Concept Pilot
-                            </h4>
-                            <p className="text-[11px] sm:text-xs text-muted font-sans">
-                                Test our turnaround and precision on 3 of your actual production files with zero commitment.
-                            </p>
+
+                        {/* Live Custom Plan Summary */}
+                        <div className="flex flex-col justify-between rounded-2xl border border-ink/10 bg-page p-6 lg:col-span-5">
+                            <div>
+                                <div className="flex items-center justify-between gap-2">
+                                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">
+                                        Your Custom Bundle
+                                    </span>
+                                    {customQuote.totalBonusPct > 0 && (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-ink">
+                                            <Sparkles className="h-3 w-3" />+{customQuote.totalBonusPct}% Bonus
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="mt-4 flex items-baseline justify-between gap-4 border-b border-ink/10 pb-4">
+                                    <span className="text-4xl font-display font-extrabold tabular-nums text-ink">
+                                        ${customQuote.totalPrice.toLocaleString()}
+                                    </span>
+                                    <span className="text-xs font-semibold text-primary-ink">
+                                        ${customQuote.effectivePerCredit} / credit
+                                    </span>
+                                </div>
+
+                                <dl className="mt-4 space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                        <dt className="text-muted">Base credits</dt>
+                                        <dd className="font-semibold tabular-nums text-ink">
+                                            {customCredits.toLocaleString()}
+                                        </dd>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <dt className="text-muted">Bonus credits</dt>
+                                        <dd className="font-semibold tabular-nums text-primary-ink">
+                                            +{customQuote.bonusCredits.toLocaleString()}
+                                        </dd>
+                                    </div>
+                                    <div className="flex justify-between border-t border-ink/10 pt-2">
+                                        <dt className="font-bold text-ink">Total studio credits</dt>
+                                        <dd className="font-extrabold tabular-nums text-ink">
+                                            {customQuote.totalCredits.toLocaleString()}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    openBuyModal({
+                                        plan_name: 'Custom Credit Plan',
+                                        base_credits: customCredits,
+                                        bonus_credits: customQuote.bonusCredits,
+                                        total_price: customQuote.totalPrice,
+                                        billing_type: billingType,
+                                        features: [
+                                            `${customCredits.toLocaleString()} base studio credits`,
+                                            customQuote.totalBonusPct > 0
+                                                ? `+${customQuote.totalBonusPct}% bonus (${customQuote.bonusCredits.toLocaleString()} extra credits)`
+                                                : 'Standard pay-as-you-go credit rate',
+                                            'Valid across 2D, 3D, DTP & Virtual Try-On',
+                                        ],
+                                    })
+                                }
+                                className="group mt-6 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-primary-hover"
+                            >
+                                <span>Buy Custom Plan</span>
+                                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <Link
-                        href="/contact"
-                        prefetch
-                        className="px-4 py-2 rounded-xl bg-ink/[0.03] hover:bg-primary hover:text-white border border-ink/10 hover:border-primary text-xs font-mono uppercase tracking-wider text-ink font-semibold transition-all duration-300 shrink-0 cursor-pointer"
-                    >
-                        Contact Studio →
-                    </Link>
+                {/* Compact Credit Usage Guide Strip */}
+                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {CREDIT_USAGE_GUIDE.map((item) => (
+                        <div
+                            key={item.service}
+                            className="rounded-2xl border border-ink/10 bg-surface px-4 py-3 text-center sm:text-left"
+                        >
+                            <p className="text-xs font-bold text-ink">{item.service}</p>
+                            <p className="mt-0.5 text-xs font-semibold text-primary-ink">{item.cost}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
+
+            {/* Buy Credit Plan Confirmation Modal */}
+            <Dialog open={Boolean(checkoutPlan)} onOpenChange={(open) => !open && setCheckoutPlan(null)}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Credit Plan Order</DialogTitle>
+                        <DialogDescription>
+                            Submit your plan order to receive an invoice and activate credits in your Client Portal.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {checkoutPlan && (
+                        <form onSubmit={handleConfirmPurchase} className="space-y-4">
+                            <div className="rounded-2xl border border-ink/10 bg-page p-4 space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-ink">{checkoutPlan.plan_name}</span>
+                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-ink">
+                                        {checkoutPlan.billing_type === 'monthly' ? 'Monthly Plan' : 'One-Time Pack'}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-muted">
+                                    <span>Base + Bonus Credits</span>
+                                    <span className="font-semibold text-ink tabular-nums">
+                                        {checkoutPlan.base_credits.toLocaleString()} + {checkoutPlan.bonus_credits.toLocaleString()} ={' '}
+                                        {(checkoutPlan.base_credits + checkoutPlan.bonus_credits).toLocaleString()} Credits
+                                    </span>
+                                </div>
+                                <div className="flex justify-between border-t border-ink/10 pt-2">
+                                    <span className="font-bold text-ink">Total Investment</span>
+                                    <span className="text-lg font-extrabold text-primary-ink tabular-nums">
+                                        ${checkoutPlan.total_price.toLocaleString()} USD
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="credit-plan-notes" className="block text-xs font-semibold text-ink-2">
+                                    Project or billing notes (optional)
+                                </label>
+                                <textarea
+                                    id="credit-plan-notes"
+                                    rows={3}
+                                    value={buyForm.data.notes}
+                                    onChange={(e) => buyForm.setData('notes', e.target.value)}
+                                    placeholder="Share your PO number, team preferences, or initial batch details..."
+                                    className="w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink placeholder-faint focus:border-primary focus:outline-none"
+                                />
+                            </div>
+
+                            <OrderAuthNotice user={user} fallbackPath="/pricing" />
+
+                            <DialogFooter>
+                                <button
+                                    type="button"
+                                    onClick={() => setCheckoutPlan(null)}
+                                    className="cursor-pointer rounded-full border border-ink/15 px-5 py-2.5 text-xs font-semibold text-ink transition-colors hover:bg-page"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={!isVerified || buyForm.processing}
+                                    className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <span>{buyForm.processing ? 'Submitting...' : 'Confirm & Buy Credit Plan'}</span>
+                                    <ArrowUpRight className="h-3.5 w-3.5" />
+                                </button>
+                            </DialogFooter>
+                        </form>
+                    )}
+                </DialogContent>
+            </Dialog>
         </section>
     );
 }

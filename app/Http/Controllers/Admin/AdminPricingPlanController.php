@@ -29,21 +29,12 @@ class AdminPricingPlanController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'headline' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'string', 'max:50'],
-            'billing_cycle' => ['required', 'string', 'max:50'],
-            'cta_text' => ['required', 'string', 'max:50'],
-            'is_popular' => ['boolean'],
-            'sort_order' => ['integer'],
-        ]);
-
+        $validated = $this->validatePlan($request);
         $validated['slug'] = Str::slug($validated['name']).'-'.Str::random(3);
 
         PricingPlan::create($validated);
 
-        return redirect()->back()->with('success', 'Engagement plan created.');
+        return redirect()->back()->with('success', 'Credit plan created.');
     }
 
     /**
@@ -51,15 +42,7 @@ class AdminPricingPlanController extends Controller
      */
     public function update(Request $request, PricingPlan $pricing): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'headline' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'string', 'max:50'],
-            'billing_cycle' => ['required', 'string', 'max:50'],
-            'cta_text' => ['required', 'string', 'max:50'],
-            'is_popular' => ['boolean'],
-            'sort_order' => ['integer'],
-        ]);
+        $validated = $this->validatePlan($request);
 
         $pricing->update($validated);
 
@@ -75,5 +58,40 @@ class AdminPricingPlanController extends Controller
         $pricing->delete();
 
         return redirect()->back()->with('success', "Plan [{$name}] removed.");
+    }
+
+    /**
+     * Validate and derive display pricing fields for a credit plan.
+     *
+     * @return array<string, mixed>
+     */
+    private function validatePlan(Request $request): array
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'badge' => ['nullable', 'string', 'max:60'],
+            'headline' => ['required', 'string', 'max:255'],
+            'base_credits' => ['required', 'integer', 'min:10', 'max:500000'],
+            'bonus_credits' => ['required', 'integer', 'min:0', 'max:500000'],
+            'price_amount' => ['required', 'numeric', 'min:1', 'max:500000'],
+            'cta_text' => ['required', 'string', 'max:60'],
+            'features' => ['nullable', 'array'],
+            'features.*' => ['string', 'max:255'],
+            'is_popular' => ['boolean'],
+            'sort_order' => ['integer'],
+        ]);
+
+        $priceAmount = (float) $validated['price_amount'];
+        $totalCredits = max(1, (int) $validated['base_credits'] + (int) $validated['bonus_credits']);
+
+        $validated['badge'] = $validated['badge'] ?: ($request->boolean('is_popular') ? 'Most Popular' : 'Credit Pack');
+        $validated['features'] = array_values(array_filter(
+            array_map('trim', (array) ($validated['features'] ?? [])),
+            fn (string $item): bool => $item !== ''
+        ));
+        $validated['price'] = '$'.number_format($priceAmount, 0);
+        $validated['billing_cycle'] = sprintf('$%.2f / credit', $priceAmount / $totalCredits);
+
+        return $validated;
     }
 }

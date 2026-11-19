@@ -36,11 +36,8 @@ class ClientAuthController extends Controller
             }
         }
 
-        if (Auth::check()) {
+        if (Auth::check() && ! Auth::user()->isAdmin()) {
             $user = Auth::user();
-            if ($user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
             if (! $user->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice');
             }
@@ -74,6 +71,16 @@ class ClientAuthController extends Controller
 
         $user = Auth::user();
 
+        if ($user->isAdmin()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Admin accounts cannot sign in through the Client Portal. Please use a client account or sign in at /admin/login.',
+            ]);
+        }
+
         if (! $user->isActive()) {
             Auth::logout();
             $request->session()->invalidate();
@@ -91,10 +98,6 @@ class ClientAuthController extends Controller
         Order::whereNull('user_id')
             ->where('client_email', strtolower($user->email))
             ->update(['user_id' => $user->id]);
-
-        if ($user->isAdmin()) {
-            return redirect()->intended(route('admin.dashboard'));
-        }
 
         if (! $user->hasVerifiedEmail()) {
             return redirect()->route('verification.notice');
@@ -115,7 +118,7 @@ class ClientAuthController extends Controller
             }
         }
 
-        if (Auth::check()) {
+        if (Auth::check() && ! Auth::user()->isAdmin()) {
             return redirect()->intended(route('client.portal'));
         }
 

@@ -15,5 +15,8 @@ class PricingPlan extends Model
         'features' => 'array',
         'is_popular' => 'boolean',
         'sort_order' => 'integer',
+        'base_credits' => 'integer',
+        'bonus_credits' => 'integer',
+        'price_amount' => 'float',
     ];
 }

@@ -1,12 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import {
+    ArrowDownLeft,
     ArrowUpRight,
     CheckCircle2,
     Clock,
+    Coins,
+    CreditCard,
     Download,
     ExternalLink,
     Eye,
+    History,
     Layers,
     LayoutDashboard,
     LogOut,
@@ -29,7 +33,6 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -44,6 +47,16 @@ import { cn } from '@/lib/utils';
 
 const CARD_PREVIEW_BG =
     'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+
+function formatOrderAmount(order: ClientOrderItem): string {
+    if (order.order_type === 'credit_usage' && order.specifications?.credits_spent) {
+        return `${Number(order.specifications.credits_spent).toLocaleString()} Credits`;
+    }
+    if (order.total_price > 0) {
+        return `$${order.total_price.toFixed(2)} ${order.currency}`;
+    }
+    return 'Custom Quote';
+}
 
 interface ClientOrderItem {
     id: number;
@@ -80,6 +93,28 @@ interface CapabilityNavItem {
     }[];
 }
 
+interface CreditSummary {
+    available_credits: number;
+    active_plan_name?: string | null;
+    total_purchased_credits: number;
+    pending_credits: number;
+    total_used_credits: number;
+}
+
+interface CreditHistoryEntry {
+    id: number;
+    order_number: string;
+    entry_type: 'purchase' | 'usage';
+    title: string;
+    subtitle: string;
+    credits_delta: number;
+    balance_after: number | null;
+    is_activated: boolean;
+    status_label: string;
+    amount_usd: number;
+    created_at_formatted: string;
+}
+
 interface ClientDashboardProps {
     orders: ClientOrderItem[];
     stats: {
@@ -89,15 +124,19 @@ interface ClientDashboardProps {
         digital_twin_orders: number;
         try_on_quotes: number;
     };
+    creditSummary?: CreditSummary;
+    creditHistory?: CreditHistoryEntry[];
     digitalTwins?: DigitalTwinModel[];
     tryOnLooks?: Look[];
 }
 
-type PortalView = 'overview' | 'orders' | 'services' | 'settings';
+type PortalView = 'overview' | 'credits' | 'orders' | 'services' | 'settings';
 
 export default function ClientDashboard({
     orders = [],
     stats,
+    creditSummary,
+    creditHistory = [],
     digitalTwins = [],
     tryOnLooks = [],
 }: ClientDashboardProps) {
@@ -110,6 +149,8 @@ export default function ClientDashboard({
                 company?: string | null;
                 phone?: string | null;
                 avatar?: string | null;
+                credits_balance?: number;
+                active_plan_name?: string | null;
             } | null;
         };
         flash?: { success?: string; error?: string };
@@ -119,7 +160,21 @@ export default function ClientDashboard({
     const user = auth?.user;
     const [activeView, setActiveView] = useState<PortalView>('overview');
     const [orderFilter, setOrderFilter] = useState<string>('all');
+    const [creditFilter, setCreditFilter] = useState<'all' | 'purchase' | 'usage'>('all');
     const [selectedOrder, setSelectedOrder] = useState<ClientOrderItem | null>(null);
+
+    const availableCredits = creditSummary?.available_credits ?? user?.credits_balance ?? 0;
+    const activePlanName = creditSummary?.active_plan_name ?? user?.active_plan_name ?? null;
+    const totalPurchasedCredits = creditSummary?.total_purchased_credits ?? 0;
+    const pendingCredits = creditSummary?.pending_credits ?? 0;
+    const totalUsedCredits = creditSummary?.total_used_credits ?? 0;
+
+    const filteredCreditHistory = useMemo(() => {
+        if (creditFilter === 'all') {
+            return creditHistory;
+        }
+        return creditHistory.filter((entry) => entry.entry_type === creditFilter);
+    }, [creditHistory, creditFilter]);
 
     React.useEffect(() => {
         if (flash?.success) {
@@ -202,7 +257,7 @@ export default function ClientDashboard({
         }
     };
 
-    const mainNavItems: {
+    const navItems: {
         id: PortalView;
         name: string;
         icon: React.ElementType;
@@ -210,27 +265,39 @@ export default function ClientDashboard({
     }[] = [
         {
             id: 'overview',
-            name: 'Dashboard',
+            name: 'Overview',
             icon: LayoutDashboard,
         },
         {
             id: 'orders',
-            name: 'My Orders & Quotes',
+            name: 'Orders',
             icon: ShoppingBag,
             badge: orders.length > 0 ? `${orders.length}` : null,
         },
         {
+            id: 'credits',
+            name: 'Credits & Plans',
+            icon: Coins,
+            badge: `${availableCredits.toLocaleString()}`,
+        },
+        {
             id: 'services',
-            name: 'Services & New Order',
+            name: 'Services',
             icon: Sparkles,
+        },
+        {
+            id: 'settings',
+            name: 'Settings',
+            icon: Settings,
         },
     ];
 
     const viewTitles: Record<PortalView, string> = {
-        overview: 'Dashboard',
-        orders: 'My Orders & Quotes',
-        services: 'Services & New Order',
-        settings: 'Account Settings',
+        overview: 'Overview',
+        credits: 'Credits & Plans',
+        orders: 'Orders',
+        services: 'Services',
+        settings: 'Settings',
     };
 
     return (
@@ -267,14 +334,10 @@ export default function ClientDashboard({
                             </button>
                         </SidebarHeader>
 
-                        <SidebarContent className="px-3 py-4 space-y-5 bg-white">
-                            {/* Main Workspace Section */}
+                        <SidebarContent className="px-3 py-4 bg-white">
                             <SidebarGroup className="p-0">
-                                <SidebarGroupLabel className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase px-2.5 mb-1">
-                                    Main
-                                </SidebarGroupLabel>
-                                <SidebarMenu className="space-y-0.5">
-                                    {mainNavItems.map((item) => {
+                                <SidebarMenu className="space-y-1">
+                                    {navItems.map((item) => {
                                         const Icon = item.icon;
                                         const isActive = activeView === item.id;
                                         return (
@@ -317,40 +380,6 @@ export default function ClientDashboard({
                                             </SidebarMenuItem>
                                         );
                                     })}
-                                </SidebarMenu>
-                            </SidebarGroup>
-
-                            {/* Account Section */}
-                            <SidebarGroup className="p-0">
-                                <SidebarGroupLabel className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase px-2.5 mb-1">
-                                    Account
-                                </SidebarGroupLabel>
-                                <SidebarMenu className="space-y-0.5">
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            isActive={activeView === 'settings'}
-                                            tooltip="Account Settings"
-                                            onClick={() => setActiveView('settings')}
-                                            className={cn(
-                                                'rounded-xl text-[13px] transition-all py-2 px-2.5 cursor-pointer',
-                                                activeView === 'settings'
-                                                    ? 'bg-primary text-white font-semibold shadow-xs hover:bg-primary-hover hover:text-white'
-                                                    : 'text-slate-600 font-medium hover:text-ink hover:bg-slate-100/80'
-                                            )}
-                                        >
-                                            <Settings
-                                                className={cn(
-                                                    'w-4 h-4 shrink-0',
-                                                    activeView === 'settings'
-                                                        ? 'text-white'
-                                                        : 'text-slate-400'
-                                                )}
-                                            />
-                                            <span className="truncate flex-1 text-left">
-                                                Profile & Password
-                                            </span>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
                                 </SidebarMenu>
                             </SidebarGroup>
                         </SidebarContent>
@@ -411,6 +440,16 @@ export default function ClientDashboard({
                             <div className="flex items-center gap-2.5">
                                 <button
                                     type="button"
+                                    onClick={() => setActiveView('credits')}
+                                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-primary/25 bg-primary/10 text-primary-ink hover:bg-primary/15 transition-colors cursor-pointer"
+                                >
+                                    <Coins className="w-3.5 h-3.5 text-primary" />
+                                    <span className="tabular-nums">
+                                        Account Credits: {availableCredits.toLocaleString()}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => setActiveView('services')}
                                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-primary text-white hover:bg-primary-hover transition-colors cursor-pointer shadow-2xs"
                                 >
@@ -436,7 +475,7 @@ export default function ClientDashboard({
                                 <>
                                     <AdminPageHeader
                                         title={`Welcome, ${user?.name || 'Client'}`}
-                                        description="Track your active orders, quotes, studio productions, and deliverables."
+                                        description="Track your active orders, quotes, studio credits, and deliverables."
                                     >
                                         <div className="flex flex-wrap items-center gap-2">
                                             <Button
@@ -458,6 +497,70 @@ export default function ClientDashboard({
                                     </AdminPageHeader>
 
                                     <div className="space-y-8">
+                                        {/* Studio Credit Wallet Banner */}
+                                        <div className="rounded-2xl border border-primary/25 bg-white p-6 shadow-xs">
+                                            <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+                                                <div className="space-y-2">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-ink">
+                                                            <Coins className="h-3.5 w-3.5" />
+                                                            Studio Credit Wallet
+                                                        </span>
+                                                        <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
+                                                            {activePlanName || 'No active plan'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-wrap items-baseline gap-6 pt-1">
+                                                        <div>
+                                                            <span className="block text-xs font-medium text-slate-500">
+                                                                Available Credits
+                                                            </span>
+                                                            <span className="text-3xl font-extrabold tracking-tight tabular-nums text-ink">
+                                                                {availableCredits.toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-5 border-l border-slate-200 pl-5 text-xs">
+                                                            <div>
+                                                                <span className="block text-slate-400">Purchased</span>
+                                                                <span className="font-bold tabular-nums text-emerald-700">
+                                                                    +{totalPurchasedCredits.toLocaleString()}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="block text-slate-400">Used</span>
+                                                                <span className="font-bold tabular-nums text-ink">
+                                                                    {totalUsedCredits.toLocaleString()}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <span className="block text-slate-400">Pending</span>
+                                                                <span className="font-bold tabular-nums text-amber-700">
+                                                                    {pendingCredits.toLocaleString()}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-wrap items-center gap-2.5">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => setActiveView('credits')}
+                                                        className="gap-2 border-slate-200 bg-white text-ink hover:bg-slate-50 text-xs font-semibold cursor-pointer"
+                                                    >
+                                                        <History className="h-3.5 w-3.5 text-primary" />
+                                                        <span>Credit History</span>
+                                                    </Button>
+                                                    <Link
+                                                        href="/pricing"
+                                                        className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-xs font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
+                                                    >
+                                                        <CreditCard className="h-3.5 w-3.5" />
+                                                        <span>Buy / Top Up Credits</span>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
                                         {/* KPI Cards — Matching Admin Dashboard Style */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                             <button
@@ -534,25 +637,27 @@ export default function ClientDashboard({
 
                                             <button
                                                 type="button"
-                                                onClick={() => setActiveView('services')}
+                                                onClick={() => setActiveView('credits')}
                                                 className="text-left p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-primary/40 transition-all group space-y-2 cursor-pointer"
                                             >
                                                 <div className="flex items-center justify-between text-slate-500">
                                                     <span className="text-xs font-semibold">
-                                                        Explore Services
+                                                        Account Credits
                                                     </span>
-                                                    <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-                                                        <Sparkles className="w-4 h-4" />
+                                                    <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                                                        <Coins className="w-4 h-4" />
                                                     </div>
                                                 </div>
-                                                <div className="text-xl font-extrabold text-ink tracking-tight pt-1">
-                                                    Start New Order
+                                                <div className="text-3xl font-extrabold text-ink tracking-tight tabular-nums">
+                                                    {availableCredits.toLocaleString()}
                                                 </div>
                                                 <div className="flex items-center justify-between text-xs pt-1">
-                                                    <span className="text-primary font-semibold">
-                                                        Browse studio services
+                                                    <span className="text-primary font-semibold truncate pr-2">
+                                                        {pendingCredits > 0
+                                                            ? `+${pendingCredits.toLocaleString()} pending approval`
+                                                            : activePlanName || 'Studio credit balance'}
                                                     </span>
-                                                    <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
+                                                    <ArrowUpRight className="w-3.5 h-3.5 shrink-0 text-slate-400 group-hover:text-primary transition-colors" />
                                                 </div>
                                             </button>
                                         </div>
@@ -613,9 +718,7 @@ export default function ClientDashboard({
                                                                         Amount
                                                                     </span>
                                                                     <span className="text-xs font-bold text-ink">
-                                                                        {order.total_price > 0
-                                                                            ? `$${order.total_price.toFixed(2)} ${order.currency}`
-                                                                            : 'Custom Quote'}
+                                                                        {formatOrderAmount(order)}
                                                                     </span>
                                                                 </div>
                                                                 <Button
@@ -655,6 +758,242 @@ export default function ClientDashboard({
                                                     </div>
                                                 )}
                                             </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* VIEW 1B: CREDITS & PLAN HISTORY */}
+                            {activeView === 'credits' && (
+                                <>
+                                    <AdminPageHeader
+                                        title="Credits & Plan History"
+                                        description="Track your credit plan purchases, admin approvals, order redemptions, and remaining studio balance."
+                                    >
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <Link
+                                                href="/pricing"
+                                                className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
+                                            >
+                                                <CreditCard className="w-3.5 h-3.5" />
+                                                <span>Buy / Top Up Credits</span>
+                                            </Link>
+                                        </div>
+                                    </AdminPageHeader>
+
+                                    <div className="space-y-6">
+                                        {/* 4 Summary Cards */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="p-5 rounded-2xl bg-white border border-primary/30 shadow-xs space-y-1.5">
+                                                <span className="text-xs font-semibold text-slate-500 block">
+                                                    Available Balance
+                                                </span>
+                                                <div className="text-3xl font-extrabold text-ink tabular-nums">
+                                                    {availableCredits.toLocaleString()}
+                                                </div>
+                                                <span className="text-xs font-semibold text-primary block">
+                                                    {activePlanName || 'No active plan'}
+                                                </span>
+                                            </div>
+
+                                            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1.5">
+                                                <span className="text-xs font-semibold text-slate-500 block">
+                                                    Total Purchased (Credited)
+                                                </span>
+                                                <div className="text-3xl font-extrabold text-emerald-700 tabular-nums">
+                                                    +{totalPurchasedCredits.toLocaleString()}
+                                                </div>
+                                                <span className="text-xs text-slate-500 block">
+                                                    Activated across approved plans
+                                                </span>
+                                            </div>
+
+                                            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1.5">
+                                                <span className="text-xs font-semibold text-slate-500 block">
+                                                    Total Used on Orders
+                                                </span>
+                                                <div className="text-3xl font-extrabold text-ink tabular-nums">
+                                                    {totalUsedCredits.toLocaleString()}
+                                                </div>
+                                                <span className="text-xs text-slate-500 block">
+                                                    Redeemed on production orders
+                                                </span>
+                                            </div>
+
+                                            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-1.5">
+                                                <span className="text-xs font-semibold text-slate-500 block">
+                                                    Pending Approval
+                                                </span>
+                                                <div className="text-3xl font-extrabold text-amber-700 tabular-nums">
+                                                    {pendingCredits.toLocaleString()}
+                                                </div>
+                                                <span className="text-xs text-slate-500 block">
+                                                    Awaiting payment confirmation
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Filter Pills */}
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            {(
+                                                [
+                                                    { id: 'all', label: `All Activity (${creditHistory.length})` },
+                                                    {
+                                                        id: 'purchase',
+                                                        label: `Plan Purchases (${creditHistory.filter((e) => e.entry_type === 'purchase').length})`,
+                                                    },
+                                                    {
+                                                        id: 'usage',
+                                                        label: `Credit Usages (${creditHistory.filter((e) => e.entry_type === 'usage').length})`,
+                                                    },
+                                                ] as const
+                                            ).map((pill) => (
+                                                <button
+                                                    key={pill.id}
+                                                    type="button"
+                                                    onClick={() => setCreditFilter(pill.id)}
+                                                    className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                                                        creditFilter === pill.id
+                                                            ? 'bg-primary text-white'
+                                                            : 'bg-white border border-slate-200 text-slate-600 hover:text-ink'
+                                                    }`}
+                                                >
+                                                    {pill.label}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Credit Purchase & Usage History Table */}
+                                        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+                                            {filteredCreditHistory.length > 0 ? (
+                                                <div className="overflow-x-auto">
+                                                    <table className="w-full text-left text-xs">
+                                                        <thead className="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                                            <tr>
+                                                                <th className="px-5 py-3.5">Reference</th>
+                                                                <th className="px-5 py-3.5">Type</th>
+                                                                <th className="px-5 py-3.5">Details</th>
+                                                                <th className="px-5 py-3.5">Credits</th>
+                                                                <th className="px-5 py-3.5">Status</th>
+                                                                <th className="px-5 py-3.5">Date</th>
+                                                                <th className="px-5 py-3.5 text-right">Order</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-slate-100">
+                                                            {filteredCreditHistory.map((entry) => {
+                                                                const isPurchase = entry.entry_type === 'purchase';
+                                                                const matchingOrder = orders.find((o) => o.id === entry.id) || null;
+
+                                                                return (
+                                                                    <tr key={entry.id} className="hover:bg-slate-50/70 transition-colors">
+                                                                        <td className="px-5 py-4 font-bold text-ink whitespace-nowrap">
+                                                                            #{entry.order_number}
+                                                                        </td>
+                                                                        <td className="px-5 py-4 whitespace-nowrap">
+                                                                            {isPurchase ? (
+                                                                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+                                                                                    <ArrowDownLeft className="h-3 w-3" />
+                                                                                    Plan Purchase
+                                                                                </span>
+                                                                            ) : (
+                                                                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                                                                                    <ArrowUpRight className="h-3 w-3" />
+                                                                                    Credit Usage
+                                                                                </span>
+                                                                            )}
+                                                                        </td>
+                                                                        <td className="px-5 py-4">
+                                                                            <div className="font-bold text-ink text-sm">
+                                                                                {entry.title}
+                                                                            </div>
+                                                                            <div className="text-slate-500 mt-0.5">
+                                                                                {entry.subtitle}
+                                                                                {entry.amount_usd > 0 && (
+                                                                                    <span className="ml-2 font-semibold text-slate-700">
+                                                                                        · ${entry.amount_usd.toFixed(2)} USD
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td className="px-5 py-4 whitespace-nowrap">
+                                                                            <span
+                                                                                className={`font-extrabold text-sm tabular-nums ${
+                                                                                    entry.credits_delta >= 0
+                                                                                        ? 'text-emerald-700'
+                                                                                        : 'text-rose-600'
+                                                                                }`}
+                                                                            >
+                                                                                {entry.credits_delta >= 0
+                                                                                    ? `+${entry.credits_delta.toLocaleString()}`
+                                                                                    : entry.credits_delta.toLocaleString()}{' '}
+                                                                                Credits
+                                                                            </span>
+                                                                            {entry.balance_after !== null && (
+                                                                                <span className="block text-[11px] text-slate-500 mt-0.5 tabular-nums">
+                                                                                    Balance after: {entry.balance_after.toLocaleString()}
+                                                                                </span>
+                                                                            )}
+                                                                        </td>
+                                                                        <td className="px-5 py-4 whitespace-nowrap">
+                                                                            <span
+                                                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${
+                                                                                    entry.status_label === 'Credited' ||
+                                                                                    entry.status_label === 'Completed'
+                                                                                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                                                                                        : entry.status_label === 'Pending Approval'
+                                                                                          ? 'bg-amber-50 border-amber-200 text-amber-700'
+                                                                                          : entry.status_label === 'Cancelled'
+                                                                                            ? 'bg-rose-50 border-rose-200 text-rose-700'
+                                                                                            : 'bg-sky-50 border-sky-200 text-sky-700'
+                                                                                }`}
+                                                                            >
+                                                                                {entry.status_label}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td className="px-5 py-4 text-slate-500 whitespace-nowrap">
+                                                                            {entry.created_at_formatted}
+                                                                        </td>
+                                                                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                                                                            {matchingOrder && (
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    size="sm"
+                                                                                    onClick={() => setSelectedOrder(matchingOrder)}
+                                                                                    className="gap-1 text-xs"
+                                                                                >
+                                                                                    <Eye className="w-3.5 h-3.5" />
+                                                                                    <span>View</span>
+                                                                                </Button>
+                                                                            )}
+                                                                        </td>
+                                                                    </tr>
+                                                                );
+                                                            })}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ) : (
+                                                <div className="p-12 text-center space-y-3">
+                                                    <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                                                        <Coins className="w-5 h-5" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-ink">
+                                                            No credit transactions yet
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                                                            Purchase a preset or custom credit bundle to start redeeming studio credits on orders.
+                                                        </p>
+                                                    </div>
+                                                    <Link
+                                                        href="/pricing"
+                                                        className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover"
+                                                    >
+                                                        <CreditCard className="w-3.5 h-3.5" />
+                                                        <span>Browse Credit Plans</span>
+                                                    </Link>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </>
@@ -732,9 +1071,7 @@ export default function ClientDashboard({
                                                                 Total / Estimate
                                                             </span>
                                                             <span className="text-sm font-extrabold text-ink">
-                                                                {order.total_price > 0
-                                                                    ? `$${order.total_price.toFixed(2)} ${order.currency}`
-                                                                    : 'Custom Quote'}
+                                                                {formatOrderAmount(order)}
                                                             </span>
                                                         </div>
                                                         <Button
@@ -1175,6 +1512,68 @@ export default function ClientDashboard({
                                         <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
                                             Order Specifications
                                         </span>
+
+                                        {selectedOrder.specifications.plan_name && (
+                                            <div className="space-y-2">
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                        <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                            Credit Plan Snapshot
+                                                        </span>
+                                                        <strong className="text-ink">
+                                                            {selectedOrder.specifications.plan_name}
+                                                        </strong>
+                                                    </div>
+                                                    <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                        <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                            Total Credits
+                                                        </span>
+                                                        <strong className="text-ink">
+                                                            {Number(selectedOrder.specifications.total_credits ?? selectedOrder.quantity).toLocaleString()} Credits (
+                                                            {selectedOrder.specifications.credits_activated ? 'Activated' : 'Pending Approval'})
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                {Array.isArray(selectedOrder.specifications.features_snapshot) &&
+                                                    selectedOrder.specifications.features_snapshot.length > 0 && (
+                                                        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                            <span className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                                                                Purchased Plan Benefits
+                                                            </span>
+                                                            <ul className="list-disc pl-4 space-y-0.5 text-slate-600">
+                                                                {selectedOrder.specifications.features_snapshot.map(
+                                                                    (feat: string, idx: number) => (
+                                                                        <li key={idx}>{feat}</li>
+                                                                    )
+                                                                )}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        )}
+
+                                        {selectedOrder.specifications.paid_with_credits && (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                    <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                        Credits Redeemed
+                                                    </span>
+                                                    <strong className="text-primary">
+                                                        {Number(selectedOrder.specifications.credits_spent ?? 0).toLocaleString()} Credits
+                                                    </strong>
+                                                </div>
+                                                {selectedOrder.specifications.remaining_credits !== undefined && (
+                                                    <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+                                                        <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                            Balance After Order
+                                                        </span>
+                                                        <strong className="text-ink">
+                                                            {Number(selectedOrder.specifications.remaining_credits).toLocaleString()} Credits
+                                                        </strong>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {selectedOrder.specifications.reference_twin_name && (
                                             <div>

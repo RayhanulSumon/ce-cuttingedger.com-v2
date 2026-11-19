@@ -80,6 +80,8 @@ class HandleInertiaRequests extends Middleware
                     'status' => $request->user()->status,
                     'role' => $request->user()->getRoleNames()->first() ?? $request->user()->role?->name,
                     'permissions' => $request->user()->getAllPermissions()->pluck('name')->values()->all(),
+                    'credits_balance' => (int) ($request->user()->credits_balance ?? 0),
+                    'active_plan_name' => $request->user()->active_plan_name,
                 ] : null,
             ],
             'flash' => [

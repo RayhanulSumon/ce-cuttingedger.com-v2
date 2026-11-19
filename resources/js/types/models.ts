@@ -157,7 +157,11 @@ export interface PricingPlan {
     id: number;
     name: string;
     slug: string;
+    badge?: string | null;
     headline: string;
+    base_credits?: number;
+    bonus_credits?: number;
+    price_amount?: number;
     price: string;
     billing_cycle: string;
     features: string[];

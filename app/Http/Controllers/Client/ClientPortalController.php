@@ -60,9 +60,73 @@ class ClientPortalController extends Controller
             'try_on_quotes' => $orders->where('order_type', 'virtual_try_on_quote')->count(),
         ];
 
+        $creditOrders = $orders->filter(
+            fn (array $o): bool => in_array($o['order_type'], ['credit_plan', 'credit_usage'], true)
+        );
+
+        $creditSummary = [
+            'available_credits' => (int) ($user->credits_balance ?? 0),
+            'active_plan_name' => $user->active_plan_name,
+            'total_purchased_credits' => $creditOrders
+                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_plan' && ! empty($o['specifications']['credits_activated']))
+                ->sum(fn (array $o): int => (int) ($o['specifications']['total_credits'] ?? $o['quantity'])),
+            'pending_credits' => $creditOrders
+                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_plan' && empty($o['specifications']['credits_activated']) && $o['status'] !== 'cancelled')
+                ->sum(fn (array $o): int => (int) ($o['specifications']['total_credits'] ?? $o['quantity'])),
+            'total_used_credits' => $creditOrders
+                ->filter(fn (array $o): bool => $o['order_type'] === 'credit_usage')
+                ->sum(fn (array $o): int => (int) ($o['specifications']['credits_spent'] ?? 0)),
+        ];
+
+        $creditHistory = $creditOrders
+            ->map(function (array $o): array {
+                $specs = $o['specifications'];
+
+                if ($o['order_type'] === 'credit_plan') {
+                    $baseCredits = (int) ($specs['base_credits'] ?? $o['quantity']);
+                    $bonusCredits = (int) ($specs['bonus_credits'] ?? 0);
+                    $billingLabel = ($specs['billing_type'] ?? 'one_time') === 'monthly' ? 'Monthly Plan' : 'One-Time Pack';
+                    $isActivated = ! empty($specs['credits_activated']);
+
+                    return [
+                        'id' => $o['id'],
+                        'order_number' => $o['order_number'],
+                        'entry_type' => 'purchase',
+                        'title' => (string) ($specs['plan_name'] ?? $o['service_name']),
+                        'subtitle' => sprintf('%s base + %s bonus credits · %s', number_format($baseCredits), number_format($bonusCredits), $billingLabel),
+                        'credits_delta' => (int) ($specs['total_credits'] ?? $o['quantity']),
+                        'balance_after' => null,
+                        'is_activated' => $isActivated,
+                        'status_label' => $isActivated ? 'Credited' : ($o['status'] === 'cancelled' ? 'Cancelled' : 'Pending Approval'),
+                        'amount_usd' => (float) $o['total_price'],
+                        'created_at_formatted' => $o['created_at_formatted'],
+                    ];
+                }
+
+                $creditsSpent = (int) ($specs['credits_spent'] ?? 0);
+
+                return [
+                    'id' => $o['id'],
+                    'order_number' => $o['order_number'],
+                    'entry_type' => 'usage',
+                    'title' => (string) ($specs['service_category'] ?? $o['service_name']),
+                    'subtitle' => sprintf('%s asset(s) · %s', number_format((int) $o['quantity']), $o['turnaround']),
+                    'credits_delta' => -1 * $creditsSpent,
+                    'balance_after' => isset($specs['remaining_credits']) ? (int) $specs['remaining_credits'] : null,
+                    'is_activated' => true,
+                    'status_label' => $o['status'] === 'completed' ? 'Completed' : 'Redeemed · In Production',
+                    'amount_usd' => (float) $o['total_price'],
+                    'created_at_formatted' => $o['created_at_formatted'],
+                ];
+            })
+            ->values()
+            ->all();
+
         return Inertia::render('Client/Dashboard', [
             'orders' => $orders->values()->all(),
             'stats' => $stats,
+            'creditSummary' => $creditSummary,
+            'creditHistory' => $creditHistory,
             'digitalTwins' => CatalogCacheService::getHomeDigitalTwins(),
             'tryOnLooks' => CatalogCacheService::getHomeTryOnLooks(),
         ]);
@@ -100,4 +164,3 @@ class ClientPortalController extends Controller
         return back()->with('success', 'Your password has been updated.');
     }
 }
-
