@@ -1,11 +1,78 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { PageProps } from '@/types';
 import { digitalTwinOrderUrl, EASE_OUT_QUART } from '../shared';
 import { TwinPoseStage } from './TwinPoseStage';
 import { PresetAction, TwinPresetSidebar } from './TwinPresetSidebar';
-import { DIGITAL_TWINS, DigitalTwinModel } from './twins';
+import { DIGITAL_TWINS, DigitalTwinModel, TwinPosePreset } from './twins';
+
+interface MailtoUserContext {
+    name?: string;
+    email?: string;
+    company?: string | null;
+    phone?: string | null;
+}
+
+type TwinPageProps = PageProps & {
+    auth?: {
+        user?: MailtoUserContext | null;
+    };
+};
+
+const DIGITAL_TWIN_ORDER_EMAIL = 'info@cuttingedger.com';
+
+/** Builds a pre-filled `mailto:` URL containing the selected Digital Twin license and pose details. */
+function buildDigitalTwinMailtoUrl(
+    action: 'buy' | 'lifetime',
+    twin: DigitalTwinModel,
+    pose: TwinPosePreset,
+    user?: MailtoUserContext | null,
+): string {
+    const [name] = twin.name.split(' — ');
+    const isLifetime = action === 'lifetime';
+
+    const subject = isLifetime
+        ? `Buy Lifetime Copyright — ${name} (Look ${twin.lookNumber}) — ${twin.lifetimePrice}`
+        : `Buy Digital Twin Preset — ${name} (Look ${twin.lookNumber}) — ${twin.presetPrice}`;
+
+    const packageLabel = isLifetime
+        ? 'Buy lifetime copyright (Full commercial rights)'
+        : `Buy this preset (All ${twin.poses.length} poses included)`;
+    const price = isLifetime ? twin.lifetimePrice : twin.presetPrice;
+    const posesIncluded = twin.poses.map((p) => p.shortName || p.title).join(', ');
+    const deliverables = (twin.deliverables || []).join(', ');
+
+    const bodyLines = [
+        'Hello CuttingEdger Studio,',
+        '',
+        isLifetime
+            ? 'I would like to purchase the exclusive Lifetime Copyright for the Digital Twin below:'
+            : 'I would like to purchase the Digital Twin pose preset below:',
+        '',
+        `Model: ${name} (Look ${twin.lookNumber})`,
+        `Category: ${twin.archetype}`,
+        `Collection: ${twin.collection}`,
+        `Package: ${packageLabel}`,
+        `Price: ${price}`,
+        `Poses Included (${twin.poses.length}): ${posesIncluded}`,
+        `Viewed Pose: ${pose.shortName || pose.code} — ${pose.title} (${pose.angle} · ${pose.lens})`,
+        `Deliverables: ${deliverables}`,
+        `Model Description: ${twin.description}`,
+        '',
+        'Client Details:',
+        `Name: ${user?.name ?? ''}`,
+        `Work Email: ${user?.email ?? ''}`,
+        `Brand / Company: ${user?.company ?? ''}`,
+        `Phone / WhatsApp: ${user?.phone ?? ''}`,
+        'Notes: ',
+    ];
+
+    const body = bodyLines.join('\n');
+
+    return `mailto:${DIGITAL_TWIN_ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 interface TwinPresetModalProps {
     /** Dynamic list of Digital Twins. */
@@ -36,6 +103,7 @@ const MODEL_ARROW =
     'absolute top-[220px] z-20 grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white sm:top-1/3 sm:h-11 sm:w-11 lg:top-1/2 lg:-translate-y-1/2';
 
 function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
+    const { auth } = usePage<TwinPageProps>().props;
     const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
     const [poseIndex, setPoseIndex] = useState(0);
     const [pendingAction, setPendingAction] = useState<PresetAction | null>(null);
@@ -82,12 +150,22 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
     const handleAction = (action: PresetAction) => {
         setPendingAction(action);
         window.clearTimeout(actionTimer.current);
+
+        if (action === 'buy' || action === 'lifetime') {
+            if (typeof window !== 'undefined') {
+                window.location.href = buildDigitalTwinMailtoUrl(action, twin, pose, auth?.user);
+            }
+            actionTimer.current = window.setTimeout(() => {
+                setPendingAction(null);
+            }, 1800);
+            return;
+        }
+
         actionTimer.current = window.setTimeout(() => {
             setPendingAction(null);
-            const mode = action === 'lifetime' ? 'lifetime' : action === 'buy' ? 'preset' : 'custom';
             router.visit(
                 digitalTwinOrderUrl({
-                    mode,
+                    mode: 'custom',
                     twin: twin.slug,
                     ref: twin.name,
                 }),

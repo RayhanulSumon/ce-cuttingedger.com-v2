@@ -192,19 +192,31 @@ export default function DigitalTwinOrder({
         []
     );
 
+    const hasExplicitTwin = Boolean((initialTwinSlug.trim() || initialReference.trim()) && initialTwin);
+
     const [mode, setMode] = useState<'custom' | 'preset' | 'lifetime'>(
         initialMode === 'custom' ? 'custom' : (initialDraft?.mode ?? initialMode)
     );
     const [selectedTwinId, setSelectedTwinId] = useState<number | null>(
-        initialDraft?.selectedTwinId !== undefined ? initialDraft.selectedTwinId : (initialTwin?.id ?? null)
+        hasExplicitTwin
+            ? (initialTwin?.id ?? null)
+            : initialDraft?.selectedTwinId !== undefined
+              ? initialDraft.selectedTwinId
+              : (initialTwin?.id ?? null)
     );
     const [selectedTwinIndex, setSelectedTwinIndex] = useState<number | null>(
-        initialDraft?.selectedTwinIndex !== undefined ? initialDraft.selectedTwinIndex : (initialTwin ? initialTwin.index : null)
+        hasExplicitTwin
+            ? (initialTwin?.index ?? null)
+            : initialDraft?.selectedTwinIndex !== undefined
+              ? initialDraft.selectedTwinIndex
+              : (initialTwin ? initialTwin.index : null)
     );
     const [showStudioModels, setShowStudioModels] = useState<boolean>(
-        initialDraft?.selectedTwinId !== undefined
-            ? initialDraft.selectedTwinId !== null || (initialDraft.selectedTwinIndex ?? null) !== null
-            : Boolean(initialTwin)
+        hasExplicitTwin
+            ? true
+            : initialDraft?.selectedTwinId !== undefined
+              ? initialDraft.selectedTwinId !== null || (initialDraft.selectedTwinIndex ?? null) !== null
+              : Boolean(initialTwin)
     );
 
     const activeTwin = useMemo(() => {
