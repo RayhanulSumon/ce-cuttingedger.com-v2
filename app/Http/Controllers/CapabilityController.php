@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Capability;
 use App\Models\Project;
+use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,7 +33,15 @@ class CapabilityController extends Controller
     {
         if ($childSlug) {
             $parent = Capability::active()->where('slug', $parentSlug)->firstOrFail();
-            $capability = Capability::active()->where('slug', $childSlug)->where('parent_id', $parent->id)->firstOrFail();
+            $capability = Capability::active()->where('slug', $childSlug)->whereNotNull('parent_id')->firstOrFail();
+
+            // A sub-capability opened under an old parent slug redirects to its canonical URL.
+            if ($capability->parent_id !== $parent->id) {
+                $capability->load('parent');
+                abort_unless($capability->parent && $capability->parent->is_active, 404);
+
+                return redirect()->to($capability->path, 301);
+            }
         } else {
             $capability = Capability::active()->where('slug', $parentSlug)->firstOrFail();
 
@@ -57,6 +66,9 @@ class CapabilityController extends Controller
             'capability' => $capability,
             'related' => $related,
             'relatedProjects' => Project::where('featured', true)->take(2)->get(),
+            'tryOnLooks' => $capability->slug === 'virtual-try-on'
+                ? CatalogCacheService::getHomeTryOnLooks()
+                : [],
         ]);
     }
 }

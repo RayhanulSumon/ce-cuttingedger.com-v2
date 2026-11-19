@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, ArrowUpRight, Check, Plus } from 'lucide-react';
+import { VirtualTryOnFittingRoom } from '@/Components/Capabilities/VirtualTryOnFittingRoom';
 import { capabilityIcon } from '@/Components/Common/capabilityIcons';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { Capability, Project } from '@/types/models';
@@ -17,6 +18,22 @@ function pathFor(capability: Capability, parent?: Capability | null): string {
     const owner = capability.parent ?? parent;
     return owner ? `/capabilities/${owner.slug}/${capability.slug}` : `/capabilities/${capability.slug}`;
 }
+
+function quoteUrlFor(capability: Capability): string {
+    if (capability.slug === 'virtual-try-on') {
+        return '/virtual-try-on/quote';
+    }
+    if (capability.slug === 'digital-twins') {
+        return '/digital-twins/order';
+    }
+    return `/order?service=other&ref=${encodeURIComponent(capability.title)}`;
+}
+
+const CUSTOM_CAPABILITY_VIEWS: Record<string, (props: CapabilityShowProps & { parent: Capability | null }) => React.ReactNode> = {
+    'virtual-try-on': ({ capability, parent }) => (
+        <VirtualTryOnFittingRoom capability={capability} parent={parent} />
+    ),
+};
 
 function SectionTitle({ children, hint }: { children: React.ReactNode; hint?: string }) {
     return (
@@ -67,7 +84,8 @@ function CheckList({ title, items }: { title: string; items: string[] }) {
 }
 
 /** A main capability or one of its sub-capabilities. Everything shown here is edited in the admin panel. */
-export default function Show({ capability, related = [], relatedProjects = [] }: CapabilityShowProps) {
+export default function Show(props: CapabilityShowProps) {
+    const { capability, related = [], relatedProjects = [] } = props;
     const parent = capability.parent ?? null;
     const children = capability.children ?? [];
     const features = capability.features ?? [];
@@ -83,54 +101,68 @@ export default function Show({ capability, related = [], relatedProjects = [] }:
         { name: capability.title, url: pathFor(capability) },
     ];
 
+    const seoHead = (
+        <SeoHead
+            title={capability.meta_title || `${capability.title} | CuttingEdger`}
+            description={capability.meta_description || capability.subtitle}
+            breadcrumbs={breadcrumbs}
+            serviceSchema={{ name: capability.title, description: capability.description, serviceType: capability.title }}
+            faqSchema={faqs}
+        />
+    );
+
+    const customView = CUSTOM_CAPABILITY_VIEWS[capability.slug]?.({ ...props, parent });
+    if (customView) {
+        return (
+            <>
+                {seoHead}
+                {customView}
+            </>
+        );
+    }
+
     return (
         <>
-            <SeoHead
-                title={capability.meta_title || `${capability.title} | CuttingEdger`}
-                description={capability.meta_description || capability.subtitle}
-                breadcrumbs={breadcrumbs}
-                serviceSchema={{ name: capability.title, description: capability.description, serviceType: capability.title }}
-                faqSchema={faqs}
-            />
+            {seoHead}
 
             {/* Hero */}
             <header className="border-b border-ink/10 bg-page pb-14 pt-36 sm:pb-20 sm:pt-44">
-                <div className={WRAP}>
-                    <Link
-                        href={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
-                        prefetch
-                        className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-primary"
-                    >
-                        <ArrowLeft size={15} />
-                        {parent ? parent.title : 'All capabilities'}
-                    </Link>
-
-                    <div className="mt-8 max-w-3xl">
-                        <span className="inline-block rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary-ink">
-                            {label}
-                        </span>
-                        <h1 className="mt-5 text-[clamp(34px,5.4vw,64px)] font-extrabold leading-[1.04] tracking-[-0.035em] text-ink">{capability.title}</h1>
-                        <p className="mt-5 text-lg leading-relaxed text-ink-2 sm:text-xl">{capability.subtitle}</p>
-                    </div>
-
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className={WRAP}>
                         <Link
-                            href={`/order?service=other&ref=${encodeURIComponent(capability.title)}`}
-                            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover"
+                            href={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
+                            prefetch
+                            className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-primary"
                         >
-                            Request a quote
-                            <ArrowUpRight size={16} />
+                            <ArrowLeft size={15} />
+                            {parent ? parent.title : 'All capabilities'}
                         </Link>
-                        <button
-                            type="button"
-                            onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                            className="inline-flex items-center rounded-full border border-ink/20 px-7 py-3.5 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
-                        >
-                            Schedule a call
-                        </button>
+
+                        <div className="mt-8 max-w-3xl">
+                            <span className="inline-block rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                                {label}
+                            </span>
+                            <h1 className="mt-5 text-[clamp(34px,5.4vw,64px)] font-extrabold leading-[1.04] tracking-[-0.035em] text-ink">{capability.title}</h1>
+                            <p className="mt-5 text-lg leading-relaxed text-ink-2 sm:text-xl">{capability.subtitle}</p>
+                        </div>
+
+                        <div className="mt-8 flex flex-wrap gap-3">
+                            <Link
+                                href={quoteUrlFor(capability)}
+                                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover"
+                            >
+                                Request a quote
+                                <ArrowUpRight size={16} />
+                            </Link>
+                            <button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                className="inline-flex items-center rounded-full border border-ink/20 px-7 py-3.5 text-sm font-semibold text-ink transition-colors duration-300 hover:bg-ink hover:text-white"
+                            >
+                                Schedule a call
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
             <div className="space-y-16 bg-page py-14 sm:space-y-24 sm:py-20">
                 {/* Specialities: the main content of a main capability */}

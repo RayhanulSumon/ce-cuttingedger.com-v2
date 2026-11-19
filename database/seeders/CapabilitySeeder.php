@@ -59,7 +59,7 @@ class CapabilitySeeder extends Seeder
                     ['question' => 'Can you match our existing style?', 'answer' => 'Yes. We build a preset from your guidelines and sample files so every batch matches.'],
                 ],
                 'meta_title' => '2D Image Retouching & Post-Production | CuttingEdger',
-                'meta_description' => 'Clipping paths, masking, ghost mannequin, fashion and jewelry retouching and colour correction for e-commerce brands.',
+                'meta_description' => 'Clipping paths, masking, ghost mannequin, virtual try-on, fashion and jewelry retouching and colour correction for e-commerce brands.',
                 'children' => [
                     [
                         'slug' => 'background-removal',
@@ -87,6 +87,25 @@ class CapabilitySeeder extends Seeder
                         'icon' => 'Shirt',
                         'features' => ['Neck and collar reconstruction', 'Balanced shape and symmetry', 'Wrinkle and crease clean-up'],
                         'deliverables' => ['Web-ready JPG', 'Layered PSD', 'Marketplace-spec versions'],
+                    ],
+                    [
+                        'slug' => 'virtual-try-on',
+                        'title' => 'Virtual Try-On',
+                        'subtitle' => 'Show your garments on styled models without a shoot.',
+                        'description' => 'Send us your pieces and choose a look. We dress our models in your garments, matching fit, drape and colour, for product pages and campaigns.',
+                        'icon' => 'Shirt',
+                        'features' => ['Garments fitted to styled models', 'Fit, drape and colour matched', 'Looks for store and campaigns'],
+                        'deliverables' => ['Try-on images per look', 'Web-ready JPG', 'Layered PSD'],
+                        'process_steps' => [
+                            ['title' => 'Brief', 'description' => 'Choose a studio model (or upload your own) and send your garment photos.'],
+                            ['title' => 'Production', 'description' => 'Our AI-assisted 2D pipeline and retouchers drape and fit your garments onto the model.'],
+                            ['title' => 'Quality control', 'description' => 'Every file is checked twice for natural drape, accurate colour and clean edges.'],
+                            ['title' => 'Delivery', 'description' => 'You receive high-resolution web JPGs and layered PSDs on the agreed date.'],
+                        ],
+                        'faqs' => [
+                            ['question' => 'Do I need 3D CAD files or a physical sample?', 'answer' => 'No. Flat-lay, hanger or mannequin photos of your garments in JPG, PNG, TIFF or PSD are all we need.'],
+                            ['question' => 'Can I use my own brand model?', 'answer' => 'Yes. You can pick from our studio lookbook models or upload your own model photo when requesting a quote.'],
+                        ],
                     ],
                     [
                         'slug' => 'fashion-beauty-retouching',
@@ -141,7 +160,7 @@ class CapabilitySeeder extends Seeder
                     ['question' => 'Can the models be used on my store?', 'answer' => 'Yes. We export lightweight web models and render sets that work on common storefront platforms.'],
                 ],
                 'meta_title' => '3D Modeling, CGI Rendering & Digital Twins | CuttingEdger',
-                'meta_description' => 'Photoreal 3D product models, CGI renders, digital twins and virtual try-on for fashion and e-commerce brands.',
+                'meta_description' => 'Photoreal 3D product models, CGI renders, digital twins and 360° product spins for fashion and e-commerce brands.',
                 'children' => [
                     [
                         'slug' => '3d-modeling',
@@ -169,15 +188,6 @@ class CapabilitySeeder extends Seeder
                         'icon' => 'Users',
                         'features' => ['Photoreal models in many poses', 'Custom models built for your brand', 'Usage rights to suit your needs'],
                         'deliverables' => ['Model images in every pose', 'Web and print sizes', 'Usage agreement'],
-                    ],
-                    [
-                        'slug' => 'virtual-try-on',
-                        'title' => 'Virtual Try-On',
-                        'subtitle' => 'Show your garments on styled models without a shoot.',
-                        'description' => 'Send us your pieces and choose a look. We dress our models in your garments, matching fit, drape and colour, for product pages and campaigns.',
-                        'icon' => 'Shirt',
-                        'features' => ['Garments fitted to styled models', 'Fit, drape and colour matched', 'Looks for store and campaigns'],
-                        'deliverables' => ['Try-on images per look', 'Web-ready JPG', 'Layered PSD'],
                     ],
                     [
                         'slug' => '360-product-spin',

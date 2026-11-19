@@ -76,6 +76,22 @@ class CapabilityControllerTest extends TestCase
             ->assertStatus(301);
     }
 
+    public function test_virtual_try_on_lives_under_2d_with_try_on_looks_and_redirects_from_3d(): void
+    {
+        $this->get('/capabilities/2d/virtual-try-on')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Capabilities/Show')
+                ->where('capability.slug', 'virtual-try-on')
+                ->where('capability.parent.slug', '2d')
+                ->has('tryOnLooks')
+            );
+
+        $this->get('/capabilities/3d/virtual-try-on')
+            ->assertRedirect('/capabilities/2d/virtual-try-on')
+            ->assertStatus(301);
+    }
+
     public function test_inactive_capability_is_hidden(): void
     {
         Capability::where('slug', 'video')->update(['is_active' => false]);

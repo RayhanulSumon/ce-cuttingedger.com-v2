@@ -75,6 +75,8 @@ class Capability extends Model
             $oldSlug = $capability->getOriginal('slug');
             $oldPath = $oldParent ? "/capabilities/{$oldParent->slug}/{$oldSlug}" : "/capabilities/{$oldSlug}";
 
+            $capability->unsetRelation('parent');
+
             if ($oldPath !== $capability->path) {
                 Redirect::updateOrCreate(
                     ['source_path' => $oldPath],
