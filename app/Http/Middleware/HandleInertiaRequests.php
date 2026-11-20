@@ -71,7 +71,7 @@ class HandleInertiaRequests extends Middleware
             'settings' => [
                 'brand_name' => $dbSettings['brand_name'] ?? config('app.name', 'Cutting Edger'),
                 'tagline' => $dbSettings['tagline'] ?? 'AI-Driven Visual Performance & Post-Production Agency.',
-                'contact_email' => $dbSettings['contact_email'] ?? 'hello@cuttingedger.com',
+                'contact_email' => $dbSettings['contact_email'] ?? 'info@cuttingedger.com',
                 'contact_phones' => $phones,
                 'contact_phone' => $phones[0]['number'] ?? '',
                 'whatsapp_number' => $dbSettings['whatsapp_number'] ?? '',

@@ -44,7 +44,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
             tagline:
                 initialMap["tagline"] ||
                 "AI-Driven Visual Performance & Post-Production Agency.",
-            contact_email: initialMap["contact_email"] || "hello@cuttingedger.com",
+            contact_email: initialMap["contact_email"] || "info@cuttingedger.com",
             contact_phones: initialMap["contact_phones"] ?? "USA | +1 (409) 995-2565",
             whatsapp_number: initialMap["whatsapp_number"] ?? "",
             office_address:

@@ -179,11 +179,11 @@ export function SlideOverContact({ isOpen, onClose, settings }: SlideOverContact
                 <div className="mt-10 pt-8 border-t border-ink/10 space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <a
-                            href={`mailto:${settings?.contact_email || 'studio@cuttingedger.com'}`}
+                            href={`mailto:${settings?.contact_email || 'info@cuttingedger.com'}`}
                             className="flex items-center gap-2.5 text-ink-2 hover:text-primary-ink transition-colors"
                         >
                             <Mail className="w-4 h-4 text-primary-ink" />
-                            <span>{settings?.contact_email || 'studio@cuttingedger.com'}</span>
+                            <span>{settings?.contact_email || 'info@cuttingedger.com'}</span>
                         </a>
                         <a
                             href={`tel:${settings?.contact_phone || '+18005553343'}`}

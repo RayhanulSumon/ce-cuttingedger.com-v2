@@ -90,7 +90,7 @@ export function SeoHead({
         },
         description: description,
         telephone: '+1 (409) 995-2565',
-        email: 'hello@cuttingedger.com',
+        email: 'info@cuttingedger.com',
         address: {
             '@type': 'PostalAddress',
             streetAddress: 'Artisan Center, Level-7, House# 57/9, West Panthapath',

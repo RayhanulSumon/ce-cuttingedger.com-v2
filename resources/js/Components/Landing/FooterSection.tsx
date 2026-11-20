@@ -132,7 +132,7 @@ export const FooterSection = memo(function FooterSection({
         .map(([name, url]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), url: url as string }));
     const socials = configured.length ? configured : DEFAULT_SOCIALS;
 
-    const email = settings?.contact_email || 'hello@cuttingedger.com';
+    const email = settings?.contact_email || 'info@cuttingedger.com';
     const phones = settings?.contact_phones ?? [];
     const office = settings?.office_address;
     const whatsapp = (settings?.whatsapp_number ?? '').replace(/\D/g, '');

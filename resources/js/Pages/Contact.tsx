@@ -1,56 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
-    Mail,
-    Phone,
-    MapPin,
     ArrowRight,
     Calendar,
-    ShieldCheck,
     Check,
     CheckCircle2,
-    Copy,
-    RotateCw,
-    Loader2,
+    ChevronDown,
     Clock,
+    Copy,
+    Loader2,
     Lock,
+    Mail,
+    MapPin,
+    Phone,
+    RotateCw,
     Users,
-    Sparkles,
 } from 'lucide-react';
 import { PageProps } from '@/types';
 
+const FIELD_LABEL_CLASS = 'block text-xs font-semibold text-ink';
+const INPUT_CLASS =
+    'w-full min-h-11 rounded-xl border border-ink/12 bg-[#f8f9fb] px-3.5 py-2.5 text-sm text-ink placeholder:text-faint transition-colors hover:border-ink/25 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/15';
+
+const FIELD_ANCHORS: Record<string, { id: string; label: string }> = {
+    name: { id: 'contact-name', label: 'Name' },
+    email: { id: 'contact-email', label: 'Work Email' },
+    phone: { id: 'contact-phone', label: 'Phone' },
+    company: { id: 'contact-company', label: 'Company' },
+    website: { id: 'contact-website', label: 'Website' },
+    message: { id: 'contact-message', label: 'Project details' },
+    captcha_answer: { id: 'contact-captcha', label: 'Security answer' },
+};
 
 export default function Contact() {
     const { url, props } = usePage<PageProps>();
-    const { settings, flash, capabilities_nav = [] } = props;
-    const capabilityOptions = [...capabilities_nav.map((capability) => capability.title), 'Not sure yet'];
+    const { auth, settings, flash, capabilities_nav = [] } = props;
+    const capabilityOptions = useMemo(
+        () => [...capabilities_nav.map((capability) => capability.title), 'Not sure yet'],
+        [capabilities_nav],
+    );
+
     const query = new URLSearchParams(
         typeof window !== 'undefined' ? window.location.search : (url.split('?')[1] ?? ''),
     );
     const requestedService = query.get('service')?.trim() ?? '';
     const requestedCapability = query.get('capability')?.trim() ?? '';
-    const matchedService = requestedService
-        ? capabilityOptions.find(
-              (option) =>
-                  option.toLowerCase() === requestedService.toLowerCase() ||
-                  option.toLowerCase().includes(requestedService.toLowerCase()),
-          ) ?? capabilityOptions[0]
-        : capabilityOptions[0];
+
+    const matchedService = useMemo(() => {
+        if (!requestedService) {
+            return capabilityOptions[0] ?? 'Not sure yet';
+        }
+        return (
+            capabilityOptions.find(
+                (option) =>
+                    option.toLowerCase() === requestedService.toLowerCase() ||
+                    option.toLowerCase().includes(requestedService.toLowerCase()),
+            ) ??
+            capabilityOptions[0] ??
+            'Not sure yet'
+        );
+    }, [capabilityOptions, requestedService]);
+
     const initialMessage = requestedCapability
         ? `Interested in ${requestedCapability}. Please share turnaround and quote details for our upcoming batch.`
         : '';
 
-    const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
-    const contactPhone = (settings as any)?.contact_phone || '+1 (409) 995-2565';
-    const contactAddress = (settings as any)?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
+    const contactEmail = settings?.contact_email || 'info@cuttingedger.com';
+    const contactPhones =
+        settings?.contact_phones && settings.contact_phones.length > 0
+            ? settings.contact_phones
+            : [{ label: 'Studio', number: settings?.contact_phone || '+1 (409) 995-2565' }];
+    const contactAddress = settings?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
+
     const [copiedEmail, setCopiedEmail] = useState(false);
+    const [showOptionalDetails, setShowOptionalDetails] = useState(false);
+    const [captchaQuestion, setCaptchaQuestion] = useState('');
+    const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
+        name: auth?.user?.name ?? '',
+        email: auth?.user?.email ?? '',
+        phone: auth?.user?.phone ?? '',
+        company: auth?.user?.company ?? '',
         website: '',
         service_interest: matchedService,
         message: initialMessage,
@@ -68,9 +100,13 @@ export default function Contact() {
             service_interest: requestedService ? matchedService : prev.service_interest,
             message: prev.message === '' && initialMessage ? initialMessage : prev.message,
         }));
-    }, [requestedService, requestedCapability, matchedService, initialMessage]);
+    }, [requestedService, requestedCapability, matchedService, initialMessage, setData]);
 
-    const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
+    useEffect(() => {
+        if (errors.phone || errors.company || errors.website) {
+            setShowOptionalDetails(true);
+        }
+    }, [errors.phone, errors.company, errors.website]);
 
     const refreshCaptcha = () => {
         fetch('/api/captcha/math')
@@ -90,12 +126,15 @@ export default function Contact() {
 
     useEffect(() => {
         refreshCaptcha();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCopyEmail = () => {
-        navigator.clipboard.writeText(contactEmail);
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(contactEmail).catch(() => {});
+        }
         setCopiedEmail(true);
-        setTimeout(() => setCopiedEmail(false), 2000);
+        window.setTimeout(() => setCopiedEmail(false), 2000);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -104,66 +143,62 @@ export default function Contact() {
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
-                reset('name', 'email', 'phone', 'company', 'website', 'message', 'captcha_answer');
+                reset('message', 'website', 'captcha_answer');
                 refreshCaptcha();
             },
-            onError: () => refreshCaptcha(),
+            onError: () => {
+                refreshCaptcha();
+                window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
+            },
         });
     };
+
+    const errorList = Object.entries(errors).filter(
+        (entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1].length > 0,
+    );
 
     return (
         <>
             <SeoHead
-                title="Contact Production Studio — Cutting Edger"
-                description="Connect directly with Cutting Edger directors. Request custom catalog volume pricing, SLA agreements, or schedule a technical call."
+                title="Contact Studio — Cutting Edger"
+                description="Connect directly with Cutting Edger studio directors for custom volume pricing, SLA turnaround, or a quick discovery call."
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
                     { name: 'Contact', url: '/contact' },
                 ]}
             />
 
-            <section className="relative py-16 sm:py-24 lg:py-28 bg-page min-h-[90vh] flex items-center overflow-hidden">
-                {/* Ambient Radial Mesh Lighting */}
-                <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[48rem] h-[28rem] bg-primary/[0.04] rounded-full blur-[220px] pointer-events-none" />
-                <div className="absolute bottom-1/4 right-1/4 translate-x-1/3 translate-y-1/3 w-[36rem] h-[24rem] bg-white/[0.015] rounded-full blur-[200px] pointer-events-none" />
-
-                {/* Subtle Technical Grid Texture */}
-                <div
-                    className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"
-                    aria-hidden="true"
-                />
-
-                <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-                        
-                        {/* LEFT: Clean, High-End Editorial Context */}
-                        <div className="lg:col-span-5 space-y-8">
-                            <div className="space-y-3.5">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-[11px] font-mono uppercase tracking-[0.18em] text-primary-ink font-semibold">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span>Direct Studio Inquiry</span>
-                                </div>
-                                <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-display font-extrabold text-ink tracking-tight leading-[1.12]">
-                                    Let’s scale your <span className="text-primary-ink">product imagery.</span>
+            <section className="relative bg-page pt-28 pb-16 sm:pt-32 sm:pb-24 lg:min-h-[calc(100vh-4rem)] lg:flex lg:items-center">
+                <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-14">
+                        {/* LEFT: Editorial Contact Overview */}
+                        <div className="space-y-6 lg:col-span-5">
+                            <div className="space-y-3">
+                                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-ink">
+                                    Contact Studio
+                                </p>
+                                <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl lg:text-[42px] lg:leading-[1.12] [text-wrap:balance]">
+                                    Let’s talk about your{' '}
+                                    <span className="text-primary-ink">next project.</span>
                                 </h1>
-                                <p className="text-muted text-sm sm:text-base leading-relaxed max-w-md">
-                                    Whether ramping up for a seasonal catalog drop, standardizing multi-category color specs, or securing dedicated studio bandwidth, our directors respond within 24 business hours.
+                                <p className="max-w-md text-sm leading-relaxed text-muted sm:text-base">
+                                    Share your goals or catalog requirements and our studio directors will respond within 24 hours.
                                 </p>
                             </div>
 
-                            {/* Direct Communication Channels */}
-                            <div className="space-y-3 pt-2">
-                                {/* Email Card with 1-Click Copy */}
-                                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-ink/10 hover:border-ink/20 transition-all">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary-ink shrink-0">
-                                            <Mail className="w-4 h-4" />
-                                        </div>
+                            {/* Unified Direct Contact Card */}
+                            <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-xs">
+                                {/* Direct Email Row */}
+                                <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary-ink">
+                                            <Mail className="h-4 w-4" aria-hidden="true" />
+                                        </span>
                                         <div className="min-w-0">
-                                            <p className="text-[10px] font-mono uppercase tracking-wider text-muted">Direct Email</p>
+                                            <p className="text-[11px] font-medium text-subtle">Email</p>
                                             <a
                                                 href={`mailto:${contactEmail}`}
-                                                className="text-ink hover:text-primary-ink font-mono text-xs sm:text-sm truncate block transition-colors font-medium"
+                                                className="block truncate text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
                                             >
                                                 {contactEmail}
                                             </a>
@@ -172,120 +207,169 @@ export default function Contact() {
                                     <button
                                         type="button"
                                         onClick={handleCopyEmail}
-                                        aria-label="Copy studio email address"
-                                        className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-ink-2 hover:text-ink transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ml-2"
+                                        aria-label="Copy email address"
+                                        className="inline-flex min-h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-ink/10 bg-[#f8f9fb] px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:border-ink/25 hover:text-ink"
                                     >
                                         {copiedEmail ? (
-                                            <span className="text-primary-ink flex items-center gap-1 font-semibold">
-                                                <Check className="w-3.5 h-3.5" /> Copied
+                                            <span className="inline-flex items-center gap-1 text-emerald-700">
+                                                <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                                                Copied
                                             </span>
                                         ) : (
-                                            <span className="flex items-center gap-1 text-muted hover:text-ink">
-                                                <Copy className="w-3.5 h-3.5" /> Copy
+                                            <span className="inline-flex items-center gap-1">
+                                                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                                                Copy
                                             </span>
                                         )}
                                     </button>
                                 </div>
 
-                                {/* Discovery Call Card */}
-                                <div
-                                    onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                    className="group flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.02] border border-ink/10 hover:border-primary/40 hover:bg-primary/[0.02] transition-all cursor-pointer"
-                                >
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-ink/10 group-hover:bg-primary group-hover:text-white group-hover:border-primary flex items-center justify-center text-ink-2 transition-all shrink-0">
-                                            <Calendar className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-mono uppercase tracking-wider text-primary-ink font-semibold">Live Screen-Share</p>
-                                            <p className="text-ink group-hover:text-primary-ink text-xs sm:text-sm font-medium transition-colors">
-                                                Book 15-Min Discovery Call
-                                            </p>
+                                {/* Phone Row(s) */}
+                                <div className="flex items-start gap-3 px-4 py-3.5 sm:px-5">
+                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f8f9fb] text-ink-2">
+                                        <Phone className="h-4 w-4" aria-hidden="true" />
+                                    </span>
+                                    <div className="min-w-0 flex-1 space-y-1">
+                                        <p className="text-[11px] font-medium text-subtle">Phone</p>
+                                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                                            {contactPhones.map((item, idx) => (
+                                                <a
+                                                    key={`${item.number}-${idx}`}
+                                                    href={`tel:${item.number.replace(/[^+\d]/g, '')}`}
+                                                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
+                                                >
+                                                    {contactPhones.length > 1 && item.label && (
+                                                        <span className="text-xs font-medium text-subtle">
+                                                            {item.label}:
+                                                        </span>
+                                                    )}
+                                                    <span>{item.number}</span>
+                                                </a>
+                                            ))}
                                         </div>
                                     </div>
-                                    <span className="text-subtle group-hover:text-primary-ink group-hover:translate-x-1 transition-all text-xs font-mono">
-                                        →
-                                    </span>
                                 </div>
 
-                                {/* Hotline & Studio Location in Compact Clean Row */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-ink/10 space-y-1">
-                                        <div className="flex items-center gap-1.5 text-muted text-[10px] font-mono uppercase tracking-wider">
-                                            <Phone className="w-3 h-3 text-primary-ink" />
-                                            <span>Studio Line</span>
-                                        </div>
-                                        <p className="text-ink-2 font-mono text-xs font-medium">
-                                            {contactPhone}
-                                        </p>
-                                    </div>
-
-                                    <div className="p-3 rounded-xl bg-white/[0.02] border border-ink/10 space-y-1">
-                                        <div className="flex items-center gap-1.5 text-muted text-[10px] font-mono uppercase tracking-wider">
-                                            <MapPin className="w-3 h-3 text-muted" />
-                                            <span>Studio Hub</span>
-                                        </div>
-                                        <p className="text-ink-2 text-xs truncate" title={contactAddress}>
+                                {/* Studio Address Row */}
+                                <div className="flex items-start gap-3 px-4 py-3.5 sm:px-5">
+                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f8f9fb] text-ink-2">
+                                        <MapPin className="h-4 w-4" aria-hidden="true" />
+                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-[11px] font-medium text-subtle">Studio</p>
+                                        <p className="text-sm font-medium leading-snug text-ink">
                                             {contactAddress}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Clean Studio Standards Pill Row */}
-                            <div className="pt-2 border-t border-ink/10 space-y-2.5">
-                                <p className="text-[11px] font-mono uppercase tracking-wider text-muted font-medium">
-                                    Studio Commitments
-                                </p>
-                                <div className="space-y-2 text-xs">
-                                    <div className="flex items-start gap-2.5 text-ink-2">
-                                        <Clock className="w-4 h-4 text-primary-ink shrink-0 mt-0.5" />
-                                        <span><strong className="text-ink font-medium">24-Hour Production SLA:</strong> Guaranteed delivery on scheduled catalog drops.</span>
-                                    </div>
-                                    <div className="flex items-start gap-2.5 text-ink-2">
-                                        <Lock className="w-4 h-4 text-primary-ink shrink-0 mt-0.5" />
-                                        <span><strong className="text-ink font-medium">Mutual Non-Disclosure Agreement:</strong> Secure IP protection for unreleased collections.</span>
-                                    </div>
-                                    <div className="flex items-start gap-2.5 text-ink-2">
-                                        <Users className="w-4 h-4 text-primary-ink shrink-0 mt-0.5" />
-                                        <span><strong className="text-ink font-medium">Dedicated Retoucher Pod:</strong> Assigned senior colorists aligned to your guidelines.</span>
+                            {/* Dedicated Discovery Call CTA Button */}
+                            <button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
+                                className="group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl bg-ink px-5 py-4 text-left text-white shadow-sm transition-colors hover:bg-ink-2"
+                            >
+                                <div className="flex items-center gap-3.5">
+                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-white">
+                                        <Calendar className="h-4 w-4" aria-hidden="true" />
+                                    </span>
+                                    <div>
+                                        <p className="text-xs text-white/75">Prefer a quick walkthrough?</p>
+                                        <p className="text-sm font-semibold text-white">
+                                            Book a 15-min Discovery Call
+                                        </p>
                                     </div>
                                 </div>
+                                <ArrowRight
+                                    className="h-4 w-4 shrink-0 text-white/80 transition-transform group-hover:translate-x-1"
+                                    aria-hidden="true"
+                                />
+                            </button>
+
+                            {/* Quiet Trust Strip */}
+                            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs font-medium text-subtle">
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Clock className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
+                                    24h response
+                                </span>
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Lock className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
+                                    Mutual NDA
+                                </span>
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Users className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
+                                    Dedicated team
+                                </span>
                             </div>
                         </div>
 
-                        {/* RIGHT: Ultra-Clean Glassmorphic Form Card */}
+                        {/* RIGHT: Clean Light Form Card */}
                         <div className="lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
-                                className="relative p-5 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-b from-white/95 to-page/95 border border-ink/10 shadow-[0_24px_64px_-24px_rgba(22,25,31,0.16)] backdrop-blur-2xl space-y-5 overflow-hidden"
+                                noValidate
+                                className="space-y-6 rounded-3xl border border-ink/10 bg-white p-6 shadow-[0_20px_50px_-28px_rgba(22,25,31,0.14)] sm:p-8 lg:p-10"
                             >
-                                {/* Top Hairline Accent Highlight */}
-                                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
-
-                                <div className="flex items-center justify-between pb-3.5 border-b border-ink/10">
-                                    <div className="space-y-1">
-                                        <h2 className="text-lg sm:text-xl font-display font-bold text-ink tracking-tight">
-                                            Project Inquiry
-                                        </h2>
-                                        <p className="text-xs text-muted">
-                                            Tell us about your requirements. Zero spam, ever.
-                                        </p>
-                                    </div>
-                                    <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-ink/10 text-[10px] font-mono uppercase tracking-wider text-muted">
-                                        <ShieldCheck className="w-3 h-3 text-primary-ink" />
-                                        <span>Confidential</span>
-                                    </span>
+                                <div className="space-y-1 border-b border-ink/8 pb-4">
+                                    <h2 className="font-display text-xl font-bold tracking-tight text-ink">
+                                        Start a conversation
+                                    </h2>
+                                    <p className="text-xs text-muted">
+                                        Tell us what you’re working on — we’ll get back to you within one business day.
+                                    </p>
                                 </div>
 
-                                {/* Clean In-page Success Banner */}
+                                {/* Success Feedback */}
                                 {flash?.success && (
-                                    <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-start gap-3.5 text-ink animate-in fade-in duration-300">
-                                        <CheckCircle2 className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-bold text-primary-ink">Inquiry Transmitted Successfully</p>
-                                            <p className="text-xs text-ink-2 leading-relaxed">{flash.success}</p>
+                                    <div
+                                        role="status"
+                                        className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950"
+                                    >
+                                        <CheckCircle2
+                                            className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600"
+                                            aria-hidden="true"
+                                        />
+                                        <div className="space-y-0.5">
+                                            <p className="text-sm font-bold">Message received</p>
+                                            <p className="text-xs leading-relaxed text-emerald-900">
+                                                {flash.success}
+                                            </p>
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* Focusable Error Summary */}
+                                {errorList.length > 0 && (
+                                    <div
+                                        ref={errorSummaryRef}
+                                        tabIndex={-1}
+                                        role="alert"
+                                        aria-labelledby="contact-error-summary"
+                                        className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                                    >
+                                        <p id="contact-error-summary" className="font-bold text-rose-800">
+                                            Please check the highlighted fields:
+                                        </p>
+                                        <ul className="mt-1.5 list-disc space-y-0.5 pl-4">
+                                            {errorList.map(([field, message]) => {
+                                                const anchor = FIELD_ANCHORS[field];
+                                                return (
+                                                    <li key={field}>
+                                                        {anchor ? (
+                                                            <a
+                                                                href={`#${anchor.id}`}
+                                                                className="font-medium underline hover:text-rose-950"
+                                                            >
+                                                                {anchor.label}: {message}
+                                                            </a>
+                                                        ) : (
+                                                            <span>{message}</span>
+                                                        )}
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
                                     </div>
                                 )}
 
@@ -300,184 +384,249 @@ export default function Contact() {
                                     className="hidden"
                                     aria-hidden="true"
                                 />
-
-                                {/* Hidden Captcha Token */}
                                 <input type="hidden" name="captcha_token" value={data.captcha_token} />
 
-                                {/* Row 1: Name & Email */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Core Row 1: Name & Work Email */}
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-ink-2 font-medium flex items-center justify-between">
-                                            <span>Your Name</span>
-                                            <span className="text-primary-ink">*</span>
+                                        <label htmlFor="contact-name" className={FIELD_LABEL_CLASS}>
+                                            Your Name <span className="text-primary-ink">*</span>
                                         </label>
                                         <input
+                                            id="contact-name"
                                             type="text"
                                             required
+                                            autoComplete="name"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
+                                            aria-invalid={Boolean(errors.name)}
+                                            aria-describedby={errors.name ? 'contact-name-error' : undefined}
                                             placeholder="Alex Mercer"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
+                                            className={INPUT_CLASS}
                                         />
-                                        {errors.name && <p className="text-xs text-rose-400 font-mono">{errors.name}</p>}
+                                        {errors.name && (
+                                            <p id="contact-name-error" className="text-xs font-medium text-rose-600">
+                                                {errors.name}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs text-ink-2 font-medium flex items-center justify-between">
-                                            <span>Work Email</span>
-                                            <span className="text-primary-ink">*</span>
+                                        <label htmlFor="contact-email" className={FIELD_LABEL_CLASS}>
+                                            Work Email <span className="text-primary-ink">*</span>
                                         </label>
                                         <input
+                                            id="contact-email"
                                             type="email"
                                             required
+                                            autoComplete="email"
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
+                                            aria-invalid={Boolean(errors.email)}
+                                            aria-describedby={errors.email ? 'contact-email-error' : undefined}
                                             placeholder="alex@company.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
+                                            className={INPUT_CLASS}
                                         />
-                                        {errors.email && <p className="text-xs text-rose-400 font-mono">{errors.email}</p>}
+                                        {errors.email && (
+                                            <p id="contact-email-error" className="text-xs font-medium text-rose-600">
+                                                {errors.email}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Row 2: Phone, Company & Store URL */}
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="text-xs text-muted font-medium">
-                                            Phone <span className="text-subtle font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            placeholder="+1 (555) 000-0000"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
-                                        />
-                                        {errors.phone && <p className="text-xs text-rose-400 font-mono">{errors.phone}</p>}
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="text-xs text-muted font-medium">
-                                            Company / Brand <span className="text-subtle font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.company}
-                                            onChange={(e) => setData('company', e.target.value)}
-                                            placeholder="Acme Footwear"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="text-xs text-muted font-medium">
-                                            Store / Website <span className="text-subtle font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="url"
-                                            value={data.website}
-                                            onChange={(e) => setData('website', e.target.value)}
-                                            placeholder="https://acme.com"
-                                            className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Capability needed: chips come from the admin panel */}
+                                {/* Core Row 2: Service Chips */}
                                 <div className="space-y-2">
-                                    <label className="text-xs text-ink-2 font-medium block">
-                                        Capability needed
-                                    </label>
+                                    <span className={FIELD_LABEL_CLASS}>What do you need help with?</span>
                                     <div className="flex flex-wrap gap-2">
-                                        {capabilityOptions.map((srv) => {
-                                            const active = data.service_interest === srv;
+                                        {capabilityOptions.map((service) => {
+                                            const active = data.service_interest === service;
                                             return (
                                                 <button
-                                                    key={srv}
+                                                    key={service}
                                                     type="button"
-                                                    onClick={() => setData('service_interest', srv)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
+                                                    aria-pressed={active}
+                                                    onClick={() => setData('service_interest', service)}
+                                                    className={`min-h-9 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                                                         active
-                                                            ? 'bg-primary text-white font-bold shadow-[0_0_15px_color-mix(in_srgb,var(--color-primary)_35%,transparent)] scale-[1.02]'
-                                                            : 'bg-white/[0.03] border border-ink/10 text-ink-2 hover:border-ink/25 hover:text-ink'
+                                                            ? 'border-ink bg-ink text-white'
+                                                            : 'border-ink/12 bg-white text-ink-2 hover:border-ink/30 hover:text-ink'
                                                     }`}
                                                 >
-                                                    {srv}
+                                                    {service}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 </div>
 
-                                {/* Message */}
+                                {/* Core Row 3: Message */}
                                 <div className="space-y-1.5">
-                                    <label className="text-xs text-ink-2 font-medium flex items-center justify-between">
-                                        <span>Project Scope & Timeline</span>
-                                        <span className="text-primary-ink">*</span>
+                                    <label htmlFor="contact-message" className={FIELD_LABEL_CLASS}>
+                                        Project details <span className="text-primary-ink">*</span>
                                     </label>
                                     <textarea
+                                        id="contact-message"
                                         required
-                                        rows={3}
+                                        rows={4}
                                         value={data.message}
                                         onChange={(e) => setData('message', e.target.value)}
-                                        placeholder="Briefly describe your image volume, desired background specs, or turnaround deadline..."
-                                        className="w-full px-3.5 py-2.5 bg-white/[0.03] border border-ink/10 hover:border-ink/20 focus:border-primary focus:bg-primary/[0.02] focus:ring-1 focus:ring-primary/30 rounded-xl text-sm text-ink placeholder-faint transition-all outline-none leading-relaxed"
+                                        aria-invalid={Boolean(errors.message)}
+                                        aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                                        placeholder="Share your image count, style references, or timeline..."
+                                        className={`${INPUT_CLASS} min-h-[112px] leading-relaxed`}
                                     />
-                                    {errors.message && <p className="text-xs text-rose-400 font-mono">{errors.message}</p>}
+                                    {errors.message && (
+                                        <p id="contact-message-error" className="text-xs font-medium text-rose-600">
+                                            {errors.message}
+                                        </p>
+                                    )}
                                 </div>
 
-                                {/* Bottom Row: Clean Security Challenge & High-Converting Submit Button */}
-                                <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-ink/10">
-                                    {/* Minimalist Integrated Security Verification */}
-                                    {captchaQuestion ? (
-                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-ink/10 text-xs font-mono text-ink-2 self-start sm:self-auto">
-                                            <span className="text-muted text-[11px]">Security:</span>
-                                            <span className="text-primary-ink font-semibold">{captchaQuestion} =</span>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={data.captcha_answer}
-                                                onChange={(e) => setData('captcha_answer', e.target.value)}
-                                                placeholder="?"
-                                                className="w-12 px-2 py-0.5 bg-white/[0.06] border border-ink/15 focus:border-primary rounded-md text-xs text-center text-ink font-mono focus:outline-none"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={refreshCaptcha}
-                                                title="Refresh challenge"
-                                                className="text-subtle hover:text-primary-ink transition-colors p-0.5 cursor-pointer"
-                                            >
-                                                <RotateCw className="w-3.5 h-3.5" />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-1.5 text-xs text-muted font-mono">
-                                            <ShieldCheck className="w-3.5 h-3.5 text-primary-ink" />
-                                            <span>Protected under Mutual NDA</span>
+                                {/* Progressive Disclosure for Optional Fields */}
+                                <div className="space-y-3">
+                                    <button
+                                        type="button"
+                                        aria-expanded={showOptionalDetails}
+                                        onClick={() => setShowOptionalDetails((prev) => !prev)}
+                                        className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 text-xs font-semibold text-primary-ink transition-colors hover:text-primary"
+                                    >
+                                        <span>
+                                            {showOptionalDetails
+                                                ? 'Hide optional details'
+                                                : '+ Add phone, company or website (optional)'}
+                                        </span>
+                                        <ChevronDown
+                                            className={`h-3.5 w-3.5 transition-transform ${
+                                                showOptionalDetails ? 'rotate-180' : ''
+                                            }`}
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+
+                                    {showOptionalDetails && (
+                                        <div className="grid grid-cols-1 gap-4 rounded-2xl border border-ink/8 bg-[#f8f9fb] p-4 sm:grid-cols-2">
+                                            <div className="space-y-1.5">
+                                                <label htmlFor="contact-phone" className={FIELD_LABEL_CLASS}>
+                                                    Phone
+                                                </label>
+                                                <input
+                                                    id="contact-phone"
+                                                    type="tel"
+                                                    autoComplete="tel"
+                                                    value={data.phone}
+                                                    onChange={(e) => setData('phone', e.target.value)}
+                                                    placeholder="+1 (555) 000-0000"
+                                                    className={`${INPUT_CLASS} bg-white`}
+                                                />
+                                                {errors.phone && (
+                                                    <p className="text-xs font-medium text-rose-600">
+                                                        {errors.phone}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label htmlFor="contact-company" className={FIELD_LABEL_CLASS}>
+                                                    Company / Brand
+                                                </label>
+                                                <input
+                                                    id="contact-company"
+                                                    type="text"
+                                                    autoComplete="organization"
+                                                    value={data.company}
+                                                    onChange={(e) => setData('company', e.target.value)}
+                                                    placeholder="Acme Footwear"
+                                                    className={`${INPUT_CLASS} bg-white`}
+                                                />
+                                                {errors.company && (
+                                                    <p className="text-xs font-medium text-rose-600">
+                                                        {errors.company}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-1.5 sm:col-span-2">
+                                                <label htmlFor="contact-website" className={FIELD_LABEL_CLASS}>
+                                                    Store / Website
+                                                </label>
+                                                <input
+                                                    id="contact-website"
+                                                    type="url"
+                                                    autoComplete="url"
+                                                    value={data.website}
+                                                    onChange={(e) => setData('website', e.target.value)}
+                                                    placeholder="https://yourstore.com"
+                                                    className={`${INPUT_CLASS} bg-white`}
+                                                />
+                                                {errors.website && (
+                                                    <p className="text-xs font-medium text-rose-600">
+                                                        {errors.website}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
-
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full sm:w-auto px-6 py-3 sm:py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
-                                    >
-                                        {processing ? (
-                                            <>
-                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                                <span>Transmitting...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span>Send Inquiry</span>
-                                                <ArrowRight className="w-3.5 h-3.5" />
-                                            </>
-                                        )}
-                                    </button>
                                 </div>
 
-                                {errors.captcha_answer && (
-                                    <p className="text-xs text-rose-400 font-mono">{errors.captcha_answer}</p>
-                                )}
+                                {/* Footer: Compact Math Check & Primary Submit */}
+                                <div className="space-y-2 border-t border-ink/8 pt-5">
+                                    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                                        {captchaQuestion ? (
+                                            <div className="inline-flex min-h-10 items-center gap-2 self-start rounded-xl border border-ink/12 bg-[#f8f9fb] px-3 py-1.5 text-xs text-ink-2 sm:self-auto">
+                                                <span className="font-medium text-subtle">Security check:</span>
+                                                <span className="font-semibold text-ink">{captchaQuestion} =</span>
+                                                <input
+                                                    id="contact-captcha"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    required
+                                                    aria-label="Security math answer"
+                                                    aria-invalid={Boolean(errors.captcha_answer)}
+                                                    value={data.captcha_answer}
+                                                    onChange={(e) => setData('captcha_answer', e.target.value)}
+                                                    placeholder="?"
+                                                    className="w-12 rounded-lg border border-ink/15 bg-white px-2 py-1 text-center text-xs font-semibold text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={refreshCaptcha}
+                                                    aria-label="Refresh security challenge"
+                                                    title="Refresh security challenge"
+                                                    className="cursor-pointer rounded-md p-1 text-subtle transition-colors hover:text-primary-ink"
+                                                >
+                                                    <RotateCw className="h-3.5 w-3.5" aria-hidden="true" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="h-10" aria-hidden="true" />
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                                        >
+                                            {processing ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                                    <span>Sending...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span>Send Message</span>
+                                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {errors.captcha_answer && (
+                                        <p className="text-xs font-medium text-rose-600">
+                                            {errors.captcha_answer}
+                                        </p>
+                                    )}
+                                </div>
                             </form>
                         </div>
                     </div>

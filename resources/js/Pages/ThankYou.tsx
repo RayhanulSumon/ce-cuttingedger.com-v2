@@ -19,7 +19,7 @@ export default function ThankYou() {
     const { settings, flash } = usePage<PageProps>().props;
     const orderNumber = (flash as any)?.order_number;
     const isPilot = Boolean(orderNumber);
-    const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
+    const contactEmail = (settings as any)?.contact_email || 'info@cuttingedger.com';
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
