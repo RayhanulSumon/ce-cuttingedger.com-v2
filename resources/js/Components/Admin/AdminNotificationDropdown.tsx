@@ -8,7 +8,6 @@ import {
 import { Button } from "@/Components/ui/button";
 import {
     Bell,
-    CalendarCheck2,
     Sparkles,
     MessageSquareText,
     CheckCheck,
@@ -167,13 +166,6 @@ export function AdminNotificationDropdown() {
 
     // Get icon badge based on notification type
     const getNotificationIcon = (type: string) => {
-        if (type.includes("consultation")) {
-            return (
-                <div className="w-8 h-8 rounded-lg bg-[#00f5ff]/10 border border-[#00f5ff]/30 text-[#00f5ff] flex items-center justify-center shrink-0">
-                    <CalendarCheck2 className="w-4 h-4" />
-                </div>
-            );
-        }
         if (type.includes("lead")) {
             return (
                 <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 text-accent flex items-center justify-center shrink-0">
@@ -266,7 +258,7 @@ export function AdminNotificationDropdown() {
                             </div>
                             <p className="text-sm font-semibold text-neutral-300">All caught up!</p>
                             <p className="text-xs text-neutral-500">
-                                No unread client consultations or captured leads at this moment.
+                                No unread inquiries or captured leads at this moment.
                             </p>
                         </div>
                     ) : (
@@ -330,11 +322,11 @@ export function AdminNotificationDropdown() {
                             type="button"
                             onClick={() => {
                                 setIsOpen(false);
-                                router.visit("/admin/consultations");
+                                router.visit("/admin/messages");
                             }}
                             className="text-accent hover:underline"
                         >
-                            View Bookings →
+                            View Inbox →
                         </button>
                     </div>
                 )}

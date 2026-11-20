@@ -67,11 +67,6 @@ class ChatSession extends Model
         return $this->hasMany(ChatMessage::class)->orderBy('created_at', 'asc');
     }
 
-    public function consultations(): HasMany
-    {
-        return $this->hasMany(ChatConsultation::class);
-    }
-
     public function touchActivity(): void
     {
         $this->updateQuietly([

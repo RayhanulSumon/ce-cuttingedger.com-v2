@@ -28,7 +28,7 @@ export const FAQS: FaqEntry[] = [
     },
     {
         question: 'Do you offer a free test?',
-        answer: 'Yes. Send a few images through the Book a Demo form and we will return them retouched, free of charge, so you can judge the quality first.',
+        answer: 'Yes. Book a demo or send a few sample images through our Contact page and we will return them retouched, free of charge, so you can judge the quality first.',
     },
     {
         question: 'Is my content confidential?',

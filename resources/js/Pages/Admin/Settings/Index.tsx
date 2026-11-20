@@ -6,7 +6,7 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Save, Globe, Search, Phone, Share2, ChevronDown, ExternalLink } from "lucide-react";
+import { Save, Globe, Search, Phone, Share2, ChevronDown, ExternalLink, Calendar, CheckCircle2 } from "lucide-react";
 
 interface SettingItem {
     id: number;
@@ -363,7 +363,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">Booking &amp; Social Links</h2>
                                 <p className="truncate text-xs text-slate-500">
-                                    Calendly discovery link and social media URLs
+                                    Calendly booking link and social media URLs
                                 </p>
                             </div>
                         </div>
@@ -381,17 +381,111 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.integrations && (
-                        <div className="space-y-4 border-t border-slate-100 px-4 py-5 sm:px-6">
+                        <div className="space-y-5 border-t border-slate-100 px-4 py-5 sm:px-6">
+                            {/* Setup Guide Box */}
+                            <div className="rounded-xl border border-amber-200/90 bg-amber-50/70 p-4 sm:p-5 space-y-4">
+                                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-200/70 pb-3">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-amber-500/15 text-amber-800">
+                                            <Calendar className="h-4 w-4" />
+                                        </span>
+                                        <div>
+                                            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950">
+                                                How to Connect Calendly (30-Minute Discovery Calls)
+                                            </h3>
+                                            <p className="text-[11px] text-amber-900/80">
+                                                Configures the self-scheduling calendar widget on <code className="font-mono bg-white/70 px-1 py-0.5 rounded text-amber-950">/book-a-demo</code>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <a
+                                            href="/book-a-demo"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-950 hover:bg-amber-50 shadow-xs"
+                                        >
+                                            <span>Preview /book-a-demo</span>
+                                            <ExternalLink className="h-3.5 w-3.5 text-amber-700" />
+                                        </a>
+                                        <a
+                                            href="https://calendly.com"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900 hover:text-amber-950 hover:underline"
+                                        >
+                                            <span>Open Calendly.com</span>
+                                            <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                        <div className="flex items-center gap-2">
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-slate-900 text-white text-[11px] font-bold">1</span>
+                                            <p className="font-bold text-slate-800">Create 30-Min Event</p>
+                                        </div>
+                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
+                                            Log in to <a href="https://calendly.com" target="_blank" rel="noreferrer" className="text-primary underline">Calendly</a> and create or select a <strong>30-minute</strong> Discovery Call event type.
+                                        </p>
+                                    </div>
+                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                        <div className="flex items-center gap-2">
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary text-white text-[11px] font-bold">2</span>
+                                            <p className="font-bold text-slate-800">Copy Share Link</p>
+                                        </div>
+                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
+                                            Click <strong>Share → Copy link</strong> (e.g. <code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-900">https://calendly.com/your-brand/30min</code>).
+                                        </p>
+                                    </div>
+                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                        <div className="flex items-center gap-2">
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-emerald-600 text-white text-[11px] font-bold">3</span>
+                                            <p className="font-bold text-slate-800">Paste &amp; Save Below</p>
+                                        </div>
+                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
+                                            Paste your link into <strong>Calendly Booking URL</strong> and click <strong>Save Settings</strong>.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/70 text-xs">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold text-slate-800">Frontend Status:</span>
+                                        {data.settings.calendly_url &&
+                                        !data.settings.calendly_url.includes("cuttingedger/discovery-call") &&
+                                        !data.settings.calendly_url.includes("your-org") ? (
+                                            <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                                Live Calendly embed active on /book-a-demo
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1 font-semibold text-amber-800 bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-300">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-pulse" />
+                                                Placeholder / Unset — Visitors currently see the direct 30-min booking request form
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-[11px] text-slate-500">
+                                        Clients will never see setup guides or 404 errors.
+                                    </p>
+                                </div>
+                            </div>
+
                             <div>
-                                <label className={LABEL_CLASS}>Calendly Discovery Call URL *</label>
+                                <label className={LABEL_CLASS}>Calendly 30-Minute Booking URL *</label>
                                 <Input
                                     type="url"
                                     value={data.settings.calendly_url}
                                     onChange={(e) => updateSetting("calendly_url", e.target.value)}
-                                    placeholder="https://calendly.com/your-org/discovery-call"
+                                    placeholder="https://calendly.com/your-brand/30min"
                                     className="bg-white border-slate-200 text-ink"
                                     required
                                 />
+                                <p className="mt-1.5 text-xs text-slate-500">
+                                    Embedded on <code className="font-mono text-slate-700">/book-a-demo</code> and sent in pilot order and inquiry confirmation emails.
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

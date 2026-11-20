@@ -82,7 +82,7 @@ function BackgroundSlider({ playing }: { playing: boolean }) {
 const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf] bg-cover bg-center';
 const pillPoster = { backgroundImage: `url(${VIDEO_POSTER})` };
 
-export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }: SectionProps) {
+export const HeroSection = memo(function HeroSection({ active, goTo }: SectionProps) {
     const rowRef = useRef<HTMLSpanElement>(null);
     const cuttingRef = useRef<HTMLSpanElement>(null);
     const edgerRef = useRef<HTMLSpanElement>(null);
@@ -195,7 +195,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo, openDemo }:
                 </p>
             </Reveal>
             <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
-                <PillButton onClick={openDemo}>Book a Demo</PillButton>
+                <PillButton href="/book-a-demo">Book a Demo</PillButton>
                 <PillButton dark={false} onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
                     Explore capabilities
                 </PillButton>

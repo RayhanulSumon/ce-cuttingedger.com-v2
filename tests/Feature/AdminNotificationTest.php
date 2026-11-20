@@ -30,13 +30,13 @@ class AdminNotificationTest extends TestCase
     {
         DB::table('notifications')->insert([
             'id' => (string) Str::uuid(),
-            'type' => 'consultation.booked',
+            'type' => 'lead.captured',
             'notifiable_type' => User::class,
             'notifiable_id' => $this->admin->id,
             'data' => json_encode([
-                'title' => 'Test Booking',
-                'message' => 'Client booked consultation',
-                'admin_url' => '/admin/consultations',
+                'title' => 'New Lead',
+                'message' => 'Visitor captured lead',
+                'admin_url' => '/admin/messages',
             ]),
             'read_at' => null,
             'created_at' => now(),

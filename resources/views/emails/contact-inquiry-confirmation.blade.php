@@ -14,7 +14,7 @@ One of our Senior Production Directors will review your brief and follow up with
 ---
 
 ### Need Immediate Alignment?
-Skip the email queue and lock in a 15-minute Discovery Call with our production team:
+Skip the email queue and lock in a 30-minute Discovery Call with our production team:
 
 <x-mail::button :url="$calendlyUrl">
 Schedule a Discovery Call

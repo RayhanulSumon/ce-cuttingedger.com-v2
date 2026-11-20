@@ -19,7 +19,6 @@ import {
     LogOut,
     ExternalLink,
     ChevronDown,
-    CalendarCheck2,
     MessageSquareText,
     Sparkles,
     ShoppingBag,
@@ -90,7 +89,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         admin_badges?: {
             pending_orders?: number;
             pending_credit_purchases?: number;
-            pending_consultations: number;
             unread_leads: number;
             new_messages: number;
         };
@@ -110,7 +108,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
     const isInboxActive =
         url.startsWith("/admin/messages") ||
-        url.startsWith("/admin/consultations") ||
         url.startsWith("/admin/chat-sessions") ||
         url.startsWith("/admin/subscribers");
 
@@ -152,7 +149,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
     const inboxTotal =
         (admin_badges?.new_messages ?? 0) +
-        (admin_badges?.pending_consultations ?? 0) +
         (admin_badges?.unread_leads ?? 0);
 
     const coreNavItems: NavItem[] = [
@@ -211,15 +207,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     icon: Mail,
                     active: url.startsWith("/admin/messages"),
                     badge: admin_badges?.new_messages ? `${admin_badges.new_messages}` : null,
-                },
-                {
-                    name: "Booked Calls",
-                    href: "/admin/consultations",
-                    icon: CalendarCheck2,
-                    active: url.startsWith("/admin/consultations"),
-                    badge: admin_badges?.pending_consultations
-                        ? `${admin_badges.pending_consultations}`
-                        : null,
                 },
                 {
                     name: "Live Chat",

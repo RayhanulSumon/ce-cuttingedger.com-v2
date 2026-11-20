@@ -214,7 +214,6 @@ class ChatFlowTest extends TestCase
         $response->assertStatus(200);
         $types = collect($response->json('message.tool_cards'))->pluck('type')->all();
         $this->assertSame(['link_card'], $types);
-        $this->assertDatabaseCount('chat_consultations', 0);
     }
 
     public function test_action_endpoints_are_removed(): void
@@ -223,6 +222,8 @@ class ChatFlowTest extends TestCase
         $this->assertContains($this->postJson('/api/chat/lead')->status(), [404, 405]);
         $this->assertContains($this->postJson('/api/chat/upload')->status(), [404, 405]);
         $this->getJson('/api/chat/available-slots')->assertStatus(404);
+        $this->getJson('/api/discovery-call/slots')->assertStatus(404);
+        $this->assertContains($this->postJson('/api/discovery-call/book')->status(), [404, 405]);
     }
 
     public function test_resumed_chat_session_refreshes_stale_capability_cards(): void

@@ -275,7 +275,7 @@ interface ShowcaseProps extends SectionProps {
     projects: Project[];
 }
 
-export const ShowcaseSection = memo(function ShowcaseSection({ active, openDemo, projects, onOverlayChange }: ShowcaseProps) {
+export const ShowcaseSection = memo(function ShowcaseSection({ active, projects, onOverlayChange }: ShowcaseProps) {
     const [openTile, setOpenTile] = useState<Tile | null>(null);
 
     const columns = useMemo(() => {
@@ -329,12 +329,12 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, openDemo,
                     <Link href="/case-studies" prefetch className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
                         View case studies
                     </Link>
-                    <button type="button" onClick={openDemo} className="group flex items-center gap-3 text-sm font-bold">
+                    <Link href="/book-a-demo" prefetch className="group flex items-center gap-3 text-sm font-bold">
                         <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white transition-transform duration-300 group-hover:rotate-45">
                             <ArrowUpRight size={14} />
                         </span>
                         Book a Demo
-                    </button>
+                    </Link>
                 </Reveal>
             </div>
 

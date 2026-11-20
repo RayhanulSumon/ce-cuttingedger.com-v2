@@ -44,6 +44,14 @@ class PageController extends Controller
     }
 
     /**
+     * Display dedicated Book a Demo page with Calendly scheduling embed.
+     */
+    public function bookDemo(): Response
+    {
+        return Inertia::render('BookDemo');
+    }
+
+    /**
      * Display dedicated Thank You page with Calendly booking embed.
      */
     public function thankYou(): Response

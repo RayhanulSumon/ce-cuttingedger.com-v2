@@ -14,10 +14,10 @@ Thank you for choosing **Cutting Edger**. Your complimentary 3-asset production 
 ---
 
 ### Need Custom Volume Pricing or Fast SLAs?
-Accelerate your workflow onboarding by reserving a 15-minute Discovery Call with a Technical Art Director.
+Accelerate your workflow onboarding by reserving a 30-minute Discovery Call with a Technical Art Director.
 
 <x-mail::button :url="$calendlyUrl">
-Book a 15-Minute Discovery Call
+Book a 30-Minute Discovery Call
 </x-mail::button>
 
 If you have additional instructions or source files to attach, simply reply directly to this email.

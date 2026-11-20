@@ -283,13 +283,13 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
 
                     <div className="flex flex-wrap items-center gap-3">
                         <OrderCta href={quoteHref}>Request a quote</OrderCta>
-                        <button
-                            type="button"
-                            onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                            className="inline-flex h-11 cursor-pointer items-center rounded-full border border-ink/20 bg-white px-6 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+                        <Link
+                            href="/book-a-demo"
+                            prefetch
+                            className="inline-flex h-11 items-center rounded-full border border-ink/20 bg-white px-6 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
                         >
-                            Book a call
-                        </button>
+                            Book a Demo
+                        </Link>
                     </div>
                 </div>
             </section>

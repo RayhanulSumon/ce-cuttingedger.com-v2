@@ -197,6 +197,7 @@ export interface SiteSettings {
     /** WhatsApp number with country code, digits only. Empty hides the link. */
     whatsapp_number: string;
     office_address: string;
+    calendly_url?: string;
     socials: {
         twitter?: string;
         instagram?: string;

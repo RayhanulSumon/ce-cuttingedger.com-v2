@@ -156,18 +156,18 @@ export default function ThankYou() {
                                 Need High Volume or Custom SLAs?
                             </span>
                             <p className="text-sm font-bold text-ink">
-                                Book an optional 15-min technical alignment call
+                                Book an optional 30-min technical alignment call
                             </p>
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-md shrink-0 cursor-pointer self-start sm:self-center"
+                        <Link
+                            href="/book-a-demo"
+                            prefetch
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-md shrink-0 self-start sm:self-center"
                         >
                             <Calendar className="w-3.5 h-3.5" />
-                            <span>Schedule Call</span>
-                        </button>
+                            <span>Book a Demo</span>
+                        </Link>
                     </div>
 
                     {/* Clean Minimal Footer Navigation */}

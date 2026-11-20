@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\ChatConsultation;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\Role;
@@ -28,68 +27,6 @@ class AdminChatAndConsultationTest extends TestCase
             ['email' => 'admin@test.com'],
             ['name' => 'Admin User', 'password' => 'secret', 'role_id' => $role->id, 'status' => 'active']
         );
-    }
-
-    public function test_admin_can_view_consultations_index(): void
-    {
-        ChatConsultation::create([
-            'chat_session_id' => null,
-            'name' => 'Charlotte Dubois',
-            'email' => 'charlotte@luxe.com',
-            'phone' => '+33 6 12 34 56',
-            'scheduled_at' => now()->addDays(2),
-            'timezone' => 'Europe/Paris',
-            'status' => 'confirmed',
-        ]);
-
-        $response = $this->actingAs($this->admin)->get('/admin/consultations');
-
-        $response->assertStatus(200);
-        $response->assertInertia(fn (Assert $page) => $page
-            ->component('Admin/Consultations/Index')
-            ->has('consultations')
-            ->has('stats')
-        );
-    }
-
-    public function test_admin_can_update_consultation_status(): void
-    {
-        $consultation = ChatConsultation::create([
-            'chat_session_id' => null,
-            'name' => 'Charlotte Dubois',
-            'email' => 'charlotte@luxe.com',
-            'scheduled_at' => now()->addDays(2),
-            'status' => 'confirmed',
-        ]);
-
-        $response = $this->actingAs($this->admin)->put("/admin/consultations/{$consultation->id}", [
-            'status' => 'completed',
-            'notes' => 'Call completed with positive feedback',
-        ]);
-
-        $response->assertRedirect();
-        $this->assertDatabaseHas('chat_consultations', [
-            'id' => $consultation->id,
-            'status' => 'completed',
-        ]);
-    }
-
-    public function test_admin_can_delete_consultation(): void
-    {
-        $consultation = ChatConsultation::create([
-            'chat_session_id' => null,
-            'name' => 'Charlotte Dubois',
-            'email' => 'charlotte@luxe.com',
-            'scheduled_at' => now()->addDays(2),
-            'status' => 'cancelled',
-        ]);
-
-        $response = $this->actingAs($this->admin)->delete("/admin/consultations/{$consultation->id}");
-
-        $response->assertRedirect();
-        $this->assertDatabaseMissing('chat_consultations', [
-            'id' => $consultation->id,
-        ]);
     }
 
     public function test_admin_can_view_chat_sessions_index(): void
@@ -208,54 +145,6 @@ class AdminChatAndConsultationTest extends TestCase
 
         $response->assertRedirect();
         $this->assertEquals(0, ChatSession::count());
-    }
-
-    public function test_admin_can_confirm_pending_consultation(): void
-    {
-        $consultation = ChatConsultation::create([
-            'chat_session_id' => null,
-            'name' => 'Jean-Luc Godard',
-            'email' => 'jeanluc@cinema.fr',
-            'scheduled_at' => now()->addDays(3),
-            'status' => 'pending',
-        ]);
-
-        $response = $this->actingAs($this->admin)->put("/admin/consultations/{$consultation->id}", [
-            'status' => 'confirmed',
-        ]);
-
-        $response->assertRedirect();
-        $this->assertDatabaseHas('chat_consultations', [
-            'id' => $consultation->id,
-            'status' => 'confirmed',
-        ]);
-    }
-
-    public function test_admin_can_reschedule_consultation(): void
-    {
-        $oldDate = now()->addDays(2);
-        $newDate = now()->addDays(5)->startOfHour();
-
-        $consultation = ChatConsultation::create([
-            'chat_session_id' => null,
-            'name' => 'Jean-Luc Godard',
-            'email' => 'jeanluc@cinema.fr',
-            'scheduled_at' => $oldDate,
-            'status' => 'pending',
-            'notes' => 'Original booking note',
-        ]);
-
-        $response = $this->actingAs($this->admin)->put("/admin/consultations/{$consultation->id}", [
-            'scheduled_at' => $newDate->toIso8601String(),
-            'notes' => 'Client requested Friday afternoon',
-        ]);
-
-        $response->assertRedirect();
-
-        $consultation->refresh();
-        $this->assertEquals('confirmed', $consultation->status);
-        $this->assertStringContainsString('Rescheduled: previously', (string) $consultation->notes);
-        $this->assertStringContainsString('Client requested Friday afternoon', (string) $consultation->notes);
     }
 
     public function test_admin_can_takeover_and_reply_to_chat_session(): void

@@ -11,7 +11,6 @@ import {
     Shirt,
     Mail,
     ArrowUpRight,
-    CalendarCheck2,
     MessageSquareText,
     FolderKanban,
     Clock,
@@ -40,7 +39,6 @@ interface AdminDashboardProps {
         total_capabilities: number;
         new_inquiries: number;
         total_subscribers: number;
-        upcoming_consultations?: number;
         total_chat_leads?: number;
     };
     recentOrders?: RecentOrderSummary[];
@@ -168,7 +166,7 @@ export default function Dashboard({
                         </div>
                         <div className="flex items-center justify-between text-xs pt-1">
                             <span className="text-slate-500">
-                                {stats.upcoming_consultations ?? 0} booked calls • {stats.total_chat_leads ?? 0} chat leads
+                                {stats.total_chat_leads ?? 0} chat leads • {stats.total_subscribers} subscribers
                             </span>
                             <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" />
                         </div>
@@ -315,12 +313,12 @@ export default function Dashboard({
                         {/* Quick Links Footer */}
                         <div className="pt-3 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-2">
                             <Link
-                                href="/admin/consultations"
+                                href="/admin/messages"
                                 className="p-2.5 rounded-xl bg-[#f8fafc] hover:bg-slate-100 border border-slate-200/70 text-center transition-colors"
                             >
-                                <CalendarCheck2 className="w-4 h-4 text-primary mx-auto mb-1" />
+                                <Mail className="w-4 h-4 text-primary mx-auto mb-1" />
                                 <span className="text-[11px] font-semibold text-slate-700 block">
-                                    Booked Calls
+                                    Messages
                                 </span>
                             </Link>
                             <Link

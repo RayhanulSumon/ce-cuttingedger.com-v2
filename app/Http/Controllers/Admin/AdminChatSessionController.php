@@ -27,7 +27,6 @@ class AdminChatSessionController extends Controller
         $status = $request->query('status');
 
         $query = ChatSession::withCount('messages')
-            ->with(['consultations'])
             ->orderBy('last_active_at', 'desc');
 
         if ($status && in_array($status, ['converted', 'active', 'idle', 'abandoned'], true)) {
@@ -48,7 +47,6 @@ class AdminChatSessionController extends Controller
             'operator_name' => $s->operator_name,
             'ip_address' => $s->ip_address,
             'messages_count' => $s->messages_count,
-            'has_consultation' => $s->consultations->isNotEmpty(),
             'last_active_at' => $s->last_active_at?->toISOString(),
             'last_active_formatted' => $s->last_active_at?->diffForHumans() ?? 'Never',
             'created_at' => $s->created_at->toISOString(),

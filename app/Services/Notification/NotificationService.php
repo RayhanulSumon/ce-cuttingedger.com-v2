@@ -2,7 +2,6 @@
 
 namespace App\Services\Notification;
 
-use App\Models\ChatConsultation;
 use App\Models\ChatSession;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -225,27 +224,6 @@ class NotificationService
     public function sendToChannel(string|array $channels, string $event, array $data = []): bool
     {
         return $this->toChannel($channels)->send($event, $data);
-    }
-
-    /**
-     * Trigger high-level business notification when a calendar consultation is booked.
-     */
-    public function triggerConsultationBooked(ChatConsultation $consultation): bool
-    {
-        $payload = [
-            'type' => 'consultation_booked',
-            'title' => '📅 New Consultation Booked',
-            'message' => "{$consultation->name} booked a call for {$consultation->scheduled_at->format('M j, Y \a\t g:i A')}",
-            'consultation_id' => $consultation->id,
-            'client_name' => $consultation->name,
-            'client_email' => $consultation->email,
-            'client_phone' => $consultation->phone,
-            'scheduled_at' => $consultation->scheduled_at->toISOString(),
-            'admin_url' => url('/admin/consultations'),
-            'timestamp' => now()->toISOString(),
-        ];
-
-        return $this->toAllAdmins()->send('consultation.booked', $payload);
     }
 
     /**

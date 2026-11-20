@@ -11,7 +11,6 @@ interface MenubarProps {
     index?: number;
     /** Jumps to a homepage section in place. Omit on other pages: section links then navigate to the homepage. */
     goTo?: (index: number) => void;
-    openDemo: () => void;
     /** When true, fades out and disables pointer events (e.g. while a fullscreen modal is open). */
     hidden?: boolean;
     /** Force light ink on a dark page background. Defaults to the active section's tone. */
@@ -63,7 +62,7 @@ const ITEM: Variants = {
 const ROW =
     'flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-[22px] font-bold tracking-[-0.02em] transition-colors duration-300 hover:bg-white/10';
 
-export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: MenubarProps) {
+export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
     const { capabilities_nav = [], auth } = usePage<PageProps>().props;
     const isClient = isClientUser(auth?.user);
     const { url } = usePage();
@@ -126,9 +125,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                                     type="button"
                                                     aria-expanded={isExpanded}
                                                     onClick={() => setOpenCapability(isExpanded ? null : capability.id)}
-                                                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white ${
-                                                        isActive || isExpanded ? 'text-white' : 'text-white/75'
-                                                    }`}
+                                                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white ${isActive || isExpanded ? 'text-white' : 'text-white/75'
+                                                        }`}
                                                 >
                                                     <span className="truncate">{capability.title}</span>
                                                     <ChevronDown
@@ -153,9 +151,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                                                             href={child.path}
                                                                             prefetch
                                                                             onClick={closeDrawer}
-                                                                            className={`block rounded-lg px-2.5 py-1.5 text-[13.5px] transition-colors duration-200 hover:bg-white/10 hover:text-white ${
-                                                                                path === child.path ? 'font-semibold text-white' : 'text-white/60'
-                                                                            }`}
+                                                                            className={`block rounded-lg px-2.5 py-1.5 text-[13.5px] transition-colors duration-200 hover:bg-white/10 hover:text-white ${path === child.path ? 'font-semibold text-white' : 'text-white/60'
+                                                                                }`}
                                                                         >
                                                                             {child.title}
                                                                         </Link>
@@ -226,9 +223,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                 initial={{ opacity: 0, y: -18 }}
                 animate={{ opacity: hidden ? 0 : 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 px-4 py-4 text-sm font-medium transition-colors duration-500 sm:px-10 sm:py-5 lg:px-16 ${
-                    solid ? 'bg-gradient-to-b from-page via-page/80 to-transparent' : ''
-                } ${dark ? 'text-white' : 'text-ink'} ${hidden ? 'pointer-events-none' : ''}`}
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 px-4 py-4 text-sm font-medium transition-colors duration-500 sm:px-10 sm:py-5 lg:px-16 ${solid ? 'bg-gradient-to-b from-page via-page/80 to-transparent' : ''
+                    } ${dark ? 'text-white' : 'text-ink'} ${hidden ? 'pointer-events-none' : ''}`}
             >
                 {goTo ? (
                     <button
@@ -243,9 +239,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                             alt="CuttingEdger"
                             width={459}
                             height={70}
-                            className={`h-6 w-auto origin-left transition-[filter,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:h-7 ${
-                                dark ? 'brightness-0 invert' : ''
-                            } ${collapsed ? 'pointer-events-none scale-75 opacity-0' : 'scale-100 opacity-100'}`}
+                            className={`h-6 w-auto origin-left transition-[filter,opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:h-7 ${dark ? 'brightness-0 invert' : ''
+                                } ${collapsed ? 'pointer-events-none scale-75 opacity-0' : 'scale-100 opacity-100'}`}
                         />
                         <img
                             src={dark ? '/images/ce/ce_icon_white.png' : '/images/ce/ce_icon.png'}
@@ -253,9 +248,8 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                             aria-hidden="true"
                             width={512}
                             height={512}
-                            className={`absolute left-0 top-1/2 h-8 w-8 origin-left -translate-y-1/2 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                                collapsed ? 'scale-100 opacity-100' : 'pointer-events-none scale-75 opacity-0'
-                            }`}
+                            className={`absolute left-0 top-1/2 h-8 w-8 origin-left -translate-y-1/2 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${collapsed ? 'scale-100 opacity-100' : 'pointer-events-none scale-75 opacity-0'
+                                }`}
                         />
                     </button>
                 ) : (
@@ -273,33 +267,30 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <Link
                         href={isClient ? '/portal' : '/login'}
-                        className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${
-                            dark
+                        className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${dark
                                 ? 'border-white/25 text-white hover:bg-white/15'
                                 : 'border-ink/20 text-ink hover:border-primary hover:text-primary'
-                        }`}
+                            }`}
                     >
                         {isClient ? 'My Portal' : 'Client Login'}
                     </Link>
 
-                    <button
-                        type="button"
-                        onClick={openDemo}
-                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${
-                            dark ? 'bg-white text-secondary' : 'bg-ink text-white hover:bg-primary'
-                        }`}
+                    <Link
+                        href="/book-a-demo"
+                        prefetch
+                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${dark ? 'bg-white text-secondary' : 'bg-ink text-white hover:bg-primary'
+                            }`}
                     >
                         Book a Demo
                         <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </button>
+                    </Link>
 
                     <button
                         type="button"
                         onClick={() => setDrawer(true)}
                         aria-label="Open menu"
-                        className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${
-                            dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-ink text-white hover:bg-primary'
-                        }`}
+                        className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-ink text-white hover:bg-primary'
+                            }`}
                     >
                         <Menu size={18} />
                     </button>
@@ -363,17 +354,15 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                                 </motion.div>
 
                                 <motion.div variants={ITEM} className="mt-auto pt-8">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            closeDrawer();
-                                            openDemo();
-                                        }}
+                                    <Link
+                                        href="/book-a-demo"
+                                        prefetch
+                                        onClick={closeDrawer}
                                         className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-secondary transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-white/90"
                                     >
                                         Book a Demo
                                         <ArrowUpRight size={16} />
-                                    </button>
+                                    </Link>
                                 </motion.div>
                             </motion.div>
                         </motion.aside>

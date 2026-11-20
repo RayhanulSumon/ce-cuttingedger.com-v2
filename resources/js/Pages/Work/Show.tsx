@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
 import { Project } from '@/types/models';
 import { ArrowUpRight, Globe, Layers, CheckCircle2, Calendar, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
-import { PageProps } from '@/types';
 
 interface WorkShowProps {
     project: Project & {
@@ -18,8 +17,6 @@ interface WorkShowProps {
 }
 
 export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
-    const { settings } = usePage<PageProps>().props;
-    const calendlyUrl = (settings as any)?.calendly_url || 'https://calendly.com/cuttingedger/discovery-call';
 
     const breadcrumbs = [
         { name: 'Home', url: '/' },
@@ -229,14 +226,14 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                 <Sparkles className="w-4 h-4" />
                                 <span>Start a Project</span>
                             </Link>
-                            <button
-                                type="button"
-                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                className="px-8 py-3.5 rounded-xl border border-ink/20 text-ink hover:bg-ink/[0.03] font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
+                            <Link
+                                href="/book-a-demo"
+                                prefetch
+                                className="px-8 py-3.5 rounded-xl border border-ink/20 text-ink hover:bg-ink/[0.03] font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2"
                             >
                                 <Calendar className="w-4 h-4 text-primary-ink" />
-                                <span>Book 15-Min Discovery Call</span>
-                            </button>
+                                <span>Book a Demo</span>
+                            </Link>
                         </div>
                     </div>
                 </div>

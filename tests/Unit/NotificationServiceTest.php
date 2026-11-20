@@ -2,11 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\ChatConsultation;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Notification\NotificationService;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -68,25 +66,6 @@ class NotificationServiceTest extends TestCase
         $this->assertTrue($result);
         NotificationService::assertSentToAdmin($admin, 'assigned_task', function ($channels, $data) {
             return $data['task_id'] === 123;
-        });
-    }
-
-    public function test_can_trigger_consultation_booked_notification(): void
-    {
-        $consultation = ChatConsultation::create([
-            'name' => 'Sara Connor',
-            'email' => 'sara@cyber.org',
-            'phone' => '+1555123456',
-            'scheduled_at' => Carbon::now()->addDay(),
-            'timezone' => 'America/New_York',
-            'status' => 'confirmed',
-        ]);
-
-        $service = new NotificationService;
-        $service->triggerConsultationBooked($consultation);
-
-        NotificationService::assertSentToAllAdmins('consultation.booked', function ($channels, $data) use ($consultation) {
-            return $data['client_email'] === 'sara@cyber.org' && $data['consultation_id'] === $consultation->id;
         });
     }
 

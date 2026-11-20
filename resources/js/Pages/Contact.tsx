@@ -3,7 +3,6 @@ import { useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
     ArrowRight,
-    Calendar,
     Check,
     CheckCircle2,
     ChevronDown,
@@ -263,29 +262,6 @@ export default function Contact() {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Dedicated Discovery Call CTA Button */}
-                            <button
-                                type="button"
-                                onClick={() => window.dispatchEvent(new CustomEvent('ce:open-discovery-call'))}
-                                className="group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl bg-ink px-5 py-4 text-left text-white shadow-sm transition-colors hover:bg-ink-2"
-                            >
-                                <div className="flex items-center gap-3.5">
-                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/10 text-white">
-                                        <Calendar className="h-4 w-4" aria-hidden="true" />
-                                    </span>
-                                    <div>
-                                        <p className="text-xs text-white/75">Prefer a quick walkthrough?</p>
-                                        <p className="text-sm font-semibold text-white">
-                                            Book a 15-min Discovery Call
-                                        </p>
-                                    </div>
-                                </div>
-                                <ArrowRight
-                                    className="h-4 w-4 shrink-0 text-white/80 transition-transform group-hover:translate-x-1"
-                                    aria-hidden="true"
-                                />
-                            </button>
 
                             {/* Quiet Trust Strip */}
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs font-medium text-subtle">

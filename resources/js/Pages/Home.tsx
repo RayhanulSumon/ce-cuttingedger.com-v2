@@ -5,7 +5,6 @@ import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { CaseStudySection } from '@/Components/Landing/CaseStudySection';
 import { ClientsSection } from '@/Components/Landing/ClientsSection';
-import { DemoModal } from '@/Components/Landing/DemoModal';
 import { DigitalTwinsSection } from '@/Components/Landing/DigitalTwins/DigitalTwinsSection';
 import { DigitalTwinModel } from '@/Components/Landing/DigitalTwins/twins';
 import { FaqSection } from '@/Components/Landing/FaqSection';
@@ -57,17 +56,13 @@ export default function Home({
     const initialSection = sectionIndexFromUrl(url);
     const isMobile = useMediaQuery('(max-width: 767px)') === true;
     const scrolledPast = useScrolledPast(400);
-    const [demoOpen, setDemoOpen] = useState(false);
     const [overlayOpen, setOverlayOpen] = useState(false);
     const { index, goTo: goToFullpage } = useFullpage(
         SECTIONS.length,
         STAGE_TRANSITION_MS,
-        !isMobile && !demoOpen && !overlayOpen,
+        !isMobile && !overlayOpen,
         initialSection,
     );
-
-    const openDemo = useCallback(() => setDemoOpen(true), []);
-    const closeDemo = useCallback(() => setDemoOpen(false), []);
 
     const goToMobile = useCallback((nextIndex: number) => {
         const clamped = Math.max(0, Math.min(SECTIONS.length - 1, nextIndex));
@@ -101,7 +96,7 @@ export default function Home({
     }, [isMobile, initialSection]);
 
     const isActive = (id: keyof typeof SECTION_INDEX) => isMobile || index === SECTION_INDEX[id];
-    const common = useMemo(() => ({ goTo, openDemo }), [goTo, openDemo]);
+    const common = useMemo(() => ({ goTo }), [goTo]);
 
     // Order must match SECTIONS in Components/Landing/shared.tsx.
     const sections = [
@@ -144,8 +139,7 @@ export default function Home({
                     <SideDots index={index} goTo={goTo} hidden={overlayOpen} />
                 </>
             )}
-            <Menubar index={menuIndex} goTo={goTo} openDemo={openDemo} hidden={overlayOpen} />
-            <DemoModal open={demoOpen} onClose={closeDemo} />
+            <Menubar index={menuIndex} goTo={goTo} hidden={overlayOpen} />
             {/* Floating chat, bottom right. Hidden (not unmounted) while a fullscreen overlay is open so the conversation survives. */}
             <div className={overlayOpen ? 'hidden' : undefined}>
                 <ScrollToTop visible={scrollTopVisible} onClick={() => goTo(SECTION_INDEX.hero)} />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
 import { ArrowUpRight, Calendar, Check } from 'lucide-react';
 
 const ENTERPRISE_PERKS = [
@@ -10,10 +11,6 @@ const ENTERPRISE_PERKS = [
 
 /** Compact enterprise volume CTA band with key capacity highlights. */
 export function EnterpriseSolutionsSection() {
-    const handleOpenDiscoveryCall = () => {
-        window.dispatchEvent(new CustomEvent('ce:open-discovery-call'));
-    };
-
     return (
         <section className="border-t border-ink/10 bg-surface py-10 sm:py-12">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -35,15 +32,15 @@ export function EnterpriseSolutionsSection() {
                         </ul>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleOpenDiscoveryCall}
-                        className="group inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-primary-hover"
+                    <Link
+                        href="/book-a-demo"
+                        prefetch
+                        className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-primary-hover"
                     >
                         <Calendar className="h-4 w-4" />
-                        <span>Book 15-Min Discovery Call</span>
+                        <span>Book a Demo</span>
                         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

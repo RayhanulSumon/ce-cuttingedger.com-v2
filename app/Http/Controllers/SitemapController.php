@@ -25,6 +25,7 @@ class SitemapController extends Controller
             ['url' => url('/pricing'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/about'), 'priority' => '0.7', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/contact'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
+            ['url' => url('/book-a-demo'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/nda-compliance'), 'priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/cookie-policy'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],
             ['url' => url('/esg-policy'), 'priority' => '0.5', 'changefreq' => 'yearly', 'lastmod' => date('Y-m-d')],

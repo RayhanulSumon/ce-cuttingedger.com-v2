@@ -5,7 +5,7 @@ import { ArrowUpRight, Mail, Plus } from 'lucide-react';
 import { FAQS } from './content';
 import { EASE_OUT_QUART, PAD_X, Reveal, SectionProps } from './shared';
 
-export const FaqSection = memo(function FaqSection({ active, openDemo }: SectionProps) {
+export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
     const [open, setOpen] = useState<number | null>(0);
 
     return (
@@ -33,14 +33,14 @@ export const FaqSection = memo(function FaqSection({ active, openDemo }: Section
                         Talk to the team. We reply within one business day, usually faster.
                     </p>
                     <div className="mt-5 flex flex-wrap gap-3">
-                        <button
-                            type="button"
-                            onClick={openDemo}
+                        <Link
+                            href="/book-a-demo"
+                            prefetch
                             className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold text-secondary transition-transform duration-300 hover:-translate-y-0.5"
                         >
                             Book a Demo
                             <ArrowUpRight size={15} />
-                        </button>
+                        </Link>
                         <Link
                             href="/contact"
                             prefetch

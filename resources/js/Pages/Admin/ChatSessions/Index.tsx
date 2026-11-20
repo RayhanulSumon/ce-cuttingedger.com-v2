@@ -59,7 +59,6 @@ interface ChatSessionItem {
     operator_name?: string;
     ip_address?: string;
     messages_count: number;
-    has_consultation: boolean;
     last_active_at?: string;
     last_active_formatted: string;
     created_at: string;
@@ -335,11 +334,6 @@ export default function ChatSessionsIndex({
                     <div className="font-semibold text-white flex items-center gap-1.5">
                         <User className="w-3.5 h-3.5 text-accent" />
                         <span>{row.lead_name}</span>
-                        {row.has_consultation && (
-                            <span className="text-[9px] font-mono font-bold bg-[#00f5ff]/20 text-[#00f5ff] px-1.5 py-0.2 rounded">
-                                CALL BOOKED
-                            </span>
-                        )}
                     </div>
                     <div className="text-xs text-neutral-400 font-mono flex items-center gap-1.5">
                         <Mail className="w-3 h-3 text-neutral-500" />

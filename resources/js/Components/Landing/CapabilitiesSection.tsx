@@ -12,7 +12,7 @@ const CAPABILITY_IMAGES = [
 ] as const;
 
 /** The main capabilities (2D, 3D, DTP, Video) as clean editorial grid tiles. Content comes from the admin panel. */
-export const CapabilitiesSection = memo(function CapabilitiesSection({ active, openDemo }: SectionProps) {
+export const CapabilitiesSection = memo(function CapabilitiesSection({ active }: SectionProps) {
     const { capabilities_nav = [] } = usePage<PageProps>().props;
 
     return (
@@ -43,13 +43,13 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active, o
                     >
                         All capabilities
                     </Link>
-                    <button
-                        type="button"
-                        onClick={openDemo}
+                    <Link
+                        href="/book-a-demo"
+                        prefetch
                         className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover sm:text-sm"
                     >
                         Book a Demo
-                    </button>
+                    </Link>
                 </Reveal>
             </div>
 

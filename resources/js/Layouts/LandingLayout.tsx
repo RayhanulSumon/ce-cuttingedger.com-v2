@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChatWidget } from '@/Components/Chat/ChatWidget';
 import { CookieConsentBanner } from '@/Components/Common/CookieConsentBanner';
 import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
-import { DiscoveryCallModal } from '@/Components/Common/DiscoveryCallModal';
-import { DemoModal } from '@/Components/Landing/DemoModal';
 import { FooterSection } from '@/Components/Landing/FooterSection';
 import { Menubar } from '@/Components/Landing/Menubar';
 import { EASE_OUT_QUART } from '@/Components/Landing/shared';
@@ -21,12 +19,8 @@ import { SlideOverContact } from './SlideOverContact';
 export function LandingLayout({ children }: { children: React.ReactNode }) {
     const { url } = usePage();
     const { settings, flash } = usePage<PageProps>().props;
-    const [demoOpen, setDemoOpen] = useState(false);
     const [contactOpen, setContactOpen] = useState(false);
-    const [discoveryOpen, setDiscoveryOpen] = useState(false);
     const scrolled = useScrolledPast();
-    const openDemo = useCallback(() => setDemoOpen(true), []);
-    const closeDemo = useCallback(() => setDemoOpen(false), []);
 
     useEffect(() => {
         initializeAttribution();
@@ -34,12 +28,9 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
 
     // Global events used by chat cards and buttons across the site.
     useEffect(() => {
-        const openDiscovery = () => setDiscoveryOpen(true);
         const openContact = () => setContactOpen(true);
-        window.addEventListener('ce:open-discovery-call', openDiscovery);
         window.addEventListener('ce:open-contact', openContact);
         return () => {
-            window.removeEventListener('ce:open-discovery-call', openDiscovery);
             window.removeEventListener('ce:open-contact', openContact);
         };
     }, []);
@@ -82,7 +73,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
             </a>
 
             <Toaster />
-            <Menubar openDemo={openDemo} />
+            <Menubar />
 
             <motion.main
                 key={url.split('?')[0]}
@@ -97,8 +88,6 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
 
             <FooterSection fullpage={false} />
 
-            <DemoModal open={demoOpen} onClose={closeDemo} />
-            <DiscoveryCallModal isOpen={discoveryOpen} onClose={() => setDiscoveryOpen(false)} />
             <SlideOverContact isOpen={contactOpen} onClose={() => setContactOpen(false)} settings={settings} />
             <ScrollToTop visible={scrolled} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
             <ChatWidget />

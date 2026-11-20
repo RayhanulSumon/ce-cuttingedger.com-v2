@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Capability;
-use App\Models\ChatConsultation;
 use App\Models\ChatSession;
 use App\Models\ContactMessage;
 use App\Models\DigitalTwin;
@@ -31,9 +30,6 @@ class AdminDashboardController extends Controller
             'total_capabilities' => Capability::count(),
             'new_inquiries' => ContactMessage::where('status', 'new')->count(),
             'total_subscribers' => NewsletterSubscriber::count(),
-            'upcoming_consultations' => ChatConsultation::where('scheduled_at', '>=', now())
-                ->where('status', '!=', 'cancelled')
-                ->count(),
             'total_chat_leads' => ChatSession::whereNotNull('lead_email')->count(),
         ];
 

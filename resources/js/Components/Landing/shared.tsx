@@ -5,7 +5,6 @@ import { ArrowUpRight, Sparkles } from 'lucide-react';
 export interface SectionProps {
     active: boolean;
     goTo: (index: number) => void;
-    openDemo: () => void;
     /** Called when this section opens/closes a fullscreen overlay (e.g. the Digital Twins preset modal).
      *  Home uses this to hide SideDots and Menubar while the overlay is showing. */
     onOverlayChange?: (open: boolean) => void;
@@ -246,27 +245,34 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
 export function PillButton({
     children,
     onClick,
+    href,
     dark = true,
     type = 'button',
     disabled,
 }: {
     children: React.ReactNode;
     onClick?: () => void;
+    href?: string;
     dark?: boolean;
     type?: 'button' | 'submit';
     disabled?: boolean;
 }) {
+    const className = `inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-[transform,background-color,color,box-shadow] duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 ${
+        dark
+            ? 'bg-ink text-white hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)]'
+            : 'border border-ink text-ink hover:bg-ink hover:text-white'
+    }`;
+
+    if (href) {
+        return (
+            <Link href={href} prefetch className={className}>
+                {children}
+            </Link>
+        );
+    }
+
     return (
-        <button
-            type={type}
-            onClick={onClick}
-            disabled={disabled}
-            className={`inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-[transform,background-color,color,box-shadow] duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 ${
-                dark
-                    ? 'bg-ink text-white hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)]'
-                    : 'border border-ink text-ink hover:bg-ink hover:text-white'
-            }`}
-        >
+        <button type={type} onClick={onClick} disabled={disabled} className={className}>
             {children}
         </button>
     );

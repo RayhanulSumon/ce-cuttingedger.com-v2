@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\AdminCapabilityController;
 use App\Http\Controllers\Admin\AdminCareerOpeningController;
 use App\Http\Controllers\Admin\AdminChatSessionController;
 use App\Http\Controllers\Admin\AdminClientController;
-use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\AdminCreditPurchaseController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -34,7 +33,6 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Client\ClientPortalController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CreditPurchaseController;
-use App\Http\Controllers\DiscoveryCallController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OrderController;
@@ -132,7 +130,6 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('faqs', AdminFaqController::class)->except(['show', 'create', 'edit']);
     Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
     Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
-    Route::resource('consultations', AdminConsultationController::class)->only(['index', 'update', 'destroy']);
     Route::redirect('free-trials', '/admin/orders?type=free_trial')->name('free-trials.index');
     Route::get('orders/{order}/download-zip', [AdminOrderController::class, 'downloadZip'])->name('orders.download-zip');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
@@ -284,6 +281,8 @@ Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{blog:slug}', [BlogController::class, 'show'])->name('blog.show');
 
+Route::get('/book-a-demo', [PageController::class, 'bookDemo'])->name('book-demo');
+
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:public-contact')
@@ -320,11 +319,6 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
         ->name('message');
     Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
 });
-
-Route::get('/api/discovery-call/slots', [DiscoveryCallController::class, 'slots'])->name('discovery-call.slots');
-Route::post('/api/discovery-call/book', [DiscoveryCallController::class, 'book'])
-    ->middleware('throttle:20,1')
-    ->name('discovery-call.book');
 
 Route::get('/api/captcha/math', [ContactController::class, 'mathCaptcha'])->name('captcha.math');
 
