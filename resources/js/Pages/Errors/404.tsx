@@ -63,8 +63,8 @@ export default function NotFound() {
                 />
 
                 {/* Ambient Radial Glows */}
-                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[38rem] h-[22rem] bg-primary/10 rounded-full blur-[180px] pointer-events-none" />
-                <div className="absolute bottom-10 right-10 w-80 h-80 bg-[#00f5ff]/5 rounded-full blur-[160px] pointer-events-none" />
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[38rem] max-w-[90vw] h-[22rem] bg-primary/10 rounded-full blur-[180px] pointer-events-none" />
+                <div className="absolute bottom-10 right-4 sm:right-10 w-64 sm:w-80 max-w-[85vw] h-64 sm:h-80 bg-primary/10 rounded-full blur-[160px] pointer-events-none" />
 
                 <div className="max-w-4xl w-full mx-auto relative z-10 text-center space-y-10">
                     {/* Status Pill */}
@@ -126,7 +126,7 @@ export default function NotFound() {
                                     <Link
                                         key={item.href}
                                         href={item.href}
-                                        className="group p-5 rounded-2xl bg-white/80 border border-ink/10 hover:border-primary/50 hover:bg-[#161924] transition-all flex flex-col justify-between"
+                                        className="group p-5 rounded-2xl bg-white/80 border border-ink/10 hover:border-primary/50 hover:bg-slate-100 transition-all flex flex-col justify-between"
                                     >
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between">

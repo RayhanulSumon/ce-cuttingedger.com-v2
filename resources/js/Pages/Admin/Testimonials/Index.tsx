@@ -202,7 +202,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                     </DialogHeader>
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Client Name
@@ -234,7 +234,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Role / Designation
@@ -328,7 +328,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                     </DialogHeader>
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Client Name
@@ -358,7 +358,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Role / Designation

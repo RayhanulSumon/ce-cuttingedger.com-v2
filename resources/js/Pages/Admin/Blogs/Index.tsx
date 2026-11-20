@@ -179,7 +179,7 @@ export default function BlogsIndex({
                     </a>
                     <Link
                         href={route("admin.blogs.edit", b.id)}
-                        className="p-1.5 text-neutral-400 hover:text-[#d4ff00] rounded hover:bg-white/5"
+                        className="p-1.5 text-neutral-400 hover:text-primary rounded hover:bg-white/5"
                         title="Edit"
                     >
                         <Edit className="h-3.5 w-3.5" />

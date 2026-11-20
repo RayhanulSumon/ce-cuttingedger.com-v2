@@ -23,6 +23,7 @@ export interface Project {
     category_id: number;
     category?: Category;
     title: string;
+    h1_title?: string;
     slug: string;
     client_name: string;
     year: string | number;
@@ -30,12 +31,20 @@ export interface Project {
     description: string;
     cover_image: string;
     gallery?: string[];
+    before_after_images?: { before: string; after: string; label?: string }[];
     deliverables: string[];
     featured: boolean;
+    is_concept?: boolean;
     sort_order: number;
     metrics?: { label: string; value: string }[];
+    client_challenge?: string;
+    work_done?: string;
+    measurable_result?: string;
     meta_title?: string;
     meta_description?: string;
+    canonical_url?: string;
+    is_noindex?: boolean;
+    og_image?: string;
     live_url?: string;
 }
 
@@ -195,4 +204,29 @@ export interface SiteSettings {
         github?: string;
         dribbble?: string;
     };
+}
+
+export interface ContactMessage {
+    id: number;
+    name: string;
+    email: string;
+    phone?: string | null;
+    company?: string | null;
+    website?: string | null;
+    service_interest?: string | null;
+    message: string;
+    ip_address?: string | null;
+    status: 'new' | 'read' | 'replied' | 'archived' | string;
+    inquiry_type?: string;
+    created_at: string;
+    updated_at?: string;
+}
+
+export interface NewsletterSubscriber {
+    id: number;
+    email: string;
+    ip_address?: string | null;
+    status: 'active' | 'unsubscribed' | string;
+    created_at: string;
+    updated_at?: string;
 }

@@ -550,22 +550,23 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     {/* Main Inset Content Area */}
                     <SidebarInset className="bg-[#f5f7fb] text-ink flex-1 flex flex-col min-w-0">
                         {/* Clean Top Bar */}
-                        <header className="h-15 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20">
-                            <div className="flex items-center gap-3">
-                                <SidebarTrigger className="text-slate-500 hover:text-ink hover:bg-slate-100" />
-                                <div className="h-4 w-px bg-slate-200" />
-                                <span className="text-sm font-bold text-ink">
+                        <header className="h-15 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-2 sticky top-0 z-20">
+                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <SidebarTrigger className="text-slate-500 hover:text-ink hover:bg-slate-100 shrink-0" />
+                                <div className="h-4 w-px bg-slate-200 shrink-0" />
+                                <span className="text-sm font-bold text-ink truncate">
                                     {title || "Dashboard"}
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
                                 <Link
                                     href="/"
                                     target="_blank"
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-ink transition-colors"
+                                    aria-label="View Website"
+                                    className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-ink transition-colors"
                                 >
-                                    <span>View Website</span>
+                                    <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="w-3.5 h-3.5" />
                                 </Link>
                                 <AdminNotificationDropdown />
@@ -575,7 +576,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         <Toaster />
 
                         {/* Main Page Content */}
-                        <div className="p-6 sm:p-8 flex-1 max-w-[1600px] w-full mx-auto">
+                        <div className="p-4 sm:p-6 lg:p-8 flex-1 max-w-[1600px] w-full mx-auto">
                             {children}
                         </div>
                     </SidebarInset>

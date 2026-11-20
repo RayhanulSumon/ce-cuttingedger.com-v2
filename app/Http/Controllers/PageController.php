@@ -7,9 +7,11 @@ use App\Models\Faq;
 use App\Models\PricingPlan;
 use App\Models\Setting;
 use App\Models\TeamMember;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class PageController extends Controller
 {
@@ -102,5 +104,15 @@ class PageController extends Controller
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain');
+    }
+
+    /**
+     * Render the Inertia 404 page for unmatched web routes.
+     */
+    public function notFound(Request $request): SymfonyResponse
+    {
+        return Inertia::render('Errors/404')
+            ->toResponse($request)
+            ->setStatusCode(404);
     }
 }

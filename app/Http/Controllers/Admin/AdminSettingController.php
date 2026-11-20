@@ -28,11 +28,13 @@ class AdminSettingController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $payload = $request->input('settings', []);
+        $validated = $request->validate([
+            'settings' => ['required', 'array'],
+        ]);
 
-        foreach ($payload as $key => $value) {
+        foreach ($validated['settings'] as $key => $value) {
             Setting::updateOrCreate(
-                ['key' => $key],
+                ['key' => (string) $key],
                 ['value' => is_array($value) ? json_encode($value) : $value]
             );
         }

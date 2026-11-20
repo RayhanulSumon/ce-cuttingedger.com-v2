@@ -5,6 +5,10 @@ import { renderToString } from 'react-dom/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
+type PageComponent = React.ComponentType<any> & {
+    layout?: (page: React.ReactNode) => React.ReactNode;
+};
+
 const appName = 'CuttingEdger';
 
 createServer((page) =>
@@ -15,15 +19,19 @@ createServer((page) =>
         resolve: async (name) => {
             const resolvedPageModule = await resolvePageComponent(
                 `./Pages/${name}.tsx`,
-                import.meta.glob('./Pages/**/*.tsx')
+                import.meta.glob<{ default: PageComponent }>('./Pages/**/*.tsx')
             );
-            const resolved = (resolvedPageModule as any).default;
-            if (resolved.layout === undefined) {
+            const resolved = resolvedPageModule.default;
+            if (
+                resolved.layout === undefined &&
+                !name.startsWith('Admin/') &&
+                !name.startsWith('Client/')
+            ) {
                 resolved.layout = (pageElement: React.ReactNode) => (
                     <LandingLayout>{pageElement}</LandingLayout>
                 );
             }
-            return resolvedPageModule;
+            return resolved;
         },
         setup: ({ App, props }) => <App {...props} />,
     })

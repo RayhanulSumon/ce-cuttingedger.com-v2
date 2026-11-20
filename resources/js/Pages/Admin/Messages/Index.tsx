@@ -199,30 +199,30 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                     </DialogHeader>
 
                     <div className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 text-xs font-mono">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono">
                             <div>
-                                <span className="text-neutral-500 block">COMPANY</span>
-                                <span className="text-white block mt-0.5">
+                                <span className="text-slate-500 block">COMPANY</span>
+                                <span className="text-ink block mt-0.5">
                                     {selectedMessage?.company || "Not provided"}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-neutral-500 block">WEBSITE</span>
-                                <span className="text-accent block mt-0.5">
+                                <span className="text-slate-500 block">WEBSITE</span>
+                                <span className="text-primary-ink block mt-0.5 break-all">
                                     {selectedMessage?.website || "Not provided"}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-neutral-500 block">
+                                <span className="text-slate-500 block">
                                     SERVICE OF INTEREST
                                 </span>
-                                <span className="text-white block mt-0.5">
+                                <span className="text-ink block mt-0.5">
                                     {selectedMessage?.service_interest || "General"}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-neutral-500 block">ORIGIN IP</span>
-                                <span className="text-neutral-400 block mt-0.5">
+                                <span className="text-slate-500 block">ORIGIN IP</span>
+                                <span className="text-slate-600 block mt-0.5">
                                     {selectedMessage?.ip_address || "Hidden"}
                                 </span>
                             </div>

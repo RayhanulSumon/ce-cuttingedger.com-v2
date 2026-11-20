@@ -224,7 +224,7 @@ export default function ClientAccountsIndex({
                         Verified
                     </span>
                 ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                             <Clock className="w-3.5 h-3.5 text-amber-600" />
                             Unverified

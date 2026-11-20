@@ -177,7 +177,10 @@ class AdminUserController extends Controller
             'password' => ['required', Password::min(8)],
         ]);
 
-        $roleId = $validated['role_id'] ?? Role::firstOrCreate(['name' => 'user'])->id;
+        $clientRoleId = Role::firstOrCreate(['name' => 'user'])->id;
+        $roleId = $request->user()->isSuperAdmin()
+            ? ($validated['role_id'] ?? $clientRoleId)
+            : $clientRoleId;
 
         User::create([
             'name' => $validated['name'],
@@ -198,6 +201,10 @@ class AdminUserController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
+        if (! $request->user()->isSuperAdmin() && $user->isAdmin()) {
+            abort(403, 'Unauthorized access: only Super Admins can modify admin accounts.');
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
@@ -213,12 +220,16 @@ class AdminUserController extends Controller
             return redirect()->back()->with('error', 'You cannot suspend your own active session.');
         }
 
+        $roleId = $request->user()->isSuperAdmin()
+            ? ($validated['role_id'] ?? $user->role_id)
+            : Role::firstOrCreate(['name' => 'user'])->id;
+
         $payload = [
             'name' => $validated['name'],
             'email' => strtolower(trim($validated['email'])),
             'company' => $validated['company'] ?? $user->company,
             'phone' => $validated['phone'] ?? $user->phone,
-            'role_id' => $validated['role_id'] ?? $user->role_id,
+            'role_id' => $roleId,
             'status' => $validated['status'],
         ];
 
@@ -242,6 +253,10 @@ class AdminUserController extends Controller
      */
     public function toggleStatus(Request $request, User $user): RedirectResponse
     {
+        if (! $request->user()->isSuperAdmin() && $user->isAdmin()) {
+            abort(403, 'Unauthorized access: only Super Admins can manage admin accounts.');
+        }
+
         if ($user->id === $request->user()->id) {
             return redirect()->back()->with('error', 'You cannot suspend your own active account.');
         }
@@ -255,8 +270,12 @@ class AdminUserController extends Controller
     /**
      * Manually mark a client's email address as verified.
      */
-    public function verifyEmail(User $user): RedirectResponse
+    public function verifyEmail(Request $request, User $user): RedirectResponse
     {
+        if (! $request->user()->isSuperAdmin() && $user->isAdmin()) {
+            abort(403, 'Unauthorized access: only Super Admins can manage admin accounts.');
+        }
+
         if (! $user->hasVerifiedEmail()) {
             $user->forceFill(['email_verified_at' => now()])->save();
         }
@@ -269,6 +288,10 @@ class AdminUserController extends Controller
      */
     public function destroy(Request $request, User $user): RedirectResponse
     {
+        if (! $request->user()->isSuperAdmin() && $user->isAdmin()) {
+            abort(403, 'Unauthorized access: only Super Admins can manage admin accounts.');
+        }
+
         if ($user->id === $request->user()->id) {
             return redirect()->back()->with('error', 'You cannot delete your own active account.');
         }

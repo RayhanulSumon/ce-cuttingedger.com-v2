@@ -440,7 +440,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
                         <div className="pb-3 border-b border-white/10">
                             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Tag className="w-4 h-4 text-[#d4ff00]" />
+                                <Tag className="w-4 h-4 text-primary" />
                                 CATEGORY & AUTHOR
                             </span>
                         </div>

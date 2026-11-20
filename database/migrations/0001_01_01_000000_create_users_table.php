@@ -39,6 +39,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('status')->default('active'); // active, suspended
+            $table->unsignedInteger('credits_balance')->default(0);
+            $table->string('active_plan_name')->nullable();
+            $table->timestamp('credits_expires_at')->nullable();
+            $table->string('stripe_customer_id', 120)->nullable()->index();
             $table->timestamp('last_login_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

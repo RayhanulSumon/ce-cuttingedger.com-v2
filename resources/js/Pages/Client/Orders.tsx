@@ -170,101 +170,194 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                     </div>
                 </div>
 
-                {/* Structured Orders Table Card */}
-                <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-                    {filteredOrders.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-xs">
-                                <thead className="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                    <tr>
-                                        <th className="px-5 py-3.5">Order #</th>
-                                        <th className="px-5 py-3.5">Service</th>
-                                        <th className="px-5 py-3.5">Turnaround</th>
-                                        <th className="px-5 py-3.5">Amount</th>
-                                        <th className="px-5 py-3.5">Status</th>
-                                        <th className="px-5 py-3.5">Date</th>
-                                        <th className="px-5 py-3.5 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {filteredOrders.map((order) => {
-                                        const isCreditOrder = order.order_type === 'credit_usage';
-                                        const hasDeliverables =
-                                            Array.isArray(order.completed_files) &&
-                                            order.completed_files.length > 0;
+                {/* Structured Orders: Mobile Cards (< md) + Desktop Table (md+) */}
+                {filteredOrders.length > 0 ? (
+                    <>
+                        {/* Mobile Card Stack (< md) */}
+                        <div className="md:hidden space-y-3">
+                            {filteredOrders.map((order) => {
+                                const isCreditOrder = order.order_type === 'credit_usage';
+                                const hasDeliverables =
+                                    Array.isArray(order.completed_files) &&
+                                    order.completed_files.length > 0;
 
-                                        return (
-                                            <tr
-                                                key={order.id}
-                                                className="transition-colors hover:bg-slate-50/70"
-                                            >
-                                                <td className="whitespace-nowrap px-5 py-4 font-bold text-ink">
+                                return (
+                                    <div
+                                        key={order.id}
+                                        className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-xs font-bold text-slate-500">
                                                     #{order.order_number}
-                                                </td>
-                                                <td className="px-5 py-4">
-                                                    <div className="text-sm font-bold text-ink">
-                                                        {order.service_name}
-                                                    </div>
-                                                    <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-slate-500">
-                                                        <span>
-                                                            {order.quantity.toLocaleString()} asset(s) ·{' '}
-                                                            {order.uploaded_count} file(s)
-                                                        </span>
-                                                        {isCreditOrder && (
-                                                            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                                                                Paid with Credits
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="whitespace-nowrap px-5 py-4 font-medium text-slate-700">
-                                                    {order.turnaround}
-                                                </td>
-                                                <td className="whitespace-nowrap px-5 py-4">
-                                                    <span
-                                                        className={`font-extrabold tabular-nums ${
-                                                            isCreditOrder ? 'text-primary' : 'text-ink'
-                                                        }`}
-                                                    >
-                                                        {formatOrderAmount(order)}
-                                                    </span>
-                                                </td>
-                                                <td className="whitespace-nowrap px-5 py-4">
-                                                    <OrderStatusBadge status={order.status} />
-                                                </td>
-                                                <td className="whitespace-nowrap px-5 py-4 text-slate-500">
+                                                </div>
+                                                <div className="mt-0.5 text-sm font-bold text-ink break-words">
+                                                    {order.service_name}
+                                                </div>
+                                            </div>
+                                            <div className="shrink-0">
+                                                <OrderStatusBadge status={order.status} />
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 divide-y divide-slate-100 border-t border-slate-100 text-xs">
+                                            <div className="flex items-center justify-between gap-3 py-2">
+                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                    Assets &amp; Turnaround
+                                                </span>
+                                                <span className="text-right font-medium text-slate-700">
+                                                    {order.quantity.toLocaleString()} asset(s) · {order.turnaround}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between gap-3 py-2">
+                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                    Amount
+                                                </span>
+                                                <span
+                                                    className={`font-extrabold tabular-nums ${
+                                                        isCreditOrder ? 'text-primary' : 'text-ink'
+                                                    }`}
+                                                >
+                                                    {formatOrderAmount(order)}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between gap-3 py-2">
+                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                    Date
+                                                </span>
+                                                <span className="text-slate-600">
                                                     {order.created_at_formatted}
-                                                </td>
-                                                <td className="whitespace-nowrap px-5 py-4 text-right">
-                                                    <div className="inline-flex items-center justify-end gap-2">
-                                                        {hasDeliverables && (
-                                                            <span
-                                                                title="Deliverables ready"
-                                                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700"
-                                                            >
-                                                                <Download className="h-3 w-3" />
-                                                                <span>{order.completed_files.length}</span>
-                                                            </span>
-                                                        )}
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => setSelectedOrder(order)}
-                                                            className="cursor-pointer gap-1 text-xs"
-                                                        >
-                                                            <Eye className="h-3.5 w-3.5" />
-                                                            <span>View</span>
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                                            <div className="flex flex-wrap items-center gap-1.5">
+                                                {isCreditOrder && (
+                                                    <span className="rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
+                                                        Paid with Credits
+                                                    </span>
+                                                )}
+                                                {hasDeliverables && (
+                                                    <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
+                                                        <Download className="h-3 w-3" />
+                                                        <span>{order.completed_files.length} Ready</span>
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setSelectedOrder(order)}
+                                                className="min-h-11 flex-1 sm:flex-none cursor-pointer gap-1.5 px-4 text-xs font-semibold"
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                                <span>View Details</span>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    ) : orders.length === 0 ? (
-                        <div className="space-y-3 p-12 text-center">
+
+                        {/* Desktop Table Card (md+) */}
+                        <div className="hidden md:block overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-xs">
+                                    <thead className="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                        <tr>
+                                            <th className="px-5 py-3.5">Order #</th>
+                                            <th className="px-5 py-3.5">Service</th>
+                                            <th className="px-5 py-3.5">Turnaround</th>
+                                            <th className="px-5 py-3.5">Amount</th>
+                                            <th className="px-5 py-3.5">Status</th>
+                                            <th className="px-5 py-3.5">Date</th>
+                                            <th className="px-5 py-3.5 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {filteredOrders.map((order) => {
+                                            const isCreditOrder = order.order_type === 'credit_usage';
+                                            const hasDeliverables =
+                                                Array.isArray(order.completed_files) &&
+                                                order.completed_files.length > 0;
+
+                                            return (
+                                                <tr
+                                                    key={order.id}
+                                                    className="transition-colors hover:bg-slate-50/70"
+                                                >
+                                                    <td className="whitespace-nowrap px-5 py-4 font-bold text-ink">
+                                                        #{order.order_number}
+                                                    </td>
+                                                    <td className="px-5 py-4">
+                                                        <div className="text-sm font-bold text-ink">
+                                                            {order.service_name}
+                                                        </div>
+                                                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-slate-500">
+                                                            <span>
+                                                                {order.quantity.toLocaleString()} asset(s) ·{' '}
+                                                                {order.uploaded_count} file(s)
+                                                            </span>
+                                                            {isCreditOrder && (
+                                                                <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                                                    Paid with Credits
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-5 py-4 font-medium text-slate-700">
+                                                        {order.turnaround}
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-5 py-4">
+                                                        <span
+                                                            className={`font-extrabold tabular-nums ${
+                                                                isCreditOrder ? 'text-primary' : 'text-ink'
+                                                            }`}
+                                                        >
+                                                            {formatOrderAmount(order)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-5 py-4">
+                                                        <OrderStatusBadge status={order.status} />
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-5 py-4 text-slate-500">
+                                                        {order.created_at_formatted}
+                                                    </td>
+                                                    <td className="whitespace-nowrap px-5 py-4 text-right">
+                                                        <div className="inline-flex items-center justify-end gap-2">
+                                                            {hasDeliverables && (
+                                                                <span
+                                                                    title="Deliverables ready"
+                                                                    className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700"
+                                                                >
+                                                                    <Download className="h-3 w-3" />
+                                                                    <span>{order.completed_files.length}</span>
+                                                                </span>
+                                                            )}
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => setSelectedOrder(order)}
+                                                                className="cursor-pointer gap-1 text-xs"
+                                                            >
+                                                                <Eye className="h-3.5 w-3.5" />
+                                                                <span>View</span>
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                ) : orders.length === 0 ? (
+                    <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                        <div className="space-y-3 p-10 sm:p-12 text-center">
                             <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                                 <ShoppingBag className="h-5 w-5" />
                             </div>
@@ -276,14 +369,16 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                             </div>
                             <Link
                                 href="/capabilities"
-                                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover"
+                                className="inline-flex min-h-11 sm:min-h-9 items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover"
                             >
                                 <Plus className="h-3.5 w-3.5" />
                                 <span>Browse Services &amp; Start Order</span>
                             </Link>
                         </div>
-                    ) : (
-                        <div className="space-y-3 p-12 text-center">
+                    </div>
+                ) : (
+                    <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                        <div className="space-y-3 p-10 sm:p-12 text-center">
                             <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
                                 <Search className="h-5 w-5" />
                             </div>
@@ -301,13 +396,13 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                     setStatusFilter('all');
                                     setSearchTerm('');
                                 }}
-                                className="cursor-pointer text-xs font-semibold"
+                                className="min-h-11 sm:min-h-9 cursor-pointer text-xs font-semibold"
                             >
                                 Clear Filters
                             </Button>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
             <ClientOrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />

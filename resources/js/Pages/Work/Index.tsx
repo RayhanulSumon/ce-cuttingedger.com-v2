@@ -130,9 +130,9 @@ export default function Index({
 
                                     {/* Quantified Metrics Pills */}
                                     {project.metrics && project.metrics.length > 0 && (
-                                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-ink/10">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-ink/10">
                                             {project.metrics.slice(0, 3).map((m, i) => (
-                                                <div key={i} className="text-center p-2 rounded-xl bg-white/[0.02]">
+                                                <div key={i} className="text-center p-2 rounded-xl bg-slate-50 border border-ink/5">
                                                     <p className="font-display font-black text-sm text-primary-ink">{m.value}</p>
                                                     <p className="text-[10px] font-mono text-muted truncate">{m.label}</p>
                                                 </div>

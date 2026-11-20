@@ -43,7 +43,7 @@ export default function Contact() {
 
     const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
     const contactPhone = (settings as any)?.contact_phone || '+1 (409) 995-2565';
-    const contactAddress = (settings as any)?.company_address || 'Artisan Center, Panthapath, Dhaka 1215';
+    const contactAddress = (settings as any)?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
     const [copiedEmail, setCopiedEmail] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -258,7 +258,7 @@ export default function Contact() {
                         <div className="lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
-                                className="relative p-6 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-b from-white/95 to-page/95 border border-ink/10 shadow-[0_30px_90px_rgba(0,0,0,0.7)] backdrop-blur-2xl space-y-5 overflow-hidden"
+                                className="relative p-5 sm:p-9 lg:p-10 rounded-3xl bg-gradient-to-b from-white/95 to-page/95 border border-ink/10 shadow-[0_24px_64px_-24px_rgba(22,25,31,0.16)] backdrop-blur-2xl space-y-5 overflow-hidden"
                             >
                                 {/* Top Hairline Accent Highlight */}
                                 <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
@@ -459,7 +459,7 @@ export default function Contact() {
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="px-6 py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-[#ffb834] hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
+                                        className="w-full sm:w-auto px-6 py-3 sm:py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer shrink-0"
                                     >
                                         {processing ? (
                                             <>

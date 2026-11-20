@@ -156,17 +156,14 @@ export default function UsersIndex({
     };
 
     const toggleRolePermission = (
-        form: typeof createRoleForm | typeof editRoleForm,
+        currentPermissions: string[],
+        setPermissions: (next: string[]) => void,
         perm: string
     ) => {
-        const current = form.data.permissions || [];
-        if (current.includes(perm)) {
-            form.setData(
-                "permissions",
-                current.filter((p) => p !== perm)
-            );
+        if (currentPermissions.includes(perm)) {
+            setPermissions(currentPermissions.filter((p) => p !== perm));
         } else {
-            form.setData("permissions", [...current, perm]);
+            setPermissions([...currentPermissions, perm]);
         }
     };
 
@@ -365,7 +362,7 @@ export default function UsersIndex({
             />
 
             {/* Switcher between Admin Staff and Spatie Roles & Permissions */}
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex flex-wrap items-center gap-2 mb-6">
                 <button
                     type="button"
                     onClick={() => setActiveSection("staff")}
@@ -509,7 +506,7 @@ export default function UsersIndex({
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-700">
                                     Assigned Spatie Role
@@ -630,7 +627,7 @@ export default function UsersIndex({
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-slate-700">
                                     Assigned Spatie Role
@@ -751,7 +748,11 @@ export default function UsersIndex({
                                                 perm
                                             )}
                                             onChange={() =>
-                                                toggleRolePermission(createRoleForm, perm)
+                                                toggleRolePermission(
+                                                    createRoleForm.data.permissions,
+                                                    (next) => createRoleForm.setData("permissions", next),
+                                                    perm
+                                                )
                                             }
                                             className="rounded border-slate-300 text-primary focus:ring-primary"
                                         />
@@ -808,7 +809,11 @@ export default function UsersIndex({
                                             editRoleForm.data.permissions.includes(perm)
                                         }
                                         onChange={() =>
-                                            toggleRolePermission(editRoleForm, perm)
+                                            toggleRolePermission(
+                                                editRoleForm.data.permissions,
+                                                (next) => editRoleForm.setData("permissions", next),
+                                                perm
+                                            )
                                         }
                                         className="rounded border-slate-300 text-primary focus:ring-primary"
                                     />

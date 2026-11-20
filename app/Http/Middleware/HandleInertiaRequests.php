@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Vite;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -46,6 +47,15 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if (app()->isLocal()) {
+            $requestHost = $request->getHost();
+            $configuredHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+            if ($requestHost !== $configuredHost || filter_var($requestHost, FILTER_VALIDATE_IP) || $request->getPort() === 8000) {
+                Vite::useHotFile(storage_path('framework/lan-bypass.hot'));
+            }
+        }
+
         $dbSettings = Cache::remember('app.public_settings', 3600, function (): array {
             try {
                 return Setting::pluck('value', 'key')->all();

@@ -203,7 +203,7 @@ export default function Dashboard({
                                     <Link
                                         key={ord.id}
                                         href="/admin/orders"
-                                        className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200/70 hover:border-primary/30 transition-colors flex items-center justify-between gap-4"
+                                        className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200/70 hover:border-primary/30 transition-colors flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 sm:gap-4"
                                     >
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function Dashboard({
                         </div>
 
                         {/* Quick Links Footer */}
-                        <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
+                        <div className="pt-3 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-2">
                             <Link
                                 href="/admin/consultations"
                                 className="p-2.5 rounded-xl bg-[#f8fafc] hover:bg-slate-100 border border-slate-200/70 text-center transition-colors"

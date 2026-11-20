@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Project;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -59,5 +60,13 @@ class WorkController extends Controller
             'project' => $project,
             'relatedProjects' => $relatedProjects,
         ]);
+    }
+
+    /**
+     * Permanently redirect legacy /work/{slug} URLs to /case-studies/{slug}.
+     */
+    public function redirectLegacy(Project $project): RedirectResponse
+    {
+        return redirect()->to("/case-studies/{$project->slug}", 301);
     }
 }

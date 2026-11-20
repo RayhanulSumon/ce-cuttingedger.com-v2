@@ -208,7 +208,7 @@ export default function ConsultationsIndex({
                 <div className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
                     {row.phone ? (
                         <>
-                            <Phone className="w-3.5 h-3.5 text-[#00f5ff]" />
+                            <Phone className="w-3.5 h-3.5 text-sky-400" />
                             <span>{row.phone}</span>
                         </>
                     ) : (
@@ -227,7 +227,7 @@ export default function ConsultationsIndex({
                     </div>
                     {row.notes && (
                         <div className="text-[11px] text-neutral-300 font-mono bg-white/[0.04] px-2 py-1 rounded border border-white/5 line-clamp-2 max-w-xs">
-                            <span className="text-[#00f5ff] font-bold text-[9px] uppercase tracking-wider block">Client Concern:</span>
+                            <span className="text-sky-400 font-bold text-[9px] uppercase tracking-wider block">Client Concern:</span>
                             "{row.notes}"
                         </div>
                     )}
@@ -291,9 +291,9 @@ export default function ConsultationsIndex({
                             )}
                             <DropdownMenuItem
                                 onClick={() => openRescheduleModal(row)}
-                                className="cursor-pointer gap-2 text-[#00f5ff] focus:text-[#00f5ff]"
+                                className="cursor-pointer gap-2 text-sky-400 focus:text-sky-300"
                             >
-                                <CalendarClock className="w-4 h-4 text-[#00f5ff]" />
+                                <CalendarClock className="w-4 h-4 text-sky-400" />
                                 <span>Reschedule Call</span>
                             </DropdownMenuItem>
                             {row.status !== "completed" && (
@@ -416,14 +416,14 @@ export default function ConsultationsIndex({
 
                         {selectedConsultation && (
                             <div className="space-y-4 pt-2 font-mono text-xs">
-                                <div className="grid grid-cols-2 gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
                                     <div>
                                         <span className="text-neutral-500 block text-[10px]">CLIENT</span>
                                         <span className="text-white font-semibold">{selectedConsultation.name}</span>
                                     </div>
                                     <div>
                                         <span className="text-neutral-500 block text-[10px]">EMAIL</span>
-                                        <span className="text-white">{selectedConsultation.email}</span>
+                                        <span className="text-white break-all">{selectedConsultation.email}</span>
                                     </div>
                                     <div>
                                         <span className="text-neutral-500 block text-[10px]">PHONE / WA</span>
@@ -438,7 +438,7 @@ export default function ConsultationsIndex({
                                 <div className="bg-white/5 p-3 rounded-xl border border-white/5 space-y-1">
                                     <span className="text-neutral-500 block text-[10px]">SCHEDULED DATE & TIME</span>
                                     <div className="text-sm font-bold text-white flex items-center gap-2">
-                                        <Clock className="w-4 h-4 text-[#00f5ff]" />
+                                        <Clock className="w-4 h-4 text-sky-400 shrink-0" />
                                         <span>{selectedConsultation.scheduled_at_formatted} ({selectedConsultation.timezone})</span>
                                     </div>
                                     <span className="text-neutral-400 text-[11px] block mt-1">
@@ -459,7 +459,7 @@ export default function ConsultationsIndex({
                                         <Button
                                             size="sm"
                                             onClick={() => updateStatus(selectedConsultation, "confirmed")}
-                                            className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold text-xs gap-1.5"
+                                            className="bg-primary hover:bg-primary-hover text-white font-mono font-bold text-xs gap-1.5"
                                         >
                                             <CheckCircle2 className="w-3.5 h-3.5" />
                                             <span>Confirm & Acknowledge</span>
@@ -469,7 +469,7 @@ export default function ConsultationsIndex({
                                         variant="outline"
                                         size="sm"
                                         onClick={() => openRescheduleModal(selectedConsultation)}
-                                        className="border-[#00f5ff]/30 bg-[#00f5ff]/10 hover:bg-[#00f5ff]/20 text-[#00f5ff] font-mono text-xs gap-1.5"
+                                        className="border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 font-mono text-xs gap-1.5"
                                     >
                                         <CalendarClock className="w-3.5 h-3.5" />
                                         <span>Reschedule Call</span>
@@ -510,7 +510,7 @@ export default function ConsultationsIndex({
                     <DialogContent className="max-w-md bg-[#0c0e14] border border-white/10 text-white rounded-2xl">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2 text-base">
-                                <CalendarClock className="w-5 h-5 text-[#00f5ff]" />
+                                <CalendarClock className="w-5 h-5 text-sky-400" />
                                 <span>Reschedule Technical Consultation</span>
                             </DialogTitle>
                             <DialogDescription className="text-neutral-400 text-xs font-mono">
@@ -537,7 +537,7 @@ export default function ConsultationsIndex({
                                         required
                                         value={rescheduleDatetime}
                                         onChange={(e) => setRescheduleDatetime(e.target.value)}
-                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-hidden focus:border-[#00f5ff] transition-colors"
+                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-hidden focus:border-primary transition-colors"
                                     />
                                 </div>
 
@@ -550,7 +550,7 @@ export default function ConsultationsIndex({
                                         value={rescheduleNotes}
                                         onChange={(e) => setRescheduleNotes(e.target.value)}
                                         placeholder="e.g. Client requested to move call to afternoon via WhatsApp..."
-                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-neutral-600 focus:outline-hidden focus:border-[#00f5ff] transition-colors resize-none"
+                                        className="w-full bg-[#12141c] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-neutral-600 focus:outline-hidden focus:border-primary transition-colors resize-none"
                                     />
                                 </div>
 
@@ -566,7 +566,7 @@ export default function ConsultationsIndex({
                                     <Button
                                         type="submit"
                                         disabled={isSubmittingReschedule}
-                                        className="bg-[#00f5ff] hover:bg-[#00d0db] text-black font-mono font-bold text-xs gap-1.5 cursor-pointer"
+                                        className="bg-primary hover:bg-primary-hover text-white font-mono font-bold text-xs gap-1.5 cursor-pointer"
                                     >
                                         {isSubmittingReschedule ? (
                                             <span>Rescheduling...</span>

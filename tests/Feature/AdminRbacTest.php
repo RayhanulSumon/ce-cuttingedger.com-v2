@@ -54,4 +54,50 @@ class AdminRbacTest extends TestCase
         $response = $this->actingAs($superAdmin)->get('/admin/users');
         $response->assertOk();
     }
+
+    public function test_standard_admin_cannot_escalate_privileges_or_modify_admins_via_client_accounts(): void
+    {
+        $adminRole = Role::where('name', 'admin')->firstOrFail();
+        $superRole = Role::where('name', 'super_admin')->firstOrFail();
+        $userRole = Role::where('name', 'user')->firstOrFail();
+
+        $standardAdmin = User::factory()->create(['role_id' => $adminRole->id]);
+        $superAdmin = User::factory()->create(['role_id' => $superRole->id]);
+
+        // Creating an account via /admin/client-accounts with a super_admin role_id forces 'user' role.
+        $this->actingAs($standardAdmin)
+            ->post('/admin/client-accounts', [
+                'name' => 'Sneaky User',
+                'email' => 'sneaky@example.com',
+                'role_id' => $superRole->id,
+                'status' => 'active',
+                'password' => 'Password123!',
+            ])
+            ->assertRedirect();
+
+        $created = User::where('email', 'sneaky@example.com')->firstOrFail();
+        $this->assertSame($userRole->id, $created->role_id);
+        $this->assertFalse($created->isAdmin());
+
+        // Standard admin cannot update, toggle, verify, or delete an admin account via client-accounts endpoints.
+        $this->actingAs($standardAdmin)
+            ->put("/admin/client-accounts/{$superAdmin->id}", [
+                'name' => 'Hijacked',
+                'email' => $superAdmin->email,
+                'status' => 'suspended',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($standardAdmin)
+            ->post("/admin/client-accounts/{$superAdmin->id}/toggle-status")
+            ->assertForbidden();
+
+        $this->actingAs($standardAdmin)
+            ->post("/admin/client-accounts/{$superAdmin->id}/verify-email")
+            ->assertForbidden();
+
+        $this->actingAs($standardAdmin)
+            ->delete("/admin/client-accounts/{$superAdmin->id}")
+            ->assertForbidden();
+    }
 }

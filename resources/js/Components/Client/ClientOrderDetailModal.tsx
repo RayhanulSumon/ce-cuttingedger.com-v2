@@ -19,7 +19,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
             onClick={onClose}
         >
             <div
-                className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 text-ink shadow-2xl sm:p-8"
+                className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 text-ink shadow-2xl sm:p-6 md:p-8"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
@@ -52,7 +52,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                             {order.specifications.plan_name && (
                                 <div className="space-y-2">
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <div className="rounded-xl border border-slate-200 bg-white p-2.5">
                                             <span className="block text-[10px] font-bold uppercase text-slate-400">
                                                 Credit Plan Snapshot
@@ -109,7 +109,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                             )}
 
                             {order.specifications.paid_with_credits && (
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                     <div className="rounded-xl border border-slate-200 bg-white p-2.5">
                                         <span className="block text-[10px] font-bold uppercase text-slate-400">
                                             Credits Redeemed
@@ -153,7 +153,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                             {order.specifications.attributes &&
                                 Object.keys(order.specifications.attributes).length > 0 && (
-                                    <div className="grid grid-cols-2 gap-2 pt-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                                         {Object.entries(order.specifications.attributes).map(([k, v]) => (
                                             <div
                                                 key={k}
@@ -190,7 +190,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                             <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
                                 Uploaded Files ({order.images.length})
                             </span>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 {order.images.map((imgUrl, idx) => (
                                     <a
                                         key={idx}

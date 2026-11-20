@@ -245,7 +245,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Marquee Ribbon Row
@@ -258,7 +258,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
+                                    className="w-full h-10 rounded-lg bg-white border border-slate-200 px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>
@@ -352,7 +352,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Marquee Ribbon Row
@@ -365,7 +365,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
+                                    className="w-full h-10 rounded-lg bg-white border border-slate-200 px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>

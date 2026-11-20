@@ -7,6 +7,7 @@ use App\Mail\ContactInquiryConfirmationMail;
 use App\Models\ContactMessage;
 use App\Models\Setting;
 use App\Services\Security\EmailAndSpamGuard;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -16,6 +17,14 @@ use Inertia\Response;
 
 class ContactController extends Controller
 {
+    /**
+     * Generate a stateless signed math CAPTCHA challenge for public forms.
+     */
+    public function mathCaptcha(EmailAndSpamGuard $guard): JsonResponse
+    {
+        return response()->json($guard->generateMathCaptcha());
+    }
+
     /**
      * Show the dedicated contact page.
      */

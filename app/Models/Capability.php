@@ -125,8 +125,6 @@ class Capability extends Model
     {
         static::saved(fn () => Cache::forget('app.capabilities_nav'));
 
-        static::saved(fn () => Cache::forget('app.capabilities_nav'));
-
         // Keep old links working when a slug or parent changes, or when a capability is removed.
         static::updating(function (Capability $capability): void {
             if (! $capability->isDirty('slug') && ! $capability->isDirty('parent_id')) {
@@ -154,7 +152,6 @@ class Capability extends Model
         });
 
         static::deleted(function (Capability $capability): void {
-            Cache::forget('app.capabilities_nav');
             Cache::forget('app.capabilities_nav');
             Redirect::updateOrCreate(
                 ['source_path' => $capability->path],

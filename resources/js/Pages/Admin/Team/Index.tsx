@@ -82,11 +82,11 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
             name: m.name,
             email: m.email || "",
             role: m.role,
-            bio: m.bio,
-            avatar: m.avatar,
-            since_year: m.since_year,
-            featured: m.featured,
-            sort_order: m.sort_order,
+            bio: m.bio || "",
+            avatar: m.avatar || "",
+            since_year: Number(m.since_year) || 2022,
+            featured: Boolean(m.featured),
+            sort_order: Number(m.sort_order ?? 0),
         });
     };
 
@@ -226,7 +226,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                     </DialogHeader>
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Full Name
@@ -269,7 +269,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Tenure Year
@@ -381,7 +381,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                     </DialogHeader>
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Full Name
@@ -422,7 +422,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Tenure Year

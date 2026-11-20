@@ -11,8 +11,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #0a0b0e;
-            color: #ffffff;
+            background-color: #f8f9fc;
+            color: #16191f;
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             display: flex;
@@ -24,14 +24,14 @@
         }
         .glow {
             position: absolute;
-            top: 20%;
+            top: 18%;
             left: 50%;
             transform: translateX(-50%);
-            width: 36rem;
+            width: min(36rem, 90vw);
             height: 20rem;
-            background: rgba(212, 255, 0, 0.08);
+            background: rgba(245, 118, 26, 0.10);
             border-radius: 9999px;
-            filter: blur(160px);
+            filter: blur(140px);
             pointer-events: none;
         }
         .container {
@@ -47,21 +47,22 @@
             gap: 0.5rem;
             padding: 0.35rem 1rem;
             border-radius: 9999px;
-            background: rgba(245, 166, 35, 0.1);
-            border: 1px solid rgba(245, 166, 35, 0.3);
-            color: #f5a623;
+            background: rgba(245, 118, 26, 0.1);
+            border: 1px solid rgba(245, 118, 26, 0.28);
+            color: #c4540a;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
+            font-weight: 700;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            margin-bottom: 2rem;
+            margin-bottom: 1.75rem;
         }
         .error-code {
-            font-size: clamp(6rem, 16vw, 10rem);
+            font-size: clamp(5.5rem, 16vw, 10rem);
             font-weight: 900;
             line-height: 1;
             letter-spacing: -0.05em;
-            background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 70%, #404040 100%);
+            background: linear-gradient(180deg, #16191f 0%, #4a505b 75%, #8a919c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
@@ -71,12 +72,13 @@
             font-weight: 800;
             margin-bottom: 1rem;
             letter-spacing: -0.02em;
+            color: #16191f;
         }
         p {
-            color: #a3a3a3;
+            color: #4a505b;
             font-size: 0.95rem;
             line-height: 1.6;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2.25rem;
             max-width: 520px;
             margin-left: auto;
             margin-right: auto;
@@ -84,13 +86,13 @@
         .actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.875rem;
             justify-content: center;
             align-items: center;
         }
         .btn-primary {
-            background-color: #f5a623;
-            color: #000000;
+            background-color: #f5761a;
+            color: #ffffff;
             font-weight: 800;
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -101,14 +103,16 @@
             transition: all 0.2s ease;
         }
         .btn-primary:hover {
-            background-color: #e09214;
-            box-shadow: 0 0 25px rgba(245, 166, 35, 0.35);
+            background-color: #e0650c;
+            box-shadow: 0 10px 24px -8px rgba(245, 118, 26, 0.45);
         }
         .btn-secondary {
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
+            border: 1px solid rgba(22, 25, 31, 0.16);
+            background-color: #ffffff;
+            color: #16191f;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             padding: 0.9rem 1.75rem;
@@ -117,21 +121,21 @@
             transition: all 0.2s ease;
         }
         .btn-secondary:hover {
-            border-color: #f5a623;
-            color: #f5a623;
+            border-color: #f5761a;
+            color: #c4540a;
         }
     </style>
 </head>
 <body>
     <div class="glow"></div>
     <div class="container">
-        <div class="badge">// ERROR 404 &bull; VOID TRAJECTORY</div>
+        <div class="badge">// ERROR 404 &bull; PAGE NOT FOUND</div>
         <div class="error-code">404</div>
         <h1>Signal Lost Beyond Perimeter</h1>
-        <p>The coordinate you requested does not exist, was decommissioned, or migrated to a new canonical URL. Return to our flagship or contact our visual production team.</p>
+        <p>The coordinate you requested does not exist, was decommissioned, or migrated to a new canonical URL. Return to our flagship or explore our studio capabilities.</p>
         <div class="actions">
-            <a href="/" class="btn-primary">Return to Flagship</a>
-            <a href="/services" class="btn-secondary">Explore Services</a>
+            <a href="/" class="btn-primary">Return Home</a>
+            <a href="/capabilities" class="btn-secondary">Explore Capabilities</a>
         </div>
     </div>
 </body>

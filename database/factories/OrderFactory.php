@@ -36,8 +36,8 @@ class OrderFactory extends Factory
             'currency' => 'USD',
             'turnaround' => '24h Standard',
             'images' => [
-                'https://cuttingedger.test/storage/chat_uploads/sample1.jpg',
-                'https://cuttingedger.test/storage/chat_uploads/sample2.jpg',
+                '/storage/chat_uploads/sample1.jpg',
+                '/storage/chat_uploads/sample2.jpg',
             ],
             'instructions' => 'Retouch with clean white background and drop shadow.',
             'status' => fake()->randomElement(['pending', 'in_production', 'completed']),

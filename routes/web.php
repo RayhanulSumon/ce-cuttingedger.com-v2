@@ -43,11 +43,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkController;
 use App\Http\Middleware\EnsureClientAccount;
-use App\Models\Project;
-use App\Services\Security\EmailAndSpamGuard;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,9 +59,13 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 |--------------------------------------------------------------------------
 */
 Route::get('/login', [ClientAuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [ClientAuthController::class, 'login'])->name('login.submit');
+Route::post('/login', [ClientAuthController::class, 'login'])
+    ->middleware('throttle:10,1')
+    ->name('login.submit');
 Route::get('/register', [ClientAuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [ClientAuthController::class, 'register'])->name('register.submit');
+Route::post('/register', [ClientAuthController::class, 'register'])
+    ->middleware('throttle:10,1')
+    ->name('register.submit');
 Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
 
 Route::get('/forgot-password', [ClientAuthController::class, 'showForgotPassword'])->name('password.request');
@@ -91,7 +91,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])
+    ->middleware('throttle:10,1')
+    ->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 /*
@@ -130,7 +132,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('messages', AdminContactMessageController::class)->only(['index', 'update', 'destroy']);
     Route::resource('subscribers', AdminSubscriberController::class)->only(['index', 'destroy']);
     Route::resource('consultations', AdminConsultationController::class)->only(['index', 'update', 'destroy']);
-    Route::get('free-trials', fn () => redirect()->route('admin.orders.index', ['type' => 'free_trial']))->name('free-trials.index');
+    Route::redirect('free-trials', '/admin/orders?type=free_trial')->name('free-trials.index');
     Route::get('orders/{order}/download-zip', [AdminOrderController::class, 'downloadZip'])->name('orders.download-zip');
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
     Route::get('credit-purchases', [AdminCreditPurchaseController::class, 'index'])->name('credit-purchases.index');
@@ -143,7 +145,6 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::post('chat-sessions/{chatSession}/release', [AdminChatSessionController::class, 'release'])->name('chat-sessions.release');
     Route::post('chat-sessions/{chatSession}/reply', [AdminChatSessionController::class, 'reply'])->name('chat-sessions.reply');
     Route::get('chat-sessions/{chatSession}/poll', [AdminChatSessionController::class, 'poll'])->name('chat-sessions.poll');
-    Route::get('chat sessions', fn () => redirect('/admin/chat-sessions'));
     Route::resource('chat-sessions', AdminChatSessionController::class)->only(['index', 'show', 'destroy']);
 
     // Admin Realtime Notifications Dropdown
@@ -206,18 +207,18 @@ Route::get('/capabilities/{parentSlug}/{childSlug?}', [CapabilityController::cla
 // Case Studies (Primary SEO Plan URL) & Legacy /work 301
 Route::get('/case-studies', [WorkController::class, 'index'])->name('case-studies.index');
 Route::get('/case-studies/{project:slug}', [WorkController::class, 'show'])->name('case-studies.show');
-Route::get('/work', fn () => redirect()->to('/case-studies', 301))->name('work.index');
-Route::get('/work/{project:slug}', fn (Project $project) => redirect()->to("/case-studies/{$project->slug}", 301))->name('work.show');
+Route::permanentRedirect('/work', '/case-studies')->name('work.index');
+Route::get('/work/{project:slug}', [WorkController::class, 'redirectLegacy'])->name('work.show');
 
 // The reviews and FAQ pages now live on the homepage.
-Route::get('/reviews', fn () => redirect()->to('/?section=clients', 301));
-Route::get('/faq', fn () => redirect()->to('/?section=faq', 301));
+Route::permanentRedirect('/reviews', '/?section=clients');
+Route::permanentRedirect('/faq', '/?section=faq');
 
 // Legal, Trust & Security Compliance Pages
 Route::get('/cookie-policy', [PageController::class, 'cookiePolicy'])->name('cookie-policy');
 Route::get('/nda-compliance', [PageController::class, 'ndaCompliance'])->name('nda-compliance');
 Route::get('/esg-policy', [PageController::class, 'esgPolicy'])->name('esg-policy');
-Route::get('/ESG-policy', fn () => redirect()->to('/esg-policy', 301));
+Route::permanentRedirect('/ESG-policy', '/esg-policy');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 
@@ -225,7 +226,7 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 
 // Digital Twins Capability Redirect, Configurator & Virtual Try-On Quote Views
-Route::get('/digital-twins', fn () => redirect()->to('/capabilities/2d/digital-twins', 301))->name('digital-twins.index');
+Route::permanentRedirect('/digital-twins', '/capabilities/2d/digital-twins')->name('digital-twins.index');
 Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
 Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
@@ -242,7 +243,7 @@ Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(funct
     Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
     Route::get('/portal/credits', [ClientPortalController::class, 'credits'])->name('client.portal.credits');
     Route::get('/portal/settings', [ClientPortalController::class, 'settings'])->name('client.portal.settings');
-    Route::get('/dashboard', fn () => redirect()->route('client.portal'))->name('dashboard');
+    Route::redirect('/dashboard', '/portal')->name('dashboard');
     Route::post('/portal/profile', [ClientPortalController::class, 'updateProfile'])->name('client.portal.profile');
     Route::post('/portal/avatar', [ClientPortalController::class, 'updateAvatar'])->name('client.portal.avatar');
     Route::delete('/portal/avatar', [ClientPortalController::class, 'destroyAvatar'])->name('client.portal.avatar.destroy');
@@ -273,7 +274,7 @@ Route::post('/team/{member:slug}/inquiry', [TeamController::class, 'sendInquiry'
     ->name('team.inquiry');
 
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
-Route::get('/career', fn () => redirect()->to('/careers', 301))->name('career');
+Route::permanentRedirect('/career', '/careers')->name('career');
 Route::get('/careers/{job:slug}', [CareerController::class, 'show'])->name('careers.show');
 
 Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
@@ -312,24 +313,22 @@ Route::prefix('api/catalog')->name('api.catalog.')->group(function (): void {
 Route::prefix('api/chat')->name('chat.')->group(function (): void {
     Route::post('/session', [ChatController::class, 'session'])->name('session');
     Route::post('/reset', [ChatController::class, 'reset'])->name('reset');
-    Route::post('/message', [ChatController::class, 'message'])->name('message');
+    Route::post('/message', [ChatController::class, 'message'])
+        ->middleware('throttle:40,1')
+        ->name('message');
     Route::get('/poll', [ChatController::class, 'poll'])->name('poll');
 });
 
 Route::get('/api/discovery-call/slots', [DiscoveryCallController::class, 'slots'])->name('discovery-call.slots');
-Route::post('/api/discovery-call/book', [DiscoveryCallController::class, 'book'])->name('discovery-call.book');
+Route::post('/api/discovery-call/book', [DiscoveryCallController::class, 'book'])
+    ->middleware('throttle:20,1')
+    ->name('discovery-call.book');
 
-Route::get('/api/captcha/math', function (EmailAndSpamGuard $guard) {
-    return response()->json($guard->generateMathCaptcha());
-})->name('captcha.math');
+Route::get('/api/captcha/math', [ContactController::class, 'mathCaptcha'])->name('captcha.math');
 
 /*
 |--------------------------------------------------------------------------
 | Dynamic Fallback Router: 301 Redirect Engine & 404 Intelligence
 |--------------------------------------------------------------------------
 */
-Route::fallback(function (Request $request) {
-    return Inertia::render('Errors/404')
-        ->toResponse($request)
-        ->setStatusCode(404);
-});
+Route::fallback([PageController::class, 'notFound']);

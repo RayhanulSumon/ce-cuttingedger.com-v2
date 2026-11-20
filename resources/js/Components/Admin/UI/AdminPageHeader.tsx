@@ -31,14 +31,14 @@ export function AdminPageHeader({
     const finalActionLabel = actionLabel || createLabel;
     const finalActionClick = onActionClick || onCreate;
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-slate-200/80 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 sm:pb-8 border-b border-slate-200/80 mb-6 sm:mb-8">
             <div className="space-y-1">
                 {eyebrow && (
                     <div className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
                         {eyebrow}
                     </div>
                 )}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
                         {title}
                     </h1>
@@ -53,7 +53,7 @@ export function AdminPageHeader({
                 )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                 {children}
 
                 {finalActionLabel && (

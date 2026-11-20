@@ -35,37 +35,20 @@
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
         @inertiaHead
 
-        <!-- Injected Head Tracking & Verification Scripts (Managed from Admin) -->
         @php
-            try {
-                $headScripts = \App\Models\TrackingScript::active()->where('placement', 'head')->pluck('code')->implode("\n");
-            } catch (\Throwable $e) {
-                $headScripts = '';
-            }
+            $trackingScripts = \App\Models\TrackingScript::cachedByPlacement();
         @endphp
-        {!! $headScripts !!}
+
+        <!-- Injected Head Tracking & Verification Scripts (Managed from Admin) -->
+        {!! $trackingScripts['head'] !!}
     </head>
     <body class="bg-[#f8f9fc] text-[#16191f] antialiased selection:bg-[#f5761a] selection:text-white transition-colors duration-300">
         <!-- Injected Body Start Tracking Scripts (GTM noscript, etc.) -->
-        @php
-            try {
-                $bodyStartScripts = \App\Models\TrackingScript::active()->where('placement', 'body_start')->pluck('code')->implode("\n");
-            } catch (\Throwable $e) {
-                $bodyStartScripts = '';
-            }
-        @endphp
-        {!! $bodyStartScripts !!}
+        {!! $trackingScripts['body_start'] !!}
 
         @inertia
 
         <!-- Injected Footer Tracking Scripts (Pixels, Chat, Analytics) -->
-        @php
-            try {
-                $footerScripts = \App\Models\TrackingScript::active()->where('placement', 'footer')->pluck('code')->implode("\n");
-            } catch (\Throwable $e) {
-                $footerScripts = '';
-            }
-        @endphp
-        {!! $footerScripts !!}
+        {!! $trackingScripts['footer'] !!}
     </body>
 </html>

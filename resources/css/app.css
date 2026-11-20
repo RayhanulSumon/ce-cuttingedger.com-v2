@@ -95,10 +95,10 @@ body {
     overflow-x: clip;
 }
 
-body:not(.admin-body) h1,
-body:not(.admin-body) h2,
-body:not(.admin-body) h3,
-body:not(.admin-body) h4,
+body h1,
+body h2,
+body h3,
+body h4,
 .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.03em;
@@ -133,7 +133,7 @@ body:not(.admin-body) h4,
     background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(212, 255, 0, 0.3);
+    background: rgba(245, 118, 26, 0.35);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -151,78 +151,17 @@ body:not(.admin-body) h4,
     to { transform: translateX(0%); }
 }
 
-@keyframes float-subtle {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-8px) rotate(1deg); }
-}
-
-@keyframes pulse-glow {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-}
-
 .animate-marquee-left {
     animation: marquee-left 32s linear infinite;
-}
-
-.animate-marquee-left-fast {
-    animation: marquee-left 18s linear infinite;
 }
 
 .animate-marquee-right {
     animation: marquee-right 32s linear infinite;
 }
 
-.animate-float {
-    animation: float-subtle 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-    animation: pulse-glow 4s ease-in-out infinite;
-}
-
 .marquee-container:hover .animate-marquee-left,
-.marquee-container:hover .animate-marquee-right,
-.marquee-container:hover .animate-marquee-left-fast {
+.marquee-container:hover .animate-marquee-right {
     animation-play-state: paused;
-}
-
-/* Subtle noise texture background overlay */
-.bg-grain {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
-    background-size: 24px 24px;
-}
-
-html.light .bg-grain {
-    background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
-}
-
-/* Glassmorphism utility */
-.glass-panel {
-    background: rgba(18, 20, 26, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-subtle);
-}
-
-html.light .glass-panel {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-subtle);
-}
-
-/* Stacking cards pinned sticky effect */
-.sticky-card {
-    position: sticky;
-    top: 6rem;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Magnetic link effects */
-.hover-reveal-image {
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Accessible focus ring - scoped so inputs/controls use their refined component ring */
@@ -586,11 +525,6 @@ select option {
     100% { transform: scale(1.7); opacity: 0; }
 }
 
-@keyframes rw-fill {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
-}
-
 @keyframes rw-breathe {
     0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
     50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
@@ -598,14 +532,6 @@ select option {
 
 .animate-rw-ring {
     animation: rw-ring 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-}
-
-.animate-rw-ring-delayed {
-    animation: rw-ring 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) 1.3s infinite;
-}
-
-.animate-rw-fill {
-    animation: rw-fill 5s linear forwards;
 }
 
 .animate-rw-breathe {
@@ -856,8 +782,6 @@ select option {
     .landing-col-down,
     .landing-col-up,
     .animate-rw-ring,
-    .animate-rw-ring-delayed,
-    .animate-rw-fill,
     .animate-rw-breathe,
     .animate-dress-reveal,
     .animate-card-in,

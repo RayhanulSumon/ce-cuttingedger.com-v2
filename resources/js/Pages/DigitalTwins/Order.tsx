@@ -51,6 +51,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'Enter height (e.g. 5\'9" or 69)',
         isRequired: true,
+        isActive: true,
+        sortOrder: 1,
     },
     {
         id: 2,
@@ -62,6 +64,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Other',
         placeholder: 'Describe custom body structure...',
         isRequired: true,
+        isActive: true,
+        sortOrder: 2,
     },
     {
         id: 3,
@@ -73,6 +77,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'Describe custom skin tone or undertone...',
         isRequired: true,
+        isActive: true,
+        sortOrder: 3,
     },
     {
         id: 4,
@@ -84,6 +90,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'in / cm',
         isRequired: true,
+        isActive: true,
+        sortOrder: 4,
     },
     {
         id: 5,
@@ -95,6 +103,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'Describe custom forehead shape...',
         isRequired: false,
+        isActive: true,
+        sortOrder: 5,
     },
     {
         id: 6,
@@ -106,6 +116,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'Describe custom eye shape...',
         isRequired: false,
+        isActive: true,
+        sortOrder: 6,
     },
     {
         id: 7,
@@ -117,6 +129,8 @@ const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
         customLabel: 'Custom',
         placeholder: 'Describe custom lip shape...',
         isRequired: false,
+        isActive: true,
+        sortOrder: 7,
     },
 ];
 

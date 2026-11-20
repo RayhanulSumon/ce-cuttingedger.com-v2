@@ -226,7 +226,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                 initial={{ opacity: 0, y: -18 }}
                 animate={{ opacity: hidden ? 0 : 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-4 px-5 py-5 text-sm font-medium transition-colors duration-500 sm:px-10 lg:px-16 ${
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 px-4 py-4 text-sm font-medium transition-colors duration-500 sm:px-10 sm:py-5 lg:px-16 ${
                     solid ? 'bg-gradient-to-b from-page via-page/80 to-transparent' : ''
                 } ${dark ? 'text-white' : 'text-ink'} ${hidden ? 'pointer-events-none' : ''}`}
             >
@@ -270,7 +270,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                     </Link>
                 )}
 
-                <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <Link
                         href={isClient ? '/portal' : '/login'}
                         className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${
@@ -285,7 +285,7 @@ export function Menubar({ index, goTo, openDemo, hidden = false, onDark }: Menub
                     <button
                         type="button"
                         onClick={openDemo}
-                        className={`group inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${
+                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${
                             dark ? 'bg-white text-secondary' : 'bg-ink text-white hover:bg-primary'
                         }`}
                     >

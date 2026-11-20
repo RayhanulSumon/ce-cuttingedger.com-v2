@@ -61,7 +61,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
             {/* Case Study Meta Strip */}
             <section className="py-8 bg-white border-b border-ink/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs font-mono">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 text-xs font-mono">
                         <div>
                             <span className="text-subtle uppercase block mb-1">Client Partner</span>
                             <span className="text-ink font-medium text-sm">{project.client_name}</span>

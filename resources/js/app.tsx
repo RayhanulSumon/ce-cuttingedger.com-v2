@@ -7,6 +7,10 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 import { configureEcho } from '@laravel/echo-react';
 
+type PageComponent = React.ComponentType<any> & {
+    layout?: (page: React.ReactNode) => React.ReactNode;
+};
+
 configureEcho({
     broadcaster: 'reverb',
 });
@@ -22,11 +26,11 @@ createInertiaApp({
     resolve: async (name) => {
         const page = await resolvePageComponent(
             `./Pages/${name}.tsx`,
-            import.meta.glob('./Pages/**/*.tsx')
+            import.meta.glob<{ default: PageComponent }>('./Pages/**/*.tsx')
         );
 
         // Apply persistent LandingLayout if not specified otherwise (skip for Admin and Client Portal pages)
-        const resolvedPage = (page as any).default;
+        const resolvedPage = page.default;
         if (
             resolvedPage.layout === undefined &&
             !name.startsWith('Admin/') &&
@@ -35,7 +39,7 @@ createInertiaApp({
             resolvedPage.layout = getLandingLayout;
         }
 
-        return page;
+        return resolvedPage;
     },
     setup({ el, App, props }) {
         if (el.dataset.serverRendered) {

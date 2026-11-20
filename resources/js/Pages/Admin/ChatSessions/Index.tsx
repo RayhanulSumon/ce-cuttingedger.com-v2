@@ -393,7 +393,7 @@ export default function ChatSessionsIndex({
                         </span>
                     )}
                     {row.mode === "operator" ? (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#00f5ff]/20 text-[#00f5ff] border border-[#00f5ff]/30">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
                             <Radio className="w-2.5 h-2.5 animate-pulse" />
                             OPERATOR LIVE
                         </span>
@@ -425,7 +425,7 @@ export default function ChatSessionsIndex({
                             row.needs_human
                                 ? "bg-rose-500 text-white hover:bg-rose-600 animate-pulse font-bold"
                                 : row.mode === "operator"
-                                ? "bg-[#00f5ff] text-black hover:bg-[#00d0db] font-bold"
+                                ? "bg-sky-600 text-white hover:bg-sky-500 font-bold"
                                 : "bg-white/10 hover:bg-accent hover:text-black text-white"
                         }`}
                         title="Open Live Chat Console & Take Over"
@@ -463,7 +463,7 @@ export default function ChatSessionsIndex({
                     title="Live Chat Sessions & Transcripts"
                     description="Monitor real-time visitor inquiries, captured leads, image quote calculations, and live human operator takeover."
                 >
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
@@ -528,11 +528,11 @@ export default function ChatSessionsIndex({
                             {stats.needs_human ?? 0}
                         </div>
                     </div>
-                    <div className="bg-[#12141a] border border-[#00f5ff]/20 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#00f5ff] block mb-1">
+                    <div className="bg-[#12141a] border border-sky-500/20 rounded-2xl p-4">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-sky-400 block mb-1">
                             Live Operator Active
                         </span>
-                        <div className="text-2xl font-bold font-mono text-[#00f5ff]">
+                        <div className="text-2xl font-bold font-mono text-sky-400">
                             {stats.operator_active ?? 0}
                         </div>
                     </div>
@@ -570,7 +570,7 @@ export default function ChatSessionsIndex({
                                         </Badge>
                                     )}
                                     {transcript?.session?.mode === "operator" && (
-                                        <Badge variant="accent" className="font-mono text-[10px] bg-[#00f5ff]/20 text-[#00f5ff] border-[#00f5ff]/30">
+                                        <Badge variant="accent" className="font-mono text-[10px] bg-sky-500/20 text-sky-300 border-sky-500/30">
                                             OPERATOR ACTIVE ({transcript.session.operator_name || 'You'})
                                         </Badge>
                                     )}
@@ -602,7 +602,7 @@ export default function ChatSessionsIndex({
                                         size="sm"
                                         onClick={handleTakeover}
                                         disabled={isTogglingTakeover}
-                                        className="h-8 px-3 text-xs font-mono bg-[#00f5ff] hover:bg-[#00d0db] text-black font-bold cursor-pointer"
+                                        className="h-8 px-3 text-xs font-mono bg-primary hover:bg-primary-hover text-white font-bold cursor-pointer"
                                         title="Take over this conversation and chat live"
                                     >
                                         <Radio className="w-3.5 h-3.5 mr-1" />
@@ -637,8 +637,8 @@ export default function ChatSessionsIndex({
                                                     </>
                                                 ) : isOperator ? (
                                                     <>
-                                                        <span className="text-[#00f5ff] font-semibold flex items-center gap-1">
-                                                            <UserCheck className="w-3 h-3 text-[#00f5ff]" />
+                                                        <span className="text-sky-400 font-semibold flex items-center gap-1">
+                                                            <UserCheck className="w-3 h-3 text-sky-400" />
                                                             Operator ({transcript.session?.operator_name || 'You'})
                                                         </span>
                                                         <span>{m.created_at_formatted}</span>
@@ -656,7 +656,7 @@ export default function ChatSessionsIndex({
                                                     isUser
                                                         ? "bg-accent text-black font-medium rounded-br-xs"
                                                         : isOperator
-                                                        ? "bg-[#0e1b29] text-white border border-[#00f5ff]/40 rounded-bl-xs shadow-md shadow-[#00f5ff]/5"
+                                                        ? "bg-[#0e1b29] text-white border border-sky-500/40 rounded-bl-xs shadow-md shadow-sky-500/5"
                                                         : "bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs"
                                                 }`}
                                             >
@@ -722,7 +722,7 @@ export default function ChatSessionsIndex({
                                     e.preventDefault();
                                     handleSendReply();
                                 }}
-                                className="flex items-center gap-2"
+                                className="flex flex-wrap sm:flex-nowrap items-center gap-2"
                             >
                                 <input
                                     type="text"
@@ -734,12 +734,12 @@ export default function ChatSessionsIndex({
                                             : "Type message to take over and reply directly..."
                                     }
                                     disabled={isSendingReply}
-                                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#00f5ff] transition-colors font-mono"
+                                    className="min-w-0 flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-primary transition-colors font-mono"
                                 />
                                 <Button
                                     type="submit"
                                     disabled={!replyText.trim() || isSendingReply}
-                                    className="h-9 px-4 bg-[#00f5ff] hover:bg-[#00d0db] text-black font-mono font-bold text-xs gap-1.5 cursor-pointer disabled:opacity-40"
+                                    className="min-h-10 px-4 bg-primary hover:bg-primary-hover text-white font-mono font-bold text-xs gap-1.5 cursor-pointer disabled:opacity-40"
                                 >
                                     {isSendingReply ? (
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />

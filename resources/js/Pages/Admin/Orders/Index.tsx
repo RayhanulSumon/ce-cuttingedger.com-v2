@@ -563,8 +563,8 @@ export default function OrdersIndex({
                     }}
                     className="flex flex-wrap items-center justify-between gap-3"
                 >
-                    <div className="flex items-center gap-2 w-full max-w-md">
-                        <div className="relative flex-1">
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:max-w-md">
+                        <div className="relative flex-1 min-w-[200px]">
                             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                             <Input
                                 value={searchQuery}
@@ -573,7 +573,7 @@ export default function OrdersIndex({
                                 className="pl-9 bg-white border-slate-200 text-ink"
                             />
                         </div>
-                        <Button type="submit" variant="outline" size="sm" className="h-9 px-3.5">
+                        <Button type="submit" variant="outline" size="sm" className="min-h-10 sm:min-h-9 px-3.5">
                             Search
                         </Button>
                         {(searchTerm || searchQuery) && (
@@ -585,7 +585,7 @@ export default function OrdersIndex({
                                     setSearchQuery("");
                                     handleSearch("");
                                 }}
-                                className="h-9 px-3 text-slate-500 hover:text-ink"
+                                className="min-h-10 sm:min-h-9 px-3 text-slate-500 hover:text-ink"
                             >
                                 Clear
                             </Button>
@@ -608,18 +608,18 @@ export default function OrdersIndex({
 
                 {/* Server Pagination Footer */}
                 {orders.last_page > 1 && (
-                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
                         <span className="font-mono">
                             Page {orders.current_page} of {orders.last_page}
                         </span>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 self-end sm:self-auto">
                             <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handlePageChange(orders.current_page - 1)}
                                 disabled={orders.current_page <= 1}
-                                className="h-8 px-2.5"
+                                className="min-h-10 sm:min-h-8 px-3 sm:px-2.5"
                             >
                                 <ChevronLeft className="w-4 h-4 mr-1" /> Prev
                             </Button>
@@ -629,7 +629,7 @@ export default function OrdersIndex({
                                 size="sm"
                                 onClick={() => handlePageChange(orders.current_page + 1)}
                                 disabled={orders.current_page >= orders.last_page}
-                                className="h-8 px-2.5"
+                                className="min-h-10 sm:min-h-8 px-3 sm:px-2.5"
                             >
                                 Next <ChevronRight className="w-4 h-4 ml-1" />
                             </Button>
@@ -655,7 +655,7 @@ export default function OrdersIndex({
                     {selectedOrder && (
                         <div className="space-y-4 py-2 text-xs">
                             {/* Client & Production Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                                 <div>
                                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">
                                         Client Name

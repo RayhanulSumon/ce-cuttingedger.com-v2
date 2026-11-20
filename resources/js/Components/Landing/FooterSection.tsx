@@ -53,9 +53,9 @@ const LETTER_FILL =
 /** One labelled line of the contact box, with a thin rule under it. */
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <div className="flex items-baseline justify-between gap-6 border-b border-ink/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
-            <dt className="text-[10px] font-bold uppercase tracking-[0.2em] text-subtle">{label}</dt>
-            <dd className="text-right text-[13px] font-semibold text-ink">{children}</dd>
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-6 border-b border-ink/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
+            <dt className="text-[10px] font-bold uppercase tracking-[0.2em] text-subtle shrink-0">{label}</dt>
+            <dd className="text-left sm:text-right text-[13px] font-semibold text-ink break-words">{children}</dd>
         </div>
     );
 }
@@ -197,9 +197,9 @@ export const FooterSection = memo(function FooterSection({
                             setHovered(null);
                             setGroupHover(false);
                         }}
-                        className="group flex w-full max-w-full items-center justify-center focus:outline-none"
+                        className="group flex w-full max-w-full overflow-hidden items-center justify-center focus:outline-none"
                     >
-                        <span className="flex flex-nowrap items-center justify-center" aria-label="Contact us">
+                        <span className="flex max-w-full flex-nowrap items-center justify-center overflow-hidden" aria-label="Contact us">
                             {LETTERS.map((char, i) =>
                                 char === ' ' ? (
                                     <span key={i} className="inline-block w-[3vw] sm:w-[3.6vw]" aria-hidden="true" />

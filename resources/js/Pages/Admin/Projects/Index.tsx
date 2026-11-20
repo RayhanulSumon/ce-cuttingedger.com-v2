@@ -114,23 +114,23 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
             title: project.title,
             slug: project.slug || "",
             client_name: project.client_name,
-            year: project.year,
-            category_id: project.category_id || "",
-            summary: project.summary,
+            year: String(project.year ?? "2026"),
+            category_id: project.category_id ?? "",
+            summary: project.summary || "",
             description: project.description || "",
-            cover_image: project.cover_image,
-            featured: project.featured,
-            is_concept: Boolean((project as any).is_concept),
-            sort_order: project.sort_order,
+            cover_image: project.cover_image || "",
+            featured: Boolean(project.featured),
+            is_concept: Boolean(project.is_concept),
+            sort_order: Number(project.sort_order ?? 0),
             live_url: project.live_url || "",
-            h1_title: (project as any).h1_title || "",
-            meta_title: (project as any).meta_title || "",
-            meta_description: (project as any).meta_description || "",
-            canonical_url: (project as any).canonical_url || "",
-            is_noindex: Boolean((project as any).is_noindex),
-            client_challenge: (project as any).client_challenge || "",
-            work_done: (project as any).work_done || "",
-            measurable_result: (project as any).measurable_result || "",
+            h1_title: project.h1_title || "",
+            meta_title: project.meta_title || "",
+            meta_description: project.meta_description || "",
+            canonical_url: project.canonical_url || "",
+            is_noindex: Boolean(project.is_noindex),
+            client_challenge: project.client_challenge || "",
+            work_done: project.work_done || "",
+            measurable_result: project.measurable_result || "",
         });
     };
 
@@ -309,7 +309,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Custom URL Slug (Optional)
@@ -336,7 +336,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Release Year *
@@ -354,7 +354,11 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                     Discipline Category
                                 </label>
                                 <Select
-                                    value={createForm.data.category_id || "uncategorized"}
+                                    value={
+                                        createForm.data.category_id
+                                            ? String(createForm.data.category_id)
+                                            : "uncategorized"
+                                    }
                                     onValueChange={(val) =>
                                         createForm.setData("category_id", val === "uncategorized" ? "" : val)
                                     }
@@ -612,7 +616,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                     </DialogHeader>
 
                     <form onSubmit={handleUpdate} className="space-y-5 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Project Title *
@@ -639,7 +643,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Custom URL Slug
@@ -666,7 +670,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-mono uppercase text-neutral-400">
                                     Release Year *

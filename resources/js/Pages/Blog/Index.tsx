@@ -278,7 +278,7 @@ export default function Index({
                             type="button"
                             onClick={prevFeatured}
                             aria-label="Previous featured post"
-                            className="absolute left-3 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                            className="hidden sm:flex absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
@@ -286,14 +286,14 @@ export default function Index({
                             type="button"
                             onClick={nextFeatured}
                             aria-label="Next featured post"
-                            className="absolute right-3 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                            className="hidden sm:flex absolute right-6 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
                         >
                             <ChevronRight className="w-5 h-5" />
                         </button>
                     </>
                 )}
 
-                <div className="max-w-7xl mx-auto w-full px-14 sm:px-16 lg:px-20 2xl:px-8 relative z-10">
+                <div className="max-w-7xl mx-auto w-full px-5 sm:px-16 lg:px-20 2xl:px-8 relative z-10">
                     {heroBlog ? (
                         <AnimatePresence initial={false} custom={slideDirection} mode="wait">
                             <motion.div
@@ -365,6 +365,27 @@ export default function Index({
                                         </Link>
                                     </div>
                                 </div>
+
+                                {featuredList.length > 1 && (
+                                    <div className="mt-6 flex items-center gap-2 sm:hidden">
+                                        <button
+                                            type="button"
+                                            onClick={prevFeatured}
+                                            aria-label="Previous featured post"
+                                            className="w-10 h-10 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                                        >
+                                            <ChevronLeft className="w-5 h-5" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={nextFeatured}
+                                            aria-label="Next featured post"
+                                            className="w-10 h-10 rounded-full border border-white/25 bg-black/40 hover:bg-primary hover:border-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                                        >
+                                            <ChevronRight className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                )}
                             </motion.div>
                         </AnimatePresence>
                     ) : (
@@ -464,7 +485,7 @@ export default function Index({
                 />
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute top-24 right-1/4 w-[480px] h-[480px] rounded-full bg-primary/[0.06] blur-[140px]"
+                    className="pointer-events-none absolute top-24 right-4 sm:right-1/4 w-72 h-72 sm:w-[480px] sm:h-[480px] max-w-full rounded-full bg-primary/[0.06] blur-[140px]"
                 />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
