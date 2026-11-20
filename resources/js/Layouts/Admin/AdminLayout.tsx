@@ -28,6 +28,7 @@ import {
     Globe,
     Shirt,
     Coins,
+    Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster, toast } from "@/Components/ui/sonner";
@@ -36,8 +37,6 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -58,6 +57,7 @@ interface NavChildItem {
     href: string;
     icon: React.ElementType;
     active: boolean;
+    badge?: string | null;
 }
 
 interface NavItem {
@@ -67,11 +67,6 @@ interface NavItem {
     active: boolean;
     badge?: string | null;
     children?: NavChildItem[];
-}
-
-interface NavSection {
-    title: string;
-    items: NavItem[];
 }
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
@@ -113,90 +108,103 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     const user = auth?.user;
     const isSuperAdmin = user?.role === "super_admin";
 
-    const isBlogGroupActive =
-        url.startsWith("/admin/blogs") || url.startsWith("/admin/blog-categories");
-    const isSiteSectionsActive =
+    const isInboxActive =
+        url.startsWith("/admin/messages") ||
+        url.startsWith("/admin/consultations") ||
+        url.startsWith("/admin/chat-sessions") ||
+        url.startsWith("/admin/subscribers");
+
+    const isWebsiteActive =
+        url.startsWith("/admin/capabilities") ||
         url.startsWith("/admin/pricing") ||
+        url.startsWith("/admin/projects") ||
+        url.startsWith("/admin/blogs") ||
+        url.startsWith("/admin/blog-categories") ||
         url.startsWith("/admin/faqs") ||
         url.startsWith("/admin/clients") ||
         url.startsWith("/admin/testimonials") ||
         url.startsWith("/admin/team") ||
         url.startsWith("/admin/careers");
-    const isSeoGroupActive =
-        url.startsWith("/admin/redirects") || url.startsWith("/admin/tracking-scripts");
+
+    const isSettingsActive =
+        url.startsWith("/admin/settings") ||
+        url.startsWith("/admin/redirects") ||
+        url.startsWith("/admin/tracking-scripts") ||
+        url.startsWith("/admin/users");
 
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-        Blog: isBlogGroupActive,
-        "Page Sections": isSiteSectionsActive,
-        "SEO & Redirects": isSeoGroupActive,
+        Inbox: isInboxActive,
+        Website: isWebsiteActive,
+        Settings: isSettingsActive,
     });
+
+    React.useEffect(() => {
+        setOpenMenus((prev) => ({
+            Inbox: isInboxActive ? true : prev.Inbox,
+            Website: isWebsiteActive ? true : prev.Website,
+            Settings: isSettingsActive ? true : prev.Settings,
+        }));
+    }, [isInboxActive, isWebsiteActive, isSettingsActive]);
 
     const toggleMenu = (menuName: string) => {
         setOpenMenus((prev) => ({ ...prev, [menuName]: !prev[menuName] }));
     };
 
-    const navSections: NavSection[] = [
+    const inboxTotal =
+        (admin_badges?.new_messages ?? 0) +
+        (admin_badges?.pending_consultations ?? 0) +
+        (admin_badges?.unread_leads ?? 0);
+
+    const coreNavItems: NavItem[] = [
         {
-            title: "Main",
-            items: [
-                {
-                    name: "Dashboard",
-                    href: "/admin",
-                    icon: LayoutDashboard,
-                    active: url === "/admin",
-                },
-                {
-                    name: "Orders & Quotes",
-                    href: "/admin/orders",
-                    icon: ShoppingBag,
-                    active: url.startsWith("/admin/orders"),
-                    badge: admin_badges?.pending_orders
-                        ? `${admin_badges.pending_orders}`
-                        : null,
-                },
-                {
-                    name: "Credit Purchases",
-                    href: "/admin/credit-purchases",
-                    icon: Coins,
-                    active: url.startsWith("/admin/credit-purchases"),
-                    badge: admin_badges?.pending_credit_purchases
-                        ? `${admin_badges.pending_credit_purchases}`
-                        : null,
-                },
-                {
-                    name: "Client Accounts",
-                    href: "/admin/client-accounts",
-                    icon: Users,
-                    active: url.startsWith("/admin/client-accounts"),
-                },
-                {
-                    name: "Pricing & Credit Plans",
-                    href: "/admin/pricing",
-                    icon: CreditCard,
-                    active: url.startsWith("/admin/pricing"),
-                },
-            ],
+            name: "Dashboard",
+            href: "/admin",
+            icon: LayoutDashboard,
+            active: url === "/admin",
         },
         {
-            title: "AI Studio",
-            items: [
-                {
-                    name: "Digital Twins",
-                    href: "/admin/digital-twins",
-                    icon: Sparkles,
-                    active: url.startsWith("/admin/digital-twins"),
-                },
-                {
-                    name: "Virtual Try-On",
-                    href: "/admin/try-on-looks",
-                    icon: Shirt,
-                    active: url.startsWith("/admin/try-on-looks"),
-                },
-            ],
+            name: "Orders & Quotes",
+            href: "/admin/orders",
+            icon: ShoppingBag,
+            active: url.startsWith("/admin/orders"),
+            badge: admin_badges?.pending_orders ? `${admin_badges.pending_orders}` : null,
         },
         {
-            title: "Customer Inbox",
-            items: [
+            name: "Credit Purchases",
+            href: "/admin/credit-purchases",
+            icon: Coins,
+            active: url.startsWith("/admin/credit-purchases"),
+            badge: admin_badges?.pending_credit_purchases
+                ? `${admin_badges.pending_credit_purchases}`
+                : null,
+        },
+        {
+            name: "Clients",
+            href: "/admin/client-accounts",
+            icon: Users,
+            active: url.startsWith("/admin/client-accounts"),
+        },
+        {
+            name: "Digital Twins",
+            href: "/admin/digital-twins",
+            icon: Sparkles,
+            active: url.startsWith("/admin/digital-twins"),
+        },
+        {
+            name: "Virtual Try-On",
+            href: "/admin/try-on-looks",
+            icon: Shirt,
+            active: url.startsWith("/admin/try-on-looks"),
+        },
+    ];
+
+    const folderItems: NavItem[] = [
+        {
+            name: "Inbox",
+            icon: Inbox,
+            active: isInboxActive,
+            badge: inboxTotal > 0 ? `${inboxTotal}` : null,
+            children: [
                 {
                     name: "Messages",
                     href: "/admin/messages",
@@ -229,14 +237,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             ],
         },
         {
-            title: "Website Content",
-            items: [
-                {
-                    name: "Case Studies",
-                    href: "/admin/projects",
-                    icon: FolderKanban,
-                    active: url.startsWith("/admin/projects"),
-                },
+            name: "Website",
+            icon: Globe,
+            active: isWebsiteActive,
+            children: [
                 {
                     name: "Capabilities",
                     href: "/admin/capabilities",
@@ -244,72 +248,66 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     active: url.startsWith("/admin/capabilities"),
                 },
                 {
-                    name: "Blog",
-                    icon: Newspaper,
-                    active: isBlogGroupActive,
-                    children: [
-                        {
-                            name: "All Posts",
-                            href: "/admin/blogs",
-                            icon: Newspaper,
-                            active: url.startsWith("/admin/blogs"),
-                        },
-                        {
-                            name: "Categories",
-                            href: "/admin/blog-categories",
-                            icon: Tag,
-                            active: url.startsWith("/admin/blog-categories"),
-                        },
-                    ],
+                    name: "Pricing Plans",
+                    href: "/admin/pricing",
+                    icon: CreditCard,
+                    active: url.startsWith("/admin/pricing"),
                 },
                 {
-                    name: "Page Sections",
-                    icon: Globe,
-                    active: isSiteSectionsActive,
-                    children: [
-                        {
-                            name: "Pricing Plans",
-                            href: "/admin/pricing",
-                            icon: CreditCard,
-                            active: url.startsWith("/admin/pricing"),
-                        },
-                        {
-                            name: "FAQs",
-                            href: "/admin/faqs",
-                            icon: HelpCircle,
-                            active: url.startsWith("/admin/faqs"),
-                        },
-                        {
-                            name: "Client Logos",
-                            href: "/admin/clients",
-                            icon: Building2,
-                            active: url.startsWith("/admin/clients"),
-                        },
-                        {
-                            name: "Reviews",
-                            href: "/admin/testimonials",
-                            icon: MessageSquareQuote,
-                            active: url.startsWith("/admin/testimonials"),
-                        },
-                        {
-                            name: "Team Members",
-                            href: "/admin/team",
-                            icon: Users,
-                            active: url.startsWith("/admin/team"),
-                        },
-                        {
-                            name: "Careers",
-                            href: "/admin/careers",
-                            icon: Briefcase,
-                            active: url.startsWith("/admin/careers"),
-                        },
-                    ],
+                    name: "Case Studies",
+                    href: "/admin/projects",
+                    icon: FolderKanban,
+                    active: url.startsWith("/admin/projects"),
+                },
+                {
+                    name: "Blog Posts",
+                    href: "/admin/blogs",
+                    icon: Newspaper,
+                    active: url.startsWith("/admin/blogs"),
+                },
+                {
+                    name: "Blog Categories",
+                    href: "/admin/blog-categories",
+                    icon: Tag,
+                    active: url.startsWith("/admin/blog-categories"),
+                },
+                {
+                    name: "FAQs",
+                    href: "/admin/faqs",
+                    icon: HelpCircle,
+                    active: url.startsWith("/admin/faqs"),
+                },
+                {
+                    name: "Client Logos",
+                    href: "/admin/clients",
+                    icon: Building2,
+                    active: url.startsWith("/admin/clients"),
+                },
+                {
+                    name: "Reviews",
+                    href: "/admin/testimonials",
+                    icon: MessageSquareQuote,
+                    active: url.startsWith("/admin/testimonials"),
+                },
+                {
+                    name: "Team",
+                    href: "/admin/team",
+                    icon: Users,
+                    active: url.startsWith("/admin/team"),
+                },
+                {
+                    name: "Careers",
+                    href: "/admin/careers",
+                    icon: Briefcase,
+                    active: url.startsWith("/admin/careers"),
                 },
             ],
         },
         {
-            title: "Settings",
-            items: [
+            name: "Settings",
+            icon: Settings,
+            active: isSettingsActive,
+            children: [
                 ...(isSuperAdmin
                     ? [
                           {
@@ -321,23 +319,16 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                       ]
                     : []),
                 {
-                    name: "SEO & Redirects",
+                    name: "Redirects & 404s",
+                    href: "/admin/redirects",
                     icon: ArrowLeftRight,
-                    active: isSeoGroupActive,
-                    children: [
-                        {
-                            name: "Redirects & 404s",
-                            href: "/admin/redirects",
-                            icon: ArrowLeftRight,
-                            active: url.startsWith("/admin/redirects"),
-                        },
-                        {
-                            name: "Tracking Pixels",
-                            href: "/admin/tracking-scripts",
-                            icon: Code2,
-                            active: url.startsWith("/admin/tracking-scripts"),
-                        },
-                    ],
+                    active: url.startsWith("/admin/redirects"),
+                },
+                {
+                    name: "Tracking Pixels",
+                    href: "/admin/tracking-scripts",
+                    icon: Code2,
+                    active: url.startsWith("/admin/tracking-scripts"),
                 },
                 ...(isSuperAdmin
                     ? [
@@ -385,137 +376,145 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         <SidebarContent
                             ref={sidebarContentRef}
                             onScroll={handleSidebarScroll}
-                            className="px-3 py-4 space-y-5 bg-white"
+                            className="px-3 py-3 space-y-1 bg-white"
                         >
-                            {navSections.map((section, idx) => (
-                                <SidebarGroup key={idx} className="p-0">
-                                    <SidebarGroupLabel className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase px-2.5 mb-1">
-                                        {section.title}
-                                    </SidebarGroupLabel>
-                                    <SidebarMenu className="space-y-0.5">
-                                        {section.items.map((item) => {
-                                            const Icon = item.icon;
-
-                                            // Collapsible Parent Menu Item
-                                            if (item.children && item.children.length > 0) {
-                                                const isOpen = !!openMenus[item.name];
-                                                return (
-                                                    <SidebarMenuItem key={item.name}>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => toggleMenu(item.name)}
-                                                            className={cn(
-                                                                "w-full flex items-center gap-2.5 rounded-xl text-[13px] font-medium transition-colors py-2 px-2.5 cursor-pointer",
-                                                                item.active
-                                                                    ? "text-primary font-semibold bg-primary/5"
-                                                                    : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
-                                                            )}
-                                                        >
-                                                            <Icon
-                                                                className={cn(
-                                                                    "w-4 h-4 shrink-0",
-                                                                    item.active
-                                                                        ? "text-primary"
-                                                                        : "text-slate-400"
-                                                                )}
-                                                            />
-                                                            <span className="truncate flex-1 text-left">
-                                                                {item.name}
-                                                            </span>
-                                                            <ChevronDown
-                                                                className={cn(
-                                                                    "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
-                                                                    isOpen ? "rotate-180" : ""
-                                                                )}
-                                                            />
-                                                        </button>
-
-                                                        {isOpen && (
-                                                            <div className="mt-1 ml-4 pl-3 border-l border-slate-200 space-y-0.5">
-                                                                {item.children.map((sub) => {
-                                                                    const SubIcon = sub.icon;
-                                                                    return (
-                                                                        <Link
-                                                                            key={sub.href}
-                                                                            href={sub.href}
-                                                                            preserveScroll
-                                                                            className={cn(
-                                                                                "flex items-center gap-2 rounded-lg py-1.5 px-2.5 text-xs transition-colors",
-                                                                                sub.active
-                                                                                    ? "bg-primary text-white font-semibold shadow-xs"
-                                                                                    : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
-                                                                            )}
-                                                                        >
-                                                                            <SubIcon
-                                                                                className={cn(
-                                                                                    "w-3.5 h-3.5 shrink-0",
-                                                                                    sub.active
-                                                                                        ? "text-white"
-                                                                                        : "text-slate-400"
-                                                                                )}
-                                                                            />
-                                                                            <span className="truncate">
-                                                                                {sub.name}
-                                                                            </span>
-                                                                        </Link>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        )}
-                                                    </SidebarMenuItem>
-                                                );
-                                            }
-
-                                            // Standard Direct Link Item
-                                            return (
-                                                <SidebarMenuItem key={item.href}>
-                                                    <SidebarMenuButton
-                                                        asChild
-                                                        isActive={item.active}
-                                                        tooltip={item.name}
+                            {/* Core Direct Links */}
+                            <SidebarMenu className="space-y-0.5">
+                                {coreNavItems.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <SidebarMenuItem key={item.href}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={item.active}
+                                                tooltip={item.name}
+                                                className={cn(
+                                                    "rounded-xl text-[13px] transition-all py-2 px-2.5",
+                                                    item.active
+                                                        ? "bg-primary text-white font-semibold shadow-xs hover:bg-primary-hover hover:text-white"
+                                                        : "text-slate-600 font-medium hover:text-ink hover:bg-slate-100/80"
+                                                )}
+                                            >
+                                                <Link
+                                                    href={item.href!}
+                                                    preserveScroll
+                                                    className="flex items-center gap-2.5 w-full"
+                                                >
+                                                    <Icon
                                                         className={cn(
-                                                            "rounded-xl text-[13px] transition-all py-2 px-2.5",
-                                                            item.active
-                                                                ? "bg-primary text-white font-semibold shadow-xs hover:bg-primary-hover hover:text-white"
-                                                                : "text-slate-600 font-medium hover:text-ink hover:bg-slate-100/80"
+                                                            "w-4 h-4 shrink-0",
+                                                            item.active ? "text-white" : "text-slate-400"
                                                         )}
-                                                    >
-                                                        <Link
-                                                            href={item.href!}
-                                                            preserveScroll
-                                                            className="flex items-center gap-2.5 w-full"
-                                                        >
-                                                            <Icon
-                                                                className={cn(
-                                                                    "w-4 h-4 shrink-0",
-                                                                    item.active
-                                                                        ? "text-white"
-                                                                        : "text-slate-400"
-                                                                )}
-                                                            />
-                                                            <span className="truncate flex-1">
-                                                                {item.name}
-                                                            </span>
-                                                            {item.badge && (
-                                                                <span
-                                                                    className={cn(
-                                                                        "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold tracking-tight",
-                                                                        item.active
-                                                                            ? "bg-white text-primary"
-                                                                            : "bg-primary/15 text-primary"
-                                                                    )}
-                                                                >
-                                                                    {item.badge}
-                                                                </span>
+                                                    />
+                                                    <span className="truncate flex-1">{item.name}</span>
+                                                    {item.badge && (
+                                                        <span
+                                                            className={cn(
+                                                                "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold tracking-tight",
+                                                                item.active
+                                                                    ? "bg-white text-primary"
+                                                                    : "bg-primary/15 text-primary"
                                                             )}
-                                                        </Link>
-                                                    </SidebarMenuButton>
-                                                </SidebarMenuItem>
-                                            );
-                                        })}
-                                    </SidebarMenu>
-                                </SidebarGroup>
-                            ))}
+                                                        >
+                                                            {item.badge}
+                                                        </span>
+                                                    )}
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+
+                            <div className="my-2 border-t border-slate-100" />
+
+                            {/* 3 Clean Collapsible Folders */}
+                            <SidebarMenu className="space-y-0.5">
+                                {folderItems.map((folder) => {
+                                    const Icon = folder.icon;
+                                    const isOpen = !!openMenus[folder.name];
+                                    return (
+                                        <SidebarMenuItem key={folder.name}>
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleMenu(folder.name)}
+                                                className={cn(
+                                                    "w-full flex items-center gap-2.5 rounded-xl text-[13px] font-medium transition-colors py-2 px-2.5 cursor-pointer",
+                                                    folder.active
+                                                        ? "text-primary font-semibold bg-primary/5"
+                                                        : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
+                                                )}
+                                            >
+                                                <Icon
+                                                    className={cn(
+                                                        "w-4 h-4 shrink-0",
+                                                        folder.active ? "text-primary" : "text-slate-400"
+                                                    )}
+                                                />
+                                                <span className="truncate flex-1 text-left">
+                                                    {folder.name}
+                                                </span>
+                                                {folder.badge && (
+                                                    <span className="shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold bg-primary/15 text-primary">
+                                                        {folder.badge}
+                                                    </span>
+                                                )}
+                                                <ChevronDown
+                                                    className={cn(
+                                                        "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
+                                                        isOpen ? "rotate-180" : ""
+                                                    )}
+                                                />
+                                            </button>
+
+                                            {isOpen && folder.children && (
+                                                <div className="mt-1 ml-4 pl-3 border-l border-slate-200 space-y-0.5">
+                                                    {folder.children.map((sub) => {
+                                                        const SubIcon = sub.icon;
+                                                        return (
+                                                            <Link
+                                                                key={sub.href}
+                                                                href={sub.href}
+                                                                preserveScroll
+                                                                className={cn(
+                                                                    "flex items-center gap-2 rounded-lg py-1.5 px-2.5 text-xs transition-colors",
+                                                                    sub.active
+                                                                        ? "bg-primary text-white font-semibold shadow-xs"
+                                                                        : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
+                                                                )}
+                                                            >
+                                                                <SubIcon
+                                                                    className={cn(
+                                                                        "w-3.5 h-3.5 shrink-0",
+                                                                        sub.active
+                                                                            ? "text-white"
+                                                                            : "text-slate-400"
+                                                                    )}
+                                                                />
+                                                                <span className="truncate flex-1">
+                                                                    {sub.name}
+                                                                </span>
+                                                                {sub.badge && (
+                                                                    <span
+                                                                        className={cn(
+                                                                            "shrink-0 min-w-4 h-4 px-1.5 flex items-center justify-center rounded-full text-[10px] font-bold",
+                                                                            sub.active
+                                                                                ? "bg-white text-primary"
+                                                                                : "bg-primary/15 text-primary"
+                                                                        )}
+                                                                    >
+                                                                        {sub.badge}
+                                                                    </span>
+                                                                )}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
                         </SidebarContent>
 
                         <SidebarFooter className="border-t border-slate-100 p-3.5 bg-[#f8fafc]">

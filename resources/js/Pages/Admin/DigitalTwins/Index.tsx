@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { router } from '@inertiajs/react';
 import { AdminLayout } from '@/Layouts/Admin/AdminLayout';
 import { AdminPageHeader } from '@/Components/Admin/UI/AdminPageHeader';
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
+import { Input } from '@/Components/ui/input';
 import {
     Dialog,
     DialogContent,
@@ -20,7 +21,7 @@ import {
 import {
     Clock,
     Edit3,
-    Plus,
+    Search,
     Settings2,
     Trash2,
     Users,
@@ -38,7 +39,9 @@ interface PageProps {
     defaultPoses: TwinPosePreset[];
 }
 
-const LABEL_CLASS = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-slate-500';
+type ModelFilter = 'all' | 'homepage' | 'available' | 'sold_out' | 'upcoming';
+
+const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-slate-700';
 const INPUT_CLASS =
     'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
 const FILE_INPUT_CLASS =
@@ -58,9 +61,12 @@ export default function AdminDigitalTwinsIndex({
     defaultPoses = [],
 }: PageProps) {
     const [activeTab, setActiveTab] = useState<'models' | 'attributes'>('models');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<ModelFilter>('all');
 
     // Digital Twin Create/Edit Dialog State
     const [isTwinDialogOpen, setIsTwinDialogOpen] = useState(false);
+    const [twinModalTab, setTwinModalTab] = useState<'basic' | 'poses'>('basic');
     const [editingTwin, setEditingTwin] = useState<AdminDigitalTwinItem | null>(null);
     const [isSavingTwin, setIsSavingTwin] = useState(false);
 
@@ -80,6 +86,7 @@ export default function AdminDigitalTwinsIndex({
     const [isActive, setIsActive] = useState(true);
     const [isCopyrightSold, setIsCopyrightSold] = useState(false);
     const [modelImageFile, setModelImageFile] = useState<File | null>(null);
+    const [modelImagePreviewUrl, setModelImagePreviewUrl] = useState<string>('');
     const [poses, setPoses] = useState<TwinPosePreset[]>(defaultPoses);
     const [poseFiles, setPoseFiles] = useState<Record<number, File | null>>({});
 
@@ -98,8 +105,18 @@ export default function AdminDigitalTwinsIndex({
     const [attrIsActive, setAttrIsActive] = useState(true);
     const [attrSortOrder, setAttrSortOrder] = useState(1);
 
+    useEffect(() => {
+        if (!modelImageFile) {
+            return;
+        }
+        const objectUrl = URL.createObjectURL(modelImageFile);
+        setModelImagePreviewUrl(objectUrl);
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [modelImageFile]);
+
     const openCreateTwin = () => {
         setEditingTwin(null);
+        setTwinModalTab('basic');
         setIsUpcomingModel(false);
         setName('');
         setLookNumber(twins.length + 1);
@@ -116,6 +133,7 @@ export default function AdminDigitalTwinsIndex({
         setIsActive(true);
         setIsCopyrightSold(false);
         setModelImageFile(null);
+        setModelImagePreviewUrl('');
         setPoses(defaultPoses.map((p) => ({ ...p })));
         setPoseFiles({});
         setIsTwinDialogOpen(true);
@@ -124,6 +142,7 @@ export default function AdminDigitalTwinsIndex({
     const openEditTwin = (twin: AdminDigitalTwinItem) => {
         const upcoming = checkIsUpcoming(twin);
         setEditingTwin(twin);
+        setTwinModalTab('basic');
         setIsUpcomingModel(upcoming);
         setName(twin.name);
         setLookNumber(twin.lookNumber);
@@ -140,6 +159,7 @@ export default function AdminDigitalTwinsIndex({
         setIsActive(twin.isActive ?? true);
         setIsCopyrightSold(upcoming ? false : twin.isCopyrightSold);
         setModelImageFile(null);
+        setModelImagePreviewUrl(twin.hiResImage || twin.runwayImage || '');
         setPoses((twin.poses && twin.poses.length > 0 ? twin.poses : defaultPoses).map((p) => ({ ...p })));
         setPoseFiles({});
         setIsTwinDialogOpen(true);
@@ -153,6 +173,7 @@ export default function AdminDigitalTwinsIndex({
             setPresetPrice('Upcoming');
             setIsFeaturedOnHome(false);
             setIsCopyrightSold(false);
+            setTwinModalTab('basic');
             return;
         }
 
@@ -301,73 +322,60 @@ export default function AdminDigitalTwinsIndex({
 
     const handleDeleteAttribute = (attr: DigitalTwinAttributeItem) => {
         if (!attr.id) return;
-        if (!window.confirm(`Delete configurator attribute "${attr.name}"?`)) return;
+        if (!window.confirm(`Delete order option "${attr.name}"?`)) return;
         router.delete(`/admin/digital-twins/attributes/${attr.id}`, { preserveScroll: true });
     };
 
-    const featuredCount = twins.filter((t) => t.isFeaturedOnHome).length;
-    const soldOutCount = twins.filter((t) => t.isCopyrightSold).length;
+    const counts = useMemo(() => {
+        let homepage = 0;
+        let available = 0;
+        let soldOut = 0;
+        let upcoming = 0;
+        twins.forEach((t) => {
+            const isUp = checkIsUpcoming(t);
+            if (isUp) {
+                upcoming += 1;
+                return;
+            }
+            if (t.isFeaturedOnHome) homepage += 1;
+            if (t.isCopyrightSold) soldOut += 1;
+            else available += 1;
+        });
+        return { homepage, available, soldOut, upcoming };
+    }, [twins]);
+
+    const filteredTwins = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        return twins.filter((twin) => {
+            const isUp = checkIsUpcoming(twin);
+            if (statusFilter === 'homepage' && (!twin.isFeaturedOnHome || isUp)) return false;
+            if (statusFilter === 'available' && (isUp || twin.isCopyrightSold)) return false;
+            if (statusFilter === 'sold_out' && (isUp || !twin.isCopyrightSold)) return false;
+            if (statusFilter === 'upcoming' && !isUp) return false;
+
+            if (!q) return true;
+            const lookTag = `#${String(twin.lookNumber).padStart(2, '0')}`;
+            return (
+                twin.name.toLowerCase().includes(q) ||
+                twin.archetype.toLowerCase().includes(q) ||
+                lookTag.includes(q) ||
+                String(twin.lookNumber).includes(q)
+            );
+        });
+    }, [twins, searchQuery, statusFilter]);
 
     return (
-        <AdminLayout title="Digital Twins Studio">
-            <div className="space-y-6">
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                    <AdminPageHeader
-                        title="Digital Twins & Custom Configurator"
-                        description="Manage homepage & catalog AI Digital Twins, 6-pose presets, sold-out copyright locks, and custom order attributes."
-                    />
+        <AdminLayout title="Digital Twins">
+            <AdminPageHeader
+                title="Digital Twins"
+                description="Manage AI Digital Twin models, copyright availability, and custom order options."
+                actionLabel={activeTab === 'models' ? 'Add Model' : 'Add Option'}
+                onActionClick={activeTab === 'models' ? openCreateTwin : openCreateAttribute}
+            />
 
-                    <div className="flex shrink-0 items-center gap-2">
-                        {activeTab === 'models' ? (
-                            <Button
-                                onClick={openCreateTwin}
-                                className="cursor-pointer bg-primary font-semibold text-white shadow-xs hover:bg-primary-hover"
-                            >
-                                <Plus className="mr-1.5 h-4 w-4" />
-                                Add Digital Twin
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={openCreateAttribute}
-                                className="cursor-pointer bg-primary font-semibold text-white shadow-xs hover:bg-primary-hover"
-                            >
-                                <Plus className="mr-1.5 h-4 w-4" />
-                                Add Configurator Attribute
-                            </Button>
-                        )}
-                    </div>
-                </div>
-
-                {/* Metric Summary Cards */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                            Total Digital Twins
-                        </span>
-                        <span className="mt-1 block text-2xl font-bold text-ink">{twins.length}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
-                            Homepage Runway Active
-                        </span>
-                        <span className="mt-1 block text-2xl font-bold text-emerald-600">{featuredCount}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-rose-700">
-                            Sold Out Copyrights
-                        </span>
-                        <span className="mt-1 block text-2xl font-bold text-rose-600">{soldOutCount}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-sky-700">
-                            Custom Order Attributes
-                        </span>
-                        <span className="mt-1 block text-2xl font-bold text-sky-600">{attributes.length}</span>
-                    </div>
-                </div>
-
-                {/* Section Switcher Tabs */}
-                <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+            <div className="space-y-5">
+                {/* Clean Section Switcher Tabs */}
+                <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
                     <button
                         type="button"
                         onClick={() => setActiveTab('models')}
@@ -378,7 +386,7 @@ export default function AdminDigitalTwinsIndex({
                         }`}
                     >
                         <Users className="h-3.5 w-3.5" />
-                        Digital Twin Models ({twins.length})
+                        Models ({twins.length})
                     </button>
                     <button
                         type="button"
@@ -390,194 +398,260 @@ export default function AdminDigitalTwinsIndex({
                         }`}
                     >
                         <Settings2 className="h-3.5 w-3.5" />
-                        Custom Order Attributes ({attributes.length})
+                        Order Options ({attributes.length})
                     </button>
                 </div>
 
                 {/* TAB 1: DIGITAL TWIN MODELS */}
                 {activeTab === 'models' && (
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        {twins.map((twin) => {
-                            const upcoming = checkIsUpcoming(twin);
+                    <>
+                        {/* Compact Search & Filter Bar */}
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                {(
+                                    [
+                                        { id: 'all', label: `All (${twins.length})` },
+                                        { id: 'homepage', label: `Homepage (${counts.homepage})` },
+                                        { id: 'available', label: `Available (${counts.available})` },
+                                        { id: 'sold_out', label: `Sold Out (${counts.soldOut})` },
+                                        { id: 'upcoming', label: `Upcoming (${counts.upcoming})` },
+                                    ] as { id: ModelFilter; label: string }[]
+                                ).map((pill) => (
+                                    <button
+                                        key={pill.id}
+                                        type="button"
+                                        onClick={() => setStatusFilter(pill.id)}
+                                        className={`cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                            statusFilter === pill.id
+                                                ? 'bg-ink text-white'
+                                                : 'border border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                        }`}
+                                    >
+                                        {pill.label}
+                                    </button>
+                                ))}
+                            </div>
 
-                            return (
-                                <div
-                                    key={twin.id ?? twin.lookNumber}
-                                    className="flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
-                                >
-                                    <div className="flex gap-4">
-                                        <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#e8eff7]">
-                                            <TwinSpriteCrop
-                                                twin={twin}
-                                                className="h-full w-full object-contain"
-                                            />
-                                            <span className="absolute left-1.5 top-1.5 rounded bg-ink/80 px-1.5 py-0.5 text-[9px] font-bold text-white">
-                                                LOOK {String(twin.lookNumber).padStart(2, '0')}
-                                            </span>
-                                        </div>
+                            <div className="relative w-full lg:w-72">
+                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Input
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search by name, look #, or category..."
+                                    className="bg-white pl-9 border-slate-200 text-ink"
+                                />
+                            </div>
+                        </div>
 
-                                        <div className="min-w-0 flex-1 space-y-1.5">
-                                            <div className="flex flex-wrap items-center gap-1.5">
-                                                {upcoming ? (
-                                                    <Badge className="border-slate-300 bg-slate-100 text-[10px] text-slate-700">
-                                                        UPCOMING
-                                                    </Badge>
-                                                ) : twin.isCopyrightSold ? (
-                                                    <Badge variant="destructive" className="text-[10px]">
-                                                        SOLD OUT
-                                                    </Badge>
-                                                ) : (
-                                                    <Badge variant="success" className="text-[10px]">
-                                                        AVAILABLE
-                                                    </Badge>
-                                                )}
-                                                {twin.isFeaturedOnHome && !upcoming && (
-                                                    <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
-                                                        HOMEPAGE
-                                                    </Badge>
-                                                )}
-                                            </div>
+                        {filteredTwins.length === 0 ? (
+                            <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-12 text-center shadow-xs">
+                                <p className="text-sm font-bold text-ink">No matching Digital Twins</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                    Try clearing your search or switching the status filter.
+                                </p>
+                                {(searchQuery || statusFilter !== 'all') && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setSearchQuery('');
+                                            setStatusFilter('all');
+                                        }}
+                                        className="mt-4 min-h-10 sm:min-h-8 text-xs font-semibold"
+                                    >
+                                        Clear Filters
+                                    </Button>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                {filteredTwins.map((twin) => {
+                                    const upcoming = checkIsUpcoming(twin);
 
-                                            <h3 className="truncate text-base font-bold text-ink">{twin.name}</h3>
-                                            <p className="text-xs font-medium text-slate-500">{twin.archetype}</p>
-                                            <p className="line-clamp-2 text-xs text-slate-600">{twin.description}</p>
-
-                                            {!upcoming && (
-                                                <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
-                                                    <span className="text-slate-600">
-                                                        Preset: <strong className="text-primary">{twin.presetPrice}</strong>
-                                                    </span>
-                                                    <span className="text-slate-600">
-                                                        Lifetime: <strong className="text-sky-700">{twin.lifetimePrice}</strong>
+                                    return (
+                                        <div
+                                            key={twin.id ?? twin.lookNumber}
+                                            className="flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
+                                        >
+                                            <div className="flex gap-4">
+                                                <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
+                                                    <TwinSpriteCrop
+                                                        twin={twin}
+                                                        className="h-full w-full object-contain"
+                                                    />
+                                                    <span className="absolute bottom-1.5 left-1.5 rounded-md border border-slate-200/90 bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-ink shadow-xs">
+                                                        #{String(twin.lookNumber).padStart(2, '0')}
                                                     </span>
                                                 </div>
-                                            )}
-                                        </div>
-                                    </div>
 
-                                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                                        {upcoming ? (
-                                            <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
-                                                <Clock className="h-3 w-3" />
-                                                Preview Only
-                                            </span>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                onClick={() => handleToggleSoldOut(twin)}
-                                                className={`cursor-pointer rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                                                    twin.isCopyrightSold
-                                                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                                                        : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                                }`}
-                                            >
-                                                {twin.isCopyrightSold ? 'Mark Available' : 'Mark Sold Out'}
-                                            </button>
-                                        )}
+                                                <div className="min-w-0 flex-1 space-y-1.5">
+                                                    <div className="flex flex-wrap items-center gap-1.5">
+                                                        {upcoming ? (
+                                                            <Badge className="border-slate-300 bg-slate-100 text-[10px] text-slate-700">
+                                                                Upcoming
+                                                            </Badge>
+                                                        ) : twin.isCopyrightSold ? (
+                                                            <Badge variant="destructive" className="text-[10px]">
+                                                                Sold Out
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="success" className="text-[10px]">
+                                                                Available
+                                                            </Badge>
+                                                        )}
+                                                        {twin.isFeaturedOnHome && !upcoming && (
+                                                            <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
+                                                                Homepage
+                                                            </Badge>
+                                                        )}
+                                                    </div>
 
-                                        <div className="flex items-center gap-1.5">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => openEditTwin(twin)}
-                                                className="h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
-                                            >
-                                                <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={() => handleDeleteTwin(twin)}
-                                                className="h-8 w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5" />
-                                            </Button>
+                                                    <h3 className="truncate text-base font-bold text-ink">{twin.name}</h3>
+                                                    <p className="text-xs font-medium text-slate-500">{twin.archetype}</p>
+
+                                                    {!upcoming && (
+                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-slate-600">
+                                                            <span>
+                                                                Preset <strong className="text-ink">{twin.presetPrice}</strong>
+                                                            </span>
+                                                            <span>
+                                                                Lifetime <strong className="text-primary">{twin.lifetimePrice}</strong>
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                                                {upcoming ? (
+                                                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                                                        <Clock className="h-3 w-3" />
+                                                        Preview Only
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleToggleSoldOut(twin)}
+                                                        className={`min-h-10 sm:min-h-8 cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                                                            twin.isCopyrightSold
+                                                                ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                                : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                        }`}
+                                                    >
+                                                        {twin.isCopyrightSold ? 'Mark Available' : 'Mark Sold Out'}
+                                                    </button>
+                                                )}
+
+                                                <div className="flex items-center gap-1.5">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => openEditTwin(twin)}
+                                                        className="min-h-10 sm:min-h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
+                                                    >
+                                                        <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        onClick={() => handleDeleteTwin(twin)}
+                                                        aria-label={`Delete ${twin.name}`}
+                                                        className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                                    >
+                                                        <Trash2 className="h-3.5 w-3.5" />
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </>
                 )}
 
-                {/* TAB 2: CUSTOM ORDER CONFIGURATOR ATTRIBUTES */}
+                {/* TAB 2: ORDER CONFIGURATOR OPTIONS */}
                 {activeTab === 'attributes' && (
                     <div className="space-y-3">
-                        {attributes.map((attr, idx) => (
-                            <div
-                                key={attr.id ?? attr.slug}
-                                className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:flex-row sm:items-center"
-                            >
-                                <div className="space-y-1.5">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <span className="text-xs font-bold text-primary">
-                                            #{idx + 1}
-                                        </span>
-                                        <h3 className="text-sm font-bold text-ink">{attr.name}</h3>
-                                        <Badge variant="secondary" className="text-[10px]">
-                                            {attr.inputType === 'unit_input' && 'Unit Selector + Input (ft/in)'}
-                                            {attr.inputType === 'select' && 'Option Chips'}
-                                            {attr.inputType === 'multi_input' && 'Multi-Input Boxes'}
-                                        </Badge>
-                                        {attr.allowCustom && (
-                                            <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
-                                                +{attr.customLabel} Text Input
-                                            </Badge>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {attr.options.map((opt) => (
-                                            <span
-                                                key={opt}
-                                                className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-700"
-                                            >
-                                                {opt}
-                                            </span>
-                                        ))}
-                                        {attr.allowCustom && (
-                                            <span className="rounded-lg border border-primary/25 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                                {attr.customLabel} (opens input)
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 self-end sm:self-center">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => openEditAttribute(attr)}
-                                        className="h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
-                                    >
-                                        <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
-                                        Edit Options
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => handleDeleteAttribute(attr)}
-                                        className="h-8 w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
-                                    >
-                                        <Trash2 className="h-3.5 w-3.5" />
-                                    </Button>
-                                </div>
+                        {attributes.length === 0 ? (
+                            <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-12 text-center shadow-xs">
+                                <p className="text-sm font-bold text-ink">No order options configured</p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                    Add attributes like Skin Tone, Body Type, or Height to customize orders.
+                                </p>
                             </div>
-                        ))}
+                        ) : (
+                            attributes.map((attr, idx) => (
+                                <div
+                                    key={attr.id ?? attr.slug}
+                                    className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs sm:flex-row sm:items-center"
+                                >
+                                    <div className="min-w-0 flex-1 space-y-2">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="text-xs font-bold text-primary">#{idx + 1}</span>
+                                            <h3 className="text-sm font-bold text-ink">{attr.name}</h3>
+                                            <Badge variant="secondary" className="text-[11px]">
+                                                {attr.inputType === 'unit_input' && 'Unit + Value (ft/in)'}
+                                                {attr.inputType === 'select' && 'Option Chips'}
+                                                {attr.inputType === 'multi_input' && 'Multiple Inputs'}
+                                            </Badge>
+                                            {attr.allowCustom && (
+                                                <Badge className="border-sky-200 bg-sky-50 text-[11px] text-sky-700">
+                                                    Allows {attr.customLabel || 'Custom'} Input
+                                                </Badge>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {attr.options.map((opt) => (
+                                                <span
+                                                    key={opt}
+                                                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-700"
+                                                >
+                                                    {opt}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => openEditAttribute(attr)}
+                                            className="min-h-10 sm:min-h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
+                                        >
+                                            <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => handleDeleteAttribute(attr)}
+                                            aria-label={`Delete ${attr.name}`}
+                                            className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
                 )}
             </div>
 
             {/* DIALOG 1: CREATE / EDIT DIGITAL TWIN MODEL */}
             <Dialog open={isTwinDialogOpen} onOpenChange={setIsTwinDialogOpen}>
-                <DialogContent className="sm:max-w-2xl">
+                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingTwin ? `Edit Digital Twin — ${editingTwin.name}` : 'Create New Digital Twin'}
+                            {editingTwin ? `Edit ${editingTwin.name}` : 'Add Digital Twin Model'}
                         </DialogTitle>
                         <DialogDescription>
-                            Uploaded model images are automatically converted to alpha-preserving 800w &amp; 1600w WebP for instant runway loading.
+                            Images are automatically optimized for instant catalog display.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -592,146 +666,204 @@ export default function AdminDigitalTwinsIndex({
                             />
                             <div className="space-y-0.5">
                                 <span className="block text-sm font-semibold text-ink">
-                                    Upcoming Model (Simplified Upload)
+                                    Upcoming Preview (Quick Upload)
                                 </span>
                                 <span className="block text-xs text-slate-500">
                                     {isUpcomingModel
-                                        ? 'Only name, look number, and model image are needed. Uncheck to configure category, pricing, description, and all 6 pose presets.'
-                                        : 'Check this to quickly upload an upcoming preview model without filling out pricing or pose details.'}
+                                        ? 'Only Model Name, Look #, and Preview Image are required.'
+                                        : 'Check this to upload a quick preview card without pricing or pose settings.'}
                                 </span>
                             </div>
                         </label>
 
-                        {/* Core Identity Fields (always shown) */}
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                            <div className="sm:col-span-2">
-                                <label className={LABEL_CLASS}>
-                                    Model Name *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder={isUpcomingModel ? 'e.g. Upcoming Model' : 'e.g. Laura'}
-                                    className={INPUT_CLASS}
-                                />
-                            </div>
-                            <div>
-                                <label className={LABEL_CLASS}>
-                                    Look Number *
-                                </label>
-                                <input
-                                    type="number"
-                                    required
-                                    min={1}
-                                    value={lookNumber}
-                                    onChange={(e) => setLookNumber(Number(e.target.value))}
-                                    className={INPUT_CLASS}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Full Model Details (shown only when NOT an Upcoming preview) */}
+                        {/* Two Clean Modal Tabs for Standard Models */}
                         {!isUpcomingModel && (
-                            <>
-                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                                    <div>
-                                        <label className={LABEL_CLASS}>
-                                            Category *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            list="digital-twin-categories"
-                                            required
-                                            value={archetype}
-                                            onChange={(e) => setArchetype(e.target.value)}
-                                            placeholder="Female or Male"
-                                            className={INPUT_CLASS}
-                                        />
-                                        <datalist id="digital-twin-categories">
-                                            <option value="Female" />
-                                            <option value="Male" />
-                                        </datalist>
-                                    </div>
-                                    <div>
-                                        <label className={LABEL_CLASS}>
-                                            Preset Price *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={presetPrice}
-                                            onChange={(e) => setPresetPrice(e.target.value)}
-                                            className={INPUT_CLASS}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className={LABEL_CLASS}>
-                                            Lifetime Copyright Price *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={lifetimePrice}
-                                            onChange={(e) => setLifetimePrice(e.target.value)}
-                                            className={INPUT_CLASS}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className={LABEL_CLASS}>
-                                        Editorial Description *
-                                    </label>
-                                    <textarea
-                                        rows={2}
-                                        required
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        placeholder="Describe garments, lighting calibration, and pose style..."
-                                        className={INPUT_CLASS}
-                                    />
-                                </div>
-                            </>
+                            <div className="flex items-center gap-1.5 rounded-xl bg-slate-100 p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setTwinModalTab('basic')}
+                                    className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                                        twinModalTab === 'basic'
+                                            ? 'bg-white text-ink shadow-xs'
+                                            : 'text-slate-600 hover:text-ink'
+                                    }`}
+                                >
+                                    1. Basic Info &amp; Image
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTwinModalTab('poses')}
+                                    className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+                                        twinModalTab === 'poses'
+                                            ? 'bg-white text-ink shadow-xs'
+                                            : 'text-slate-600 hover:text-ink'
+                                    }`}
+                                >
+                                    2. 6 Poses &amp; Advanced
+                                </button>
+                            </div>
                         )}
 
-                        {/* Full-Body Model Image Upload (always shown) */}
-                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-primary">
-                                Full-Body Transparent PNG / WebP Image
-                            </label>
-                            <p className="mt-0.5 text-xs text-slate-600">
-                                {isUpcomingModel
-                                    ? 'Upload a single preview cutout for the Upcoming category card.'
-                                    : 'Upload a transparent cutout of the model. If individual pose photos are not uploaded below, all 6 pose angles will automatically frame from this master cutout.'}
-                            </p>
-                            <input
-                                type="file"
-                                accept=".png,.webp,.jpg,.jpeg"
-                                onChange={(e) => setModelImageFile(e.target.files?.[0] ?? null)}
-                                className={`mt-2.5 ${FILE_INPUT_CLASS}`}
-                            />
-                        </div>
+                        {/* TAB: BASIC INFO (always shown for Upcoming preview) */}
+                        {(isUpcomingModel || twinModalTab === 'basic') && (
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                    <div className="sm:col-span-2">
+                                        <label className={LABEL_CLASS}>Model Name *</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder={isUpcomingModel ? 'e.g. Upcoming Model' : 'e.g. Laura'}
+                                            className={INPUT_CLASS}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className={LABEL_CLASS}>Look Number *</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min={1}
+                                            value={lookNumber}
+                                            onChange={(e) => setLookNumber(Number(e.target.value))}
+                                            className={INPUT_CLASS}
+                                        />
+                                    </div>
+                                </div>
 
-                        {isUpcomingModel ? (
-                            <div className="max-w-[180px]">
-                                <label className={LABEL_CLASS}>
-                                    Sort Order
-                                </label>
-                                <input
-                                    type="number"
-                                    value={sortOrder}
-                                    onChange={(e) => setSortOrder(Number(e.target.value))}
-                                    className={INPUT_CLASS}
-                                />
+                                {!isUpcomingModel && (
+                                    <>
+                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                            <div>
+                                                <label className={LABEL_CLASS}>Category *</label>
+                                                <input
+                                                    type="text"
+                                                    list="digital-twin-categories"
+                                                    required
+                                                    value={archetype}
+                                                    onChange={(e) => setArchetype(e.target.value)}
+                                                    placeholder="Female or Male"
+                                                    className={INPUT_CLASS}
+                                                />
+                                                <datalist id="digital-twin-categories">
+                                                    <option value="Female" />
+                                                    <option value="Male" />
+                                                </datalist>
+                                            </div>
+                                            <div>
+                                                <label className={LABEL_CLASS}>Preset Price *</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={presetPrice}
+                                                    onChange={(e) => setPresetPrice(e.target.value)}
+                                                    className={INPUT_CLASS}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className={LABEL_CLASS}>Lifetime Price *</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={lifetimePrice}
+                                                    onChange={(e) => setLifetimePrice(e.target.value)}
+                                                    className={INPUT_CLASS}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className={LABEL_CLASS}>Short Description *</label>
+                                            <textarea
+                                                rows={2}
+                                                required
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                placeholder="Describe garments, lighting calibration, and style..."
+                                                className={INPUT_CLASS}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Model Image Upload with Live Preview */}
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                                    {(modelImagePreviewUrl || editingTwin) && (
+                                        <div className="h-24 w-18 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#eef3f9]">
+                                            {modelImagePreviewUrl ? (
+                                                <img
+                                                    src={modelImagePreviewUrl}
+                                                    alt={name || 'Model preview'}
+                                                    className="h-full w-full object-contain"
+                                                />
+                                            ) : editingTwin ? (
+                                                <TwinSpriteCrop
+                                                    twin={editingTwin}
+                                                    className="h-full w-full object-contain"
+                                                />
+                                            ) : null}
+                                        </div>
+                                    )}
+                                    <div className="min-w-0 flex-1 space-y-1.5">
+                                        <label className="block text-xs font-bold text-ink">
+                                            Main Model Image (PNG / WebP)
+                                        </label>
+                                        <p className="text-xs text-slate-500">
+                                            {isUpcomingModel
+                                                ? 'Upload a transparent cutout for the Upcoming preview card.'
+                                                : 'Used on catalog cards and automatically frames any pose without a custom photo.'}
+                                        </p>
+                                        <input
+                                            type="file"
+                                            accept=".png,.webp,.jpg,.jpeg"
+                                            onChange={(e) => setModelImageFile(e.target.files?.[0] ?? null)}
+                                            className={FILE_INPUT_CLASS}
+                                        />
+                                    </div>
+                                </div>
+
+                                {!isUpcomingModel ? (
+                                    <div className="flex flex-wrap items-center gap-6 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                        <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-ink">
+                                            <input
+                                                type="checkbox"
+                                                checked={isFeaturedOnHome}
+                                                onChange={(e) => setIsFeaturedOnHome(e.target.checked)}
+                                                className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
+                                            />
+                                            Show on Homepage
+                                        </label>
+                                        <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-rose-700">
+                                            <input
+                                                type="checkbox"
+                                                checked={isCopyrightSold}
+                                                onChange={(e) => setIsCopyrightSold(e.target.checked)}
+                                                className="h-4 w-4 rounded border-slate-300 accent-rose-600"
+                                            />
+                                            Copyright Sold Out
+                                        </label>
+                                    </div>
+                                ) : (
+                                    <div className="max-w-[180px]">
+                                        <label className={LABEL_CLASS}>Sort Order</label>
+                                        <input
+                                            type="number"
+                                            value={sortOrder}
+                                            onChange={(e) => setSortOrder(Number(e.target.value))}
+                                            className={INPUT_CLASS}
+                                        />
+                                    </div>
+                                )}
                             </div>
-                        ) : (
-                            <>
-                                {/* 6 Pose Presets Configuration */}
+                        )}
+
+                        {/* TAB: 6 POSES & ADVANCED */}
+                        {!isUpcomingModel && twinModalTab === 'poses' && (
+                            <div className="space-y-4">
                                 <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                                    <span className="block text-xs font-bold uppercase tracking-wider text-ink">
-                                        6 Pose Presets (Optional Individual Pose Photo Overrides)
+                                    <span className="block text-xs font-bold text-ink">
+                                        6 Pose Presets (Optional Photo Overrides)
                                     </span>
                                     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                                         {poses.map((pose, idx) => (
@@ -745,7 +877,7 @@ export default function AdminDigitalTwinsIndex({
                                                     </span>
                                                     {pose.imageUrl && (
                                                         <span className="text-[10px] font-semibold text-emerald-700">
-                                                            Custom Image Set
+                                                            Custom Set
                                                         </span>
                                                     )}
                                                 </div>
@@ -774,12 +906,18 @@ export default function AdminDigitalTwinsIndex({
                                     </div>
                                 </div>
 
-                                {/* Toggles & Metadata */}
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                                     <div>
-                                        <label className={LABEL_CLASS}>
-                                            Downloads Count
-                                        </label>
+                                        <label className={LABEL_CLASS}>Custom Order Price</label>
+                                        <input
+                                            type="text"
+                                            value={customOrderPrice}
+                                            onChange={(e) => setCustomOrderPrice(e.target.value)}
+                                            className={INPUT_CLASS}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className={LABEL_CLASS}>Downloads Count</label>
                                         <input
                                             type="number"
                                             min={0}
@@ -789,9 +927,7 @@ export default function AdminDigitalTwinsIndex({
                                         />
                                     </div>
                                     <div>
-                                        <label className={LABEL_CLASS}>
-                                            Sort Order
-                                        </label>
+                                        <label className={LABEL_CLASS}>Sort Order</label>
                                         <input
                                             type="number"
                                             value={sortOrder}
@@ -799,44 +935,53 @@ export default function AdminDigitalTwinsIndex({
                                             className={INPUT_CLASS}
                                         />
                                     </div>
-                                    <label className="flex cursor-pointer items-center gap-2 pt-5 text-xs font-medium text-ink">
+                                    <div>
+                                        <label className={LABEL_CLASS}>Listed Date</label>
                                         <input
-                                            type="checkbox"
-                                            checked={isFeaturedOnHome}
-                                            onChange={(e) => setIsFeaturedOnHome(e.target.checked)}
-                                            className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
+                                            type="text"
+                                            value={listedAt}
+                                            onChange={(e) => setListedAt(e.target.value)}
+                                            className={INPUT_CLASS}
                                         />
-                                        Featured on Home
-                                    </label>
-                                    <label className="flex cursor-pointer items-center gap-2 pt-5 text-xs font-medium text-rose-700">
-                                        <input
-                                            type="checkbox"
-                                            checked={isCopyrightSold}
-                                            onChange={(e) => setIsCopyrightSold(e.target.checked)}
-                                            className="h-4 w-4 rounded border-slate-300 accent-rose-600"
-                                        />
-                                        Copyright Sold Out
-                                    </label>
+                                    </div>
                                 </div>
-                            </>
+                            </div>
                         )}
 
-                        <div className="flex justify-end gap-2 border-t border-slate-200 pt-3">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                onClick={() => setIsTwinDialogOpen(false)}
-                                className="cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                disabled={isSavingTwin}
-                                className="cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
-                            >
-                                {isSavingTwin ? 'Saving...' : isUpcomingModel ? 'Save Upcoming Model' : 'Save Digital Twin'}
-                            </Button>
+                        <div className="flex flex-wrap justify-between gap-2 border-t border-slate-200 pt-3">
+                            <div>
+                                {!isUpcomingModel && twinModalTab === 'basic' && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setTwinModalTab('poses')}
+                                        className="min-h-10 sm:min-h-9 cursor-pointer text-xs"
+                                    >
+                                        Edit 6 Poses &amp; Advanced
+                                    </Button>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    onClick={() => setIsTwinDialogOpen(false)}
+                                    className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={isSavingTwin}
+                                    className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
+                                >
+                                    {isSavingTwin
+                                        ? 'Saving...'
+                                        : isUpcomingModel
+                                          ? 'Save Preview'
+                                          : 'Save Model'}
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </DialogContent>
@@ -844,24 +989,20 @@ export default function AdminDigitalTwinsIndex({
 
             {/* DIALOG 2: CREATE / EDIT CONFIGURATOR ATTRIBUTE */}
             <Dialog open={isAttrDialogOpen} onOpenChange={setIsAttrDialogOpen}>
-                <DialogContent className="sm:max-w-lg">
+                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingAttr
-                                ? `Edit Attribute — ${editingAttr.name}`
-                                : 'Add Custom Order Attribute'}
+                            {editingAttr ? `Edit Option — ${editingAttr.name}` : 'Add Order Option'}
                         </DialogTitle>
                         <DialogDescription>
-                            Configure dynamic traits shown on the Custom Digital Twin Order page (/digital-twins/order).
+                            Options shown to clients on the Custom Digital Twin order page.
                         </DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleSaveAttribute} className="space-y-4 pt-1 text-xs">
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
-                                <label className={LABEL_CLASS}>
-                                    Attribute Name *
-                                </label>
+                                <label className={LABEL_CLASS}>Option Name *</label>
                                 <input
                                     type="text"
                                     required
@@ -872,9 +1013,7 @@ export default function AdminDigitalTwinsIndex({
                                 />
                             </div>
                             <div>
-                                <label className={LABEL_CLASS}>
-                                    Input Type *
-                                </label>
+                                <label className={LABEL_CLASS}>Field Type *</label>
                                 <select
                                     value={attrInputType}
                                     onChange={(e) =>
@@ -884,42 +1023,38 @@ export default function AdminDigitalTwinsIndex({
                                     }
                                     className={INPUT_CLASS}
                                 >
-                                    <option value="select">Option Chips (Select)</option>
-                                    <option value="unit_input">Unit Selector First + Input (e.g. ft / in)</option>
-                                    <option value="multi_input">Multi-Input Boxes (e.g. Shoulder, Chest, Hip)</option>
+                                    <option value="select">Option Chips</option>
+                                    <option value="unit_input">Unit + Value (ft / in)</option>
+                                    <option value="multi_input">Multiple Inputs (Chest, Waist)</option>
                                 </select>
                             </div>
                         </div>
 
                         <div>
-                            <label className={LABEL_CLASS}>
-                                Options / Sub-Fields (Comma Separated) *
-                            </label>
+                            <label className={LABEL_CLASS}>Choices / Sub-Fields (Comma Separated) *</label>
                             <input
                                 type="text"
                                 required
                                 value={attrOptionsText}
                                 onChange={(e) => setAttrOptionsText(e.target.value)}
-                                placeholder="Fair, Blonde, Brown, White, Dark"
+                                placeholder="Fair, Blonde, Brown, Dark"
                                 className={INPUT_CLASS}
                             />
                         </div>
 
                         {attrInputType === 'select' && (
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <label className="flex cursor-pointer items-center gap-2 pt-5 text-xs font-medium text-ink">
+                                <label className="flex cursor-pointer items-center gap-2 pt-4 text-xs font-semibold text-ink">
                                     <input
                                         type="checkbox"
                                         checked={attrAllowCustom}
                                         onChange={(e) => setAttrAllowCustom(e.target.checked)}
-                                        className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
+                                        className="h-4 w-4 rounded border-slate-300 text-primary accent-[var(--color-primary)]"
                                     />
-                                    Allow Custom / Other Input
+                                    Allow Custom Text Input
                                 </label>
                                 <div>
-                                    <label className={LABEL_CLASS}>
-                                        Custom Trigger Label
-                                    </label>
+                                    <label className={LABEL_CLASS}>Custom Button Label</label>
                                     <input
                                         type="text"
                                         value={attrCustomLabel}
@@ -933,9 +1068,7 @@ export default function AdminDigitalTwinsIndex({
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
-                                <label className={LABEL_CLASS}>
-                                    Input Placeholder
-                                </label>
+                                <label className={LABEL_CLASS}>Placeholder Text</label>
                                 <input
                                     type="text"
                                     value={attrPlaceholder}
@@ -945,9 +1078,7 @@ export default function AdminDigitalTwinsIndex({
                                 />
                             </div>
                             <div>
-                                <label className={LABEL_CLASS}>
-                                    Sort Order
-                                </label>
+                                <label className={LABEL_CLASS}>Sort Order</label>
                                 <input
                                     type="number"
                                     value={attrSortOrder}
@@ -962,16 +1093,16 @@ export default function AdminDigitalTwinsIndex({
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setIsAttrDialogOpen(false)}
-                                className="cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
+                                className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={isSavingAttr}
-                                className="cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
+                                className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
                             >
-                                {isSavingAttr ? 'Saving...' : 'Save Attribute'}
+                                {isSavingAttr ? 'Saving...' : 'Save Option'}
                             </Button>
                         </div>
                     </form>
