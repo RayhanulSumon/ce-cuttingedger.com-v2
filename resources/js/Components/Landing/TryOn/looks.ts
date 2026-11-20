@@ -1,4 +1,4 @@
-const BASE = 'https://reel-ref-try-the-look.vercel.app/assets';
+const BASE = '/images/try-on';
 
 export interface LookPiece {
     name: string;

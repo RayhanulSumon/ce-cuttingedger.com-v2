@@ -93,6 +93,12 @@ class DigitalTwinsAndTryOnTest extends TestCase
             ->assertJsonCount(24, 'data')
             ->assertJsonCount(7, 'attributes');
 
+        foreach ($twinsResponse->json('data') as $twinItem) {
+            $this->assertStringStartsWith('/images/digital-twins/', (string) ($twinItem['runwayImage'] ?? ''));
+            $this->assertStringStartsWith('/images/digital-twins/', (string) ($twinItem['hiResImage'] ?? ''));
+            $this->assertStringNotContainsString('http', (string) ($twinItem['runwayImage'] ?? ''));
+        }
+
         $etag = $twinsResponse->headers->get('ETag');
         $this->assertNotEmpty($etag);
 
@@ -103,6 +109,17 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $looksResponse = $this->getJson('/api/catalog/try-on-looks');
         $looksResponse->assertOk()
             ->assertJsonCount(6, 'data');
+
+        foreach ($looksResponse->json('data') as $lookItem) {
+            $this->assertStringStartsWith('/images/try-on/', (string) ($lookItem['model'] ?? ''));
+            $this->assertStringStartsWith('/images/try-on/', (string) ($lookItem['modelHiRes'] ?? ''));
+            $this->assertStringNotContainsString('http', (string) ($lookItem['model'] ?? ''));
+
+            foreach ($lookItem['pieces'] ?? [] as $pieceItem) {
+                $this->assertStringStartsWith('/images/try-on/', (string) ($pieceItem['image'] ?? ''));
+                $this->assertStringNotContainsString('http', (string) ($pieceItem['image'] ?? ''));
+            }
+        }
     }
 
     public function test_guests_can_view_order_pages_but_must_login_and_verify_email_before_submitting(): void

@@ -228,7 +228,9 @@ class DigitalTwinSeeder extends Seeder
         $seededSlugs = [];
 
         foreach ($twins as $idx => $twin) {
-            $slot = $spriteSlots[$idx % count($spriteSlots)];
+            $slotIndex = $idx % count($spriteSlots);
+            $slot = $spriteSlots[$slotIndex];
+            $localImage = '/images/digital-twins/model-'.($slotIndex + 1).'.webp';
             $lookNumber = 15 + $idx;
             $slug = Str::slug($twin['name']);
             $seededSlugs[] = $slug;
@@ -241,6 +243,8 @@ class DigitalTwinSeeder extends Seeder
                     'look_number' => $lookNumber,
                     'sprite_x0' => $slot['sprite_x0'],
                     'sprite_x1' => $slot['sprite_x1'],
+                    'runway_image' => $localImage,
+                    'hi_res_image' => $localImage,
                     'preset_price' => $twin['preset_price'] ?? '$149',
                     'custom_order_price' => '$290',
                     'lifetime_price' => '$490',

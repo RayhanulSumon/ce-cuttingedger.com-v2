@@ -1,5 +1,4 @@
-export const TWIN_MODELS_SPRITE =
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_042056_1a704ff7-b0e5-4a9f-bbda-62392b819fb6.png&w=3840&q=85';
+export const TWIN_MODELS_SPRITE = '/images/digital-twins/models-sprite.webp';
 
 export const TWIN_Y0 = 48;
 export const TWIN_Y1 = 496;
@@ -373,7 +372,9 @@ const TWIN_SEED_ENTRIES: TwinSeedEntry[] = [
 ];
 
 export const DIGITAL_TWINS: DigitalTwinModel[] = TWIN_SEED_ENTRIES.map((entry, index) => {
-    const slot = SPRITE_SLOTS[index % SPRITE_SLOTS.length];
+    const slotIndex = index % SPRITE_SLOTS.length;
+    const slot = SPRITE_SLOTS[slotIndex];
+    const localImage = `/images/digital-twins/model-${slotIndex + 1}.webp`;
     const lookNumber = TWIN_FIRST_LOOK + index;
 
     return {
@@ -382,6 +383,9 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = TWIN_SEED_ENTRIES.map((entry, i
         lookNumber,
         x0: slot.x0,
         x1: slot.x1,
+        aspectRatio: Number(((slot.x1 - slot.x0) / 448).toFixed(4)),
+        runwayImage: localImage,
+        hiResImage: localImage,
         name: entry.name,
         archetype: entry.archetype,
         presetPrice: entry.presetPrice ?? '$149',

@@ -14,7 +14,7 @@ class TryOnLookSeeder extends Seeder
      */
     public function run(): void
     {
-        $base = 'https://reel-ref-try-the-look.vercel.app/assets';
+        $base = '/images/try-on';
 
         $piece = fn (string $name, string $image, string $brand = 'Nike', ?string $tag = null): array => [
             'name' => $name,
