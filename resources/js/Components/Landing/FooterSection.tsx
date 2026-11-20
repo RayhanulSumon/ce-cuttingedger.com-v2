@@ -143,7 +143,7 @@ export const FooterSection = memo(function FooterSection({
             <div
                 data-scrollable={fullpage ? '' : undefined}
                 className={`relative flex flex-col justify-between rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10 ${
-                    fullpage ? 'h-full gap-6 overflow-y-auto' : 'gap-8 overflow-hidden'
+                    fullpage ? 'h-full gap-6 overflow-x-hidden overflow-y-auto' : 'gap-8 overflow-hidden'
                 }`}
                 style={{ backgroundImage: FOOTER_GRADIENT }}
             >
@@ -187,7 +187,7 @@ export const FooterSection = memo(function FooterSection({
                 </Reveal>
 
                 {/* Middle: the big call to action */}
-                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-6 text-center sm:py-8">
+                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center pt-10 pb-4 text-center sm:pt-14 sm:pb-6">
                     <Link
                         href="/contact"
                         prefetch
@@ -197,9 +197,9 @@ export const FooterSection = memo(function FooterSection({
                             setHovered(null);
                             setGroupHover(false);
                         }}
-                        className="group flex w-full max-w-full overflow-hidden items-center justify-center focus:outline-none"
+                        className="group flex w-full max-w-full items-center justify-center focus:outline-none"
                     >
-                        <span className="flex max-w-full flex-nowrap items-center justify-center overflow-hidden" aria-label="Contact us">
+                        <span className="flex flex-nowrap items-center justify-center" aria-label="Contact us">
                             {LETTERS.map((char, i) =>
                                 char === ' ' ? (
                                     <span key={i} className="inline-block w-[3vw] sm:w-[3.6vw]" aria-hidden="true" />
