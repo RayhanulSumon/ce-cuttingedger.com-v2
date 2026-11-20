@@ -14,7 +14,7 @@ class ImageOptimizationService
     public function __construct(public ImageUploadService $imageUploadService) {}
 
     /**
-     * Store a Digital Twin main full-body image as optimized 640w + 1600w alpha-preserving WebP files.
+     * Store a Digital Twin main full-body image as optimized 640w + 1080w alpha-preserving WebP files.
      *
      * @return array{runway_image: string, hi_res_image: string, aspect_ratio: float}
      */
@@ -22,17 +22,20 @@ class ImageOptimizationService
     {
         $baseName = 'twin-'.Str::random(12);
         $runwayRel = ImageUploadService::PATH_DIGITAL_TWINS."/{$baseName}-640.webp";
-        $hiResRel = ImageUploadService::PATH_DIGITAL_TWINS."/{$baseName}-1600.webp";
+        $hiResRel = ImageUploadService::PATH_DIGITAL_TWINS."/{$baseName}-1080.webp";
 
-        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 86);
-        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1600, 88);
+        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 80, 1200);
+        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1080, 82, 1920);
 
         if (! $runway || ! $hiRes) {
             $url = $this->imageUploadService->uploadAsWebp(
                 $file,
                 ImageUploadService::PATH_DIGITAL_TWINS,
-                1600,
-                88,
+                1080,
+                82,
+                null,
+                null,
+                1920,
             );
             $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
 
@@ -57,17 +60,18 @@ class ImageOptimizationService
     }
 
     /**
-     * Store a Digital Twin individual pose image as an optimized 1080w WebP file.
+     * Store a Digital Twin individual pose image as an optimized 900w WebP file.
      */
     public function storeTwinPoseImage(UploadedFile $file, ?string $oldUrl = null): string
     {
         return $this->imageUploadService->uploadAsWebp(
             $file,
             ImageUploadService::PATH_DIGITAL_TWIN_POSES,
-            1080,
-            86,
+            900,
+            82,
             $oldUrl,
             'pose',
+            1600,
         );
     }
 
@@ -82,15 +86,18 @@ class ImageOptimizationService
         $runwayRel = ImageUploadService::PATH_TRY_ON."/{$baseName}-640.webp";
         $hiResRel = ImageUploadService::PATH_TRY_ON."/{$baseName}-1080.webp";
 
-        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 85);
-        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1080, 88);
+        $runway = $this->imageUploadService->storeResizedWebp($file, $runwayRel, 640, 80, 1138);
+        $hiRes = $this->imageUploadService->storeResizedWebp($file, $hiResRel, 1080, 82, 1920);
 
         if (! $runway || ! $hiRes) {
             $url = $this->imageUploadService->uploadAsWebp(
                 $file,
                 ImageUploadService::PATH_TRY_ON,
                 1080,
-                88,
+                82,
+                null,
+                null,
+                1920,
             );
             $this->imageUploadService->deleteMany([$oldRunway, $oldHiRes]);
 
@@ -117,9 +124,10 @@ class ImageOptimizationService
             $file,
             ImageUploadService::PATH_TRY_ON_PIECES,
             600,
-            86,
+            82,
             $oldUrl,
             'piece',
+            800,
         );
     }
 }

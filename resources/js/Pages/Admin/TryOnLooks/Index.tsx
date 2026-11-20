@@ -14,8 +14,15 @@ import {
 } from '@/Components/ui/dialog';
 import { Look, LookPiece } from '@/Components/Landing/TryOn/looks';
 import {
+    STUDIO_IMAGE_SPECS,
+    StudioImageValidationResult,
+    validateStudioImage,
+} from '@/lib/studioImageValidation';
+import {
     AlertCircle,
+    AlertTriangle,
     ArrowRight,
+    CheckCircle2,
     Crosshair,
     Edit3,
     ImagePlus,
@@ -69,16 +76,17 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
     // Form state
     const [modelName, setModelName] = useState('');
-    const [description, setDescription] = useState('');
     const [sortOrder, setSortOrder] = useState(1);
     const [isFeaturedOnHome, setIsFeaturedOnHome] = useState(true);
     const [isActive, setIsActive] = useState(true);
     const [modelImageFile, setModelImageFile] = useState<File | null>(null);
     const [modelPreviewUrl, setModelPreviewUrl] = useState<string>('');
+    const [modelImageMeta, setModelImageMeta] = useState<StudioImageValidationResult | null>(null);
 
     const [pieces, setPieces] = useState<LookPiece[]>([]);
     const [pieceFiles, setPieceFiles] = useState<Record<number, File | null>>({});
     const [piecePreviews, setPiecePreviews] = useState<Record<number, string>>({});
+    const [pieceMeta, setPieceMeta] = useState<Record<number, StudioImageValidationResult>>({});
     const [pins, setPins] = useState<Pin[]>([]);
     const [activePinIndex, setActivePinIndex] = useState<number>(0);
 
@@ -113,7 +121,9 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
             revokeAllManagedBlobs();
             setPiecePreviews({});
             setPieceFiles({});
+            setPieceMeta({});
             setModelImageFile(null);
+            setModelImageMeta(null);
             setFormErrors({});
         }
         setIsDialogOpen(open);
@@ -125,19 +135,20 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         setLookModalTab('info');
         setFormErrors({});
         setModelName('');
-        setDescription('3 pieces · 1 shot');
         setSortOrder(looks.length + 1);
         setIsFeaturedOnHome(true);
         setIsActive(true);
         setModelImageFile(null);
         setModelPreviewUrl('');
+        setModelImageMeta(null);
         setPieces([
-            { name: 'Top Garment', brand: 'Studio Label', image: '', tag: 'Top' },
-            { name: 'Bottom Garment', brand: 'Studio Label', image: '', tag: 'Bottom' },
-            { name: 'Footwear', brand: 'Studio Label', image: '', tag: 'Shoes' },
+            { name: 'Top Garment', brand: 'Studio Label', image: '' },
+            { name: 'Bottom Garment', brand: 'Studio Label', image: '' },
+            { name: 'Footwear', brand: 'Studio Label', image: '' },
         ]);
         setPieceFiles({});
         setPiecePreviews({});
+        setPieceMeta({});
         setPins([
             { left: 50, top: 28 },
             { left: 50, top: 55 },
@@ -153,28 +164,39 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         setLookModalTab('info');
         setFormErrors({});
         setModelName(look.modelName);
-        setDescription(look.description || '3 pieces · 1 shot');
         setSortOrder(look.sortOrder ?? 1);
         setIsFeaturedOnHome(look.isFeaturedOnHome ?? true);
         setIsActive(look.isActive ?? true);
         setModelImageFile(null);
         setModelPreviewUrl(look.modelHiRes || look.model);
+        setModelImageMeta(null);
         setPieces(look.pieces.map((p) => ({ ...p })));
         setPieceFiles({});
         setPiecePreviews({});
+        setPieceMeta({});
         setPins(look.pins.map((p) => ({ ...p })));
         setActivePinIndex(0);
         setIsDialogOpen(true);
     };
 
-    const handleModelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleModelFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
         e.target.value = '';
         if (!file) return;
 
+        const result = await validateStudioImage(file, STUDIO_IMAGE_SPECS.tryOnModel);
+        if (!result.valid) {
+            setFormErrors((prev) => ({
+                ...prev,
+                model_image: result.error ?? 'Invalid model image.',
+            }));
+            return;
+        }
+
         revokeBlobUrl(modelPreviewUrl);
         setModelImageFile(file);
         setModelPreviewUrl(trackBlobUrl(URL.createObjectURL(file)));
+        setModelImageMeta(result);
         setFormErrors((prev) => {
             if (!prev.model_image) return prev;
             const { model_image: _, ...rest } = prev;
@@ -182,16 +204,26 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         });
     };
 
-    const handlePieceFileChange = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePieceFileChange = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
         e.target.value = '';
         if (!file) return;
+
+        const result = await validateStudioImage(file, STUDIO_IMAGE_SPECS.tryOnPiece);
+        if (!result.valid) {
+            setFormErrors((prev) => ({
+                ...prev,
+                [`piece_images.${idx}`]: result.error ?? 'Invalid garment piece image.',
+            }));
+            return;
+        }
 
         revokeBlobUrl(piecePreviews[idx]);
         const nextPreview = trackBlobUrl(URL.createObjectURL(file));
 
         setPieceFiles((prev) => ({ ...prev, [idx]: file }));
         setPiecePreviews((prev) => ({ ...prev, [idx]: nextPreview }));
+        setPieceMeta((prev) => ({ ...prev, [idx]: result }));
         setFormErrors((prev) => {
             const next = { ...prev };
             delete next[`piece_images.${idx}`];
@@ -211,13 +243,18 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
             delete next[idx];
             return next;
         });
+        setPieceMeta((prev) => {
+            const next = { ...prev };
+            delete next[idx];
+            return next;
+        });
     };
 
     const handleAddPiece = () => {
         const nextIndex = pieces.length;
         setPieces((prev) => [
             ...prev,
-            { name: `Piece #${prev.length + 1}`, brand: 'Studio Label', image: '', tag: 'Accessory' },
+            { name: `Piece #${prev.length + 1}`, brand: 'Studio Label', image: '' },
         ]);
         setPins((prev) => [...prev, { left: 50, top: 50 }]);
         setActivePinIndex(nextIndex);
@@ -230,6 +267,12 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         setPins((prev) => prev.filter((_, i) => i !== idx));
         setPieceFiles((prev) => shiftIndexMap(prev, idx));
         setPiecePreviews((prev) => shiftIndexMap(prev, idx));
+        setPieceMeta((prev) => shiftIndexMap(prev, idx));
+        setFormErrors((prev) => {
+            const next = { ...prev };
+            delete next[`piece_images.${idx}`];
+            return next;
+        });
         setActivePinIndex((prev) => {
             if (prev === idx) return Math.max(0, idx - 1);
             if (prev > idx) return prev - 1;
@@ -249,8 +292,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
         const clickX = ((e.clientX - rect.left) / rect.width) * 100;
         const clickY = ((e.clientY - rect.top) / rect.height) * 100;
 
-        const clampedLeft = Math.max(2, Math.min(98, Number(clickX.toFixed(1))));
-        const clampedTop = Math.max(2, Math.min(98, Number(clickY.toFixed(1))));
+        const clampedLeft = Math.max(18, Math.min(96, Number(clickX.toFixed(1))));
+        const clampedTop = Math.max(4, Math.min(96, Number(clickY.toFixed(1))));
 
         setPins((prev) =>
             prev.map((pin, idx) =>
@@ -299,7 +342,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
             url,
             {
                 model_name: modelName,
-                description,
                 sort_order: sortOrder,
                 is_featured_on_home: isFeaturedOnHome,
                 is_active: isActive,
@@ -349,12 +391,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
             if (!q) return true;
             return (
                 look.modelName.toLowerCase().includes(q) ||
-                (look.description || '').toLowerCase().includes(q) ||
-                look.pieces.some(
-                    (p) =>
-                        p.name.toLowerCase().includes(q) ||
-                        (p.tag || '').toLowerCase().includes(q),
-                )
+                look.pieces.some((p) => p.name.toLowerCase().includes(q))
             );
         });
     }, [looks, searchQuery, homepageOnly]);
@@ -363,7 +400,16 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
     const activePin = pins[activePinIndex] ?? { left: 50, top: 50 };
     const activePieceFile = pieceFiles[activePinIndex] ?? null;
     const activePiecePreview = piecePreviews[activePinIndex] || activePiece?.image || '';
-    const errorMessages = Object.values(formErrors).filter(Boolean);
+    const activePieceMeta = pieceMeta[activePinIndex] ?? null;
+    const activePieceError = formErrors[`piece_images.${activePinIndex}`];
+    const bannerErrors = Object.entries(formErrors)
+        .filter(([key, msg]) => {
+            if (!msg) return false;
+            if (lookModalTab === 'info' && key === 'model_image') return false;
+            if (lookModalTab === 'pins' && key === `piece_images.${activePinIndex}`) return false;
+            return true;
+        })
+        .map(([, msg]) => msg);
 
     return (
         <AdminLayout title="Virtual Try-On">
@@ -429,7 +475,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                 className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
                             >
                                 <div className="flex gap-4">
-                                    <div className="h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
+                                    <div className="h-36 w-[81px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
                                         <img
                                             src={look.model}
                                             alt={look.modelName}
@@ -449,8 +495,6 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                             )}
                                         </div>
 
-                                        <p className="text-xs text-slate-500">{look.description}</p>
-
                                         <div className="flex flex-wrap gap-1.5 pt-0.5">
                                             {look.pieces.map((piece, i) => (
                                                 <span
@@ -458,8 +502,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-700"
                                                 >
                                                     <span className="font-bold text-primary">#{i + 1}</span>
-                                                    <span className="truncate max-w-[110px]">
-                                                        {piece.tag || piece.name}
+                                                    <span className="max-w-[110px] truncate">
+                                                        {piece.name}
                                                     </span>
                                                 </span>
                                             ))}
@@ -514,12 +558,12 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                     </DialogHeader>
 
                     <form onSubmit={handleSaveLook} noValidate className="space-y-4 pt-1 text-xs">
-                        {/* Validation Error Banner */}
-                        {errorMessages.length > 0 && (
+                        {/* Cross-tab or server errors not already shown inline */}
+                        {bannerErrors.length > 0 && (
                             <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
                                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
                                 <div className="space-y-0.5">
-                                    {errorMessages.map((msg, idx) => (
+                                    {bannerErrors.map((msg, idx) => (
                                         <p key={idx} className="font-medium">
                                             {msg}
                                         </p>
@@ -539,7 +583,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         : 'text-slate-600 hover:text-ink'
                                 }`}
                             >
-                                1. Model Info
+                                1. Full-Body Model
                             </button>
                             <button
                                 type="button"
@@ -550,38 +594,26 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         : 'text-slate-600 hover:text-ink'
                                 }`}
                             >
-                                2. Outfit Pieces &amp; Pins ({pieces.length})
+                                2. Garment Pieces &amp; Pins ({pieces.length})
                             </button>
                         </div>
 
-                        {/* STEP 1: MODEL INFO */}
+                        {/* STEP 1: FULL-BODY MODEL */}
                         {lookModalTab === 'info' && (
                             <div className="space-y-4">
-                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                    <div>
-                                        <label className={LABEL_CLASS}>Model Name *</label>
-                                        <input
-                                            type="text"
-                                            value={modelName}
-                                            onChange={(e) => setModelName(e.target.value)}
-                                            placeholder="e.g. John"
-                                            className={INPUT_CLASS}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className={LABEL_CLASS}>Subtitle</label>
-                                        <input
-                                            type="text"
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            placeholder="e.g. 3 pieces · 1 shot"
-                                            className={INPUT_CLASS}
-                                        />
-                                    </div>
+                                <div>
+                                    <label className={LABEL_CLASS}>Model Name *</label>
+                                    <input
+                                        type="text"
+                                        value={modelName}
+                                        onChange={(e) => setModelName(e.target.value)}
+                                        placeholder="e.g. John"
+                                        className={INPUT_CLASS}
+                                    />
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                                    <div className="aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#eef3f9]">
+                                <div className="flex flex-col items-start gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5 sm:flex-row sm:items-center">
+                                    <div className="aspect-[9/16] w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#eef3f9]">
                                         {modelPreviewUrl ? (
                                             <img
                                                 src={modelPreviewUrl}
@@ -597,10 +629,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     <div className="min-w-0 flex-1 space-y-2">
                                         <div>
                                             <label className="block text-xs font-bold text-ink">
-                                                Model Cutout Image (PNG / WebP) {editingLook ? '' : '*'}
+                                                Full-Body Model Photo {editingLook ? '' : '*'}
                                             </label>
-                                            <p className="mt-0.5 text-xs text-slate-500">
-                                                Full-body portrait image used on the runway stage and pin editor.
+                                            <p className="mt-0.5 text-[11px] text-slate-500">
+                                                Transparent PNG/WebP · 9:16 portrait (1080×1920 px)
                                             </p>
                                         </div>
 
@@ -613,7 +645,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 <input
                                                     key="tryon-model-file"
                                                     type="file"
-                                                    accept=".png,.webp,.jpg,.jpeg"
+                                                    accept="image/png,image/webp,.png,.webp"
                                                     onChange={handleModelFileChange}
                                                     className="sr-only"
                                                 />
@@ -626,6 +658,37 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                       : 'No file selected'}
                                             </span>
                                         </div>
+
+                                        {modelImageMeta?.valid && (
+                                            <p
+                                                className={`flex items-center gap-1.5 text-[11px] font-medium ${
+                                                    modelImageMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                }`}
+                                            >
+                                                {modelImageMeta.warning ? (
+                                                    <>
+                                                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>
+                                                            {modelImageMeta.width}×{modelImageMeta.height} px ·{' '}
+                                                            {modelImageMeta.warning}
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>
+                                                            {modelImageMeta.width}×{modelImageMeta.height} px · Transparent
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </p>
+                                        )}
+
+                                        {formErrors.model_image && (
+                                            <p className="text-[11px] font-semibold text-rose-600">
+                                                {formErrors.model_image}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -655,8 +718,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                         {/* STEP 2: OUTFIT PIECES & FOCUSED PIN EDITOR */}
                         {lookModalTab === 'pins' && (
                             <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
-                                {/* Left: Interactive Photo Pin Placement */}
-                                <div className="space-y-2.5 lg:col-span-5">
+                                {/* Left: Interactive Photo Pin Placement (exact 9:16 live frame) */}
+                                <div className="space-y-2 lg:col-span-5">
                                     <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
                                         <Crosshair className="h-3.5 w-3.5 text-primary" />
                                         Tap photo to move Pin #{activePinIndex + 1}
@@ -665,7 +728,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     <div
                                         ref={previewBoxRef}
                                         onClick={handlePreviewClick}
-                                        className="relative aspect-[3/4] w-full max-w-[260px] mx-auto cursor-crosshair select-none overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-[#eef3f9] to-[#dce6f2]"
+                                        className="relative aspect-[9/16] w-full max-w-[215px] mx-auto cursor-crosshair select-none overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-[#eef3f9] to-[#dce6f2]"
                                     >
                                         {modelPreviewUrl ? (
                                             <img
@@ -676,10 +739,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         ) : (
                                             <div
                                                 onClick={(e) => e.stopPropagation()}
-                                                className="flex h-full flex-col items-center justify-center gap-2.5 p-5 text-center"
+                                                className="flex h-full flex-col items-center justify-center gap-2.5 p-4 text-center"
                                             >
-                                                <p className="text-xs font-medium text-slate-600">
-                                                    Upload a model image to preview and place pins accurately.
+                                                <p className="text-[11px] font-medium leading-relaxed text-slate-600">
+                                                    Upload a 9:16 transparent PNG/WebP model photo.
                                                 </p>
                                                 <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-hover">
                                                     <Upload className="h-3.5 w-3.5" />
@@ -687,7 +750,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     <input
                                                         key="tryon-model-file-step2"
                                                         type="file"
-                                                        accept=".png,.webp,.jpg,.jpeg"
+                                                        accept="image/png,image/webp,.png,.webp"
                                                         onChange={handleModelFileChange}
                                                         className="sr-only"
                                                     />
@@ -698,25 +761,50 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         {pins.map((pin, idx) => {
                                             const isActivePin = activePinIndex === idx;
                                             return (
-                                                <button
+                                                <div
                                                     key={idx}
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setActivePinIndex(idx);
-                                                    }}
-                                                    style={{ left: `${pin.left}%`, top: `${pin.top}%` }}
-                                                    className={`absolute grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-xs font-bold shadow-md transition-transform ${
-                                                        isActivePin
-                                                            ? 'scale-120 bg-primary text-white ring-2 ring-white'
-                                                            : 'bg-ink text-white ring-2 ring-white'
-                                                    }`}
+                                                    style={{ top: `${pin.top}%`, width: `${pin.left}%` }}
+                                                    className="pointer-events-none absolute left-0 z-10 flex -translate-y-1/2 items-center"
                                                 >
-                                                    {idx + 1}
-                                                </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setActivePinIndex(idx);
+                                                        }}
+                                                        className={`pointer-events-auto ml-1 grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-full text-[11px] font-bold shadow-md ring-2 ring-white transition-transform ${
+                                                            isActivePin
+                                                                ? 'scale-110 bg-primary text-white'
+                                                                : 'bg-ink text-white'
+                                                        }`}
+                                                    >
+                                                        {idx + 1}
+                                                    </button>
+                                                    <span
+                                                        aria-hidden="true"
+                                                        className={`h-[1.5px] min-w-0 flex-1 ${
+                                                            isActivePin ? 'bg-primary' : 'bg-ink/60'
+                                                        }`}
+                                                    />
+                                                    <svg
+                                                        aria-hidden="true"
+                                                        width="7"
+                                                        height="10"
+                                                        viewBox="0 0 7 10"
+                                                        className={`-ml-px shrink-0 ${
+                                                            isActivePin ? 'text-primary' : 'text-ink/70'
+                                                        }`}
+                                                    >
+                                                        <path d="M0 0l7 5-7 5z" fill="currentColor" />
+                                                    </svg>
+                                                </div>
                                             );
                                         })}
                                     </div>
+
+                                    <p className="text-center text-[11px] text-slate-500">
+                                        Exact 9:16 live frame — arrow tip marks where the live pointer lands.
+                                    </p>
                                 </div>
 
                                 {/* Right: Focused Piece Switcher & Single Active Piece Form */}
@@ -736,7 +824,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     }`}
                                                 >
                                                     <span>
-                                                        #{idx + 1} {piece.tag || piece.name}
+                                                        #{idx + 1} {piece.name}
                                                     </span>
                                                     {hasImage && (
                                                         <span
@@ -791,34 +879,20 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 />
                                             </div>
 
-                                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                                <div>
-                                                    <label className={LABEL_CLASS}>Brand *</label>
-                                                    <input
-                                                        type="text"
-                                                        value={activePiece.brand}
-                                                        onChange={(e) =>
-                                                            handlePieceFieldChange(activePinIndex, 'brand', e.target.value)
-                                                        }
-                                                        placeholder="Brand"
-                                                        className={INPUT_CLASS}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className={LABEL_CLASS}>Zone Label</label>
-                                                    <input
-                                                        type="text"
-                                                        value={activePiece.tag || ''}
-                                                        onChange={(e) =>
-                                                            handlePieceFieldChange(activePinIndex, 'tag', e.target.value)
-                                                        }
-                                                        placeholder="Top / Bottom / Shoes"
-                                                        className={INPUT_CLASS}
-                                                    />
-                                                </div>
+                                            <div>
+                                                <label className={LABEL_CLASS}>Brand *</label>
+                                                <input
+                                                    type="text"
+                                                    value={activePiece.brand}
+                                                    onChange={(e) =>
+                                                        handlePieceFieldChange(activePinIndex, 'brand', e.target.value)
+                                                    }
+                                                    placeholder="Brand"
+                                                    className={INPUT_CLASS}
+                                                />
                                             </div>
 
-                                            <div>
+                                            <div className="space-y-1.5">
                                                 <label className={LABEL_CLASS}>
                                                     Garment Image (Piece #{activePinIndex + 1})
                                                 </label>
@@ -845,7 +919,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                                 <input
                                                                     key={`piece-file-${activePinIndex}`}
                                                                     type="file"
-                                                                    accept=".png,.webp,.jpg,.jpeg"
+                                                                    accept="image/png,image/webp,.png,.webp"
                                                                     onChange={(e) =>
                                                                         handlePieceFileChange(activePinIndex, e)
                                                                     }
@@ -871,6 +945,40 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         </p>
                                                     </div>
                                                 </div>
+                                                <p className="text-[11px] text-slate-500">
+                                                    Transparent PNG/WebP · 1:1 or 3:4 (800×800 px)
+                                                </p>
+
+                                                {activePieceMeta?.valid && (
+                                                    <p
+                                                        className={`flex items-center gap-1.5 text-[11px] font-medium ${
+                                                            activePieceMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                        }`}
+                                                    >
+                                                        {activePieceMeta.warning ? (
+                                                            <>
+                                                                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                                                <span>
+                                                                    {activePieceMeta.width}×{activePieceMeta.height} px ·{' '}
+                                                                    {activePieceMeta.warning}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                                                <span>
+                                                                    {activePieceMeta.width}×{activePieceMeta.height} px · Transparent
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </p>
+                                                )}
+
+                                                {activePieceError && (
+                                                    <p className="text-[11px] font-semibold text-rose-600">
+                                                        {activePieceError}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                     )}

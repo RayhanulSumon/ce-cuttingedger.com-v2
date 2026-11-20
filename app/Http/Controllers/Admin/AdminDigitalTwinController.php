@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DigitalTwin;
 use App\Models\DigitalTwinAttribute;
+use App\Rules\StudioImageDimensions;
 use App\Services\Media\ImageOptimizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,26 +45,10 @@ class AdminDigitalTwinController extends Controller
      */
     public function store(Request $request, ImageOptimizationService $optimizer): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'look_number' => ['required', 'integer', 'min:1'],
-            'archetype' => ['required', 'string', 'max:255'],
-            'collection' => ['nullable', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:2000'],
-            'preset_price' => ['required', 'string', 'max:50'],
-            'custom_order_price' => ['nullable', 'string', 'max:50'],
-            'lifetime_price' => ['required', 'string', 'max:50'],
-            'is_copyright_sold' => ['boolean'],
-            'download_count' => ['nullable', 'integer', 'min:0'],
-            'listed_at' => ['nullable', 'date'],
-            'deliverables' => ['nullable', 'array'],
-            'poses' => ['nullable', 'array'],
-            'is_featured_on_home' => ['boolean'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-            'model_image' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pose_images.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-        ]);
+        $validated = $request->validate(
+            $this->twinValidationRules(),
+            $this->twinValidationMessages(),
+        );
 
         $imageMeta = [
             'runway_image' => null,
@@ -121,26 +106,10 @@ class AdminDigitalTwinController extends Controller
      */
     public function update(Request $request, DigitalTwin $digitalTwin, ImageOptimizationService $optimizer): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'look_number' => ['required', 'integer', 'min:1'],
-            'archetype' => ['required', 'string', 'max:255'],
-            'collection' => ['nullable', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:2000'],
-            'preset_price' => ['required', 'string', 'max:50'],
-            'custom_order_price' => ['nullable', 'string', 'max:50'],
-            'lifetime_price' => ['required', 'string', 'max:50'],
-            'is_copyright_sold' => ['boolean'],
-            'download_count' => ['nullable', 'integer', 'min:0'],
-            'listed_at' => ['nullable', 'date'],
-            'deliverables' => ['nullable', 'array'],
-            'poses' => ['nullable', 'array'],
-            'is_featured_on_home' => ['boolean'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-            'model_image' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pose_images.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-        ]);
+        $validated = $request->validate(
+            $this->twinValidationRules(),
+            $this->twinValidationMessages(),
+        );
 
         $updates = [
             'name' => $validated['name'],
@@ -297,5 +266,73 @@ class AdminDigitalTwinController extends Controller
         $attribute->delete();
 
         return redirect()->back()->with('success', "Attribute [{$name}] deleted.");
+    }
+
+    /**
+     * Shared validation rules enforcing transparent PNG/WebP format and studio aspect ratios.
+     *
+     * @return array<string, mixed>
+     */
+    private function twinValidationRules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'look_number' => ['required', 'integer', 'min:1'],
+            'archetype' => ['required', 'string', 'max:255'],
+            'collection' => ['nullable', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:2000'],
+            'preset_price' => ['required', 'string', 'max:50'],
+            'custom_order_price' => ['nullable', 'string', 'max:50'],
+            'lifetime_price' => ['required', 'string', 'max:50'],
+            'is_copyright_sold' => ['boolean'],
+            'download_count' => ['nullable', 'integer', 'min:0'],
+            'listed_at' => ['nullable', 'date'],
+            'deliverables' => ['nullable', 'array'],
+            'poses' => ['nullable', 'array'],
+            'is_featured_on_home' => ['boolean'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer'],
+            'model_image' => [
+                'nullable',
+                'file',
+                'max:25600',
+                'mimes:png,webp',
+                new StudioImageDimensions(
+                    minWidth: 450,
+                    minHeight: 900,
+                    minRatio: 0.30,
+                    maxRatio: 0.65,
+                    ratioLabel: '9:16 portrait',
+                    recommendedSize: '1080×1920',
+                ),
+            ],
+            'pose_images.*' => [
+                'nullable',
+                'file',
+                'max:25600',
+                'mimes:png,webp',
+                new StudioImageDimensions(
+                    minWidth: 450,
+                    minHeight: 600,
+                    minRatio: 0.40,
+                    maxRatio: 0.85,
+                    ratioLabel: '3:4 or 9:16',
+                    recommendedSize: '900×1200',
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * Explicit validation messages for unsupported Digital Twin formats.
+     *
+     * @return array<string, string>
+     */
+    private function twinValidationMessages(): array
+    {
+        return [
+            'model_image.mimes' => 'PNG or WebP only (transparent background).',
+            'pose_images.*.mimes' => 'PNG or WebP only (transparent background).',
+        ];
     }
 }

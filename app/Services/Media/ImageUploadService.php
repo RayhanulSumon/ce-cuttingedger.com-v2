@@ -65,6 +65,7 @@ class ImageUploadService
         int $quality = 85,
         ?string $oldUrl = null,
         ?string $filenamePrefix = null,
+        ?int $maxHeight = null,
     ): string {
         $directory = self::directory($directoryKeyOrPath);
         $baseName = $this->buildFilename($file, $filenamePrefix);
@@ -73,7 +74,11 @@ class ImageUploadService
         try {
             $image = Image::decode($file->getRealPath());
             $image->orient();
-            $image->scaleDown(width: $maxWidth);
+            if ($maxHeight !== null) {
+                $image->scaleDown(width: $maxWidth, height: $maxHeight);
+            } else {
+                $image->scaleDown(width: $maxWidth);
+            }
             $encoded = $image->encodeUsingFormat(Format::WEBP, quality: $quality);
 
             Storage::disk('public')->put($relativePath, (string) $encoded);
@@ -100,11 +105,16 @@ class ImageUploadService
         string $relativePath,
         int $maxWidth,
         int $quality = 85,
+        ?int $maxHeight = null,
     ): ?array {
         try {
             $image = Image::decode($file->getRealPath());
             $image->orient();
-            $image->scaleDown(width: $maxWidth);
+            if ($maxHeight !== null) {
+                $image->scaleDown(width: $maxWidth, height: $maxHeight);
+            } else {
+                $image->scaleDown(width: $maxWidth);
+            }
             $width = $image->width();
             $height = $image->height();
             $encoded = $image->encodeUsingFormat(Format::WEBP, quality: $quality);

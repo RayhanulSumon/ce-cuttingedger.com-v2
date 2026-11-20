@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TryOnLook;
+use App\Rules\StudioImageDimensions;
 use App\Services\Media\ImageOptimizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,23 +35,10 @@ class AdminTryOnLookController extends Controller
      */
     public function store(Request $request, ImageOptimizationService $optimizer): RedirectResponse
     {
-        $validated = $request->validate([
-            'model_name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'model_image' => ['required', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pieces' => ['required', 'array', 'min:1'],
-            'pieces.*.name' => ['required', 'string', 'max:255'],
-            'pieces.*.brand' => ['required', 'string', 'max:255'],
-            'pieces.*.tag' => ['nullable', 'string', 'max:60'],
-            'pieces.*.image' => ['nullable', 'string', 'max:1000'],
-            'piece_images.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pins' => ['required', 'array', 'min:1'],
-            'pins.*.left' => ['required', 'numeric', 'min:0', 'max:100'],
-            'pins.*.top' => ['required', 'numeric', 'min:0', 'max:100'],
-            'is_featured_on_home' => ['boolean'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-        ]);
+        $validated = $request->validate(
+            $this->validationRules(true),
+            $this->validationMessages(),
+        );
 
         $modelImages = $optimizer->storeTryOnModelImage($request->file('model_image'));
 
@@ -91,23 +79,10 @@ class AdminTryOnLookController extends Controller
      */
     public function update(Request $request, TryOnLook $tryOnLook, ImageOptimizationService $optimizer): RedirectResponse
     {
-        $validated = $request->validate([
-            'model_name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:500'],
-            'model_image' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pieces' => ['required', 'array', 'min:1'],
-            'pieces.*.name' => ['required', 'string', 'max:255'],
-            'pieces.*.brand' => ['required', 'string', 'max:255'],
-            'pieces.*.tag' => ['nullable', 'string', 'max:60'],
-            'pieces.*.image' => ['nullable', 'string', 'max:1000'],
-            'piece_images.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp'],
-            'pins' => ['required', 'array', 'min:1'],
-            'pins.*.left' => ['required', 'numeric', 'min:0', 'max:100'],
-            'pins.*.top' => ['required', 'numeric', 'min:0', 'max:100'],
-            'is_featured_on_home' => ['boolean'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-        ]);
+        $validated = $request->validate(
+            $this->validationRules(false),
+            $this->validationMessages(),
+        );
 
         $updates = [
             'model_name' => $validated['model_name'],
@@ -163,5 +138,70 @@ class AdminTryOnLookController extends Controller
         $tryOnLook->delete();
 
         return redirect()->back()->with('success', "Virtual Try-On Look [{$name}] deleted.");
+    }
+
+    /**
+     * Shared validation rules enforcing transparent studio PNG/WebP format and aspect ratios.
+     *
+     * @return array<string, mixed>
+     */
+    private function validationRules(bool $isCreate): array
+    {
+        return [
+            'model_name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:500'],
+            'model_image' => [
+                $isCreate ? 'required' : 'nullable',
+                'file',
+                'max:25600',
+                'mimes:png,webp',
+                new StudioImageDimensions(
+                    minWidth: 540,
+                    minHeight: 960,
+                    minRatio: 0.50,
+                    maxRatio: 0.63,
+                    ratioLabel: '9:16 portrait',
+                    recommendedSize: '1080×1920',
+                ),
+            ],
+            'pieces' => ['required', 'array', 'min:1'],
+            'pieces.*.name' => ['required', 'string', 'max:255'],
+            'pieces.*.brand' => ['required', 'string', 'max:255'],
+            'pieces.*.tag' => ['nullable', 'string', 'max:60'],
+            'pieces.*.image' => ['nullable', 'string', 'max:1000'],
+            'piece_images.*' => [
+                'nullable',
+                'file',
+                'max:25600',
+                'mimes:png,webp',
+                new StudioImageDimensions(
+                    minWidth: 400,
+                    minHeight: 400,
+                    minRatio: 0.65,
+                    maxRatio: 1.15,
+                    ratioLabel: '1:1 or 3:4',
+                    recommendedSize: '800×800',
+                ),
+            ],
+            'pins' => ['required', 'array', 'min:1'],
+            'pins.*.left' => ['required', 'numeric', 'min:0', 'max:100'],
+            'pins.*.top' => ['required', 'numeric', 'min:0', 'max:100'],
+            'is_featured_on_home' => ['boolean'],
+            'is_active' => ['boolean'],
+            'sort_order' => ['nullable', 'integer'],
+        ];
+    }
+
+    /**
+     * Explicit validation messages for unsupported formats.
+     *
+     * @return array<string, string>
+     */
+    private function validationMessages(): array
+    {
+        return [
+            'model_image.mimes' => 'PNG or WebP only (transparent background).',
+            'piece_images.*.mimes' => 'PNG or WebP only (transparent background).',
+        ];
     }
 }

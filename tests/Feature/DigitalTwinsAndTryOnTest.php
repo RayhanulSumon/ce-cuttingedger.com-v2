@@ -375,4 +375,157 @@ class DigitalTwinsAndTryOnTest extends TestCase
 
         $this->assertTrue(Hash::check('NewAdminPass123!', $this->admin->fresh()->password));
     }
+
+    public function test_admin_try_on_look_validates_transparent_format_and_required_dimensions(): void
+    {
+        Storage::fake('public');
+
+        $basePayload = [
+            'model_name' => 'Studio Model A',
+            'pieces' => [
+                ['name' => 'Blazer', 'brand' => 'Atelier'],
+            ],
+            'pins' => [
+                ['left' => 50, 'top' => 30],
+            ],
+            'is_featured_on_home' => true,
+            'is_active' => true,
+            'sort_order' => 10,
+        ];
+
+        // Reject solid JPG model upload
+        $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model.jpg', 1080, 1920),
+            ]))
+            ->assertSessionHasErrors('model_image');
+
+        // Reject wrong orientation landscape PNG model (1200x900)
+        $landscapeResponse = $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model-landscape.png', 1200, 900),
+            ]));
+        $landscapeResponse->assertSessionHasErrors('model_image');
+        $landscapeError = session('errors')->first('model_image');
+        $this->assertStringContainsStringIgnoringCase('landscape', $landscapeError);
+
+        // Reject wrong aspect ratio portrait PNG model (4:5 instead of 9:16)
+        $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model-4x5.png', 800, 1000),
+            ]))
+            ->assertSessionHasErrors('model_image');
+
+        // Reject undersized 9:16 PNG model (< 540x960)
+        $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model-small.png', 360, 640),
+            ]))
+            ->assertSessionHasErrors('model_image');
+
+        // Reject landscape banner garment piece (1200x400)
+        $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model-valid.png', 1080, 1920),
+                'piece_images' => [
+                    0 => UploadedFile::fake()->image('wide-piece.png', 1200, 400),
+                ],
+            ]))
+            ->assertSessionHasErrors('piece_images.0');
+
+        // Accept valid 9:16 PNG model and 1:1 PNG piece without description or tag
+        $this->actingAs($this->admin)
+            ->post('/admin/try-on-looks', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('model-valid.png', 1080, 1920),
+                'piece_images' => [
+                    0 => UploadedFile::fake()->image('blazer.png', 800, 800),
+                ],
+            ]))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $createdLook = TryOnLook::where('model_name', 'Studio Model A')->firstOrFail();
+
+        $runwayRel = substr($createdLook->runway_image, strlen('/storage/'));
+        $hiResRel = substr($createdLook->hi_res_image, strlen('/storage/'));
+        $pieceRel = substr($createdLook->pieces[0]['image'], strlen('/storage/'));
+
+        $this->assertStringEndsWith('.webp', $createdLook->runway_image);
+        $this->assertStringEndsWith('.webp', $createdLook->hi_res_image);
+        $this->assertStringEndsWith('.webp', $createdLook->pieces[0]['image']);
+
+        Storage::disk('public')->assertExists($runwayRel);
+        Storage::disk('public')->assertExists($hiResRel);
+        Storage::disk('public')->assertExists($pieceRel);
+
+        $runwaySize = getimagesizefromstring(Storage::disk('public')->get($runwayRel));
+        $hiResSize = getimagesizefromstring(Storage::disk('public')->get($hiResRel));
+        $pieceSize = getimagesizefromstring(Storage::disk('public')->get($pieceRel));
+
+        $this->assertLessThanOrEqual(640, $runwaySize[0]);
+        $this->assertLessThanOrEqual(1138, $runwaySize[1]);
+        $this->assertLessThanOrEqual(1080, $hiResSize[0]);
+        $this->assertLessThanOrEqual(1920, $hiResSize[1]);
+        $this->assertLessThanOrEqual(600, $pieceSize[0]);
+        $this->assertLessThanOrEqual(800, $pieceSize[1]);
+    }
+
+    public function test_admin_digital_twin_validates_transparent_format_and_required_dimensions(): void
+    {
+        Storage::fake('public');
+
+        $basePayload = [
+            'name' => 'Studio Twin Alpha',
+            'look_number' => 99,
+            'archetype' => 'Female',
+            'collection' => 'Spring Summer 2027',
+            'description' => 'Full body transparent runway model.',
+            'preset_price' => '$149',
+            'custom_order_price' => '$290',
+            'lifetime_price' => '$490',
+            'is_featured_on_home' => false,
+            'is_active' => true,
+            'sort_order' => 99,
+        ];
+
+        // Reject JPG model upload
+        $this->actingAs($this->admin)
+            ->post('/admin/digital-twins', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('twin.jpg', 1080, 1920),
+            ]))
+            ->assertSessionHasErrors('model_image');
+
+        // Reject landscape PNG model upload
+        $this->actingAs($this->admin)
+            ->post('/admin/digital-twins', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('twin-landscape.png', 1200, 800),
+            ]))
+            ->assertSessionHasErrors('model_image');
+
+        // Reject landscape pose image upload
+        $this->actingAs($this->admin)
+            ->post('/admin/digital-twins', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('twin-valid.png', 1080, 1920),
+                'pose_images' => [
+                    0 => UploadedFile::fake()->image('pose-landscape.png', 1200, 800),
+                ],
+            ]))
+            ->assertSessionHasErrors('pose_images.0');
+
+        // Accept valid 9:16 PNG model and 3:4 PNG pose
+        $this->actingAs($this->admin)
+            ->post('/admin/digital-twins', array_merge($basePayload, [
+                'model_image' => UploadedFile::fake()->image('twin-valid.png', 1080, 1920),
+                'pose_images' => [
+                    0 => UploadedFile::fake()->image('pose-front.png', 900, 1200),
+                ],
+            ]))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('digital_twins', [
+            'name' => 'Studio Twin Alpha',
+            'look_number' => 99,
+        ]);
+    }
 }

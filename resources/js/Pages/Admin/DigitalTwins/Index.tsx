@@ -19,7 +19,14 @@ import {
     TwinPosePreset,
 } from '@/Components/Landing/DigitalTwins/twins';
 import {
+    STUDIO_IMAGE_SPECS,
+    StudioImageValidationResult,
+    validateStudioImage,
+} from '@/lib/studioImageValidation';
+import {
     AlertCircle,
+    AlertTriangle,
+    CheckCircle2,
     Clock,
     Edit3,
     Search,
@@ -88,8 +95,10 @@ export default function AdminDigitalTwinsIndex({
     const [isCopyrightSold, setIsCopyrightSold] = useState(false);
     const [modelImageFile, setModelImageFile] = useState<File | null>(null);
     const [modelImagePreviewUrl, setModelImagePreviewUrl] = useState<string>('');
+    const [modelImageMeta, setModelImageMeta] = useState<StudioImageValidationResult | null>(null);
     const [poses, setPoses] = useState<TwinPosePreset[]>(defaultPoses);
     const [poseFiles, setPoseFiles] = useState<Record<number, File | null>>({});
+    const [poseMeta, setPoseMeta] = useState<Record<number, StudioImageValidationResult>>({});
 
     // Attribute Create/Edit Dialog State
     const [isAttrDialogOpen, setIsAttrDialogOpen] = useState(false);
@@ -136,8 +145,10 @@ export default function AdminDigitalTwinsIndex({
         setIsCopyrightSold(false);
         setModelImageFile(null);
         setModelImagePreviewUrl('');
+        setModelImageMeta(null);
         setPoses(defaultPoses.map((p) => ({ ...p })));
         setPoseFiles({});
+        setPoseMeta({});
         setIsTwinDialogOpen(true);
     };
 
@@ -163,9 +174,57 @@ export default function AdminDigitalTwinsIndex({
         setIsCopyrightSold(upcoming ? false : twin.isCopyrightSold);
         setModelImageFile(null);
         setModelImagePreviewUrl(twin.hiResImage || twin.runwayImage || '');
+        setModelImageMeta(null);
         setPoses((twin.poses && twin.poses.length > 0 ? twin.poses : defaultPoses).map((p) => ({ ...p })));
         setPoseFiles({});
+        setPoseMeta({});
         setIsTwinDialogOpen(true);
+    };
+
+    const handleTwinModelFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        e.target.value = '';
+        if (!file) return;
+
+        const result = await validateStudioImage(file, STUDIO_IMAGE_SPECS.twinModel);
+        if (!result.valid) {
+            setFormErrors((prev) => ({
+                ...prev,
+                model_image: result.error ?? 'Invalid model image.',
+            }));
+            return;
+        }
+
+        setModelImageFile(file);
+        setModelImageMeta(result);
+        setFormErrors((prev) => {
+            if (!prev.model_image) return prev;
+            const { model_image: _, ...rest } = prev;
+            return rest;
+        });
+    };
+
+    const handleTwinPoseFileChange = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        e.target.value = '';
+        if (!file) return;
+
+        const result = await validateStudioImage(file, STUDIO_IMAGE_SPECS.twinPose);
+        if (!result.valid) {
+            setFormErrors((prev) => ({
+                ...prev,
+                [`pose_images.${idx}`]: result.error ?? 'Invalid pose image.',
+            }));
+            return;
+        }
+
+        setPoseFiles((prev) => ({ ...prev, [idx]: file }));
+        setPoseMeta((prev) => ({ ...prev, [idx]: result }));
+        setFormErrors((prev) => {
+            const next = { ...prev };
+            delete next[`pose_images.${idx}`];
+            return next;
+        });
     };
 
     const handleUpcomingToggle = (checked: boolean) => {
@@ -276,6 +335,11 @@ export default function AdminDigitalTwinsIndex({
                     flatErrors.model_image
                 ) {
                     setTwinModalTab('basic');
+                } else if (
+                    !isUpcomingModel &&
+                    Object.keys(flatErrors).some((key) => key.startsWith('pose_images'))
+                ) {
+                    setTwinModalTab('poses');
                 }
             },
             onFinish: () => setIsSavingTwin(false),
@@ -399,6 +463,16 @@ export default function AdminDigitalTwinsIndex({
             );
         });
     }, [twins, searchQuery, statusFilter]);
+
+    const showingBasicTab = isUpcomingModel || twinModalTab === 'basic';
+    const twinBannerErrors = Object.entries(formErrors)
+        .filter(([key, msg]) => {
+            if (!msg) return false;
+            if (showingBasicTab && key === 'model_image') return false;
+            if (!showingBasicTab && key.startsWith('pose_images.')) return false;
+            return true;
+        })
+        .map(([, msg]) => msg);
 
     return (
         <AdminLayout title="Digital Twins">
@@ -683,7 +757,11 @@ export default function AdminDigitalTwinsIndex({
             <Dialog
                 open={isTwinDialogOpen}
                 onOpenChange={(open) => {
-                    if (!open) setFormErrors({});
+                    if (!open) {
+                        setFormErrors({});
+                        setModelImageMeta(null);
+                        setPoseMeta({});
+                    }
                     setIsTwinDialogOpen(open);
                 }}
             >
@@ -698,17 +776,15 @@ export default function AdminDigitalTwinsIndex({
                     </DialogHeader>
 
                     <form onSubmit={handleSaveTwin} noValidate className="space-y-4 pt-1 text-xs">
-                        {Object.values(formErrors).filter(Boolean).length > 0 && (
+                        {twinBannerErrors.length > 0 && (
                             <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
                                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
                                 <div className="space-y-0.5">
-                                    {Object.values(formErrors)
-                                        .filter(Boolean)
-                                        .map((msg, idx) => (
-                                            <p key={idx} className="font-medium">
-                                                {msg}
-                                            </p>
-                                        ))}
+                                    {twinBannerErrors.map((msg, idx) => (
+                                        <p key={idx} className="font-medium">
+                                            {msg}
+                                        </p>
+                                    ))}
                                 </div>
                             </div>
                         )}
@@ -864,12 +940,10 @@ export default function AdminDigitalTwinsIndex({
                                     <div className="min-w-0 flex-1 space-y-2">
                                         <div>
                                             <label className="block text-xs font-bold text-ink">
-                                                Main Model Image (PNG / WebP)
+                                                Model Image
                                             </label>
-                                            <p className="mt-0.5 text-xs text-slate-500">
-                                                {isUpcomingModel
-                                                    ? 'Upload a transparent cutout for the Upcoming preview card.'
-                                                    : 'Used on catalog cards and automatically frames any pose without a custom photo.'}
+                                            <p className="mt-0.5 text-[11px] text-slate-500">
+                                                Transparent PNG/WebP · 9:16 portrait (1080×1920 px)
                                             </p>
                                         </div>
                                         <div className="flex flex-wrap items-center gap-2.5">
@@ -883,12 +957,8 @@ export default function AdminDigitalTwinsIndex({
                                                 <input
                                                     key="twin-model-file"
                                                     type="file"
-                                                    accept=".png,.webp,.jpg,.jpeg"
-                                                    onChange={(e) => {
-                                                        const f = e.target.files?.[0] ?? null;
-                                                        e.target.value = '';
-                                                        if (f) setModelImageFile(f);
-                                                    }}
+                                                    accept="image/png,image/webp,.png,.webp"
+                                                    onChange={handleTwinModelFileChange}
                                                     className="sr-only"
                                                 />
                                             </label>
@@ -900,6 +970,37 @@ export default function AdminDigitalTwinsIndex({
                                                       : 'No file selected'}
                                             </span>
                                         </div>
+
+                                        {modelImageMeta?.valid && (
+                                            <p
+                                                className={`flex items-center gap-1.5 text-[11px] font-medium ${
+                                                    modelImageMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                }`}
+                                            >
+                                                {modelImageMeta.warning ? (
+                                                    <>
+                                                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>
+                                                            {modelImageMeta.width}×{modelImageMeta.height} px ·{' '}
+                                                            {modelImageMeta.warning}
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>
+                                                            {modelImageMeta.width}×{modelImageMeta.height} px · Transparent
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </p>
+                                        )}
+
+                                        {formErrors.model_image && (
+                                            <p className="text-[11px] font-semibold text-rose-600">
+                                                {formErrors.model_image}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -942,48 +1043,74 @@ export default function AdminDigitalTwinsIndex({
                         {!isUpcomingModel && twinModalTab === 'poses' && (
                             <div className="space-y-4">
                                 <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                                    <span className="block text-xs font-bold text-ink">
-                                        6 Pose Presets (Optional Photo Overrides)
-                                    </span>
+                                    <div>
+                                        <span className="block text-xs font-bold text-ink">
+                                            6 Pose Presets (Optional)
+                                        </span>
+                                        <p className="mt-0.5 text-[11px] text-slate-500">
+                                            Transparent PNG/WebP · 3:4 or 9:16 (900×1200 px)
+                                        </p>
+                                    </div>
                                     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                                        {poses.map((pose, idx) => (
-                                            <div
-                                                key={pose.id || idx}
-                                                className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-2.5"
-                                            >
-                                                <div className="flex items-center justify-between text-[11px]">
-                                                    <span className="font-bold text-primary">
-                                                        {pose.code}: {pose.shortName}
-                                                    </span>
-                                                    {pose.imageUrl && (
-                                                        <span className="text-[10px] font-semibold text-emerald-700">
-                                                            Custom Set
+                                        {poses.map((pose, idx) => {
+                                            const meta = poseMeta[idx];
+                                            const poseErr = formErrors[`pose_images.${idx}`];
+                                            return (
+                                                <div
+                                                    key={pose.id || idx}
+                                                    className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-2.5"
+                                                >
+                                                    <div className="flex items-center justify-between text-[11px]">
+                                                        <span className="font-bold text-primary">
+                                                            {pose.code}: {pose.shortName}
                                                         </span>
+                                                        {pose.imageUrl && (
+                                                            <span className="text-[10px] font-semibold text-emerald-700">
+                                                                Custom Set
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={pose.title}
+                                                        onChange={(e) =>
+                                                            handlePoseTitleChange(idx, 'title', e.target.value)
+                                                        }
+                                                        placeholder="Pose title"
+                                                        className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-primary focus:outline-none"
+                                                    />
+                                                    <input
+                                                        key={`twin-pose-file-${idx}`}
+                                                        type="file"
+                                                        accept="image/png,image/webp,.png,.webp"
+                                                        onChange={(e) => handleTwinPoseFileChange(idx, e)}
+                                                        className="block w-full text-[11px] text-slate-600 file:mr-2 file:cursor-pointer file:rounded file:border-0 file:bg-slate-100 file:px-2.5 file:py-1 file:text-[11px] file:font-semibold file:text-ink hover:file:bg-slate-200"
+                                                    />
+                                                    {meta?.valid && (
+                                                        <p
+                                                            className={`flex items-center gap-1 text-[10px] font-medium ${
+                                                                meta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                            }`}
+                                                        >
+                                                            {meta.warning ? (
+                                                                <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                            ) : (
+                                                                <CheckCircle2 className="h-3 w-3 shrink-0" />
+                                                            )}
+                                                            <span>
+                                                                {meta.width}×{meta.height} px ·{' '}
+                                                                {meta.warning ? 'Solid background' : 'Transparent'}
+                                                            </span>
+                                                        </p>
+                                                    )}
+                                                    {poseErr && (
+                                                        <p className="text-[10px] font-semibold text-rose-600">
+                                                            {poseErr}
+                                                        </p>
                                                     )}
                                                 </div>
-                                                <input
-                                                    type="text"
-                                                    value={pose.title}
-                                                    onChange={(e) =>
-                                                        handlePoseTitleChange(idx, 'title', e.target.value)
-                                                    }
-                                                    placeholder="Pose title"
-                                                    className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-primary focus:outline-none"
-                                                />
-                                                <input
-                                                    key={`twin-pose-file-${idx}`}
-                                                    type="file"
-                                                    accept=".png,.webp,.jpg,.jpeg"
-                                                    onChange={(e) =>
-                                                        setPoseFiles((prev) => ({
-                                                            ...prev,
-                                                            [idx]: e.target.files?.[0] ?? null,
-                                                        }))
-                                                    }
-                                                    className="block w-full text-[11px] text-slate-600 file:mr-2 file:cursor-pointer file:rounded file:border-0 file:bg-slate-100 file:px-2.5 file:py-1 file:text-[11px] file:font-semibold file:text-ink hover:file:bg-slate-200"
-                                                />
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
