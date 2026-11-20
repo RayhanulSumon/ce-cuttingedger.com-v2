@@ -34,12 +34,20 @@ interface ClientLayoutProps {
     title?: string;
 }
 
+const PAGE_TITLES: Record<string, string> = {
+    '/portal': 'Overview',
+    '/portal/orders': 'Orders',
+    '/portal/credits': 'Credits & Plans',
+    '/portal/settings': 'Profile & Settings',
+};
+
 /** Persistent workspace shell shared across all Client Portal Inertia pages. */
-export function ClientLayout({ children, title = 'Overview' }: ClientLayoutProps) {
+export function ClientLayout({ children, title }: ClientLayoutProps) {
     const { url, props } = usePage<PageProps>();
     const { auth, flash, client_badges } = props;
     const user = auth?.user ?? null;
     const pathname = url.split('?')[0];
+    const activeTitle = title || PAGE_TITLES[pathname] || 'Overview';
 
     const availableCredits = client_badges?.available_credits ?? user?.credits_balance ?? 0;
     const ordersCount = client_badges?.orders_count ?? 0;
@@ -52,6 +60,21 @@ export function ClientLayout({ children, title = 'Overview' }: ClientLayoutProps
             toast.error(flash.error, { id: 'portal-flash-error' });
         }
     }, [flash?.success, flash?.error]);
+
+    // Silently prefetch remaining portal tab bundles in browser idle time so the first click is instantaneous
+    useEffect(() => {
+        const schedule =
+            typeof window !== 'undefined' && 'requestIdleCallback' in window
+                ? window.requestIdleCallback
+                : (cb: () => void) => setTimeout(cb, 120);
+
+        schedule(() => {
+            if (pathname !== '/portal/orders') import('@/Pages/Client/Orders');
+            if (pathname !== '/portal/credits') import('@/Pages/Client/Credits');
+            if (pathname !== '/portal/settings') import('@/Pages/Client/Settings');
+            if (pathname !== '/portal') import('@/Pages/Client/Dashboard');
+        });
+    }, [pathname]);
 
     const navItems = [
         {
@@ -136,6 +159,7 @@ export function ClientLayout({ children, title = 'Overview' }: ClientLayoutProps
                                                         href={item.href}
                                                         preserveScroll
                                                         prefetch
+                                                        cacheFor="1m"
                                                         className="flex w-full items-center gap-2.5"
                                                     >
                                                         <Icon
@@ -205,7 +229,7 @@ export function ClientLayout({ children, title = 'Overview' }: ClientLayoutProps
                             <div className="flex items-center gap-3">
                                 <SidebarTrigger className="text-slate-500 hover:bg-slate-100 hover:text-ink" />
                                 <div className="h-4 w-px bg-slate-200" />
-                                <span className="text-sm font-bold text-ink">{title}</span>
+                                <span className="text-sm font-bold text-ink">{activeTitle}</span>
                                 <span className="hidden items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 sm:inline-flex">
                                     <UserCheck className="h-3 w-3" />
                                     Verified Account
@@ -245,3 +269,8 @@ export function ClientLayout({ children, title = 'Overview' }: ClientLayoutProps
         </TooltipProvider>
     );
 }
+
+/** Persistent layout wrapper ensuring the client portal shell never unmounts between tab visits. */
+export const getClientLayout = (page: React.ReactNode) => (
+    <ClientLayout>{page}</ClientLayout>
+);

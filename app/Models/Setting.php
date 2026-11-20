@@ -4,12 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('app.public_settings'));
+        static::deleted(fn () => Cache::forget('app.public_settings'));
+    }
 
     /**
      * Turns the "contact_phones" setting ("BD | +88 02 55020348", one per line) into label/number pairs.

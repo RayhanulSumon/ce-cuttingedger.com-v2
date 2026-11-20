@@ -10,7 +10,7 @@ import {
 } from '@/Components/Client/types';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { Button } from '@/Components/ui/button';
-import { ClientLayout } from '@/Layouts/Client/ClientLayout';
+import { getClientLayout } from '@/Layouts/Client/ClientLayout';
 
 type OrderStatusFilter = 'all' | 'in_progress' | 'completed';
 
@@ -315,6 +315,4 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
     );
 }
 
-ClientOrders.layout = (page: React.ReactNode) => (
-    <ClientLayout title="Orders">{page}</ClientLayout>
-);
+ClientOrders.layout = getClientLayout;

@@ -22,7 +22,7 @@ import {
 } from '@/Components/Client/types';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { Button } from '@/Components/ui/button';
-import { ClientLayout } from '@/Layouts/Client/ClientLayout';
+import { getClientLayout } from '@/Layouts/Client/ClientLayout';
 import { PageProps } from '@/types';
 
 interface ClientDashboardProps {
@@ -358,6 +358,4 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
     );
 }
 
-ClientDashboard.layout = (page: React.ReactNode) => (
-    <ClientLayout title="Overview">{page}</ClientLayout>
-);
+ClientDashboard.layout = getClientLayout;

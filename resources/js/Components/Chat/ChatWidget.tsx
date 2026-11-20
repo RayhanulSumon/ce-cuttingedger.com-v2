@@ -169,7 +169,7 @@ export function ChatWidget() {
     }, 0);
 
     useEffect(() => {
-        if (!sessionId) {
+        if (!sessionId || !isOpen) {
             return;
         }
         const timer = window.setInterval(async () => {

@@ -11,7 +11,7 @@ import {
 } from '@/Components/Client/types';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { Button } from '@/Components/ui/button';
-import { ClientLayout } from '@/Layouts/Client/ClientLayout';
+import { getClientLayout } from '@/Layouts/Client/ClientLayout';
 import { PageProps } from '@/types';
 
 interface ClientCreditsProps {
@@ -317,6 +317,4 @@ export default function ClientCredits({
     );
 }
 
-ClientCredits.layout = (page: React.ReactNode) => (
-    <ClientLayout title="Credits & Plans">{page}</ClientLayout>
-);
+ClientCredits.layout = getClientLayout;

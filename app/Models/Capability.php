@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * A main capability (2D, 3D, DTP, Video) or one of its sub-capabilities.
@@ -65,6 +66,10 @@ class Capability extends Model
 
     protected static function booted(): void
     {
+        static::saved(fn () => Cache::forget('app.capabilities_nav'));
+
+        static::saved(fn () => Cache::forget('app.capabilities_nav'));
+
         // Keep old links working when a slug or parent changes, or when a capability is removed.
         static::updating(function (Capability $capability): void {
             if (! $capability->isDirty('slug') && ! $capability->isDirty('parent_id')) {
@@ -92,6 +97,8 @@ class Capability extends Model
         });
 
         static::deleted(function (Capability $capability): void {
+            Cache::forget('app.capabilities_nav');
+            Cache::forget('app.capabilities_nav');
             Redirect::updateOrCreate(
                 ['source_path' => $capability->path],
                 [

@@ -13,6 +13,10 @@ configureEcho({
 
 const appName = import.meta.env.VITE_APP_NAME || 'CuttingEdger';
 
+const getLandingLayout = (pageElement: React.ReactNode) => (
+    <LandingLayout>{pageElement}</LandingLayout>
+);
+
 createInertiaApp({
     title: (title) => (title ? `${title} — ${appName}` : `${appName} — Radical Digital Agency`),
     resolve: async (name) => {
@@ -28,9 +32,7 @@ createInertiaApp({
             !name.startsWith('Admin/') &&
             !name.startsWith('Client/')
         ) {
-            resolvedPage.layout = (pageElement: React.ReactNode) => (
-                <LandingLayout>{pageElement}</LandingLayout>
-            );
+            resolvedPage.layout = getLandingLayout;
         }
 
         return page;
@@ -43,7 +45,7 @@ createInertiaApp({
         }
     },
     progress: {
-        color: 'var(--color-primary)',
-        showSpinner: false,
+        color: '#f5761a',
+        showSpinner: true,
     },
 });

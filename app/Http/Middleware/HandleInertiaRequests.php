@@ -9,6 +9,7 @@ use App\Models\CreditPurchase;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -45,12 +46,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $dbSettings = [];
-        try {
-            $dbSettings = Setting::pluck('value', 'key')->all();
-        } catch (\Throwable $e) {
-            // Silently fallback if db is migrating
-        }
+        $dbSettings = Cache::remember('app.public_settings', 3600, function (): array {
+            try {
+                return Setting::pluck('value', 'key')->all();
+            } catch (\Throwable) {
+                return [];
+            }
+        });
 
         $phones = Setting::parsePhones($dbSettings['contact_phones'] ?? 'USA | +1 (409) 995-2565');
 
@@ -95,7 +97,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
-            'admin_badges' => fn () => $request->user()?->isAdmin() ? [
+            'admin_badges' => fn () => $request->is('admin', 'admin/*') && $request->user()?->isAdmin() ? [
                 'pending_orders' => Order::where('status', 'pending')->count(),
                 'pending_credit_purchases' => CreditPurchase::where('status', 'pending')->count(),
                 'pending_consultations' => ChatConsultation::where('status', 'pending')->count(),
@@ -109,33 +111,35 @@ class HandleInertiaRequests extends Middleware
                 'available_credits' => (int) ($request->user()->credits_balance ?? 0),
             ] : null,
             'capabilities_nav' => function () {
-                try {
-                    return Capability::active()->main()
-                        ->with(['children' => fn ($query) => $query->active()])
-                        ->orderBy('sort_order')
-                        ->get()
-                        ->map(fn (Capability $main) => [
-                            'id' => $main->id,
-                            'title' => $main->title,
-                            'tag' => $main->tag,
-                            'slug' => $main->slug,
-                            'path' => $main->path,
-                            'subtitle' => $main->subtitle,
-                            'icon' => $main->icon,
-                            'image' => $main->image,
-                            'children' => $main->children->map(fn (Capability $child) => [
-                                'id' => $child->id,
-                                'title' => $child->title,
-                                'slug' => $child->slug,
-                                'path' => $child->path,
-                                'subtitle' => $child->subtitle,
-                                'icon' => $child->icon,
-                                'image' => $child->image,
-                            ])->values()->all(),
-                        ])->values()->all();
-                } catch (\Throwable) {
-                    return [];
-                }
+                return Cache::remember('app.capabilities_nav', 3600, function (): array {
+                    try {
+                        return Capability::active()->main()
+                            ->with(['children' => fn ($query) => $query->active()])
+                            ->orderBy('sort_order')
+                            ->get()
+                            ->map(fn (Capability $main) => [
+                                'id' => $main->id,
+                                'title' => $main->title,
+                                'tag' => $main->tag,
+                                'slug' => $main->slug,
+                                'path' => $main->path,
+                                'subtitle' => $main->subtitle,
+                                'icon' => $main->icon,
+                                'image' => $main->image,
+                                'children' => $main->children->map(fn (Capability $child) => [
+                                    'id' => $child->id,
+                                    'title' => $child->title,
+                                    'slug' => $child->slug,
+                                    'path' => $child->path,
+                                    'subtitle' => $child->subtitle,
+                                    'icon' => $child->icon,
+                                    'image' => $child->image,
+                                ])->values()->all(),
+                            ])->values()->all();
+                    } catch (\Throwable) {
+                        return [];
+                    }
+                });
             },
         ];
     }

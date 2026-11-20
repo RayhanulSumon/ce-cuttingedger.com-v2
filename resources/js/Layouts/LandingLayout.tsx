@@ -44,6 +44,21 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
         };
     }, []);
 
+    // Silently warm top landing page chunks in browser idle time so first click is instantaneous
+    useEffect(() => {
+        const schedule =
+            typeof window !== 'undefined' && 'requestIdleCallback' in window
+                ? window.requestIdleCallback
+                : (cb: () => void) => setTimeout(cb, 180);
+
+        schedule(() => {
+            if (url !== '/pricing') import('@/Pages/Pricing');
+            if (!url.startsWith('/capabilities')) import('@/Pages/Capabilities/Index');
+            if (url !== '/about') import('@/Pages/About');
+            if (url !== '/work') import('@/Pages/Work/Index');
+        });
+    }, [url]);
+
     // Flash messages as toasts. The order and thank-you pages show their own confirmation.
     useEffect(() => {
         if (url.startsWith('/thank-you') || url.startsWith('/order')) {
@@ -73,9 +88,9 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
                 key={url.split('?')[0]}
                 id="main-content"
                 className="flex-1"
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: EASE_OUT_QUART }}
+                transition={{ duration: 0.16, ease: EASE_OUT_QUART }}
             >
                 {children}
             </motion.main>
