@@ -19,11 +19,13 @@ import {
     TwinPosePreset,
 } from '@/Components/Landing/DigitalTwins/twins';
 import {
+    AlertCircle,
     Clock,
     Edit3,
     Search,
     Settings2,
     Trash2,
+    Upload,
     Users,
 } from 'lucide-react';
 
@@ -44,8 +46,6 @@ type ModelFilter = 'all' | 'homepage' | 'available' | 'sold_out' | 'upcoming';
 const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-slate-700';
 const INPUT_CLASS =
     'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
-const FILE_INPUT_CLASS =
-    'block w-full text-xs text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-primary file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-primary-hover';
 
 function checkIsUpcoming(twin: Pick<DigitalTwinModel, 'archetype' | 'presetPrice' | 'isUpcoming'>): boolean {
     return (
@@ -69,6 +69,7 @@ export default function AdminDigitalTwinsIndex({
     const [twinModalTab, setTwinModalTab] = useState<'basic' | 'poses'>('basic');
     const [editingTwin, setEditingTwin] = useState<AdminDigitalTwinItem | null>(null);
     const [isSavingTwin, setIsSavingTwin] = useState(false);
+    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
     const [isUpcomingModel, setIsUpcomingModel] = useState(false);
     const [name, setName] = useState('');
@@ -117,6 +118,7 @@ export default function AdminDigitalTwinsIndex({
     const openCreateTwin = () => {
         setEditingTwin(null);
         setTwinModalTab('basic');
+        setFormErrors({});
         setIsUpcomingModel(false);
         setName('');
         setLookNumber(twins.length + 1);
@@ -143,6 +145,7 @@ export default function AdminDigitalTwinsIndex({
         const upcoming = checkIsUpcoming(twin);
         setEditingTwin(twin);
         setTwinModalTab('basic');
+        setFormErrors({});
         setIsUpcomingModel(upcoming);
         setName(twin.name);
         setLookNumber(twin.lookNumber);
@@ -193,6 +196,24 @@ export default function AdminDigitalTwinsIndex({
 
     const handleSaveTwin = (e: React.FormEvent) => {
         e.preventDefault();
+        setFormErrors({});
+
+        if (!name.trim()) {
+            setTwinModalTab('basic');
+            setFormErrors({ name: 'Please enter a model name in Basic Info.' });
+            return;
+        }
+
+        if (!isUpcomingModel && !description.trim()) {
+            setTwinModalTab('basic');
+            setFormErrors({ description: 'Please enter a short description in Basic Info.' });
+            return;
+        }
+
+        const validPoseFiles = Object.fromEntries(
+            Object.entries(poseFiles).filter(([, file]) => file instanceof File),
+        );
+
         setIsSavingTwin(true);
 
         const url = editingTwin?.id
@@ -235,13 +256,28 @@ export default function AdminDigitalTwinsIndex({
                   is_copyright_sold: isCopyrightSold,
                   model_image: modelImageFile,
                   poses: poses as any,
-                  pose_images: poseFiles as any,
+                  pose_images: validPoseFiles as any,
               };
 
         router.post(url, payload, {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => setIsTwinDialogOpen(false),
+            onError: (errors) => {
+                const flatErrors: Record<string, string> = {};
+                Object.entries(errors).forEach(([k, v]) => {
+                    if (typeof v === 'string') flatErrors[k] = v;
+                });
+                setFormErrors(flatErrors);
+                if (
+                    flatErrors.name ||
+                    flatErrors.look_number ||
+                    flatErrors.description ||
+                    flatErrors.model_image
+                ) {
+                    setTwinModalTab('basic');
+                }
+            },
             onFinish: () => setIsSavingTwin(false),
         });
     };
@@ -644,7 +680,13 @@ export default function AdminDigitalTwinsIndex({
             </div>
 
             {/* DIALOG 1: CREATE / EDIT DIGITAL TWIN MODEL */}
-            <Dialog open={isTwinDialogOpen} onOpenChange={setIsTwinDialogOpen}>
+            <Dialog
+                open={isTwinDialogOpen}
+                onOpenChange={(open) => {
+                    if (!open) setFormErrors({});
+                    setIsTwinDialogOpen(open);
+                }}
+            >
                 <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>
@@ -655,7 +697,21 @@ export default function AdminDigitalTwinsIndex({
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleSaveTwin} className="space-y-4 pt-1 text-xs">
+                    <form onSubmit={handleSaveTwin} noValidate className="space-y-4 pt-1 text-xs">
+                        {Object.values(formErrors).filter(Boolean).length > 0 && (
+                            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
+                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                                <div className="space-y-0.5">
+                                    {Object.values(formErrors)
+                                        .filter(Boolean)
+                                        .map((msg, idx) => (
+                                            <p key={idx} className="font-medium">
+                                                {msg}
+                                            </p>
+                                        ))}
+                                </div>
+                            </div>
+                        )}
                         {/* Upcoming Model Simplification Toggle */}
                         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-colors hover:border-primary/40">
                             <input
@@ -805,21 +861,45 @@ export default function AdminDigitalTwinsIndex({
                                             ) : null}
                                         </div>
                                     )}
-                                    <div className="min-w-0 flex-1 space-y-1.5">
-                                        <label className="block text-xs font-bold text-ink">
-                                            Main Model Image (PNG / WebP)
-                                        </label>
-                                        <p className="text-xs text-slate-500">
-                                            {isUpcomingModel
-                                                ? 'Upload a transparent cutout for the Upcoming preview card.'
-                                                : 'Used on catalog cards and automatically frames any pose without a custom photo.'}
-                                        </p>
-                                        <input
-                                            type="file"
-                                            accept=".png,.webp,.jpg,.jpeg"
-                                            onChange={(e) => setModelImageFile(e.target.files?.[0] ?? null)}
-                                            className={FILE_INPUT_CLASS}
-                                        />
+                                    <div className="min-w-0 flex-1 space-y-2">
+                                        <div>
+                                            <label className="block text-xs font-bold text-ink">
+                                                Main Model Image (PNG / WebP)
+                                            </label>
+                                            <p className="mt-0.5 text-xs text-slate-500">
+                                                {isUpcomingModel
+                                                    ? 'Upload a transparent cutout for the Upcoming preview card.'
+                                                    : 'Used on catalog cards and automatically frames any pose without a custom photo.'}
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2.5">
+                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-hover">
+                                                <Upload className="h-3.5 w-3.5" />
+                                                <span>
+                                                    {modelImagePreviewUrl || editingTwin
+                                                        ? 'Change Model Image'
+                                                        : 'Upload Model Image'}
+                                                </span>
+                                                <input
+                                                    key="twin-model-file"
+                                                    type="file"
+                                                    accept=".png,.webp,.jpg,.jpeg"
+                                                    onChange={(e) => {
+                                                        const f = e.target.files?.[0] ?? null;
+                                                        e.target.value = '';
+                                                        if (f) setModelImageFile(f);
+                                                    }}
+                                                    className="sr-only"
+                                                />
+                                            </label>
+                                            <span className="max-w-[200px] truncate text-xs text-slate-600">
+                                                {modelImageFile
+                                                    ? modelImageFile.name
+                                                    : editingTwin
+                                                      ? 'Current image saved'
+                                                      : 'No file selected'}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -891,6 +971,7 @@ export default function AdminDigitalTwinsIndex({
                                                     className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-primary focus:outline-none"
                                                 />
                                                 <input
+                                                    key={`twin-pose-file-${idx}`}
                                                     type="file"
                                                     accept=".png,.webp,.jpg,.jpeg"
                                                     onChange={(e) =>
