@@ -26,8 +26,10 @@ import {
 import {
     AlertCircle,
     AlertTriangle,
+    Archive,
     CheckCircle2,
     Clock,
+    Download,
     Edit3,
     Search,
     Settings2,
@@ -40,6 +42,9 @@ interface AdminDigitalTwinItem extends DigitalTwinModel {
     isFeaturedOnHome?: boolean;
     isActive?: boolean;
     sortOrder?: number;
+    hasSourceZip?: boolean;
+    sourceZipName?: string | null;
+    sourceZipSize?: number | null;
 }
 
 interface PageProps {
@@ -53,6 +58,16 @@ type ModelFilter = 'all' | 'homepage' | 'available' | 'sold_out' | 'upcoming';
 const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-slate-700';
 const INPUT_CLASS =
     'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
+
+function formatFileSize(bytes?: number | null): string {
+    if (!bytes || bytes <= 0) {
+        return '';
+    }
+    if (bytes >= 1024 * 1024) {
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
 
 function checkIsUpcoming(twin: Pick<DigitalTwinModel, 'archetype' | 'presetPrice' | 'isUpcoming'>): boolean {
     return (
@@ -82,7 +97,6 @@ export default function AdminDigitalTwinsIndex({
     const [name, setName] = useState('');
     const [lookNumber, setLookNumber] = useState(1);
     const [archetype, setArchetype] = useState('Female');
-    const [collection, setCollection] = useState('Spring Summer 2027');
     const [description, setDescription] = useState('');
     const [presetPrice, setPresetPrice] = useState('$149');
     const [customOrderPrice, setCustomOrderPrice] = useState('$290');
@@ -96,6 +110,8 @@ export default function AdminDigitalTwinsIndex({
     const [modelImageFile, setModelImageFile] = useState<File | null>(null);
     const [modelImagePreviewUrl, setModelImagePreviewUrl] = useState<string>('');
     const [modelImageMeta, setModelImageMeta] = useState<StudioImageValidationResult | null>(null);
+    const [sourceZipFile, setSourceZipFile] = useState<File | null>(null);
+    const [removeSourceZip, setRemoveSourceZip] = useState(false);
     const [poses, setPoses] = useState<TwinPosePreset[]>(defaultPoses);
     const [poseFiles, setPoseFiles] = useState<Record<number, File | null>>({});
     const [poseMeta, setPoseMeta] = useState<Record<number, StudioImageValidationResult>>({});
@@ -132,7 +148,6 @@ export default function AdminDigitalTwinsIndex({
         setName('');
         setLookNumber(twins.length + 1);
         setArchetype('Female');
-        setCollection('Spring Summer 2027');
         setDescription('');
         setPresetPrice('$149');
         setCustomOrderPrice('$290');
@@ -146,6 +161,8 @@ export default function AdminDigitalTwinsIndex({
         setModelImageFile(null);
         setModelImagePreviewUrl('');
         setModelImageMeta(null);
+        setSourceZipFile(null);
+        setRemoveSourceZip(false);
         setPoses(defaultPoses.map((p) => ({ ...p })));
         setPoseFiles({});
         setPoseMeta({});
@@ -161,7 +178,6 @@ export default function AdminDigitalTwinsIndex({
         setName(twin.name);
         setLookNumber(twin.lookNumber);
         setArchetype(twin.archetype || (upcoming ? 'Upcoming' : 'Female'));
-        setCollection(twin.collection || 'Spring Summer 2027');
         setDescription(twin.description);
         setPresetPrice(twin.presetPrice);
         setCustomOrderPrice(twin.customOrderPrice);
@@ -175,10 +191,34 @@ export default function AdminDigitalTwinsIndex({
         setModelImageFile(null);
         setModelImagePreviewUrl(twin.hiResImage || twin.runwayImage || '');
         setModelImageMeta(null);
+        setSourceZipFile(null);
+        setRemoveSourceZip(false);
         setPoses((twin.poses && twin.poses.length > 0 ? twin.poses : defaultPoses).map((p) => ({ ...p })));
         setPoseFiles({});
         setPoseMeta({});
         setIsTwinDialogOpen(true);
+    };
+
+    const handleSourceZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] ?? null;
+        e.target.value = '';
+        if (!file) return;
+
+        if (!file.name.toLowerCase().endsWith('.zip')) {
+            setFormErrors((prev) => ({
+                ...prev,
+                source_zip: 'Raw package must be a .zip file.',
+            }));
+            return;
+        }
+
+        setSourceZipFile(file);
+        setRemoveSourceZip(false);
+        setFormErrors((prev) => {
+            if (!prev.source_zip) return prev;
+            const { source_zip: _, ...rest } = prev;
+            return rest;
+        });
     };
 
     const handleTwinModelFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -284,7 +324,6 @@ export default function AdminDigitalTwinsIndex({
                   name,
                   look_number: lookNumber,
                   archetype: 'Upcoming',
-                  collection: 'Upcoming Drop · Preview',
                   description: description.trim() || 'Upcoming digital twin model preview.',
                   preset_price: 'Upcoming',
                   custom_order_price: customOrderPrice || '$290',
@@ -302,7 +341,6 @@ export default function AdminDigitalTwinsIndex({
                   name,
                   look_number: lookNumber,
                   archetype,
-                  collection,
                   description,
                   preset_price: presetPrice,
                   custom_order_price: customOrderPrice,
@@ -314,6 +352,8 @@ export default function AdminDigitalTwinsIndex({
                   is_active: isActive,
                   is_copyright_sold: isCopyrightSold,
                   model_image: modelImageFile,
+                  source_zip: sourceZipFile,
+                  remove_source_zip: removeSourceZip,
                   poses: poses as any,
                   pose_images: validPoseFiles as any,
               };
@@ -332,7 +372,8 @@ export default function AdminDigitalTwinsIndex({
                     flatErrors.name ||
                     flatErrors.look_number ||
                     flatErrors.description ||
-                    flatErrors.model_image
+                    flatErrors.model_image ||
+                    flatErrors.source_zip
                 ) {
                     setTwinModalTab('basic');
                 } else if (
@@ -468,7 +509,7 @@ export default function AdminDigitalTwinsIndex({
     const twinBannerErrors = Object.entries(formErrors)
         .filter(([key, msg]) => {
             if (!msg) return false;
-            if (showingBasicTab && key === 'model_image') return false;
+            if (showingBasicTab && (key === 'model_image' || key === 'source_zip')) return false;
             if (!showingBasicTab && key.startsWith('pose_images.')) return false;
             return true;
         })
@@ -613,6 +654,11 @@ export default function AdminDigitalTwinsIndex({
                                                         {twin.isFeaturedOnHome && !upcoming && (
                                                             <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
                                                                 Homepage
+                                                            </Badge>
+                                                        )}
+                                                        {twin.hasSourceZip && (
+                                                            <Badge className="border-emerald-200 bg-emerald-50 text-[10px] text-emerald-700">
+                                                                ZIP
                                                             </Badge>
                                                         )}
                                                     </div>
@@ -1003,6 +1049,84 @@ export default function AdminDigitalTwinsIndex({
                                         )}
                                     </div>
                                 </div>
+
+                                {!isUpcomingModel && (
+                                    <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3.5">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                            <div>
+                                                <label className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                                                    <Archive className="h-3.5 w-3.5 text-primary" />
+                                                    Raw Source Package (ZIP)
+                                                </label>
+                                                <p className="mt-0.5 text-[11px] text-slate-500">
+                                                    Private ZIP delivered after purchase (never public).
+                                                </p>
+                                            </div>
+                                            {editingTwin?.hasSourceZip && !removeSourceZip && editingTwin.id && (
+                                                <a
+                                                    href={`/admin/digital-twins/${editingTwin.id}/download-package`}
+                                                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-ink hover:bg-slate-100"
+                                                >
+                                                    <Download className="h-3 w-3 text-primary" />
+                                                    Download
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-2.5">
+                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-slate-100">
+                                                <Upload className="h-3.5 w-3.5 text-primary" />
+                                                <span>
+                                                    {sourceZipFile || (editingTwin?.hasSourceZip && !removeSourceZip)
+                                                        ? 'Replace ZIP'
+                                                        : 'Upload ZIP'}
+                                                </span>
+                                                <input
+                                                    key="twin-source-zip"
+                                                    type="file"
+                                                    accept=".zip,application/zip,application/x-zip-compressed"
+                                                    onChange={handleSourceZipChange}
+                                                    className="sr-only"
+                                                />
+                                            </label>
+
+                                            <span className="max-w-[260px] truncate text-xs text-slate-600">
+                                                {sourceZipFile
+                                                    ? `${sourceZipFile.name} (${formatFileSize(sourceZipFile.size)})`
+                                                    : removeSourceZip
+                                                      ? 'Removed on save'
+                                                      : editingTwin?.hasSourceZip
+                                                        ? `${editingTwin.sourceZipName || 'raw-pack.zip'}${
+                                                              editingTwin.sourceZipSize
+                                                                  ? ` (${formatFileSize(editingTwin.sourceZipSize)})`
+                                                                  : ''
+                                                          }`
+                                                        : 'No ZIP uploaded'}
+                                            </span>
+
+                                            {(sourceZipFile || (editingTwin?.hasSourceZip && !removeSourceZip)) && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSourceZipFile(null);
+                                                        if (editingTwin?.hasSourceZip) {
+                                                            setRemoveSourceZip(true);
+                                                        }
+                                                    }}
+                                                    className="cursor-pointer text-[11px] font-semibold text-rose-600 hover:underline"
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {formErrors.source_zip && (
+                                            <p className="text-[11px] font-semibold text-rose-600">
+                                                {formErrors.source_zip}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
 
                                 {!isUpcomingModel ? (
                                     <div className="flex flex-wrap items-center gap-6 rounded-xl border border-slate-200 bg-white px-4 py-3">

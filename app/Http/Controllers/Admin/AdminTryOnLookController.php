@@ -61,7 +61,6 @@ class AdminTryOnLookController extends Controller
         TryOnLook::create([
             'slug' => $slug,
             'model_name' => $validated['model_name'],
-            'description' => $validated['description'] ?? null,
             'runway_image' => $modelImages['runway_image'],
             'hi_res_image' => $modelImages['hi_res_image'],
             'pieces' => array_values($pieces),
@@ -86,7 +85,6 @@ class AdminTryOnLookController extends Controller
 
         $updates = [
             'model_name' => $validated['model_name'],
-            'description' => $validated['description'] ?? null,
             'is_featured_on_home' => $request->boolean('is_featured_on_home', true),
             'is_active' => $request->boolean('is_active', true),
             'sort_order' => (int) ($validated['sort_order'] ?? $tryOnLook->sort_order),
@@ -149,7 +147,6 @@ class AdminTryOnLookController extends Controller
     {
         return [
             'model_name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:500'],
             'model_image' => [
                 $isCreate ? 'required' : 'nullable',
                 'file',

@@ -16,61 +16,14 @@ class DigitalTwinSeeder extends Seeder
     public function run(): void
     {
         $defaultPoses = DigitalTwin::defaultPoses();
-        $defaultDeliverables = [
-            '6 Multi-Angle Pose Presets (8K PNG/TIFF)',
-            'Layered PSD + Garment UV Smart Masks',
-            'Commercial Global Campaign License',
-        ];
 
         $spriteSlots = [
-            [
-                'sprite_x0' => 12,
-                'sprite_x1' => 176,
-                'featured_pieces' => [
-                    ['name' => 'Feather Jacket', 'price' => '$2,900', 'box' => [26, 224, 28, 214]],
-                    ['name' => 'Satin Wide Leg Trousers', 'price' => '$1,450', 'box' => [304, 412, 22, 236]],
-                ],
-            ],
-            [
-                'sprite_x0' => 178,
-                'sprite_x1' => 330,
-                'featured_pieces' => [
-                    ['name' => 'Pleated Dress', 'price' => '$2,200', 'box' => [530, 666, 12, 242]],
-                    ['name' => 'Gold Waist Belt', 'price' => '$420', 'box' => [752, 922, 100, 146]],
-                ],
-            ],
-            [
-                'sprite_x0' => 331,
-                'sprite_x1' => 470,
-                'featured_pieces' => [
-                    ['name' => 'Satin Trench Dress', 'price' => '$2,350', 'box' => [70, 176, 246, 466]],
-                    ['name' => 'Top Handle Bag', 'price' => '$980', 'box' => [294, 422, 294, 432]],
-                ],
-            ],
-            [
-                'sprite_x0' => 476,
-                'sprite_x1' => 633,
-                'featured_pieces' => [
-                    ['name' => 'Billow Sleeve Blouse', 'price' => '$860', 'box' => [508, 688, 240, 452]],
-                    ['name' => 'Tie Waist Trousers', 'price' => '$740', 'box' => [780, 890, 252, 466]],
-                ],
-            ],
-            [
-                'sprite_x0' => 634,
-                'sprite_x1' => 767,
-                'featured_pieces' => [
-                    ['name' => 'Powder Long Coat', 'price' => '$1,980', 'box' => [64, 178, 484, 698]],
-                    ['name' => 'Ivory Straight Trousers', 'price' => '$690', 'box' => [316, 396, 482, 698]],
-                ],
-            ],
-            [
-                'sprite_x0' => 767,
-                'sprite_x1' => 956,
-                'featured_pieces' => [
-                    ['name' => 'Sculpted Ruffle Top', 'price' => '$1,120', 'box' => [530, 672, 508, 682]],
-                    ['name' => 'Pleated Maxi Skirt', 'price' => '$1,340', 'box' => [754, 916, 484, 700]],
-                ],
-            ],
+            ['sprite_x0' => 12, 'sprite_x1' => 176],
+            ['sprite_x0' => 178, 'sprite_x1' => 330],
+            ['sprite_x0' => 331, 'sprite_x1' => 470],
+            ['sprite_x0' => 476, 'sprite_x1' => 633],
+            ['sprite_x0' => 634, 'sprite_x1' => 767],
+            ['sprite_x0' => 767, 'sprite_x1' => 956],
         ];
 
         $twins = [
@@ -280,7 +233,6 @@ class DigitalTwinSeeder extends Seeder
             $slug = Str::slug($twin['name']);
             $seededSlugs[] = $slug;
             $aspect = round(($slot['sprite_x1'] - $slot['sprite_x0']) / 448, 4);
-            $isUpcoming = $twin['archetype'] === 'Upcoming';
 
             DigitalTwin::updateOrCreate(
                 ['slug' => $slug],
@@ -289,13 +241,10 @@ class DigitalTwinSeeder extends Seeder
                     'look_number' => $lookNumber,
                     'sprite_x0' => $slot['sprite_x0'],
                     'sprite_x1' => $slot['sprite_x1'],
-                    'collection' => $isUpcoming ? 'Upcoming Drop · Preview' : "Spring Summer 2027 · Look {$lookNumber}",
                     'preset_price' => $twin['preset_price'] ?? '$149',
                     'custom_order_price' => '$290',
                     'lifetime_price' => '$490',
                     'aspect_ratio' => $aspect,
-                    'deliverables' => $defaultDeliverables,
-                    'featured_pieces' => $slot['featured_pieces'],
                     'poses' => $defaultPoses,
                     'is_featured_on_home' => $idx < 6,
                     'is_active' => true,

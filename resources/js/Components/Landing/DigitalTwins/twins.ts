@@ -1,9 +1,6 @@
 export const TWIN_MODELS_SPRITE =
     'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_042056_1a704ff7-b0e5-4a9f-bbda-62392b819fb6.png&w=3840&q=85';
 
-export const TWIN_PIECES_SPRITE =
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20261102_042057_080e85b0-b4aa-4072-8eb9-2304c7baf42b.png&w=2400&q=85';
-
 export const TWIN_Y0 = 48;
 export const TWIN_Y1 = 496;
 export const TWIN_FIRST_LOOK = 15;
@@ -38,7 +35,6 @@ export interface DigitalTwinModel {
     hiResImage?: string | null;
     name: string;
     archetype: string;
-    collection: string;
     presetPrice: string;
     customOrderPrice: string;
     lifetimePrice: string;
@@ -49,8 +45,6 @@ export interface DigitalTwinModel {
     /** Total preset downloads so far. */
     downloadCount: number;
     description: string;
-    deliverables: string[];
-    featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
     poses: TwinPosePreset[];
     isFeaturedOnHome?: boolean;
     isUpcoming?: boolean;
@@ -156,65 +150,13 @@ export const DEFAULT_POSES: TwinPosePreset[] = [
     },
 ];
 
-const DEFAULT_DELIVERABLES = [
-    '6 Multi-Angle Pose Presets (8K PNG/TIFF)',
-    'Layered PSD + Garment UV Smart Masks',
-    'Commercial Global Campaign License',
-];
-
-const SPRITE_SLOTS: {
-    x0: number;
-    x1: number;
-    featuredPieces: { name: string; price: string; box: [number, number, number, number] }[];
-}[] = [
-    {
-        x0: 12,
-        x1: 176,
-        featuredPieces: [
-            { name: 'Feather Jacket', price: '$2,900', box: [26, 224, 28, 214] },
-            { name: 'Satin Wide Leg Trousers', price: '$1,450', box: [304, 412, 22, 236] },
-        ],
-    },
-    {
-        x0: 178,
-        x1: 330,
-        featuredPieces: [
-            { name: 'Pleated Dress', price: '$2,200', box: [530, 666, 12, 242] },
-            { name: 'Gold Waist Belt', price: '$420', box: [752, 922, 100, 146] },
-        ],
-    },
-    {
-        x0: 331,
-        x1: 470,
-        featuredPieces: [
-            { name: 'Satin Trench Dress', price: '$2,350', box: [70, 176, 246, 466] },
-            { name: 'Top Handle Bag', price: '$980', box: [294, 422, 294, 432] },
-        ],
-    },
-    {
-        x0: 476,
-        x1: 633,
-        featuredPieces: [
-            { name: 'Billow Sleeve Blouse', price: '$860', box: [508, 688, 240, 452] },
-            { name: 'Tie Waist Trousers', price: '$740', box: [780, 890, 252, 466] },
-        ],
-    },
-    {
-        x0: 634,
-        x1: 767,
-        featuredPieces: [
-            { name: 'Powder Long Coat', price: '$1,980', box: [64, 178, 484, 698] },
-            { name: 'Ivory Straight Trousers', price: '$690', box: [316, 396, 482, 698] },
-        ],
-    },
-    {
-        x0: 767,
-        x1: 956,
-        featuredPieces: [
-            { name: 'Sculpted Ruffle Top', price: '$1,120', box: [530, 672, 508, 682] },
-            { name: 'Pleated Maxi Skirt', price: '$1,340', box: [754, 916, 484, 700] },
-        ],
-    },
+const SPRITE_SLOTS: { x0: number; x1: number }[] = [
+    { x0: 12, x1: 176 },
+    { x0: 178, x1: 330 },
+    { x0: 331, x1: 470 },
+    { x0: 476, x1: 633 },
+    { x0: 634, x1: 767 },
+    { x0: 767, x1: 956 },
 ];
 
 interface TwinSeedEntry {
@@ -442,7 +384,6 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = TWIN_SEED_ENTRIES.map((entry, i
         x1: slot.x1,
         name: entry.name,
         archetype: entry.archetype,
-        collection: entry.isUpcoming ? 'Upcoming Drop · Preview' : `Spring Summer 2027 · Look ${lookNumber}`,
         presetPrice: entry.presetPrice ?? '$149',
         customOrderPrice: '$290',
         lifetimePrice: '$490',
@@ -450,8 +391,6 @@ export const DIGITAL_TWINS: DigitalTwinModel[] = TWIN_SEED_ENTRIES.map((entry, i
         listedAt: entry.listedAt,
         downloadCount: entry.downloadCount,
         description: entry.description,
-        deliverables: DEFAULT_DELIVERABLES,
-        featuredPieces: slot.featuredPieces,
         poses: DEFAULT_POSES,
         isFeaturedOnHome: index < 6,
         isUpcoming: Boolean(entry.isUpcoming),

@@ -17,11 +17,10 @@ class DigitalTwin extends Model
         'sprite_x0' => 'integer',
         'sprite_x1' => 'integer',
         'aspect_ratio' => 'float',
+        'source_zip_size' => 'integer',
         'is_copyright_sold' => 'boolean',
         'download_count' => 'integer',
         'listed_at' => 'date:Y-m-d',
-        'deliverables' => 'array',
-        'featured_pieces' => 'array',
         'poses' => 'array',
         'is_featured_on_home' => 'boolean',
         'is_active' => 'boolean',
@@ -136,7 +135,8 @@ class DigitalTwin extends Model
     }
 
     /**
-     * Format the Digital Twin model for the frontend runway, catalog, and modal.
+     * Format the Digital Twin model for the public runway, catalog, and modal.
+     * Raw ZIP paths remain server-private and are never exposed here.
      *
      * @return array<string, mixed>
      */
@@ -157,7 +157,6 @@ class DigitalTwin extends Model
             'hiResImage' => $this->hi_res_image ?: $this->runway_image,
             'name' => $this->name,
             'archetype' => $this->archetype,
-            'collection' => $this->collection ?? '',
             'presetPrice' => $this->preset_price,
             'customOrderPrice' => $this->custom_order_price,
             'lifetimePrice' => $this->lifetime_price,
@@ -165,12 +164,24 @@ class DigitalTwin extends Model
             'listedAt' => $this->listed_at ? $this->listed_at->format('Y-m-d') : now()->format('Y-m-d'),
             'downloadCount' => (int) $this->download_count,
             'description' => $this->description,
-            'deliverables' => (array) ($this->deliverables ?? []),
-            'featuredPieces' => (array) ($this->featured_pieces ?? []),
             'poses' => ! empty($this->poses) ? $this->poses : self::defaultPoses(),
             'isFeaturedOnHome' => (bool) $this->is_featured_on_home,
             'isActive' => (bool) $this->is_active,
             'sortOrder' => (int) $this->sort_order,
         ];
+    }
+
+    /**
+     * Format the Digital Twin model for the Admin manager including private package metadata.
+     *
+     * @return array<string, mixed>
+     */
+    public function toAdminArray(int $index = 0): array
+    {
+        return array_merge($this->toFrontendArray($index), [
+            'hasSourceZip' => ! empty($this->source_zip_path),
+            'sourceZipName' => $this->source_zip_name,
+            'sourceZipSize' => $this->source_zip_size,
+        ]);
     }
 }

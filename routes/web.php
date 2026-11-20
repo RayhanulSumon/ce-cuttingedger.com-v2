@@ -108,6 +108,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::post('digital-twins/attributes', [AdminDigitalTwinController::class, 'storeAttribute'])->name('digital-twin-attributes.store');
     Route::match(['put', 'post'], 'digital-twins/attributes/{attribute}', [AdminDigitalTwinController::class, 'updateAttribute'])->name('digital-twin-attributes.update');
     Route::delete('digital-twins/attributes/{attribute}', [AdminDigitalTwinController::class, 'destroyAttribute'])->name('digital-twin-attributes.destroy');
+    Route::get('digital-twins/{digitalTwin}/download-package', [AdminDigitalTwinController::class, 'downloadPackage'])->name('digital-twins.download-package');
     Route::post('digital-twins/{digitalTwin}/toggle-sold-out', [AdminDigitalTwinController::class, 'toggleSoldOut'])->name('digital-twins.toggle-sold-out');
     Route::post('digital-twins/{digitalTwin}', [AdminDigitalTwinController::class, 'update'])->name('digital-twins.update.post');
     Route::resource('digital-twins', AdminDigitalTwinController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -241,6 +242,7 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
 Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
     Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
+    Route::get('/portal/orders/{order}/download-twin-package', [ClientPortalController::class, 'downloadDigitalTwinPackage'])->name('client.portal.orders.download-twin');
     Route::get('/portal/credits', [ClientPortalController::class, 'credits'])->name('client.portal.credits');
     Route::get('/portal/settings', [ClientPortalController::class, 'settings'])->name('client.portal.settings');
     Route::redirect('/dashboard', '/portal')->name('dashboard');

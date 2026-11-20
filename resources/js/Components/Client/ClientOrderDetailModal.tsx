@@ -1,6 +1,16 @@
 import React from 'react';
-import { Download, X } from 'lucide-react';
+import { Archive, Download, X } from 'lucide-react';
 import { ClientOrderItem, OrderStatusBadge } from './types';
+
+function formatPackageSize(bytes?: number | null): string {
+    if (!bytes || bytes <= 0) {
+        return '';
+    }
+    if (bytes >= 1024 * 1024) {
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
 
 interface ClientOrderDetailModalProps {
     order: ClientOrderItem | null;
@@ -206,6 +216,34 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         />
                                     </a>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {order.digital_twin_download_url && (
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                            <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                                Digital Twin Raw Package Ready
+                            </span>
+                            <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-center gap-2 text-xs text-emerald-900">
+                                    <Archive size={15} className="shrink-0 text-emerald-700" />
+                                    <span className="font-semibold">
+                                        {order.digital_twin_download_name || 'digital-twin-raw-pack.zip'}
+                                    </span>
+                                    {order.digital_twin_download_size ? (
+                                        <span className="text-[11px] text-emerald-700">
+                                            ({formatPackageSize(order.digital_twin_download_size)})
+                                        </span>
+                                    ) : null}
+                                </div>
+                                <a
+                                    href={order.digital_twin_download_url}
+                                    className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                                >
+                                    <Download size={13} />
+                                    Download Full ZIP
+                                </a>
                             </div>
                         </div>
                     )}

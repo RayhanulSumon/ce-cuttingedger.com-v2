@@ -26,7 +26,6 @@ class TryOnLookSeeder extends Seeder
         $looks = [
             [
                 'model_name' => 'John',
-                'description' => 'A charcoal knit and easy denim.',
                 'runway_image' => "{$base}/model-1-640.webp",
                 'hi_res_image' => "{$base}/original-look-1.webp",
                 'pieces' => [
@@ -43,7 +42,6 @@ class TryOnLookSeeder extends Seeder
             ],
             [
                 'model_name' => 'Paul',
-                'description' => 'A clean white tee and relaxed denim.',
                 'runway_image' => "{$base}/model-5-640.webp",
                 'hi_res_image' => "{$base}/original-look-5.webp",
                 'pieces' => [
@@ -60,7 +58,6 @@ class TryOnLookSeeder extends Seeder
             ],
             [
                 'model_name' => 'Nooh',
-                'description' => 'Olive knitwear. A grounded palette.',
                 'runway_image' => "{$base}/model-4-640.webp",
                 'hi_res_image' => "{$base}/original-look-4.webp",
                 'pieces' => [
@@ -77,7 +74,6 @@ class TryOnLookSeeder extends Seeder
             ],
             [
                 'model_name' => 'David',
-                'description' => 'Black, white and laid-back denim.',
                 'runway_image' => "{$base}/model-6-640.webp",
                 'hi_res_image' => "{$base}/original-look-6.webp",
                 'pieces' => [
@@ -94,7 +90,6 @@ class TryOnLookSeeder extends Seeder
             ],
             [
                 'model_name' => 'Joseph',
-                'description' => 'Burgundy layers. A tailored perspective.',
                 'runway_image' => "{$base}/model-3-640.webp",
                 'hi_res_image' => "{$base}/original-look-3.webp",
                 'pieces' => [
@@ -111,7 +106,6 @@ class TryOnLookSeeder extends Seeder
             ],
             [
                 'model_name' => 'Issac',
-                'description' => 'A grey crew and your favourite denim.',
                 'runway_image' => "{$base}/model-2-640.webp",
                 'hi_res_image' => "{$base}/original-look-2.webp",
                 'pieces' => [

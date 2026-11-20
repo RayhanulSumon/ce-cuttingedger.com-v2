@@ -11,9 +11,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ClientPortalController extends Controller
 {
@@ -152,6 +155,37 @@ class ClientPortalController extends Controller
     }
 
     /**
+     * Download the private raw ZIP package for a paid or completed Digital Twin order.
+     */
+    public function downloadDigitalTwinPackage(Request $request, Order $order): StreamedResponse
+    {
+        $user = $request->user();
+        $ownsOrder = $order->user_id === $user->id
+            || strtolower((string) $order->client_email) === strtolower($user->email);
+
+        if (! $ownsOrder) {
+            abort(403, 'You do not have permission to download assets for this order.');
+        }
+
+        if (! str_starts_with((string) $order->order_type, 'digital_twin')) {
+            abort(403, 'This order is not a Digital Twin purchase.');
+        }
+
+        if ($order->payment_status !== 'paid' && $order->status !== 'completed') {
+            abort(403, 'Raw package download unlocks once payment is confirmed.');
+        }
+
+        $twin = $order->digitalTwin;
+        if (! $twin || ! $twin->source_zip_path || ! Storage::disk('local')->exists($twin->source_zip_path)) {
+            abort(404, 'Raw package is not available for this model yet.');
+        }
+
+        $downloadName = $twin->source_zip_name ?: Str::slug($twin->name).'-raw-pack.zip';
+
+        return Storage::disk('local')->download($twin->source_zip_path, $downloadName);
+    }
+
+    /**
      * Link unassociated email-matched orders and fetch formatted client order records.
      *
      * @return Collection<int, array<string, mixed>>
@@ -162,32 +196,57 @@ class ClientPortalController extends Controller
             ->where('client_email', strtolower($user->email))
             ->update(['user_id' => $user->id]);
 
-        return Order::where('user_id', $user->id)
-            ->orWhere('client_email', strtolower($user->email))
+        return Order::with('digitalTwin')
+            ->where(function ($query) use ($user): void {
+                $query->where('user_id', $user->id)
+                    ->orWhere('client_email', strtolower($user->email));
+            })
             ->latest('id')
             ->get()
-            ->map(fn (Order $order): array => [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'order_type' => $order->order_type ?? 'custom_order',
-                'service_name' => $order->service_name,
-                'complexity' => $order->complexity,
-                'quantity' => $order->quantity,
-                'uploaded_count' => $order->uploaded_count,
-                'total_price' => (float) $order->total_price,
-                'currency' => $order->currency,
-                'turnaround' => $order->turnaround,
-                'images' => (array) ($order->images ?? []),
-                'completed_files' => (array) ($order->completed_files ?? []),
-                'specifications' => (array) ($order->specifications ?? []),
-                'cloud_link' => $order->cloud_link,
-                'instructions' => $order->instructions,
-                'status' => $order->status,
-                'payment_status' => $order->payment_status,
-                'created_at' => $order->created_at->toISOString(),
-                'created_at_timestamp' => $order->created_at->timestamp,
-                'created_at_formatted' => $order->created_at->format('M j, Y \a\t g:i A'),
-            ]);
+            ->map(function (Order $order): array {
+                $isUnlocked = $order->payment_status === 'paid' || $order->status === 'completed';
+                $twin = $order->digitalTwin;
+                $hasPrivateZip = $twin
+                    && str_starts_with((string) $order->order_type, 'digital_twin')
+                    && ! empty($twin->source_zip_path)
+                    && Storage::disk('local')->exists($twin->source_zip_path);
+
+                $downloadUrl = ($isUnlocked && $hasPrivateZip)
+                    ? route('client.portal.orders.download-twin', $order)
+                    : null;
+                $downloadName = ($isUnlocked && $hasPrivateZip)
+                    ? ($twin->source_zip_name ?: Str::slug($twin->name).'-raw-pack.zip')
+                    : null;
+                $downloadSize = ($isUnlocked && $hasPrivateZip)
+                    ? $twin->source_zip_size
+                    : null;
+
+                return [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'order_type' => $order->order_type ?? 'custom_order',
+                    'service_name' => $order->service_name,
+                    'complexity' => $order->complexity,
+                    'quantity' => $order->quantity,
+                    'uploaded_count' => $order->uploaded_count,
+                    'total_price' => (float) $order->total_price,
+                    'currency' => $order->currency,
+                    'turnaround' => $order->turnaround,
+                    'images' => (array) ($order->images ?? []),
+                    'completed_files' => (array) ($order->completed_files ?? []),
+                    'digital_twin_download_url' => $downloadUrl,
+                    'digital_twin_download_name' => $downloadName,
+                    'digital_twin_download_size' => $downloadSize,
+                    'specifications' => (array) ($order->specifications ?? []),
+                    'cloud_link' => $order->cloud_link,
+                    'instructions' => $order->instructions,
+                    'status' => $order->status,
+                    'payment_status' => $order->payment_status,
+                    'created_at' => $order->created_at->toISOString(),
+                    'created_at_timestamp' => $order->created_at->timestamp,
+                    'created_at_formatted' => $order->created_at->format('M j, Y \a\t g:i A'),
+                ];
+            });
     }
 
     /**

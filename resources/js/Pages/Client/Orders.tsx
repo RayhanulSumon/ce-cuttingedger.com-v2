@@ -31,7 +31,9 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
         ).length;
         const completedCount = orders.filter((o) => o.status === 'completed').length;
         const deliverablesCount = orders.filter(
-            (o) => Array.isArray(o.completed_files) && o.completed_files.length > 0
+            (o) =>
+                Boolean(o.digital_twin_download_url) ||
+                (Array.isArray(o.completed_files) && o.completed_files.length > 0)
         ).length;
 
         return {
@@ -178,8 +180,9 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                             {filteredOrders.map((order) => {
                                 const isCreditOrder = order.order_type === 'credit_usage';
                                 const hasDeliverables =
-                                    Array.isArray(order.completed_files) &&
-                                    order.completed_files.length > 0;
+                                    Boolean(order.digital_twin_download_url) ||
+                                    (Array.isArray(order.completed_files) &&
+                                        order.completed_files.length > 0);
 
                                 return (
                                     <div
@@ -239,10 +242,20 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     </span>
                                                 )}
                                                 {hasDeliverables && (
-                                                    <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
-                                                        <Download className="h-3 w-3" />
-                                                        <span>{order.completed_files.length} Ready</span>
-                                                    </span>
+                                                    order.digital_twin_download_url ? (
+                                                        <a
+                                                            href={order.digital_twin_download_url}
+                                                            className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700"
+                                                        >
+                                                            <Download className="h-3 w-3" />
+                                                            <span>Download ZIP</span>
+                                                        </a>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
+                                                            <Download className="h-3 w-3" />
+                                                            <span>{order.completed_files.length} Ready</span>
+                                                        </span>
+                                                    )
                                                 )}
                                             </div>
 
@@ -280,8 +293,9 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                         {filteredOrders.map((order) => {
                                             const isCreditOrder = order.order_type === 'credit_usage';
                                             const hasDeliverables =
-                                                Array.isArray(order.completed_files) &&
-                                                order.completed_files.length > 0;
+                                                Boolean(order.digital_twin_download_url) ||
+                                                (Array.isArray(order.completed_files) &&
+                                                    order.completed_files.length > 0);
 
                                             return (
                                                 <tr
@@ -328,13 +342,23 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     <td className="whitespace-nowrap px-5 py-4 text-right">
                                                         <div className="inline-flex items-center justify-end gap-2">
                                                             {hasDeliverables && (
-                                                                <span
-                                                                    title="Deliverables ready"
-                                                                    className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700"
-                                                                >
-                                                                    <Download className="h-3 w-3" />
-                                                                    <span>{order.completed_files.length}</span>
-                                                                </span>
+                                                                order.digital_twin_download_url ? (
+                                                                    <a
+                                                                        href={order.digital_twin_download_url}
+                                                                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700"
+                                                                    >
+                                                                        <Download className="h-3 w-3" />
+                                                                        <span>ZIP</span>
+                                                                    </a>
+                                                                ) : (
+                                                                    <span
+                                                                        title="Deliverables ready"
+                                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700"
+                                                                    >
+                                                                        <Download className="h-3 w-3" />
+                                                                        <span>{order.completed_files.length}</span>
+                                                                    </span>
+                                                                )
                                                             )}
                                                             <Button
                                                                 variant="outline"

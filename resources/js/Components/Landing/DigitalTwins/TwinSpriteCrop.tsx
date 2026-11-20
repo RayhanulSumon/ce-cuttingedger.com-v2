@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { DigitalTwinModel, TWIN_MODELS_SPRITE, TWIN_PIECES_SPRITE, TWIN_Y0, TWIN_Y1, TwinPosePreset } from './twins';
+import { DigitalTwinModel, TWIN_MODELS_SPRITE, TWIN_Y0, TWIN_Y1, TwinPosePreset } from './twins';
 
 /** One rectangular region of a sprite sheet, drawn as a self-sizing SVG. */
 function SpriteCrop({
@@ -110,27 +110,3 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
         />
     );
 });
-
-/** A garment cut from the Digital Twins pieces sheet. `box` is `[x0, x1, y0, y1]`. */
-export function PieceSpriteCrop({
-    box,
-    className = 'h-full w-full',
-}: {
-    box: [number, number, number, number];
-    className?: string;
-}) {
-    const [x0, x1, y0, y1] = box;
-
-    return (
-        <SpriteCrop
-            href={TWIN_PIECES_SPRITE}
-            sheetWidth={960}
-            sheetHeight={720}
-            x={x0}
-            y={y0}
-            width={x1 - x0}
-            height={y1 - y0}
-            className={className}
-        />
-    );
-}

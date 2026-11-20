@@ -13,6 +13,9 @@ export interface ClientOrderItem {
     turnaround: string;
     images: string[];
     completed_files: string[];
+    digital_twin_download_url?: string | null;
+    digital_twin_download_name?: string | null;
+    digital_twin_download_size?: number | null;
     specifications: Record<string, any>;
     cloud_link?: string | null;
     instructions?: string | null;

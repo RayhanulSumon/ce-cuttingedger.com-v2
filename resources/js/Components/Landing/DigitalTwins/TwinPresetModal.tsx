@@ -42,7 +42,6 @@ function buildDigitalTwinMailtoUrl(
         : `Buy this preset (All ${twin.poses.length} poses included)`;
     const price = isLifetime ? twin.lifetimePrice : twin.presetPrice;
     const posesIncluded = twin.poses.map((p) => p.shortName || p.title).join(', ');
-    const deliverables = (twin.deliverables || []).join(', ');
 
     const bodyLines = [
         'Hello CuttingEdger Studio,',
@@ -53,12 +52,10 @@ function buildDigitalTwinMailtoUrl(
         '',
         `Model: ${name} (Look ${twin.lookNumber})`,
         `Category: ${twin.archetype}`,
-        `Collection: ${twin.collection}`,
         `Package: ${packageLabel}`,
         `Price: ${price}`,
         `Poses Included (${twin.poses.length}): ${posesIncluded}`,
         `Viewed Pose: ${pose.shortName || pose.code} — ${pose.title} (${pose.angle} · ${pose.lens})`,
-        `Deliverables: ${deliverables}`,
         `Model Description: ${twin.description}`,
         '',
         'Client Details:',

@@ -37,7 +37,6 @@ class TryOnLook extends Model
             'id' => $this->id,
             'slug' => $this->slug,
             'modelName' => $this->model_name,
-            'description' => $this->description ?? '',
             'model' => $this->runway_image,
             'modelHiRes' => $this->hi_res_image ?: $this->runway_image,
             'pieces' => (array) ($this->pieces ?? []),

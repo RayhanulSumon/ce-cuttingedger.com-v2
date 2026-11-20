@@ -9,9 +9,12 @@ use App\Rules\StudioImageDimensions;
 use App\Services\Media\ImageOptimizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminDigitalTwinController extends Controller
 {
@@ -25,7 +28,7 @@ class AdminDigitalTwinController extends Controller
             ->orderBy('id')
             ->get()
             ->values()
-            ->map(fn (DigitalTwin $twin, int $idx) => $twin->toFrontendArray($idx));
+            ->map(fn (DigitalTwin $twin, int $idx) => $twin->toAdminArray($idx));
 
         $attributes = DigitalTwinAttribute::query()
             ->orderBy('sort_order')
@@ -71,15 +74,27 @@ class AdminDigitalTwinController extends Controller
 
         $slug = Str::slug($validated['name']).'-'.Str::lower(Str::random(4));
 
+        $zipMeta = [
+            'source_zip_path' => null,
+            'source_zip_name' => null,
+            'source_zip_size' => null,
+        ];
+
+        if ($request->hasFile('source_zip') && $request->file('source_zip')->isValid()) {
+            $zipMeta = $this->storeSourceZip($request->file('source_zip'));
+        }
+
         DigitalTwin::create([
             'name' => $validated['name'],
             'slug' => $slug,
             'look_number' => $validated['look_number'],
             'archetype' => $validated['archetype'],
-            'collection' => $validated['collection'] ?? null,
             'description' => $validated['description'],
             'runway_image' => $imageMeta['runway_image'],
             'hi_res_image' => $imageMeta['hi_res_image'],
+            'source_zip_path' => $zipMeta['source_zip_path'],
+            'source_zip_name' => $zipMeta['source_zip_name'],
+            'source_zip_size' => $zipMeta['source_zip_size'],
             'aspect_ratio' => $imageMeta['aspect_ratio'],
             'preset_price' => $validated['preset_price'],
             'custom_order_price' => $validated['custom_order_price'] ?? '$290',
@@ -87,11 +102,6 @@ class AdminDigitalTwinController extends Controller
             'is_copyright_sold' => $request->boolean('is_copyright_sold', false),
             'download_count' => (int) ($validated['download_count'] ?? 0),
             'listed_at' => $validated['listed_at'] ?? now()->format('Y-m-d'),
-            'deliverables' => $validated['deliverables'] ?? [
-                '6 Multi-Angle Pose Presets (8K PNG/TIFF)',
-                'Layered PSD + Garment UV Smart Masks',
-                'Commercial Global Campaign License',
-            ],
             'poses' => $poses,
             'is_featured_on_home' => $request->boolean('is_featured_on_home', true),
             'is_active' => $request->boolean('is_active', true),
@@ -115,7 +125,6 @@ class AdminDigitalTwinController extends Controller
             'name' => $validated['name'],
             'look_number' => $validated['look_number'],
             'archetype' => $validated['archetype'],
-            'collection' => $validated['collection'] ?? null,
             'description' => $validated['description'],
             'preset_price' => $validated['preset_price'],
             'custom_order_price' => $validated['custom_order_price'] ?? $digitalTwin->custom_order_price,
@@ -123,7 +132,6 @@ class AdminDigitalTwinController extends Controller
             'is_copyright_sold' => $request->boolean('is_copyright_sold', false),
             'download_count' => (int) ($validated['download_count'] ?? $digitalTwin->download_count),
             'listed_at' => $validated['listed_at'] ?? ($digitalTwin->listed_at ? $digitalTwin->listed_at->format('Y-m-d') : now()->format('Y-m-d')),
-            'deliverables' => $validated['deliverables'] ?? $digitalTwin->deliverables,
             'is_featured_on_home' => $request->boolean('is_featured_on_home', true),
             'is_active' => $request->boolean('is_active', true),
             'sort_order' => (int) ($validated['sort_order'] ?? $digitalTwin->sort_order),
@@ -138,6 +146,18 @@ class AdminDigitalTwinController extends Controller
             $updates['runway_image'] = $imageMeta['runway_image'];
             $updates['hi_res_image'] = $imageMeta['hi_res_image'];
             $updates['aspect_ratio'] = $imageMeta['aspect_ratio'];
+        }
+
+        if ($request->hasFile('source_zip') && $request->file('source_zip')->isValid()) {
+            $updates = array_merge(
+                $updates,
+                $this->storeSourceZip($request->file('source_zip'), $digitalTwin->source_zip_path),
+            );
+        } elseif ($request->boolean('remove_source_zip') && $digitalTwin->source_zip_path) {
+            Storage::disk('local')->delete($digitalTwin->source_zip_path);
+            $updates['source_zip_path'] = null;
+            $updates['source_zip_name'] = null;
+            $updates['source_zip_size'] = null;
         }
 
         $poses = ! empty($validated['poses']) ? $validated['poses'] : ($digitalTwin->poses ?: DigitalTwin::defaultPoses());
@@ -157,6 +177,20 @@ class AdminDigitalTwinController extends Controller
     }
 
     /**
+     * Download the private raw ZIP package from Admin.
+     */
+    public function downloadPackage(DigitalTwin $digitalTwin): StreamedResponse
+    {
+        if (! $digitalTwin->source_zip_path || ! Storage::disk('local')->exists($digitalTwin->source_zip_path)) {
+            abort(404, 'No raw ZIP package uploaded for this Digital Twin.');
+        }
+
+        $downloadName = $digitalTwin->source_zip_name ?: Str::slug($digitalTwin->name).'-raw-pack.zip';
+
+        return Storage::disk('local')->download($digitalTwin->source_zip_path, $downloadName);
+    }
+
+    /**
      * Quick toggle for Sold Out (is_copyright_sold) status.
      */
     public function toggleSoldOut(DigitalTwin $digitalTwin): RedirectResponse
@@ -169,7 +203,7 @@ class AdminDigitalTwinController extends Controller
     }
 
     /**
-     * Delete a Digital Twin model.
+     * Delete a Digital Twin model and its public/private assets.
      */
     public function destroy(DigitalTwin $digitalTwin, ImageOptimizationService $optimizer): RedirectResponse
     {
@@ -180,6 +214,11 @@ class AdminDigitalTwinController extends Controller
             $digitalTwin->hi_res_image,
             ...$poseUrls,
         ]);
+
+        if ($digitalTwin->source_zip_path) {
+            Storage::disk('local')->delete($digitalTwin->source_zip_path);
+        }
+
         $digitalTwin->delete();
 
         return redirect()->back()->with('success', "Digital Twin [{$name}] removed.");
@@ -269,7 +308,28 @@ class AdminDigitalTwinController extends Controller
     }
 
     /**
-     * Shared validation rules enforcing transparent PNG/WebP format and studio aspect ratios.
+     * Persist an uploaded Digital Twin raw package on the private `local` disk.
+     *
+     * @return array{source_zip_path: string, source_zip_name: string, source_zip_size: int}
+     */
+    private function storeSourceZip(UploadedFile $file, ?string $oldPath = null): array
+    {
+        $filename = 'twin-'.Str::random(12).'.zip';
+        $storedPath = Storage::disk('local')->putFileAs('digital-twins/packages', $file, $filename);
+
+        if ($oldPath && $oldPath !== $storedPath) {
+            Storage::disk('local')->delete($oldPath);
+        }
+
+        return [
+            'source_zip_path' => $storedPath,
+            'source_zip_name' => $file->getClientOriginalName() ?: $filename,
+            'source_zip_size' => (int) ($file->getSize() ?: 0),
+        ];
+    }
+
+    /**
+     * Shared validation rules enforcing transparent PNG/WebP previews and private ZIP archives.
      *
      * @return array<string, mixed>
      */
@@ -279,7 +339,6 @@ class AdminDigitalTwinController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'look_number' => ['required', 'integer', 'min:1'],
             'archetype' => ['required', 'string', 'max:255'],
-            'collection' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:2000'],
             'preset_price' => ['required', 'string', 'max:50'],
             'custom_order_price' => ['nullable', 'string', 'max:50'],
@@ -287,7 +346,6 @@ class AdminDigitalTwinController extends Controller
             'is_copyright_sold' => ['boolean'],
             'download_count' => ['nullable', 'integer', 'min:0'],
             'listed_at' => ['nullable', 'date'],
-            'deliverables' => ['nullable', 'array'],
             'poses' => ['nullable', 'array'],
             'is_featured_on_home' => ['boolean'],
             'is_active' => ['boolean'],
@@ -320,11 +378,13 @@ class AdminDigitalTwinController extends Controller
                     recommendedSize: '900×1200',
                 ),
             ],
+            'source_zip' => ['nullable', 'file', 'mimes:zip', 'max:512000'],
+            'remove_source_zip' => ['boolean'],
         ];
     }
 
     /**
-     * Explicit validation messages for unsupported Digital Twin formats.
+     * Explicit validation messages for Digital Twin uploads.
      *
      * @return array<string, string>
      */
@@ -333,6 +393,7 @@ class AdminDigitalTwinController extends Controller
         return [
             'model_image.mimes' => 'PNG or WebP only (transparent background).',
             'pose_images.*.mimes' => 'PNG or WebP only (transparent background).',
+            'source_zip.mimes' => 'Raw package must be a .zip archive.',
         ];
     }
 }

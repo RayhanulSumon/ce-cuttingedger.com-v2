@@ -478,7 +478,6 @@ class DigitalTwinsAndTryOnTest extends TestCase
             'name' => 'Studio Twin Alpha',
             'look_number' => 99,
             'archetype' => 'Female',
-            'collection' => 'Spring Summer 2027',
             'description' => 'Full body transparent runway model.',
             'preset_price' => '$149',
             'custom_order_price' => '$290',
@@ -527,5 +526,116 @@ class DigitalTwinsAndTryOnTest extends TestCase
             'name' => 'Studio Twin Alpha',
             'look_number' => 99,
         ]);
+    }
+
+    public function test_digital_twin_private_source_zip_upload_and_paid_client_download(): void
+    {
+        Storage::fake('public');
+        Storage::fake('local');
+        Mail::fake();
+
+        $tmpZip = tempnam(sys_get_temp_dir(), 'twinzip');
+        $zip = new \ZipArchive;
+        $zip->open($tmpZip, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $zip->addFromString('README.txt', 'Raw 8K layered studio files for Laura');
+        $zip->close();
+        $zipContent = (string) file_get_contents($tmpZip);
+        @unlink($tmpZip);
+
+        $this->actingAs($this->admin)
+            ->post('/admin/digital-twins', [
+                'name' => 'Laura Raw',
+                'look_number' => 101,
+                'archetype' => 'Female',
+                'description' => 'Photoreal studio twin with private raw ZIP pack.',
+                'preset_price' => '$149',
+                'custom_order_price' => '$290',
+                'lifetime_price' => '$490',
+                'is_featured_on_home' => false,
+                'is_active' => true,
+                'sort_order' => 101,
+                'model_image' => UploadedFile::fake()->image('laura.png', 1080, 1920),
+                'source_zip' => UploadedFile::fake()->createWithContent('laura-raw-pack.zip', $zipContent),
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $twin = DigitalTwin::where('name', 'Laura Raw')->firstOrFail();
+
+        $this->assertNotNull($twin->source_zip_path);
+        $this->assertSame('laura-raw-pack.zip', $twin->source_zip_name);
+        $this->assertGreaterThan(0, $twin->source_zip_size);
+
+        // Public preview is stored on `public` disk as WebP; raw ZIP stays on `local` private disk
+        $this->assertStringEndsWith('.webp', $twin->runway_image);
+        Storage::disk('public')->assertExists(substr($twin->runway_image, strlen('/storage/')));
+        Storage::disk('local')->assertExists($twin->source_zip_path);
+        Storage::disk('public')->assertMissing($twin->source_zip_path);
+
+        // Public catalog JSON never leaks private source_zip_path
+        $catalog = $this->getJson('/api/catalog/digital-twins')->assertOk();
+        $catalogItem = collect($catalog->json('data'))->firstWhere('id', $twin->id);
+        $this->assertNotNull($catalogItem);
+        $this->assertArrayNotHasKey('source_zip_path', $catalogItem);
+        $this->assertArrayNotHasKey('sourceZipPath', $catalogItem);
+
+        // Admin can download the private raw ZIP
+        $this->actingAs($this->admin)
+            ->get("/admin/digital-twins/{$twin->id}/download-package")
+            ->assertOk();
+
+        // Client submits a preset purchase order (initially unpaid/pending)
+        $this->actingAs($this->client)
+            ->post('/digital-twins/order', [
+                'mode' => 'preset',
+                'digital_twin_id' => $twin->id,
+                'name' => $this->client->name,
+                'email' => $this->client->email,
+            ])
+            ->assertRedirect();
+
+        $order = Order::where('digital_twin_id', $twin->id)->latest('id')->firstOrFail();
+
+        // Unpaid order cannot download the raw ZIP
+        $this->actingAs($this->client)
+            ->get("/portal/orders/{$order->id}/download-twin-package")
+            ->assertStatus(403);
+
+        // Another client cannot download the raw ZIP
+        $otherClient = User::factory()->create([
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+        $this->actingAs($otherClient)
+            ->get("/portal/orders/{$order->id}/download-twin-package")
+            ->assertStatus(403);
+
+        // Admin marks order as paid/completed
+        $this->actingAs($this->admin)
+            ->put("/admin/orders/{$order->id}", [
+                'status' => 'completed',
+                'payment_status' => 'paid',
+            ])
+            ->assertRedirect();
+
+        // Paid client sees download URL in Portal Orders and can download the full ZIP
+        $this->actingAs($this->client)
+            ->get('/portal/orders')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Client/Orders')
+                ->where('orders.0.id', $order->id)
+                ->where('orders.0.digital_twin_download_name', 'laura-raw-pack.zip')
+                ->where('orders.0.digital_twin_download_url', fn (?string $url) => ! empty($url))
+            );
+
+        $downloadResponse = $this->actingAs($this->client)
+            ->get("/portal/orders/{$order->id}/download-twin-package")
+            ->assertOk();
+
+        $this->assertStringContainsString(
+            'laura-raw-pack.zip',
+            (string) $downloadResponse->headers->get('content-disposition'),
+        );
     }
 }
