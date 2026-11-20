@@ -16,20 +16,18 @@ class CapabilityFactory extends Factory
      */
     public function definition(): array
     {
-        $title = fake()->unique()->words(3, true);
+        $title = Str::title(fake()->unique()->words(3, true));
+        $subtitle = fake()->sentence(8);
 
         return [
             'parent_id' => null,
-            'title' => Str::title($title),
+            'title' => $title,
             'slug' => Str::slug($title),
             'tag' => null,
-            'subtitle' => fake()->sentence(8),
-            'description' => fake()->paragraph(),
+            'subtitle' => $subtitle,
             'icon' => 'Layers',
-            'features' => [fake()->sentence(4), fake()->sentence(4)],
-            'deliverables' => [fake()->sentence(3)],
-            'process_steps' => [['title' => 'Brief', 'description' => fake()->sentence()]],
-            'faqs' => [['question' => fake()->sentence().'?', 'answer' => fake()->sentence()]],
+            'meta_title' => "{$title} | CuttingEdger",
+            'meta_description' => $subtitle,
             'is_active' => true,
             'sort_order' => 0,
         ];

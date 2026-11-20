@@ -21,10 +21,6 @@ class Capability extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'features' => 'array',
-        'deliverables' => 'array',
-        'process_steps' => 'array',
-        'faqs' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -62,6 +58,67 @@ class Capability extends Model
         return $this->parent_id && $this->parent
             ? "/capabilities/{$this->parent->slug}/{$this->slug}"
             : "/capabilities/{$this->slug}";
+    }
+
+    /**
+     * Minimal SEO & routing payload for public capability pages and catalog APIs.
+     *
+     * @return array<string, mixed>
+     */
+    public function toPublicArray(bool $includeParent = false, bool $includeChildren = false): array
+    {
+        $payload = [
+            'id' => $this->id,
+            'parent_id' => $this->parent_id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'tag' => $this->tag,
+            'subtitle' => $this->subtitle,
+            'icon' => $this->icon,
+            'image' => $this->image,
+            'meta_title' => $this->meta_title ?: "{$this->title} | CuttingEdger",
+            'meta_description' => $this->meta_description ?: $this->subtitle,
+            'is_active' => (bool) $this->is_active,
+            'sort_order' => (int) $this->sort_order,
+            'path' => $this->path,
+        ];
+
+        if ($includeParent) {
+            $payload['parent'] = $this->parent ? [
+                'id' => $this->parent->id,
+                'title' => $this->parent->title,
+                'slug' => $this->parent->slug,
+                'tag' => $this->parent->tag,
+                'subtitle' => $this->parent->subtitle,
+                'icon' => $this->parent->icon,
+                'image' => $this->parent->image,
+                'meta_title' => $this->parent->meta_title ?: "{$this->parent->title} | CuttingEdger",
+                'meta_description' => $this->parent->meta_description ?: $this->parent->subtitle,
+                'path' => $this->parent->path,
+            ] : null;
+        }
+
+        if ($includeChildren) {
+            $payload['children'] = $this->relationLoaded('children')
+                ? $this->children->map(fn (Capability $child) => [
+                    'id' => $child->id,
+                    'parent_id' => $child->parent_id,
+                    'title' => $child->title,
+                    'slug' => $child->slug,
+                    'tag' => $child->tag,
+                    'subtitle' => $child->subtitle,
+                    'icon' => $child->icon,
+                    'image' => $child->image,
+                    'meta_title' => $child->meta_title ?: "{$child->title} | CuttingEdger",
+                    'meta_description' => $child->meta_description ?: $child->subtitle,
+                    'is_active' => (bool) $child->is_active,
+                    'sort_order' => (int) $child->sort_order,
+                    'path' => "/capabilities/{$this->slug}/{$child->slug}",
+                ])->values()->all()
+                : [];
+        }
+
+        return $payload;
     }
 
     protected static function booted(): void

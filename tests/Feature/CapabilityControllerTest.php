@@ -27,12 +27,46 @@ class CapabilityControllerTest extends TestCase
         }
     }
 
-    public function test_capabilities_have_no_price_columns(): void
+    public function test_capabilities_have_no_price_or_legacy_description_columns(): void
     {
-        foreach (Schema::getColumnListing('capabilities') as $column) {
+        $columns = Schema::getColumnListing('capabilities');
+
+        foreach ($columns as $column) {
             $this->assertStringNotContainsString('price', $column);
             $this->assertStringNotContainsString('rate', $column);
         }
+
+        $this->assertNotContains('description', $columns);
+        $this->assertNotContains('features', $columns);
+        $this->assertNotContains('deliverables', $columns);
+        $this->assertNotContains('process_steps', $columns);
+        $this->assertNotContains('faqs', $columns);
+    }
+
+    public function test_capability_pages_and_api_only_send_seo_and_routing_fields_without_description(): void
+    {
+        $this->get('/capabilities/2d/background-removal')
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Capabilities/Show')
+                ->where('capability.slug', 'background-removal')
+                ->where('capability.meta_title', 'Photo Background Removal & Clipping Path Services | CuttingEdger')
+                ->missing('capability.description')
+                ->missing('capability.features')
+                ->missing('capability.deliverables')
+                ->missing('capability.process_steps')
+                ->missing('capability.faqs')
+                ->missing('relatedProjects')
+            );
+
+        $apiResponse = $this->getJson('/api/catalog/capabilities')->assertOk();
+        $firstMain = $apiResponse->json('data.0');
+        $this->assertArrayHasKey('meta_title', $firstMain);
+        $this->assertArrayHasKey('meta_description', $firstMain);
+        $this->assertArrayNotHasKey('description', $firstMain);
+        $this->assertArrayNotHasKey('features', $firstMain);
+        $this->assertArrayNotHasKey('deliverables', $firstMain);
+        $this->assertArrayNotHasKey('faqs', $firstMain);
     }
 
     public function test_index_lists_main_capabilities_with_their_children(): void

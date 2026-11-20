@@ -22,7 +22,13 @@ class AdminCapabilityController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Capabilities/Index', [
-            'capabilities' => Capability::main()->with('children')->orderBy('sort_order')->get(),
+            'capabilities' => Capability::main()
+                ->with('children')
+                ->orderBy('sort_order')
+                ->get()
+                ->map(fn (Capability $main) => $main->toPublicArray(includeChildren: true))
+                ->values()
+                ->all(),
         ]);
     }
 
@@ -71,20 +77,9 @@ class AdminCapabilityController extends Controller
             'slug' => ['nullable', 'string', 'max:255'],
             'tag' => ['nullable', 'string', 'max:20'],
             'subtitle' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
             'icon' => ['required', 'string', 'max:50'],
             'image_file' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,avif,gif', 'max:10240'],
             'remove_image' => ['nullable', 'boolean'],
-            'features' => ['nullable', 'array'],
-            'features.*' => ['string', 'max:255'],
-            'deliverables' => ['nullable', 'array'],
-            'deliverables.*' => ['string', 'max:255'],
-            'process_steps' => ['nullable', 'array'],
-            'process_steps.*.title' => ['required', 'string', 'max:255'],
-            'process_steps.*.description' => ['required', 'string', 'max:500'],
-            'faqs' => ['nullable', 'array'],
-            'faqs.*.question' => ['required', 'string', 'max:255'],
-            'faqs.*.answer' => ['required', 'string', 'max:1000'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['boolean'],
@@ -110,9 +105,6 @@ class AdminCapabilityController extends Controller
         $validated['parent_id'] = ! empty($validated['parent_id']) ? $validated['parent_id'] : null;
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
-        $validated['description'] = ! empty($validated['description'])
-            ? $validated['description']
-            : ($capability?->description ?: $validated['subtitle']);
 
         return $validated;
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight, Check, HelpCircle, Layers } from 'lucide-react';
+import { ArrowUpRight, HelpCircle, Layers } from 'lucide-react';
 
 export interface ChatCard {
     type: string;
@@ -14,25 +14,6 @@ interface InfoCardsProps {
 
 const SURFACE = 'rounded-2xl border border-ink/10 bg-surface p-4 text-left shadow-sm';
 const LABEL = 'text-[10px] font-semibold uppercase tracking-[0.18em] text-subtle';
-
-function BulletList({ title, items }: { title: string; items: string[] }) {
-    if (!items?.length) {
-        return null;
-    }
-    return (
-        <div>
-            <p className={LABEL}>{title}</p>
-            <ul className="mt-1.5 space-y-1">
-                {items.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-[12px] leading-snug text-ink-2">
-                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={3} />
-                        {item}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-}
 
 export function InfoCards({ card, onAsk }: InfoCardsProps) {
     switch (card.type) {
@@ -81,8 +62,6 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                         <p className="text-sm font-bold leading-snug text-ink">{card.title}</p>
                         {card.subtitle && <p className="mt-0.5 text-[12px] leading-snug text-muted">{card.subtitle}</p>}
                     </div>
-                    <BulletList title="What you get" items={card.features ?? []} />
-                    <BulletList title="Deliverables" items={card.deliverables ?? []} />
                     {card.children?.length > 0 && (
                         <div>
                             <p className={LABEL}>Specialities</p>

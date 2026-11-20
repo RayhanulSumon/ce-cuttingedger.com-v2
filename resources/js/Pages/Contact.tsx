@@ -22,8 +22,25 @@ import { PageProps } from '@/types';
 
 
 export default function Contact() {
-    const { settings, flash, capabilities_nav = [] } = usePage<PageProps>().props;
+    const { url, props } = usePage<PageProps>();
+    const { settings, flash, capabilities_nav = [] } = props;
     const capabilityOptions = [...capabilities_nav.map((capability) => capability.title), 'Not sure yet'];
+    const query = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : (url.split('?')[1] ?? ''),
+    );
+    const requestedService = query.get('service')?.trim() ?? '';
+    const requestedCapability = query.get('capability')?.trim() ?? '';
+    const matchedService = requestedService
+        ? capabilityOptions.find(
+              (option) =>
+                  option.toLowerCase() === requestedService.toLowerCase() ||
+                  option.toLowerCase().includes(requestedService.toLowerCase()),
+          ) ?? capabilityOptions[0]
+        : capabilityOptions[0];
+    const initialMessage = requestedCapability
+        ? `Interested in ${requestedCapability}. Please share turnaround and quote details for our upcoming batch.`
+        : '';
+
     const contactEmail = (settings as any)?.contact_email || 'hello@cuttingedger.com';
     const contactPhone = (settings as any)?.contact_phone || '+1 (409) 995-2565';
     const contactAddress = (settings as any)?.company_address || 'Artisan Center, Panthapath, Dhaka 1215';
@@ -35,12 +52,23 @@ export default function Contact() {
         phone: '',
         company: '',
         website: '',
-        service_interest: capabilityOptions[0],
-        message: '',
+        service_interest: matchedService,
+        message: initialMessage,
         honeypot: '',
         captcha_answer: '',
         captcha_token: '',
     });
+
+    useEffect(() => {
+        if (!requestedService && !requestedCapability) {
+            return;
+        }
+        setData((prev) => ({
+            ...prev,
+            service_interest: requestedService ? matchedService : prev.service_interest,
+            message: prev.message === '' && initialMessage ? initialMessage : prev.message,
+        }));
+    }, [requestedService, requestedCapability, matchedService, initialMessage]);
 
     const [captchaQuestion, setCaptchaQuestion] = useState<string>('');
 

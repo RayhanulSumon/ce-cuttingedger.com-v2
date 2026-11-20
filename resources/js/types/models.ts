@@ -42,19 +42,25 @@ export interface Project {
 export interface Capability {
     id: number;
     parent_id: number | null;
-    parent?: Capability | null;
+    parent?: {
+        id: number;
+        title: string;
+        slug: string;
+        tag: string | null;
+        subtitle?: string;
+        icon?: string;
+        image?: string | null;
+        meta_title?: string | null;
+        meta_description?: string | null;
+        path?: string;
+    } | null;
     children?: Capability[];
     title: string;
     slug: string;
     tag: string | null;
     subtitle: string;
-    description: string;
     icon: string;
     image?: string | null;
-    features: string[] | null;
-    deliverables: string[] | null;
-    process_steps: { title: string; description: string }[] | null;
-    faqs: { question: string; answer: string }[] | null;
     meta_title: string | null;
     meta_description: string | null;
     is_active: boolean;

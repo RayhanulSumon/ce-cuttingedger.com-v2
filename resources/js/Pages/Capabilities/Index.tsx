@@ -1,19 +1,47 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
-import { capabilityIcon } from '@/Components/Common/capabilityIcons';
-import { PageHero } from '@/Components/Common/PageHero';
+import {
+    CapabilityCard,
+    CapabilityPageHeader,
+    pathForCapability,
+} from '@/Components/Capabilities/CapabilityShared';
 import { SeoHead } from '@/Components/Common/SeoHead';
+import { PAD_X } from '@/Components/Landing/shared';
 import { Capability } from '@/types/models';
 
 interface CapabilitiesIndexProps {
     capabilities: Capability[];
 }
 
-/** Every main capability with its sub-capabilities. All content is managed in the admin panel. */
+const ALL_TAB = 'All';
+
+/**
+ * Clean minimal Capabilities catalog index with compact header, department filter tabs,
+ * and uniform 4:3 visual cards matching DigitalTwinsShowcase.
+ */
 export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
+    const [activeTab, setActiveTab] = useState<string>(ALL_TAB);
+
+    const tabs = useMemo(() => {
+        const tags = capabilities.map((main) => main.tag || main.title);
+        return [ALL_TAB, ...tags];
+    }, [capabilities]);
+
+    const visibleMainCapabilities = useMemo(() => {
+        if (activeTab === ALL_TAB) {
+            return capabilities;
+        }
+        return capabilities.filter((main) => (main.tag || main.title) === activeTab);
+    }, [capabilities, activeTab]);
+
+    const totalSpecialities = useMemo(
+        () => visibleMainCapabilities.reduce((sum, main) => sum + (main.children?.length ?? 0), 0),
+        [visibleMainCapabilities],
+    );
+
     return (
-        <>
+        <div className="min-h-screen bg-white text-ink">
             <SeoHead
                 title="Capabilities: 2D, 3D, DTP and Video"
                 description="Explore CuttingEdger capabilities: 2D retouching, digital twins and virtual try-on, 3D modeling and CGI, DTP and catalog layout, and video, each with its own specialities."
@@ -23,70 +51,109 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
                 ]}
             />
 
-            <PageHero
-                eyebrow="Capabilities"
-                title="Four capabilities."
-                highlight="One connected studio."
-                description="2D, 3D, DTP and Video, each with the specialities your catalog and campaigns need. Pick one to see what we deliver and how it works."
+            <CapabilityPageHeader
+                eyebrow="2D · 3D · DTP · Video"
+                title="Capabilities"
+                subtitle="2D, 3D, DTP and Video production built for fashion and e-commerce catalogs."
+                ctaHref="/contact"
+                ctaLabel="Request a quote"
             />
 
-            <section className="bg-page py-16 sm:py-20">
-                <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
-                    {capabilities.map((capability) => {
-                        const Icon = capabilityIcon(capability.icon);
-                        const children = capability.children ?? [];
+            <section className={`py-6 sm:py-8 ${PAD_X}`}>
+                <div className="mx-auto max-w-[1440px]">
+                    {/* Under-Header Department Filter Tabs */}
+                    <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+                        <div
+                            role="tablist"
+                            aria-label="Filter capabilities by department"
+                            className="flex items-center gap-2 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        >
+                            {tabs.map((tab) => {
+                                const isSelected = activeTab === tab;
+                                return (
+                                    <button
+                                        key={tab}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={isSelected}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                                            isSelected
+                                                ? 'border-ink bg-ink text-white shadow-xs'
+                                                : 'border-ink/15 bg-white text-subtle hover:border-primary/60 hover:text-primary'
+                                        }`}
+                                    >
+                                        {tab}
+                                    </button>
+                                );
+                            })}
+                        </div>
 
-                        return (
-                            <article key={capability.id} className="rounded-3xl border border-ink/10 bg-surface p-6 sm:p-10">
-                                <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
-                                    <div>
-                                        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-ink text-white">
-                                            <Icon size={26} />
-                                        </span>
-                                        {capability.tag && (
-                                            <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em] text-primary-ink">{capability.tag}</p>
-                                        )}
-                                        <h2 className="mt-1 text-3xl font-extrabold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">
-                                            <Link href={`/capabilities/${capability.slug}`} prefetch className="transition-colors hover:text-primary">
-                                                {capability.title}
-                                            </Link>
-                                        </h2>
-                                        <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-2">{capability.subtitle}</p>
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                            {totalSpecialities} {totalSpecialities === 1 ? 'speciality' : 'specialities'}
+                        </span>
+                    </div>
+
+                    {/* Flat Hairline-Separated Sections Directly on bg-white */}
+                    <div className="divide-y divide-ink/10">
+                        {visibleMainCapabilities.map((main, idx) => {
+                            const children = main.children ?? [];
+
+                            return (
+                                <section
+                                    key={main.id}
+                                    className={idx === 0 ? 'pb-10' : 'py-10'}
+                                >
+                                    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                {main.tag && (
+                                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-primary-ink">
+                                                        {main.tag}
+                                                    </span>
+                                                )}
+                                                <h2 className="text-lg font-extrabold tracking-[-0.02em] text-ink sm:text-xl">
+                                                    <Link
+                                                        href={`/capabilities/${main.slug}`}
+                                                        prefetch
+                                                        className="transition-colors hover:text-primary"
+                                                    >
+                                                        {main.title}
+                                                    </Link>
+                                                </h2>
+                                            </div>
+                                            <p className="mt-1 text-xs text-subtle sm:text-sm">
+                                                {main.subtitle}
+                                            </p>
+                                        </div>
+
                                         <Link
-                                            href={`/capabilities/${capability.slug}`}
+                                            href={`/capabilities/${main.slug}`}
                                             prefetch
-                                            className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-primary"
+                                            className="inline-flex items-center gap-1 text-xs font-bold text-ink transition-colors hover:text-primary"
                                         >
-                                            Explore {capability.tag ?? capability.title}
-                                            <ArrowUpRight size={16} />
+                                            Explore {main.tag ?? main.title}
+                                            <ArrowUpRight size={13} />
                                         </Link>
                                     </div>
 
-                                    <ul className="grid gap-3 sm:grid-cols-2">
+                                    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                                         {children.map((child) => (
                                             <li key={child.id}>
-                                                <Link
-                                                    href={`/capabilities/${capability.slug}/${child.slug}`}
-                                                    prefetch
-                                                    className="group flex h-full items-start gap-3 rounded-2xl border border-ink/10 bg-page p-4 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-surface"
-                                                >
-                                                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface text-primary-ink transition-colors group-hover:bg-primary group-hover:text-white">
-                                                        {React.createElement(capabilityIcon(child.icon), { size: 17 })}
-                                                    </span>
-                                                    <span className="min-w-0">
-                                                        <span className="block text-sm font-bold leading-snug text-ink">{child.title}</span>
-                                                        <span className="mt-0.5 line-clamp-2 block text-[12.5px] leading-snug text-muted">{child.subtitle}</span>
-                                                    </span>
-                                                </Link>
+                                                <CapabilityCard
+                                                    capability={child}
+                                                    parent={main}
+                                                    href={pathForCapability(child, main)}
+                                                />
                                             </li>
                                         ))}
                                     </ul>
-                                </div>
-                            </article>
-                        );
-                    })}
+                                </section>
+                            );
+                        })}
+                    </div>
                 </div>
             </section>
-        </>
+        </div>
     );
 }

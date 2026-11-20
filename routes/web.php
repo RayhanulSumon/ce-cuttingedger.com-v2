@@ -299,6 +299,7 @@ Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
 |--------------------------------------------------------------------------
 */
 Route::prefix('api/catalog')->name('api.catalog.')->group(function (): void {
+    Route::get('/capabilities', [CapabilityController::class, 'apiIndex'])->name('capabilities');
     Route::get('/digital-twins', [OrderController::class, 'apiDigitalTwins'])->name('digital-twins');
     Route::get('/try-on-looks', [OrderController::class, 'apiTryOnLooks'])->name('try-on-looks');
 });

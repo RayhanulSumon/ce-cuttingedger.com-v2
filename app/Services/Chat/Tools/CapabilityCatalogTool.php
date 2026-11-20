@@ -53,8 +53,6 @@ class CapabilityCatalogTool
             'title' => $capability->title,
             'subtitle' => $capability->subtitle,
             'path' => $capability->path,
-            'features' => array_slice((array) $capability->features, 0, 4),
-            'deliverables' => array_slice((array) $capability->deliverables, 0, 4),
             'children' => $capability->children->map(fn (Capability $child) => [
                 'title' => $child->title,
                 'path' => $child->path,

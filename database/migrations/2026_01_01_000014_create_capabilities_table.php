@@ -19,13 +19,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('tag', 20)->nullable(); // short label for main capabilities, e.g. "2D"
             $table->string('subtitle');
-            $table->text('description');
             $table->string('icon', 50)->default('Layers');
             $table->string('image')->nullable();
-            $table->json('features')->nullable(); // ["Feature", ...]
-            $table->json('deliverables')->nullable(); // ["Deliverable", ...]
-            $table->json('process_steps')->nullable(); // [{"title": "", "description": ""}, ...]
-            $table->json('faqs')->nullable(); // [{"question": "", "answer": ""}, ...]
             $table->string('meta_title')->nullable();
             $table->string('meta_description', 500)->nullable();
             $table->boolean('is_active')->default(true);

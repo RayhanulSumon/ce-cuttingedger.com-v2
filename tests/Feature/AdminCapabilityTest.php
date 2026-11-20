@@ -31,12 +31,9 @@ class AdminCapabilityTest extends TestCase
         return array_merge([
             'title' => 'Product Cleanup',
             'subtitle' => 'Tidy product images.',
-            'description' => 'We clean up product images.',
             'icon' => 'Layers',
-            'features' => ['Dust removal'],
-            'deliverables' => ['PNG'],
-            'process_steps' => [['title' => 'Brief', 'description' => 'Send files.']],
-            'faqs' => [['question' => 'How long?', 'answer' => 'A day.']],
+            'meta_title' => 'Product Cleanup | CuttingEdger',
+            'meta_description' => 'Tidy product images for e-commerce catalogs.',
             'is_active' => true,
             'sort_order' => 9,
         ], $overrides);
