@@ -152,7 +152,7 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                     <div>
                         <div className="flex items-center justify-between gap-2">
                             <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
-                                Estimated total
+                                Total credits you get
                             </span>
                             {quote.totalBonusPct > 0 && (
                                 <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-2xs font-bold text-primary-ink">
@@ -162,13 +162,21 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                             )}
                         </div>
 
-                        <div className="mt-3 flex items-baseline justify-between gap-2 border-b border-ink/10 pb-3.5">
-                            <span className="text-3xl font-display font-extrabold tracking-tight tabular-nums text-ink sm:text-4xl">
-                                ${quote.totalPrice.toLocaleString()}
-                            </span>
-                            <span className="text-xs font-semibold text-primary-ink">
-                                ${quote.effectivePerCredit} / credit
-                            </span>
+                        <div className="mt-2.5 border-b border-ink/10 pb-3.5">
+                            <p className="flex items-baseline gap-1.5 font-display tracking-tight text-ink">
+                                <span className="text-3xl font-extrabold tabular-nums sm:text-4xl">
+                                    {quote.totalCredits.toLocaleString()}
+                                </span>
+                                <span className="text-sm font-bold text-ink-2">credits</span>
+                            </p>
+                            <div className="mt-1.5 flex items-baseline justify-between gap-2 text-xs">
+                                <span className="text-base font-display font-bold tabular-nums text-ink">
+                                    ${quote.totalPrice.toLocaleString()}
+                                </span>
+                                <span className="font-semibold text-primary-ink">
+                                    ${quote.effectivePerCredit} / credit
+                                </span>
+                            </div>
                         </div>
 
                         <dl className="mt-3.5 space-y-2 text-xs sm:text-sm">
@@ -187,12 +195,6 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                             <div className="flex justify-between gap-2">
                                 <dt className="text-muted">Validity</dt>
                                 <dd className="font-semibold text-ink">{quote.validityDays} days</dd>
-                            </div>
-                            <div className="flex justify-between gap-2 border-t border-ink/10 pt-2">
-                                <dt className="font-bold text-ink">Total credits</dt>
-                                <dd className="font-extrabold tabular-nums text-ink">
-                                    {quote.totalCredits.toLocaleString()}
-                                </dd>
                             </div>
                         </dl>
                     </div>

@@ -22,8 +22,8 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         effectiveRate: '$0.50 / credit',
         buttonLabel: 'Buy Starter Plan',
         features: [
-            'Valid for 90 days from activation',
             'Use across 2D, 3D, DTP & Try-On',
+            '24h standard turnaround',
             'Unlimited revisions with 2-step QA',
         ],
     },
@@ -40,9 +40,9 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         popular: true,
         buttonLabel: 'Buy Studio Plan',
         features: [
-            '2,000 + 300 bonus = 2,300 credits',
-            'Valid for 180 days from activation',
+            'Use across 2D, 3D, DTP & Try-On',
             '12–18h priority studio turnaround',
+            'Dedicated style guide & QA memory',
         ],
     },
     {
@@ -57,9 +57,9 @@ const PRESET_PLANS: PresetCreditPlan[] = [
         effectiveRate: '$0.32 / credit',
         buttonLabel: 'Buy Scale Plan',
         features: [
-            '5,000 + 1,250 bonus = 6,250 credits',
-            'Valid for 365 days (12 months) from activation',
+            'Use across 2D, 3D, DTP & Try-On',
             'Sub-6h rush lane & dedicated pod',
+            'Custom SFTP / API & Net-30 terms',
         ],
     },
 ];
@@ -212,29 +212,42 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                                 {plan.description}
                                             </p>
 
-                                            <div className="mt-5 border-y border-ink/10 py-4">
-                                                <div className="flex items-baseline justify-between gap-3">
-                                                    <p className="text-3xl font-display font-extrabold tracking-tight tabular-nums text-ink sm:text-[34px]">
-                                                        ${plan.totalPrice.toLocaleString()}
+                                            <div className="mt-5 rounded-2xl border border-ink/8 bg-page/75 p-4">
+                                                {/* Main Highlight: Total Credits (Primary Value) */}
+                                                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                                                    <p className="flex items-baseline gap-1.5 font-display tracking-tight text-ink">
+                                                        <span className="text-3xl font-extrabold tabular-nums sm:text-[34px]">
+                                                            {totalCredits.toLocaleString()}
+                                                        </span>
+                                                        <span className="text-sm font-bold text-ink-2">
+                                                            credits
+                                                        </span>
                                                     </p>
-                                                    <span className="text-xs font-semibold text-primary-ink">
-                                                        {plan.effectiveRate}
-                                                    </span>
-                                                </div>
-                                                <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-2">
-                                                    <span className="font-semibold">
-                                                        {totalCredits.toLocaleString()} credits
-                                                    </span>
-                                                    {plan.bonusCredits > 0 && (
-                                                        <span className="font-semibold text-primary-ink">
-                                                            (+{plan.bonusCredits.toLocaleString()} bonus)
+                                                    {plan.bonusCredits > 0 ? (
+                                                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-2xs font-bold text-primary-ink">
+                                                            +{plan.bonusCredits.toLocaleString()} bonus
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-2xs font-medium text-subtle">
+                                                            Standard pack
                                                         </span>
                                                     )}
-                                                    <span aria-hidden="true" className="text-subtle">
-                                                        &middot;
+                                                </div>
+
+                                                {/* Secondary Row: Dollar Amount, Rate & Validity */}
+                                                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-ink/10 pt-2.5 text-xs">
+                                                    <div className="flex items-baseline gap-2">
+                                                        <span className="text-base font-display font-bold tabular-nums text-ink">
+                                                            ${plan.totalPrice.toLocaleString()}
+                                                        </span>
+                                                        <span className="font-semibold text-primary-ink">
+                                                            ({plan.effectiveRate})
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-subtle">
+                                                        {plan.validityDays}-day validity
                                                     </span>
-                                                    <span className="text-subtle">{plan.validityDays}-day validity</span>
-                                                </p>
+                                                </div>
                                             </div>
 
                                             <ul className="mt-5 space-y-2.5">

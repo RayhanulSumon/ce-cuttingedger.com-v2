@@ -28,8 +28,8 @@ class PricingPlanSeeder extends Seeder
                 'price' => '$250',
                 'billing_cycle' => '$0.50 / credit',
                 'features' => [
-                    'Valid for 90 days from activation',
                     'Use across 2D, 3D, DTP & Try-On',
+                    '24h standard turnaround',
                     'Unlimited revisions with 2-step QA',
                 ],
                 'is_popular' => false,
@@ -48,9 +48,9 @@ class PricingPlanSeeder extends Seeder
                 'price' => '$900',
                 'billing_cycle' => '$0.39 / credit',
                 'features' => [
-                    '2,000 + 300 bonus = 2,300 credits',
-                    'Valid for 180 days from activation',
+                    'Use across 2D, 3D, DTP & Try-On',
                     '12–18h priority studio turnaround',
+                    'Dedicated style guide & QA memory',
                 ],
                 'is_popular' => true,
                 'cta_text' => 'Buy Studio Plan',
@@ -68,9 +68,9 @@ class PricingPlanSeeder extends Seeder
                 'price' => '$2,000',
                 'billing_cycle' => '$0.32 / credit',
                 'features' => [
-                    '5,000 + 1,250 bonus = 6,250 credits',
-                    'Valid for 365 days (12 months) from activation',
+                    'Use across 2D, 3D, DTP & Try-On',
                     'Sub-6h rush lane & dedicated pod',
+                    'Custom SFTP / API & Net-30 terms',
                 ],
                 'is_popular' => false,
                 'cta_text' => 'Buy Scale Plan',
