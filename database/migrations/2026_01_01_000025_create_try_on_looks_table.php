@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('model_name');
             $table->string('slug')->unique();
-            $table->string('description')->nullable();
             $table->string('runway_image', 1000);
             $table->string('hi_res_image', 1000);
             $table->json('pieces');

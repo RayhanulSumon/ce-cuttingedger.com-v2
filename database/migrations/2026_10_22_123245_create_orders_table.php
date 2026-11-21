@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table): void {
             $table->id();
             $table->string('order_number')->unique();
-            $table->string('order_type')->default('custom_order')->index(); // digital_twin_custom, digital_twin_preset, digital_twin_lifetime, virtual_try_on_quote, capability_quote, free_trial
+            $table->string('order_type')->default('custom_order')->index(); // digital_twin_custom, digital_twin_preset, digital_twin_lifetime, virtual_try_on_order, credit_usage, free_trial
             $table->foreignId('digital_twin_id')->nullable()->constrained('digital_twins')->nullOnDelete();
             $table->foreignId('try_on_look_id')->nullable()->constrained('try_on_looks')->nullOnDelete();
             $table->uuid('chat_session_id')->nullable()->index();

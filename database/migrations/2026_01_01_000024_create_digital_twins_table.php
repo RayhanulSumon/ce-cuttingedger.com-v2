@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->unsignedInteger('look_number')->default(1);
             $table->string('archetype');
-            $table->string('collection')->nullable();
             $table->text('description');
             $table->string('runway_image', 1000)->nullable();
             $table->string('hi_res_image', 1000)->nullable();
+            $table->string('source_zip_path', 1000)->nullable();
+            $table->string('source_zip_name')->nullable();
+            $table->unsignedBigInteger('source_zip_size')->nullable();
             $table->unsignedInteger('sprite_x0')->nullable();
             $table->unsignedInteger('sprite_x1')->nullable();
             $table->decimal('aspect_ratio', 6, 4)->default(0.3500);
@@ -30,8 +32,6 @@ return new class extends Migration
             $table->boolean('is_copyright_sold')->default(false)->index();
             $table->unsignedInteger('download_count')->default(0);
             $table->date('listed_at')->nullable();
-            $table->json('deliverables')->nullable();
-            $table->json('featured_pieces')->nullable();
             $table->json('poses')->nullable();
             $table->boolean('is_featured_on_home')->default(true);
             $table->boolean('is_active')->default(true);
