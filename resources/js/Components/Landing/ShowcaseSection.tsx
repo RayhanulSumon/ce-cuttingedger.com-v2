@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, X } from 'lucide-react';
@@ -197,6 +198,9 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
         if (!tile) {
             return;
         }
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 event.preventDefault();
@@ -205,14 +209,21 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
             }
         };
         window.addEventListener('keydown', onKeyDown, true);
-        return () => window.removeEventListener('keydown', onKeyDown, true);
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            window.removeEventListener('keydown', onKeyDown, true);
+        };
     }, [tile, onClose]);
 
-    return (
+    if (typeof document === 'undefined') {
+        return null;
+    }
+
+    return createPortal(
         <AnimatePresence>
             {tile && (
                 <motion.div
-                    className="absolute inset-0 z-[500] grid place-items-center bg-ink/55 p-4 backdrop-blur-sm"
+                    className="fixed inset-0 z-[500] flex items-center justify-center bg-ink/55 p-4 backdrop-blur-sm"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -224,7 +235,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                         aria-modal="true"
                         aria-label={tile.title}
                         data-scrollable
-                        className="relative grid max-h-full w-full max-w-3xl overflow-y-auto rounded-3xl bg-surface shadow-2xl sm:grid-cols-[0.9fr_1.1fr]"
+                        className="relative grid max-h-[min(88dvh,680px)] w-full max-w-3xl overflow-y-auto rounded-3xl bg-surface shadow-2xl sm:grid-cols-[0.9fr_1.1fr]"
                         initial={{ y: 24, scale: 0.97, opacity: 0 }}
                         animate={{ y: 0, scale: 1, opacity: 1 }}
                         exit={{ y: 16, scale: 0.98, opacity: 0 }}
@@ -280,7 +291,8 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                     </motion.div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body,
     );
 }
 
