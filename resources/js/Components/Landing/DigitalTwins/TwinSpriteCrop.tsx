@@ -57,7 +57,7 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
                 alt={`${twin.name} — ${pose.title}`}
                 decoding="async"
                 draggable={false}
-                className={`block select-none object-contain ${className}`}
+                className={`block select-none object-contain object-bottom ${className}`}
             />
         );
     }

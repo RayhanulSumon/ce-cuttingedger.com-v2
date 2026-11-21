@@ -39,10 +39,12 @@ export function getShortPoseName(id: string): string {
 export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStageProps, 'onSelectPose'>) {
     const pose = twin.poses[poseIndex] ?? twin.poses[0];
     const poseName = getShortPoseName(pose.id);
+    const showsFloor = pose.yEndFrac >= 0.95;
+    const isMidCrop = !showsFloor && pose.yStartFrac >= 0.1;
 
     return (
         <div
-            className="relative flex h-full min-h-[420px] flex-col justify-between overflow-hidden rounded-2xl border border-line p-5 shadow-xs"
+            className="relative flex h-full min-h-[420px] flex-col justify-between overflow-hidden rounded-2xl border border-line p-4 shadow-xs sm:p-5"
             style={{ background: pose.backdrop }}
         >
             <div className="relative z-10 flex items-start justify-between gap-2">
@@ -58,20 +60,28 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
                 </span>
             </div>
 
-            {/* Main model showcase — properly framed so head, dress and shoes fit without clipping */}
-            <div className="relative my-2 flex flex-1 items-center justify-center min-h-[260px] sm:min-h-[300px]">
-                <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute bottom-3 left-1/2 h-6 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.22),transparent)]"
-                />
+            {/* Main model showcase — fills full stage height with floor shadow anchored directly beneath the shoes */}
+            <div
+                className={`relative mt-2 flex h-[400px] min-h-0 w-full justify-center overflow-hidden sm:h-[480px] lg:h-auto lg:flex-1 ${
+                    isMidCrop ? 'items-center py-2' : showsFloor ? 'items-end pb-3' : 'items-end'
+                }`}
+            >
                 <motion.div
                     key={`${twin.index}-${pose.id}`}
                     initial={{ opacity: 0, scale: 0.98, y: 8 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 0.45, ease: EASE_OUT_QUART }}
-                    className="relative flex h-full max-h-[340px] w-full items-center justify-center p-2 sm:max-h-[460px]"
+                    className={`relative flex h-full w-full justify-center ${isMidCrop ? 'items-center' : 'items-end'}`}
                 >
-                    <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
+                    <span className="relative inline-flex h-full max-w-full items-end justify-center">
+                        {showsFloor && (
+                            <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute -bottom-1.5 left-1/2 z-0 h-4 w-[82%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(35,45,60,0.28),transparent)]"
+                            />
+                        )}
+                        <TwinSpriteCrop twin={twin} pose={pose} className="relative z-10 block h-full w-auto max-w-full select-none" />
+                    </span>
                 </motion.div>
             </div>
 
@@ -96,10 +106,12 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
 export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStageProps, 'onStepPose'>) {
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-rows-2">
                 {twin.poses.map((pose, i) => {
                     const selected = i === poseIndex;
                     const poseName = getShortPoseName(pose.id);
+                    const showsFloor = pose.yEndFrac >= 0.95;
+                    const isMidCrop = !showsFloor && pose.yStartFrac >= 0.1;
 
                     return (
                         <button
@@ -108,7 +120,9 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                             onClick={() => onSelectPose(i)}
                             aria-pressed={selected}
                             style={{ background: pose.backdrop }}
-                            className={`group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden rounded-2xl border p-2.5 text-left transition-all duration-300 ${
+                            className={`group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden rounded-2xl border px-2.5 pt-2.5 text-left transition-all duration-300 lg:aspect-auto lg:h-full ${
+                                showsFloor ? 'pb-2.5' : 'pb-0'
+                            } ${
                                 selected
                                     ? 'border-ink shadow-lg ring-2 ring-ink/20 scale-[1.01]'
                                     : 'border-line hover:border-ink/50 hover:shadow-md'
@@ -126,13 +140,21 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                                 )}
                             </div>
 
-                            {/* Centered Model Sprite — fills card naturally without extra labels underneath */}
-                            <div className="relative flex flex-1 items-center justify-center overflow-hidden pt-1 transition-transform duration-300 group-hover:scale-105">
-                                <span
-                                    aria-hidden="true"
-                                    className="pointer-events-none absolute bottom-1 left-1/2 h-3.5 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(45,60,80,0.2),transparent)]"
-                                />
-                                <TwinSpriteCrop twin={twin} pose={pose} className="h-full w-auto max-h-full block select-none" />
+                            {/* Centered Model Sprite — fills card naturally with floor shadow only on full-body poses */}
+                            <div
+                                className={`relative flex min-h-0 flex-1 justify-center overflow-hidden pt-1 transition-transform duration-300 group-hover:scale-105 ${
+                                    isMidCrop ? 'items-center pb-2' : 'items-end'
+                                }`}
+                            >
+                                <span className="relative inline-flex h-full max-w-full items-end justify-center">
+                                    {showsFloor && (
+                                        <span
+                                            aria-hidden="true"
+                                            className="pointer-events-none absolute -bottom-0.5 left-1/2 z-0 h-2.5 w-[78%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(35,45,60,0.24),transparent)]"
+                                        />
+                                    )}
+                                    <TwinSpriteCrop twin={twin} pose={pose} className="relative z-10 block h-full w-auto max-w-full select-none" />
+                                </span>
                             </div>
                         </button>
                     );
@@ -145,7 +167,7 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
 /** Left side of the preset modal: featured pose next to full pose gallery. */
 export function TwinPoseStage(props: TwinPoseStageProps) {
     return (
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,0.92fr)_minmax(0,1.35fr)]">
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 lg:grid-cols-[minmax(360px,1.12fr)_minmax(0,1.22fr)]">
             <FeaturedPose twin={props.twin} poseIndex={props.poseIndex} onStepPose={props.onStepPose} />
             <PoseGallery twin={props.twin} poseIndex={props.poseIndex} onSelectPose={props.onSelectPose} />
         </div>
