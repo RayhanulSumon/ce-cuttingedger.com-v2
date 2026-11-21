@@ -52,6 +52,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
     const stageRef = useRef<HTMLDivElement | null>(null);
     const actorRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLSpanElement | null>(null);
+    const wakeRef = useRef<() => void>(() => {});
     const callbacks = useRef({ onLookChange, onFrontActorClick });
     callbacks.current = { onLookChange, onFrontActorClick };
 
@@ -173,6 +174,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         });
 
         placeRing();
+        wakeRef.current();
     }, [placeRing]);
 
     useEffect(() => {
@@ -201,6 +203,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
 
     useEffect(() => {
         if (!running || !onScreen) {
+            wakeRef.current = () => {};
             return;
         }
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -208,8 +211,13 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         s.lastTime = 0;
         s.dirty = true;
         let frame = 0;
+        let disposed = false;
 
         const tick = (now: number) => {
+            frame = 0;
+            if (disposed) {
+                return;
+            }
             const dt = s.lastTime ? Math.min(0.034, (now - s.lastTime) / 1000) : 1 / 60;
             s.lastTime = now;
 
@@ -235,18 +243,37 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
 
             const dx = s.pointerX - s.cursorX;
             const dy = s.pointerY - s.cursorY;
-            if (cursorRef.current && (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05)) {
+            const cursorMoving = Boolean(cursorRef.current && (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05));
+            if (cursorMoving && cursorRef.current) {
                 const follow = reduced ? 1 : CURSOR_FOLLOW;
                 s.cursorX += dx * follow;
                 s.cursorY += dy * follow;
                 cursorRef.current.style.transform = `translate3d(${s.cursorX.toFixed(1)}px,${s.cursorY.toFixed(1)}px,0)`;
             }
 
-            frame = requestAnimationFrame(tick);
+            const ringMoving = s.position !== s.target || s.velocity !== 0 || s.dirty || s.dragging;
+            if (ringMoving || cursorMoving) {
+                frame = requestAnimationFrame(tick);
+            } else {
+                s.lastTime = 0;
+            }
         };
 
-        frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
+        const wake = () => {
+            if (!disposed && !frame) {
+                frame = requestAnimationFrame(tick);
+            }
+        };
+        wakeRef.current = wake;
+        wake();
+
+        return () => {
+            disposed = true;
+            wakeRef.current = () => {};
+            if (frame) {
+                cancelAnimationFrame(frame);
+            }
+        };
     }, [running, onScreen, placeRing]);
 
     const reportLook = useCallback(
@@ -264,6 +291,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         (target: number) => {
             sim.current.target = target;
             reportLook(target);
+            wakeRef.current();
         },
         [reportLook],
     );
@@ -307,6 +335,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         const rect = stageRef.current.getBoundingClientRect();
         s.pointerX = event.clientX - rect.left;
         s.pointerY = event.clientY - rect.top;
+        wakeRef.current();
 
         if (!s.cursorOn && event.pointerType === 'mouse') {
             s.cursorX = s.pointerX;
@@ -352,6 +381,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         if (event.pointerType === 'mouse') {
             setCursor((previous) => ({ ...previous, on: true, dragging: true }));
         }
+        wakeRef.current();
     };
 
     const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {

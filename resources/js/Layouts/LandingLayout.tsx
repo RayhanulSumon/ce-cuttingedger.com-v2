@@ -89,8 +89,7 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
             <FooterSection fullpage={false} />
 
             <SlideOverContact isOpen={contactOpen} onClose={() => setContactOpen(false)} settings={settings} />
-            <ScrollToTop visible={scrolled} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
-            <ChatWidget />
+            <ChatWidget leadingControl={<ScrollToTop visible={scrolled} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />} />
             <CookieConsentBanner />
         </div>
     );

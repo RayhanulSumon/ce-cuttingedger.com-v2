@@ -2,34 +2,23 @@ import React from 'react';
 import { DigitalTwinModel } from './twins';
 
 /**
- * Clean model name shown directly under the active front model,
- * with a tilted rubber-stamp seal ("SOLD OUT") across the center when copyright is sold.
+ * Unscaled editorial caption pill shown at the bottom of the Digital Twins stage,
+ * displaying the active look counter, model name, and a matte Sold Out tag when exclusive rights are sold.
  */
-export function TwinNameLabel({ twin }: { twin: DigitalTwinModel }) {
+export function TwinNameLabel({ twin, index, total }: { twin: DigitalTwinModel; index: number; total: number }) {
     const [name] = twin.name.split(' — ');
+    const counter = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
 
     return (
-        <>
+        <div className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-full border border-ink/10 bg-surface/85 px-4 py-1.5 shadow-[0_8px_24px_-12px_rgba(16,17,20,0.18)] backdrop-blur-md">
+            <span className="text-2xs font-semibold tabular-nums tracking-[0.14em] text-subtle">{counter}</span>
+            <span aria-hidden="true" className="h-3 w-px bg-ink/15" />
+            <span className="font-display text-xs font-bold tracking-[0.02em] text-ink sm:text-sm">{name}</span>
             {twin.isCopyrightSold && (
-                <div className="pointer-events-none absolute left-1/2 top-[48%] z-10 -translate-x-1/2 -translate-y-1/2 -rotate-[14deg] select-none whitespace-nowrap rounded-md border-[3px] border-danger/85 bg-surface/80 p-1 shadow-[0_12px_28px_-10px_color-mix(in_srgb,var(--color-danger)_45%,transparent)] backdrop-blur-[2px]">
-                    <div className="flex items-center gap-2 rounded-[3px] border-[1.5px] border-dashed border-danger/75 px-4 py-1.5 text-danger">
-                        <span aria-hidden="true" className="text-xs leading-none opacity-85">
-                            ★
-                        </span>
-                        <span className="font-display text-base font-black uppercase leading-none tracking-[0.2em] sm:text-lg">
-                            Sold Out
-                        </span>
-                        <span aria-hidden="true" className="text-xs leading-none opacity-85">
-                            ★
-                        </span>
-                    </div>
-                </div>
+                <span className="rounded-full border border-danger/25 bg-danger-soft px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-[0.1em] text-danger">
+                    Sold Out
+                </span>
             )}
-            <div className="pointer-events-none absolute left-1/2 top-[98%] mt-4 flex -translate-x-1/2 flex-col items-center text-center whitespace-nowrap">
-                <p className="font-display text-xs sm:text-sm font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
-                    {name}
-                </p>
-            </div>
-        </>
+        </div>
     );
 }

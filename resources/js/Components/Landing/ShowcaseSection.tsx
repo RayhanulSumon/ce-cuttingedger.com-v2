@@ -2,8 +2,9 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, X } from 'lucide-react';
+import { useInViewport } from '@/hooks/useInViewport';
 import { Project } from '@/types/models';
-import { EASE_OUT_QUART, orderUrl, PAD_X, Reveal, SectionProps } from './shared';
+import { EASE_OUT_QUART, orderUrl, PAD_X, PillButton, Reveal, SectionProps } from './shared';
 
 interface TileAction {
     label: string;
@@ -46,16 +47,16 @@ const FALLBACK_PHOTO_COPY = {
 
 const COLORED_TILES = [
     {
-        bg: '#ef5d44',
-        fg: 'var(--color-ink)',
+        bg: 'var(--color-primary)',
+        fg: 'var(--color-primary-foreground)',
         label: 'AI',
         title: 'Virtual try-on',
         description: 'Show every garment on a model without a shoot. Six styled looks, shoppable piece by piece.',
         actions: [{ label: 'Start a try-on order', href: orderUrl('virtual-try-on') }],
     },
     {
-        bg: '#fcdd71',
-        fg: 'var(--color-ink)',
+        bg: 'var(--color-secondary)',
+        fg: 'var(--color-secondary-foreground)',
         label: '2D',
         title: 'Digital twins',
         description: 'Photoreal AI digital twins and studio models, ready for any pose, colour or setting.',
@@ -65,7 +66,7 @@ const COLORED_TILES = [
         ],
     },
     {
-        bg: '#9fd5f7',
+        bg: 'var(--color-surface)',
         fg: 'var(--color-ink)',
         label: '2D',
         title: 'Retouching',
@@ -76,7 +77,7 @@ const COLORED_TILES = [
         ],
     },
     {
-        bg: '#f9f6f1',
+        bg: 'var(--color-surface-3)',
         fg: 'var(--color-ink)',
         label: 'DTP',
         title: 'Catalog layout',
@@ -84,8 +85,8 @@ const COLORED_TILES = [
         actions: [{ label: 'Explore capabilities', href: '/capabilities' }],
     },
     {
-        bg: '#151515',
-        fg: '#f9f6f1',
+        bg: 'var(--color-ink-2)',
+        fg: 'var(--color-surface)',
         label: 'Video',
         title: 'Motion cut-downs',
         description: 'Short-form video cut-downs built from the same source files as your stills.',
@@ -176,9 +177,9 @@ const TileCard = memo(function TileCard({
                 backgroundColor: tile.bg,
                 color: tile.fg,
                 boxShadow:
-                    tile.bg === '#f9f6f1'
-                        ? 'inset 0 0 0 1px #e9e6df'
-                        : 'inset 0 1px 0 rgba(255, 255, 255, 0.18)',
+                    tile.bg === 'var(--color-surface)' || tile.bg === 'var(--color-surface-3)'
+                        ? 'inset 0 0 0 1px var(--color-line)'
+                        : 'inset 0 1px 0 rgba(255, 255, 255, 0.14)',
             }}
         >
             <span className="flex h-full flex-col justify-between p-4 sm:p-5">
@@ -255,10 +256,10 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                                         key={action.href}
                                         href={action.href}
                                         prefetch
-                                        className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 ${
+                                        className={`inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-semibold transition-transform duration-200 hover:-translate-y-0.5 sm:h-11 sm:text-sm ${
                                             i === 0
-                                                ? 'bg-primary text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)]'
-                                                : 'border border-ink/25 text-ink hover:bg-ink hover:text-surface'
+                                                ? 'bg-primary text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_75%,transparent)] hover:bg-primary-hover'
+                                                : 'border border-ink/20 text-ink hover:border-ink hover:bg-ink hover:text-surface'
                                         }`}
                                     >
                                         {action.label}
@@ -288,6 +289,8 @@ interface ShowcaseProps extends SectionProps {
 }
 
 export const ShowcaseSection = memo(function ShowcaseSection({ active, projects, onOverlayChange }: ShowcaseProps) {
+    const rootRef = useRef<HTMLDivElement>(null);
+    const inView = useInViewport(rootRef);
     const [openTile, setOpenTile] = useState<Tile | null>(null);
     const trackRefs = useRef<(HTMLDivElement | null)[]>([]);
     const pausedRefs = useRef<[boolean, boolean, boolean]>([false, false, false]);
@@ -360,7 +363,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
             return;
         }
 
-        if (!active || openTile !== null) {
+        if (!active || !inView || openTile !== null) {
             return;
         }
 
@@ -430,7 +433,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
             cancelAnimationFrame(rafId);
             document.removeEventListener('visibilitychange', onVisibilityChange);
         };
-    }, [active, openTile]);
+    }, [active, inView, openTile]);
 
     const open = useCallback(
         (tile: Tile) => {
@@ -446,7 +449,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
     }, [onOverlayChange]);
 
     return (
-        <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
+        <div ref={rootRef} className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-24 sm:pt-28 md:pb-10 md:pt-28 ${PAD_X}`}>
                 <Reveal active={active}>
                     <h2 className="text-section text-ink">What We Achieved</h2>
@@ -458,20 +461,14 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
                         <strong className="font-semibold text-ink">thousand-SKU programmes</strong>.
                     </p>
                 </Reveal>
-                <Reveal active={active} delay={0.24} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
-                    <Link
-                        href="/case-studies"
-                        prefetch
-                        className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-surface transition-transform duration-300 hover:-translate-y-0.5"
-                    >
-                        View case studies
-                    </Link>
-                    <Link href="/book-a-demo" prefetch className="group flex items-center gap-3 text-sm font-bold">
-                        <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-surface transition-transform duration-300 group-hover:rotate-45">
-                            <ArrowUpRight size={14} />
-                        </span>
+                <Reveal active={active} delay={0.24} className="mt-5 flex flex-wrap items-center gap-2.5 md:mt-7">
+                    <PillButton href="/case-studies" variant="dark">
+                        View Case Studies
+                    </PillButton>
+                    <PillButton href="/book-a-demo" variant="outline">
                         Book a Demo
-                    </Link>
+                        <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </PillButton>
                 </Reveal>
             </div>
 

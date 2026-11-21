@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { CustomOrderCta, PAD_X, Reveal, SectionIntro, SectionProps, tryOnOrderUrl } from '../shared';
+import { useInViewport } from '@/hooks/useInViewport';
+import { OrderCta, PAD_X, Reveal, SectionIntro, SectionProps, tryOnOrderUrl } from '../shared';
 import { Look, LOOKS } from './looks';
 import { LookView } from './LookView';
 import { PieceCards } from './PieceCards';
@@ -24,7 +25,11 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
     const [lookOpen, setLookOpen] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
     const [hotPin, setHotPin] = useState<number | null>(null);
+    const rootRef = useRef<HTMLDivElement>(null);
     const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
+    const preloadedUrlsRef = useRef(new Set<string>());
+    const inView = useInViewport(rootRef);
+    const sectionActive = active && inView;
 
     const handleLookChange = useCallback((index: number) => {
         setLookIndex(index);
@@ -44,7 +49,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
     }, []);
 
     const runway = useRingRunway({
-        running: active,
+        running: sectionActive,
         interactive: !lookOpen,
         looks: activeLooks,
         onLookChange: handleLookChange,
@@ -59,19 +64,27 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
 
     useEffect(() => () => onOverlayChange?.(false), [onOverlayChange]);
 
-    const autoplaying = active && !lookOpen;
+    const autoplaying = sectionActive && !lookOpen;
+    const look = activeLooks[lookIndex] ?? activeLooks[0];
 
-    // Warm the cache for every garment once the section is first shown, so cards never wipe in empty.
-    const preloaded = useRef(false);
+    // Preload only the active look's hi-res model + garment thumbnails (plus next look's piece thumbnails) on demand.
     useEffect(() => {
-        if (!active || preloaded.current) {
+        if (!sectionActive || !look) {
             return;
         }
-        preloaded.current = true;
-        new Set(activeLooks.flatMap((item) => [item.modelHiRes, ...item.pieces.map((piece) => piece.image)])).forEach((src) => {
-            new Image().src = src;
+        const nextLook = activeLooks[(lookIndex + 1) % activeLooks.length];
+        const urls = [
+            look.modelHiRes,
+            ...look.pieces.map((piece) => piece.image),
+            ...(nextLook ? nextLook.pieces.map((piece) => piece.image) : []),
+        ];
+        urls.forEach((src) => {
+            if (src && !preloadedUrlsRef.current.has(src)) {
+                preloadedUrlsRef.current.add(src);
+                new Image().src = src;
+            }
         });
-    }, [active, activeLooks]);
+    }, [sectionActive, look, lookIndex, activeLooks]);
 
     useEffect(() => {
         if (!autoplaying) {
@@ -126,12 +139,12 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
         cardRefs.current[pieceIndex]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     };
 
-    const look = activeLooks[lookIndex] ?? activeLooks[0];
     const fadeWhenOpen = `transition-opacity duration-300 ${lookOpen ? 'pointer-events-none opacity-0' : 'opacity-100'}`;
 
     return (
         <div
-            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,var(--color-surface)_0%,var(--color-page)_60%,var(--color-surface-2)_100%)] pb-6 text-ink sm:gap-4 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${embedded ? 'pt-6 sm:pt-8' : 'pt-20 sm:pt-24'} ${PAD_X}`}
+            ref={rootRef}
+            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,var(--color-surface)_0%,var(--color-page)_60%,var(--color-surface-2)_100%)] pb-6 text-ink sm:gap-4 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${embedded ? 'pt-6 sm:pt-8' : 'pt-24 sm:pt-24'} ${PAD_X}`}
         >
             {/* Floor shade spans the whole section, so the runway and its controls sit on one seamless backdrop. */}
             <div
@@ -146,8 +159,13 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                     titleClassName="text-section"
                     bodyClassName="text-sm text-muted sm:text-base"
                     className={`relative z-10 ${fadeWhenOpen}`}
+                    actions={
+                        <OrderCta href={tryOnOrderUrl(look.modelName)} className="max-sm:h-9 max-sm:px-4">
+                            Order Try-On
+                        </OrderCta>
+                    }
                 >
-                    Styled looks, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
+                    Styled outfits, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
                 </SectionIntro>
 
                 <RunwayStage
@@ -197,14 +215,6 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                     />
                 </Reveal>
             </aside>
-
-            <CustomOrderCta
-                active={active}
-                href={tryOnOrderUrl(look.modelName)}
-                question="Want this look on your own garments?"
-                buttonLabel="Order now"
-                className={`${fadeWhenOpen} max-lg:static`}
-            />
         </div>
     );
 });

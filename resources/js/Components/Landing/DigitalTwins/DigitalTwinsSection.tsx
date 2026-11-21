@@ -1,7 +1,6 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
-import { Link } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { CustomOrderCta, digitalTwinOrderUrl, Reveal, SectionIntro, SectionProps } from '../shared';
+import { digitalTwinOrderUrl, OrderCta, PillButton, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
 import { TwinNameLabel } from './TwinNameLabel';
 import { TwinPosePreview } from './TwinPosePreview';
@@ -14,7 +13,7 @@ const STAGE_BACKGROUND =
     'linear-gradient(transparent 60%, color-mix(in srgb, var(--color-surface) 72%, transparent) 100%), linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 const SIDE_ARROW =
-    'grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-ink/20 bg-surface/90 text-ink shadow-[0_8px_32px_-8px_color-mix(in_srgb,var(--color-ink)_22%,transparent)] backdrop-blur-sm transition-all duration-300 hover:bg-ink hover:text-white hover:scale-110 hover:shadow-[0_12px_40px_-10px_color-mix(in_srgb,var(--color-ink)_45%,transparent)]';
+    'grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface/85 text-ink shadow-[0_8px_24px_-10px_rgba(16,17,20,0.25)] backdrop-blur-md transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface sm:h-11 sm:w-11';
 
 interface DigitalTwinsSectionProps extends SectionProps {
     twins?: DigitalTwinModel[];
@@ -93,9 +92,6 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
 
                                 <TwinSpriteCrop twin={twin} className="relative block h-full w-full" />
 
-                                {/* Model name only — directly under the front active model */}
-                                {isFrontModel && <TwinNameLabel twin={twin} />}
-
                                 {/* Pose preview cards — 3 large cards to the right of the front model on hover */}
                                 {showPreview && <TwinPosePreview twin={twin} visible={isHovered} />}
                             </div>
@@ -109,58 +105,61 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     cursorFree
                     titleClassName="text-section"
                     bodyClassName="text-sm text-muted sm:text-base"
-                    className="pointer-events-none absolute left-5 top-20 z-20 sm:left-10 sm:top-24 lg:left-16 lg:top-28"
+                    className="absolute left-5 top-24 z-20 max-w-[calc(100%-2.5rem)] sm:left-10 sm:top-24 sm:w-fit lg:left-16 lg:top-28"
+                    actions={
+                        <>
+                            <OrderCta
+                                href={digitalTwinOrderUrl({ mode: 'custom', twin: activeTwin.slug, ref: activeTwin.name })}
+                                className="max-sm:h-9 max-sm:px-4"
+                            >
+                                Order Custom Model
+                            </OrderCta>
+                            <PillButton
+                                href="/capabilities/2d/digital-twins"
+                                variant="outline"
+                                className="max-sm:h-9 max-sm:px-4"
+                            >
+                                Explore Catalog
+                                <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                            </PillButton>
+                        </>
+                    }
                 >
                     Shoot a garment once. Our photoreal AI models wear it in every pose, light and angle.
                 </SectionIntro>
 
-                {/* ── Left arrow — left edge, vertically centred ── */}
-                <Reveal active={active} delay={0.3} className="pointer-events-auto absolute left-4 top-1/2 z-30 -translate-y-1/2 sm:left-6 lg:left-8">
+                {/* ── Left arrow — left edge ── */}
+                <Reveal active={active} delay={0.3} className="pointer-events-auto absolute left-3 top-[60%] z-30 -translate-y-1/2 sm:left-6 sm:top-1/2 lg:left-8">
                     <button
                         type="button"
                         onClick={() => runway.stepLook(-1)}
                         aria-label="Previous digital twin"
                         className={SIDE_ARROW}
                     >
-                        <ArrowLeft size={20} />
+                        <ArrowLeft size={18} />
                     </button>
                 </Reveal>
 
-                {/* ── Right arrow — right edge, vertically centred ── */}
-                <Reveal active={active} delay={0.34} className="pointer-events-auto absolute right-4 top-1/2 z-30 -translate-y-1/2 sm:right-6 lg:right-8">
+                {/* ── Right arrow — right edge ── */}
+                <Reveal active={active} delay={0.34} className="pointer-events-auto absolute right-3 top-[60%] z-30 -translate-y-1/2 sm:right-6 sm:top-1/2 lg:right-8">
                     <button
                         type="button"
                         onClick={() => runway.stepLook(1)}
                         aria-label="Next digital twin"
                         className={SIDE_ARROW}
                     >
-                        <ArrowRight size={20} />
+                        <ArrowRight size={18} />
                     </button>
                 </Reveal>
 
-                <div className="max-sm:absolute max-sm:bottom-5 max-sm:left-5 max-sm:right-24 max-sm:z-20 max-sm:flex max-sm:flex-col max-sm:items-start max-sm:gap-2.5 sm:contents">
-                    <CustomOrderCta
-                        active={active}
-                        href={digitalTwinOrderUrl({ mode: 'custom', twin: activeTwin.slug, ref: activeTwin.name })}
-                        question="Want a custom model?"
-                        buttonLabel="Order now"
-                        className="max-sm:static"
-                    />
-
-                    {/* Right side bottom: Explore more -> full catalogue */}
-                    <div className="sm:absolute sm:bottom-10 sm:right-[9.5rem] sm:z-20">
-                        <Reveal active={active} delay={0.32}>
-                            <Link
-                                href="/capabilities/2d/digital-twins"
-                                prefetch
-                                className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-surface/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-surface hover:text-primary active:scale-95 sm:text-sm"
-                            >
-                                Explore more
-                                <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                            </Link>
-                        </Reveal>
-                    </div>
-                </div>
+                {/* Unscaled active twin caption */}
+                <Reveal
+                    active={active}
+                    delay={0.28}
+                    className="pointer-events-none absolute bottom-5 left-1/2 z-20 -translate-x-1/2 sm:bottom-7 sm:left-[74.4%]"
+                >
+                    <TwinNameLabel twin={activeTwin} index={runway.activeTwinIndex} total={models.length} />
+                </Reveal>
 
                 <TwinCursor cursorRef={runway.cursorRef} mode={runway.cursorMode} />
             </section>

@@ -65,13 +65,26 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
     const uploadedImage = pose ? (twin.hiResImage || twin.runwayImage) : (twin.runwayImage || twin.hiResImage);
 
     if (uploadedImage) {
+        if (!pose) {
+            return (
+                <img
+                    src={uploadedImage}
+                    alt={twin.name}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className={`block select-none object-contain ${className}`}
+                />
+            );
+        }
+
         const aspect = twin.aspectRatio && twin.aspectRatio > 0 ? twin.aspectRatio : 0.36;
         const baseW = 1000 * aspect;
         const baseH = 1000;
-        const yStart = pose ? pose.yStartFrac * baseH : 0;
-        const yEnd = pose ? pose.yEndFrac * baseH : baseH;
-        const padX = pose?.xPadFrac ? baseW * pose.xPadFrac : 0;
-        const transforms = [pose?.mirror ? 'scaleX(-1)' : '', pose?.tiltDeg ? `rotate(${pose.tiltDeg}deg)` : ''].filter(Boolean);
+        const yStart = pose.yStartFrac * baseH;
+        const yEnd = pose.yEndFrac * baseH;
+        const padX = pose.xPadFrac ? baseW * pose.xPadFrac : 0;
+        const transforms = [pose.mirror ? 'scaleX(-1)' : '', pose.tiltDeg ? `rotate(${pose.tiltDeg}deg)` : ''].filter(Boolean);
 
         return (
             <SpriteCrop

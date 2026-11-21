@@ -559,27 +559,6 @@ html.lenis body {
         will-change: transform;
     }
 
-    .cap-card-sheen {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 340px;
-        height: 340px;
-        margin-left: -170px;
-        margin-top: -170px;
-        border-radius: 9999px;
-        background: radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.22) 0%,
-            color-mix(in srgb, var(--color-primary) 16%, transparent) 42%,
-            transparent 72%
-        );
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.35s ease;
-        will-change: transform, opacity;
-    }
-
     @media (min-width: 1024px) {
         .cap-grid:hover .cap-card-wrap:not(:hover) .cap-card {
             opacity: 0.84;
@@ -594,10 +573,6 @@ html.lenis body {
     .cap-card-content {
         transform: none !important;
         transition: opacity 0.2s ease !important;
-    }
-
-    .cap-card-sheen {
-        display: none;
     }
 }
 
@@ -750,9 +725,9 @@ html.lenis body {
     border: 0;
     background: var(--color-primary);
     color: var(--color-primary-foreground);
-    font-weight: 700;
-    font-size: 15px;
-    padding: 13px 26px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 11px 22px;
     border-radius: 999px;
     text-decoration: none;
     transition: transform 0.25s ease, background-color 0.2s ease;
@@ -847,30 +822,6 @@ html.lenis body {
         font-size: 12px;
         color: var(--color-muted);
     }
-}
-
-.cs-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 520px;
-    height: 520px;
-    margin-left: -260px;
-    margin-top: -260px;
-    border-radius: 9999px;
-    background: radial-gradient(
-        circle,
-        color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
-        transparent 65%
-    );
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    will-change: transform, opacity;
-}
-
-.cs-card.hov .cs-glow {
-    opacity: 1;
 }
 
 .cs-dots {

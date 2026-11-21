@@ -11,7 +11,7 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
     return (
         <div
             data-scrollable
-            className={`grid h-full w-full grid-cols-1 content-start gap-8 overflow-y-auto bg-page pb-10 pt-24 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:content-center lg:gap-16 lg:pt-20 ${PAD_X}`}
+            className={`grid h-full w-full grid-cols-1 content-start gap-8 overflow-y-auto bg-page pb-12 pt-24 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:content-center lg:gap-16 lg:pb-8 lg:pt-20 ${PAD_X}`}
         >
             <div className="lg:pr-6">
                 <Reveal active={active}>
@@ -28,11 +28,11 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
                     <p className="mt-1.5 text-sm leading-relaxed text-white/70">
                         Talk to the team. We reply within one business day, usually faster.
                     </p>
-                    <div className="mt-5 flex flex-wrap gap-3">
+                    <div className="mt-5 flex flex-wrap gap-2.5">
                         <Link
                             href="/book-a-demo"
                             prefetch
-                            className="inline-flex items-center gap-2 rounded-full bg-surface px-5 py-2.5 text-sm font-bold text-secondary transition-transform duration-300 hover:-translate-y-0.5"
+                            className="inline-flex h-10 items-center gap-2 rounded-full bg-surface px-5 text-xs font-semibold text-secondary transition-transform duration-200 hover:-translate-y-0.5 sm:h-11 sm:text-sm"
                         >
                             Book a Demo
                             <ArrowUpRight size={15} />
@@ -40,10 +40,10 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
                         <Link
                             href="/contact"
                             prefetch
-                            className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold transition-colors duration-300 hover:bg-white/10"
+                            className="inline-flex h-10 items-center gap-2 rounded-full border border-white/25 px-5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-white/10 sm:h-11 sm:text-sm"
                         >
                             <Mail size={15} />
-                            Contact us
+                            Contact Us
                         </Link>
                     </div>
                 </Reveal>
@@ -56,10 +56,10 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
                         <li key={faq.question}>
                             <Reveal active={active} delay={0.12 + i * 0.05} y="18px">
                                 <div
-                                    className={`rounded-2xl border bg-white transition-[border-color,box-shadow] duration-300 ${
+                                    className={`rounded-2xl border bg-surface transition-[border-color,box-shadow] duration-300 ${
                                         isOpen
-                                            ? 'border-primary/60 shadow-[0_18px_36px_-26px_color-mix(in_srgb,var(--color-primary)_70%,transparent)]'
-                                            : 'border-ink/10 hover:border-ink/30'
+                                            ? 'border-ink/30 shadow-[0_14px_30px_-22px_rgba(16,17,20,0.22)]'
+                                            : 'border-ink/10 hover:border-ink/25'
                                     }`}
                                 >
                                     <button

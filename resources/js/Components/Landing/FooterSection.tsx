@@ -35,12 +35,11 @@ const DEFAULT_SOCIALS = [
     { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
 ];
 
-/** Light theme gradient with more depth: a strong primary glow from the bottom right, a lighter one bottom left, on a tinted base. */
+/** Refined warm editorial surface with a soft ember wash in the lower corner. */
 const FOOTER_GRADIENT = [
-    'radial-gradient(70% 90% at 92% 120%, color-mix(in srgb, var(--color-primary) 62%, transparent), transparent 68%)',
-    'radial-gradient(45% 60% at 0% 112%, color-mix(in srgb, var(--color-primary) 26%, transparent), transparent 70%)',
-    'radial-gradient(40% 50% at 6% -6%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 70%)',
-    'linear-gradient(165deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-primary) 16%, var(--color-page)) 100%)',
+    'radial-gradient(65% 80% at 92% 115%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 68%)',
+    'radial-gradient(45% 55% at 0% 110%, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 70%)',
+    'linear-gradient(165deg, var(--color-surface) 0%, var(--color-page) 100%)',
 ].join(', ');
 
 /**
@@ -143,14 +142,14 @@ export const FooterSection = memo(function FooterSection({
             <div
                 data-scrollable={fullpage ? '' : undefined}
                 className={`relative flex flex-col justify-between rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10 ${
-                    fullpage ? 'h-full gap-6 overflow-x-hidden overflow-y-auto' : 'gap-8 overflow-hidden'
+                    fullpage ? 'h-full gap-6 overflow-x-hidden overflow-y-auto pb-16 sm:pb-8' : 'gap-8 overflow-hidden pb-16 sm:pb-10'
                 }`}
                 style={{ backgroundImage: FOOTER_GRADIENT }}
             >
                 {/* Soft grid that fades out towards the glow, for a little texture. */}
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]"
+                    className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]"
                 />
 
                 {/* Top: newsletter on the left, how to reach us on the right */}
@@ -209,7 +208,7 @@ export const FooterSection = memo(function FooterSection({
                                         aria-hidden="true"
                                         onPointerEnter={() => setHovered(i)}
                                         onPointerLeave={() => setHovered((prev) => (prev === i ? null : prev))}
-                                        animate={{ scaleY: hovered === i ? 1.3 : 1.18, y: hovered === i ? '-2%' : '0%' }}
+                                        animate={{ scaleY: hovered === i ? 1.18 : 1.06, y: hovered === i ? '-2%' : '0%' }}
                                         transition={{ duration: 0.25, ease: [0.39, 0.575, 0.565, 1] }}
                                         style={{
                                             transformOrigin: 'center bottom',

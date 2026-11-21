@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 export interface SectionProps {
     active: boolean;
@@ -97,11 +97,12 @@ export function Reveal({
     );
 }
 
-/** Section title with a short description underneath. Shared by the Digital Twins and Try-On sections. */
+/** Section title with a short description and optional actions underneath. */
 export function SectionIntro({
     active,
     title,
     children,
+    actions,
     className = '',
     titleClassName = 'text-section',
     bodyClassName = 'text-sm text-muted sm:text-base',
@@ -110,6 +111,7 @@ export function SectionIntro({
     active: boolean;
     title: string;
     children: React.ReactNode;
+    actions?: React.ReactNode;
     className?: string;
     titleClassName?: string;
     bodyClassName?: string;
@@ -117,15 +119,27 @@ export function SectionIntro({
     cursorFree?: boolean;
 }) {
     return (
-        <div className={className} data-twin-cursor-free={cursorFree ? '' : undefined}>
+        <div
+            className={`${cursorFree ? 'pointer-events-auto' : ''} ${className}`.trim()}
+            data-twin-cursor-free={cursorFree ? '' : undefined}
+        >
             <Reveal active={active}>
                 <h2 className={`font-display text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>
             <Reveal active={active} delay={0.1}>
-                <p className={`mt-3 max-w-[36ch] leading-[1.6] ${bodyClassName}`}>{children}</p>
+                <p className={`mt-2.5 max-w-[36ch] leading-[1.6] sm:mt-3 ${bodyClassName}`}>{children}</p>
             </Reveal>
+            {actions && (
+                <Reveal
+                    active={active}
+                    delay={0.18}
+                    className="pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5 sm:mt-5"
+                >
+                    {actions}
+                </Reveal>
+            )}
         </div>
     );
 }
@@ -172,67 +186,44 @@ export function orderUrl(service: string, reference?: string): string {
 }
 
 /**
- * Primary call to action, shared by every landing section: a solid orange pill with an arrow
- * inside it that opens the custom order form on its own page.
+ * Primary call to action, shared across landing and capability sections: a matte ember pill
+ * with an arrow inside it that opens the order or inquiry flow.
  */
 export function OrderCta({
     href,
     ariaLabel,
     icon,
+    size = 'md',
+    className = '',
     children,
 }: {
     href: string;
     ariaLabel?: string;
     /** Optional icon shown before the label. */
     icon?: React.ReactNode;
+    size?: 'sm' | 'md';
+    className?: string;
     children: React.ReactNode;
 }) {
+    const sizeClasses =
+        size === 'sm'
+            ? 'h-9 px-4 text-xs sm:h-10 sm:px-5 sm:text-xs'
+            : 'h-10 px-5 text-xs sm:h-11 sm:px-6 sm:text-sm';
+
     return (
         <Link
             href={href}
             prefetch
             aria-label={ariaLabel}
-            className="group relative inline-flex h-11 cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
+            className={`group inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary font-semibold text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_75%,transparent)] transition-[transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover active:translate-y-0 active:scale-[0.98] ${sizeClasses} ${className}`.trim()}
         >
-            <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent)] opacity-0 transition-[translate,opacity] duration-700 group-hover:translate-x-[320%] group-hover:opacity-100"
+            {icon && <span className="grid place-items-center">{icon}</span>}
+            <span>{children}</span>
+            <ArrowUpRight
+                size={15}
+                className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
             />
-            {icon && <span className="relative grid place-items-center">{icon}</span>}
-            <span className="relative">{children}</span>
-            <ArrowUpRight size={16} className="relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-1" />
         </Link>
-    );
-}
-
-/**
- * Bottom-left call to action shared by Digital Twins and Virtual Try-On:
- * the question sits above, the order button underneath.
- */
-export function CustomOrderCta({
-    active,
-    href,
-    question,
-    buttonLabel,
-    delay = 0.28,
-    className = '',
-}: {
-    active: boolean;
-    href: string;
-    question: string;
-    buttonLabel: string;
-    delay?: number;
-    className?: string;
-}) {
-    return (
-        <div className={`absolute bottom-6 left-5 z-20 sm:bottom-10 sm:left-10 lg:left-16 ${className}`} data-twin-cursor-free>
-            <Reveal active={active} delay={delay} className="flex flex-col items-start gap-2.5">
-                <p className="pl-1 text-sm font-semibold leading-none text-ink sm:text-base">{question}</p>
-                <OrderCta href={href} icon={<Sparkles size={16} />}>
-                    {buttonLabel}
-                </OrderCta>
-            </Reveal>
-        </div>
     );
 }
 
@@ -240,33 +231,37 @@ export function PillButton({
     children,
     onClick,
     href,
-    dark = true,
+    variant = 'dark',
     type = 'button',
     disabled,
+    className = '',
 }: {
     children: React.ReactNode;
     onClick?: () => void;
     href?: string;
-    dark?: boolean;
+    variant?: 'dark' | 'outline';
     type?: 'button' | 'submit';
     disabled?: boolean;
+    className?: string;
 }) {
-    const className = `inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-[transform,background-color,color,box-shadow] duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 ${
-        dark
-            ? 'bg-ink text-white hover:shadow-[0_12px_28px_-12px_rgba(0,0,0,0.55)]'
-            : 'border border-ink text-ink hover:bg-ink hover:text-white'
-    }`;
+    const toneClasses =
+        variant === 'dark'
+            ? 'bg-ink text-surface hover:bg-ink-2 hover:shadow-[0_12px_26px_-14px_rgba(16,17,20,0.45)]'
+            : 'border border-ink/20 bg-surface/85 text-ink backdrop-blur-sm hover:border-ink hover:bg-ink hover:text-surface';
+
+    const buttonClasses =
+        `group inline-flex h-10 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-xs font-semibold transition-[transform,background-color,color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-60 sm:h-11 sm:px-6 sm:text-sm ${toneClasses} ${className}`.trim();
 
     if (href) {
         return (
-            <Link href={href} prefetch className={className}>
+            <Link href={href} prefetch className={buttonClasses}>
                 {children}
             </Link>
         );
     }
 
     return (
-        <button type={type} onClick={onClick} disabled={disabled} className={className}>
+        <button type={type} onClick={onClick} disabled={disabled} className={buttonClasses}>
             {children}
         </button>
     );

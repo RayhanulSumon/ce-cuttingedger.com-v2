@@ -6,13 +6,14 @@ interface ScrollToTopProps {
     /** Whether the button is shown. The parent decides, so the homepage can use its sections instead of page scroll. */
     visible: boolean;
     onClick: () => void;
+    /** When false, renders fixed in the corner instead of inline inside the utility dock. */
+    inline?: boolean;
 }
 
 /**
- * Small round "back to top" button that sits just left of the chat button, centred with it. It fades and slides in only once
- * there is somewhere to go back to.
+ * Compact round "back to top" button that docks cleanly beside the chat launcher when visible.
  */
-export function ScrollToTop({ visible, onClick }: ScrollToTopProps) {
+export function ScrollToTop({ visible, onClick, inline = true }: ScrollToTopProps) {
     return (
         <AnimatePresence>
             {visible && (
@@ -21,11 +22,11 @@ export function ScrollToTop({ visible, onClick }: ScrollToTopProps) {
                     onClick={onClick}
                     aria-label="Back to top"
                     title="Back to top"
-                    initial={{ opacity: 0, y: 14, scale: 0.85 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.88 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 14, scale: 0.85 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="fixed bottom-[1.75rem] right-[5.25rem] z-[99] grid h-8 w-8 place-items-center rounded-full border border-ink/20 bg-surface/30 text-ink backdrop-blur-sm transition-colors duration-300 hover:border-ink hover:bg-ink hover:text-white sm:bottom-10 sm:right-[6.25rem]"
+                    exit={{ opacity: 0, y: 10, scale: 0.88 }}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                    className={`${inline ? '' : 'fixed bottom-4 right-16 z-[99] sm:bottom-6 sm:right-20 '}grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface/90 text-ink shadow-[0_8px_20px_-10px_rgba(16,17,20,0.3)] backdrop-blur-md transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface sm:h-10 sm:w-10`}
                 >
                     <ChevronUp size={16} strokeWidth={2.2} />
                 </motion.button>

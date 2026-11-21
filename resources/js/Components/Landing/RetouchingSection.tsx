@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { MoveHorizontal, Sparkles } from 'lucide-react';
+import { MoveHorizontal } from 'lucide-react';
+import { useInViewport } from '@/hooks/useInViewport';
 import { OrderCta, Reveal, SectionProps, STAGE_TRANSITION_MS } from './shared';
 
 interface RetouchFix {
@@ -173,13 +174,16 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
 }
 
 export const RetouchingSection = memo(function RetouchingSection({ active }: SectionProps) {
+    const rootRef = useRef<HTMLDivElement>(null);
+    const inView = useInViewport(rootRef);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const activeFix = FIXES[selectedIndex] ?? FIXES[0];
 
     return (
         <div
+            ref={rootRef}
             data-scrollable
-            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 pb-10 pt-24 sm:px-10 sm:pt-28 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-28"
+            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 pb-12 pt-24 sm:px-10 sm:pt-28 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-28"
         >
             <div>
                 <Reveal active={active}>
@@ -187,8 +191,8 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-                        AI finds the artifacts. Senior retouchers finish them. Pick a specialty or drag the handle to
-                        compare the raw capture with the delivered file.
+                        AI flags the flaws; senior retouchers finish every pixel. Pick a specialty or drag the handle to
+                        inspect raw versus delivered.
                     </p>
                 </Reveal>
                 <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Retouching specialties">
@@ -201,10 +205,10 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                                     role="tab"
                                     aria-selected={isSelected}
                                     onClick={() => setSelectedIndex(i)}
-                                    className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                                    className={`min-h-9 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
                                         isSelected
-                                            ? 'border-ink bg-ink text-white shadow-sm'
-                                            : 'border-ink/20 bg-surface text-ink hover:border-ink/50'
+                                            ? 'border-ink bg-ink text-surface shadow-sm'
+                                            : 'border-ink/15 bg-surface text-ink hover:border-ink/40'
                                     }`}
                                 >
                                     {fix.label}
@@ -215,14 +219,14 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                 </div>
 
                 <Reveal active={active} delay={0.38} className="mt-7">
-                    <OrderCta href="/contact" icon={<Sparkles size={16} />}>
+                    <OrderCta href="/contact">
                         Request Retouching Quote
                     </OrderCta>
                 </Reveal>
             </div>
 
             <Reveal active={active} delay={0.12} className="min-h-0">
-                <BeforeAfter active={active} fix={activeFix} />
+                <BeforeAfter active={active && inView} fix={activeFix} />
             </Reveal>
         </div>
     );

@@ -1,5 +1,6 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useInViewport } from '@/hooks/useInViewport';
 import { Client, Testimonial } from '@/types/models';
 import { REVIEW_FALLBACK, ReviewEntry } from './content';
 import { PAD_X, Reveal, SectionIntro, SectionProps } from './shared';
@@ -30,17 +31,19 @@ function LogoLane({
     logos,
     direction,
     speed,
+    running,
 }: {
     logos: Logo[];
     direction: 'down' | 'up';
     speed: number;
+    running: boolean;
 }) {
     return (
         <div className={`min-h-0 min-w-0 flex-1 overflow-hidden px-1 py-1 ${FADE_MASK}`}>
             <div
                 className={`flex flex-col gap-3.5 pb-3.5 will-change-transform hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] ${
                     direction === 'down' ? 'landing-col-down' : 'landing-col-up'
-                }`}
+                } ${running ? '' : '[animation-play-state:paused]'}`}
                 style={{ ['--landing-col-speed' as string]: `${speed}s` }}
             >
                 {[...logos, ...logos].map((logo, i) => (
@@ -71,7 +74,7 @@ function LogoLane({
 
 function ReviewCard({ quote, name, role, rating }: ReviewEntry & { rating?: number }) {
     return (
-        <figure className="flex h-full flex-col justify-between rounded-3xl border border-ink/10 bg-surface p-6 shadow-[0_14px_34px_-26px_color-mix(in_srgb,var(--color-ink)_35%,transparent)]">
+        <figure className="flex h-full flex-col justify-between rounded-3xl border border-line bg-surface p-6 shadow-[0_14px_34px_-26px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]">
             <div>
                 <div className="flex gap-0.5 text-primary" aria-label={`${rating ?? 5} out of 5 stars`}>
                     {Array.from({ length: rating ?? 5 }, (_, i) => (
@@ -80,7 +83,7 @@ function ReviewCard({ quote, name, role, rating }: ReviewEntry & { rating?: numb
                 </div>
                 <blockquote className="mt-3 text-sm leading-relaxed text-ink-2 sm:text-base">&ldquo;{quote}&rdquo;</blockquote>
             </div>
-            <figcaption className="mt-4 border-t border-ink/8 pt-3.5 text-sm">
+            <figcaption className="mt-4 border-t border-line pt-3.5 text-sm">
                 <span className="font-bold text-ink">{name}</span>
                 {role && <span className="text-subtle"> · {role}</span>}
             </figcaption>
@@ -89,6 +92,9 @@ function ReviewCard({ quote, name, role, rating }: ReviewEntry & { rating?: numb
 }
 
 export const ClientsSection = memo(function ClientsSection({ active, clients, testimonials }: ClientsProps) {
+    const rootRef = useRef<HTMLDivElement>(null);
+    const inView = useInViewport(rootRef);
+    const isRunning = active && inView;
     const [reviewIndex, setReviewIndex] = useState(0);
     const [reviewPaused, setReviewPaused] = useState(false);
 
@@ -116,17 +122,17 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
     };
 
     useEffect(() => {
-        if (!active || reviewPaused || reviews.length <= 1) {
+        if (!isRunning || reviewPaused || reviews.length <= 1) {
             return;
         }
         const timer = window.setInterval(() => {
             setReviewIndex((current) => (current + 1) % reviews.length);
         }, 4500);
         return () => window.clearInterval(timer);
-    }, [active, reviewPaused, reviews.length]);
+    }, [isRunning, reviewPaused, reviews.length]);
 
     return (
-        <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(320px,46%)] md:grid-rows-1">
+        <div ref={rootRef} className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(320px,46%)] md:grid-rows-1">
             {/* Left column: big heading, description, and testimonial slider */}
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-24 sm:pt-28 md:py-8 ${PAD_X}`}>
                 <SectionIntro
@@ -211,13 +217,13 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                 delay={0.12}
                 x="48px"
                 y="0px"
-                className="relative h-72 min-h-0 overflow-hidden pb-6 pr-5 pt-2 sm:pr-10 md:h-full md:pb-8 md:pr-14 md:pt-28 lg:pr-20"
+                className="relative h-72 min-h-0 overflow-hidden pb-10 pr-5 pt-2 sm:pr-10 md:h-full md:pb-8 md:pr-14 md:pt-28 lg:pr-20"
             >
                 <div className="flex h-full gap-3 pl-5 sm:pl-10 md:pl-0">
-                    <LogoLane logos={laneOne} direction="down" speed={38} />
-                    <LogoLane logos={laneTwo} direction="up" speed={32} />
+                    <LogoLane logos={laneOne} direction="down" speed={38} running={isRunning} />
+                    <LogoLane logos={laneTwo} direction="up" speed={32} running={isRunning} />
                     <div className="hidden min-w-0 flex-1 sm:flex">
-                        <LogoLane logos={laneThree} direction="down" speed={35} />
+                        <LogoLane logos={laneThree} direction="down" speed={35} running={isRunning} />
                     </div>
                 </div>
             </Reveal>

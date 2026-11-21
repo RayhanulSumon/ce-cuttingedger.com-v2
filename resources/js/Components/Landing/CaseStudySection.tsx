@@ -3,7 +3,7 @@ import { Link, useRemember } from '@inertiajs/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Project } from '@/types/models';
 import { CASE_STUDIES } from './content';
-import { SectionProps } from './shared';
+import { OrderCta, PAD_X, Reveal, SectionIntro, SectionProps } from './shared';
 
 interface CaseStudyProps extends SectionProps {
     projects: Project[];
@@ -129,6 +129,9 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
     }, [active]);
 
     useEffect(() => {
+        if (isMobile) {
+            return;
+        }
         const cs = csRef.current;
         const stage = stageRef.current;
         const cards = cardRefs.current.filter((c): c is HTMLElement => c !== null);
@@ -418,8 +421,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         const cleanups: (() => void)[] = [];
         cards.forEach((card) => {
             const inn = card.querySelector<HTMLElement>('.cs-in');
-            const glow = card.querySelector<HTMLElement>('.cs-glow');
-            if (!inn || !glow) {
+            if (!inn) {
                 return;
             }
             let hoverRaf = 0;
@@ -440,7 +442,6 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 const y = clamp(py / cardRect.height);
 
                 card.classList.add('hov');
-                glow.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0)`;
                 inn.style.transform = `perspective(1100px) rotateX(${((0.5 - y) * 5).toFixed(2)}deg) rotateY(${((x - 0.5) * 7).toFixed(2)}deg)`;
                 card.style.setProperty('--tx', `${((0.5 - x) * 16).toFixed(1)}px`);
                 card.style.setProperty('--ty', `${((0.5 - y) * 16).toFixed(1)}px`);
@@ -617,7 +618,6 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                                     <img src={imageUrl} alt={title} loading="lazy" decoding="async" draggable={false} />
                                 </div>
                             </div>
-                            <div className="cs-glow" aria-hidden="true" />
                         </article>
                     );
                 })}
@@ -644,7 +644,74 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
     );
 
     if (isMobile) {
-        return content;
+        return (
+            <div className={`w-full bg-page pb-12 pt-24 sm:px-10 ${PAD_X}`}>
+                <SectionIntro active={active} title="Selected Case Studies" bodyClassName="text-sm text-muted">
+                    Measurable results across high-volume retouching, digital twins, and omnichannel production.
+                </SectionIntro>
+
+                <div className="mt-6 flex flex-col gap-5">
+                    {CASE_STUDIES.slice(0, 3).map((study, i) => {
+                        const linked = projects[i];
+                        const theme = CARD_THEMES[i] ?? CARD_THEMES[0];
+                        const title = linked?.title || study.title;
+                        const category = linked?.category?.name || study.category;
+                        const summary = linked?.summary || study.summary;
+                        const metrics = linked?.metrics?.length ? linked.metrics : study.metrics;
+                        const imageUrl = linked?.cover_image || study.image;
+                        const href = linked ? `/case-studies/${linked.slug}` : '/case-studies';
+                        const isLightCard = i === 1;
+
+                        return (
+                            <Reveal key={linked?.id ?? study.title} active={active} delay={0.08 * i} y="18px">
+                                <article
+                                    className={`overflow-hidden rounded-3xl p-4 shadow-[0_18px_42px_-26px_rgba(16,17,20,0.35)] ${
+                                        isLightCard ? 'border border-line' : ''
+                                    }`}
+                                    style={{ backgroundColor: theme.bg, color: theme.ink }}
+                                >
+                                    <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl bg-secondary/10">
+                                        <img
+                                            src={imageUrl}
+                                            alt={title}
+                                            loading="lazy"
+                                            decoding="async"
+                                            draggable={false}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+
+                                    <div className="mt-4 flex flex-col items-start gap-3">
+                                        <span className="text-2xs font-semibold uppercase tracking-[0.16em] opacity-75">
+                                            Case study 0{i + 1} · {category}
+                                        </span>
+                                        <h3 className="font-display text-xl font-extrabold leading-tight tracking-[-0.02em]">
+                                            {title}
+                                        </h3>
+                                        <p className="text-sm leading-relaxed opacity-85">{summary}</p>
+
+                                        <div className="flex flex-wrap gap-6 py-1">
+                                            {metrics.slice(0, 2).map((metric) => (
+                                                <div key={metric.label}>
+                                                    <span className="block font-display text-2xl font-extrabold leading-none tabular-nums">
+                                                        {metric.value}
+                                                    </span>
+                                                    <span className="mt-1 block text-xs opacity-75">{metric.label}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <OrderCta href={href} size="sm">
+                                            Read Case Study
+                                        </OrderCta>
+                                    </div>
+                                </article>
+                            </Reveal>
+                        );
+                    })}
+                </div>
+            </div>
+        );
     }
 
     return (

@@ -81,11 +81,16 @@ function TypingDots() {
     );
 }
 
+interface ChatWidgetProps {
+    /** Optional control (such as ScrollToTop) docked inline to the left of the launcher. */
+    leadingControl?: React.ReactNode;
+}
+
 /**
  * Information-only assistant: answers questions about services, pricing, turnaround and the process,
  * and points visitors to the contact page for anything else. It never books, quotes or collects files.
  */
-export function ChatWidget() {
+export function ChatWidget({ leadingControl }: ChatWidgetProps = {}) {
     const [isOpen, setIsOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [messages, setMessages] = useState<ChatMessageItem[]>([]);
@@ -303,11 +308,11 @@ export function ChatWidget() {
                         }`}
                     >
                         {/* Header */}
-                        <div className="flex shrink-0 items-center justify-between gap-3 bg-gradient-to-br from-secondary to-ink px-5 py-4 text-white">
+                        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-secondary px-5 py-4 text-white">
                             <div className="flex min-w-0 items-center gap-3">
-                                <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary-hover shadow-md">
-                                    {operatorName ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
-                                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-secondary bg-success" />
+                                <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                                    {operatorName ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                                    {operatorName && <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-secondary bg-success" />}
                                 </span>
                                 <span className="min-w-0">
                                     <span className="block truncate text-sm font-bold leading-tight">
@@ -371,7 +376,7 @@ export function ChatWidget() {
                                         <div
                                             className={`max-w-[88%] rounded-2xl px-4 py-2.5 ${
                                                 isUser
-                                                    ? 'rounded-br-sm bg-gradient-to-br from-primary-hover to-primary-ink shadow-md shadow-primary/25'
+                                                    ? 'rounded-br-sm bg-primary shadow-sm shadow-primary/20'
                                                     : 'rounded-bl-sm border border-ink/10 bg-surface shadow-sm'
                                             }`}
                                         >
@@ -442,44 +447,47 @@ export function ChatWidget() {
                 )}
             </AnimatePresence>
 
-            {/* Floating launcher */}
-            <motion.button
-                type="button"
-                whileHover={{ scale: 1.06, y: -2 }}
-                whileTap={{ scale: 0.94 }}
-                onClick={() => setIsOpen((value) => !value)}
-                className="group relative grid h-14 w-14 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-hover text-white shadow-[0_18px_36px_-10px_color-mix(in_srgb,var(--color-primary)_70%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)] sm:h-16 sm:w-16"
-                aria-label={isOpen ? 'Close chat' : 'Open chat'}
-                aria-expanded={isOpen}
-            >
-                {!isOpen && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />}
-                <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-surface/35 to-transparent" />
+            {/* Compact bottom-right utility dock: optional ScrollToTop + matte ink chat launcher */}
+            <div className="flex items-center gap-2">
+                {leadingControl}
 
-                <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                        key={isOpen ? 'close' : 'chat'}
-                        initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
-                        animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                        exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative"
-                    >
-                        {isOpen ? (
-                            <X className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.4} />
-                        ) : (
-                            <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" fill="currentColor" fillOpacity={0.2} strokeWidth={2.2} />
-                        )}
-                    </motion.span>
-                </AnimatePresence>
+                <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.04, y: -1 }}
+                    whileTap={{ scale: 0.94 }}
+                    onClick={() => setIsOpen((value) => !value)}
+                    className="group relative grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-white/10 bg-ink text-surface shadow-[0_10px_28px_-10px_rgba(16,17,20,0.45)] transition-[background-color,border-color,box-shadow] duration-200 hover:border-primary/40 hover:bg-primary hover:text-primary-foreground hover:shadow-[0_12px_28px_-10px_color-mix(in_srgb,var(--color-primary)_55%,transparent)] sm:h-12 sm:w-12"
+                    aria-label={isOpen ? 'Close chat' : 'Open chat'}
+                    aria-expanded={isOpen}
+                >
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                            key={isOpen ? 'close' : 'chat'}
+                            initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+                            animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                            exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+                            transition={{ duration: 0.18 }}
+                            className="relative"
+                        >
+                            {isOpen ? (
+                                <X className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2.2} />
+                            ) : (
+                                <MessageSquare className="h-[18px] w-[18px] sm:h-5 sm:w-5" strokeWidth={2} />
+                            )}
+                        </motion.span>
+                    </AnimatePresence>
 
-                {!isOpen && <span aria-hidden="true" className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-success" />}
+                    {!isOpen && operatorName && (
+                        <span aria-hidden="true" className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-ink bg-success" />
+                    )}
 
-                {unreadCount > 0 && !isOpen && (
-                    <span className="absolute -left-1 -top-1 min-w-5 rounded-full bg-danger px-1.5 py-0.5 text-center text-2xs font-bold text-white shadow-md">
-                        {unreadCount}
-                    </span>
-                )}
-            </motion.button>
+                    {unreadCount > 0 && !isOpen && (
+                        <span className="absolute -left-1 -top-1 min-w-4.5 rounded-full bg-primary px-1 py-0.5 text-center text-2xs font-bold leading-none text-primary-foreground shadow-sm">
+                            {unreadCount}
+                        </span>
+                    )}
+                </motion.button>
+            </div>
         </aside>
     );
 }

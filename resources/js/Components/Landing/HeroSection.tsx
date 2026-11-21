@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useFitFontSize } from '@/hooks/useFitFontSize';
+import { useInViewport } from '@/hooks/useInViewport';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { PAD_X, PillButton, Reveal, SectionProps, SECTION_INDEX } from './shared';
 
@@ -38,7 +39,7 @@ function BannerVideo({ playing }: { playing: boolean }) {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
         />
     );
 }
@@ -51,7 +52,7 @@ const SLIDES = [
 ];
 const SLIDE_INTERVAL_MS = 5000;
 
-/** Cross-fading image slideshow behind the hero, held at medium opacity so the title stays readable. */
+/** Cross-fading image slideshow behind the hero, held at low opacity under a paper veil so typography stays crisp. */
 function BackgroundSlider({ playing }: { playing: boolean }) {
     const [current, setCurrent] = useState(0);
 
@@ -64,17 +65,19 @@ function BackgroundSlider({ playing }: { playing: boolean }) {
     }, [playing]);
 
     return (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-40">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
             {SLIDES.map((src, i) => (
                 <img
                     key={src}
                     src={src}
                     alt=""
+                    loading={i === 0 ? 'eager' : 'lazy'}
                     data-current={i === current}
                     decoding="async"
                     className="hero-slide absolute inset-0 h-full w-full object-cover"
                 />
             ))}
+            <div className="absolute inset-0 bg-page/35" />
         </div>
     );
 }
@@ -83,6 +86,9 @@ const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-su
 const pillPoster = { backgroundImage: `url(${VIDEO_POSTER})` };
 
 export const HeroSection = memo(function HeroSection({ active, goTo }: SectionProps) {
+    const rootRef = useRef<HTMLDivElement>(null);
+    const inView = useInViewport(rootRef);
+    const playing = active && inView;
     const rowRef = useRef<HTMLSpanElement>(null);
     const cuttingRef = useRef<HTMLSpanElement>(null);
     const edgerRef = useRef<HTMLSpanElement>(null);
@@ -131,8 +137,8 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
     const show = active && mounted;
 
     return (
-        <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-page pb-10 pt-20 ${PAD_X}`}>
-            <BackgroundSlider playing={active} />
+        <div ref={rootRef} className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-page pb-10 pt-20 ${PAD_X}`}>
+            <BackgroundSlider playing={playing} />
 
             <h1 className="hero-title relative z-10 w-full text-ink" aria-label="Cutting Edger">
                 {/* Tablet / desktop: CUTTING [banner] EDGER on one centred line. */}
@@ -152,7 +158,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                         className={`${PILL_BASE} h-[1.55em]`}
                     >
                         <span className="block h-full" style={{ width: `${PILL_EM}em`, ...pillPoster }} />
-                        {isWide === true && <BannerVideo playing={active} />}
+                        {isWide === true && <BannerVideo playing={playing} />}
                     </Reveal>
                     <Reveal as="span" ref={edgerRef} active={show} x={`-${WORD_OFFSET_EM}em`} y="0px">
                         EDGER
@@ -179,7 +185,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                         className={`${PILL_BASE} h-[1.3em] w-full`}
                     >
                         <span className="block h-full w-full" style={pillPoster} />
-                        {isWide === false && <BannerVideo playing={active} />}
+                        {isWide === false && <BannerVideo playing={playing} />}
                     </Reveal>
                     <Reveal as="span" active={show} y="-0.35em">
                         EDGER
@@ -187,17 +193,15 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                 </span>
             </h1>
 
-            <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-2xl text-center sm:mt-10">
-                <p className="text-base font-medium leading-[1.65] text-ink sm:text-lg lg:text-[19px]">
-                    Transform your apparel and product photography with next-generation AI-integrated image editing and
-                    expert post-production. Save time, reduce production costs, and scale your visual content without
-                    compromising quality.
+            <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-xl text-center sm:mt-10">
+                <p className="text-base font-medium leading-[1.65] text-ink-2 sm:text-lg lg:text-[19px]">
+                    Photoreal AI models, virtual try-on, and senior retouching for apparel and product brands—built to scale catalogs without studio bottlenecks.
                 </p>
             </Reveal>
             <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
-                <PillButton href="/book-a-demo">Book a Demo</PillButton>
-                <PillButton dark={false} onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
-                    Explore capabilities
+                <PillButton href="/book-a-demo" variant="dark">Book a Demo</PillButton>
+                <PillButton variant="outline" onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
+                    Explore Capabilities
                 </PillButton>
             </Reveal>
 

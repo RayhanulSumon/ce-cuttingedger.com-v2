@@ -140,10 +140,9 @@ export default function Home({
                 </>
             )}
             <Menubar index={menuIndex} goTo={goTo} hidden={overlayOpen} />
-            {/* Floating chat, bottom right. Hidden (not unmounted) while a fullscreen overlay is open so the conversation survives. */}
+            {/* Floating dock, bottom right. Hidden (not unmounted) while a fullscreen overlay is open so the conversation survives. */}
             <div className={overlayOpen ? 'hidden' : undefined}>
-                <ScrollToTop visible={scrollTopVisible} onClick={() => goTo(SECTION_INDEX.hero)} />
-                <ChatWidget />
+                <ChatWidget leadingControl={<ScrollToTop visible={scrollTopVisible} onClick={() => goTo(SECTION_INDEX.hero)} />} />
             </div>
         </>
     );

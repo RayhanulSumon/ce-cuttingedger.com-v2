@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Copyright, Download, ShoppingBag, Sparkles } from 'lucide-react';
+import { Calendar, Copyright, Download, ShoppingBag, SlidersHorizontal } from 'lucide-react';
 import { DigitalTwinModel, formatDownloadCount, formatTwinAge, TwinPosePreset } from './twins';
 
 export type PresetAction = 'buy' | 'lifetime' | 'custom';
@@ -91,7 +91,7 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
                     className={`${ACTION_BUTTON} border border-ink/15 bg-surface-2 text-ink hover:border-primary/50 hover:bg-surface`}
                 >
                     <span className="flex items-center gap-3">
-                        <Sparkles size={18} className="shrink-0 text-primary" />
+                        <SlidersHorizontal size={18} className="shrink-0 text-primary" />
                         <span>
                             <span className="block text-sm font-bold">Customize a model like {name}</span>
                             <span className="block text-xs text-subtle">Tailor height, body, skin, eye &amp; lip presets</span>

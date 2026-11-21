@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
 import { CapabilityNavItem, PageProps } from '@/types';
-import { PAD_X, Reveal, SectionProps } from './shared';
+import { OrderCta, PAD_X, PillButton, Reveal, SectionProps } from './shared';
 
 const SLUG_IMAGES: Record<string, string> = {
     '2d': '/images/capabilities/fashion-editorial-after.webp',
@@ -18,9 +18,6 @@ const FALLBACK_IMAGES = [
     '/images/capabilities/video-grade-after.webp',
 ] as const;
 
-const AMBIENT_BACKDROP =
-    'radial-gradient(60% 55% at 85% 18%, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 70%), radial-gradient(50% 55% at 15% 88%, color-mix(in srgb, var(--color-surface) 75%, transparent), transparent 72%)';
-
 const CapabilityDepthCard = memo(function CapabilityDepthCard({
     capability,
     index,
@@ -31,7 +28,6 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
     const cardRef = useRef<HTMLAnchorElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const sheenRef = useRef<HTMLDivElement>(null);
 
     const rectRef = useRef<DOMRect | null>(null);
     const rafRef = useRef(0);
@@ -66,10 +62,6 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
         }
         if (contentRef.current) {
             contentRef.current.style.transform = `translate3d(${(nx * 6).toFixed(1)}px, ${(ny * 4).toFixed(1)}px, 0)`;
-        }
-        if (sheenRef.current) {
-            sheenRef.current.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0)`;
-            sheenRef.current.style.opacity = '1';
         }
     };
 
@@ -111,9 +103,6 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
         if (contentRef.current) {
             contentRef.current.style.transform = '';
         }
-        if (sheenRef.current) {
-            sheenRef.current.style.opacity = '0';
-        }
     };
 
     const imageSrc =
@@ -131,7 +120,7 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
             onPointerEnter={handlePointerEnter}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            className="cap-card group/card relative flex h-[300px] w-full flex-col justify-between overflow-hidden rounded-3xl bg-secondary p-4 text-white shadow-[0_18px_40px_-22px_rgba(16,17,20,0.45),0_4px_12px_-4px_rgba(16,17,20,0.2)] ring-1 ring-inset ring-white/15 hover:shadow-[0_30px_60px_-22px_rgba(16,17,20,0.58),0_10px_24px_-10px_color-mix(in_srgb,var(--color-primary)_26%,transparent)] hover:ring-primary/55 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:h-[380px] sm:p-5 lg:h-[clamp(360px,56vh,475px)]"
+            className="cap-card group/card relative flex h-[300px] w-full flex-col justify-between overflow-hidden rounded-3xl bg-secondary p-4 text-white shadow-[0_18px_40px_-22px_rgba(16,17,20,0.45),0_4px_12px_-4px_rgba(16,17,20,0.2)] ring-1 ring-inset ring-white/15 hover:shadow-[0_26px_52px_-22px_rgba(16,17,20,0.55)] hover:ring-primary/55 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:h-[380px] sm:p-5 lg:h-[clamp(360px,56vh,475px)]"
         >
             {/* Background photography with deeper parallax travel inside clipped frame */}
             <img
@@ -153,11 +142,8 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
             {/* Subtle top glass specular highlight */}
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
+                className="pointer-events-none absolute inset-0 rounded-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
             />
-
-            {/* Pre-rendered radial specular sheen positioned purely via translate3d */}
-            <div ref={sheenRef} aria-hidden="true" className="cap-card-sheen" />
 
             {/* Top bar: frosted department tag badge and circular action indicator */}
             <div className="relative z-10 flex items-center justify-between gap-2">
@@ -203,14 +189,8 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
     return (
         <div
             data-scrollable
-            className={`relative flex h-full w-full flex-col overflow-y-auto bg-page pb-8 pt-24 sm:pt-28 ${PAD_X}`}
+            className={`relative flex h-full w-full flex-col overflow-y-auto bg-page pb-12 pt-24 sm:pt-28 lg:pb-8 ${PAD_X}`}
         >
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{ backgroundImage: AMBIENT_BACKDROP }}
-            />
-
             <div className="relative z-10 mx-auto my-auto w-full max-w-[1360px]">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                     <div>
@@ -219,26 +199,18 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                         </Reveal>
                         <Reveal active={active} delay={0.08}>
                             <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
-                                Four core capabilities, many specialities. Pick one to see what we deliver and how it works.
+                                Four core disciplines, built for high-volume apparel and product teams.
                             </p>
                         </Reveal>
                     </div>
 
                     <Reveal active={active} delay={0.14} className="flex shrink-0 flex-wrap items-center gap-2.5">
-                        <Link
-                            href="/capabilities"
-                            prefetch
-                            className="rounded-full border border-ink/20 bg-surface px-5 py-2.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface sm:text-sm"
-                        >
-                            All capabilities
-                        </Link>
-                        <Link
-                            href="/book-a-demo"
-                            prefetch
-                            className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover sm:text-sm"
-                        >
+                        <PillButton href="/capabilities" variant="outline">
+                            All Capabilities
+                        </PillButton>
+                        <OrderCta href="/book-a-demo">
                             Book a Demo
-                        </Link>
+                        </OrderCta>
                     </Reveal>
                 </div>
 

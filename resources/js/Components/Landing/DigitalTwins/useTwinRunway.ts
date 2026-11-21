@@ -55,6 +55,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
     const stageRef = useRef<HTMLElement | null>(null);
     const modelRefs = useRef<(HTMLDivElement | null)[]>([]);
     const cursorRef = useRef<HTMLDivElement | null>(null);
+    const wakeRef = useRef<() => void>(() => {});
     const onOpenTwinRef = useRef(onOpenTwin);
     onOpenTwinRef.current = onOpenTwin;
 
@@ -110,11 +111,11 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             }
 
             const isNarrow = s.width < 768;
-            const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? 0.62 : 1);
+            const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? 0.64 : 1);
             const scale = height / s.baseHeight;
             const aspect = twinAspects[i] ?? 0.36;
-            const xRatio = isNarrow ? 0.54 + (mix(DEPTH_X) - 0.744) * 0.85 : mix(DEPTH_X);
-            const feetRatio = isNarrow ? mix(DEPTH_FEET) - 0.13 : mix(DEPTH_FEET);
+            const xRatio = isNarrow ? 0.5 + (mix(DEPTH_X) - 0.744) * 0.82 : mix(DEPTH_X);
+            const feetRatio = isNarrow ? mix(DEPTH_FEET) + 0.015 : mix(DEPTH_FEET);
             const x = xRatio * s.width - height * aspect * 0.5;
             const y = feetRatio * s.height - height;
             const blur = Math.round(mix(DEPTH_BLUR) * 2) / 2;
@@ -154,6 +155,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
         s.dirty = true;
         paint();
+        wakeRef.current();
     }, [paint, twinAspects]);
 
     useEffect(() => {
@@ -182,6 +184,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
     useEffect(() => {
         if (!running || !onScreen) {
+            wakeRef.current = () => {};
             return;
         }
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -189,8 +192,13 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         s.lastTime = 0;
         s.dirty = true;
         let frame = 0;
+        let disposed = false;
 
         const tick = (now: number) => {
+            frame = 0;
+            if (disposed) {
+                return;
+            }
             const dt = s.lastTime ? Math.min(50, now - s.lastTime) : 16;
             s.lastTime = now;
             const before = s.position;
@@ -206,17 +214,36 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
             const dx = s.pointerX - s.cursorX;
             const dy = s.pointerY - s.cursorY;
-            if (cursorRef.current && (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05)) {
+            const cursorMoving = Boolean(cursorRef.current && (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05));
+            if (cursorMoving && cursorRef.current) {
                 s.cursorX += dx * CURSOR_FOLLOW;
                 s.cursorY += dy * CURSOR_FOLLOW;
                 cursorRef.current.style.transform = `translate3d(${s.cursorX.toFixed(1)}px,${s.cursorY.toFixed(1)}px,0)`;
             }
 
-            frame = requestAnimationFrame(tick);
+            const modelMoving = s.position !== s.target || s.dirty || s.pressed;
+            if (modelMoving || cursorMoving) {
+                frame = requestAnimationFrame(tick);
+            } else {
+                s.lastTime = 0;
+            }
         };
 
-        frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
+        const wake = () => {
+            if (!disposed && !frame) {
+                frame = requestAnimationFrame(tick);
+            }
+        };
+        wakeRef.current = wake;
+        wake();
+
+        return () => {
+            disposed = true;
+            wakeRef.current = () => {};
+            if (frame) {
+                cancelAnimationFrame(frame);
+            }
+        };
     }, [running, onScreen, paint]);
 
     useEffect(() => {
@@ -227,6 +254,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             const s = sim.current;
             if (!s.pressed && s.hoveredModel < 0 && !document.hidden) {
                 s.target = Math.round(s.target) + 1;
+                wakeRef.current();
             }
         }, AUTO_ADVANCE_MS);
         return () => window.clearInterval(timer);
@@ -234,6 +262,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
     const stepLook = useCallback((delta: number) => {
         sim.current.target = Math.round(sim.current.target) + delta;
+        wakeRef.current();
     }, []);
 
     const focusTwin = useCallback(
@@ -246,6 +275,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             }
             s.target = current + delta;
             s.dirty = true;
+            wakeRef.current();
         },
         [twinCount],
     );
@@ -254,12 +284,6 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         sim.current.hoveredModel = index;
         setHoveredTwinIndex(index >= 0 ? index : null);
     };
-
-    const isOverCursorFreeZone = (x: number, y: number): boolean =>
-        Array.from(document.querySelectorAll<HTMLElement>('[data-twin-cursor-free]')).some((el) => {
-            const r = el.getBoundingClientRect();
-            return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-        });
 
     const modelIndexAt = (target: EventTarget | null): number => {
         const el = (target as HTMLElement | null)?.closest<HTMLElement>('[data-twin-model]');
@@ -283,7 +307,12 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         if (cursorRef.current) {
             cursorRef.current.style.transform = `translate3d(${s.cursorX.toFixed(1)}px,${s.cursorY.toFixed(1)}px,0)`;
         }
-        setCursorMode('drag');
+        if ((event.target as HTMLElement | null)?.closest('button, a, [data-twin-cursor-free]')) {
+            setCursorMode('hidden');
+        } else {
+            setCursorMode('drag');
+        }
+        wakeRef.current();
     };
 
     const onPointerLeave = () => {
@@ -299,6 +328,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         const rect = stageRef.current.getBoundingClientRect();
         s.pointerX = event.clientX - rect.left;
         s.pointerY = event.clientY - rect.top;
+        wakeRef.current();
 
         if (s.pressed) {
             const pull = Math.max(150, s.width * 0.2);
@@ -312,7 +342,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         }
 
         if (event.pointerType === 'mouse') {
-            if ((event.target as HTMLElement | null)?.closest('button, a') || isOverCursorFreeZone(event.clientX, event.clientY)) {
+            if ((event.target as HTMLElement | null)?.closest('button, a, [data-twin-cursor-free]')) {
                 setHoveredModel(-1);
                 setCursorMode('hidden');
             } else {
@@ -322,7 +352,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
     };
 
     const onPointerDown = (event: React.PointerEvent<HTMLElement>) => {
-        if ((event.target as HTMLElement | null)?.closest('button, a')) {
+        if ((event.target as HTMLElement | null)?.closest('button, a, [data-twin-cursor-free]')) {
             return;
         }
         const s = sim.current;
@@ -334,6 +364,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         if (event.pointerType === 'mouse') {
             setCursorMode((mode) => (mode === 'drag' ? 'dragging' : mode));
         }
+        wakeRef.current();
     };
 
     const onPointerUp = (event: React.PointerEvent<HTMLElement>) => {
@@ -343,6 +374,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
         }
         s.pressed = false;
         s.target = Math.round(s.target);
+        wakeRef.current();
 
         const hit = document
             .elementsFromPoint(event.clientX, event.clientY)

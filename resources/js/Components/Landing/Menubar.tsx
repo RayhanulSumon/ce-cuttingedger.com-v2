@@ -223,7 +223,11 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                 initial={{ opacity: 0, y: -18 }}
                 animate={{ opacity: hidden ? 0 : 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
-                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 px-4 py-4 text-sm font-medium transition-colors duration-500 sm:px-10 sm:py-5 lg:px-16 ${solid ? 'bg-gradient-to-b from-page via-page/80 to-transparent' : ''
+                className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 px-4 py-4 text-sm font-medium transition-colors duration-500 sm:px-10 sm:py-5 lg:px-16 ${solid
+                        ? 'bg-gradient-to-b from-page via-page/80 to-transparent'
+                        : collapsed
+                          ? 'max-md:border-b max-md:border-ink/8 max-md:bg-page/88 max-md:backdrop-blur-md'
+                          : ''
                     } ${dark ? 'text-white' : 'text-ink'} ${hidden ? 'pointer-events-none' : ''}`}
             >
                 {goTo ? (
