@@ -16,7 +16,7 @@ export function TwinNameLabel({ twin }: { twin: DigitalTwinModel }) {
                         <span aria-hidden="true" className="text-xs leading-none opacity-85">
                             ★
                         </span>
-                        <span className="font-brand uppercase text-base font-black uppercase leading-none tracking-[0.22em] sm:text-lg">
+                        <span className="font-display text-base font-black uppercase leading-none tracking-[0.2em] sm:text-lg">
                             Sold Out
                         </span>
                         <span aria-hidden="true" className="text-xs leading-none opacity-85">
@@ -26,7 +26,7 @@ export function TwinNameLabel({ twin }: { twin: DigitalTwinModel }) {
                 </div>
             )}
             <div className="pointer-events-none absolute left-1/2 top-[98%] mt-4 flex -translate-x-1/2 flex-col items-center text-center whitespace-nowrap">
-                <p className="font-brand uppercase text-xs sm:text-sm font-bold tracking-[0.08em] text-ink leading-none drop-shadow-sm">
+                <p className="font-display text-xs sm:text-sm font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
                     {name}
                 </p>
             </div>

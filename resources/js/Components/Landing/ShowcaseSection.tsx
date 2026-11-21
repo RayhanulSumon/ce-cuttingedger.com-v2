@@ -313,7 +313,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
         <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
                 <Reveal active={active}>
-                    <h2 className="text-[clamp(38px,7.2vw,104px)] font-black uppercase leading-[0.9] tracking-[-0.05em] text-ink">
+                    <h2 className="text-[clamp(30px,4.4vw,60px)] leading-[1.02] text-ink">
                         What we
                         <br />
                         achieved

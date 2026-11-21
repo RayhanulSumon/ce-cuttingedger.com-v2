@@ -25,7 +25,7 @@ export function OrderSuccessCard({
                 <CheckCircle2 size={28} />
             </div>
 
-            <h2 className="mt-5 font-brand uppercase text-xl text-ink sm:text-2xl">{title}</h2>
+            <h2 className="mt-5 font-display text-xl text-ink sm:text-2xl">{title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-success sm:text-base">{message}</p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

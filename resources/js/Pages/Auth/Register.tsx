@@ -58,7 +58,7 @@ export default function ClientRegister() {
                         <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                             Client Studio Portal
                         </p>
-                        <h1 className="mt-1.5 font-brand uppercase text-2xl font-normal tracking-[0.06em] text-ink">
+                        <h1 className="mt-1.5 font-display text-2xl text-ink">
                             Create Your Account
                         </h1>
                         <p className="mt-2 text-xs text-subtle">

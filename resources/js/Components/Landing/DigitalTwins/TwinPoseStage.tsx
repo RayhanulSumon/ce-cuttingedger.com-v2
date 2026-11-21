@@ -47,7 +47,7 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
         >
             <div className="relative z-10 flex items-start justify-between gap-2">
                 <div>
-                    <span className="font-brand uppercase inline-flex items-center gap-1.5 rounded-full bg-ink px-3.5 py-1 text-2xs font-bold tracking-[0.18em] text-white shadow-xs uppercase">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3.5 py-1 text-2xs font-bold uppercase tracking-[0.16em] text-surface shadow-xs">
                         {poseName}
                     </span>
                     <p className="mt-2 text-base font-bold text-ink sm:text-lg">{pose.title}</p>
@@ -76,7 +76,7 @@ export function FeaturedPose({ twin, poseIndex, onStepPose }: Omit<TwinPoseStage
             </div>
 
             <div className="relative z-10 flex items-center justify-between border-t border-ink/10 pt-3">
-                <span className="font-brand uppercase text-2xs tracking-[0.14em] text-subtle uppercase">
+                <span className="text-2xs font-semibold uppercase tracking-[0.14em] text-subtle">
                     {poseName} · {poseIndex + 1} / {twin.poses.length}
                 </span>
                 <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export function PoseGallery({ twin, poseIndex, onSelectPose }: Omit<TwinPoseStag
                         >
                             {/* Top badge row: Direct pose name (Front, Side, Close-Up, Back, Detail, Stride) */}
                             <div className="relative z-10 flex w-full items-center justify-between">
-                                <span className="font-brand uppercase rounded-full bg-surface/95 px-2.5 py-0.5 text-2xs font-bold tracking-[0.14em] text-ink shadow-xs backdrop-blur-xs uppercase">
+                                <span className="rounded-full bg-surface/95 px-2.5 py-0.5 text-2xs font-bold uppercase tracking-[0.14em] text-ink shadow-xs backdrop-blur-xs">
                                     {poseName}
                                 </span>
                                 {selected && (

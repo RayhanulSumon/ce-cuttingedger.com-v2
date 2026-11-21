@@ -107,8 +107,8 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     active={active}
                     title="Digital Twins"
                     cursorFree
-                    titleClassName="text-[clamp(28px,3.6vw,52px)] font-bold"
-                    bodyClassName="text-base font-semibold text-ink-2 sm:text-lg"
+                    titleClassName="text-[clamp(24px,3vw,40px)]"
+                    bodyClassName="text-sm text-muted sm:text-base"
                     className="pointer-events-none absolute left-5 top-20 z-20 sm:left-10 sm:top-24 lg:left-16 lg:top-28"
                 >
                     Shoot a garment once. Our photoreal AI models wear it in every pose, light and angle.

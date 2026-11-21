@@ -430,7 +430,7 @@ export default function TryOnQuote({
                             <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary">
                                 Capability 02 // AI Virtual Try-On Studio
                             </p>
-                            <h1 className="mt-1 font-brand uppercase text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
+                            <h1 className="mt-1 font-display text-[clamp(24px,2.8vw,36px)] leading-[1.1] text-ink">
                                 Request a Virtual Try-On Quote
                             </h1>
                             <p className="mt-1.5 max-w-[58ch] text-xs leading-[1.6] text-subtle sm:text-sm">

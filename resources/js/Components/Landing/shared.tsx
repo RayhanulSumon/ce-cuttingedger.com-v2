@@ -103,7 +103,7 @@ export function SectionIntro({
     title,
     children,
     className = '',
-    titleClassName = 'text-[clamp(22px,2.6vw,36px)] font-normal',
+    titleClassName = 'text-[clamp(24px,3vw,40px)]',
     bodyClassName = 'text-sm text-subtle',
     cursorFree = false,
 }: {
@@ -119,7 +119,7 @@ export function SectionIntro({
     return (
         <div className={className} data-twin-cursor-free={cursorFree ? '' : undefined}>
             <Reveal active={active}>
-                <h2 className={`font-brand uppercase leading-[1.15] tracking-[0.14em] text-ink ${titleClassName}`}>
+                <h2 className={`font-display leading-[1.08] text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>

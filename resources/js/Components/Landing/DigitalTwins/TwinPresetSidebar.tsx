@@ -21,7 +21,7 @@ export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetS
     return (
         <div className="flex flex-col gap-6">
             <div>
-                <p className="font-brand uppercase text-2xs tracking-[0.2em] text-subtle">LOOK {twin.lookNumber}</p>
+                <p className="text-2xs font-semibold uppercase tracking-[0.2em] text-subtle">LOOK {twin.lookNumber}</p>
                 <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.02em] text-ink">{name}</h3>
                 {twin.isCopyrightSold ? (
                     <span className="mt-3 inline-block rounded-full bg-danger px-3 py-1 text-2xs font-bold uppercase tracking-[0.12em] text-white shadow-[0_8px_18px_-8px_rgba(220,38,38,0.7)]">

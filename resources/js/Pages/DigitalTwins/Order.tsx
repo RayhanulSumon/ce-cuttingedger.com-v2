@@ -528,7 +528,7 @@ export default function DigitalTwinOrder({
                                     ? 'Digital Twin Studio // Custom Order'
                                     : 'Digital Twin Studio // Licensing'}
                             </p>
-                            <h1 className="mt-1 font-brand uppercase text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
+                            <h1 className="mt-1 font-display text-[clamp(24px,2.8vw,36px)] leading-[1.1] text-ink">
                                 {mode === 'custom' ? 'Customize Your Digital Twin' : 'Digital Twin Studio Order'}
                             </h1>
                             <p className="mt-1.5 max-w-[58ch] text-xs leading-[1.6] text-subtle sm:text-sm">
@@ -1187,7 +1187,7 @@ export default function DigitalTwinOrder({
                                 {mode !== 'custom' ? (
                                     <div className="flex items-baseline justify-between rounded-2xl border border-ink/10 bg-surface px-4 py-3">
                                         <span className="text-xs font-semibold text-subtle">License Total</span>
-                                        <span className="font-brand uppercase text-xl font-normal text-ink">
+                                        <span className="font-display text-xl font-bold tracking-[-0.02em] text-ink tabular-nums">
                                             {mode === 'preset'
                                                 ? (activeTwin?.presetPrice ?? '$149')
                                                 : (activeTwin?.lifetimePrice ?? '$490')}

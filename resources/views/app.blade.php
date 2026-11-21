@@ -17,10 +17,10 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" media="(prefers-color-scheme: dark)">
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
 
-        <!-- Fonts: Plus Jakarta Sans (UI) + Michroma (brand titles). Families are mapped in resources/css/app.css @theme -->
+        <!-- Font: Plus Jakarta Sans (mapped in resources/css/app.css @theme) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
         <script>
             (function() {

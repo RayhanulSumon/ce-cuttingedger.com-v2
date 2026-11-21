@@ -47,12 +47,12 @@ export function PieceCards({
                         onMouseEnter={() => onHotPinChange(i)}
                         onMouseLeave={() => onHotPinChange(null)}
                         onClick={() => onSelect(i)}
-                        className={`group relative flex min-h-0 min-w-0 flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-white bg-[linear-gradient(165deg,#ffffff_0%,#f6f9fc_55%,#eaf1f7_100%)] p-2.5 shadow-[0_14px_30px_-20px_rgba(45,65,95,0.45)] transition-[box-shadow,translate] duration-300 sm:min-w-[170px] sm:p-4 lg:min-w-0 ${
+                        className={`group relative flex min-h-0 min-w-0 flex-1 cursor-pointer select-none flex-col overflow-hidden rounded-2xl border border-line/70 bg-[linear-gradient(165deg,var(--color-surface)_0%,var(--color-page)_60%,var(--color-surface-2)_100%)] p-2.5 shadow-[0_14px_30px_-20px_color-mix(in_srgb,var(--color-ink)_16%,transparent)] transition-[box-shadow,translate] duration-300 sm:min-w-[170px] sm:p-4 lg:min-w-0 ${
                             isSelected
-                                ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-2 ring-primary'
+                                ? 'shadow-[0_18px_36px_-18px_color-mix(in_srgb,var(--color-ink)_24%,transparent)] ring-2 ring-primary'
                                 : isHot
-                                  ? 'shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)] ring-1 ring-primary/70'
-                                  : 'hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-18px_rgba(45,65,95,0.6)]'
+                                  ? 'shadow-[0_18px_36px_-18px_color-mix(in_srgb,var(--color-ink)_24%,transparent)] ring-1 ring-primary/70'
+                                  : 'hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-18px_color-mix(in_srgb,var(--color-ink)_24%,transparent)]'
                         }`}
                     >
                         <div className="relative z-10 flex items-center">

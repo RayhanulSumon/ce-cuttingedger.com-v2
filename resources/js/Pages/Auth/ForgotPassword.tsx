@@ -51,7 +51,7 @@ export default function ForgotPassword({ from = 'client' }: ForgotPasswordProps)
                         <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                             {isAdminFlow ? 'Admin Operations Recovery' : 'Account Recovery'}
                         </p>
-                        <h1 className="mt-1.5 font-brand uppercase text-2xl font-normal tracking-[0.06em] text-ink">
+                        <h1 className="mt-1.5 font-display text-2xl text-ink">
                             Forgot Password
                         </h1>
                         <p className="mt-2 text-xs text-subtle">

@@ -186,7 +186,7 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                     <Eyebrow>Retouching · Artifact remedy</Eyebrow>
                 </Reveal>
                 <Reveal active={active} delay={0.08}>
-                    <h2 className="mt-3 text-[clamp(28px,4.6vw,64px)] font-extrabold leading-[0.95] tracking-[-0.03em] text-ink">
+                    <h2 className="mt-3 text-[clamp(28px,4vw,52px)] leading-[1.04] text-ink">
                         Every flaw,
                         <br />
                         quietly fixed.

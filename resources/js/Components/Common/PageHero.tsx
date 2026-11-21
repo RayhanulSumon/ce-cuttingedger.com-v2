@@ -48,8 +48,8 @@ export function PageHero({
 
                 <h1
                     className={`${
-                        compact ? 'text-[clamp(30px,4.2vw,52px)]' : 'text-[clamp(34px,5.6vw,76px)]'
-                    } max-w-4xl font-extrabold leading-[1.02] tracking-[-0.035em] text-ink`}
+                        compact ? 'text-[clamp(26px,3.6vw,44px)]' : 'text-[clamp(30px,4.6vw,60px)]'
+                    } max-w-4xl leading-[1.04] text-ink`}
                 >
                     {title} {highlight && <span className="text-primary">{highlight}</span>}
                 </h1>

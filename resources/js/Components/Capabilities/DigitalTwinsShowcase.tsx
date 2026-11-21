@@ -174,7 +174,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                 {parent ? `Back to ${parent.title}` : 'All capabilities'}
                             </Link>
                         )}
-                        <h1 className="font-brand uppercase text-[clamp(24px,2.8vw,36px)] font-normal leading-[1.12] tracking-[0.12em] text-ink">
+                        <h1 className="font-display text-[clamp(24px,3vw,38px)] leading-[1.08] text-ink">
                             {capability?.title ?? 'Digital Twins'}
                         </h1>
                     </div>

@@ -15,7 +15,7 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
         >
             <div className="lg:pr-6">
                 <Reveal active={active}>
-                    <h2 className="text-[clamp(32px,4.8vw,68px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">
+                    <h2 className="text-[clamp(28px,4vw,52px)] leading-[1.04] text-ink">
                         Questions,
                         <br />
                         answered.

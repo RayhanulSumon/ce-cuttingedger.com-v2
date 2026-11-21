@@ -49,7 +49,7 @@ export default function VerifyEmail() {
                     <p className="mt-4 text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                         Email Verification Required
                     </p>
-                    <h1 className="mt-1.5 font-brand uppercase text-xl font-normal tracking-[0.06em] text-ink">
+                    <h1 className="mt-1.5 font-display text-xl text-ink">
                         Check Your Inbox
                     </h1>
 

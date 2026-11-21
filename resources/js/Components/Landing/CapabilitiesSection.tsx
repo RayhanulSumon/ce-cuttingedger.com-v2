@@ -24,7 +24,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                 <div>
                     <Reveal active={active}>
                         <Eyebrow>Capabilities</Eyebrow>
-                        <h2 className="mt-2 text-[clamp(22px,2.8vw,38px)] font-extrabold leading-[1.08] tracking-[-0.025em] text-ink">
+                        <h2 className="mt-2 text-[clamp(24px,3vw,38px)] leading-[1.08] text-ink">
                             What can we help you with
                         </h2>
                     </Reveal>
@@ -39,7 +39,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                     <Link
                         href="/capabilities"
                         prefetch
-                        className="rounded-full border border-ink/20 bg-surface px-5 py-2.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-white sm:text-sm"
+                        className="rounded-full border border-ink/20 bg-surface px-5 py-2.5 text-xs font-semibold text-ink transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface sm:text-sm"
                     >
                         All capabilities
                     </Link>

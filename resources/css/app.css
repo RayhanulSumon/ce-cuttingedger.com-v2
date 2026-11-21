@@ -9,25 +9,24 @@
  * ─── Design tokens: the single source of truth ──────────────────────────────
  * Change a value here and every page, admin panel, client area, dialog and
  * menu follows. Components must only use these utilities (bg-primary,
- * text-ink, border-line, bg-success-soft, font-brand, text-2xs ...),
+ * text-ink, border-line, bg-success-soft, font-display, text-2xs ...),
  * never raw hex values or Tailwind palette colours (slate-*, neutral-* ...).
  * Palette: "Ember Editorial".
  */
 @theme {
     /* Typography */
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; /* body + UI */
-    --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; /* h1-h4 */
-    --font-brand: 'Michroma', ui-sans-serif, system-ui, sans-serif; /* signature titles */
+    --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; /* headings */
     --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, Consolas, monospace; /* code, slugs, URLs */
 
     --text-2xs: 0.6875rem; /* 11px: smallest allowed size (labels, eyebrows) */
     --text-2xs--line-height: 1rem;
 
     /* Brand */
-    --color-primary: #f26a1b; /* buttons, highlights, active states */
-    --color-primary-hover: #d9590d; /* primary on hover / pressed */
-    --color-primary-ink: #b04a0a; /* primary as text or links on light backgrounds */
-    --color-primary-foreground: #16171a; /* text on primary fills (AA contrast) */
+    --color-primary: #de540c; /* buttons, highlights, active states */
+    --color-primary-hover: #c44606; /* primary on hover / pressed */
+    --color-primary-ink: #b54208; /* primary as text or links on light backgrounds */
+    --color-primary-foreground: #ffffff; /* text on primary fills (AA contrast) */
     --color-primary-soft: #fdeee3; /* tinted primary backgrounds */
 
     /* Dark panels: side menu, contact card, case studies, tooltips */
@@ -48,7 +47,7 @@
     --color-surface-3: #e9e6e1; /* pressed, tracks, stronger fills */
     --color-line: #e5e2dd; /* default borders, dividers */
     --color-line-strong: #d3cfc8; /* input borders, emphasized dividers */
-    --color-ring: #f26a1b; /* focus rings */
+    --color-ring: #de540c; /* focus rings */
 
     /* Status */
     --color-success: #15803d;
@@ -74,6 +73,8 @@
 
 :root {
     --header-height: 61px;
+    --heading-weight: 600; /* change once to adjust all section/page titles (e.g. 500, 600, 700) */
+    --heading-tracking: -0.025em;
 }
 
 @media (max-width: 1023px) {
@@ -100,7 +101,8 @@
     h3,
     h4 {
         font-family: var(--font-display);
-        letter-spacing: -0.03em;
+        font-weight: var(--heading-weight);
+        letter-spacing: var(--heading-tracking);
     }
 
     ::selection {
