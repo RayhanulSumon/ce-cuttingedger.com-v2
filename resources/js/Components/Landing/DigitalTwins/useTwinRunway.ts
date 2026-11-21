@@ -8,6 +8,14 @@ interface TwinRunwayOptions {
     running: boolean;
     /** Dynamic list of Digital Twins from the database. */
     twins?: DigitalTwinModel[];
+    /** Optional custom desktop X depth stops for alternative runway layouts. */
+    desktopXStops?: readonly number[];
+    /** Optional multiplier on desktop model heights (default 1). */
+    desktopHeightScale?: number;
+    /** Optional vertical feet-line offset on desktop (default 0). */
+    desktopFeetOffset?: number;
+    /** Optional multiplier on narrow/mobile model heights (default 0.64). */
+    narrowHeightScale?: number;
     /** Called when a model is clicked / tapped without dragging. */
     onOpenTwin: (index: number) => void;
 }
@@ -38,7 +46,15 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
  * All per-frame work writes straight to element styles (transform / opacity / filter) —
  * React only re-renders when the front look or the cursor mode actually changes.
  */
-export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: TwinRunwayOptions) {
+export function useTwinRunway({
+    running,
+    twins = DIGITAL_TWINS,
+    desktopXStops = DEPTH_X,
+    desktopHeightScale = 1,
+    desktopFeetOffset = 0,
+    narrowHeightScale = 0.64,
+    onOpenTwin,
+}: TwinRunwayOptions) {
     const models = twins.length > 0 ? twins : DIGITAL_TWINS;
     const twinCount = models.length;
 
@@ -102,7 +118,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             const lower = Math.floor(stop);
             const upper = Math.min(LAST_STOP, lower + 1);
             const t = stop - lower;
-            const mix = (stops: number[]) => stops[lower] + (stops[upper] - stops[lower]) * t;
+            const mix = (stops: readonly number[]) => stops[lower] + (stops[upper] - stops[lower]) * t;
 
             let opacity = mix(DEPTH_OPACITY);
             if (twinCount < LAST_STOP && depth > twinCount - 2) {
@@ -116,16 +132,16 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             }
 
             const isNarrow = s.width < 768;
-            const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? 0.64 : 1);
+            const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? narrowHeightScale : desktopHeightScale);
             const scale = height / s.baseHeight;
             const aspect = twinAspects[i] ?? 0.36;
-            const rawX = mix(DEPTH_X);
+            const rawX = mix(isNarrow ? DEPTH_X : desktopXStops);
             const xRatio = isNarrow
                 ? depth < 0
                     ? 0.5 + (rawX - 0.744) * 1.6
                     : 0.5 + (rawX - 0.744) * 0.82
                 : rawX;
-            const feetRatio = isNarrow ? mix(DEPTH_FEET) + 0.015 : mix(DEPTH_FEET);
+            const feetRatio = isNarrow ? mix(DEPTH_FEET) + 0.015 : mix(DEPTH_FEET) + desktopFeetOffset;
             const x = xRatio * s.width - height * aspect * 0.5;
             const y = feetRatio * s.height - height;
             const blur = Math.round(mix(DEPTH_BLUR) * 2) / 2;
@@ -145,7 +161,7 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
 
         const front = wrap(Math.round(s.position), twinCount);
         setActiveTwinIndex((previous) => (previous === front ? previous : front));
-    }, [models, twinAspects, twinCount]);
+    }, [models, twinAspects, twinCount, desktopXStops, desktopHeightScale, desktopFeetOffset, narrowHeightScale]);
 
     const measure = useCallback(() => {
         const stage = stageRef.current;

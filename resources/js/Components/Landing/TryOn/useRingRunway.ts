@@ -15,6 +15,10 @@ interface RingRunwayOptions {
     interactive: boolean;
     /** Dynamic looks from the database. */
     looks?: Look[];
+    /** Optional horizontal ring center ratio on desktop (default 0.5). */
+    desktopCenterXRatio?: number;
+    /** Optional horizontal ring radius ratio on desktop (default 0.62). */
+    desktopRadiusRatio?: number;
     onLookChange: (lookIndex: number) => void;
     onFrontActorClick: () => void;
 }
@@ -43,7 +47,15 @@ const mod = (value: number, n: number) => (n > 0 ? ((value % n) + n) % n : 0);
  * Drives the Try-On runway: models standing on a perspective ring that the visitor
  * can drag, click or auto-play through.
  */
-export function useRingRunway({ running, interactive, looks = LOOKS, onLookChange, onFrontActorClick }: RingRunwayOptions) {
+export function useRingRunway({
+    running,
+    interactive,
+    looks = LOOKS,
+    desktopCenterXRatio = 0.5,
+    desktopRadiusRatio = 0.62,
+    onLookChange,
+    onFrontActorClick,
+}: RingRunwayOptions) {
     const activeLooks = looks.length > 0 ? looks : LOOKS;
     const lookCount = activeLooks.length;
     const actorCount = Math.max(8, lookCount * 2);
@@ -158,8 +170,8 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
         s.width = width;
         s.height = height;
         s.modelHeight = Math.max(200, Math.round((height - 34 - 18) / FRONT_SCALE));
-        s.centerX = width * 0.5;
-        s.radius = width * (mobile ? 0.72 : 0.62);
+        s.centerX = width * (mobile ? 0.5 : desktopCenterXRatio);
+        s.radius = width * (mobile ? 0.72 : desktopRadiusRatio);
         s.perspective = width * (mobile ? 1.9 : 1.65);
         s.floor = height - 34;
         s.horizon = height * 0.36;
@@ -175,7 +187,7 @@ export function useRingRunway({ running, interactive, looks = LOOKS, onLookChang
 
         placeRing();
         wakeRef.current();
-    }, [placeRing]);
+    }, [placeRing, desktopCenterXRatio, desktopRadiusRatio]);
 
     useEffect(() => {
         measure();

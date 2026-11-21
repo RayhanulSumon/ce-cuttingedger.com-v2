@@ -5,7 +5,9 @@ import { ScrollToTop, useScrolledPast } from '@/Components/Common/ScrollToTop';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { CaseStudySection } from '@/Components/Landing/CaseStudySection';
 import { ClientsSection } from '@/Components/Landing/ClientsSection';
+import { DigitalTwinsCenteredSection } from '@/Components/Landing/DigitalTwins/DigitalTwinsCenteredSection';
 import { DigitalTwinsSection } from '@/Components/Landing/DigitalTwins/DigitalTwinsSection';
+import { DigitalTwinsTopCenterSection } from '@/Components/Landing/DigitalTwins/DigitalTwinsTopCenterSection';
 import { DigitalTwinModel } from '@/Components/Landing/DigitalTwins/twins';
 import { FaqSection } from '@/Components/Landing/FaqSection';
 import { FooterSection } from '@/Components/Landing/FooterSection';
@@ -18,7 +20,9 @@ import { CapabilitiesSection } from '@/Components/Landing/CapabilitiesSection';
 import { ShowcaseSection } from '@/Components/Landing/ShowcaseSection';
 import { SideDots } from '@/Components/Landing/SideDots';
 import { Look } from '@/Components/Landing/TryOn/looks';
+import { TryOnCenteredSection } from '@/Components/Landing/TryOn/TryOnCenteredSection';
 import { TryOnSection } from '@/Components/Landing/TryOn/TryOnSection';
+import { TryOnTopCenterSection } from '@/Components/Landing/TryOn/TryOnTopCenterSection';
 import { useFullpage } from '@/hooks/useFullpage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Client, Project, Testimonial } from '@/types/models';
@@ -42,6 +46,8 @@ const NO_TESTIMONIALS: Testimonial[] = [];
 const STAGE_BOUNDED_SECTIONS = new Set<number>([
     SECTION_INDEX.hero,
     SECTION_INDEX['digital-twins'],
+    SECTION_INDEX['digital-twins-alt'],
+    SECTION_INDEX['digital-twins-top-center'],
     SECTION_INDEX.showcase,
 ]);
 
@@ -102,7 +108,11 @@ export default function Home({
     const sections = [
         <HeroSection {...common} active={isActive('hero')} />,
         <DigitalTwinsSection {...common} twins={digitalTwins} active={isActive('digital-twins')} onOverlayChange={setOverlayOpen} />,
+        <DigitalTwinsCenteredSection {...common} twins={digitalTwins} active={isActive('digital-twins-alt')} onOverlayChange={setOverlayOpen} />,
+        <DigitalTwinsTopCenterSection {...common} twins={digitalTwins} active={isActive('digital-twins-top-center')} onOverlayChange={setOverlayOpen} />,
         <TryOnSection {...common} looks={tryOnLooks} active={isActive('try-on')} onOverlayChange={setOverlayOpen} />,
+        <TryOnCenteredSection {...common} looks={tryOnLooks} active={isActive('try-on-alt')} onOverlayChange={setOverlayOpen} />,
+        <TryOnTopCenterSection {...common} looks={tryOnLooks} active={isActive('try-on-top-center')} onOverlayChange={setOverlayOpen} />,
         <RetouchingSection {...common} active={isActive('retouching')} />,
         <ShowcaseSection {...common} active={isActive('showcase')} projects={featuredProjects} onOverlayChange={setOverlayOpen} />,
         <ClientsSection {...common} active={isActive('clients')} clients={clients} testimonials={testimonials} />,

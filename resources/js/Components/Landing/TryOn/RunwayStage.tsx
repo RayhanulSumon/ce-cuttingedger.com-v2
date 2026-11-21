@@ -11,6 +11,8 @@ interface RunwayStageProps {
     cursor: RunwayCursorState;
     /** Fade the ring out while the look view is open on top of it. */
     dimmed: boolean;
+    /** Optional CSS mask override for the runway actors container. */
+    actorsMaskClassName?: string;
     handlers: Pick<
         React.HTMLAttributes<HTMLDivElement>,
         'onPointerMove' | 'onPointerLeave' | 'onPointerDown' | 'onPointerUp' | 'onPointerCancel'
@@ -98,7 +100,17 @@ function RunwayCursor({ cursorRef, cursor, hidden }: { cursorRef: React.Ref<HTML
 }
 
 /** The 3D ring runway: atmosphere, the models and the custom cursor. */
-export function RunwayStage({ looks, actorCount, stageRef, actorRefs, cursorRef, cursor, dimmed, handlers }: RunwayStageProps) {
+export function RunwayStage({
+    looks,
+    actorCount,
+    stageRef,
+    actorRefs,
+    cursorRef,
+    cursor,
+    dimmed,
+    actorsMaskClassName = '[mask-image:linear-gradient(90deg,transparent,black_9%,black_91%,transparent)]',
+    handlers,
+}: RunwayStageProps) {
     return (
         <div
             ref={stageRef}
@@ -116,7 +128,7 @@ export function RunwayStage({ looks, actorCount, stageRef, actorRefs, cursorRef,
             />
 
             <div
-                className="ring-actors absolute inset-0 [mask-image:linear-gradient(90deg,transparent,black_9%,black_91%,transparent)]"
+                className={`ring-actors absolute inset-0 ${actorsMaskClassName}`}
                 data-dimmed={dimmed}
             >
                 <RingActors looks={looks} actorCount={actorCount} actorRefs={actorRefs} />

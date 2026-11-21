@@ -202,7 +202,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                 />
             </div>
 
-            <aside aria-label="In this look" className="relative min-h-0 lg:pt-2">
+            <aside aria-label="In this look" className="relative min-h-0 lg:pb-14 lg:pt-2">
                 <Reveal active={active} delay={0.2} x="36px" y="0px" className="h-full">
                     <PieceCards
                         look={look}

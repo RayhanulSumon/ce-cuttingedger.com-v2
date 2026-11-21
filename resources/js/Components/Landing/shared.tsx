@@ -13,7 +13,11 @@ export interface SectionProps {
 export const SECTIONS = [
     { id: 'hero', label: 'Home' },
     { id: 'digital-twins', label: 'Digital Twins' },
+    { id: 'digital-twins-alt', label: 'Digital Twins (Centered)' },
+    { id: 'digital-twins-top-center', label: 'Digital Twins (Top Center)' },
     { id: 'try-on', label: 'Virtual Try-On' },
+    { id: 'try-on-alt', label: 'Virtual Try-On (Centered)' },
+    { id: 'try-on-top-center', label: 'Virtual Try-On (Top Center)' },
     { id: 'retouching', label: 'Retouching' },
     { id: 'showcase', label: 'Showcase' },
     { id: 'clients', label: 'Clients' },
@@ -103,24 +107,31 @@ export function SectionIntro({
     title,
     children,
     actions,
+    align = 'left',
     className = '',
     titleClassName = 'text-section',
     bodyClassName = 'text-sm text-muted sm:text-base',
+    bodyMaxWidthClassName,
     cursorFree = false,
 }: {
     active: boolean;
     title: string;
     children: React.ReactNode;
     actions?: React.ReactNode;
+    align?: 'left' | 'center';
     className?: string;
     titleClassName?: string;
     bodyClassName?: string;
+    bodyMaxWidthClassName?: string;
     /** Marks the block so custom cursors step aside while it is hovered. */
     cursorFree?: boolean;
 }) {
+    const isCentered = align === 'center';
+    const maxWidthClass = bodyMaxWidthClassName ?? (isCentered ? 'mx-auto max-w-[58ch]' : 'max-w-[36ch]');
+
     return (
         <div
-            className={`${cursorFree ? 'pointer-events-auto' : ''} ${className}`.trim()}
+            className={`${cursorFree ? 'pointer-events-auto' : ''} ${isCentered ? 'text-center' : ''} ${className}`.trim()}
             data-twin-cursor-free={cursorFree ? '' : undefined}
         >
             <Reveal active={active}>
@@ -129,13 +140,13 @@ export function SectionIntro({
                 </h2>
             </Reveal>
             <Reveal active={active} delay={0.1}>
-                <p className={`mt-2.5 max-w-[36ch] leading-[1.6] sm:mt-3 ${bodyClassName}`}>{children}</p>
+                <p className={`mt-2.5 leading-[1.6] sm:mt-3 ${maxWidthClass} ${bodyClassName}`}>{children}</p>
             </Reveal>
             {actions && (
                 <Reveal
                     active={active}
                     delay={0.18}
-                    className="pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5 sm:mt-5"
+                    className={`pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5 sm:mt-5 ${isCentered ? 'justify-center' : ''}`}
                 >
                     {actions}
                 </Reveal>
