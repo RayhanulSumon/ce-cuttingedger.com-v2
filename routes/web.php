@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\Admin\AdminRedirectController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSubscriberController;
+use App\Http\Controllers\Admin\AdminSystemLogController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
 use App\Http\Controllers\Admin\AdminTrackingScriptController;
@@ -187,6 +188,11 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
         Route::delete('roles/{role}', [AdminUserController::class, 'destroyRole'])->name('roles.destroy');
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+
+        // System Logs: Laravel log viewer & error monitor
+        Route::get('system-logs', [AdminSystemLogController::class, 'index'])->name('system-logs.index');
+        Route::get('system-logs/download', [AdminSystemLogController::class, 'download'])->name('system-logs.download');
+        Route::delete('system-logs', [AdminSystemLogController::class, 'clear'])->name('system-logs.clear');
     });
 });
 

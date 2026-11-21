@@ -6,7 +6,8 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Save, Globe, Search, Phone, Share2, ChevronDown, ExternalLink, Calendar, CheckCircle2 } from "lucide-react";
+import { NotificationEmailsSection } from "@/Components/Admin/Settings/NotificationEmailsSection";
+import { Save, Globe, Search, Phone, Share2, ChevronDown } from "lucide-react";
 
 interface SettingItem {
     id: number;
@@ -18,14 +19,15 @@ interface SettingItem {
 
 interface SettingsIndexProps {
     settings: SettingItem[];
+    adminNotificationRecipients: string[];
 }
 
-type SettingGroupId = "brand" | "contact" | "seo" | "integrations";
+type SettingGroupId = "brand" | "contact" | "notifications" | "seo" | "integrations";
 
 const LABEL_CLASS = "text-xs font-semibold text-ink-2 block mb-1.5";
-const GROUP_IDS: SettingGroupId[] = ["brand", "contact", "seo", "integrations"];
+const GROUP_IDS: SettingGroupId[] = ["brand", "contact", "notifications", "seo", "integrations"];
 
-export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
+export default function SettingsIndex({ settings = [], adminNotificationRecipients = [] }: SettingsIndexProps) {
     const initialMap: Record<string, string> = {};
     settings.forEach((s) => {
         initialMap[s.key] = s.value || "";
@@ -34,11 +36,12 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
     const [openGroups, setOpenGroups] = useState<Record<SettingGroupId, boolean>>({
         brand: true,
         contact: false,
+        notifications: false,
         seo: false,
         integrations: false,
     });
 
-    const { data, setData, post, processing, isDirty } = useForm({
+    const { data, setData, post, processing, isDirty, errors } = useForm({
         settings: {
             brand_name: initialMap["brand_name"] || "Cutting Edger",
             tagline:
@@ -47,6 +50,8 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
             contact_email: initialMap["contact_email"] || "info@cuttingedger.com",
             contact_phones: initialMap["contact_phones"] ?? "USA | +1 (409) 995-2565",
             whatsapp_number: initialMap["whatsapp_number"] ?? "",
+            admin_notification_emails:
+                initialMap["admin_notification_emails"] ?? adminNotificationRecipients.join("\n"),
             office_address:
                 initialMap["office_address"] ||
                 "Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215",
@@ -56,9 +61,6 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
             default_meta_description:
                 initialMap["default_meta_description"] ||
                 "High-volume e-commerce catalog retouching, color standardization, white-label agency bandwidth, and 3D CGI virtual production studio.",
-            robots_txt_content:
-                initialMap["robots_txt_content"] ||
-                "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /thank-you\n\nSitemap: https://cuttingedger.com/sitemap.xml",
             calendly_url:
                 initialMap["calendly_url"] ||
                 "https://calendly.com/cuttingedger/discovery-call",
@@ -91,6 +93,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
         setOpenGroups({
             brand: next,
             contact: next,
+            notifications: next,
             seo: next,
             integrations: next,
         });
@@ -258,6 +261,14 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     )}
                 </section>
 
+                <NotificationEmailsSection
+                    open={openGroups.notifications}
+                    onToggle={() => toggleGroup("notifications")}
+                    value={data.settings.admin_notification_emails}
+                    onChange={(value) => updateSetting("admin_notification_emails", value)}
+                    error={(errors as Record<string, string | undefined>)["settings.admin_notification_emails"]}
+                />
+
                 {/* Group 3: SEO & Search Crawlers */}
                 <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                     <button
@@ -273,13 +284,13 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">SEO &amp; Search Crawlers</h2>
                                 <p className="truncate text-xs text-subtle">
-                                    Default meta title, description, and live robots.txt
+                                    Default meta title and meta description
                                 </p>
                             </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
                             <span className="hidden rounded-full bg-surface-2 px-2.5 py-0.5 text-2xs font-semibold text-muted sm:inline-block">
-                                3 fields
+                                2 fields
                             </span>
                             <ChevronDown
                                 className={cn(
@@ -315,34 +326,6 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         className="bg-surface border-line text-ink"
                                     />
                                 </div>
-                            </div>
-
-                            <div>
-                                <div className="mb-1.5 flex items-center justify-between gap-2">
-                                    <label className="text-xs font-semibold text-ink-2">
-                                        robots.txt Rules
-                                    </label>
-                                    <a
-                                        href="/robots.txt"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-                                    >
-                                        <span>View /robots.txt</span>
-                                        <ExternalLink className="h-3 w-3" />
-                                    </a>
-                                </div>
-                                <Textarea
-                                    value={data.settings.robots_txt_content}
-                                    onChange={(e) =>
-                                        updateSetting("robots_txt_content", e.target.value)
-                                    }
-                                    rows={6}
-                                    className="text-xs bg-surface-2 border-line text-ink"
-                                />
-                                <p className="mt-1.5 text-xs text-subtle">
-                                    Takes effect immediately at /robots.txt without rebuilding.
-                                </p>
                             </div>
                         </div>
                     )}
@@ -381,98 +364,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.integrations && (
-                        <div className="space-y-5 border-t border-line px-4 py-5 sm:px-6">
-                            {/* Setup Guide Box */}
-                            <div className="rounded-xl border border-warning/25 bg-warning-soft p-4 sm:p-5 space-y-4">
-                                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-warning/25 pb-3">
-                                    <div className="flex items-center gap-2.5">
-                                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-warning-soft text-warning">
-                                            <Calendar className="h-4 w-4" />
-                                        </span>
-                                        <div>
-                                            <h3 className="text-xs font-bold uppercase tracking-wider text-warning">
-                                                How to Connect Calendly (30-Minute Discovery Calls)
-                                            </h3>
-                                            <p className="text-2xs text-warning/80">
-                                                Configures the self-scheduling calendar widget on <code className="font-mono bg-surface/70 px-1 py-0.5 rounded text-warning">/book-a-demo</code>.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <a
-                                            href="/book-a-demo"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 rounded-lg border border-warning/30 bg-surface px-3 py-1.5 text-xs font-semibold text-warning hover:bg-warning-soft shadow-xs"
-                                        >
-                                            <span>Preview /book-a-demo</span>
-                                            <ExternalLink className="h-3.5 w-3.5 text-warning" />
-                                        </a>
-                                        <a
-                                            href="https://calendly.com"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-warning hover:text-warning hover:underline"
-                                        >
-                                            <span>Open Calendly.com</span>
-                                            <ExternalLink className="h-3 w-3" />
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
-                                        <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-ink text-surface text-2xs font-bold">1</span>
-                                            <p className="font-bold text-ink">Create 30-Min Event</p>
-                                        </div>
-                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
-                                            Log in to <a href="https://calendly.com" target="_blank" rel="noreferrer" className="text-primary underline">Calendly</a> and create or select a <strong>30-minute</strong> Discovery Call event type.
-                                        </p>
-                                    </div>
-                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
-                                        <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-2xs font-bold">2</span>
-                                            <p className="font-bold text-ink">Copy Share Link</p>
-                                        </div>
-                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
-                                            Click <strong>Share → Copy link</strong> (e.g. <code className="text-2xs bg-surface-2 px-1 py-0.5 rounded font-mono text-ink">https://calendly.com/your-brand/30min</code>).
-                                        </p>
-                                    </div>
-                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
-                                        <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-success text-white text-2xs font-bold">3</span>
-                                            <p className="font-bold text-ink">Paste &amp; Save Below</p>
-                                        </div>
-                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
-                                            Paste your link into <strong>Calendly Booking URL</strong> and click <strong>Save Settings</strong>.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-warning/25 text-xs">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-ink">Frontend Status:</span>
-                                        {data.settings.calendly_url &&
-                                        !data.settings.calendly_url.includes("cuttingedger/discovery-call") &&
-                                        !data.settings.calendly_url.includes("your-org") ? (
-                                            <span className="inline-flex items-center gap-1 font-semibold text-success bg-success-soft px-2.5 py-0.5 rounded-full border border-success/25">
-                                                <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-                                                Live Calendly embed active on /book-a-demo
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 font-semibold text-warning bg-warning-soft px-2.5 py-0.5 rounded-full border border-warning/30">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />
-                                                Placeholder / Unset — Visitors currently see the direct 30-min booking request form
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-2xs text-subtle">
-                                        Clients will never see setup guides or 404 errors.
-                                    </p>
-                                </div>
-                            </div>
-
+                        <div className="space-y-4 border-t border-line px-4 py-5 sm:px-6">
                             <div>
                                 <label className={LABEL_CLASS}>Calendly 30-Minute Booking URL *</label>
                                 <Input

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Faq;
 use App\Models\PricingPlan;
-use App\Models\Setting;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -100,15 +99,12 @@ class PageController extends Controller
     }
 
     /**
-     * Generate dynamic robots.txt from admin settings.
+     * Serve the manually managed public/robots.txt file.
      */
     public function robots(): HttpResponse
     {
-        $content = Setting::where('key', 'robots_txt_content')->value('value');
-
-        if (! $content) {
-            $content = "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /thank-you\n\nSitemap: ".url('/sitemap.xml')."\n";
-        }
+        $path = public_path('robots.txt');
+        $content = is_file($path) ? (string) file_get_contents($path) : "User-agent: *\nDisallow: /\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain');

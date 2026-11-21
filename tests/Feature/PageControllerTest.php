@@ -66,6 +66,7 @@ class PageControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
         $this->assertStringContainsString('User-agent: *', $response->getContent());
+        $this->assertStringContainsString('Disallow: /', $response->getContent());
     }
 
     public function test_renders_digital_twin_order_page_prefilled_from_query_string(): void

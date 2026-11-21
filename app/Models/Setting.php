@@ -51,20 +51,49 @@ class Setting extends Model
     }
 
     /**
-     * Resolve all admin notification email recipients, deduplicated.
+     * Resolve the emails that receive form-submission notifications.
+     *
+     * Uses the "admin_notification_emails" setting managed in Admin → Settings; until it has been saved once,
+     * the contact email plus the MAIL_ADMIN_RECIPIENTS defaults are used.
      *
      * @return array<int, string>
      */
     public static function adminNotificationRecipients(): array
     {
-        $configured = (array) config('mail.admin_recipients', []);
-        $primary = static::where('key', 'contact_email')->value('value');
+        $saved = static::where('key', 'admin_notification_emails')->first();
 
-        $all = array_filter(array_map(
-            fn (?string $email): string => strtolower(trim((string) $email)),
-            [$primary, ...$configured]
-        ), fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false);
+        if ($saved) {
+            return static::parseEmailList($saved->value);
+        }
 
-        return array_values(array_unique($all));
+        $primary = (string) static::where('key', 'contact_email')->value('value');
+
+        return static::parseEmailList(implode("\n", [$primary, ...(array) config('mail.admin_recipients', [])]));
+    }
+
+    /**
+     * Split a comma/semicolon/newline separated list into valid, lowercase, unique emails.
+     *
+     * @return array<int, string>
+     */
+    public static function parseEmailList(?string $value): array
+    {
+        return array_values(array_unique(array_filter(
+            array_map(fn (string $email): string => strtolower(trim($email)), preg_split('/[\s,;]+/', (string) $value) ?: []),
+            fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false
+        )));
+    }
+
+    /**
+     * Return the entries of a comma/semicolon/newline separated list that are not valid emails.
+     *
+     * @return array<int, string>
+     */
+    public static function invalidEmailsIn(?string $value): array
+    {
+        return array_values(array_filter(
+            array_map('trim', preg_split('/[\s,;]+/', (string) $value) ?: []),
+            fn (string $email): bool => $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) === false
+        ));
     }
 }

@@ -28,6 +28,7 @@ import {
     Shirt,
     Coins,
     Inbox,
+    ScrollText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster, toast } from "@/Components/ui/sonner";
@@ -127,7 +128,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         url.startsWith("/admin/settings") ||
         url.startsWith("/admin/redirects") ||
         url.startsWith("/admin/tracking-scripts") ||
-        url.startsWith("/admin/users");
+        url.startsWith("/admin/users") ||
+        url.startsWith("/admin/system-logs");
 
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
         Inbox: isInboxActive,
@@ -324,6 +326,12 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                               href: "/admin/users",
                               icon: Shield,
                               active: url.startsWith("/admin/users"),
+                          },
+                          {
+                              name: "System Logs",
+                              href: "/admin/system-logs",
+                              icon: ScrollText,
+                              active: url.startsWith("/admin/system-logs"),
                           },
                       ]
                     : []),

@@ -92,7 +92,6 @@ class SeoSettingsSeeder extends Seeder
             'calendly_url' => 'https://calendly.com/cuttingedger/discovery-call',
             'default_meta_title' => 'Cutting Edger — AI-Driven Visual Performance Agency',
             'default_meta_description' => 'High-volume e-commerce catalog retouching, color standardization, white-label agency bandwidth, and 3D CGI virtual production studio.',
-            'robots_txt_content' => "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /thank-you\n\nSitemap: https://cuttingedger.com/sitemap.xml",
         ];
 
         foreach ($settingsData as $key => $val) {

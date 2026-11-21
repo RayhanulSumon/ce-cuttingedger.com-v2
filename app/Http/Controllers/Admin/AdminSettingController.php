@@ -20,6 +20,7 @@ class AdminSettingController extends Controller
 
         return Inertia::render('Admin/Settings/Index', [
             'settings' => $settings,
+            'adminNotificationRecipients' => Setting::adminNotificationRecipients(),
         ]);
     }
 
@@ -30,7 +31,28 @@ class AdminSettingController extends Controller
     {
         $validated = $request->validate([
             'settings' => ['required', 'array'],
+            'settings.*' => ['nullable'],
+            'settings.admin_notification_emails' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:5000',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $invalid = Setting::invalidEmailsIn($value);
+
+                    if ($invalid !== []) {
+                        $fail('Invalid notification email(s): '.implode(', ', $invalid));
+                    }
+                },
+            ],
         ]);
+
+        if (array_key_exists('admin_notification_emails', $validated['settings'])) {
+            $validated['settings']['admin_notification_emails'] = implode(
+                "\n",
+                Setting::parseEmailList($validated['settings']['admin_notification_emails'])
+            );
+        }
 
         foreach ($validated['settings'] as $key => $value) {
             Setting::updateOrCreate(
