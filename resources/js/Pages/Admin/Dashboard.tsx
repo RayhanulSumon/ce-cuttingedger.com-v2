@@ -55,7 +55,7 @@ export default function Dashboard({
         <AdminLayout title="Dashboard">
             <AdminPageHeader
                 title="Dashboard"
-                description="Overview of your Digital Twins, Virtual Try-On quotes, client orders, and customer messages."
+                description="Overview of your Digital Twins, Virtual Try-On orders, client orders, and customer messages."
             >
                 <div className="flex flex-wrap items-center gap-2">
                     <Link href="/admin/digital-twins">
@@ -79,7 +79,7 @@ export default function Dashboard({
                     <Link href="/admin/orders">
                         <Button className="gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold text-xs">
                             <ShoppingBag className="w-3.5 h-3.5" />
-                            <span>View Orders & Quotes</span>
+                            <span>View Orders</span>
                         </Button>
                     </Link>
                 </div>
@@ -93,7 +93,7 @@ export default function Dashboard({
                         className="p-5 rounded-2xl bg-surface border border-line shadow-xs hover:border-primary/40 transition-all group space-y-2"
                     >
                         <div className="flex items-center justify-between text-subtle">
-                            <span className="text-xs font-semibold">Orders & Quotes</span>
+                            <span className="text-xs font-semibold">Orders</span>
                             <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                                 <ShoppingBag className="w-4 h-4" />
                             </div>
@@ -175,15 +175,15 @@ export default function Dashboard({
 
                 {/* Split Overview: Recent Orders & Recent Messages */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    {/* Left 7 Columns: Recent Orders & Quotes */}
+                    {/* Left 7 Columns: Recent Orders */}
                     <div className="lg:col-span-7 p-6 rounded-2xl bg-surface border border-line shadow-xs space-y-4">
                         <div className="flex items-center justify-between pb-3 border-b border-line">
                             <div>
                                 <h2 className="text-base font-bold text-ink">
-                                    Recent Orders & Quotes
+                                    Recent Orders
                                 </h2>
                                 <p className="text-xs text-subtle">
-                                    Latest Digital Twin orders and Virtual Try-On quote requests
+                                    Latest Digital Twin and Virtual Try-On orders
                                 </p>
                             </div>
                             <Link
@@ -225,7 +225,7 @@ export default function Dashboard({
                                                 </span>
                                             ) : (
                                                 <span className="text-2xs font-semibold text-primary">
-                                                    Custom Quote
+                                                    Custom Order
                                                 </span>
                                             )}
 
@@ -246,10 +246,10 @@ export default function Dashboard({
                             ) : (
                                 <div className="py-10 text-center space-y-2">
                                     <p className="text-sm font-semibold text-muted">
-                                        No orders or quotes yet
+                                        No orders yet
                                     </p>
                                     <p className="text-xs text-faint">
-                                        New Digital Twin orders and Virtual Try-On quotes will appear here automatically.
+                                        New Digital Twin and Virtual Try-On orders will appear here automatically.
                                     </p>
                                 </div>
                             )}

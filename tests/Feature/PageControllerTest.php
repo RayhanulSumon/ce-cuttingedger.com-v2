@@ -89,7 +89,7 @@ class PageControllerTest extends TestCase
             ->assertRedirect(route('digital-twins.order', ['ref' => 'Look 16']));
 
         $this->get('/order?service=virtual-try-on&ref=Elena')
-            ->assertRedirect(route('try-on.quote', ['look' => 'Elena', 'service' => 'virtual-try-on']));
+            ->assertRedirect(route('try-on.order', ['look' => 'Elena', 'service' => 'virtual-try-on']));
     }
 
     public function test_reviews_page_redirects_to_the_homepage_section(): void

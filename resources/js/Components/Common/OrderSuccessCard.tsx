@@ -10,7 +10,7 @@ interface OrderSuccessCardProps {
 }
 
 /**
- * Full-width confirmation state shown in place of the order/quote form after
+ * Full-width confirmation state shown in place of the order form after
  * a successful submission so the visitor sees confirmation immediately.
  */
 export function OrderSuccessCard({

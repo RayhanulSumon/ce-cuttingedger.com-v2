@@ -15,7 +15,7 @@ export function pathForCapability(capability: Capability, parent?: Capability['p
 
 export function quoteUrlForCapability(capability: Capability, parent?: Capability['parent'] | Capability | null): string {
     if (capability.slug === 'virtual-try-on') {
-        return '/virtual-try-on/quote';
+        return '/virtual-try-on/order';
     }
     if (capability.slug === 'digital-twins') {
         return '/digital-twins/order';

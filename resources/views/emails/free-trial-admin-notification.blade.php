@@ -4,7 +4,7 @@
         'digital_twin_preset' => 'New Digital Twin Preset Order',
         'digital_twin_custom' => 'New Digital Twin Custom Order',
         'digital_twin_lifetime' => 'New Digital Twin Lifetime Order',
-        'virtual_try_on_quote' => 'New Virtual Try-On Quote Request',
+        'virtual_try_on_order' => 'New Virtual Try-On Order',
         default => $order->payment_status === 'free_trial' ? 'New 3-Asset Pilot Request' : 'New Order Received',
     };
 @endphp

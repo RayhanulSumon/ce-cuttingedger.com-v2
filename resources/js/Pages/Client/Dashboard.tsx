@@ -32,7 +32,7 @@ interface ClientDashboardProps {
         in_progress: number;
         completed: number;
         digital_twin_orders?: number;
-        try_on_quotes?: number;
+        try_on_orders?: number;
     };
     creditSummary?: CreditSummary;
 }
@@ -56,12 +56,12 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
         <>
             <SeoHead
                 title="Client Workspace — CuttingEdger"
-                description="Track your CuttingEdger studio orders, quotes, credits, and deliverables."
+                description="Track your CuttingEdger studio orders, credits, and deliverables."
             />
 
             <AdminPageHeader
                 title={`Welcome, ${user?.name || 'Client'}`}
-                description="Track your active orders, quotes, studio credits, and deliverables."
+                description="Track your active orders, studio credits, and deliverables."
             >
                 <div className="flex flex-wrap items-center gap-2">
                     <Link href="/portal/orders" preserveScroll prefetch>
@@ -76,7 +76,7 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
                     <Link href="/capabilities">
                         <Button className="cursor-pointer gap-2 bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover">
                             <Plus className="h-3.5 w-3.5" />
-                            <span>New Order / Quote</span>
+                            <span>New Order</span>
                         </Button>
                     </Link>
                 </div>
@@ -174,7 +174,7 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
                         className="group space-y-2 rounded-2xl border border-line bg-surface p-5 text-left shadow-xs transition-all hover:border-primary/40"
                     >
                         <div className="flex items-center justify-between text-subtle">
-                            <span className="text-xs font-semibold">Total Orders &amp; Quotes</span>
+                            <span className="text-xs font-semibold">Total Orders</span>
                             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                 <ShoppingBag className="h-4 w-4" />
                             </div>
@@ -263,11 +263,11 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
                     </Link>
                 </div>
 
-                {/* Recent Orders & Quotes Card */}
+                {/* Recent Orders Card */}
                 <div className="space-y-4 rounded-2xl border border-line bg-surface p-6 shadow-xs">
                     <div className="flex items-center justify-between border-b border-line pb-3">
                         <div>
-                            <h2 className="text-base font-bold text-ink">Recent Orders &amp; Quotes</h2>
+                            <h2 className="text-base font-bold text-ink">Recent Orders</h2>
                             <p className="text-xs text-subtle">
                                 Inspect specifications, uploaded files, and production status
                             </p>
@@ -336,9 +336,9 @@ export default function ClientDashboard({ orders = [], stats, creditSummary }: C
                                     <ShoppingBag className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-ink">No orders or quotes yet</p>
+                                    <p className="text-sm font-bold text-ink">No orders yet</p>
                                     <p className="mx-auto mt-0.5 max-w-md text-xs text-subtle">
-                                        Explore our studio capabilities to place a new order or request a custom project quote.
+                                        Explore our studio capabilities to place a new order.
                                     </p>
                                 </div>
                                 <Link href="/capabilities">

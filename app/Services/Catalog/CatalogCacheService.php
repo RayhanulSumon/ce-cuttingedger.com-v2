@@ -136,7 +136,7 @@ class CatalogCacheService
     }
 
     /**
-     * Get all active Virtual Try-On Looks for the quote selector.
+     * Get all active Virtual Try-On Looks for the order selector.
      *
      * @return array<int, array<string, mixed>>
      */

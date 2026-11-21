@@ -49,7 +49,7 @@ export default function ClientRegister() {
         <div style={{ background: PAGE_BACKGROUND }} className="min-h-screen pb-20 pt-28 sm:pt-32">
             <SeoHead
                 title="Create Client Account — CuttingEdger Studio Portal"
-                description="Create a verified CuttingEdger client account via email or Google to order Digital Twins and request Virtual Try-On quotes."
+                description="Create a verified CuttingEdger client account via email or Google to order Digital Twins and place Virtual Try-On orders."
             />
 
             <div className="mx-auto max-w-lg px-5">
@@ -62,7 +62,7 @@ export default function ClientRegister() {
                             Create Your Account
                         </h1>
                         <p className="mt-2 text-xs text-subtle">
-                            Sign up with Google or verify your work email to place Digital Twin orders and Virtual Try-On quotes.
+                            Sign up with Google or verify your work email to place Digital Twin and Virtual Try-On orders.
                         </p>
                     </div>
 

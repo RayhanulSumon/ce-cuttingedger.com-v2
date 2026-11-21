@@ -34,7 +34,7 @@ class Order extends Model
                     $order->payment_status === 'free_trial' || $order->source === 'web_trial' || $order->source === 'chat_trial' => 'CE-TRL-',
                     $order->order_type === 'credit_usage' => 'CE-USE-',
                     str_starts_with((string) $order->order_type, 'digital_twin') => 'CE-TWN-',
-                    $order->order_type === 'virtual_try_on_quote' => 'CE-VTO-',
+                    $order->order_type === 'virtual_try_on_order' => 'CE-VTO-',
                     default => 'CE-ORD-',
                 };
                 $order->order_number = $prefix.strtoupper(Str::random(6));

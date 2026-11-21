@@ -51,13 +51,13 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
     const isOrderingRedirect =
         intendedUrl &&
         (intendedUrl.includes('/digital-twins/order') ||
-            intendedUrl.includes('/virtual-try-on/quote'));
+            intendedUrl.includes('/virtual-try-on/order'));
 
     return (
         <div style={{ background: PAGE_BACKGROUND }} className="min-h-screen pb-20 pt-28 sm:pt-32">
             <SeoHead
                 title="Client Sign In — CuttingEdger Studio Portal"
-                description="Sign in to your CuttingEdger client account to order Digital Twins, request Virtual Try-On quotes, and manage your deliverables."
+                description="Sign in to your CuttingEdger client account to order Digital Twins, place Virtual Try-On orders, and manage your deliverables."
             />
 
             <div className="mx-auto max-w-md px-5">
@@ -95,7 +95,7 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                             Welcome Back
                         </h1>
                         <p className="mt-2 text-xs text-subtle">
-                            Sign in to configure Digital Twins, request Virtual Try-On quotes, and manage your orders.
+                            Sign in to configure Digital Twins, place Virtual Try-On orders, and manage your orders.
                         </p>
                     </div>
 

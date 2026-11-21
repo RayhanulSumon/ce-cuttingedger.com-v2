@@ -109,6 +109,65 @@ class AdminOrderTest extends TestCase
         $this->assertTrue(str_contains((string) $response->headers->get('content-disposition'), 'CE-ORD-ZIPTEST'));
     }
 
+    public function test_admin_orders_page_returns_type_stats_and_filters_by_order_type(): void
+    {
+        Order::query()->delete();
+
+        $twinOrder = Order::factory()->create([
+            'order_type' => 'digital_twin_custom',
+            'order_number' => 'CE-TWN-FILTER1',
+            'service_name' => 'Custom Brand Digital Twin',
+        ]);
+
+        $tryOnOrder = Order::factory()->create([
+            'order_type' => 'virtual_try_on_order',
+            'order_number' => 'CE-VTO-FILTER1',
+            'service_name' => 'Virtual Try-On — Paul',
+        ]);
+
+        $creditOrder = Order::factory()->create([
+            'order_type' => 'credit_usage',
+            'order_number' => 'CE-USE-FILTER1',
+            'service_name' => '2D Retouching (40 Credits)',
+            'payment_status' => 'paid',
+        ]);
+
+        $this->actingAs($this->admin)
+            ->get('/admin/orders')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Orders/Index')
+                ->where('stats.total', 3)
+                ->where('stats.digital_twin_orders', 1)
+                ->where('stats.try_on_orders', 1)
+                ->where('stats.credit_orders', 1)
+            );
+
+        $this->actingAs($this->admin)
+            ->get('/admin/orders?type=digital_twin')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('orders.data', 1)
+                ->where('orders.data.0.id', $twinOrder->id)
+            );
+
+        $this->actingAs($this->admin)
+            ->get('/admin/orders?type=virtual_try_on')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('orders.data', 1)
+                ->where('orders.data.0.id', $tryOnOrder->id)
+            );
+
+        $this->actingAs($this->admin)
+            ->get('/admin/orders?type=credit_usage')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('orders.data', 1)
+                ->where('orders.data.0.id', $creditOrder->id)
+            );
+    }
+
     public function test_security_guard_blocks_malicious_links_and_files(): void
     {
         $guard = app(LinkAndFileSecurityGuard::class);

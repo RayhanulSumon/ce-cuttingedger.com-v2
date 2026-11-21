@@ -159,7 +159,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             active: url === "/admin",
         },
         {
-            name: "Orders & Quotes",
+            name: "Orders",
             href: "/admin/orders",
             icon: ShoppingBag,
             active: url.startsWith("/admin/orders"),

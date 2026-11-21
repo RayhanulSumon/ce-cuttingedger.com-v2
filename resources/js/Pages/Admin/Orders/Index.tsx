@@ -99,7 +99,8 @@ interface PageProps {
         in_production: number;
         completed: number;
         digital_twin_orders?: number;
-        try_on_quotes?: number;
+        try_on_orders?: number;
+        credit_orders?: number;
         total_trials?: number;
         total_revenue: number;
     };
@@ -271,6 +272,43 @@ export default function OrdersIndex({
         }
     };
 
+    const getOrderTypeBadge = (order: OrderItem) => {
+        if (order.payment_status === "free_trial" || order.source === "web_trial" || order.source === "chat_trial") {
+            return (
+                <Badge className="bg-info-soft text-info border border-info/25 w-fit text-2xs">
+                    Free Trial
+                </Badge>
+            );
+        }
+        if (order.order_type?.startsWith("digital_twin")) {
+            return (
+                <Badge className="bg-primary/10 text-primary-ink border border-primary/25 w-fit text-2xs">
+                    Digital Twin
+                </Badge>
+            );
+        }
+        if (order.order_type === "virtual_try_on_order") {
+            return (
+                <Badge className="bg-info-soft text-info border border-info/25 w-fit text-2xs">
+                    Virtual Try-On
+                </Badge>
+            );
+        }
+        if (order.order_type === "credit_usage") {
+            return (
+                <Badge className="bg-success-soft text-success border border-success/25 w-fit text-2xs">
+                    Credit Order
+                </Badge>
+            );
+        }
+
+        return (
+            <Badge className="bg-surface-2 text-muted border border-line w-fit text-2xs">
+                Custom Order
+            </Badge>
+        );
+    };
+
     const columns: Column<OrderItem>[] = [
         {
             header: "Order / Date",
@@ -299,13 +337,16 @@ export default function OrdersIndex({
             header: "Service & Complexity",
             accessorKey: "service_name",
             cell: (row) => (
-                <div className="flex flex-col gap-0.5 text-xs">
+                <div className="flex flex-col gap-1 text-xs">
                     <span className="font-semibold text-ink truncate max-w-[200px]">
                         {row.service_name}
                     </span>
-                    <span className="text-2xs text-subtle capitalize">
-                        {row.complexity} complexity • {row.turnaround}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                        {getOrderTypeBadge(row)}
+                        <span className="text-2xs text-subtle capitalize">
+                            {row.complexity} • {row.turnaround}
+                        </span>
+                    </div>
                 </div>
             ),
         },
@@ -320,7 +361,7 @@ export default function OrdersIndex({
                         <div className="flex items-center gap-1.5">
                             <span className="font-bold text-ink">{row.uploaded_count}</span>
                             <span className="text-faint">/</span>
-                            <span className="text-muted">{row.quantity} quoted</span>
+                            <span className="text-muted">{row.quantity} ordered</span>
                         </div>
                         {row.cloud_link ? (
                             <a
@@ -356,7 +397,11 @@ export default function OrdersIndex({
             cell: (row) => (
                 <div className="flex flex-col gap-1 text-xs">
                     <span className="font-bold text-ink tabular-nums">
-                        ${row.total_price.toFixed(2)}
+                        {row.order_type === "credit_usage" && row.specifications?.credits_spent
+                            ? `${Number(row.specifications.credits_spent).toLocaleString()} Credits`
+                            : row.total_price > 0
+                              ? `$${row.total_price.toFixed(2)}`
+                              : "Custom Order"}
                     </span>
                     <div>{getPaymentBadge(row.payment_status)}</div>
                 </div>
@@ -431,11 +476,11 @@ export default function OrdersIndex({
     ];
 
     return (
-        <AdminLayout title="Orders & Quotes">
+        <AdminLayout title="Orders">
             <div className="space-y-6">
                 <AdminPageHeader
-                    title="Client Production Orders"
-                    description="Manage commercial batch retouching orders, Digital Twins, Virtual Try-On quotes, inspect client uploads, and download production assets."
+                    title="Orders"
+                    description="Manage Digital Twin orders, Virtual Try-On orders, credit orders, inspect client uploads, and download production assets."
                 />
 
                 {/* Metric Summary Cards */}
@@ -532,7 +577,11 @@ export default function OrdersIndex({
                         },
                         {
                             key: "virtual_try_on",
-                            label: `Virtual Try-On Quotes (${stats.try_on_quotes ?? 0})`,
+                            label: `Virtual Try-On (${stats.try_on_orders ?? 0})`,
+                        },
+                        {
+                            key: "credit_usage",
+                            label: `Credit Orders (${stats.credit_orders ?? 0})`,
                         },
                         { key: "free_trial", label: `Free Trials (${stats.total_trials ?? 0})` },
                     ].map((tab) => {
@@ -726,7 +775,7 @@ export default function OrdersIndex({
                                         </span>
                                         <span className="text-2xs text-muted">
                                             {selectedOrder.uploaded_count < selectedOrder.quantity
-                                                ? `Client quoted for ${selectedOrder.quantity} images, but has only uploaded ${selectedOrder.uploaded_count} files (${selectedOrder.quantity - selectedOrder.uploaded_count} pending).`
+                                                ? `Client ordered ${selectedOrder.quantity} images, and has uploaded ${selectedOrder.uploaded_count} files (${selectedOrder.quantity - selectedOrder.uploaded_count} pending).`
                                                 : `All ${selectedOrder.quantity} files received for this production batch.`}
                                         </span>
                                     </div>
@@ -771,7 +820,7 @@ export default function OrdersIndex({
                                         <span className="text-2xs font-bold uppercase tracking-wider text-primary-ink block">
                                             {selectedOrder.order_type?.startsWith("digital_twin")
                                                 ? "Digital Twin Specification & Custom Attributes"
-                                                : selectedOrder.order_type === "virtual_try_on_quote"
+                                                : selectedOrder.order_type === "virtual_try_on_order"
                                                   ? "Virtual Try-On Model & Garment Slots"
                                                   : "Order Specifications"}
                                         </span>
@@ -850,7 +899,7 @@ export default function OrdersIndex({
                                             </div>
                                         )}
 
-                                        {selectedOrder.order_type === "virtual_try_on_quote" && (
+                                        {selectedOrder.order_type === "virtual_try_on_order" && (
                                             <div className="space-y-2 text-xs">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>

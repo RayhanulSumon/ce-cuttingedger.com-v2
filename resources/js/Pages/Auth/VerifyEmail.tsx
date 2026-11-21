@@ -24,7 +24,7 @@ export default function VerifyEmail() {
         <div style={{ background: PAGE_BACKGROUND }} className="min-h-screen pb-20 pt-28 sm:pt-32">
             <SeoHead
                 title="Verify Your Email — CuttingEdger Client Portal"
-                description="Verify your email address to unlock Digital Twin ordering, Virtual Try-On quotes, and your Client Portal."
+                description="Verify your email address to unlock Digital Twin ordering, Virtual Try-On ordering, and your Client Portal."
             />
 
             <div className="mx-auto max-w-md px-5">

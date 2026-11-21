@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { CustomOrderCta, PAD_X, Reveal, SectionIntro, SectionProps, tryOnQuoteUrl } from '../shared';
+import { CustomOrderCta, PAD_X, Reveal, SectionIntro, SectionProps, tryOnOrderUrl } from '../shared';
 import { Look, LOOKS } from './looks';
 import { LookView } from './LookView';
 import { PieceCards } from './PieceCards';
@@ -200,9 +200,9 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
 
             <CustomOrderCta
                 active={active}
-                href={tryOnQuoteUrl(look.modelName)}
+                href={tryOnOrderUrl(look.modelName)}
                 question="Want this look on your own garments?"
-                buttonLabel="Request Try-On Quote"
+                buttonLabel="Order now"
                 className={`${fadeWhenOpen} max-lg:static`}
             />
         </div>

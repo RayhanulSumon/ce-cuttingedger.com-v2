@@ -42,11 +42,11 @@ class OrderController extends Controller
     }
 
     /**
-     * Display Page 2: Virtual Try-On Capability Quote / Pilot Request page.
+     * Display Page 2: Virtual Try-On Custom Order page.
      */
-    public function tryOnQuote(Request $request): Response
+    public function tryOnOrder(Request $request): Response
     {
-        return Inertia::render('TryOn/Quote', [
+        return Inertia::render('TryOn/Order', [
             'tryOnLooks' => CatalogCacheService::getAllTryOnLooks(),
             'initialLook' => Str::limit((string) $request->query('look', $request->query('ref', '')), 120, ''),
             'initialService' => Str::limit((string) $request->query('service', 'virtual-try-on'), 80, ''),
@@ -67,7 +67,7 @@ class OrderController extends Controller
             ]));
         }
 
-        return redirect()->route('try-on.quote', array_filter([
+        return redirect()->route('try-on.order', array_filter([
             'look' => $ref ?: null,
             'service' => $service ?: null,
         ]));
@@ -167,7 +167,7 @@ class OrderController extends Controller
             'unit_price' => $rawPrice,
             'total_price' => $rawPrice,
             'currency' => 'USD',
-            'turnaround' => $mode === 'custom' ? 'Custom Quote' : 'Instant / 24h Delivery',
+            'turnaround' => $mode === 'custom' ? '24h Studio Review' : 'Instant / 24h Delivery',
             'images' => $uploadedUrls,
             'specifications' => $specifications,
             'cloud_link' => $validated['cloud_link'] ?? null,
@@ -184,16 +184,16 @@ class OrderController extends Controller
 
         $this->notifyOrderCreated($order);
 
-        return back()->with('success', "Digital Twin request #{$order->order_number} received! Our studio team will review your specification and send your quote and next steps within one business day.");
+        return back()->with('success', "Digital Twin order #{$order->order_number} received! Our studio team will review your specification and follow up with next steps within one business day.");
     }
 
     /**
-     * Store a Virtual Try-On Quote / Pilot Request (with Our Model vs Your Model + Top, Bottom, Shoes uploads).
+     * Store a Virtual Try-On Order (with Our Model vs Your Model + Top, Bottom, Shoes uploads).
      */
-    public function storeTryOnQuote(Request $request): RedirectResponse
+    public function storeTryOnOrder(Request $request): RedirectResponse
     {
         if ($request->filled('honeypot') || $request->filled('website_url')) {
-            return back()->with('success', 'Your Virtual Try-On quote request has been received.');
+            return back()->with('success', 'Your Virtual Try-On order has been received.');
         }
 
         $validated = $request->validate([
@@ -267,7 +267,7 @@ class OrderController extends Controller
         ];
 
         $order = Order::create([
-            'order_type' => 'virtual_try_on_quote',
+            'order_type' => 'virtual_try_on_order',
             'user_id' => $request->user()?->id,
             'try_on_look_id' => $look?->id,
             'client_name' => $validated['name'],
@@ -284,14 +284,14 @@ class OrderController extends Controller
             'unit_price' => 0.00,
             'total_price' => 0.00,
             'currency' => 'USD',
-            'turnaround' => '24h Proof Quote',
+            'turnaround' => '24h Studio Delivery',
             'images' => $allImages,
             'specifications' => $specifications,
             'cloud_link' => $validated['cloud_link'] ?? null,
             'instructions' => $validated['instructions'] ?? null,
             'status' => 'pending',
             'payment_status' => 'unpaid',
-            'source' => 'virtual_try_on_quote',
+            'source' => 'virtual_try_on_order',
             'landing_page_url' => $validated['landing_page_url'] ?? null,
             'submission_page_url' => $validated['submission_page_url'] ?? $request->header('referer'),
             'utm_source' => $validated['utm_source'] ?? null,
@@ -301,7 +301,7 @@ class OrderController extends Controller
 
         $this->notifyOrderCreated($order);
 
-        return back()->with('success', "Virtual Try-On Quote Request #{$order->order_number} received! Our specialists will review your garments and return a quote and proof within one business day.");
+        return back()->with('success', "Virtual Try-On Order #{$order->order_number} received! Our specialists will review your garments and follow up within one business day.");
     }
 
     /**

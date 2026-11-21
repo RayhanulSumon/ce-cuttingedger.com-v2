@@ -273,11 +273,11 @@ export function VirtualTryOnFittingRoom({ capability, parent }: VirtualTryOnFitt
 
                 <div className="lg:absolute lg:right-10 lg:top-24 lg:z-30">
                     <Link
-                        href="/virtual-try-on/quote"
+                        href="/virtual-try-on/order"
                         prefetch
                         className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 sm:px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_85%,transparent)] transition-[transform,background-color] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover sm:text-sm"
                     >
-                        Request a quote
+                        Order now
                         <ArrowUpRight size={14} />
                     </Link>
                 </div>

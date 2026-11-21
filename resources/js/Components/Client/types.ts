@@ -59,7 +59,7 @@ export function formatOrderAmount(order: ClientOrderItem): string {
     if (order.total_price > 0) {
         return `$${order.total_price.toFixed(2)} ${order.currency}`;
     }
-    return 'Custom Quote';
+    return 'Custom Order';
 }
 
 export function formatCreditExpiryText(

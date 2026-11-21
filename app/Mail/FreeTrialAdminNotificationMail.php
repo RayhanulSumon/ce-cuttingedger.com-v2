@@ -27,7 +27,7 @@ class FreeTrialAdminNotificationMail extends Mailable implements ShouldQueue
             'digital_twin_preset' => 'Digital Twin Preset Order',
             'digital_twin_custom' => 'Digital Twin Custom Order',
             'digital_twin_lifetime' => 'Digital Twin Lifetime Order',
-            'virtual_try_on_quote' => 'Virtual Try-On Quote',
+            'virtual_try_on_order' => 'Virtual Try-On Order',
             default => $this->order->payment_status === 'free_trial' ? '3-Asset Pilot Lead' : 'New Order',
         };
         $company = $this->order->company ? " ({$this->order->company})" : '';

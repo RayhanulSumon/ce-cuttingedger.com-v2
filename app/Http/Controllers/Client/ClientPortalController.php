@@ -34,7 +34,7 @@ class ClientPortalController extends Controller
             'in_progress' => $orders->whereIn('status', ['pending', 'in_production', 'review'])->count(),
             'completed' => $orders->where('status', 'completed')->count(),
             'digital_twin_orders' => $orders->filter(fn (array $o) => str_starts_with($o['order_type'], 'digital_twin'))->count(),
-            'try_on_quotes' => $orders->where('order_type', 'virtual_try_on_quote')->count(),
+            'try_on_orders' => $orders->where('order_type', 'virtual_try_on_order')->count(),
         ];
 
         return Inertia::render('Client/Dashboard', [
@@ -46,7 +46,7 @@ class ClientPortalController extends Controller
     }
 
     /**
-     * Display the authenticated client's orders and quotes page.
+     * Display the authenticated client's orders page.
      */
     public function orders(Request $request): Response
     {

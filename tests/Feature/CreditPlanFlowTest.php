@@ -258,7 +258,7 @@ class CreditPlanFlowTest extends TestCase
             'email' => $this->admin->email,
         ])->assertRedirect(route('login'));
 
-        $this->actingAs($this->admin)->post('/virtual-try-on/quote', [
+        $this->actingAs($this->admin)->post('/virtual-try-on/order', [
             'model_source' => 'our_model',
             'name' => 'Admin User',
             'email' => $this->admin->email,

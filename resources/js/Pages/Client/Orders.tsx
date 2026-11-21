@@ -66,13 +66,13 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
         <>
             <SeoHead
                 title="Orders — Client Workspace"
-                description="Track your submitted studio orders, custom quotes, turnaround times, and downloadable deliverables."
+                description="Track your submitted studio orders, turnaround times, and downloadable deliverables."
             />
 
             <AdminPageHeader
-                title="My Orders & Quotes"
-                description="Track your submitted studio orders, custom quotes, turnaround times, and downloadable deliverables."
-                actionLabel="New Order / Quote"
+                title="My Orders"
+                description="Track your submitted studio orders, turnaround times, and downloadable deliverables."
+                actionLabel="New Order"
                 actionHref="/capabilities"
             />
 
@@ -87,7 +87,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                             {orders.length.toLocaleString()}
                         </div>
                         <span className="block text-xs text-subtle">
-                            Submitted orders &amp; quotes
+                            Submitted orders
                         </span>
                     </div>
 
@@ -386,9 +386,9 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                 <ShoppingBag className="h-5 w-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-bold text-ink">No orders or quotes yet</p>
+                                <p className="text-sm font-bold text-ink">No orders yet</p>
                                 <p className="mx-auto mt-1 max-w-md text-xs text-subtle">
-                                    Explore our studio capabilities to place a new order or request a custom project quote.
+                                    Explore our studio capabilities to place a new order.
                                 </p>
                             </div>
                             <Link

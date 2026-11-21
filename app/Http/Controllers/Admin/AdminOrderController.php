@@ -16,7 +16,7 @@ use ZipArchive;
 class AdminOrderController extends Controller
 {
     /**
-     * Display a listing of client orders (Digital Twins, Virtual Try-On Quotes, Paid Orders & Free Trials).
+     * Display a listing of client orders (Digital Twins, Virtual Try-On Orders, Credit Orders & Free Trials).
      */
     public function index(Request $request): Response
     {
@@ -32,7 +32,9 @@ class AdminOrderController extends Controller
         } elseif ($type === 'digital_twin') {
             $query->where('order_type', 'like', 'digital_twin%');
         } elseif ($type === 'virtual_try_on') {
-            $query->where('order_type', 'virtual_try_on_quote');
+            $query->where('order_type', 'virtual_try_on_order');
+        } elseif ($type === 'credit_usage') {
+            $query->where('order_type', 'credit_usage');
         } elseif ($type === 'paid') {
             $query->where('payment_status', '!=', 'free_trial');
         }
@@ -97,7 +99,8 @@ class AdminOrderController extends Controller
             'in_production' => Order::where('status', 'in_production')->count(),
             'completed' => Order::where('status', 'completed')->count(),
             'digital_twin_orders' => Order::where('order_type', 'like', 'digital_twin%')->count(),
-            'try_on_quotes' => Order::where('order_type', 'virtual_try_on_quote')->count(),
+            'try_on_orders' => Order::where('order_type', 'virtual_try_on_order')->count(),
+            'credit_orders' => Order::where('order_type', 'credit_usage')->count(),
             'total_trials' => Order::where('payment_status', 'free_trial')->count(),
             'pending_trials' => Order::where('payment_status', 'free_trial')->where('status', 'pending')->count(),
             'paid_orders' => Order::where('payment_status', '!=', 'free_trial')->count(),

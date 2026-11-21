@@ -223,10 +223,10 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 // Dedicated Conversion Thank-You Page (noindex)
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 
-// Digital Twins Capability Redirect, Configurator & Virtual Try-On Quote Views
+// Digital Twins & Virtual Try-On Order Views
 Route::permanentRedirect('/digital-twins', '/capabilities/2d/digital-twins')->name('digital-twins.index');
 Route::get('/digital-twins/order', [OrderController::class, 'digitalTwinOrder'])->name('digital-twins.order');
-Route::get('/virtual-try-on/quote', [OrderController::class, 'tryOnQuote'])->name('try-on.quote');
+Route::get('/virtual-try-on/order', [OrderController::class, 'tryOnOrder'])->name('try-on.order');
 Route::get('/order', [OrderController::class, 'legacyRedirect'])->name('order');
 
 // Real-Time AI Preview (Max 2 Free per Account / IP)
@@ -235,7 +235,7 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
     ->middleware('throttle:public-contact')
     ->name('ai-preview.generate');
 
-// Protected Client Portal & Order / Quote Submission Routes (Requires Verified Client Account)
+// Protected Client Portal & Order Submission Routes (Requires Verified Client Account)
 Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
     Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
@@ -252,9 +252,9 @@ Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(funct
         ->middleware('throttle:public-contact')
         ->name('digital-twins.order.store');
 
-    Route::post('/virtual-try-on/quote', [OrderController::class, 'storeTryOnQuote'])
+    Route::post('/virtual-try-on/order', [OrderController::class, 'storeTryOnOrder'])
         ->middleware('throttle:public-contact')
-        ->name('try-on.quote.store');
+        ->name('try-on.order.store');
 
     Route::post('/pricing/buy-plan', [CreditPurchaseController::class, 'store'])
         ->middleware('throttle:public-contact')

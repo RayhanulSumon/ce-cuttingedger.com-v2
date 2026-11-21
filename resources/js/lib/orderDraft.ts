@@ -1,6 +1,6 @@
 /**
- * Session-scoped draft persistence for public order and quote configurators so
- * unauthenticated visitors can configure their request, sign in, and resume
+ * Session-scoped draft persistence for public order configurators so
+ * unauthenticated visitors can configure their order, sign in, and resume
  * without losing their selections or selected files.
  */
 

@@ -458,490 +458,486 @@ export default function TryOnOrder({
                         />
                     ) : (
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-7 lg:grid-cols-12">
-                        {/* Left 8 Columns: Step 1 (Model), Step 2 (3 Garment Slots + Notes) */}
-                        <div className="space-y-6 lg:col-span-8">
-                            {/* STEP 1: Select Model Source (Our Model vs Your Model) */}
-                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
-                                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                                    <div>
+                            {/* Left 8 Columns: Step 1 (Model), Step 2 (3 Garment Slots + Notes) */}
+                            <div className="space-y-6 lg:col-span-8">
+                                {/* STEP 1: Select Model Source (Our Model vs Your Model) */}
+                                <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                                    <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                                        <div>
+                                            <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
+                                                Step 01
+                                            </span>
+                                            <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
+                                                Choose Model Source
+                                            </h2>
+                                        </div>
+
+                                        {/* Toggle: Our Model vs Your Own Model */}
+                                        <div
+                                            role="tablist"
+                                            aria-label="Model Source"
+                                            className="inline-flex rounded-full border border-ink/15 bg-surface-2 p-1"
+                                        >
+                                            <button
+                                                type="button"
+                                                role="tab"
+                                                aria-selected={modelSource === 'our_model'}
+                                                onClick={() => setModelSource('our_model')}
+                                                className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${modelSource === 'our_model'
+                                                    ? 'bg-ink text-white shadow-xs'
+                                                    : 'text-subtle hover:text-ink'
+                                                    }`}
+                                            >
+                                                <UserCheck size={13} />
+                                                Use Our Model
+                                            </button>
+                                            <button
+                                                type="button"
+                                                role="tab"
+                                                aria-selected={modelSource === 'custom_model'}
+                                                onClick={() => setModelSource('custom_model')}
+                                                className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${modelSource === 'custom_model'
+                                                    ? 'bg-ink text-white shadow-xs'
+                                                    : 'text-subtle hover:text-ink'
+                                                    }`}
+                                            >
+                                                <UserPlus size={13} />
+                                                Use My Model
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Option A: Our Model Grid */}
+                                    {modelSource === 'our_model' ? (
+                                        <div className="mt-4">
+                                            <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-6">
+                                                {looks.map((look) => {
+                                                    const isSelected =
+                                                        (activeLook?.id && activeLook.id === look.id) ||
+                                                        activeLook?.modelName === look.modelName;
+
+                                                    return (
+                                                        <button
+                                                            key={look.id ?? look.modelName}
+                                                            type="button"
+                                                            onClick={() => handleSelectLook(look)}
+                                                            className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all ${isSelected
+                                                                ? 'border-primary bg-primary/5 ring-2 ring-primary/25'
+                                                                : 'border-ink/10 bg-surface hover:border-ink/35'
+                                                                }`}
+                                                        >
+                                                            <div
+                                                                className="relative aspect-[4/5] w-full overflow-hidden"
+                                                                style={{ background: PAGE_BACKGROUND }}
+                                                            >
+                                                                <img
+                                                                    src={look.model}
+                                                                    alt={look.modelName}
+                                                                    className="h-full w-full object-contain object-bottom transition-transform duration-300 group-hover:scale-105"
+                                                                />
+                                                                {isSelected && (
+                                                                    <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground shadow">
+                                                                        <Check size={11} strokeWidth={3} />
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="px-2 py-1.5">
+                                                                <p className="truncate text-2xs font-bold text-ink">
+                                                                    {look.modelName}
+                                                                </p>
+                                                            </div>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        /* Option B: Upload Client's Own Model Photo */
+                                        <div className="mt-4">
+                                            <input
+                                                ref={customModelInputRef}
+                                                type="file"
+                                                accept=".jpg,.jpeg,.png,.webp,.tiff,.psd"
+                                                onChange={(e) =>
+                                                    handleFileWithPreview(
+                                                        e.target.files?.[0] ?? null,
+                                                        setModelFile,
+                                                        setModelPreview
+                                                    )
+                                                }
+                                                className="hidden"
+                                            />
+
+                                            {modelFile && modelPreview ? (
+                                                <div className="flex items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/[0.04] p-3">
+                                                    <div className="flex min-w-0 items-center gap-3.5">
+                                                        <img
+                                                            src={modelPreview}
+                                                            alt="Uploaded client model"
+                                                            className="h-16 w-14 shrink-0 rounded-xl border border-ink/10 object-cover"
+                                                        />
+                                                        <div className="min-w-0">
+                                                            <p className="truncate text-xs font-bold text-ink">
+                                                                {modelFile.name}
+                                                            </p>
+                                                            <p className="mt-0.5 text-2xs text-subtle">
+                                                                {(modelFile.size / (1024 * 1024)).toFixed(2)} MB • High-res model photo attached
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex shrink-0 items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => customModelInputRef.current?.click()}
+                                                            className="cursor-pointer rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink hover:border-primary hover:text-primary"
+                                                        >
+                                                            Replace
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                handleFileWithPreview(null, setModelFile, setModelPreview);
+                                                                if (customModelInputRef.current) {
+                                                                    customModelInputRef.current.value = '';
+                                                                }
+                                                            }}
+                                                            className="cursor-pointer rounded-full p-1.5 text-danger hover:bg-danger-soft"
+                                                            aria-label="Remove model photo"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => customModelInputRef.current?.click()}
+                                                    className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-surface-2 px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                                                            <ImagePlus size={18} />
+                                                        </div>
+                                                        <div>
+                                                            <span className="block text-xs font-bold text-ink">
+                                                                Upload Your Model Photo
+                                                            </span>
+                                                            <span className="block text-2xs text-subtle">
+                                                                High-quality full-body photo (JPG, PNG, WEBP, TIFF, PSD • Max 25MB)
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <span className="hidden shrink-0 rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink sm:inline-flex">
+                                                        Choose File
+                                                    </span>
+                                                </button>
+                                            )}
+
+                                            {errors?.model_file && (
+                                                <p className="mt-2 text-xs font-semibold text-danger">
+                                                    {errors.model_file}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </section>
+
+                                {/* STEP 2: 3 Garment Upload Slots (1. Top, 2. Bottom / Below, 3. Shoes) */}
+                                <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                                    <div className="border-b border-ink/10 pb-3.5">
                                         <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                                            Step 01
+                                            Step 02
                                         </span>
                                         <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
-                                            Choose Model Source
+                                            Upload Garment Pieces
                                         </h2>
                                     </div>
 
-                                    {/* Toggle: Our Model vs Your Own Model */}
-                                    <div
-                                        role="tablist"
-                                        aria-label="Model Source"
-                                        className="inline-flex rounded-full border border-ink/15 bg-surface-2 p-1"
-                                    >
-                                        <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected={modelSource === 'our_model'}
-                                            onClick={() => setModelSource('our_model')}
-                                            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                                modelSource === 'our_model'
-                                                    ? 'bg-ink text-white shadow-xs'
-                                                    : 'text-subtle hover:text-ink'
-                                            }`}
-                                        >
-                                            <UserCheck size={13} />
-                                            Use Our Model
-                                        </button>
-                                        <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected={modelSource === 'custom_model'}
-                                            onClick={() => setModelSource('custom_model')}
-                                            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                                                modelSource === 'custom_model'
-                                                    ? 'bg-ink text-white shadow-xs'
-                                                    : 'text-subtle hover:text-ink'
-                                            }`}
-                                        >
-                                            <UserPlus size={13} />
-                                            Use My Model
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Option A: Our Model Grid */}
-                                {modelSource === 'our_model' ? (
-                                    <div className="mt-4">
-                                        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-6">
-                                            {looks.map((look) => {
-                                                const isSelected =
-                                                    (activeLook?.id && activeLook.id === look.id) ||
-                                                    activeLook?.modelName === look.modelName;
-
-                                                return (
-                                                    <button
-                                                        key={look.id ?? look.modelName}
-                                                        type="button"
-                                                        onClick={() => handleSelectLook(look)}
-                                                        className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all ${
-                                                            isSelected
-                                                                ? 'border-primary bg-primary/5 ring-2 ring-primary/25'
-                                                                : 'border-ink/10 bg-surface hover:border-ink/35'
-                                                        }`}
-                                                    >
-                                                        <div
-                                                            className="relative aspect-[4/5] w-full overflow-hidden"
-                                                            style={{ background: PAGE_BACKGROUND }}
-                                                        >
-                                                            <img
-                                                                src={look.model}
-                                                                alt={look.modelName}
-                                                                className="h-full w-full object-contain object-bottom transition-transform duration-300 group-hover:scale-105"
-                                                            />
-                                                            {isSelected && (
-                                                                <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground shadow">
-                                                                    <Check size={11} strokeWidth={3} />
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="px-2 py-1.5">
-                                                            <p className="truncate text-2xs font-bold text-ink">
-                                                                {look.modelName}
-                                                            </p>
-                                                        </div>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    /* Option B: Upload Client's Own Model Photo */
-                                    <div className="mt-4">
-                                        <input
-                                            ref={customModelInputRef}
-                                            type="file"
-                                            accept=".jpg,.jpeg,.png,.webp,.tiff,.psd"
-                                            onChange={(e) =>
-                                                handleFileWithPreview(
-                                                    e.target.files?.[0] ?? null,
-                                                    setModelFile,
-                                                    setModelPreview
-                                                )
+                                    <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+                                        {/* Slot 1: Top */}
+                                        <GarmentUploadSlot
+                                            stepNumber="01"
+                                            title="Top Garment"
+                                            subtitle="Shirt, Jacket, Blouse, Knitwear, or Dress"
+                                            file={garmentTop}
+                                            previewUrl={topPreview}
+                                            onSelectFile={(f) =>
+                                                handleFileWithPreview(f, setGarmentTop, setTopPreview)
                                             }
-                                            className="hidden"
+                                            icon={<Shirt size={12} />}
+                                            error={errors?.garment_top}
                                         />
 
-                                        {modelFile && modelPreview ? (
-                                            <div className="flex items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/[0.04] p-3">
-                                                <div className="flex min-w-0 items-center gap-3.5">
-                                                    <img
-                                                        src={modelPreview}
-                                                        alt="Uploaded client model"
-                                                        className="h-16 w-14 shrink-0 rounded-xl border border-ink/10 object-cover"
-                                                    />
-                                                    <div className="min-w-0">
-                                                        <p className="truncate text-xs font-bold text-ink">
-                                                            {modelFile.name}
-                                                        </p>
-                                                        <p className="mt-0.5 text-2xs text-subtle">
-                                                            {(modelFile.size / (1024 * 1024)).toFixed(2)} MB • High-res model photo attached
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex shrink-0 items-center gap-2">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => customModelInputRef.current?.click()}
-                                                        className="cursor-pointer rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink hover:border-primary hover:text-primary"
-                                                    >
-                                                        Replace
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            handleFileWithPreview(null, setModelFile, setModelPreview);
-                                                            if (customModelInputRef.current) {
-                                                                customModelInputRef.current.value = '';
-                                                            }
-                                                        }}
-                                                        className="cursor-pointer rounded-full p-1.5 text-danger hover:bg-danger-soft"
-                                                        aria-label="Remove model photo"
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                onClick={() => customModelInputRef.current?.click()}
-                                                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-surface-2 px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                                                        <ImagePlus size={18} />
-                                                    </div>
-                                                    <div>
-                                                        <span className="block text-xs font-bold text-ink">
-                                                            Upload Your Model Photo
-                                                        </span>
-                                                        <span className="block text-2xs text-subtle">
-                                                            High-quality full-body photo (JPG, PNG, WEBP, TIFF, PSD • Max 25MB)
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <span className="hidden shrink-0 rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink sm:inline-flex">
-                                                    Choose File
-                                                </span>
-                                            </button>
-                                        )}
+                                        {/* Slot 2: Below / Bottom */}
+                                        <GarmentUploadSlot
+                                            stepNumber="02"
+                                            title="Below / Bottom"
+                                            subtitle="Trousers, Skirt, Denim, Shorts, or Leggings"
+                                            file={garmentBottom}
+                                            previewUrl={bottomPreview}
+                                            onSelectFile={(f) =>
+                                                handleFileWithPreview(f, setGarmentBottom, setBottomPreview)
+                                            }
+                                            icon={<Layers size={12} />}
+                                            error={errors?.garment_bottom}
+                                        />
 
-                                        {errors?.model_file && (
-                                            <p className="mt-2 text-xs font-semibold text-danger">
-                                                {errors.model_file}
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
-                            </section>
-
-                            {/* STEP 2: 3 Garment Upload Slots (1. Top, 2. Bottom / Below, 3. Shoes) */}
-                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
-                                <div className="border-b border-ink/10 pb-3.5">
-                                    <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                                        Step 02
-                                    </span>
-                                    <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
-                                        Upload Garment Pieces
-                                    </h2>
-                                </div>
-
-                                <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
-                                    {/* Slot 1: Top */}
-                                    <GarmentUploadSlot
-                                        stepNumber="01"
-                                        title="Top Garment"
-                                        subtitle="Shirt, Jacket, Blouse, Knitwear, or Dress"
-                                        file={garmentTop}
-                                        previewUrl={topPreview}
-                                        onSelectFile={(f) =>
-                                            handleFileWithPreview(f, setGarmentTop, setTopPreview)
-                                        }
-                                        icon={<Shirt size={12} />}
-                                        error={errors?.garment_top}
-                                    />
-
-                                    {/* Slot 2: Below / Bottom */}
-                                    <GarmentUploadSlot
-                                        stepNumber="02"
-                                        title="Below / Bottom"
-                                        subtitle="Trousers, Skirt, Denim, Shorts, or Leggings"
-                                        file={garmentBottom}
-                                        previewUrl={bottomPreview}
-                                        onSelectFile={(f) =>
-                                            handleFileWithPreview(f, setGarmentBottom, setBottomPreview)
-                                        }
-                                        icon={<Layers size={12} />}
-                                        error={errors?.garment_bottom}
-                                    />
-
-                                    {/* Slot 3: Shoes */}
-                                    <GarmentUploadSlot
-                                        stepNumber="03"
-                                        title="Shoes / Footwear"
-                                        subtitle="Heels, Boots, Sneakers, Loafers, or Sandals"
-                                        file={garmentShoes}
-                                        previewUrl={shoesPreview}
-                                        onSelectFile={(f) =>
-                                            handleFileWithPreview(f, setGarmentShoes, setShoesPreview)
-                                        }
-                                        icon={<Footprints size={12} />}
-                                        error={errors?.garment_shoes}
-                                    />
-                                </div>
-
-                                {/* Notes & Cloud Folder Link */}
-                                <div className="mt-5 space-y-4 border-t border-ink/10 pt-4">
-                                    <div>
-                                        <label className="flex items-center gap-1.5 text-xs font-bold text-ink">
-                                            <Folder size={13} className="text-primary" />
-                                            Cloud Folder Link (Optional)
-                                        </label>
-                                        <input
-                                            type="url"
-                                            value={cloudLink}
-                                            onChange={(e) => setCloudLink(e.target.value)}
-                                            placeholder="https://drive.google.com/..."
-                                            className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
+                                        {/* Slot 3: Shoes */}
+                                        <GarmentUploadSlot
+                                            stepNumber="03"
+                                            title="Shoes / Footwear"
+                                            subtitle="Heels, Boots, Sneakers, Loafers, or Sandals"
+                                            file={garmentShoes}
+                                            previewUrl={shoesPreview}
+                                            onSelectFile={(f) =>
+                                                handleFileWithPreview(f, setGarmentShoes, setShoesPreview)
+                                            }
+                                            icon={<Footprints size={12} />}
+                                            error={errors?.garment_shoes}
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-ink">
-                                            Styling &amp; Fit Notes (Optional)
-                                        </label>
-                                        <textarea
-                                            rows={1}
-                                            value={instructions}
-                                            onChange={(e) => {
-                                                setInstructions(e.target.value);
-                                                e.currentTarget.style.height = 'auto';
-                                                e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
-                                            }}
-                                            placeholder="e.g. Tuck the top into the trousers, relaxed sleeve drape, neutral studio lighting..."
-                                            className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
-                                        />
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-
-                        {/* Right 4 Columns: Sticky Order Summary & Contact Form */}
-                        <div className="lg:col-span-4">
-                            <div
-                                ref={submitCardRef}
-                                className="sticky top-28 space-y-4 rounded-3xl border border-ink/10 bg-surface-2 p-5 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-6"
-                            >
-                                <div>
-                                    <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                                        Order Summary
-                                    </p>
-                                    <h3 className="mt-0.5 text-base font-bold text-ink">
-                                        Custom Virtual Try-On Order
-                                    </h3>
-                                </div>
-
-                                {/* Selected Model Preview */}
-                                {modelSource === 'our_model' && activeLook ? (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
-                                        <div
-                                            className="h-14 w-11 shrink-0 overflow-hidden rounded-xl"
-                                            style={{ background: PAGE_BACKGROUND }}
-                                        >
-                                            <img
-                                                src={activeLook.model}
-                                                alt={activeLook.modelName}
-                                                className="h-full w-full object-contain object-bottom"
+                                    {/* Notes & Cloud Folder Link */}
+                                    <div className="mt-5 space-y-4 border-t border-ink/10 pt-4">
+                                        <div>
+                                            <label className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                                                <Folder size={13} className="text-primary" />
+                                                Cloud Folder Link (Optional)
+                                            </label>
+                                            <input
+                                                type="url"
+                                                value={cloudLink}
+                                                onChange={(e) => setCloudLink(e.target.value)}
+                                                placeholder="https://drive.google.com/..."
+                                                className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                             />
                                         </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
-                                                Studio Model
-                                            </p>
-                                            <p className="truncate text-xs font-bold text-ink">
-                                                {activeLook.modelName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : modelPreview && modelFile ? (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
-                                        <img
-                                            src={modelPreview}
-                                            alt="Your uploaded model"
-                                            className="h-14 w-11 shrink-0 rounded-xl object-cover"
-                                        />
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
-                                                Your Model
-                                            </p>
-                                            <p className="truncate text-xs font-bold text-ink">{modelFile.name}</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-3">
-                                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                                            <UserPlus size={16} />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
-                                                Your Model
-                                            </p>
-                                            <p className="truncate text-xs font-semibold text-subtle">
-                                                Upload your model in Step 01
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
 
-                                {/* Compact Garments Status Row */}
-                                <div className="grid grid-cols-3 gap-1.5 text-center text-2xs">
-                                    {[
-                                        { label: 'Top', attached: Boolean(garmentTop) },
-                                        { label: 'Bottom', attached: Boolean(garmentBottom) },
-                                        { label: 'Shoes', attached: Boolean(garmentShoes) },
-                                    ].map((slot) => (
-                                        <div
-                                            key={slot.label}
-                                            className={`rounded-xl border px-2 py-1.5 font-semibold ${
-                                                slot.attached
+                                        <div>
+                                            <label className="block text-xs font-bold text-ink">
+                                                Styling &amp; Fit Notes (Optional)
+                                            </label>
+                                            <textarea
+                                                rows={1}
+                                                value={instructions}
+                                                onChange={(e) => {
+                                                    setInstructions(e.target.value);
+                                                    e.currentTarget.style.height = 'auto';
+                                                    e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                                                }}
+                                                placeholder="e.g. Tuck the top into the trousers, relaxed sleeve drape, neutral studio lighting..."
+                                                className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                            {/* Right 4 Columns: Sticky Order Summary & Contact Form */}
+                            <div className="lg:col-span-4">
+                                <div
+                                    ref={submitCardRef}
+                                    className="sticky top-28 space-y-4 rounded-3xl border border-ink/10 bg-surface-2 p-5 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-6"
+                                >
+                                    <div>
+                                        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
+                                            Order Summary
+                                        </p>
+                                        <h3 className="mt-0.5 text-base font-bold text-ink">
+                                            Custom Virtual Try-On Order
+                                        </h3>
+                                    </div>
+
+                                    {/* Selected Model Preview */}
+                                    {modelSource === 'our_model' && activeLook ? (
+                                        <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
+                                            <div
+                                                className="h-14 w-11 shrink-0 overflow-hidden rounded-xl"
+                                                style={{ background: PAGE_BACKGROUND }}
+                                            >
+                                                <img
+                                                    src={activeLook.model}
+                                                    alt={activeLook.modelName}
+                                                    className="h-full w-full object-contain object-bottom"
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-2xs font-bold uppercase tracking-wider text-primary">
+                                                    Studio Model
+                                                </p>
+                                                <p className="truncate text-xs font-bold text-ink">
+                                                    {activeLook.modelName}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : modelPreview && modelFile ? (
+                                        <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
+                                            <img
+                                                src={modelPreview}
+                                                alt="Your uploaded model"
+                                                className="h-14 w-11 shrink-0 rounded-xl object-cover"
+                                            />
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-2xs font-bold uppercase tracking-wider text-primary">
+                                                    Your Model
+                                                </p>
+                                                <p className="truncate text-xs font-bold text-ink">{modelFile.name}</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-3">
+                                            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                                                <UserPlus size={16} />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-2xs font-bold uppercase tracking-wider text-primary">
+                                                    Your Model
+                                                </p>
+                                                <p className="truncate text-xs font-semibold text-subtle">
+                                                    Upload your model in Step 01
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Compact Garments Status Row */}
+                                    <div className="grid grid-cols-3 gap-1.5 text-center text-2xs">
+                                        {[
+                                            { label: 'Top', attached: Boolean(garmentTop) },
+                                            { label: 'Bottom', attached: Boolean(garmentBottom) },
+                                            { label: 'Shoes', attached: Boolean(garmentShoes) },
+                                        ].map((slot) => (
+                                            <div
+                                                key={slot.label}
+                                                className={`rounded-xl border px-2 py-1.5 font-semibold ${slot.attached
                                                     ? 'border-primary/35 bg-primary/[0.06] text-ink'
                                                     : 'border-ink/10 bg-surface text-subtle'
-                                            }`}
-                                        >
-                                            {slot.label} {slot.attached ? '✓' : ''}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <AiPreviewPanel
-                                    feature="virtual_try_on"
-                                    disabledReason={
-                                        !garmentTop && !garmentBottom && !garmentShoes
-                                            ? 'Upload at least 1 garment photo to preview.'
-                                            : modelSource === 'custom_model' && !modelFile
-                                              ? 'Upload your model photo in Step 01.'
-                                              : null
-                                    }
-                                    buildFormData={() => {
-                                        const fd = new FormData();
-                                        if (modelSource === 'our_model' && activeLook?.id) {
-                                            fd.set('try_on_look_id', String(activeLook.id));
-                                        }
-                                        if (modelSource === 'custom_model' && modelFile) {
-                                            fd.set('model_file', modelFile);
-                                        }
-                                        if (garmentTop) fd.set('garment_top', garmentTop);
-                                        if (garmentBottom) fd.set('garment_bottom', garmentBottom);
-                                        if (garmentShoes) fd.set('garment_shoes', garmentShoes);
-                                        if (instructions) fd.set('instructions', instructions);
-                                        return fd;
-                                    }}
-                                />
-
-                                {/* Monthly Volume */}
-                                <div>
-                                    <label className="block text-xs font-bold text-ink">
-                                        Estimated Volume
-                                    </label>
-                                    <select
-                                        value={monthlyVolume}
-                                        onChange={(e) => setMonthlyVolume(e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-surface px-3 text-xs font-semibold text-ink focus:border-primary focus:outline-none"
-                                    >
-                                        {VOLUME_OPTIONS.map((vol) => (
-                                            <option key={vol} value={vol}>
-                                                {vol}
-                                            </option>
+                                                    }`}
+                                            >
+                                                {slot.label} {slot.attached ? '✓' : ''}
+                                            </div>
                                         ))}
-                                    </select>
-                                </div>
-
-                                {/* Client Contact Fields */}
-                                <div className="space-y-3 border-t border-ink/10 pt-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-ink">
-                                            Your Name <span className="text-primary">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            placeholder="Alex Rivera"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
-                                        />
-                                        {errors?.name && (
-                                            <p className="mt-1 text-xs text-danger">{errors.name}</p>
-                                        )}
                                     </div>
 
+                                    <AiPreviewPanel
+                                        feature="virtual_try_on"
+                                        disabledReason={
+                                            !garmentTop && !garmentBottom && !garmentShoes
+                                                ? 'Upload at least 1 garment photo to preview.'
+                                                : modelSource === 'custom_model' && !modelFile
+                                                    ? 'Upload your model photo in Step 01.'
+                                                    : null
+                                        }
+                                        buildFormData={() => {
+                                            const fd = new FormData();
+                                            if (modelSource === 'our_model' && activeLook?.id) {
+                                                fd.set('try_on_look_id', String(activeLook.id));
+                                            }
+                                            if (modelSource === 'custom_model' && modelFile) {
+                                                fd.set('model_file', modelFile);
+                                            }
+                                            if (garmentTop) fd.set('garment_top', garmentTop);
+                                            if (garmentBottom) fd.set('garment_bottom', garmentBottom);
+                                            if (garmentShoes) fd.set('garment_shoes', garmentShoes);
+                                            if (instructions) fd.set('instructions', instructions);
+                                            return fd;
+                                        }}
+                                    />
+
+                                    {/* Monthly Volume */}
                                     <div>
                                         <label className="block text-xs font-bold text-ink">
-                                            Work Email <span className="text-primary">*</span>
+                                            Estimated Volume
                                         </label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="alex@brand.com"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
-                                        />
-                                        {errors?.email && (
-                                            <p className="mt-1 text-xs text-danger">{errors.email}</p>
-                                        )}
+                                        <select
+                                            value={monthlyVolume}
+                                            onChange={(e) => setMonthlyVolume(e.target.value)}
+                                            className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-surface px-3 text-xs font-semibold text-ink focus:border-primary focus:outline-none"
+                                        >
+                                            {VOLUME_OPTIONS.map((vol) => (
+                                                <option key={vol} value={vol}>
+                                                    {vol}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {/* Client Contact Fields */}
+                                    <div className="space-y-3 border-t border-ink/10 pt-4">
                                         <div>
-                                            <label className="block text-xs font-bold text-ink">Brand / Company</label>
+                                            <label className="block text-xs font-bold text-ink">
+                                                Your Name <span className="text-primary">*</span>
+                                            </label>
                                             <input
                                                 type="text"
-                                                value={company}
-                                                onChange={(e) => setCompany(e.target.value)}
-                                                placeholder="Atelier Studio"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                required
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                placeholder="Alex Rivera"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
+                                            {errors?.name && (
+                                                <p className="mt-1 text-xs text-danger">{errors.name}</p>
+                                            )}
                                         </div>
+
                                         <div>
-                                            <label className="block text-xs font-bold text-ink">Phone / WhatsApp</label>
+                                            <label className="block text-xs font-bold text-ink">
+                                                Work Email <span className="text-primary">*</span>
+                                            </label>
                                             <input
-                                                type="tel"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                placeholder="+1 (555) 000-0000"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                type="email"
+                                                required
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                placeholder="alex@brand.com"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
+                                            {errors?.email && (
+                                                <p className="mt-1 text-xs text-danger">{errors.email}</p>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                            <div>
+                                                <label className="block text-xs font-bold text-ink">Brand / Company</label>
+                                                <input
+                                                    type="text"
+                                                    value={company}
+                                                    onChange={(e) => setCompany(e.target.value)}
+                                                    placeholder="Atelier Studio"
+                                                    className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-ink">Phone / WhatsApp</label>
+                                                <input
+                                                    type="tel"
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    placeholder="+1 (555) 000-0000"
+                                                    className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <OrderAuthNotice user={auth?.user} fallbackPath="/virtual-try-on/order" onBeforeNavigate={saveDraft} />
+
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                                    >
+                                        {isSubmitting
+                                            ? 'Submitting Order...'
+                                            : !clientUser
+                                                ? 'Sign in & Submit Order'
+                                                : 'Submit Order'}
+                                    </button>
                                 </div>
-
-                                <OrderAuthNotice user={auth?.user} fallbackPath="/virtual-try-on/order" onBeforeNavigate={saveDraft} />
-
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
-                                >
-                                    {isSubmitting
-                                        ? 'Submitting Order...'
-                                        : !clientUser
-                                          ? 'Sign in & Submit Order'
-                                          : 'Submit Order'}
-                                </button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
                     )}
                 </div>
             </main>

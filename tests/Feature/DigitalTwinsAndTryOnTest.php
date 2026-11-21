@@ -127,10 +127,12 @@ class DigitalTwinsAndTryOnTest extends TestCase
         Notification::fake();
 
         $this->get('/digital-twins/order')->assertOk();
-        $this->get('/virtual-try-on/quote')->assertOk();
+        $this->get('/virtual-try-on/order')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('TryOn/Order'));
 
         $this->post('/digital-twins/order', [])->assertRedirect(route('login'));
-        $this->post('/virtual-try-on/quote', [])->assertRedirect(route('login'));
+        $this->post('/virtual-try-on/order', [])->assertRedirect(route('login'));
 
         $this->post('/register', [
             'name' => 'Elena Rossi',
@@ -242,14 +244,14 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $this->assertTrue($twin->fresh()->is_copyright_sold);
     }
 
-    public function test_client_can_submit_virtual_try_on_quote_using_our_model_and_3_garment_slots(): void
+    public function test_client_can_submit_virtual_try_on_order_using_our_model_and_3_garment_slots(): void
     {
         Mail::fake();
         Storage::fake('public');
 
         $look = TryOnLook::firstOrFail();
 
-        $response = $this->actingAs($this->client)->post('/virtual-try-on/quote', [
+        $response = $this->actingAs($this->client)->post('/virtual-try-on/order', [
             'model_source' => 'our_model',
             'try_on_look_id' => $look->id,
             'selected_look_name' => $look->name,
@@ -265,7 +267,8 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        $order = Order::where('order_type', 'virtual_try_on_quote')->latest('id')->firstOrFail();
+        $order = Order::where('order_type', 'virtual_try_on_order')->latest('id')->firstOrFail();
+        $this->assertStringStartsWith('CE-VTO-', $order->order_number);
         $this->assertSame($this->client->id, $order->user_id);
         $this->assertSame($look->id, $order->try_on_look_id);
         $this->assertSame('our_model', $order->specifications['model_source']);
@@ -276,12 +279,12 @@ class DigitalTwinsAndTryOnTest extends TestCase
         $this->assertSame('Tuck top into trousers and add gold belt.', $order->instructions);
     }
 
-    public function test_client_can_submit_virtual_try_on_quote_with_custom_uploaded_model(): void
+    public function test_client_can_submit_virtual_try_on_order_with_custom_uploaded_model(): void
     {
         Mail::fake();
         Storage::fake('public');
 
-        $response = $this->actingAs($this->client)->post('/virtual-try-on/quote', [
+        $response = $this->actingAs($this->client)->post('/virtual-try-on/order', [
             'model_source' => 'custom_model',
             'model_file' => UploadedFile::fake()->image('my-brand-model.jpg', 900, 1200),
             'garment_top' => UploadedFile::fake()->image('jacket.jpg', 600, 800),
@@ -291,7 +294,8 @@ class DigitalTwinsAndTryOnTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        $order = Order::where('order_type', 'virtual_try_on_quote')->latest('id')->firstOrFail();
+        $order = Order::where('order_type', 'virtual_try_on_order')->latest('id')->firstOrFail();
+        $this->assertStringStartsWith('CE-VTO-', $order->order_number);
         $this->assertSame('custom_model', $order->specifications['model_source']);
         $this->assertArrayHasKey('client_model', $order->specifications['labeled_files']);
         $this->assertArrayHasKey('top', $order->specifications['labeled_files']);
