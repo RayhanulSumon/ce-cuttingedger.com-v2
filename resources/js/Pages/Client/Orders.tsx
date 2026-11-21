@@ -148,11 +148,10 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                 key={pill.id}
                                 type="button"
                                 onClick={() => setStatusFilter(pill.id)}
-                                className={`cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all ${
-                                    statusFilter === pill.id
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'border border-line bg-surface text-muted hover:text-ink'
-                                }`}
+                                className={`cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all ${statusFilter === pill.id
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'border border-line bg-surface text-muted hover:text-ink'
+                                    }`}
                             >
                                 {pill.label}
                             </button>
@@ -217,9 +216,8 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     Amount
                                                 </span>
                                                 <span
-                                                    className={`font-extrabold tabular-nums ${
-                                                        isCreditOrder ? 'text-primary' : 'text-ink'
-                                                    }`}
+                                                    className={`font-extrabold tabular-nums ${isCreditOrder ? 'text-primary' : 'text-ink'
+                                                        }`}
                                                 >
                                                     {formatOrderAmount(order)}
                                                 </span>
@@ -326,9 +324,8 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     </td>
                                                     <td className="whitespace-nowrap px-5 py-4">
                                                         <span
-                                                            className={`font-extrabold tabular-nums ${
-                                                                isCreditOrder ? 'text-primary' : 'text-ink'
-                                                            }`}
+                                                            className={`font-extrabold tabular-nums ${isCreditOrder ? 'text-primary' : 'text-ink'
+                                                                }`}
                                                         >
                                                             {formatOrderAmount(order)}
                                                         </span>
