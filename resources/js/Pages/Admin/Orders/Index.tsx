@@ -400,8 +400,8 @@ export default function OrdersIndex({
                         {row.order_type === "credit_usage" && row.specifications?.credits_spent
                             ? `${Number(row.specifications.credits_spent).toLocaleString()} Credits`
                             : row.total_price > 0
-                              ? `$${row.total_price.toFixed(2)}`
-                              : "Custom Order"}
+                                ? `$${row.total_price.toFixed(2)}`
+                                : "Custom Order"}
                     </span>
                     <div>{getPaymentBadge(row.payment_status)}</div>
                 </div>
@@ -821,8 +821,8 @@ export default function OrdersIndex({
                                             {selectedOrder.order_type?.startsWith("digital_twin")
                                                 ? "Digital Twin Specification & Custom Attributes"
                                                 : selectedOrder.order_type === "virtual_try_on_order"
-                                                  ? "Virtual Try-On Model & Garment Slots"
-                                                  : "Order Specifications"}
+                                                    ? "Virtual Try-On Model & Garment Slots"
+                                                    : "Order Specifications"}
                                         </span>
 
                                         {selectedOrder.order_type?.startsWith("digital_twin") && (
@@ -883,13 +883,13 @@ export default function OrdersIndex({
                                                                     </span>
                                                                     <span className="text-ink font-semibold">
                                                                         {typeof attrVal === "object" &&
-                                                                        attrVal !== null
+                                                                            attrVal !== null
                                                                             ? Object.entries(attrVal)
-                                                                                  .map(
-                                                                                      ([k, v]) =>
-                                                                                          `${k}: ${v}`
-                                                                                  )
-                                                                                  .join(" | ")
+                                                                                .map(
+                                                                                    ([k, v]) =>
+                                                                                        `${k}: ${v}`
+                                                                                )
+                                                                                .join(" | ")
                                                                             : String(attrVal)}
                                                                     </span>
                                                                 </div>
@@ -922,8 +922,8 @@ export default function OrdersIndex({
                                                                 .selected_model_name
                                                                 ? `${selectedOrder.specifications.selected_model_name} (${selectedOrder.specifications.selected_look_name})`
                                                                 : selectedOrder.specifications
-                                                                      .selected_look_name ||
-                                                                  "Client Custom Talent"}
+                                                                    .selected_look_name ||
+                                                                "Client Custom Talent"}
                                                         </span>
                                                     </div>
                                                 </div>
