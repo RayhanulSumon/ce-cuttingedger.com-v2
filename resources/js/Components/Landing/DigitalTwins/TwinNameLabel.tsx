@@ -25,8 +25,8 @@ export function TwinNameLabel({ twin }: { twin: DigitalTwinModel }) {
                     </div>
                 </div>
             )}
-            <div className="pointer-events-none absolute left-1/2 top-[98%] mt-4 flex -translate-x-1/2 flex-col items-center text-center whitespace-nowrap">
-                <p className="font-display text-2xl sm:text-base font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
+            <div className="pointer-events-none absolute left-1/2 top-[98%] mt-3 flex -translate-x-1/2 flex-col items-center text-center whitespace-nowrap">
+                <p className="font-display text-[32px] sm:text-xl font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
                     {name}
                 </p>
             </div>

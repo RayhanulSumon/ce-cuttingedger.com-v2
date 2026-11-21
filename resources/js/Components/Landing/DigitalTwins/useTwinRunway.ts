@@ -25,8 +25,8 @@ const CURSOR_FOLLOW = 0.32;
 const DEPTH_X = [1.2, 0.744, 0.496, 0.346, 0.235, 0.15, 0.085];
 const DEPTH_FEET = [1.14, 0.89, 0.777, 0.704, 0.651, 0.616, 0.59];
 const DEPTH_HEIGHT = [1.18, 0.832, 0.574, 0.436, 0.334, 0.258, 0.19];
-const DEPTH_BLUR = [0, 0, 1.5, 4, 8, 12, 17];
-const DEPTH_OPACITY = [1, 1, 1, 1, 0.86, 0.5, 0];
+const DEPTH_BLUR = [0, 0, 1.5, 3.5, 6.5, 9.5, 12];
+const DEPTH_OPACITY = [0, 1, 1, 1, 0.86, 0.5, 0];
 const LAST_STOP = DEPTH_X.length - 1;
 
 const wrap = (value: number, n: number) => (n > 0 ? ((value % n) + n) % n : 0);
@@ -104,9 +104,14 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             const t = stop - lower;
             const mix = (stops: number[]) => stops[lower] + (stops[upper] - stops[lower]) * t;
 
-            const opacity = mix(DEPTH_OPACITY);
+            let opacity = mix(DEPTH_OPACITY);
+            if (twinCount < LAST_STOP && depth > twinCount - 2) {
+                opacity *= clamp(twinCount - 1 - depth, 0, 1);
+            }
             if (opacity < 0.01) {
+                el.style.opacity = '0';
                 el.style.visibility = 'hidden';
+                el.style.pointerEvents = 'none';
                 return;
             }
 
@@ -114,15 +119,22 @@ export function useTwinRunway({ running, twins = DIGITAL_TWINS, onOpenTwin }: Tw
             const height = mix(DEPTH_HEIGHT) * s.height * (isNarrow ? 0.64 : 1);
             const scale = height / s.baseHeight;
             const aspect = twinAspects[i] ?? 0.36;
-            const xRatio = isNarrow ? 0.5 + (mix(DEPTH_X) - 0.744) * 0.82 : mix(DEPTH_X);
+            const rawX = mix(DEPTH_X);
+            const xRatio = isNarrow
+                ? depth < 0
+                    ? 0.5 + (rawX - 0.744) * 1.6
+                    : 0.5 + (rawX - 0.744) * 0.82
+                : rawX;
             const feetRatio = isNarrow ? mix(DEPTH_FEET) + 0.015 : mix(DEPTH_FEET);
             const x = xRatio * s.width - height * aspect * 0.5;
             const y = feetRatio * s.height - height;
             const blur = Math.round(mix(DEPTH_BLUR) * 2) / 2;
+            const effectiveBlur = blur < 0.5 ? 0 : Math.min(24, Math.round(blur / Math.max(0.35, scale)));
+            const nextFilter = effectiveBlur === 0 ? 'none' : `blur(${effectiveBlur}px)`;
 
             el.style.visibility = 'visible';
+            el.style.pointerEvents = 'auto';
             el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${scale.toFixed(4)})`;
-            const nextFilter = blur < 0.5 ? 'none' : `blur(${(blur / scale).toFixed(1)}px)`;
             if (el.dataset.lastFilter !== nextFilter) {
                 el.dataset.lastFilter = nextFilter;
                 el.style.filter = nextFilter;

@@ -70,10 +70,10 @@ export const TwinSpriteCrop = memo(function TwinSpriteCrop({
                 <img
                     src={uploadedImage}
                     alt={twin.name}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     draggable={false}
-                    className={`block select-none object-contain ${className}`}
+                    className={`block select-none object-contain object-bottom ${className}`}
                 />
             );
         }

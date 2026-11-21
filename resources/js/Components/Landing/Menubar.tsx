@@ -305,7 +305,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                 {drawer && (
                     <>
                         <motion.div
-                            className="fixed inset-0 z-[88] bg-ink/55 backdrop-blur-sm"
+                            className="fixed inset-0 z-[110] bg-ink/55 backdrop-blur-sm"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -316,7 +316,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                         <motion.aside
                             data-scrollable
                             aria-label="Main navigation"
-                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-secondary px-6 py-6 text-secondary-foreground shadow-2xl sm:px-8"
+                            className="fixed right-0 top-0 z-[120] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-secondary px-6 py-6 text-secondary-foreground shadow-2xl sm:px-8"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}

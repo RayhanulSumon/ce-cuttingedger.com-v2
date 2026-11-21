@@ -289,7 +289,7 @@ export function ChatWidget({ leadingControl }: ChatWidgetProps = {}) {
     const lastAssistantIndex = messages.reduce((last, m, i) => (m.sender !== 'user' ? i : last), -1);
 
     return (
-        <aside aria-label="Assistant" className="fixed bottom-4 right-4 z-[100] flex flex-col items-end sm:bottom-6 sm:right-6">
+        <aside aria-label="Assistant" className="fixed bottom-4 right-4 z-[70] flex flex-col items-end sm:bottom-6 sm:right-6">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div

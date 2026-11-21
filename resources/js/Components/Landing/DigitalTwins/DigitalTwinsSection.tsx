@@ -57,10 +57,10 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                 ref={runway.stageRef}
                 aria-label="Digital Twins runway. Hover a model to preview its poses, click to see every pose and buy, or drag to step through the models."
                 {...runway.stageHandlers}
-                className={`relative h-full w-full touch-pan-y select-none overflow-hidden ${runway.cursorMode === 'hidden' ? '' : 'lg:cursor-none'}`}
+                className={`relative isolate h-full w-full touch-pan-y select-none overflow-hidden ${runway.cursorMode === 'hidden' ? '' : 'lg:cursor-none'}`}
                 style={{ background: STAGE_BACKGROUND }}
             >
-                <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute inset-0 z-0 isolate overflow-hidden">
                     {models.map((twin, i) => {
                         const isFrontModel = i === runway.activeTwinIndex;
                         const isHovered = runway.hoveredTwinIndex === i && isFrontModel;

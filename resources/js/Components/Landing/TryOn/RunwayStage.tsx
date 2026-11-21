@@ -106,7 +106,7 @@ export function RunwayStage({ looks, actorCount, stageRef, actorRefs, cursorRef,
             aria-roledescription="carousel"
             aria-label="Try the Look — drag or click a model to rotate the ring, click the front model to view outfit pins"
             {...handlers}
-            className={`relative min-h-0 flex-1 touch-pan-y select-none overflow-x-clip ${
+            className={`relative isolate min-h-0 flex-1 touch-pan-y select-none overflow-x-clip ${
                 cursor.on ? 'lg:cursor-none' : 'cursor-grab active:cursor-grabbing'
             }`}
         >
