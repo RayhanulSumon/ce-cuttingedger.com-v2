@@ -230,6 +230,9 @@ When working on Octane-specific features (concurrency, shared tables, memory, dr
    - **Engine**: Laravel Reverb WebSocket Server
    - **Port**: `127.0.0.1:8081`
    - **Command**: `C:\php84\php.exe artisan reverb:start --host=127.0.0.1 --port=8081`
+3. **`CuttingEdger-Queue`** (Background Queue Worker):
+   - **Engine**: Laravel Database Queue Worker
+   - **Command**: `C:\php84\php.exe artisan queue:work database --sleep=3 --tries=3 --timeout=60`
 
 ## Apache Configuration (`C:\xampp\apache\conf\extra\httpd-ssl.conf`)
 - Static assets (`/build/`, `/images/`, `/favicon.ico`, `/robots.txt`) are excluded from proxying and served directly by Apache (`DocumentRoot "C:/xampp/htdocs/laravel/cuttingedger/public"`).
@@ -257,6 +260,7 @@ php artisan package:discover
 # 4. Restart services
 C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Dev
 C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Reverb
+C:\nssm\nssm-2.24\win64\nssm.exe restart CuttingEdger-Queue
 ```
 
 ## Development Philosophy & Direct-Change Policy

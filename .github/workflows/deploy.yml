@@ -116,8 +116,8 @@ jobs:
           & $php artisan optimize
           & $php artisan queue:restart
 
-          # 7. Restart NSSM Services (Octane + Reverb)
-          Write-Host "--> Starting CuttingEdger-Dev (Octane) & restarting CuttingEdger-Reverb..." -ForegroundColor Green
+          # 7. Restart NSSM Services (Octane + Reverb + Queue)
+          Write-Host "--> Starting CuttingEdger-Dev (Octane), CuttingEdger-Reverb & CuttingEdger-Queue..." -ForegroundColor Green
           & $nssm start CuttingEdger-Dev
           $reverb = Get-Service -Name "CuttingEdger-Reverb" -ErrorAction SilentlyContinue
           if ($reverb -and $reverb.Status -ne 'Stopped') {
@@ -131,5 +131,20 @@ jobs:
             }
           }
           & $nssm start CuttingEdger-Reverb
+
+          $queue = Get-Service -Name "CuttingEdger-Queue" -ErrorAction SilentlyContinue
+          if ($queue) {
+            if ($queue.Status -ne 'Stopped') {
+              $prevPref = $ErrorActionPreference
+              $ErrorActionPreference = "Continue"
+              & $nssm stop CuttingEdger-Queue 2>&1 | Out-Null
+              $ErrorActionPreference = $prevPref
+              $deadline = (Get-Date).AddSeconds(15)
+              while ((Get-Service -Name "CuttingEdger-Queue" -ErrorAction SilentlyContinue).Status -ne 'Stopped' -and (Get-Date) -lt $deadline) {
+                Start-Sleep -Milliseconds 500
+              }
+            }
+            & $nssm start CuttingEdger-Queue
+          }
 
           Write-Host "[SUCCESS] Deployment completed successfully!" -ForegroundColor Green
