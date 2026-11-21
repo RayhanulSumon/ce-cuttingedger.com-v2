@@ -59,11 +59,33 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
             : String(blog.tags)
         : "";
 
-    const { data, setData, post, put, processing, errors, isDirty } = useForm({
+    const initialPrimaryId: string | number =
+        blog?.category?.parent_id ?? blog?.blog_category_id ?? categories[0]?.id ?? "";
+    const initialSubId: string | number = blog?.category?.parent_id ? blog.blog_category_id : "";
+    const [primaryCategoryId, setPrimaryCategoryId] = useState<string | number>(initialPrimaryId);
+    const [subcategoryId, setSubcategoryId] = useState<string | number>(initialSubId);
+
+    const { data, setData, post, put, processing, errors, isDirty } = useForm<{
+        title: string;
+        slug: string;
+        blog_category_id: string | number;
+        author_id: string | number;
+        excerpt: string;
+        body: string;
+        cover_image: string;
+        is_featured: boolean;
+        status: "draft" | "published" | "archived";
+        tags: string;
+        meta_title: string;
+        meta_description: string;
+        meta_keywords: string;
+        canonical_url: string;
+        og_image: string;
+        robots: string;
+    }>({
         title: blog?.title || "",
         slug: blog?.slug || "",
-        blog_category_id: blog?.blog_category_id || categories[0]?.id || "",
-        subcategory_id: blog?.subcategory_id || "",
+        blog_category_id: initialSubId || initialPrimaryId,
         author_id: blog?.author_id || authors[0]?.id || "",
         excerpt: blog?.excerpt || "",
         body: blog?.body || "",
@@ -199,7 +221,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
     // Active subcategories based on the chosen category
     const activeSubcategories =
-        categories.find((c) => String(c.id) === String(data.blog_category_id))
+        categories.find((c) => String(c.id) === String(primaryCategoryId))
             ?.subcategories || [];
 
     // Selected entities for custom trigger displays
@@ -207,10 +229,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
         (a) => String(a.id) === String(data.author_id)
     );
     const selectedCategory = categories.find(
-        (c) => String(c.id) === String(data.blog_category_id)
+        (c) => String(c.id) === String(primaryCategoryId)
     );
     const selectedSubcategory = activeSubcategories.find(
-        (s) => String(s.id) === String(data.subcategory_id)
+        (s) => String(s.id) === String(subcategoryId)
     );
 
     // Helper: Generate slug from title
@@ -529,13 +551,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 <span>Primary Category *</span>
                             </label>
                             <Select
-                                value={data.blog_category_id ? String(data.blog_category_id) : ""}
+                                value={primaryCategoryId ? String(primaryCategoryId) : ""}
                                 onValueChange={(val) => {
-                                    setData((prev) => ({
-                                        ...prev,
-                                        blog_category_id: Number(val) || val,
-                                        subcategory_id: "",
-                                    }));
+                                    const nextPrimaryId = Number(val) || val;
+                                    setPrimaryCategoryId(nextPrimaryId);
+                                    setSubcategoryId("");
+                                    setData("blog_category_id", nextPrimaryId);
                                 }}
                             >
                                 <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink">
@@ -600,10 +621,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 )}
                             </div>
                             <Select
-                                value={data.subcategory_id ? String(data.subcategory_id) : "none"}
-                                onValueChange={(val) =>
-                                    setData("subcategory_id", val === "none" ? "" : Number(val) || val)
-                                }
+                                value={subcategoryId ? String(subcategoryId) : "none"}
+                                onValueChange={(val) => {
+                                    const nextSubId = val === "none" ? "" : Number(val) || val;
+                                    setSubcategoryId(nextSubId);
+                                    setData("blog_category_id", nextSubId || primaryCategoryId);
+                                }}
                                 disabled={activeSubcategories.length === 0}
                             >
                                 <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink disabled:opacity-50">
@@ -614,8 +637,8 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                 {selectedSubcategory
                                                     ? selectedSubcategory.name
                                                     : activeSubcategories.length === 0
-                                                    ? "No subcategories available"
-                                                    : "None (Direct in Primary Category)"}
+                                                        ? "No subcategories available"
+                                                        : "None (Direct in Primary Category)"}
                                             </span>
                                         </div>
                                     </SelectValue>
@@ -644,11 +667,6 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                            {errors.subcategory_id && (
-                                <p className="text-danger text-xs">
-                                    {errors.subcategory_id}
-                                </p>
-                            )}
                         </div>
 
                         {/* Tags */}
@@ -709,13 +727,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
                                 onClick={() => !isUploading && fileInputRef.current?.click()}
-                                className={`group relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer overflow-hidden p-5 flex flex-col items-center justify-center text-center gap-2.5 ${
-                                    isDragging
-                                        ? "border-primary bg-primary-soft shadow-md"
-                                        : isUploading
+                                className={`group relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer overflow-hidden p-5 flex flex-col items-center justify-center text-center gap-2.5 ${isDragging
+                                    ? "border-primary bg-primary-soft shadow-md"
+                                    : isUploading
                                         ? "border-primary/50 bg-surface opacity-80 cursor-wait"
                                         : "border-line bg-surface hover:border-primary/60 hover:bg-surface-2"
-                                }`}
+                                    }`}
                             >
                                 <input
                                     ref={fileInputRef}
@@ -904,13 +921,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 PUBLISHING HUB
                             </span>
                             <span
-                                className={`px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border ${
-                                    data.status === "published"
-                                        ? "border-success/25 bg-success-soft text-success"
-                                        : data.status === "draft"
+                                className={`px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border ${data.status === "published"
+                                    ? "border-success/25 bg-success-soft text-success"
+                                    : data.status === "draft"
                                         ? "border-warning/25 bg-warning-soft text-warning"
                                         : "border-line bg-surface-2 text-subtle"
-                                }`}
+                                    }`}
                             >
                                 {data.status}
                             </span>
@@ -934,20 +950,19 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     <SelectValue>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span
-                                                className={`w-2 h-2 rounded-full ${
-                                                    data.status === "published"
-                                                        ? "bg-success shadow-xs"
-                                                        : data.status === "draft"
+                                                className={`w-2 h-2 rounded-full ${data.status === "published"
+                                                    ? "bg-success shadow-xs"
+                                                    : data.status === "draft"
                                                         ? "bg-warning shadow-xs"
                                                         : "bg-faint"
-                                                }`}
+                                                    }`}
                                             />
                                             <span className="font-medium text-ink">
                                                 {data.status === "published"
                                                     ? "Published (Live to Public)"
                                                     : data.status === "draft"
-                                                    ? "Draft (Private in Studio)"
-                                                    : "Archived (Unlisted)"}
+                                                        ? "Draft (Private in Studio)"
+                                                        : "Archived (Unlisted)"}
                                             </span>
                                         </div>
                                     </SelectValue>
@@ -1023,8 +1038,8 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             ? "Saving Updates..."
                                             : "Publishing..."
                                         : isEdit
-                                        ? "Save Article Changes"
-                                        : "Publish Article"}
+                                            ? "Save Article Changes"
+                                            : "Publish Article"}
                                 </span>
                             </Button>
 

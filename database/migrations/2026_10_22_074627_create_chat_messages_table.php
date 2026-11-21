@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('sender', 20)->default('assistant'); // user, assistant, system
             $table->longText('content');
             $table->json('attachments')->nullable();
-            $table->json('tool_calls')->nullable();
             $table->json('tool_results')->nullable();
             $table->json('suggested_replies')->nullable();
             $table->boolean('is_read')->default(false);

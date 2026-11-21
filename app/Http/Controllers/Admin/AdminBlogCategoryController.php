@@ -17,10 +17,19 @@ class AdminBlogCategoryController extends Controller
      */
     public function index(): Response
     {
-        $categories = BlogCategory::with(['parent', 'subcategories'])
+        $categories = BlogCategory::with([
+            'parent',
+            'subcategories' => fn ($q) => $q->withCount('blogs'),
+        ])
             ->withCount('blogs')
             ->latest()
             ->get();
+
+        foreach ($categories as $category) {
+            if ($category->parent_id === null) {
+                $category->blogs_count += $category->subcategories->sum('blogs_count');
+            }
+        }
 
         $parentCategories = BlogCategory::whereNull('parent_id')->get();
 

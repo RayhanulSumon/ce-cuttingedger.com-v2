@@ -338,7 +338,7 @@ export default function Index({
                                             Category
                                         </span>
                                         <span className="mt-0.5 block text-xs sm:text-sm font-semibold text-white">
-                                            {heroBlog.category?.name || 'Editorial'}
+                                            {heroBlog.category?.parent?.name || heroBlog.category?.name || 'Editorial'}
                                         </span>
                                     </div>
 
@@ -552,11 +552,11 @@ export default function Index({
                                                     >
                                                         <div className="flex flex-wrap items-center gap-2">
                                                             <span className="text-sm sm:text-base font-semibold text-primary-ink">
-                                                                {blog.category?.name || 'Editorial'}
+                                                                {blog.category?.parent?.name || blog.category?.name || 'Editorial'}
                                                             </span>
-                                                            {blog.subcategory && (
+                                                            {blog.category?.parent && (
                                                                 <span className="text-xs font-medium text-subtle">
-                                                                    · {blog.subcategory.name}
+                                                                    · {blog.category.name}
                                                                 </span>
                                                             )}
                                                         </div>

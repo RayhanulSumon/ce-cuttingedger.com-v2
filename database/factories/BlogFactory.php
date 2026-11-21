@@ -51,7 +51,6 @@ class BlogFactory extends Factory
 
         return [
             'blog_category_id' => BlogCategory::factory(),
-            'subcategory_id' => null,
             'author_id' => TeamMember::inRandomOrder()->value('id') ?? 1,
             'title' => rtrim($title, '.'),
             'slug' => $slug,

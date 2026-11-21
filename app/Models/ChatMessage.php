@@ -14,7 +14,6 @@ class ChatMessage extends Model
 
     protected $casts = [
         'attachments' => 'array',
-        'tool_calls' => 'array',
         'tool_results' => 'array',
         'suggested_replies' => 'array',
         'is_read' => 'boolean',

@@ -18,29 +18,35 @@ class BlogController extends Controller
         $selectedCategory = $request->query('category');
         $selectedSubcategory = $request->query('subcategory');
 
-        $query = Blog::with(['category', 'subcategory', 'author'])
+        $query = Blog::with(['category.parent', 'author'])
             ->where('status', 'published')
             ->latest('published_at');
 
         if ($selectedCategory && $selectedCategory !== 'all') {
             $query->whereHas('category', function ($q) use ($selectedCategory): void {
-                $q->where('slug', $selectedCategory);
+                $q->where('slug', $selectedCategory)
+                    ->orWhereHas('parent', fn ($pq) => $pq->where('slug', $selectedCategory));
             });
         }
 
         if ($selectedSubcategory && $selectedSubcategory !== 'all') {
-            $query->whereHas('subcategory', function ($q) use ($selectedSubcategory): void {
-                $q->where('slug', $selectedSubcategory);
+            $query->whereHas('category', function ($q) use ($selectedSubcategory): void {
+                $q->where('slug', $selectedSubcategory)
+                    ->whereNotNull('parent_id');
             });
         }
 
         $blogs = $query->get();
         $categories = BlogCategory::whereNull('parent_id')
-            ->with('subcategories')
+            ->with(['subcategories' => fn ($q) => $q->withCount('blogs')])
             ->withCount('blogs')
             ->get();
 
-        $featuredBlogs = Blog::with(['category', 'subcategory', 'author'])
+        foreach ($categories as $category) {
+            $category->blogs_count += $category->subcategories->sum('blogs_count');
+        }
+
+        $featuredBlogs = Blog::with(['category.parent', 'author'])
             ->where('status', 'published')
             ->where('is_featured', true)
             ->latest('published_at')
@@ -48,7 +54,7 @@ class BlogController extends Controller
             ->get();
 
         if ($featuredBlogs->isEmpty()) {
-            $featuredBlogs = Blog::with(['category', 'subcategory', 'author'])
+            $featuredBlogs = Blog::with(['category.parent', 'author'])
                 ->where('status', 'published')
                 ->latest('published_at')
                 ->take(1)
@@ -72,9 +78,9 @@ class BlogController extends Controller
      */
     public function show(Blog $blog): Response
     {
-        $blog->load(['category', 'subcategory', 'author']);
+        $blog->load(['category.parent', 'author']);
 
-        $relatedBlogs = Blog::with(['category', 'subcategory', 'author'])
+        $relatedBlogs = Blog::with(['category.parent', 'author'])
             ->where('id', '!=', $blog->id)
             ->where('status', 'published')
             ->orderByRaw('CASE WHEN blog_category_id = ? THEN 0 ELSE 1 END', [$blog->blog_category_id ?? 0])

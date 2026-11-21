@@ -15,7 +15,6 @@ class ChatSession extends Model
 
     protected $casts = [
         'metadata' => 'array',
-        'estimated_price' => 'decimal:2',
         'needs_human' => 'boolean',
         'last_active_at' => 'datetime',
         'follow_up_sent_at' => 'datetime',
@@ -38,11 +37,11 @@ class ChatSession extends Model
             'mode' => 'operator',
             'needs_human' => false,
             'operator_id' => $operator->id,
-            'operator_name' => $operator->name,
             'operator_joined_at' => now(),
             'last_active_at' => now(),
             'status' => 'active',
         ]);
+        $this->setRelation('operator', $operator);
     }
 
     public function returnToBot(): void
@@ -50,8 +49,10 @@ class ChatSession extends Model
         $this->update([
             'mode' => 'bot',
             'needs_human' => false,
+            'operator_id' => null,
             'last_active_at' => now(),
         ]);
+        $this->unsetRelation('operator');
     }
 
     public function requestHuman(): void

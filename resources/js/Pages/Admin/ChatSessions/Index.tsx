@@ -52,7 +52,6 @@ interface ChatSessionItem {
     lead_phone?: string;
     company?: string;
     service_interest?: string;
-    estimated_price?: string;
     status: "active" | "idle" | "converted" | "abandoned";
     mode?: "bot" | "operator";
     needs_human?: boolean;
@@ -69,7 +68,6 @@ interface TranscriptMessage {
     sender: "user" | "assistant" | "system" | "operator";
     content: string;
     attachments: string[];
-    tool_calls?: any[];
     tool_results?: any[];
     created_at_formatted: string;
 }
@@ -349,21 +347,6 @@ export default function ChatSessionsIndex({
                 <span className="text-xs text-ink-2">
                     {row.lead_phone || <span className="text-muted">—</span>}
                 </span>
-            ),
-        },
-        {
-            header: "Quote Estimate",
-            accessorKey: "estimated_price",
-            cell: (row) => (
-                <div className="text-xs">
-                    {row.estimated_price ? (
-                        <span className="font-bold text-primary-ink">
-                            ${row.estimated_price}
-                        </span>
-                    ) : (
-                        <span className="text-muted">—</span>
-                    )}
-                </div>
             ),
         },
         {

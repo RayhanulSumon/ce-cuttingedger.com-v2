@@ -24,7 +24,7 @@ class AdminBlogController extends Controller
      */
     public function index(): Response
     {
-        $blogs = Blog::with(['category', 'subcategory', 'author'])->latest()->get();
+        $blogs = Blog::with(['category.parent', 'author'])->latest()->get();
         $categories = BlogCategory::whereNull('parent_id')
             ->with('subcategories')
             ->get();
@@ -92,7 +92,6 @@ class AdminBlogController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:blogs,slug'],
             'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
-            'subcategory_id' => ['nullable', 'exists:blog_categories,id'],
             'author_id' => ['nullable', 'exists:team_members,id'],
             'excerpt' => ['required', 'string'],
             'body' => ['required', 'string'],
@@ -157,7 +156,7 @@ class AdminBlogController extends Controller
      */
     public function edit(Blog $blog): Response
     {
-        $blog->load(['category', 'subcategory', 'author']);
+        $blog->load(['category.parent', 'author']);
         $categories = BlogCategory::whereNull('parent_id')
             ->with('subcategories')
             ->get();
@@ -179,7 +178,6 @@ class AdminBlogController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'unique:blogs,slug,'.$blog->id],
             'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
-            'subcategory_id' => ['nullable', 'exists:blog_categories,id'],
             'author_id' => ['nullable', 'exists:team_members,id'],
             'excerpt' => ['required', 'string'],
             'body' => ['required', 'string'],
@@ -247,7 +245,7 @@ class AdminBlogController extends Controller
     public function trash(): Response
     {
         $trashedBlogs = Blog::onlyTrashed()
-            ->with(['category', 'subcategory', 'author'])
+            ->with(['category.parent', 'author'])
             ->latest('deleted_at')
             ->get();
 

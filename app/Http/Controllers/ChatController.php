@@ -73,10 +73,11 @@ class ChatController extends Controller
         $session = $this->sessionManager->resolve($request);
 
         $result = $this->orchestrator->handle($session, trim($validated['message']));
+        $session->loadMissing('operator:id,name');
 
         $result['mode'] = $session->mode;
         $result['needs_human'] = (bool) $session->needs_human;
-        $result['operator_name'] = $session->operator_name;
+        $result['operator_name'] = $session->operator?->name;
 
         return response()->json($result);
     }
@@ -104,11 +105,13 @@ class ChatController extends Controller
             $query->where('id', '>', $afterId);
         }
 
+        $session->loadMissing('operator:id,name');
+
         return response()->json([
             'session_id' => $session->id,
             'mode' => $session->mode,
             'needs_human' => (bool) $session->needs_human,
-            'operator_name' => $session->operator_name,
+            'operator_name' => $session->operator?->name,
             'messages' => $query->get()->map(fn (ChatMessage $msg) => $this->present($msg)),
         ]);
     }
@@ -168,11 +171,13 @@ class ChatController extends Controller
      */
     private function stateResponse(ChatSession $session, array $messages): JsonResponse
     {
+        $session->loadMissing('operator:id,name');
+
         return response()->json([
             'session_id' => $session->id,
             'mode' => $session->mode,
             'needs_human' => (bool) $session->needs_human,
-            'operator_name' => $session->operator_name,
+            'operator_name' => $session->operator?->name,
             'messages' => $messages,
         ])->cookie(ChatSessionManager::COOKIE_NAME, $session->id, 60 * 24 * 30);
     }

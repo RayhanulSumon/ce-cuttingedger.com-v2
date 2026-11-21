@@ -47,4 +47,25 @@ class BlogControllerTest extends TestCase
             ->has('nextBlog')
         );
     }
+
+    public function test_blog_index_filters_by_parent_category_and_child_subcategory(): void
+    {
+        $this->get('/blog?category=design-theory')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Blog/Index')
+                ->where('activeCategory', 'design-theory')
+                ->has('blogs', 2)
+            );
+
+        $this->get('/blog?category=design-theory&subcategory=tactile-ui-haptics')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Blog/Index')
+                ->where('activeCategory', 'design-theory')
+                ->where('activeSubcategory', 'tactile-ui-haptics')
+                ->has('blogs', 1)
+                ->where('blogs.0.slug', 'death-of-minimalist-box')
+            );
+    }
 }

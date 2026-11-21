@@ -21,8 +21,6 @@ return new class extends Migration
             $table->unsignedInteger('bonus_credits')->default(0);
             $table->decimal('price_amount', 10, 2)->default(250.00);
             $table->unsignedInteger('validity_days')->default(90);
-            $table->string('stripe_product_id', 120)->nullable();
-            $table->string('stripe_price_id', 120)->nullable();
             $table->string('price');
             $table->string('billing_cycle')->default('per sprint');
             $table->json('features')->nullable();

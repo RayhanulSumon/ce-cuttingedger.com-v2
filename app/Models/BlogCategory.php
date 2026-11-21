@@ -30,18 +30,10 @@ class BlogCategory extends Model
     }
 
     /**
-     * Primary category blogs.
+     * Blogs directly assigned to this category.
      */
     public function blogs(): HasMany
     {
         return $this->hasMany(Blog::class, 'blog_category_id');
-    }
-
-    /**
-     * Subcategory blogs.
-     */
-    public function subcategoryBlogs(): HasMany
-    {
-        return $this->hasMany(Blog::class, 'subcategory_id');
     }
 }

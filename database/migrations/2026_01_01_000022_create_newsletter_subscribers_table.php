@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('newsletter_subscribers', function (Blueprint $table): void {
             $table->id();
             $table->string('email')->unique();
-            $table->string('ip_address')->nullable();
+            $table->string('ip_address', 45)->nullable();
             $table->string('status')->default('active')->index();
             $table->timestamps();
         });

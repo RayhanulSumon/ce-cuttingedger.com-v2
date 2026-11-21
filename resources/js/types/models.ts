@@ -121,8 +121,6 @@ export interface Blog {
     id: number;
     blog_category_id: number;
     category?: BlogCategory;
-    subcategory_id?: number | null;
-    subcategory?: BlogCategory | null;
     author_id?: number;
     author?: TeamMember;
     title: string;

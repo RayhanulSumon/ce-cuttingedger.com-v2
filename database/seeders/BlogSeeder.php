@@ -94,8 +94,7 @@ class BlogSeeder extends Seeder
         // 3. Seed Comprehensive Articles
         $articles = [
             [
-                'blog_category_id' => $catDesign->id,
-                'subcategory_id' => $subTactile->id,
+                'blog_category_id' => $subTactile->id,
                 'author_id' => $author1,
                 'title' => 'The Death of the Minimalist Box: Why Modern Software Craves Visceral Tactility',
                 'slug' => 'death-of-minimalist-box',
@@ -115,8 +114,7 @@ class BlogSeeder extends Seeder
                 'robots' => 'index, follow',
             ],
             [
-                'blog_category_id' => $catEngineering->id,
-                'subcategory_id' => $subPerf->id,
+                'blog_category_id' => $subPerf->id,
                 'author_id' => $author2,
                 'title' => 'Engineering 100/100 Lighthouse on Laravel 13 + Inertia + Tailwind 4',
                 'slug' => 'engineering-100-lighthouse-laravel-inertia',
@@ -136,8 +134,7 @@ class BlogSeeder extends Seeder
                 'robots' => 'index, follow',
             ],
             [
-                'blog_category_id' => $catDesign->id,
-                'subcategory_id' => $subMotion->id,
+                'blog_category_id' => $subMotion->id,
                 'author_id' => $author3,
                 'title' => 'Volumetric Shaders in the Browser: Real-Time Raymarching with WebGL',
                 'slug' => 'volumetric-shaders-browser-webgl',
@@ -157,8 +154,7 @@ class BlogSeeder extends Seeder
                 'robots' => 'index, follow',
             ],
             [
-                'blog_category_id' => $catBrand->id,
-                'subcategory_id' => $subTypography->id,
+                'blog_category_id' => $subTypography->id,
                 'author_id' => $author1,
                 'title' => 'Kinetic Typography: Designing Variable Typefaces for Fluid Display Scales',
                 'slug' => 'kinetic-typography-variable-typefaces',

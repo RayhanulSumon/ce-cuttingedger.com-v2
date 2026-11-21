@@ -21,7 +21,6 @@ A new submission has been recorded (`{{ $order->order_number }}`).
 | **Client** | {{ $order->client_name }} ([{{ $order->client_email }}](mailto:{{ $order->client_email }})) |
 | **Phone** | {{ $order->client_phone ?? 'N/A' }} |
 | **Company** | {{ $order->company ?? 'N/A' }} |
-| **Website** | {{ $order->website ?? 'N/A' }} |
 | **Service** | {{ $order->service_name }} |
 | **Total** | {{ $order->currency }} {{ number_format((float) $order->total_price, 2) }} |
 | **Uploaded Files** | {{ count($order->images ?? []) }} file(s) |

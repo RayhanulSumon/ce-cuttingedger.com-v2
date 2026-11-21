@@ -36,11 +36,13 @@ class ChatOrchestrator
 
         // A human operator has taken over: stay quiet.
         if ($session->isOperatorActive()) {
+            $session->loadMissing('operator:id,name');
+
             return [
                 'session_id' => $session->id,
                 'engine' => 'operator',
                 'operator_active' => true,
-                'operator_name' => $session->operator_name,
+                'operator_name' => $session->operator?->name,
                 'user_message_id' => $userMessage->id,
                 'message' => null,
             ];

@@ -29,14 +29,6 @@ class Blog extends Model
     }
 
     /**
-     * Child subcategory.
-     */
-    public function subcategory(): BelongsTo
-    {
-        return $this->belongsTo(BlogCategory::class, 'subcategory_id');
-    }
-
-    /**
      * Author team member.
      */
     public function author(): BelongsTo

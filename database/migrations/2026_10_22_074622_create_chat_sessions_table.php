@@ -20,13 +20,10 @@ return new class extends Migration
             $table->string('lead_phone')->nullable();
             $table->string('company')->nullable();
             $table->string('service_interest')->nullable();
-            $table->string('complexity_level')->nullable();
-            $table->decimal('estimated_price', 10, 2)->nullable();
             $table->string('status')->default('active'); // active, idle, converted, abandoned
             $table->string('mode', 20)->default('bot'); // 'bot', 'operator'
             $table->boolean('needs_human')->default(false);
             $table->foreignId('operator_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('operator_name')->nullable();
             $table->timestamp('operator_joined_at')->nullable();
             $table->timestamp('last_active_at')->nullable();
             $table->timestamp('follow_up_sent_at')->nullable();

@@ -166,6 +166,7 @@ class AdminChatAndConsultationTest extends TestCase
                 'session' => [
                     'id' => $session->id,
                     'mode' => 'operator',
+                    'operator_name' => $this->admin->name,
                 ],
             ]);
 
@@ -225,11 +226,13 @@ class AdminChatAndConsultationTest extends TestCase
                 'success' => true,
                 'session' => [
                     'mode' => 'bot',
+                    'operator_name' => null,
                 ],
             ]);
 
         $session->refresh();
         $this->assertEquals('bot', $session->mode);
+        $this->assertNull($session->operator_id);
     }
 
     public function test_visitor_request_human_flags_session_for_takeover(): void

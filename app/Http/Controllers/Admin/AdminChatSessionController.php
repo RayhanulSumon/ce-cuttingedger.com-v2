@@ -26,7 +26,8 @@ class AdminChatSessionController extends Controller
 
         $status = $request->query('status');
 
-        $query = ChatSession::withCount('messages')
+        $query = ChatSession::with('operator:id,name')
+            ->withCount('messages')
             ->orderBy('last_active_at', 'desc');
 
         if ($status && in_array($status, ['converted', 'active', 'idle', 'abandoned'], true)) {
@@ -40,11 +41,10 @@ class AdminChatSessionController extends Controller
             'lead_phone' => $s->lead_phone,
             'company' => $s->company,
             'service_interest' => $s->service_interest,
-            'estimated_price' => $s->estimated_price ? number_format((float) $s->estimated_price, 2) : null,
             'status' => $s->status,
             'mode' => $s->mode ?? 'bot',
             'needs_human' => (bool) $s->needs_human,
-            'operator_name' => $s->operator_name,
+            'operator_name' => $s->operator?->name,
             'ip_address' => $s->ip_address,
             'messages_count' => $s->messages_count,
             'last_active_at' => $s->last_active_at?->toISOString(),
@@ -81,6 +81,8 @@ class AdminChatSessionController extends Controller
                 ->update(['status' => 'read']);
         }
 
+        $chatSession->load('operator:id,name');
+
         $messages = $chatSession->messages()
             ->orderBy('created_at', 'asc')
             ->get()
@@ -89,7 +91,6 @@ class AdminChatSessionController extends Controller
                 'sender' => $m->sender,
                 'content' => $m->content,
                 'attachments' => $m->attachments ?? [],
-                'tool_calls' => $m->tool_calls ?? [],
                 'tool_results' => $m->tool_results ?? [],
                 'created_at' => $m->created_at->toISOString(),
                 'created_at_formatted' => $m->created_at->format('M j, g:i A'),
@@ -106,7 +107,7 @@ class AdminChatSessionController extends Controller
                 'mode' => $chatSession->mode ?? 'bot',
                 'needs_human' => (bool) $chatSession->needs_human,
                 'operator_id' => $chatSession->operator_id,
-                'operator_name' => $chatSession->operator_name,
+                'operator_name' => $chatSession->operator?->name,
                 'operator_joined_at' => $chatSession->operator_joined_at?->toISOString(),
                 'ip_address' => $chatSession->ip_address,
                 'metadata' => $chatSession->metadata,
@@ -136,7 +137,7 @@ class AdminChatSessionController extends Controller
                 'id' => $chatSession->id,
                 'mode' => $chatSession->mode,
                 'needs_human' => (bool) $chatSession->needs_human,
-                'operator_name' => $chatSession->operator_name,
+                'operator_name' => $user->name,
             ],
             'announcement' => [
                 'id' => $announcement->id,
@@ -228,12 +229,13 @@ class AdminChatSessionController extends Controller
             $query->where('id', '>', $afterId);
         }
 
+        $chatSession->load('operator:id,name');
+
         $messages = $query->get()->map(fn (ChatMessage $m) => [
             'id' => $m->id,
             'sender' => $m->sender,
             'content' => $m->content,
             'attachments' => $m->attachments ?? [],
-            'tool_calls' => $m->tool_calls ?? [],
             'tool_results' => $m->tool_results ?? [],
             'created_at' => $m->created_at->toISOString(),
             'created_at_formatted' => $m->created_at->format('M j, g:i A'),
@@ -245,7 +247,7 @@ class AdminChatSessionController extends Controller
                 'mode' => $chatSession->mode ?? 'bot',
                 'needs_human' => (bool) $chatSession->needs_human,
                 'operator_id' => $chatSession->operator_id,
-                'operator_name' => $chatSession->operator_name,
+                'operator_name' => $chatSession->operator?->name,
                 'status' => $chatSession->status,
             ],
             'messages' => $messages,

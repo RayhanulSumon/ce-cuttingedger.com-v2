@@ -85,13 +85,13 @@ export default function BlogsIndex({
                         </div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-subtle">
                             <span className="text-primary-ink">
-                                {b.category?.name || "General"}
+                                {b.category?.parent?.name || b.category?.name || "General"}
                             </span>
-                            {b.subcategory && (
+                            {b.category?.parent && (
                                 <>
                                     <span>/</span>
                                     <span className="text-ink-2">
-                                        {b.subcategory.name}
+                                        {b.category.name}
                                     </span>
                                 </>
                             )}
