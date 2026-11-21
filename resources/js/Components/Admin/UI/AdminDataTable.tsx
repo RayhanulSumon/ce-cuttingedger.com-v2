@@ -106,7 +106,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
             {searchKey && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="relative w-full sm:max-w-sm">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-faint" />
                         <Input
                             placeholder={searchPlaceholder}
                             value={search}
@@ -114,11 +114,11 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 setSearch(e.target.value);
                                 setPage(1);
                             }}
-                            className="pl-9 bg-white border-slate-200 text-ink placeholder:text-slate-400"
+                            className="pl-9 bg-surface border-line text-ink placeholder:text-faint"
                         />
                     </div>
 
-                    <div className="text-xs font-mono text-slate-500">
+                    <div className="text-xs text-subtle">
                         Total {filteredData.length} records
                     </div>
                 </div>
@@ -135,7 +135,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
                         ) : (
                             <div
                                 key={row.id ?? rowIdx}
-                                className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+                                className="rounded-2xl border border-line bg-surface p-4 shadow-xs"
                             >
                                 {(titleCol || statusCol) && (
                                     <div className="flex items-start justify-between gap-3">
@@ -153,7 +153,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 )}
 
                                 {metaCols.length > 0 && (
-                                    <div className="mt-3 divide-y divide-slate-100 border-t border-slate-100">
+                                    <div className="mt-3 divide-y divide-line border-t border-line">
                                         {metaCols.map((col, colIdx) => {
                                             const label = col.mobileLabel ?? col.header;
                                             return (
@@ -162,11 +162,11 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                                     className="flex items-start justify-between gap-3 py-2 text-xs"
                                                 >
                                                     {label && (
-                                                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 shrink-0 pt-0.5">
+                                                        <span className="text-2xs font-semibold uppercase tracking-wide text-faint shrink-0 pt-0.5">
                                                             {label}
                                                         </span>
                                                     )}
-                                                    <div className="min-w-0 flex-1 text-right text-slate-700 break-words flex justify-end">
+                                                    <div className="min-w-0 flex-1 text-right text-ink-2 break-words flex justify-end">
                                                         {renderColumnCell(col, row)}
                                                     </div>
                                                 </div>
@@ -176,7 +176,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 )}
 
                                 {actionsCol && (
-                                    <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-end gap-2 [&_button]:min-h-11 [&_button]:min-w-11 [&_a]:min-h-11">
+                                    <div className="mt-3 pt-3 border-t border-line flex flex-wrap items-center justify-end gap-2 [&_button]:min-h-11 [&_button]:min-w-11 [&_a]:min-h-11">
                                         {renderColumnCell(actionsCol, row)}
                                     </div>
                                 )}
@@ -184,17 +184,17 @@ export function AdminDataTable<T extends { id?: number | string }>({
                         )
                     )
                 ) : (
-                    <div className="rounded-2xl border border-slate-200/90 bg-white px-5 py-10 text-center text-xs font-mono text-slate-400 shadow-xs">
+                    <div className="rounded-2xl border border-line bg-surface px-5 py-10 text-center text-xs text-faint shadow-xs">
                         {emptyMessage}
                     </div>
                 )}
             </div>
 
             {/* Desktop Table Container (md+) */}
-            <div className="hidden md:block rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-xs">
+            <div className="hidden md:block rounded-2xl border border-line bg-surface overflow-hidden shadow-xs">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-slate-700">
-                        <thead className="bg-[#f8fafc] text-[11px] font-mono uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                    <table className="w-full text-left text-sm text-ink-2">
+                        <thead className="bg-surface-2 text-2xs uppercase tracking-wider text-subtle border-b border-line">
                             <tr>
                                 {columns.map((col, idx) => (
                                     <th
@@ -209,18 +209,18 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-line">
                             {paginatedData.length > 0 ? (
                                 paginatedData.map((row, rowIdx) => (
                                     <tr
                                         key={row.id ?? rowIdx}
-                                        className="hover:bg-slate-50/80 transition-colors"
+                                        className="hover:bg-surface-2 transition-colors"
                                     >
                                         {columns.map((col, colIdx) => (
                                             <td
                                                 key={colIdx}
                                                 className={cn(
-                                                    "px-6 py-4 text-slate-700",
+                                                    "px-6 py-4 text-ink-2",
                                                     col.className
                                                 )}
                                             >
@@ -233,7 +233,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
                                 <tr>
                                     <td
                                         colSpan={columns.length}
-                                        className="px-6 py-12 text-center text-slate-400 font-mono text-xs"
+                                        className="px-6 py-12 text-center text-faint text-xs"
                                     >
                                         {emptyMessage}
                                     </td>
@@ -246,7 +246,7 @@ export function AdminDataTable<T extends { id?: number | string }>({
 
             {/* Client Pagination Footer */}
             {totalPages > 1 && (
-                <div className="rounded-2xl border border-slate-200/90 bg-[#f8fafc] px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs font-mono text-slate-500 shadow-xs">
+                <div className="rounded-2xl border border-line bg-surface-2 px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-subtle shadow-xs">
                     <span>
                         Page {page} of {totalPages}
                     </span>

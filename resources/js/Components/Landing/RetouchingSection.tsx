@@ -112,7 +112,7 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
         <div>
             <div
                 ref={box}
-                className="relative mx-auto aspect-[4/3] max-h-[62vh] w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-[28px] border border-ink/10 bg-[#d8d3cf] shadow-[0_28px_60px_-24px_rgba(17,19,24,0.35)]"
+                className="relative mx-auto aspect-[4/3] max-h-[62vh] w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-[28px] border border-ink/10 bg-surface-3 shadow-[0_28px_60px_-24px_rgba(17,19,24,0.35)]"
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
                     setDragging(true);
@@ -153,14 +153,14 @@ function BeforeAfter({ active, fix }: { active: boolean; fix: RetouchFix }) {
                         className={`h-full w-full object-cover ${fix.rawFilter}`}
                     />
                 </div>
-                <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white">
+                <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-white">
                     Raw
                 </span>
-                <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-black">
+                <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-surface/90 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-ink">
                     Delivered
                 </span>
-                <div ref={lineRef} className={`pointer-events-none absolute inset-y-0 w-0.5 bg-white will-change-[left] transition-[left] ${glide}`} style={{ left: `${position}%` }}>
-                    <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-xl">
+                <div ref={lineRef} className={`pointer-events-none absolute inset-y-0 w-0.5 bg-surface will-change-[left] transition-[left] ${glide}`} style={{ left: `${position}%` }}>
+                    <span className="absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-surface text-ink shadow-xl">
                         <MoveHorizontal size={20} />
                     </span>
                 </div>
@@ -211,7 +211,7 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
                                     className={`cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 ${
                                         isSelected
                                             ? 'border-ink bg-ink text-white shadow-sm'
-                                            : 'border-ink/20 bg-white text-ink hover:border-ink/50'
+                                            : 'border-ink/20 bg-surface text-ink hover:border-ink/50'
                                     }`}
                                 >
                                     {fix.label}

@@ -79,7 +79,7 @@ function BackgroundSlider({ playing }: { playing: boolean }) {
     );
 }
 
-const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-[#d8d3cf] bg-cover bg-center';
+const PILL_BASE = 'relative block shrink-0 overflow-hidden rounded-[0.2em] bg-surface-3 bg-cover bg-center';
 const pillPoster = { backgroundImage: `url(${VIDEO_POSTER})` };
 
 export const HeroSection = memo(function HeroSection({ active, goTo }: SectionProps) {
@@ -188,7 +188,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
             </h1>
 
             <Reveal active={show} delay={0.7} className="relative z-10 mt-8 max-w-2xl text-center sm:mt-10">
-                <p className="text-base font-medium leading-[1.65] text-[#111318] sm:text-lg lg:text-[19px]">
+                <p className="text-base font-medium leading-[1.65] text-ink sm:text-lg lg:text-[19px]">
                     Transform your apparel and product photography with next-generation AI-integrated image editing and
                     expert post-production. Save time, reduce production costs, and scale your visual content without
                     compromising quality.
@@ -204,7 +204,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
             <Reveal
                 active={show}
                 delay={1.1}
-                className="absolute bottom-5 z-10 hidden text-[11px] uppercase tracking-[0.3em] text-ink-2/60 sm:block"
+                className="absolute bottom-5 z-10 hidden text-2xs uppercase tracking-[0.3em] text-ink-2/60 sm:block"
             >
                 Scroll to explore
             </Reveal>

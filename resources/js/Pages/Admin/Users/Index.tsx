@@ -222,7 +222,7 @@ export default function UsersIndex({
                     </div>
                     <div>
                         <div className="font-bold text-ink">{user.name}</div>
-                        <div className="text-xs text-slate-500">{user.email}</div>
+                        <div className="text-xs text-subtle">{user.email}</div>
                     </div>
                 </div>
             ),
@@ -250,17 +250,17 @@ export default function UsersIndex({
                         (user.permissions || []).slice(0, 4).map((p) => (
                             <span
                                 key={p}
-                                className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-medium"
+                                className="px-2 py-0.5 rounded-md bg-surface-2 text-ink-2 text-2xs font-medium"
                             >
                                 {formatPermissionLabel(p)}
                             </span>
                         ))
                     ) : (
-                        <span className="text-xs text-slate-400">No permissions</span>
+                        <span className="text-xs text-faint">No permissions</span>
                     )}
                     {(user.permissions || []).length > 4 &&
                         user.role_name !== "super_admin" && (
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
+                            <span className="px-2 py-0.5 rounded-md bg-surface-2 text-muted text-2xs font-bold">
                                 +{(user.permissions || []).length - 4} more
                             </span>
                         )}
@@ -273,13 +273,13 @@ export default function UsersIndex({
                 <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                         user.status === "active"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-rose-50 text-rose-700 border border-rose-200"
+                            ? "bg-success-soft text-success border border-success/25"
+                            : "bg-danger-soft text-danger border border-danger/25"
                     }`}
                 >
                     <span
                         className={`w-1.5 h-1.5 rounded-full ${
-                            user.status === "active" ? "bg-emerald-500" : "bg-rose-500"
+                            user.status === "active" ? "bg-success" : "bg-danger"
                         }`}
                     />
                     <span className="capitalize">{user.status}</span>
@@ -289,7 +289,7 @@ export default function UsersIndex({
         {
             header: "Last Login",
             cell: (user) => (
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-subtle">
                     {user.last_login_at || "Never"}
                 </span>
             ),
@@ -303,7 +303,7 @@ export default function UsersIndex({
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-slate-500 hover:text-ink"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -322,19 +322,19 @@ export default function UsersIndex({
                         >
                             {user.status === "active" ? (
                                 <>
-                                    <UserX className="w-3.5 h-3.5 text-amber-600" />
+                                    <UserX className="w-3.5 h-3.5 text-warning" />
                                     <span>Suspend Access</span>
                                 </>
                             ) : (
                                 <>
-                                    <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                    <UserCheck className="w-3.5 h-3.5 text-success" />
                                     <span>Activate Access</span>
                                 </>
                             )}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setUserToDelete(user)}
-                            className="gap-2 text-rose-600 focus:text-rose-600"
+                            className="gap-2 text-danger focus:text-danger"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Delete Admin</span>
@@ -368,8 +368,8 @@ export default function UsersIndex({
                     onClick={() => setActiveSection("staff")}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         activeSection === "staff"
-                            ? "bg-primary text-white shadow-xs"
-                            : "bg-white text-slate-600 border border-slate-200 hover:text-ink"
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "bg-surface text-muted border border-line hover:text-ink"
                     }`}
                 >
                     <ShieldCheck className="w-3.5 h-3.5" />
@@ -380,8 +380,8 @@ export default function UsersIndex({
                     onClick={() => setActiveSection("roles")}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         activeSection === "roles"
-                            ? "bg-primary text-white shadow-xs"
-                            : "bg-white text-slate-600 border border-slate-200 hover:text-ink"
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "bg-surface text-muted border border-line hover:text-ink"
                     }`}
                 >
                     <KeyRound className="w-3.5 h-3.5" />
@@ -404,7 +404,7 @@ export default function UsersIndex({
                         return (
                             <div
                                 key={role.id}
-                                className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-2xs"
+                                className="bg-surface rounded-2xl border border-line p-6 flex flex-col justify-between shadow-2xs"
                             >
                                 <div>
                                     <div className="flex items-center justify-between gap-3 mb-3">
@@ -412,7 +412,7 @@ export default function UsersIndex({
                                             <h3 className="text-base font-extrabold text-ink">
                                                 {formatRoleLabel(role.name)}
                                             </h3>
-                                            <span className="text-xs font-mono text-slate-400">
+                                            <span className="text-xs text-faint">
                                                 guard: web · slug: {role.name}
                                             </span>
                                         </div>
@@ -429,7 +429,7 @@ export default function UsersIndex({
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={() => handleDeleteRole(role)}
-                                                    className="text-rose-600 hover:text-rose-700"
+                                                    className="text-danger hover:text-danger"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </Button>
@@ -447,12 +447,12 @@ export default function UsersIndex({
                                                     key={perm}
                                                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${
                                                         enabled
-                                                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                                            : "bg-slate-50 text-slate-400 border-slate-200"
+                                                            ? "bg-success-soft text-success border-success/25"
+                                                            : "bg-surface-2 text-faint border-line"
                                                     }`}
                                                 >
                                                     {enabled && (
-                                                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                                        <CheckCircle2 className="w-3 h-3 text-success" />
                                                     )}
                                                     {formatPermissionLabel(perm)}
                                                 </span>
@@ -478,7 +478,7 @@ export default function UsersIndex({
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Full Name *
                             </label>
                             <Input
@@ -492,7 +492,7 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Work Email *
                             </label>
                             <Input
@@ -508,7 +508,7 @@ export default function UsersIndex({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">
+                                <label className="text-xs font-semibold text-ink-2">
                                     Assigned Spatie Role
                                 </label>
                                 <Select
@@ -535,7 +535,7 @@ export default function UsersIndex({
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">
+                                <label className="text-xs font-semibold text-ink-2">
                                     Status
                                 </label>
                                 <Select
@@ -556,7 +556,7 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Password *
                             </label>
                             <Input
@@ -601,7 +601,7 @@ export default function UsersIndex({
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Full Name *
                             </label>
                             <Input
@@ -614,7 +614,7 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Work Email *
                             </label>
                             <Input
@@ -629,7 +629,7 @@ export default function UsersIndex({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">
+                                <label className="text-xs font-semibold text-ink-2">
                                     Assigned Spatie Role
                                 </label>
                                 <Select
@@ -656,7 +656,7 @@ export default function UsersIndex({
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">
+                                <label className="text-xs font-semibold text-ink-2">
                                     Status
                                 </label>
                                 <Select
@@ -677,7 +677,7 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Reset Password (leave blank to retain)
                             </label>
                             <Input
@@ -719,7 +719,7 @@ export default function UsersIndex({
 
                     <form onSubmit={handleCreateRole} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Role Name *
                             </label>
                             <Input
@@ -733,14 +733,14 @@ export default function UsersIndex({
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold text-slate-700 block">
+                            <label className="text-xs font-semibold text-ink-2 block">
                                 Assign Permissions
                             </label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 {permissions.map((perm) => (
                                     <label
                                         key={perm}
-                                        className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-medium text-ink cursor-pointer"
+                                        className="flex items-center gap-2 p-2.5 rounded-xl border border-line hover:bg-surface-2 text-xs font-medium text-ink cursor-pointer"
                                     >
                                         <input
                                             type="checkbox"
@@ -754,7 +754,7 @@ export default function UsersIndex({
                                                     perm
                                                 )
                                             }
-                                            className="rounded border-slate-300 text-primary focus:ring-primary"
+                                            className="rounded border-line-strong text-primary focus:ring-primary"
                                         />
                                         <span>{formatPermissionLabel(perm)}</span>
                                     </label>
@@ -799,7 +799,7 @@ export default function UsersIndex({
                             {permissions.map((perm) => (
                                 <label
                                     key={perm}
-                                    className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-medium text-ink cursor-pointer"
+                                    className="flex items-center gap-2 p-2.5 rounded-xl border border-line hover:bg-surface-2 text-xs font-medium text-ink cursor-pointer"
                                 >
                                     <input
                                         type="checkbox"
@@ -815,7 +815,7 @@ export default function UsersIndex({
                                                 perm
                                             )
                                         }
-                                        className="rounded border-slate-300 text-primary focus:ring-primary"
+                                        className="rounded border-line-strong text-primary focus:ring-primary"
                                     />
                                     <span>{formatPermissionLabel(perm)}</span>
                                 </label>

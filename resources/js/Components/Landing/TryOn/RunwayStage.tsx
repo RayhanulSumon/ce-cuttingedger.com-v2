@@ -61,15 +61,15 @@ const RingActors = memo(function RingActors({
 
 function cursorShape(cursor: RunwayCursorState, hidden: boolean): string {
     if (!cursor.on || hidden) {
-        return 'scale-30 border-[#151413]/25 bg-white/40 text-[#151413] opacity-0';
+        return 'scale-30 border-ink/25 bg-white/40 text-ink opacity-0';
     }
     if (cursor.dragging) {
-        return 'scale-75 border-[#0e0e0e] bg-[#0e0e0e] text-white opacity-100';
+        return 'scale-75 border-ink bg-ink text-white opacity-100';
     }
     if (cursor.mode === 'link') {
-        return 'scale-20 border-transparent bg-[#0e0e0e] text-white opacity-100';
+        return 'scale-20 border-transparent bg-ink text-white opacity-100';
     }
-    return 'scale-100 border-[#151413]/28 bg-white/70 text-[#151413] opacity-100';
+    return 'scale-100 border-ink/28 bg-surface/70 text-ink opacity-100';
 }
 
 /** Frosted follower cursor: "Drag" over the stage, "View" over the front model, a dot over side models. */
@@ -85,7 +85,7 @@ function RunwayCursor({ cursorRef, cursor, hidden }: { cursorRef: React.Ref<HTML
             >
                 {cursor.mode !== 'link' && (
                     <span
-                        className={`pl-[0.24em] text-[10px] font-medium uppercase transition-[letter-spacing] duration-300 ${
+                        className={`pl-[0.24em] text-2xs font-medium uppercase transition-[letter-spacing] duration-300 ${
                             cursor.dragging ? 'tracking-[0.42em]' : 'tracking-[0.24em]'
                         }`}
                     >
@@ -116,7 +116,7 @@ export function RunwayStage({ looks, actorCount, stageRef, actorRefs, cursorRef,
             />
 
             <div
-                className="ring-actors absolute inset-0 [mask-image:linear-gradient(90deg,transparent,#000_9%,#000_91%,transparent)]"
+                className="ring-actors absolute inset-0 [mask-image:linear-gradient(90deg,transparent,black_9%,black_91%,transparent)]"
                 data-dimmed={dimmed}
             >
                 <RingActors looks={looks} actorCount={actorCount} actorRefs={actorRefs} />

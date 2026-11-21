@@ -108,19 +108,19 @@ export default function BlogCategoriesIndex({
             cell: (c) => (
                 <div className="flex items-center gap-2">
                     {c.parent_id ? (
-                        <div className="flex items-center gap-1.5 text-neutral-400 pl-4 font-mono text-xs">
-                            <CornerDownRight className="w-3.5 h-3.5 text-accent" />
-                            <span className="text-white font-medium">{c.name}</span>
-                            <span className="text-[10px] text-neutral-500 uppercase px-1.5 py-0.5 rounded bg-white/5 border border-white/5">
+                        <div className="flex items-center gap-1.5 text-subtle pl-4 text-xs">
+                            <CornerDownRight className="w-3.5 h-3.5 text-primary-ink" />
+                            <span className="text-ink font-medium">{c.name}</span>
+                            <span className="text-2xs text-subtle uppercase px-1.5 py-0.5 rounded bg-surface-2 border border-line">
                                 Subcategory of {c.parent?.name}
                             </span>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2 font-medium text-white">
-                            <Tag className="w-3.5 h-3.5 text-accent" />
+                        <div className="flex items-center gap-2 font-medium text-ink">
+                            <Tag className="w-3.5 h-3.5 text-primary-ink" />
                             <span>{c.name}</span>
                             {c.subcategories && c.subcategories.length > 0 && (
-                                <Badge variant="outline" className="text-[10px] font-mono text-accent border-accent/30 bg-accent/5">
+                                <Badge variant="outline" className="text-2xs text-primary-ink border-primary/30 bg-primary-soft/60">
                                     {c.subcategories.length} subcategories
                                 </Badge>
                             )}
@@ -133,7 +133,7 @@ export default function BlogCategoriesIndex({
             key: "slug",
             header: "URL SLUG",
             cell: (c) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     /blog?category={c.slug}
                 </span>
             ),
@@ -142,7 +142,7 @@ export default function BlogCategoriesIndex({
             key: "description",
             header: "DESCRIPTION / CONTEXT",
             cell: (c) => (
-                <span className="text-xs text-neutral-400 line-clamp-1 max-w-sm">
+                <span className="text-xs text-subtle line-clamp-1 max-w-sm">
                     {c.description || "—"}
                 </span>
             ),
@@ -151,7 +151,7 @@ export default function BlogCategoriesIndex({
             key: "blogs_count",
             header: "ARTICLES",
             cell: (c) => (
-                <span className="text-xs font-mono text-accent">
+                <span className="text-xs text-primary-ink">
                     {c.blogs_count ?? 0} Published
                 </span>
             ),
@@ -167,25 +167,25 @@ export default function BlogCategoriesIndex({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0 text-neutral-400 hover:text-white hover:bg-white/10"
+                                className="h-8 w-8 p-0 text-subtle hover:text-ink hover:bg-surface-2"
                             >
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                             align="end"
-                            className="bg-[#12131a] border-white/10 text-white min-w-[140px]"
+                            className="bg-surface border-line text-ink min-w-[140px]"
                         >
                             <DropdownMenuItem
                                 onClick={() => openEdit(c)}
-                                className="cursor-pointer text-xs focus:bg-accent focus:text-black"
+                                className="cursor-pointer text-xs focus:bg-primary focus:text-primary-foreground"
                             >
                                 <Edit className="mr-2 h-3.5 w-3.5" />
                                 Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setCategoryToDelete(c)}
-                                className="cursor-pointer text-xs text-rose-400 focus:bg-rose-500 focus:text-white"
+                                className="cursor-pointer text-xs text-danger focus:bg-danger focus:text-white"
                             >
                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
                                 Move to Trash
@@ -217,13 +217,13 @@ export default function BlogCategoriesIndex({
 
                 {/* CREATE MODAL */}
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                    <DialogContent className="sm:max-w-xl bg-[#0c0d12] border-white/10 text-white shadow-2xl">
+                    <DialogContent className="sm:max-w-xl bg-surface border-line text-ink shadow-2xl">
                         <DialogHeader>
-                            <DialogTitle className="text-xl font-bold font-mono tracking-tight text-white flex items-center gap-2">
-                                <FolderTree className="w-5 h-5 text-accent" />
+                            <DialogTitle className="text-xl font-bold tracking-tight text-ink flex items-center gap-2">
+                                <FolderTree className="w-5 h-5 text-primary-ink" />
                                 REGISTER BLOG CATEGORY
                             </DialogTitle>
-                            <DialogDescription className="text-neutral-400 text-xs font-mono">
+                            <DialogDescription className="text-subtle text-xs">
                                 Create a primary blog category or nest as a subcategory under an existing parent.
                             </DialogDescription>
                         </DialogHeader>
@@ -231,7 +231,7 @@ export default function BlogCategoriesIndex({
                         <form onSubmit={handleCreate} className="space-y-4 pt-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-mono text-neutral-300">
+                                    <label className="text-xs text-ink-2">
                                         Category Name *
                                     </label>
                                     <Input
@@ -240,18 +240,18 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             createForm.setData("name", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-accent"
+                                        className="bg-surface border-line focus:border-ring"
                                         required
                                     />
                                     {createForm.errors.name && (
-                                        <p className="text-rose-400 text-xs font-mono">
+                                        <p className="text-danger text-xs">
                                             {createForm.errors.name}
                                         </p>
                                     )}
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-mono text-neutral-300">
+                                    <label className="text-xs text-ink-2">
                                         Slug (Optional - auto-generated)
                                     </label>
                                     <Input
@@ -260,10 +260,10 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             createForm.setData("slug", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-accent"
+                                        className="bg-surface border-line focus:border-ring"
                                     />
                                     {createForm.errors.slug && (
-                                        <p className="text-rose-400 text-xs font-mono">
+                                        <p className="text-danger text-xs">
                                             {createForm.errors.slug}
                                         </p>
                                     )}
@@ -271,7 +271,7 @@ export default function BlogCategoriesIndex({
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono text-neutral-300">
+                                <label className="text-xs text-ink-2">
                                     Parent Category (Select if this is a Subcategory)
                                 </label>
                                 <select
@@ -279,7 +279,7 @@ export default function BlogCategoriesIndex({
                                     onChange={(e) =>
                                         createForm.setData("parent_id", e.target.value)
                                     }
-                                    className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-accent focus:outline-none"
+                                    className="w-full h-10 px-3 rounded-md bg-surface border border-line text-ink text-sm focus:border-ring focus:outline-none"
                                 >
                                     <option value="">None (Primary Root Category)</option>
                                     {parentCategories.map((p) => (
@@ -291,7 +291,7 @@ export default function BlogCategoriesIndex({
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono text-neutral-300">
+                                <label className="text-xs text-ink-2">
                                     Description / Meta Scope
                                 </label>
                                 <Textarea
@@ -301,7 +301,7 @@ export default function BlogCategoriesIndex({
                                     onChange={(e) =>
                                         createForm.setData("description", e.target.value)
                                     }
-                                    className="bg-[#12131a] border-white/10 focus:border-accent"
+                                    className="bg-surface border-line focus:border-ring"
                                 />
                             </div>
 
@@ -310,14 +310,14 @@ export default function BlogCategoriesIndex({
                                     type="button"
                                     variant="outline"
                                     onClick={() => setIsCreateOpen(false)}
-                                    className="border-white/10 text-neutral-400 hover:text-white"
+                                    className="border-line text-subtle hover:text-ink"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={createForm.processing}
-                                    className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold"
+                                    className="bg-primary hover:bg-primary-hover text-primary-foreground font-bold"
                                 >
                                     {createForm.processing ? "Saving..." : "Create Category"}
                                 </Button>
@@ -331,13 +331,13 @@ export default function BlogCategoriesIndex({
                     open={!!editingCategory}
                     onOpenChange={(open) => !open && setEditingCategory(null)}
                 >
-                    <DialogContent className="sm:max-w-xl bg-[#0c0d12] border-white/10 text-white shadow-2xl">
+                    <DialogContent className="sm:max-w-xl bg-surface border-line text-ink shadow-2xl">
                         <DialogHeader>
-                            <DialogTitle className="text-xl font-bold font-mono tracking-tight text-white flex items-center gap-2">
-                                <Edit className="w-5 h-5 text-accent" />
+                            <DialogTitle className="text-xl font-bold tracking-tight text-ink flex items-center gap-2">
+                                <Edit className="w-5 h-5 text-primary-ink" />
                                 EDIT BLOG CATEGORY
                             </DialogTitle>
-                            <DialogDescription className="text-neutral-400 text-xs font-mono">
+                            <DialogDescription className="text-subtle text-xs">
                                 Modify name, URL slug, description, or parent relationship.
                             </DialogDescription>
                         </DialogHeader>
@@ -346,7 +346,7 @@ export default function BlogCategoriesIndex({
                             <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-mono text-neutral-300">
+                                        <label className="text-xs text-ink-2">
                                             Category Name *
                                         </label>
                                         <Input
@@ -354,13 +354,13 @@ export default function BlogCategoriesIndex({
                                             onChange={(e) =>
                                                 editForm.setData("name", e.target.value)
                                             }
-                                            className="bg-[#12131a] border-white/10 focus:border-accent"
+                                            className="bg-surface border-line focus:border-ring"
                                             required
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-mono text-neutral-300">
+                                        <label className="text-xs text-ink-2">
                                             Slug *
                                         </label>
                                         <Input
@@ -368,14 +368,14 @@ export default function BlogCategoriesIndex({
                                             onChange={(e) =>
                                                 editForm.setData("slug", e.target.value)
                                             }
-                                            className="bg-[#12131a] border-white/10 focus:border-accent"
+                                            className="bg-surface border-line focus:border-ring"
                                             required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-mono text-neutral-300">
+                                    <label className="text-xs text-ink-2">
                                         Parent Category
                                     </label>
                                     <select
@@ -383,7 +383,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             editForm.setData("parent_id", e.target.value)
                                         }
-                                        className="w-full h-10 px-3 rounded-md bg-[#12131a] border border-white/10 text-white text-sm focus:border-accent focus:outline-none"
+                                        className="w-full h-10 px-3 rounded-md bg-surface border border-line text-ink text-sm focus:border-ring focus:outline-none"
                                     >
                                         <option value="">None (Primary Root Category)</option>
                                         {parentCategories
@@ -397,7 +397,7 @@ export default function BlogCategoriesIndex({
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-mono text-neutral-300">
+                                    <label className="text-xs text-ink-2">
                                         Description
                                     </label>
                                     <Textarea
@@ -406,7 +406,7 @@ export default function BlogCategoriesIndex({
                                         onChange={(e) =>
                                             editForm.setData("description", e.target.value)
                                         }
-                                        className="bg-[#12131a] border-white/10 focus:border-accent"
+                                        className="bg-surface border-line focus:border-ring"
                                     />
                                 </div>
 
@@ -415,14 +415,14 @@ export default function BlogCategoriesIndex({
                                         type="button"
                                         variant="outline"
                                         onClick={() => setEditingCategory(null)}
-                                        className="border-white/10 text-neutral-400 hover:text-white"
+                                        className="border-line text-subtle hover:text-ink"
                                     >
                                         Cancel
                                     </Button>
                                     <Button
                                         type="submit"
                                         disabled={editForm.processing}
-                                        className="bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold"
+                                        className="bg-primary hover:bg-primary-hover text-primary-foreground font-bold"
                                     >
                                         {editForm.processing ? "Updating..." : "Commit Update"}
                                     </Button>
@@ -437,23 +437,23 @@ export default function BlogCategoriesIndex({
                     open={!!categoryToDelete}
                     onOpenChange={(open) => !open && setCategoryToDelete(null)}
                 >
-                    <AlertDialogContent className="bg-[#0c0d12] border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="font-mono text-rose-400">
+                            <AlertDialogTitle className="text-danger">
                                 PURGE BLOG CATEGORY
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400 text-xs font-mono">
+                            <AlertDialogDescription className="text-subtle text-xs">
                                 Are you sure you wish to delete &ldquo;{categoryToDelete?.name}&rdquo;?
                                 Articles assigned to this category will remain intact with an unassigned status.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel className="border-white/10 text-neutral-400 hover:text-white">
+                            <AlertDialogCancel className="border-line text-subtle hover:text-ink">
                                 Abort
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDelete}
-                                className="bg-rose-500 hover:bg-rose-600 text-white font-mono font-bold"
+                                className="bg-danger hover:bg-danger-hover text-white font-bold"
                             >
                                 Confirm Delete
                             </AlertDialogAction>

@@ -54,8 +54,8 @@ const LETTER_FILL =
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-6 border-b border-ink/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
-            <dt className="text-[10px] font-bold uppercase tracking-[0.2em] text-subtle shrink-0">{label}</dt>
-            <dd className="text-left sm:text-right text-[13px] font-semibold text-ink break-words">{children}</dd>
+            <dt className="text-2xs font-bold uppercase tracking-[0.2em] text-subtle shrink-0">{label}</dt>
+            <dd className="text-left sm:text-right text-sm font-semibold text-ink break-words">{children}</dd>
         </div>
     );
 }
@@ -105,13 +105,13 @@ function NewsletterSignup() {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary disabled:opacity-60"
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-surface transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
                         >
                             {processing ? 'Sending…' : 'Subscribe'}
                             <ArrowUpRight size={15} />
                         </button>
                     </div>
-                    {errors.email && <p className="mt-2 pl-5 text-xs text-rose-600">{errors.email}</p>}
+                    {errors.email && <p className="mt-2 pl-5 text-xs text-danger">{errors.email}</p>}
                 </form>
             )}
         </div>

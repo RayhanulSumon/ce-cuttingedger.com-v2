@@ -67,30 +67,30 @@ export default function BlogsIndex({
                     <img
                         src={b.cover_image}
                         alt={b.title}
-                        className="w-16 h-10 rounded object-cover border border-white/10 shrink-0"
+                        className="w-16 h-10 rounded object-cover border border-line shrink-0"
                     />
                     <div className="min-w-0 space-y-1">
-                        <div className="font-medium text-white leading-snug break-words">
+                        <div className="font-medium text-ink leading-snug break-words">
                             <Link
                                 href={route("admin.blogs.edit", b.id)}
-                                className="hover:text-accent transition-colors"
+                                className="hover:text-primary-ink transition-colors"
                             >
                                 {b.title}
                             </Link>
                             {b.is_featured && (
-                                <Badge className="bg-accent text-black text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
+                                <Badge className="bg-primary text-primary-foreground text-2xs font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
                                     FEATURED
                                 </Badge>
                             )}
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-mono text-neutral-400">
-                            <span className="text-accent">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-subtle">
+                            <span className="text-primary-ink">
                                 {b.category?.name || "General"}
                             </span>
                             {b.subcategory && (
                                 <>
                                     <span>/</span>
-                                    <span className="text-neutral-300">
+                                    <span className="text-ink-2">
                                         {b.subcategory.name}
                                     </span>
                                 </>
@@ -106,7 +106,7 @@ export default function BlogsIndex({
             key: "author",
             header: "AUTHOR",
             cell: (b) => (
-                <div className="text-xs font-mono text-neutral-300">
+                <div className="text-xs text-ink-2">
                     {b.author?.name || "Studio Editor"}
                 </div>
             ),
@@ -116,12 +116,12 @@ export default function BlogsIndex({
             header: "STATUS",
             cell: (b) => (
                 <span
-                    className={`px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border ${
+                    className={`px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border ${
                         b.status === "published"
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                            ? "border-success/25 bg-success-soft text-success"
                             : b.status === "draft"
-                            ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                            : "border-neutral-500/30 bg-neutral-500/10 text-neutral-400"
+                            ? "border-warning/25 bg-warning-soft text-warning"
+                            : "border-line bg-surface-2 text-subtle"
                     }`}
                 >
                     {b.status || "published"}
@@ -134,14 +134,14 @@ export default function BlogsIndex({
             cell: (b) => {
                 const hasSeo = b.meta_title && b.meta_description;
                 return (
-                    <div className="flex items-center gap-1.5 text-xs font-mono">
+                    <div className="flex items-center gap-1.5 text-xs">
                         {hasSeo ? (
-                            <span className="flex items-center gap-1 text-emerald-400">
+                            <span className="flex items-center gap-1 text-success">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 Configured
                             </span>
                         ) : (
-                            <span className="text-amber-400">Auto-Fallback</span>
+                            <span className="text-warning">Auto-Fallback</span>
                         )}
                     </div>
                 );
@@ -151,7 +151,7 @@ export default function BlogsIndex({
             key: "published_at",
             header: "PUBLISHED",
             cell: (b) => (
-                <span className="text-xs font-mono text-neutral-400">
+                <span className="text-xs text-subtle">
                     {b.published_at
                         ? new Date(b.published_at).toLocaleDateString("en-US", {
                               month: "short",
@@ -172,14 +172,14 @@ export default function BlogsIndex({
                         href={`/blog/${b.slug}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-1.5 text-neutral-400 hover:text-white rounded hover:bg-white/5"
+                        className="p-1.5 text-subtle hover:text-ink rounded hover:bg-surface-2"
                         title="View Public Article"
                     >
                         <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                     <Link
                         href={route("admin.blogs.edit", b.id)}
-                        className="p-1.5 text-neutral-400 hover:text-primary rounded hover:bg-white/5"
+                        className="p-1.5 text-subtle hover:text-primary rounded hover:bg-surface-2"
                         title="Edit"
                     >
                         <Edit className="h-3.5 w-3.5" />
@@ -189,18 +189,18 @@ export default function BlogsIndex({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0 text-neutral-400 hover:text-white hover:bg-white/10 cursor-pointer"
+                                className="h-8 w-8 p-0 text-subtle hover:text-ink hover:bg-surface-2 cursor-pointer"
                             >
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                             align="end"
-                            className="bg-[#12131a] border-white/10 text-white min-w-[150px]"
+                            className="bg-surface border-line text-ink min-w-[150px]"
                         >
                             <DropdownMenuItem
                                 asChild
-                                className="cursor-pointer text-xs focus:bg-accent focus:text-black"
+                                className="cursor-pointer text-xs focus:bg-primary focus:text-primary-foreground"
                             >
                                 <Link
                                     href={route("admin.blogs.edit", b.id)}
@@ -212,7 +212,7 @@ export default function BlogsIndex({
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setBlogToDelete(b)}
-                                className="cursor-pointer text-xs text-rose-400 focus:bg-rose-500 focus:text-white"
+                                className="cursor-pointer text-xs text-danger focus:bg-danger focus:text-white"
                             >
                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
                                 Move to trash
@@ -236,12 +236,12 @@ export default function BlogsIndex({
                     <Link href={route("admin.blogs.trash")}>
                         <Button
                             variant="outline"
-                            className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
+                            className="gap-2 border-line bg-surface-2 hover:bg-surface-2 text-ink-2 hover:text-ink cursor-pointer"
                         >
-                            <Trash2 className="w-4 h-4 text-rose-400" />
+                            <Trash2 className="w-4 h-4 text-danger" />
                             <span>Trash</span>
                             {trashedCount > 0 && (
-                                <Badge className="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold px-1.5 py-0 h-4">
+                                <Badge className="bg-danger-soft text-danger border border-danger/25 text-2xs font-bold px-1.5 py-0 h-4">
                                     {trashedCount}
                                 </Badge>
                             )}
@@ -261,24 +261,24 @@ export default function BlogsIndex({
                     open={!!blogToDelete}
                     onOpenChange={(open) => !open && setBlogToDelete(null)}
                 >
-                    <AlertDialogContent className="bg-[#0c0d12] border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="font-mono text-rose-400">
+                            <AlertDialogTitle className="text-danger">
                                 DELETE BLOG POST
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400 text-xs font-mono">
+                            <AlertDialogDescription className="text-subtle text-xs">
                                 Are you sure you wish to purge &ldquo;{blogToDelete?.title}&rdquo; to the trash?
                                 It will be removed from public view and can be restored or permanently removed from the trash archive.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel className="border-white/10 text-neutral-400 hover:text-white cursor-pointer">
+                            <AlertDialogCancel className="border-line text-subtle hover:text-ink cursor-pointer">
                                 Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDelete}
                                 disabled={isDeleting}
-                                className="bg-rose-500 hover:bg-rose-600 text-white font-mono font-bold cursor-pointer"
+                                className="bg-danger hover:bg-danger-hover text-white font-bold cursor-pointer"
                             >
                                 {isDeleting ? "Moving to trash..." : "Confirm"}
                             </AlertDialogAction>

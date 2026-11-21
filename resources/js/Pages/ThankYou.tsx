@@ -44,7 +44,7 @@ export default function ThankYou() {
 
                 <div className="max-w-3xl w-full mx-auto relative z-10 text-center space-y-8">
                     {/* Glowing Check Icon */}
-                    <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink shadow-[0_0_35px_rgba(251, 183, 24, 0.18)]">
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink shadow-sm">
                         <CheckCircle2 className="w-7 h-7" />
                     </div>
 
@@ -61,7 +61,7 @@ export default function ThankYou() {
                     </div>
 
                     {/* Visual 3-Stage Progress Timeline */}
-                    <div className="p-6 sm:p-8 rounded-3xl bg-white border border-ink/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+                    <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-ink/10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative">
                             {/* Step 1: Received */}
                             <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 relative">
@@ -69,7 +69,7 @@ export default function ThankYou() {
                                     <div className="w-8 h-8 rounded-xl bg-primary/15 border border-primary/40 flex items-center justify-center text-primary-ink">
                                         <Check className="w-4 h-4 stroke-[3]" />
                                     </div>
-                                    <span className="text-[11px] font-mono uppercase tracking-wider text-primary-ink font-bold">
+                                    <span className="text-2xs uppercase tracking-wider text-primary-ink font-bold">
                                         01 · Received
                                     </span>
                                 </div>
@@ -84,10 +84,10 @@ export default function ThankYou() {
                             {/* Step 2: In Retouching / Review */}
                             <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-2 relative">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-xl bg-primary text-white flex items-center justify-center font-bold shadow-[0_0_20px_rgba(251, 183, 24, 0.35)] animate-pulse">
+                                    <div className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm animate-pulse">
                                         <Sparkles className="w-4 h-4" />
                                     </div>
-                                    <span className="text-[11px] font-mono uppercase tracking-wider text-ink font-bold">
+                                    <span className="text-2xs uppercase tracking-wider text-ink font-bold">
                                         {isPilot ? '02 · In Queue' : '02 · In Review'}
                                     </span>
                                 </div>
@@ -105,7 +105,7 @@ export default function ThankYou() {
                                     <div className="w-8 h-8 rounded-xl bg-ink/[0.03] border border-ink/10 flex items-center justify-center text-muted">
                                         <DownloadCloud className="w-4 h-4" />
                                     </div>
-                                    <span className="text-[11px] font-mono uppercase tracking-wider text-subtle font-bold">
+                                    <span className="text-2xs uppercase tracking-wider text-subtle font-bold">
                                         {isPilot ? '03 · Delivery' : '03 · Response'}
                                     </span>
                                 </div>
@@ -118,7 +118,7 @@ export default function ThankYou() {
 
                         {/* Order Reference Pill & Quick Specs */}
                         {orderNumber && (
-                            <div className="mt-6 pt-5 border-t border-ink/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                            <div className="mt-6 pt-5 border-t border-ink/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                                 <div className="flex items-center gap-2">
                                     <span className="text-subtle">REF:</span>
                                     <span className="text-ink font-bold px-2.5 py-1 rounded-lg bg-ink/[0.03] border border-ink/10">
@@ -134,7 +134,7 @@ export default function ThankYou() {
                                     </button>
                                 </div>
 
-                                <div className="flex items-center gap-4 text-muted text-[11px]">
+                                <div className="flex items-center gap-4 text-muted text-2xs">
                                     <span className="inline-flex items-center gap-1.5">
                                         <Clock className="w-3 h-3 text-primary-ink" /> 24h SLA
                                     </span>
@@ -150,9 +150,9 @@ export default function ThankYou() {
                     </div>
 
                     {/* Visual Call-to-Action Bar: Discovery Call */}
-                    <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.02] border border-ink/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
+                    <div className="p-5 sm:p-6 rounded-2xl bg-surface-2 border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
                         <div className="space-y-0.5">
-                            <span className="text-[11px] font-mono text-primary-ink font-bold uppercase tracking-wider">
+                            <span className="text-2xs text-primary-ink font-bold uppercase tracking-wider">
                                 Need High Volume or Custom SLAs?
                             </span>
                             <p className="text-sm font-bold text-ink">
@@ -163,7 +163,7 @@ export default function ThankYou() {
                         <Link
                             href="/book-a-demo"
                             prefetch
-                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-md shrink-0 self-start sm:self-center"
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-md shrink-0 self-start sm:self-center"
                         >
                             <Calendar className="w-3.5 h-3.5" />
                             <span>Book a Demo</span>
@@ -171,7 +171,7 @@ export default function ThankYou() {
                     </div>
 
                     {/* Clean Minimal Footer Navigation */}
-                    <div className="pt-2 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-muted">
+                    <div className="pt-2 flex flex-wrap items-center justify-center gap-6 text-xs text-muted">
                         <Link href="/" className="hover:text-ink transition-colors">
                             ← Return Home
                         </Link>

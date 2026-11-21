@@ -125,7 +125,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                                                     type="button"
                                                     aria-expanded={isExpanded}
                                                     onClick={() => setOpenCapability(isExpanded ? null : capability.id)}
-                                                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white ${isActive || isExpanded ? 'text-white' : 'text-white/75'
+                                                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-base font-semibold transition-colors duration-200 hover:bg-white/10 hover:text-white ${isActive || isExpanded ? 'text-white' : 'text-white/75'
                                                         }`}
                                                 >
                                                     <span className="truncate">{capability.title}</span>
@@ -269,7 +269,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                         href={isClient ? '/portal' : '/login'}
                         className={`hidden sm:inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold transition-colors duration-300 ${dark
                                 ? 'border-white/25 text-white hover:bg-white/15'
-                                : 'border-ink/20 text-ink hover:border-primary hover:text-primary'
+                                : 'border-ink/20 text-ink hover:border-primary hover:text-primary-ink'
                             }`}
                     >
                         {isClient ? 'My Portal' : 'Client Login'}
@@ -278,7 +278,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                     <Link
                         href="/book-a-demo"
                         prefetch
-                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${dark ? 'bg-white text-secondary' : 'bg-ink text-white hover:bg-primary'
+                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${dark ? 'bg-surface text-secondary' : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground'
                             }`}
                     >
                         Book a Demo
@@ -289,7 +289,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                         type="button"
                         onClick={() => setDrawer(true)}
                         aria-label="Open menu"
-                        className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-ink text-white hover:bg-primary'
+                        className={`grid h-10 w-10 place-items-center rounded-full transition-[background-color,transform] duration-300 hover:scale-105 ${dark ? 'bg-white/15 text-white hover:bg-white/25' : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground'
                             }`}
                     >
                         <Menu size={18} />
@@ -301,7 +301,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                 {drawer && (
                     <>
                         <motion.div
-                            className="fixed inset-0 z-[88] bg-black/55 backdrop-blur-sm"
+                            className="fixed inset-0 z-[88] bg-ink/55 backdrop-blur-sm"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -312,7 +312,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                         <motion.aside
                             data-scrollable
                             aria-label="Main navigation"
-                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-secondary px-6 py-6 text-white shadow-2xl sm:px-8"
+                            className="fixed right-0 top-0 z-[90] flex h-full w-[min(400px,92vw)] flex-col overflow-y-auto bg-secondary px-6 py-6 text-secondary-foreground shadow-2xl sm:px-8"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
@@ -358,7 +358,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                                         href="/book-a-demo"
                                         prefetch
                                         onClick={closeDrawer}
-                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-bold text-secondary transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-white/90"
+                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-surface py-3.5 text-sm font-bold text-secondary transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-surface/90"
                                     >
                                         Book a Demo
                                         <ArrowUpRight size={16} />

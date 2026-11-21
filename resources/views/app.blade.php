@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#f7f6f4">
         <meta name="robots" content="noindex, nofollow">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -17,11 +17,10 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=2" media="(prefers-color-scheme: dark)">
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
 
-        <!-- Modern Luxury Tech Fonts: Plus Jakarta Sans, Outfit, Inter, Space Grotesk, Roboto -->
+        <!-- Fonts: Plus Jakarta Sans (UI) + Michroma (brand titles). Families are mapped in resources/css/app.css @theme -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Michroma&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:wght@400;500;700;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-        <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
         <script>
             (function() {
@@ -42,7 +41,7 @@
         <!-- Injected Head Tracking & Verification Scripts (Managed from Admin) -->
         {!! $trackingScripts['head'] !!}
     </head>
-    <body class="bg-[#f8f9fc] text-[#16191f] antialiased selection:bg-[#f5761a] selection:text-white transition-colors duration-300">
+    <body class="bg-page text-ink antialiased">
         <!-- Injected Body Start Tracking Scripts (GTM noscript, etc.) -->
         {!! $trackingScripts['body_start'] !!}
 

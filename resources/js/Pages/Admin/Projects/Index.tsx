@@ -160,15 +160,15 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                     <img
                         src={p.cover_image}
                         alt={p.title}
-                        className="w-10 h-10 rounded-lg object-cover bg-neutral-900 border border-white/10"
+                        className="w-10 h-10 rounded-lg object-cover bg-surface-2 border border-line"
                         onError={(e) => {
                             (e.target as HTMLImageElement).src =
                                 "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80";
                         }}
                     />
                     <div>
-                        <div className="font-semibold text-white">{p.title}</div>
-                        <div className="text-xs text-neutral-400 font-mono">
+                        <div className="font-semibold text-ink">{p.title}</div>
+                        <div className="text-xs text-subtle">
                             {p.client_name} • {p.year}
                         </div>
                     </div>
@@ -189,7 +189,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                 <div className="flex flex-wrap gap-1">
                     {p.featured && <Badge variant="accent">FEATURED</Badge>}
                     {(p as any).is_concept ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                        <span className="px-2 py-0.5 rounded text-2xs font-bold bg-warning-soft text-warning border border-warning/25">
                             CONCEPT
                         </span>
                     ) : (
@@ -201,7 +201,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
         {
             header: "ORDER",
             cell: (p) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     #{p.sort_order}
                 </span>
             ),
@@ -216,7 +216,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             href={p.live_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 text-neutral-400 hover:text-white transition-colors"
+                            className="p-1.5 text-subtle hover:text-ink transition-colors"
                         >
                             <ExternalLink className="w-4 h-4" />
                         </a>
@@ -226,7 +226,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-neutral-400 hover:text-white"
+                                className="h-8 w-8 text-subtle hover:text-ink"
                             >
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -241,7 +241,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setProjectToDelete(p)}
-                                className="gap-2 text-rose-400 focus:text-rose-400"
+                                className="gap-2 text-danger focus:text-danger"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span>Purge Project</span>
@@ -282,7 +282,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                     <form onSubmit={handleCreate} className="space-y-5 pt-2">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Project Title *
                                 </label>
                                 <Input
@@ -295,7 +295,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Client / Brand *
                                 </label>
                                 <Input
@@ -311,7 +311,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Custom URL Slug (Optional)
                                 </label>
                                 <Input
@@ -323,7 +323,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     H1 Headline Override
                                 </label>
                                 <Input
@@ -338,7 +338,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Release Year *
                                 </label>
                                 <Input
@@ -350,7 +350,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Discipline Category
                                 </label>
                                 <Select
@@ -377,7 +377,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 </Select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Display Order
                                 </label>
                                 <Input
@@ -394,7 +394,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Cover Image Asset Path / URL *
                             </label>
                             <Input
@@ -408,7 +408,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Executive Summary *
                             </label>
                             <Textarea
@@ -423,13 +423,13 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         {/* B2B Case Study Narrative (§6.2 Outline) */}
-                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold block">
+                        <div className="p-4 rounded-xl bg-surface-2 border border-line space-y-4">
+                            <span className="text-xs uppercase tracking-wider text-primary-ink font-bold block">
                                 Case Study Narrative (Challenge, Execution & Outcome)
                             </span>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     01. Client Situation & Challenge
                                 </label>
                                 <Textarea
@@ -443,7 +443,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     02. Execution & Work Done
                                 </label>
                                 <Textarea
@@ -457,7 +457,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     03. Measurable Commercial Result
                                 </label>
                                 <Textarea
@@ -472,13 +472,13 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         {/* SEO Metadata */}
-                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
-                            <span className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold block">
+                        <div className="p-4 rounded-xl bg-surface-2 border border-line space-y-3">
+                            <span className="text-xs uppercase tracking-wider text-ink-2 font-bold block">
                                 Page-Level SEO Metadata
                             </span>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Meta Title
                                 </label>
                                 <Input
@@ -491,7 +491,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Meta Description
                                 </label>
                                 <Textarea
@@ -505,7 +505,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Canonical URL Override (Optional)
                                 </label>
                                 <Input
@@ -519,7 +519,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Live Demonstration URL (Optional)
                             </label>
                             <Input
@@ -532,12 +532,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Flagship
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Promote to home page marquee sticky showcases.
                                 </span>
                             </div>
@@ -549,12 +549,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-warning-soft border border-warning/25">
                             <div>
-                                <span className="text-xs font-semibold text-amber-300 block">
+                                <span className="text-xs font-semibold text-warning block">
                                     Concept / Speculative Case Study
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Tags project as Concept Work to maintain B2B enterprise transparency.
                                 </span>
                             </div>
@@ -566,12 +566,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-danger-soft border border-danger/25">
                             <div>
-                                <span className="text-xs font-semibold text-rose-300 block">
+                                <span className="text-xs font-semibold text-danger block">
                                     Noindex (Exclude from Search Engines)
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Prevents crawlers and sitemap inclusion for unreleased or sensitive client work.
                                 </span>
                             </div>
@@ -618,7 +618,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                     <form onSubmit={handleUpdate} className="space-y-5 pt-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Project Title *
                                 </label>
                                 <Input
@@ -630,7 +630,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Client / Brand *
                                 </label>
                                 <Input
@@ -645,7 +645,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Custom URL Slug
                                 </label>
                                 <Input
@@ -657,7 +657,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     H1 Headline Override
                                 </label>
                                 <Input
@@ -672,7 +672,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Release Year *
                                 </label>
                                 <Input
@@ -684,7 +684,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Discipline Category
                                 </label>
                                 <select
@@ -692,7 +692,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                     onChange={(e) =>
                                         editForm.setData("category_id", e.target.value)
                                     }
-                                    className="w-full h-10 rounded-lg bg-[#0d0f15] border border-white/10 px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent"
+                                    className="w-full h-10 rounded-lg bg-surface-2 border border-line px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-ring"
                                 >
                                     <option value="">Uncategorized</option>
                                     {categories.map((c) => (
@@ -703,7 +703,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Display Order
                                 </label>
                                 <Input
@@ -720,7 +720,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Cover Image Asset Path / URL *
                             </label>
                             <Input
@@ -733,7 +733,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Executive Summary *
                             </label>
                             <Textarea
@@ -747,13 +747,13 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         {/* B2B Case Study Narrative (§6.2 Outline) */}
-                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-4">
-                            <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold block">
+                        <div className="p-4 rounded-xl bg-surface-2 border border-line space-y-4">
+                            <span className="text-xs uppercase tracking-wider text-primary-ink font-bold block">
                                 Case Study Narrative (Challenge, Execution & Outcome)
                             </span>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     01. Client Situation & Challenge
                                 </label>
                                 <Textarea
@@ -767,7 +767,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     02. Execution & Work Done
                                 </label>
                                 <Textarea
@@ -781,7 +781,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     03. Measurable Commercial Result
                                 </label>
                                 <Textarea
@@ -796,13 +796,13 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         {/* SEO Metadata */}
-                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
-                            <span className="font-mono text-xs uppercase tracking-wider text-neutral-300 font-bold block">
+                        <div className="p-4 rounded-xl bg-surface-2 border border-line space-y-3">
+                            <span className="text-xs uppercase tracking-wider text-ink-2 font-bold block">
                                 Page-Level SEO Metadata
                             </span>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Meta Title
                                 </label>
                                 <Input
@@ -815,7 +815,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Meta Description
                                 </label>
                                 <Textarea
@@ -829,7 +829,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Canonical URL Override (Optional)
                                 </label>
                                 <Input
@@ -843,7 +843,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Live Demonstration URL (Optional)
                             </label>
                             <Input
@@ -856,12 +856,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Flagship
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Promote to home page marquee sticky showcases.
                                 </span>
                             </div>
@@ -873,12 +873,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-warning-soft border border-warning/25">
                             <div>
-                                <span className="text-xs font-semibold text-amber-300 block">
+                                <span className="text-xs font-semibold text-warning block">
                                     Concept / Speculative Case Study
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Tags project as Concept Work to maintain B2B enterprise transparency.
                                 </span>
                             </div>
@@ -890,12 +890,12 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-danger-soft border border-danger/25">
                             <div>
-                                <span className="text-xs font-semibold text-rose-300 block">
+                                <span className="text-xs font-semibold text-danger block">
                                     Noindex (Exclude from Search Engines)
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Prevents crawlers and sitemap inclusion for unreleased or sensitive client work.
                                 </span>
                             </div>
@@ -936,7 +936,7 @@ export default function ProjectsIndex({ projects = [], categories = [] }: Projec
                         <AlertDialogTitle>Purge Flagship Project?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you wish to archive project{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {projectToDelete?.title}
                             </span>
                             ?

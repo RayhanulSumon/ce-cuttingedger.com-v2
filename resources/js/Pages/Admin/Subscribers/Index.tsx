@@ -54,7 +54,7 @@ export default function SubscribersIndex({ subscribers = [] }: SubscribersIndexP
             header: "SUBSCRIBER RECIPIENT",
             accessorKey: "email",
             cell: (s) => (
-                <span className="font-mono text-sm text-white">{s.email}</span>
+                <span className="text-sm text-ink">{s.email}</span>
             ),
         },
         {
@@ -70,7 +70,7 @@ export default function SubscribersIndex({ subscribers = [] }: SubscribersIndexP
         {
             header: "JOINED DATE",
             cell: (s) => (
-                <span className="text-xs font-mono text-neutral-400">
+                <span className="text-xs text-subtle">
                     {new Date(s.created_at).toLocaleDateString()}
                 </span>
             ),
@@ -83,7 +83,7 @@ export default function SubscribersIndex({ subscribers = [] }: SubscribersIndexP
                     variant="ghost"
                     size="icon"
                     onClick={() => setSubToDelete(s)}
-                    className="h-8 w-8 text-neutral-400 hover:text-rose-400"
+                    className="h-8 w-8 text-subtle hover:text-danger"
                 >
                     <Trash2 className="w-4 h-4" />
                 </Button>
@@ -124,7 +124,7 @@ export default function SubscribersIndex({ subscribers = [] }: SubscribersIndexP
                         <AlertDialogTitle>Purge Subscriber?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Remove{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {subToDelete?.email}
                             </span>{" "}
                             from the distribution registry?

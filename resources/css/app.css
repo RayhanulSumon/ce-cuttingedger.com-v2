@@ -5,67 +5,75 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * ─── Design tokens: the single source of truth ──────────────────────────────
+ * Change a value here and every page, admin panel, client area, dialog and
+ * menu follows. Components must only use these utilities (bg-primary,
+ * text-ink, border-line, bg-success-soft, font-brand, text-2xs ...),
+ * never raw hex values or Tailwind palette colours (slate-*, neutral-* ...).
+ * Palette: "Ember Editorial".
+ */
 @theme {
-    --font-display: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-    --font-condensed: 'Plus Jakarta Sans', 'Outfit', sans-serif;
-    --font-mango: 'Plus Jakarta Sans', 'Outfit', sans-serif;
-    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'Space Grotesk', monospace;
+    /* Typography */
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; /* body + UI */
+    --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; /* h1-h4 */
+    --font-brand: 'Michroma', ui-sans-serif, system-ui, sans-serif; /* signature titles */
+    --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, Consolas, monospace; /* code, slugs, URLs */
 
-    /*
-     * Site theme tokens. Change a value here and every page, the chat widget and the menus follow.
-     * Use them as utilities: bg-primary, text-ink, border-ink/10, bg-page, text-muted ...
-     */
-    --color-primary: #f5761a; /* brand colour: buttons, highlights */
-    --color-primary-hover: #e0650c; /* primary on hover / pressed */
-    --color-primary-ink: #c4540a; /* primary used as text on light backgrounds (readable) */
-    --color-primary-foreground: #ffffff; /* text on primary */
-    --color-secondary: #141a26; /* deep navy: side menu, dark panels, contact card */
-    --color-secondary-foreground: #ffffff; /* text on secondary */
-    --color-ink: #16191f; /* headings, dark buttons */
-    --color-ink-2: #2f333a; /* body text */
-    --color-muted: #4a505b; /* secondary text */
-    --color-subtle: #5d6572; /* captions, labels */
-    --color-faint: #8a919c; /* placeholders */
-    --color-page: #f2f2f1; /* page background */
-    --color-surface: #ffffff; /* cards, panels */
+    --text-2xs: 0.6875rem; /* 11px: smallest allowed size (labels, eyebrows) */
+    --text-2xs--line-height: 1rem;
 
-    --color-accent: #f5761a;
-    --color-accent-hover: #e0650c;
-    --color-accent-dim: rgba(245, 118, 26, 0.12);
-    --color-accent-glow: rgba(245, 118, 26, 0.24);
-    --color-dark-bg: #f4f7fb;
-    --color-dark-surface: #ffffff;
-    --color-dark-elevated: #f8fafc;
-    --color-dark-border: rgba(15, 23, 42, 0.09);
-    --font-admin: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Brand */
+    --color-primary: #f26a1b; /* buttons, highlights, active states */
+    --color-primary-hover: #d9590d; /* primary on hover / pressed */
+    --color-primary-ink: #b04a0a; /* primary as text or links on light backgrounds */
+    --color-primary-foreground: #16171a; /* text on primary fills (AA contrast) */
+    --color-primary-soft: #fdeee3; /* tinted primary backgrounds */
+
+    /* Dark panels: side menu, contact card, case studies, tooltips */
+    --color-secondary: #15171c;
+    --color-secondary-foreground: #f7f6f4;
+
+    /* Text */
+    --color-ink: #16171a; /* headings, strong text */
+    --color-ink-2: #2e3036; /* body text */
+    --color-muted: #555861; /* secondary text */
+    --color-subtle: #6e717a; /* captions, labels */
+    --color-faint: #9a9ca3; /* placeholders, disabled */
+
+    /* Surfaces & lines (one warm-grey family) */
+    --color-page: #f7f6f4; /* page background */
+    --color-surface: #ffffff; /* cards, panels, inputs */
+    --color-surface-2: #f3f1ee; /* table heads, subtle fills, hover */
+    --color-surface-3: #e9e6e1; /* pressed, tracks, stronger fills */
+    --color-line: #e5e2dd; /* default borders, dividers */
+    --color-line-strong: #d3cfc8; /* input borders, emphasized dividers */
+    --color-ring: #f26a1b; /* focus rings */
+
+    /* Status */
+    --color-success: #15803d;
+    --color-success-soft: #e8f5ec;
+    --color-warning: #b45309;
+    --color-warning-soft: #fdf3e2;
+    --color-danger: #dc2626;
+    --color-danger-hover: #b91c1c;
+    --color-danger-soft: #fdecec;
+    --color-info: #2563eb;
+    --color-info-soft: #e9f0fd;
+
+    /* Sidebar primitive (Components/ui/sidebar.tsx) */
+    --color-sidebar: var(--color-surface);
+    --color-sidebar-foreground: var(--color-ink);
+    --color-sidebar-primary: var(--color-primary);
+    --color-sidebar-primary-foreground: var(--color-primary-foreground);
+    --color-sidebar-accent: var(--color-primary-soft);
+    --color-sidebar-accent-foreground: var(--color-ink);
+    --color-sidebar-border: var(--color-line);
+    --color-sidebar-ring: var(--color-ring);
 }
 
-:root,
-.dark {
+:root {
     --header-height: 61px;
-    --bg-main: #f8f9fc;
-    --bg-surface: #ffffff;
-    --bg-surface-elevated: #f0f2f7;
-    --border-subtle: rgba(15, 23, 42, 0.08);
-    --border-strong: rgba(15, 23, 42, 0.16);
-    --text-primary: #16191f;
-    --text-secondary: #4a5264;
-    --text-muted: #5d6572;
-    --accent: #f5761a;
-    --accent-hover: #e0650c;
-    --accent-dim: rgba(245, 118, 26, 0.12);
-    --accent-glow: rgba(245, 118, 26, 0.22);
-    --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.06);
-    --sidebar: #ffffff;
-    --sidebar-foreground: #16191f;
-    --sidebar-primary: #f5761a;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f5761a;
-    --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: #e2e8f0;
-    --sidebar-ring: #f5761a;
 }
 
 @media (max-width: 1023px) {
@@ -74,9 +82,65 @@
     }
 }
 
-html {
-    scroll-behavior: auto !important;
-    overflow-x: clip;
+@layer base {
+    html {
+        scroll-behavior: auto !important;
+        overflow-x: clip;
+    }
+
+    body {
+        background-color: var(--color-page);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        overflow-x: clip;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: var(--font-display);
+        letter-spacing: -0.03em;
+    }
+
+    ::selection {
+        background-color: var(--color-primary);
+        color: var(--color-primary-foreground);
+    }
+
+    select {
+        color-scheme: light;
+    }
+
+    select option {
+        background-color: var(--color-surface);
+        color: var(--color-ink);
+    }
+
+    /* Accessible focus ring - scoped so inputs/controls use their refined component ring */
+    a:focus-visible,
+    button:focus-visible:not([data-slot='button']):not([data-slot='input']) {
+        outline: 2px solid var(--color-ring);
+        outline-offset: 3px;
+    }
+
+    /* Browser autofill keeps the light theme */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--color-ink) !important;
+        caret-color: var(--color-ink) !important;
+        -webkit-box-shadow: 0 0 0 1000px var(--color-surface) inset !important;
+        box-shadow: 0 0 0 1000px var(--color-surface) inset !important;
+        transition: background-color 5000s ease-in-out 0s !important;
+    }
 }
 
 html.lenis,
@@ -88,56 +152,19 @@ html.lenis body {
     scroll-behavior: auto !important;
 }
 
-body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    font-family: var(--font-sans);
-    overflow-x: clip;
-}
-
-body h1,
-body h2,
-body h3,
-body h4,
-.font-display {
-    font-family: var(--font-display);
-    letter-spacing: -0.03em;
-}
-
-/* Clean Modern SaaS Admin Dashboard Typography (Plus Jakarta Sans / Inter) */
-.admin-shell,
-.admin-shell h1,
-.admin-shell h2,
-.admin-shell h3,
-.admin-shell h4,
-.admin-shell h5,
-.admin-shell h6,
-.admin-shell button,
-.admin-shell input,
-.admin-shell select,
-.admin-shell textarea,
-.admin-shell table,
-.admin-shell .font-mono,
-[data-slot="dialog-content"] .font-mono,
-[data-slot="alert-dialog-content"] .font-mono,
-[data-slot="dropdown-menu-content"] .font-mono {
-    font-family: var(--font-admin) !important;
-    letter-spacing: -0.01em;
-}
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--bg-main);
+    background: var(--color-page);
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(245, 118, 26, 0.35);
+    background: color-mix(in srgb, var(--color-primary) 35%, transparent);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: var(--color-primary);
 }
 
 /* Animations */
@@ -164,13 +191,6 @@ body h4,
     animation-play-state: paused;
 }
 
-/* Accessible focus ring - scoped so inputs/controls use their refined component ring */
-a:focus-visible,
-button:focus-visible:not([data-slot="button"]):not([data-slot="input"]) {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
 @media (prefers-reduced-motion: reduce) {
     *,
     ::before,
@@ -182,332 +202,6 @@ button:focus-visible:not([data-slot="button"]):not([data-slot="input"]) {
     }
 }
 
-/* Fix Browser Autofill (Chrome/Edge/Safari/Firefox) for consistent light editorial theme */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-    -webkit-text-fill-color: #16191f !important;
-    caret-color: #16191f !important;
-    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-    box-shadow: 0 0 0 1000px #ffffff inset !important;
-    transition: background-color 5000s ease-in-out 0s !important;
-}
-
-/* Ensure select and its option popup menus match the clean light theme */
-select {
-    color-scheme: light;
-}
-select option {
-    background-color: #ffffff;
-    color: #16191f;
-}
-
-/* Unified Light Editorial Theme for Admin Shell & Modals (Consistent with Homepage) */
-.admin-shell,
-[data-slot="dialog-content"],
-[data-slot="alert-dialog-content"],
-[data-slot="dropdown-menu-content"],
-[data-slot="select-content"] {
-    color: #16191f;
-    color-scheme: light;
-}
-
-.admin-shell .bg-\[\#08090c\],
-.admin-shell .bg-\[\#0a0b0e\],
-.admin-shell .bg-\[\#0a0b0f\] {
-    background-color: #f4f7fb !important;
-}
-
-.admin-shell .bg-\[\#0b0c10\],
-.admin-shell .bg-\[\#0c0d12\],
-.admin-shell .bg-\[\#0c0e14\],
-.admin-shell .bg-\[\#0f1117\],
-.admin-shell .bg-\[\#0f1118\],
-.admin-shell .bg-\[\#10121a\],
-.admin-shell .bg-\[\#12131a\],
-.admin-shell .bg-\[\#12141a\],
-.admin-shell .bg-\[\#12141c\],
-.admin-shell .bg-neutral-950,
-[data-slot="dialog-content"].bg-\[\#0b0c10\],
-[data-slot="dialog-content"].bg-\[\#0c0d12\],
-[data-slot="dialog-content"].bg-\[\#0f1117\],
-[data-slot="dialog-content"].bg-\[\#12141a\],
-[data-slot="dialog-content"].bg-\[\#12141c\],
-[data-slot="dialog-content"].bg-black\/95,
-[data-slot="dialog-content"].bg-neutral-950,
-[data-slot="alert-dialog-content"].bg-\[\#0b0c10\],
-[data-slot="alert-dialog-content"].bg-\[\#12141a\],
-[data-slot="alert-dialog-content"].bg-\[\#12141c\],
-[data-slot="alert-dialog-content"].bg-neutral-950,
-[data-slot="dropdown-menu-content"].bg-\[\#0c0e14\],
-[data-slot="dropdown-menu-content"].bg-\[\#12141a\],
-[data-slot="dropdown-menu-content"].bg-\[\#12141c\],
-[data-slot="select-content"].bg-\[\#0f1118\],
-[data-slot="select-content"].bg-\[\#12141c\] {
-    background-color: #ffffff !important;
-    color: #16191f !important;
-    border-color: #e2e8f0 !important;
-    box-shadow: 0 20px 44px -16px rgba(15, 23, 42, 0.14) !important;
-}
-
-.admin-shell .bg-black\/80 {
-    background-color: rgba(15, 23, 42, 0.45) !important;
-}
-
-.admin-shell .bg-\[\#0d0f15\],
-.admin-shell .bg-\[\#0e1b29\],
-.admin-shell .bg-\[\#12131a\]\/60,
-.admin-shell .bg-\[\#141824\],
-.admin-shell .bg-\[\#151720\],
-.admin-shell .bg-\[\#161822\],
-.admin-shell .bg-\[\#161922\],
-.admin-shell .bg-\[\#181b24\],
-.admin-shell .bg-\[\#0e1017\],
-.admin-shell .bg-neutral-900,
-.admin-shell .bg-neutral-900\/60,
-.admin-shell .bg-black\/20,
-.admin-shell .bg-black\/30,
-.admin-shell .bg-black\/40,
-.admin-shell .bg-black\/50,
-.admin-shell .bg-black\/60,
-.admin-shell .bg-white\/\[0\.02\],
-.admin-shell .bg-white\/\[0\.03\],
-.admin-shell .bg-white\/\[0\.04\],
-.admin-shell .bg-white\/\[0\.08\],
-.admin-shell .bg-white\/5,
-.admin-shell .bg-white\/10,
-[data-slot="dialog-content"] .bg-\[\#0b0c10\],
-[data-slot="dialog-content"] .bg-\[\#0c0d12\],
-[data-slot="dialog-content"] .bg-\[\#0d0f15\],
-[data-slot="dialog-content"] .bg-\[\#0e1b29\],
-[data-slot="dialog-content"] .bg-\[\#10121a\],
-[data-slot="dialog-content"] .bg-\[\#12131a\],
-[data-slot="dialog-content"] .bg-\[\#12141a\],
-[data-slot="dialog-content"] .bg-\[\#141824\],
-[data-slot="dialog-content"] .bg-\[\#151720\],
-[data-slot="dialog-content"] .bg-\[\#161822\],
-[data-slot="dialog-content"] .bg-\[\#161922\],
-[data-slot="dialog-content"] .bg-neutral-900,
-[data-slot="dialog-content"] .bg-black\/20,
-[data-slot="dialog-content"] .bg-black\/30,
-[data-slot="dialog-content"] .bg-black\/40,
-[data-slot="dialog-content"] .bg-black\/50,
-[data-slot="dialog-content"] .bg-black\/60,
-[data-slot="dialog-content"] .bg-white\/\[0\.02\],
-[data-slot="dialog-content"] .bg-white\/\[0\.03\],
-[data-slot="dialog-content"] .bg-white\/\[0\.04\],
-[data-slot="dialog-content"] .bg-white\/\[0\.08\],
-[data-slot="dialog-content"] .bg-white\/5,
-[data-slot="dialog-content"] .bg-white\/10,
-[data-slot="alert-dialog-content"] .bg-white\/5,
-[data-slot="alert-dialog-content"] .bg-white\/10,
-[data-slot="dropdown-menu-content"] .bg-\[\#10121a\],
-[data-slot="dropdown-menu-content"] .bg-white\/5,
-[data-slot="dropdown-menu-content"] .bg-white\/10 {
-    background-color: #f8fafc !important;
-}
-
-.admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-.admin-shell textarea,
-.admin-shell select,
-[data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-[data-slot="dialog-content"] textarea,
-[data-slot="dialog-content"] select {
-    background-color: #ffffff !important;
-    color: #16191f !important;
-    border-color: #cbd5e1 !important;
-}
-
-.admin-shell input[type="file"],
-[data-slot="dialog-content"] input[type="file"] {
-    color: #475569 !important;
-}
-
-.admin-shell .text-white,
-[data-slot="dialog-content"] .text-white,
-[data-slot="alert-dialog-content"] .text-white,
-[data-slot="dropdown-menu-content"] .text-white,
-[data-slot="select-content"] .text-white {
-    color: #16191f !important;
-}
-
-.admin-shell .bg-primary,
-.admin-shell .bg-accent,
-.admin-shell .bg-accent.text-black,
-.admin-shell .bg-ink.text-white,
-.admin-shell .bg-ink\/80.text-white,
-.admin-shell .bg-ink\/90.text-white,
-.admin-shell .bg-black.text-white,
-.admin-shell .bg-slate-900.text-white,
-.admin-shell .bg-rose-500.text-white,
-.admin-shell .bg-rose-600.text-white,
-.admin-shell .bg-emerald-600.text-white,
-.admin-shell .bg-blue-600.text-white,
-.admin-shell .bg-sky-500.text-white,
-.admin-shell .bg-sky-600.text-white,
-.admin-shell .bg-amber-500.text-white,
-.admin-shell .bg-purple-500.text-white,
-[data-slot="dialog-content"] .bg-primary,
-[data-slot="dialog-content"] .bg-accent,
-[data-slot="dialog-content"] .bg-accent.text-black,
-[data-slot="dialog-content"] .bg-ink.text-white,
-[data-slot="dialog-content"] .bg-ink\/80.text-white,
-[data-slot="dialog-content"] .bg-ink\/90.text-white,
-[data-slot="dialog-content"] .bg-black.text-white,
-[data-slot="dialog-content"] .bg-rose-500.text-white,
-[data-slot="dialog-content"] .bg-rose-600.text-white,
-[data-slot="dialog-content"] .bg-emerald-600.text-white,
-[data-slot="dialog-content"] .bg-sky-500.text-white,
-[data-slot="dialog-content"] .bg-sky-600.text-white,
-[data-slot="dialog-content"] .bg-amber-500.text-white,
-[data-slot="dialog-content"] .bg-purple-500.text-white,
-[data-slot="alert-dialog-content"] .bg-rose-500.text-white,
-[data-slot="alert-dialog-content"] .bg-rose-600.text-white {
-    color: #ffffff !important;
-}
-
-.admin-shell .text-white\/90,
-.admin-shell .text-white\/80,
-.admin-shell .text-white\/70,
-.admin-shell .text-neutral-200,
-.admin-shell .text-neutral-300,
-[data-slot="dialog-content"] .text-white\/90,
-[data-slot="dialog-content"] .text-white\/80,
-[data-slot="dialog-content"] .text-white\/70,
-[data-slot="dialog-content"] .text-neutral-200,
-[data-slot="dialog-content"] .text-neutral-300,
-[data-slot="alert-dialog-content"] .text-neutral-200,
-[data-slot="alert-dialog-content"] .text-neutral-300,
-[data-slot="dropdown-menu-content"] .text-neutral-200,
-[data-slot="dropdown-menu-content"] .text-neutral-300,
-[data-slot="select-content"] .text-neutral-200,
-[data-slot="select-content"] .text-neutral-300 {
-    color: #334155 !important;
-}
-
-.admin-shell .text-white\/60,
-.admin-shell .text-white\/50,
-.admin-shell .text-white\/40,
-.admin-shell .text-neutral-400,
-.admin-shell .text-neutral-500,
-.admin-shell .text-neutral-600,
-[data-slot="dialog-content"] .text-white\/60,
-[data-slot="dialog-content"] .text-white\/50,
-[data-slot="dialog-content"] .text-white\/40,
-[data-slot="dialog-content"] .text-neutral-400,
-[data-slot="dialog-content"] .text-neutral-500,
-[data-slot="dialog-content"] .text-neutral-600,
-[data-slot="alert-dialog-content"] .text-white\/60,
-[data-slot="alert-dialog-content"] .text-neutral-400,
-[data-slot="alert-dialog-content"] .text-neutral-500,
-[data-slot="dropdown-menu-content"] .text-neutral-400,
-[data-slot="dropdown-menu-content"] .text-neutral-500,
-[data-slot="dropdown-menu-content"] .text-neutral-600,
-[data-slot="select-content"] .text-neutral-400 {
-    color: #64748b !important;
-}
-
-.admin-shell .text-\[\#00f5ff\],
-[data-slot="dialog-content"] .text-\[\#00f5ff\],
-[data-slot="dropdown-menu-content"] .text-\[\#00f5ff\] {
-    color: #0284c7 !important;
-}
-
-.admin-shell .text-emerald-300,
-.admin-shell .text-emerald-400,
-[data-slot="dialog-content"] .text-emerald-300,
-[data-slot="dialog-content"] .text-emerald-400 {
-    color: #047857 !important;
-}
-
-.admin-shell .text-amber-300,
-.admin-shell .text-amber-400,
-[data-slot="dialog-content"] .text-amber-300,
-[data-slot="dialog-content"] .text-amber-400 {
-    color: #b45309 !important;
-}
-
-.admin-shell .text-rose-300,
-.admin-shell .text-rose-400,
-[data-slot="dialog-content"] .text-rose-300,
-[data-slot="dialog-content"] .text-rose-400 {
-    color: #be123c !important;
-}
-
-.admin-shell .text-purple-200,
-.admin-shell .text-purple-200\/90,
-[data-slot="dialog-content"] .text-purple-200,
-[data-slot="dialog-content"] .text-purple-200\/90 {
-    color: #6d28d9 !important;
-}
-
-.admin-shell .border-white\/5,
-.admin-shell .border-white\/10,
-.admin-shell .border-white\/15,
-.admin-shell .border-white\/20,
-[data-slot="dialog-content"] .border-white\/5,
-[data-slot="dialog-content"] .border-white\/10,
-[data-slot="dialog-content"] .border-white\/15,
-[data-slot="dialog-content"] .border-white\/20,
-[data-slot="alert-dialog-content"] .border-white\/10,
-[data-slot="dropdown-menu-content"] .border-white\/5,
-[data-slot="dropdown-menu-content"] .border-white\/10,
-[data-slot="select-content"] .border-white\/10 {
-    border-color: #e2e8f0 !important;
-}
-
-.admin-shell .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
-.admin-shell .divide-white\/10 > :not([hidden]) ~ :not([hidden]),
-[data-slot="dropdown-menu-content"] .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
-    border-color: #f1f5f9 !important;
-}
-
-.admin-shell .hover\:bg-white\/5:hover,
-.admin-shell .hover\:bg-white\/10:hover,
-.admin-shell .hover\:bg-white\/\[0\.08\]:hover,
-[data-slot="dialog-content"] .hover\:bg-white\/5:hover,
-[data-slot="dialog-content"] .hover\:bg-white\/10:hover,
-[data-slot="dialog-content"] .hover\:bg-white\/\[0\.08\]:hover,
-[data-slot="alert-dialog-content"] .hover\:bg-white\/10:hover,
-[data-slot="dropdown-menu-content"] .hover\:bg-white\/5:hover {
-    background-color: #f1f5f9 !important;
-}
-
-.admin-shell .hover\:text-white:not(.hover\:bg-primary):not(.hover\:bg-primary-hover):not(.hover\:bg-rose-600):not(.hover\:bg-ink):hover,
-[data-slot="dialog-content"] .hover\:text-white:not(.hover\:bg-primary):not(.hover\:bg-rose-600):hover,
-[data-slot="alert-dialog-content"] .hover\:text-white:not(.hover\:bg-rose-600):hover {
-    color: #16191f !important;
-}
-
-.admin-shell .file\:bg-white\/10::file-selector-button,
-[data-slot="dialog-content"] .file\:bg-white\/10::file-selector-button {
-    background-color: #e2e8f0 !important;
-    color: #16191f !important;
-}
-
-.admin-shell .file\:bg-accent::file-selector-button,
-[data-slot="dialog-content"] .file\:bg-accent::file-selector-button {
-    background-color: #f5761a !important;
-    color: #ffffff !important;
-}
-
-@theme inline {
-    --color-sidebar: var(--sidebar);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-ring: var(--sidebar-ring);
-}
 
 /* Landing showcase: vertical auto-scrolling tile columns */
 @keyframes landing-col-down {
@@ -546,11 +240,6 @@ select option {
 
 .animate-rw-breathe {
     animation: rw-breathe 9s ease-in-out infinite;
-}
-
-.font-michroma {
-    font-family: 'Michroma', sans-serif;
-    text-transform: uppercase;
 }
 
 @keyframes dress-reveal-down {
@@ -614,7 +303,7 @@ select option {
 .fp-stage {
     --fp-duration: 1000ms;
     --fp-ease: cubic-bezier(0.76, 0, 0.24, 1);
-    background: #0a0b0e;
+    background: var(--color-secondary);
 }
 
 .fp-panel {
@@ -630,7 +319,7 @@ select option {
     position: absolute;
     inset: 0;
     z-index: 9999;
-    background: #0a0b0e;
+    background: var(--color-secondary);
     opacity: 0;
     pointer-events: none;
 }
@@ -822,7 +511,7 @@ select option {
 .cs {
     position: relative;
     height: 480vh;
-    background: var(--color-page, #f2f2f1);
+    background: var(--color-page);
 }
 
 .cs-stage {
@@ -841,13 +530,13 @@ select option {
     border-radius: 28px;
     overflow: hidden;
     container-type: size;
-    background: var(--cb, var(--color-secondary, #141a26));
-    color: var(--ci, #ffffff);
+    background: var(--cb, var(--color-secondary));
+    color: var(--ci, var(--color-secondary-foreground));
     will-change: transform, width, height;
 }
 
 .cs-card.c2 {
-    box-shadow: inset 0 0 0 1px rgba(22, 25, 31, 0.08);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 8%, transparent);
 }
 
 .cs-in {
@@ -890,7 +579,7 @@ select option {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, var(--cb, #141a26) 28%, transparent 100%);
+    background: linear-gradient(to top, var(--cb, var(--color-secondary)) 28%, transparent 100%);
 }
 
 .cs-copy {
@@ -941,8 +630,8 @@ select option {
 .cs-btn {
     display: inline-block;
     border: 0;
-    background: var(--color-primary, #f5761a);
-    color: var(--color-primary-foreground, #ffffff);
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
     font-weight: 700;
     font-size: 15px;
     padding: 13px 26px;
@@ -952,7 +641,7 @@ select option {
 }
 
 .cs-btn:hover {
-    background: var(--color-primary-hover, #e0650c);
+    background: var(--color-primary-hover);
     transform: translateY(-2px);
 }
 
@@ -1008,7 +697,7 @@ select option {
     .cs-hint {
         bottom: 5px;
         font-size: 12px;
-        color: var(--color-muted, #4a505b);
+        color: var(--color-muted);
     }
 
     @container (min-height: 460px) {
@@ -1084,8 +773,8 @@ select option {
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    border: 2px solid #16191f;
-    background: #ffffff;
+    border: 2px solid var(--color-ink);
+    background: var(--color-surface);
     padding: 0;
     cursor: pointer;
     transition: transform 0.2s, background 0.2s, border-color 0.2s;
@@ -1096,8 +785,8 @@ select option {
 }
 
 .cs-dots button.on {
-    background: var(--color-primary, #f5761a);
-    border-color: var(--color-primary, #f5761a);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
     transform: scale(1.35);
 }
 
@@ -1109,7 +798,7 @@ select option {
     z-index: 5;
     font-weight: 600;
     font-size: 0.875rem;
-    color: #f2f4f8;
+    color: var(--color-secondary-foreground);
     transition: opacity 0.3s;
     pointer-events: none;
 }

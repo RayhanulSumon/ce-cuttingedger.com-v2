@@ -15,9 +15,9 @@ interface CardTheme {
 }
 
 const CARD_THEMES: readonly CardTheme[] = [
-    { bg: 'var(--color-secondary, #141A26)', ink: '#FFFFFF' },
-    { bg: 'var(--color-surface, #FFFFFF)', ink: 'var(--color-ink, #16191F)' },
-    { bg: 'var(--color-ink, #16191F)', ink: '#FFFFFF' },
+    { bg: 'var(--color-secondary)', ink: 'var(--color-secondary-foreground)' },
+    { bg: 'var(--color-surface)', ink: 'var(--color-ink)' },
+    { bg: 'var(--color-ink)', ink: 'var(--color-surface)' },
 ];
 
 const DOT_POSITIONS = [0.03, 0.45, 0.98] as const;
@@ -373,7 +373,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 const x = (lastEvent.clientX - r.left) / r.width;
                 const y = (lastEvent.clientY - r.top) / r.height;
                 card.classList.add('hov');
-                glow.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, rgba(245, 118, 26, 0.22), transparent 60%)`;
+                glow.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 60%)`;
                 inn.style.transform = `perspective(1000px) rotateX(${(0.5 - y) * 6}deg) rotateY(${(x - 0.5) * 8}deg)`;
                 card.style.setProperty('--tx', `${(0.5 - x) * 18}px`);
                 card.style.setProperty('--ty', `${(0.5 - y) * 18}px`);

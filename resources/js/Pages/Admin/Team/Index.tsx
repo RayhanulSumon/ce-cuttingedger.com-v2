@@ -116,15 +116,15 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                     <img
                         src={m.avatar}
                         alt={m.name}
-                        className="w-9 h-9 rounded-full object-cover bg-neutral-900 border border-white/10"
+                        className="w-9 h-9 rounded-full object-cover bg-surface-2 border border-line"
                         onError={(e) => {
                             (e.target as HTMLImageElement).src =
                                 "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80";
                         }}
                     />
                     <div>
-                        <div className="font-semibold text-white">{m.name}</div>
-                        <div className="text-xs text-neutral-400 font-mono">
+                        <div className="font-semibold text-ink">{m.name}</div>
+                        <div className="text-xs text-subtle">
                             {m.role}
                         </div>
                     </div>
@@ -134,7 +134,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
         {
             header: "TENURE",
             cell: (m) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     Since {m.since_year}
                 </span>
             ),
@@ -151,7 +151,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
         {
             header: "ORDER",
             cell: (m) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     #{m.sort_order}
                 </span>
             ),
@@ -165,7 +165,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-neutral-400 hover:text-white"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -178,7 +178,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 rel="noopener noreferrer"
                                 className="gap-2 cursor-pointer"
                             >
-                                <ExternalLink className="w-3.5 h-3.5 text-accent" />
+                                <ExternalLink className="w-3.5 h-3.5 text-primary-ink" />
                                 <span>View Live Single Page</span>
                             </a>
                         </DropdownMenuItem>
@@ -188,7 +188,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setMemberToDelete(m)}
-                            className="gap-2 text-rose-400 focus:text-rose-400"
+                            className="gap-2 text-danger focus:text-danger"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Purge Operative</span>
@@ -228,7 +228,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Full Name
                                 </label>
                                 <Input
@@ -241,7 +241,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Role / Title
                                 </label>
                                 <Input
@@ -256,7 +256,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Email Address (Private / Internal)
                             </label>
                             <Input
@@ -271,7 +271,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Tenure Year
                                 </label>
                                 <Input
@@ -287,7 +287,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Sort Order
                                 </label>
                                 <Input
@@ -304,7 +304,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Avatar Asset Path / URL
                             </label>
                             <Input
@@ -318,7 +318,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Biography
                             </label>
                             <Textarea
@@ -331,12 +331,12 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Crew Member
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Display in featured team strips across the site.
                                 </span>
                             </div>
@@ -383,7 +383,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Full Name
                                 </label>
                                 <Input
@@ -395,7 +395,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Role / Title
                                 </label>
                                 <Input
@@ -409,7 +409,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Email Address (Private / Internal)
                             </label>
                             <Input
@@ -424,7 +424,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Tenure Year
                                 </label>
                                 <Input
@@ -440,7 +440,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Sort Order
                                 </label>
                                 <Input
@@ -457,7 +457,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Avatar Asset Path / URL
                             </label>
                             <Input
@@ -470,7 +470,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Biography
                             </label>
                             <Textarea
@@ -482,12 +482,12 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Crew Member
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Display in featured team strips across the site.
                                 </span>
                             </div>
@@ -528,7 +528,7 @@ export default function TeamIndex({ team = [] }: TeamIndexProps) {
                         <AlertDialogTitle>Purge Operative?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you wish to remove{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {memberToDelete?.name}
                             </span>{" "}
                             from the studio roster?

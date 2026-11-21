@@ -47,7 +47,7 @@ export function CapabilityPageHeader({
     ctaLabel = 'Request a quote',
 }: CapabilityPageHeaderProps) {
     return (
-        <header className={`border-b border-ink/10 bg-white pb-6 pt-20 sm:pb-7 sm:pt-24 ${PAD_X}`}>
+        <header className={`border-b border-ink/10 bg-surface pb-6 pt-20 sm:pb-7 sm:pt-24 ${PAD_X}`}>
             <div className="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-4">
                 <div>
                     {backHref && backLabel ? (
@@ -61,7 +61,7 @@ export function CapabilityPageHeader({
                         </Link>
                     ) : (
                         eyebrow && (
-                            <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-ink">
+                            <p className="mb-1.5 text-2xs font-bold uppercase tracking-[0.2em] text-primary-ink">
                                 {eyebrow}
                             </p>
                         )
@@ -102,16 +102,16 @@ export function CapabilityCard({
         <Link
             href={href}
             prefetch
-            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_14px_34px_-18px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]"
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ink/10 bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_14px_34px_-18px_color-mix(in_srgb,var(--color-ink)_25%,transparent)]"
         >
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f7fb]">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-2">
                 <img
                     src={coverImage}
                     alt={capability.title}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
-                <span className="absolute right-2.5 top-2.5 grid h-7 w-7 place-items-center rounded-full bg-white/95 text-ink opacity-0 shadow-xs transition-all duration-200 group-hover:bg-primary group-hover:text-white group-hover:opacity-100">
+                <span className="absolute right-2.5 top-2.5 grid h-7 w-7 place-items-center rounded-full bg-surface/95 text-ink opacity-0 shadow-xs transition-all duration-200 group-hover:bg-primary group-hover:text-primary-foreground group-hover:opacity-100">
                     <ArrowUpRight size={13} />
                 </span>
             </div>

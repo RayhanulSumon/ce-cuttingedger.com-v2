@@ -5,9 +5,9 @@ import { TwinCursorMode } from './useTwinRunway';
 const SHAPE: Record<TwinCursorMode, string> = {
     hidden: 'h-[96px] w-[96px] scale-50 opacity-0',
     ring: 'h-[42px] w-[42px] scale-100 border-[2px] border-ink/50 opacity-100',
-    drag: 'h-[38px] w-[98px] scale-100 border border-white/70 bg-white/60 opacity-100 backdrop-blur-md shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-ink)_45%,transparent),inset_0_1px_0_rgba(255,255,255,0.9)]',
+    drag: 'h-[38px] w-[98px] scale-100 border border-white/70 bg-surface/60 opacity-100 backdrop-blur-md shadow-[0_12px_28px_-12px_color-mix(in_srgb,var(--color-ink)_45%,transparent),inset_0_1px_0_rgba(255,255,255,0.9)]',
     dragging:
-        'h-[38px] w-[116px] scale-[0.96] border border-white/70 bg-white/60 opacity-100 backdrop-blur-md shadow-[0_8px_20px_-12px_color-mix(in_srgb,var(--color-ink)_45%,transparent),inset_0_1px_0_rgba(255,255,255,0.9)]',
+        'h-[38px] w-[116px] scale-[0.96] border border-white/70 bg-surface/60 opacity-100 backdrop-blur-md shadow-[0_8px_20px_-12px_color-mix(in_srgb,var(--color-ink)_45%,transparent),inset_0_1px_0_rgba(255,255,255,0.9)]',
     view: 'h-[80px] w-[80px] scale-100 border border-white/35 bg-gradient-to-b from-[color-mix(in_srgb,var(--color-ink)_82%,white)] to-ink opacity-100 shadow-[0_16px_32px_-10px_color-mix(in_srgb,var(--color-ink)_60%,transparent),inset_0_1px_0_rgba(255,255,255,0.35)]',
     buy: 'h-[80px] w-[80px] scale-100 border border-white/35 bg-gradient-to-b from-[color-mix(in_srgb,var(--color-primary)_86%,white)] to-primary opacity-100 shadow-[0_16px_32px_-10px_color-mix(in_srgb,var(--color-primary)_72%,transparent),inset_0_1px_0_rgba(255,255,255,0.45)]',
 };
@@ -29,11 +29,11 @@ export function TwinCursor({ cursorRef, mode }: { cursorRef: React.Ref<HTMLDivEl
                 className={`relative grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition-[width,height,opacity,scale,background-color,border-color,box-shadow] duration-300 ${SPRING} ${SHAPE[mode]}`}
             >
                 {(mode === 'buy' || mode === 'view') && (
-                    <span aria-hidden="true" className="absolute inset-x-3 top-1 h-[42%] rounded-full bg-gradient-to-b from-white/25 to-transparent" />
+                    <span aria-hidden="true" className="absolute inset-x-3 top-1 h-[42%] rounded-full bg-gradient-to-b from-surface/25 to-transparent" />
                 )}
 
                 {(mode === 'buy' || mode === 'view') && (
-                    <span className="relative select-none pl-[0.2em] text-[12px] font-extrabold tracking-[0.18em] text-white">
+                    <span className="relative select-none pl-[0.2em] text-xs font-extrabold tracking-[0.18em] text-white">
                         {mode === 'buy' ? 'BUY' : 'VIEW'}
                     </span>
                 )}
@@ -50,7 +50,7 @@ export function TwinCursor({ cursorRef, mode }: { cursorRef: React.Ref<HTMLDivEl
                             />
                         </span>
                         <span
-                            className={`select-none pl-[0.2em] text-[9px] font-extrabold transition-[letter-spacing,color] duration-300 ${SPRING} ${
+                            className={`select-none pl-[0.2em] text-2xs font-extrabold transition-[letter-spacing,color] duration-300 ${SPRING} ${
                                 isDragging ? 'tracking-[0.34em] text-ink' : 'tracking-[0.22em] text-ink'
                             }`}
                         >

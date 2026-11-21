@@ -50,15 +50,15 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
 
             {/* Concept Work Disclaimer Banner if Concept */}
             {project.is_concept && (
-                <div className="bg-cyan-950/40 border-b border-cyan-500/20 py-3 px-4 sm:px-6 lg:px-8 text-center text-xs font-mono text-cyan-300">
+                <div className="bg-info-soft border-b border-info/25 py-3 px-4 sm:px-6 lg:px-8 text-center text-xs text-info">
                     <span>💡 <strong>Concept Showcase Work:</strong> This study represents a virtual CGI prototype and pipeline benchmark engineered by Cutting Edger Studio.</span>
                 </div>
             )}
 
             {/* Case Study Meta Strip */}
-            <section className="py-8 bg-white border-b border-ink/10">
+            <section className="py-8 bg-surface border-b border-ink/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 text-xs font-mono">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 text-xs">
                         <div>
                             <span className="text-subtle uppercase block mb-1">Client Partner</span>
                             <span className="text-ink font-medium text-sm">{project.client_name}</span>
@@ -94,7 +94,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
             {/* Main Cover Imagery */}
             <section className="py-12 bg-page">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="relative rounded-3xl overflow-hidden aspect-[16/9] border border-ink/10 bg-white shadow-2xl">
+                    <div className="relative rounded-3xl overflow-hidden aspect-[16/9] border border-ink/10 bg-surface shadow-2xl">
                         <img
                             src={project.cover_image}
                             alt={`${project.title} - Main production outcome for ${project.client_name}`}
@@ -106,15 +106,15 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
 
             {/* Metrics Impact Section */}
             {project.metrics && project.metrics.length > 0 && (
-                <section className="py-12 bg-white border-y border-ink/10">
+                <section className="py-12 bg-surface border-y border-ink/10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             {project.metrics.map((metric, i) => (
-                                <div key={i} className="p-8 rounded-2xl bg-white border border-ink/10 text-center space-y-2">
+                                <div key={i} className="p-8 rounded-2xl bg-surface border border-ink/10 text-center space-y-2">
                                     <p className="font-display font-black text-4xl sm:text-5xl text-primary-ink">
                                         {metric.value}
                                     </p>
-                                    <p className="text-xs font-mono uppercase tracking-widest text-ink-2 font-bold">
+                                    <p className="text-xs uppercase tracking-widest text-ink-2 font-bold">
                                         {metric.label}
                                     </p>
                                 </div>
@@ -128,8 +128,8 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
             <section className="py-20 bg-page">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
                     {/* The Challenge */}
-                    <div className="p-8 sm:p-10 rounded-3xl bg-white border border-ink/10 space-y-4">
-                        <span className="font-mono text-xs uppercase tracking-widest text-red-400 font-bold">
+                    <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-ink/10 space-y-4">
+                        <span className="text-xs uppercase tracking-widest text-danger font-bold">
                             [ 01. THE SITUATION & CHALLENGE ]
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink">
@@ -141,8 +141,8 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                     </div>
 
                     {/* Work Done */}
-                    <div className="p-8 sm:p-10 rounded-3xl bg-white border border-ink/10 space-y-4">
-                        <span className="font-mono text-xs uppercase tracking-widest text-primary-ink font-bold">
+                    <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-ink/10 space-y-4">
+                        <span className="text-xs uppercase tracking-widest text-primary-ink font-bold">
                             [ 02. EXECUTION & WORK COMPLETED ]
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink">
@@ -155,12 +155,12 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         {/* Deliverables List */}
                         {project.deliverables && (
                             <div className="pt-4 border-t border-ink/10 space-y-3">
-                                <span className="font-mono text-xs uppercase tracking-wider text-muted font-bold block">
+                                <span className="text-xs uppercase tracking-wider text-muted font-bold block">
                                     Production Assets Handed Over:
                                 </span>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {project.deliverables.map((deliv, idx) => (
-                                        <div key={idx} className="flex items-center gap-2 text-xs font-mono text-ink-2">
+                                        <div key={idx} className="flex items-center gap-2 text-xs text-ink-2">
                                             <CheckCircle2 className="w-4 h-4 text-primary-ink shrink-0" />
                                             <span>{deliv}</span>
                                         </div>
@@ -171,8 +171,8 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                     </div>
 
                     {/* Measurable Result */}
-                    <div className="p-8 sm:p-10 rounded-3xl bg-white border border-emerald-500/30 space-y-4">
-                        <span className="font-mono text-xs uppercase tracking-widest text-emerald-400 font-bold">
+                    <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-success/25 space-y-4">
+                        <span className="text-xs uppercase tracking-widest text-success font-bold">
                             [ 03. MEASURABLE COMMERCIAL OUTCOME ]
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink">
@@ -193,7 +193,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                                 {project.gallery.map((imgUrl, idx) => (
                                     <div
                                         key={idx}
-                                        className="rounded-2xl overflow-hidden aspect-[4/3] border border-ink/10 bg-white group"
+                                        className="rounded-2xl overflow-hidden aspect-[4/3] border border-ink/10 bg-surface group"
                                     >
                                         <img
                                             src={imgUrl}
@@ -208,8 +208,8 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                     )}
 
                     {/* Call to Action Card */}
-                    <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-white to-page border border-primary/40 text-center space-y-6 shadow-2xl">
-                        <span className="font-mono text-xs uppercase tracking-widest text-primary-ink font-bold">
+                    <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-surface to-page border border-primary/40 text-center space-y-6 shadow-2xl">
+                        <span className="text-xs uppercase tracking-widest text-primary-ink font-bold">
                             [ ACHIEVE SIMILAR RESULTS FOR YOUR CATALOG ]
                         </span>
                         <h3 className="text-3xl sm:text-4xl font-display font-bold text-ink">
@@ -221,7 +221,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                             <Link
                                 href="/contact"
-                                className="px-8 py-3.5 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-lg flex items-center gap-2"
+                                className="px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-all shadow-lg flex items-center gap-2"
                             >
                                 <Sparkles className="w-4 h-4" />
                                 <span>Start a Project</span>
@@ -229,7 +229,7 @@ export default function Show({ project, relatedProjects = [] }: WorkShowProps) {
                             <Link
                                 href="/book-a-demo"
                                 prefetch
-                                className="px-8 py-3.5 rounded-xl border border-ink/20 text-ink hover:bg-ink/[0.03] font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2"
+                                className="px-8 py-3.5 rounded-xl border border-ink/20 text-ink hover:bg-ink/[0.03] text-xs uppercase tracking-wider transition-all flex items-center gap-2"
                             >
                                 <Calendar className="w-4 h-4 text-primary-ink" />
                                 <span>Book a Demo</span>

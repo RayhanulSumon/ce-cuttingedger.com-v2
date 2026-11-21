@@ -47,7 +47,7 @@ function LogoLane({
                     <div
                         key={`${logo.name}-${i}`}
                         aria-hidden={i >= logos.length}
-                        className="flex h-24 w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-ink/8 bg-white p-1.5 transition-[border-color,box-shadow] duration-300 hover:border-ink/20 hover:shadow-[0_14px_28px_-20px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] sm:h-28"
+                        className="flex h-24 w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-ink/8 bg-surface p-1.5 transition-[border-color,box-shadow] duration-300 hover:border-ink/20 hover:shadow-[0_14px_28px_-20px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] sm:h-28"
                     >
                         {logo.src ? (
                             <img
@@ -71,14 +71,14 @@ function LogoLane({
 
 function ReviewCard({ quote, name, role, rating }: ReviewEntry & { rating?: number }) {
     return (
-        <figure className="flex h-full flex-col justify-between rounded-3xl border border-ink/10 bg-white p-6 shadow-[0_14px_34px_-26px_color-mix(in_srgb,var(--color-ink)_35%,transparent)]">
+        <figure className="flex h-full flex-col justify-between rounded-3xl border border-ink/10 bg-surface p-6 shadow-[0_14px_34px_-26px_color-mix(in_srgb,var(--color-ink)_35%,transparent)]">
             <div>
                 <div className="flex gap-0.5 text-primary" aria-label={`${rating ?? 5} out of 5 stars`}>
                     {Array.from({ length: rating ?? 5 }, (_, i) => (
                         <Star key={i} size={14} fill="currentColor" />
                     ))}
                 </div>
-                <blockquote className="mt-3 text-sm leading-relaxed text-[#2a2d33] sm:text-[15px]">&ldquo;{quote}&rdquo;</blockquote>
+                <blockquote className="mt-3 text-sm leading-relaxed text-ink-2 sm:text-base">&ldquo;{quote}&rdquo;</blockquote>
             </div>
             <figcaption className="mt-4 border-t border-ink/8 pt-3.5 text-sm">
                 <span className="font-bold text-ink">{name}</span>
@@ -186,7 +186,7 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                                     type="button"
                                     onClick={() => stepReview(-1)}
                                     aria-label="Previous testimonial"
-                                    className="grid h-9 w-9 place-items-center rounded-full border border-ink/15 bg-white text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                    className="grid h-9 w-9 place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
                                 >
                                     <ChevronLeft size={16} />
                                 </button>
@@ -194,7 +194,7 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                                     type="button"
                                     onClick={() => stepReview(1)}
                                     aria-label="Next testimonial"
-                                    className="grid h-9 w-9 place-items-center rounded-full border border-ink/15 bg-white text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                    className="grid h-9 w-9 place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
                                 >
                                     <ChevronRight size={16} />
                                 </button>

@@ -47,9 +47,9 @@ interface PageProps {
     looks: AdminTryOnLookItem[];
 }
 
-const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-slate-700';
+const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-ink-2';
 const INPUT_CLASS =
-    'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
+    'w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-ring focus:outline-none focus:ring-2 focus:ring-primary/15';
 
 function shiftIndexMap<T>(record: Record<number, T>, removedIdx: number): Record<number, T> {
     const next: Record<number, T> = {};
@@ -429,8 +429,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             onClick={() => setHomepageOnly(false)}
                             className={`cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                                 !homepageOnly
-                                    ? 'bg-ink text-white'
-                                    : 'border border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                    ? 'bg-ink text-surface'
+                                    : 'border border-line bg-surface text-muted hover:text-ink'
                             }`}
                         >
                             All ({looks.length})
@@ -440,8 +440,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             onClick={() => setHomepageOnly(true)}
                             className={`cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                                 homepageOnly
-                                    ? 'bg-ink text-white'
-                                    : 'border border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                    ? 'bg-ink text-surface'
+                                    : 'border border-line bg-surface text-muted hover:text-ink'
                             }`}
                         >
                             Homepage ({featuredCount})
@@ -449,21 +449,21 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                     </div>
 
                     <div className="relative w-full sm:w-72">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
                         <Input
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search by model or garment..."
-                            className="bg-white pl-9 border-slate-200 text-ink"
+                            className="bg-surface pl-9 border-line text-ink"
                         />
                     </div>
                 </div>
 
                 {/* Looks Grid */}
                 {filteredLooks.length === 0 ? (
-                    <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-12 text-center shadow-xs">
+                    <div className="rounded-2xl border border-line bg-surface px-6 py-12 text-center shadow-xs">
                         <p className="text-sm font-bold text-ink">No matching Virtual Try-On looks</p>
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-subtle">
                             Try clearing your search or switching the filter above.
                         </p>
                     </div>
@@ -472,10 +472,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                         {filteredLooks.map((look) => (
                             <div
                                 key={look.id ?? look.modelName}
-                                className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
+                                className="flex flex-col justify-between rounded-2xl border border-line bg-surface p-4 shadow-xs transition-shadow hover:shadow-md"
                             >
                                 <div className="flex gap-4">
-                                    <div className="h-36 w-[81px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
+                                    <div className="h-36 w-[81px] shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
                                         <img
                                             src={look.model}
                                             alt={look.modelName}
@@ -489,7 +489,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 {look.modelName}
                                             </h3>
                                             {look.isFeaturedOnHome && (
-                                                <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
+                                                <Badge className="border-info/25 bg-info-soft text-2xs text-info">
                                                     Homepage
                                                 </Badge>
                                             )}
@@ -499,7 +499,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                             {look.pieces.map((piece, i) => (
                                                 <span
                                                     key={i}
-                                                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-700"
+                                                    className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface-2 px-2 py-0.5 text-2xs font-medium text-ink-2"
                                                 >
                                                     <span className="font-bold text-primary">#{i + 1}</span>
                                                     <span className="max-w-[110px] truncate">
@@ -511,8 +511,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     </div>
                                 </div>
 
-                                <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
-                                    <span className="text-xs font-medium text-slate-500">
+                                <div className="mt-4 flex items-center justify-between gap-2 border-t border-line pt-3">
+                                    <span className="text-xs font-medium text-subtle">
                                         {look.pieces.length} pieces · Order #{look.sortOrder ?? 1}
                                     </span>
 
@@ -521,7 +521,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                             size="sm"
                                             variant="outline"
                                             onClick={() => openEditLook(look)}
-                                            className="min-h-10 sm:min-h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
+                                            className="min-h-10 sm:min-h-8 cursor-pointer border-line bg-surface text-xs text-ink hover:bg-surface-2"
                                         >
                                             <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
                                             Edit Look
@@ -531,7 +531,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                             variant="ghost"
                                             onClick={() => handleDeleteLook(look)}
                                             aria-label={`Delete ${look.modelName}`}
-                                            className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                            className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-danger hover:bg-danger-soft hover:text-danger"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                         </Button>
@@ -560,8 +560,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                     <form onSubmit={handleSaveLook} noValidate className="space-y-4 pt-1 text-xs">
                         {/* Cross-tab or server errors not already shown inline */}
                         {bannerErrors.length > 0 && (
-                            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
-                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                            <div className="flex items-start gap-2.5 rounded-xl border border-danger/25 bg-danger-soft px-3.5 py-2.5 text-xs text-danger">
+                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
                                 <div className="space-y-0.5">
                                     {bannerErrors.map((msg, idx) => (
                                         <p key={idx} className="font-medium">
@@ -573,14 +573,14 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                         )}
 
                         {/* Clean 2-Step Segmented Tabs */}
-                        <div className="flex items-center gap-1.5 rounded-xl bg-slate-100 p-1">
+                        <div className="flex items-center gap-1.5 rounded-xl bg-surface-2 p-1">
                             <button
                                 type="button"
                                 onClick={() => setLookModalTab('info')}
                                 className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                                     lookModalTab === 'info'
-                                        ? 'bg-white text-ink shadow-xs'
-                                        : 'text-slate-600 hover:text-ink'
+                                        ? 'bg-surface text-ink shadow-xs'
+                                        : 'text-muted hover:text-ink'
                                 }`}
                             >
                                 1. Full-Body Model
@@ -590,8 +590,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                 onClick={() => setLookModalTab('pins')}
                                 className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                                     lookModalTab === 'pins'
-                                        ? 'bg-white text-ink shadow-xs'
-                                        : 'text-slate-600 hover:text-ink'
+                                        ? 'bg-surface text-ink shadow-xs'
+                                        : 'text-muted hover:text-ink'
                                 }`}
                             >
                                 2. Garment Pieces &amp; Pins ({pieces.length})
@@ -612,8 +612,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     />
                                 </div>
 
-                                <div className="flex flex-col items-start gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5 sm:flex-row sm:items-center">
-                                    <div className="aspect-[9/16] w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#eef3f9]">
+                                <div className="flex flex-col items-start gap-4 rounded-xl border border-line bg-surface-2 p-3.5 sm:flex-row sm:items-center">
+                                    <div className="aspect-[9/16] w-20 shrink-0 overflow-hidden rounded-lg border border-line bg-surface-2">
                                         {modelPreviewUrl ? (
                                             <img
                                                 src={modelPreviewUrl}
@@ -621,7 +621,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 className="h-full w-full object-contain object-bottom"
                                             />
                                         ) : (
-                                            <div className="grid h-full place-items-center p-2 text-center text-[11px] text-slate-500">
+                                            <div className="grid h-full place-items-center p-2 text-center text-2xs text-subtle">
                                                 No Image
                                             </div>
                                         )}
@@ -631,13 +631,13 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                             <label className="block text-xs font-bold text-ink">
                                                 Full-Body Model Photo {editingLook ? '' : '*'}
                                             </label>
-                                            <p className="mt-0.5 text-[11px] text-slate-500">
+                                            <p className="mt-0.5 text-2xs text-subtle">
                                                 Transparent PNG/WebP · 9:16 portrait (1080×1920 px)
                                             </p>
                                         </div>
 
                                         <div className="flex flex-wrap items-center gap-2.5">
-                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-hover">
+                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary-hover">
                                                 <Upload className="h-3.5 w-3.5" />
                                                 <span>
                                                     {modelPreviewUrl ? 'Change Model Image' : 'Upload Model Image'}
@@ -650,7 +650,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     className="sr-only"
                                                 />
                                             </label>
-                                            <span className="max-w-[200px] truncate text-xs text-slate-600">
+                                            <span className="max-w-[200px] truncate text-xs text-muted">
                                                 {modelImageFile
                                                     ? modelImageFile.name
                                                     : editingLook
@@ -661,8 +661,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
 
                                         {modelImageMeta?.valid && (
                                             <p
-                                                className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                                                    modelImageMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                className={`flex items-center gap-1.5 text-2xs font-medium ${
+                                                    modelImageMeta.warning ? 'text-warning' : 'text-success'
                                                 }`}
                                             >
                                                 {modelImageMeta.warning ? (
@@ -685,30 +685,30 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         )}
 
                                         {formErrors.model_image && (
-                                            <p className="text-[11px] font-semibold text-rose-600">
+                                            <p className="text-2xs font-semibold text-danger">
                                                 {formErrors.model_image}
                                             </p>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-line bg-surface px-4 py-3">
                                     <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-ink">
                                         <input
                                             type="checkbox"
                                             checked={isFeaturedOnHome}
                                             onChange={(e) => setIsFeaturedOnHome(e.target.checked)}
-                                            className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
+                                            className="h-4 w-4 rounded border-line-strong accent-[var(--color-primary)]"
                                         />
                                         Show on Homepage Runway
                                     </label>
                                     <div className="flex items-center gap-2">
-                                        <label className="text-xs font-semibold text-slate-700">Order</label>
+                                        <label className="text-xs font-semibold text-ink-2">Order</label>
                                         <input
                                             type="number"
                                             value={sortOrder}
                                             onChange={(e) => setSortOrder(Number(e.target.value))}
-                                            className="w-20 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                            className="w-20 rounded-xl border border-line bg-surface px-3 py-1.5 text-sm text-ink focus:border-ring focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -720,7 +720,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
                                 {/* Left: Interactive Photo Pin Placement (exact 9:16 live frame) */}
                                 <div className="space-y-2 lg:col-span-5">
-                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-ink-2">
                                         <Crosshair className="h-3.5 w-3.5 text-primary" />
                                         Tap photo to move Pin #{activePinIndex + 1}
                                     </span>
@@ -728,7 +728,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     <div
                                         ref={previewBoxRef}
                                         onClick={handlePreviewClick}
-                                        className="relative aspect-[9/16] w-full max-w-[215px] mx-auto cursor-crosshair select-none overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-[#eef3f9] to-[#dce6f2]"
+                                        className="relative aspect-[9/16] w-full max-w-[215px] mx-auto cursor-crosshair select-none overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-surface-2 to-surface-3"
                                     >
                                         {modelPreviewUrl ? (
                                             <img
@@ -741,10 +741,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 onClick={(e) => e.stopPropagation()}
                                                 className="flex h-full flex-col items-center justify-center gap-2.5 p-4 text-center"
                                             >
-                                                <p className="text-[11px] font-medium leading-relaxed text-slate-600">
+                                                <p className="text-2xs font-medium leading-relaxed text-muted">
                                                     Upload a 9:16 transparent PNG/WebP model photo.
                                                 </p>
-                                                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-hover">
+                                                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary-hover">
                                                     <Upload className="h-3.5 w-3.5" />
                                                     <span>Upload Model Photo</span>
                                                     <input
@@ -772,10 +772,10 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                             e.stopPropagation();
                                                             setActivePinIndex(idx);
                                                         }}
-                                                        className={`pointer-events-auto ml-1 grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-full text-[11px] font-bold shadow-md ring-2 ring-white transition-transform ${
+                                                        className={`pointer-events-auto ml-1 grid h-6 w-6 shrink-0 cursor-pointer place-items-center rounded-full text-2xs font-bold shadow-md ring-2 ring-surface transition-transform ${
                                                             isActivePin
-                                                                ? 'scale-110 bg-primary text-white'
-                                                                : 'bg-ink text-white'
+                                                                ? 'scale-110 bg-primary text-primary-foreground'
+                                                                : 'bg-ink text-surface'
                                                         }`}
                                                     >
                                                         {idx + 1}
@@ -802,7 +802,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                         })}
                                     </div>
 
-                                    <p className="text-center text-[11px] text-slate-500">
+                                    <p className="text-center text-2xs text-subtle">
                                         Exact 9:16 live frame — arrow tip marks where the live pointer lands.
                                     </p>
                                 </div>
@@ -819,8 +819,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     onClick={() => setActivePinIndex(idx)}
                                                     className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
                                                         activePinIndex === idx
-                                                            ? 'border-primary bg-primary text-white shadow-xs'
-                                                            : 'border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                                            ? 'border-primary bg-primary text-primary-foreground shadow-xs'
+                                                            : 'border-line bg-surface text-muted hover:text-ink'
                                                     }`}
                                                 >
                                                     <span>
@@ -830,8 +830,8 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         <span
                                                             className={`h-1.5 w-1.5 rounded-full ${
                                                                 activePinIndex === idx
-                                                                    ? 'bg-white'
-                                                                    : 'bg-emerald-500'
+                                                                    ? 'bg-surface'
+                                                                    : 'bg-success'
                                                             }`}
                                                             title="Image attached"
                                                         />
@@ -850,7 +850,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     </div>
 
                                     {activePiece && (
-                                        <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                        <div className="space-y-3 rounded-2xl border border-line bg-surface-2 p-4">
                                             <div className="flex items-center justify-between gap-2">
                                                 <span className="text-xs font-bold text-ink">
                                                     Piece #{activePinIndex + 1} · Pin ({activePin.left}%, {activePin.top}%)
@@ -859,7 +859,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemovePiece(activePinIndex)}
-                                                        className="cursor-pointer text-xs font-semibold text-rose-600 hover:underline"
+                                                        className="cursor-pointer text-xs font-semibold text-danger hover:underline"
                                                     >
                                                         Remove Piece
                                                     </button>
@@ -896,22 +896,22 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 <label className={LABEL_CLASS}>
                                                     Garment Image (Piece #{activePinIndex + 1})
                                                 </label>
-                                                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5">
+                                                <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-2.5">
                                                     {activePiecePreview ? (
                                                         <img
                                                             src={activePiecePreview}
                                                             alt={activePiece.name}
-                                                            className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 bg-slate-50 object-contain p-0.5"
+                                                            className="h-12 w-12 shrink-0 rounded-lg border border-line bg-surface-2 object-contain p-0.5"
                                                         />
                                                     ) : (
-                                                        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-400">
+                                                        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-dashed border-line-strong bg-surface-2 text-faint">
                                                             <ImagePlus className="h-4 w-4" />
                                                         </div>
                                                     )}
 
                                                     <div className="min-w-0 flex-1 space-y-1">
                                                         <div className="flex flex-wrap items-center gap-2">
-                                                            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-slate-200">
+                                                            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-surface-2 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-surface-3">
                                                                 <Upload className="h-3.5 w-3.5 text-primary" />
                                                                 <span>
                                                                     {activePiecePreview ? 'Replace Image' : 'Choose Image'}
@@ -930,13 +930,13 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => handleClearPieceFile(activePinIndex)}
-                                                                    className="cursor-pointer text-[11px] font-semibold text-slate-500 hover:text-rose-600"
+                                                                    className="cursor-pointer text-2xs font-semibold text-subtle hover:text-danger"
                                                                 >
                                                                     Clear
                                                                 </button>
                                                             )}
                                                         </div>
-                                                        <p className="truncate text-[11px] text-slate-500">
+                                                        <p className="truncate text-2xs text-subtle">
                                                             {activePieceFile
                                                                 ? activePieceFile.name
                                                                 : activePiece.image
@@ -945,14 +945,14 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <p className="text-[11px] text-slate-500">
+                                                <p className="text-2xs text-subtle">
                                                     Transparent PNG/WebP · 1:1 or 3:4 (800×800 px)
                                                 </p>
 
                                                 {activePieceMeta?.valid && (
                                                     <p
-                                                        className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                                                            activePieceMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                        className={`flex items-center gap-1.5 text-2xs font-medium ${
+                                                            activePieceMeta.warning ? 'text-warning' : 'text-success'
                                                         }`}
                                                     >
                                                         {activePieceMeta.warning ? (
@@ -975,7 +975,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                                 )}
 
                                                 {activePieceError && (
-                                                    <p className="text-[11px] font-semibold text-rose-600">
+                                                    <p className="text-2xs font-semibold text-danger">
                                                         {activePieceError}
                                                     </p>
                                                 )}
@@ -986,7 +986,7 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                             </div>
                         )}
 
-                        <div className="flex flex-wrap justify-between gap-2 border-t border-slate-200 pt-3">
+                        <div className="flex flex-wrap justify-between gap-2 border-t border-line pt-3">
                             <div>
                                 {lookModalTab === 'info' ? (
                                     <Button
@@ -1014,14 +1014,14 @@ export default function AdminTryOnLooksIndex({ looks = [] }: PageProps) {
                                     type="button"
                                     variant="ghost"
                                     onClick={() => handleDialogOpenChange(false)}
-                                    className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
+                                    className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-muted hover:bg-surface-2 hover:text-ink"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={isSaving}
-                                    className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
+                                    className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
                                 >
                                     {isSaving ? 'Saving...' : 'Save Look'}
                                 </Button>

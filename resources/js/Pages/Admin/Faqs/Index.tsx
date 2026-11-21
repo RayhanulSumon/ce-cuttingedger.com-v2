@@ -100,8 +100,8 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
             header: "QUESTION",
             cell: (f) => (
                 <div>
-                    <div className="font-semibold text-white">{f.question}</div>
-                    <div className="text-xs text-neutral-400 max-w-lg truncate mt-0.5">
+                    <div className="font-semibold text-ink">{f.question}</div>
+                    <div className="text-xs text-subtle max-w-lg truncate mt-0.5">
                         {f.answer}
                     </div>
                 </div>
@@ -118,7 +118,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
         {
             header: "ORDER",
             cell: (f) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     #{f.sort_order}
                 </span>
             ),
@@ -132,7 +132,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-neutral-400 hover:text-white"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -144,7 +144,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setFaqToDelete(f)}
-                            className="gap-2 text-rose-400 focus:text-rose-400"
+                            className="gap-2 text-danger focus:text-danger"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Purge FAQ</span>
@@ -180,7 +180,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Question
                             </label>
                             <Input
@@ -195,7 +195,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Topic Category
                                 </label>
                                 <Input
@@ -208,7 +208,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Display Order
                                 </label>
                                 <Input
@@ -225,7 +225,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Comprehensive Answer
                             </label>
                             <Textarea
@@ -269,7 +269,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Question
                             </label>
                             <Input
@@ -283,7 +283,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Topic Category
                                 </label>
                                 <Input
@@ -295,7 +295,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Display Order
                                 </label>
                                 <Input
@@ -312,7 +312,7 @@ export default function FaqsIndex({ faqs = [] }: FaqsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Comprehensive Answer
                             </label>
                             <Textarea

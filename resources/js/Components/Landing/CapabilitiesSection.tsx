@@ -68,7 +68,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                                             loading="lazy"
                                             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                                         />
-                                        <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-surface/90 text-ink opacity-0 shadow-sm backdrop-blur-sm transition-[opacity,transform,background-color,color] duration-200 group-hover:rotate-45 group-hover:bg-primary group-hover:text-white group-hover:opacity-100">
+                                        <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-surface/90 text-ink opacity-0 shadow-sm backdrop-blur-sm transition-[opacity,transform,background-color,color] duration-200 group-hover:rotate-45 group-hover:bg-primary group-hover:text-primary-foreground group-hover:opacity-100">
                                             <ArrowUpRight size={15} />
                                         </span>
                                     </div>

@@ -113,10 +113,10 @@ export function RichContentEditor({
     ];
 
     return (
-        <div className="border border-white/10 rounded-md overflow-hidden bg-[#0c0d12] focus-within:border-accent transition-colors">
+        <div className="border border-line rounded-md overflow-hidden bg-surface focus-within:border-ring transition-colors">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-1 p-2 bg-[#12131a] border-b border-white/10">
-                <span className="text-[10px] font-mono font-bold text-accent uppercase tracking-wider px-2 py-0.5 border border-accent/30 rounded bg-accent/10 mr-1">
+            <div className="flex flex-wrap items-center gap-1 p-2 bg-surface border-b border-line">
+                <span className="text-2xs font-bold text-primary-ink uppercase tracking-wider px-2 py-0.5 border border-primary/30 rounded bg-primary-soft mr-1">
                     RICH EDITOR
                 </span>
                 {tools.map((t, idx) => (
@@ -127,7 +127,7 @@ export function RichContentEditor({
                         size="sm"
                         title={t.title}
                         onClick={t.action}
-                        className="h-7 w-7 p-0 text-neutral-300 hover:text-white hover:bg-white/10"
+                        className="h-7 w-7 p-0 text-ink-2 hover:text-ink hover:bg-surface-2"
                     >
                         <t.icon className="w-3.5 h-3.5" />
                     </Button>
@@ -141,18 +141,18 @@ export function RichContentEditor({
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
                 rows={12}
-                className="w-full p-4 bg-transparent text-white font-mono text-sm leading-relaxed focus:outline-none resize-y min-h-[220px]"
+                className="w-full p-4 bg-transparent text-ink font-mono text-sm leading-relaxed focus:outline-none resize-y min-h-[220px]"
             />
 
             {/* Editor Footer / Quick Stats */}
-            <div className="flex items-center justify-between px-3 py-1.5 bg-[#12131a]/60 border-t border-white/5 text-[11px] font-mono text-neutral-400">
+            <div className="flex items-center justify-between px-3 py-1.5 bg-surface-2 border-t border-line text-2xs text-subtle">
                 <span>Markdown + HTML formatted syntax</span>
                 <div className="flex items-center gap-3">
                     <span>
                         {value.trim() ? value.trim().split(/\s+/).length : 0} words
                     </span>
                     <span>{value.length} chars</span>
-                    <span className="text-accent">
+                    <span className="text-primary-ink">
                         ~{Math.max(1, Math.ceil((value.trim() ? value.trim().split(/\s+/).length : 0) / 200))} min read
                     </span>
                 </div>

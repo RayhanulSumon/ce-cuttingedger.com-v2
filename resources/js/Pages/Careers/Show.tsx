@@ -55,7 +55,7 @@ export default function Show({ job }: CareerShowProps) {
                                 <ul className="space-y-3">
                                     {job.requirements?.map((req, i) => (
                                         <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-ink-2">
-                                            <span className="text-primary-ink font-mono font-bold">→</span>
+                                            <span className="text-primary-ink font-bold">→</span>
                                             <span>{req}</span>
                                         </li>
                                     ))}
@@ -69,7 +69,7 @@ export default function Show({ job }: CareerShowProps) {
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {job.benefits?.map((ben, i) => (
-                                        <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-ink/10 text-sm text-ink-2 font-mono">
+                                        <div key={i} className="p-4 rounded-xl bg-surface-2 border border-line text-sm text-ink-2">
                                             {ben}
                                         </div>
                                     ))}
@@ -79,9 +79,9 @@ export default function Show({ job }: CareerShowProps) {
 
                         {/* Application Card */}
                         <div className="lg:col-span-4">
-                            <div className="sticky top-28 p-8 rounded-3xl bg-white border border-ink/10 space-y-6">
+                            <div className="sticky top-28 p-8 rounded-3xl bg-surface border border-ink/10 space-y-6">
                                 <div>
-                                    <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block mb-2">
+                                    <span className="text-xs uppercase tracking-widest text-primary-ink block mb-2">
                                         READY TO APPLY?
                                     </span>
                                     <h4 className="text-xl font-display font-bold text-ink">
@@ -93,7 +93,7 @@ export default function Show({ job }: CareerShowProps) {
                                 </div>
 
                                 {applied ? (
-                                    <div className="p-4 rounded-xl bg-primary/10 border border-primary text-primary-ink text-xs font-mono">
+                                    <div className="p-4 rounded-xl bg-primary/10 border border-primary text-primary-ink text-xs">
                                         Application link received! We will inspect your portfolio within 48 hours.
                                     </div>
                                 ) : (
@@ -105,7 +105,7 @@ export default function Show({ job }: CareerShowProps) {
                                         className="space-y-4"
                                     >
                                         <div>
-                                            <label className="block text-xs font-mono text-muted mb-1">
+                                            <label className="block text-xs text-muted mb-1">
                                                 Full Name
                                             </label>
                                             <input
@@ -117,7 +117,7 @@ export default function Show({ job }: CareerShowProps) {
                                         </div>
 
                                         <div>
-                                            <label className="block text-xs font-mono text-muted mb-1">
+                                            <label className="block text-xs text-muted mb-1">
                                                 Email
                                             </label>
                                             <input
@@ -129,7 +129,7 @@ export default function Show({ job }: CareerShowProps) {
                                         </div>
 
                                         <div>
-                                            <label className="block text-xs font-mono text-muted mb-1">
+                                            <label className="block text-xs text-muted mb-1">
                                                 Portfolio / GitHub URL
                                             </label>
                                             <input
@@ -142,7 +142,7 @@ export default function Show({ job }: CareerShowProps) {
 
                                         <button
                                             type="submit"
-                                            className="w-full bg-primary text-white font-display font-bold py-3.5 px-6 rounded-xl hover:bg-primary-hover flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                            className="w-full bg-primary text-primary-foreground font-display font-bold py-3.5 px-6 rounded-xl hover:bg-primary-hover flex items-center justify-center gap-2 transition-colors cursor-pointer"
                                         >
                                             <span>Transmit Application</span>
                                             <Send className="w-4 h-4" />

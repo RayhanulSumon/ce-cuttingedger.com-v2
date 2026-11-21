@@ -82,14 +82,14 @@ export function AiPreviewPanel({ feature, buildFormData, disabledReason }: AiPre
     };
 
     return (
-        <div className="rounded-2xl border border-ink/10 bg-white p-3.5">
+        <div className="rounded-2xl border border-ink/10 bg-surface p-3.5">
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5">
                     <Sparkles size={14} className="text-primary" />
                     <span className="text-xs font-bold text-ink">Instant AI Preview</span>
                 </div>
                 <span
-                    className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                    className={`rounded-full px-2.5 py-0.5 text-2xs font-bold ${
                         quota.remaining > 0
                             ? 'bg-primary/10 text-primary'
                             : 'bg-ink/10 text-subtle'
@@ -100,13 +100,13 @@ export function AiPreviewPanel({ feature, buildFormData, disabledReason }: AiPre
             </div>
 
             {previewUrl && (
-                <div className="mt-3 overflow-hidden rounded-xl border border-ink/10 bg-[#f8fafc]">
+                <div className="mt-3 overflow-hidden rounded-xl border border-ink/10 bg-surface-2">
                     <img
                         src={previewUrl}
                         alt="Real-time AI generated preview"
                         className="max-h-64 w-full object-contain"
                     />
-                    <div className="flex items-center justify-between border-t border-ink/10 bg-white px-3 py-1.5 text-[11px]">
+                    <div className="flex items-center justify-between border-t border-ink/10 bg-surface px-3 py-1.5 text-2xs">
                         <span className="font-semibold text-ink">AI Generated Preview</span>
                         <a
                             href={previewUrl}
@@ -121,13 +121,13 @@ export function AiPreviewPanel({ feature, buildFormData, disabledReason }: AiPre
                 </div>
             )}
 
-            {error && <p className="mt-2 text-[11px] font-medium text-red-600">{error}</p>}
+            {error && <p className="mt-2 text-2xs font-medium text-danger">{error}</p>}
 
             <button
                 type="button"
                 disabled={generating || quota.remaining <= 0 || Boolean(disabledReason)}
                 onClick={handleGenerate}
-                className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-ink/15 bg-[#f8fafc] px-3 py-2 text-xs font-bold text-ink transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-ink/15 bg-surface-2 px-3 py-2 text-xs font-bold text-ink transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {generating ? (
                     <>
@@ -145,7 +145,7 @@ export function AiPreviewPanel({ feature, buildFormData, disabledReason }: AiPre
             </button>
 
             {disabledReason && quota.remaining > 0 && (
-                <p className="mt-1.5 text-center text-[10px] text-subtle">{disabledReason}</p>
+                <p className="mt-1.5 text-center text-2xs text-subtle">{disabledReason}</p>
             )}
         </div>
     );

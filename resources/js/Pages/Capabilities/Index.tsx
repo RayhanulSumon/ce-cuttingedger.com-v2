@@ -41,7 +41,7 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
     );
 
     return (
-        <div className="min-h-screen bg-white text-ink">
+        <div className="min-h-screen bg-surface text-ink">
             <SeoHead
                 title="Capabilities: 2D, 3D, DTP and Video"
                 description="Explore CuttingEdger capabilities: 2D retouching, digital twins and virtual try-on, 3D modeling and CGI, DTP and catalog layout, and video, each with its own specialities."
@@ -80,7 +80,7 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
                                         className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
                                             isSelected
                                                 ? 'border-ink bg-ink text-white shadow-xs'
-                                                : 'border-ink/15 bg-white text-subtle hover:border-primary/60 hover:text-primary'
+                                                : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
                                         }`}
                                     >
                                         {tab}
@@ -89,7 +89,7 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
                             })}
                         </div>
 
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                        <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                             {totalSpecialities} {totalSpecialities === 1 ? 'speciality' : 'specialities'}
                         </span>
                     </div>
@@ -108,7 +108,7 @@ export default function Index({ capabilities = [] }: CapabilitiesIndexProps) {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 {main.tag && (
-                                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-primary-ink">
+                                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-2xs font-bold uppercase tracking-[0.16em] text-primary-ink">
                                                         {main.tag}
                                                     </span>
                                                 )}

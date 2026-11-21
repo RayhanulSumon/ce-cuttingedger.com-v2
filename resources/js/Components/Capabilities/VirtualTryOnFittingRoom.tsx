@@ -253,7 +253,7 @@ export function VirtualTryOnFittingRoom({ capability, parent }: VirtualTryOnFitt
     return (
         <section
             aria-label={capability.title}
-            className="relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden bg-white pb-6 pt-20 text-[#181818] select-none sm:pb-8 sm:pt-24"
+            className="relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden bg-surface pb-6 pt-20 text-ink select-none sm:pb-8 sm:pt-24"
         >
             {/* Minimal Top Header */}
             <div className="flex flex-wrap items-start justify-between gap-3 px-4 sm:px-10 lg:block lg:px-0">
@@ -266,7 +266,7 @@ export function VirtualTryOnFittingRoom({ capability, parent }: VirtualTryOnFitt
                         <ArrowLeft size={13} />
                         {parent ? `Back to ${parent.title}` : 'All capabilities'}
                     </Link>
-                    <h1 className="mt-1.5 font-serif text-[26px] sm:text-[34px] font-normal leading-none tracking-[-0.02em] text-[#181818]">
+                    <h1 className="mt-1.5 font-serif text-[26px] sm:text-[34px] font-normal leading-none tracking-[-0.02em] text-ink">
                         Fitting Room
                     </h1>
                 </div>
@@ -338,14 +338,14 @@ export function VirtualTryOnFittingRoom({ capability, parent }: VirtualTryOnFitt
             </div>
 
             {/* Clean Bottom Outfit Caption */}
-            <div className="mx-auto flex flex-wrap items-center justify-center gap-8 px-5 text-xs sm:gap-10 sm:text-[13px]">
+            <div className="mx-auto flex flex-wrap items-center justify-center gap-8 px-5 text-xs sm:gap-10 sm:text-sm">
                 <p>
-                    <span className="text-[#8e8e93]">Jacket</span>{' '}
-                    <strong className="font-semibold text-[#181818]">{activeJacket.name}</strong>
+                    <span className="text-subtle">Jacket</span>{' '}
+                    <strong className="font-semibold text-ink">{activeJacket.name}</strong>
                 </p>
                 <p>
-                    <span className="text-[#8e8e93]">Pant</span>{' '}
-                    <strong className="font-semibold text-[#181818]">{activePant.name}</strong>
+                    <span className="text-subtle">Pant</span>{' '}
+                    <strong className="font-semibold text-ink">{activePant.name}</strong>
                 </p>
             </div>
         </section>

@@ -107,8 +107,8 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
             header: "POSITION / ROLE",
             cell: (c) => (
                 <div>
-                    <div className="font-semibold text-white">{c.title}</div>
-                    <div className="text-xs text-neutral-400 font-mono">
+                    <div className="font-semibold text-ink">{c.title}</div>
+                    <div className="text-xs text-subtle">
                         {c.department} • {c.location_type}
                     </div>
                 </div>
@@ -140,7 +140,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-neutral-400 hover:text-white"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -152,7 +152,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setRoleToDelete(c)}
-                            className="gap-2 text-rose-400 focus:text-rose-400"
+                            className="gap-2 text-danger focus:text-danger"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Purge Opening</span>
@@ -188,7 +188,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Position Title
                             </label>
                             <Input
@@ -203,7 +203,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Department
                                 </label>
                                 <Input
@@ -215,7 +215,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Location
                                 </label>
                                 <Input
@@ -227,7 +227,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Experience
                                 </label>
                                 <Input
@@ -241,7 +241,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Position Overview
                             </label>
                             <Textarea
@@ -254,12 +254,12 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Recruiting Status
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Active for public applications.
                                 </span>
                             </div>
@@ -302,7 +302,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Position Title
                             </label>
                             <Input
@@ -316,7 +316,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Department
                                 </label>
                                 <Input
@@ -328,7 +328,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Location
                                 </label>
                                 <Input
@@ -340,7 +340,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Experience
                                 </label>
                                 <Input
@@ -354,7 +354,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Position Overview
                             </label>
                             <Textarea
@@ -366,12 +366,12 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Recruiting Status
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Active for public applications.
                                 </span>
                             </div>
@@ -412,7 +412,7 @@ export default function CareersIndex({ careers = [] }: CareersIndexProps) {
                         <AlertDialogTitle>Purge Career Opening?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you want to purge opening{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {roleToDelete?.title}
                             </span>
                             ?

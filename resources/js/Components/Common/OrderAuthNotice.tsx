@@ -60,7 +60,7 @@ export function OrderAuthNotice({ user, fallbackPath, onBeforeNavigate }: OrderA
                                     markAuthReturn();
                                     onBeforeNavigate?.();
                                 }}
-                                className="inline-flex items-center rounded-full bg-ink px-3.5 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-primary"
+                                className="inline-flex items-center rounded-full bg-ink px-3.5 py-1.5 text-2xs font-bold text-surface transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
                                 Sign in to Continue
                             </Link>
@@ -71,7 +71,7 @@ export function OrderAuthNotice({ user, fallbackPath, onBeforeNavigate }: OrderA
                                     markAuthReturn();
                                     onBeforeNavigate?.();
                                 }}
-                                className="inline-flex items-center rounded-full border border-ink/20 bg-white px-3.5 py-1.5 text-[11px] font-bold text-ink transition-colors hover:border-primary hover:text-primary"
+                                className="inline-flex items-center rounded-full border border-ink/20 bg-surface px-3.5 py-1.5 text-2xs font-bold text-ink transition-colors hover:border-primary hover:text-primary-ink"
                             >
                                 Create Account
                             </Link>
@@ -83,12 +83,12 @@ export function OrderAuthNotice({ user, fallbackPath, onBeforeNavigate }: OrderA
     }
 
     return (
-        <div className="rounded-2xl border border-amber-300/70 bg-amber-50 p-4 text-xs">
+        <div className="rounded-2xl border border-warning/30 bg-warning-soft p-4 text-xs">
             <div className="flex items-start gap-2.5">
-                <MailCheck size={15} className="mt-0.5 shrink-0 text-amber-700" />
+                <MailCheck size={15} className="mt-0.5 shrink-0 text-warning" />
                 <div className="space-y-2">
-                    <p className="font-bold text-amber-950">Verify your email to submit</p>
-                    <p className="leading-relaxed text-amber-900/80">
+                    <p className="font-bold text-warning">Verify your email to submit</p>
+                    <p className="leading-relaxed text-warning/80">
                         Your selections are saved automatically. Verify your email address and return here to submit your request.
                     </p>
                     <Link
@@ -98,7 +98,7 @@ export function OrderAuthNotice({ user, fallbackPath, onBeforeNavigate }: OrderA
                             markAuthReturn();
                             onBeforeNavigate?.();
                         }}
-                        className="inline-flex items-center rounded-full bg-amber-900 px-3.5 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-amber-800"
+                        className="inline-flex items-center rounded-full bg-warning px-3.5 py-1.5 text-2xs font-bold text-white transition-colors hover:bg-warning/90"
                     >
                         Verify Email
                     </Link>

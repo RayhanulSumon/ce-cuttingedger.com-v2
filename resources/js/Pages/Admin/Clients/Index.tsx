@@ -105,12 +105,12 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
             header: "PARTNER BRAND",
             cell: (c) => (
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-mono font-bold text-xs text-white">
+                    <div className="w-10 h-10 rounded-lg bg-surface-2 border border-line flex items-center justify-center font-bold text-xs text-ink">
                         {c.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                        <div className="font-semibold text-white">{c.name}</div>
-                        <div className="text-xs text-neutral-400 font-mono">
+                        <div className="font-semibold text-ink">{c.name}</div>
+                        <div className="text-xs text-subtle">
                             {c.url || "No link"}
                         </div>
                     </div>
@@ -128,7 +128,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
         {
             header: "SORT ORDER",
             cell: (c) => (
-                <span className="font-mono text-xs text-neutral-400">
+                <span className="text-xs text-subtle">
                     #{c.sort_order}
                 </span>
             ),
@@ -143,7 +143,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                             href={c.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 text-neutral-400 hover:text-white transition-colors"
+                            className="p-1.5 text-subtle hover:text-ink transition-colors"
                         >
                             <ExternalLink className="w-4 h-4" />
                         </a>
@@ -153,7 +153,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-neutral-400 hover:text-white"
+                                className="h-8 w-8 text-subtle hover:text-ink"
                             >
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -165,7 +165,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setClientToDelete(c)}
-                                className="gap-2 text-rose-400 focus:text-rose-400"
+                                className="gap-2 text-danger focus:text-danger"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span>Remove Brand</span>
@@ -205,7 +205,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
 
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Client / Company Name
                             </label>
                             <Input
@@ -219,7 +219,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Logo Dark Vector Asset Path / SVG
                             </label>
                             <Input
@@ -232,7 +232,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Brand Official Website URL
                             </label>
                             <Input
@@ -247,7 +247,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Marquee Ribbon Row
                                 </label>
                                 <select
@@ -258,14 +258,14 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-white border border-slate-200 px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
+                                    className="w-full h-10 rounded-lg bg-surface border border-line px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Sort Order
                                 </label>
                                 <Input
@@ -315,7 +315,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
 
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Client / Company Name
                             </label>
                             <Input
@@ -328,7 +328,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Logo Dark Vector Asset Path / SVG
                             </label>
                             <Input
@@ -340,7 +340,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Brand Official Website URL
                             </label>
                             <Input
@@ -354,7 +354,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Marquee Ribbon Row
                                 </label>
                                 <select
@@ -365,14 +365,14 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                                             Number(e.target.value)
                                         )
                                     }
-                                    className="w-full h-10 rounded-lg bg-white border border-slate-200 px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
+                                    className="w-full h-10 rounded-lg bg-surface border border-line px-3 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-primary"
                                 >
                                     <option value={1}>Row 1 (Top Ribbon)</option>
                                     <option value={2}>Row 2 (Bottom Ribbon)</option>
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Sort Order
                                 </label>
                                 <Input
@@ -417,7 +417,7 @@ export default function ClientsIndex({ clients = [] }: ClientsIndexProps) {
                         <AlertDialogTitle>Remove Brand Partner?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you wish to purge{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {clientToDelete?.name}
                             </span>{" "}
                             from the client marquee?

@@ -13,7 +13,7 @@ interface InfoCardsProps {
 }
 
 const SURFACE = 'rounded-2xl border border-ink/10 bg-surface p-4 text-left shadow-sm';
-const LABEL = 'text-[10px] font-semibold uppercase tracking-[0.18em] text-subtle';
+const LABEL = 'text-2xs font-semibold uppercase tracking-[0.18em] text-subtle';
 
 export function InfoCards({ card, onAsk }: InfoCardsProps) {
     switch (card.type) {
@@ -25,11 +25,11 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                         {(card.capabilities ?? []).map((capability: any) => (
                             <div key={capability.id} className="rounded-xl px-2.5 py-2.5">
                                 <Link href={capability.path} prefetch className="group flex items-start gap-3">
-                                    <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary-ink">
+                                    <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-2xs font-bold text-primary-ink">
                                         {capability.tag ?? <Layers className="h-4 w-4" />}
                                     </span>
                                     <span className="min-w-0 flex-1">
-                                        <span className="block text-[13px] font-bold leading-snug text-ink group-hover:text-primary-ink">{capability.title}</span>
+                                        <span className="block text-sm font-bold leading-snug text-ink group-hover:text-primary-ink">{capability.title}</span>
                                         <span className="mt-0.5 line-clamp-2 block text-[11.5px] leading-snug text-muted">{capability.subtitle}</span>
                                     </span>
                                     <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-faint transition-colors group-hover:text-primary" />
@@ -41,7 +41,7 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                                                 key={child.path}
                                                 type="button"
                                                 onClick={() => onAsk(`Tell me about ${child.title}`)}
-                                                className="rounded-full bg-page px-2.5 py-1 text-[10.5px] font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
+                                                className="rounded-full bg-page px-2.5 py-1 text-2xs font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
                                             >
                                                 {child.title}
                                             </button>
@@ -58,9 +58,9 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
             return (
                 <div className={`${SURFACE} space-y-3`}>
                     <div>
-                        {card.tag && <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-ink">{card.tag}</p>}
+                        {card.tag && <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary-ink">{card.tag}</p>}
                         <p className="text-sm font-bold leading-snug text-ink">{card.title}</p>
-                        {card.subtitle && <p className="mt-0.5 text-[12px] leading-snug text-muted">{card.subtitle}</p>}
+                        {card.subtitle && <p className="mt-0.5 text-xs leading-snug text-muted">{card.subtitle}</p>}
                     </div>
                     {card.children?.length > 0 && (
                         <div>
@@ -71,7 +71,7 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                                         key={child.path}
                                         type="button"
                                         onClick={() => onAsk(`Tell me about ${child.title}`)}
-                                        className="rounded-full bg-page px-2.5 py-1 text-[10.5px] font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
+                                        className="rounded-full bg-page px-2.5 py-1 text-2xs font-semibold text-ink-2 transition-colors hover:bg-primary/10 hover:text-primary-ink"
                                     >
                                         {child.title}
                                     </button>
@@ -79,7 +79,7 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                             </div>
                         </div>
                     )}
-                    <Link href={card.path} prefetch className="inline-flex items-center gap-1.5 text-[12px] font-bold text-primary-ink hover:underline">
+                    <Link href={card.path} prefetch className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-ink hover:underline">
                         Open the full page <ArrowUpRight className="h-3.5 w-3.5" />
                     </Link>
                 </div>
@@ -95,8 +95,8 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                                 key={link.href}
                                 href={link.href}
                                 prefetch
-                                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-bold transition-[transform,background-color] duration-300 hover:-translate-y-0.5 ${
-                                    i === 0 ? 'bg-primary text-primary-foreground hover:bg-primary-hover' : 'border border-ink/20 text-ink hover:bg-ink hover:text-white'
+                                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-[transform,background-color] duration-300 hover:-translate-y-0.5 ${
+                                    i === 0 ? 'bg-primary text-primary-foreground hover:bg-primary-hover' : 'border border-ink/20 text-ink hover:bg-ink hover:text-surface'
                                 }`}
                             >
                                 {link.label}
@@ -120,7 +120,7 @@ export function InfoCards({ card, onAsk }: InfoCardsProps) {
                     {faqs.map((faq) => (
                         <div key={faq.q}>
                             <p className="text-[12.5px] font-bold leading-snug text-ink">{faq.q}</p>
-                            <p className="mt-1 text-[12px] leading-relaxed text-muted">{faq.a}</p>
+                            <p className="mt-1 text-xs leading-relaxed text-muted">{faq.a}</p>
                         </div>
                     ))}
                 </div>

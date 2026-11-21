@@ -95,7 +95,7 @@ export function MagnifierLens({ lensRef }: { lensRef: React.Ref<HTMLSpanElement>
         <span
             ref={lensRef}
             aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-0 z-30 rounded-full border-2 border-white bg-[#eaf1f8] bg-no-repeat opacity-0 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.5)] ring-1 ring-black/10 transition-opacity duration-200 will-change-transform"
+            className="pointer-events-none absolute left-0 top-0 z-30 rounded-full border-2 border-white bg-surface-2 bg-no-repeat opacity-0 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.5)] ring-1 ring-black/10 transition-opacity duration-200 will-change-transform"
         />
     );
 }

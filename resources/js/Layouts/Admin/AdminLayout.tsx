@@ -334,10 +334,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     return (
         <TooltipProvider>
             <SidebarProvider defaultOpen={true}>
-                <div className="admin-shell min-h-screen w-full bg-[#f5f7fb] text-ink flex antialiased">
+                <div className="min-h-screen w-full bg-page text-ink flex antialiased">
                     {/* Clean Light Editorial Sidebar */}
-                    <Sidebar className="border-r border-slate-200/90 bg-white text-ink">
-                        <SidebarHeader className="border-b border-slate-100 bg-white px-5 py-4">
+                    <Sidebar className="border-r border-line bg-surface text-ink">
+                        <SidebarHeader className="border-b border-line bg-surface px-5 py-4">
                             <Link
                                 href="/admin"
                                 className="flex items-center justify-between gap-2 group cursor-pointer"
@@ -352,7 +352,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                         <span className="font-extrabold text-sm tracking-tight text-ink block leading-none">
                                             CuttingEdger
                                         </span>
-                                        <span className="text-[11px] font-medium text-slate-400 block mt-0.5">
+                                        <span className="text-2xs font-medium text-subtle block mt-0.5">
                                             Admin Workspace
                                         </span>
                                     </div>
@@ -363,7 +363,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         <SidebarContent
                             ref={sidebarContentRef}
                             onScroll={handleSidebarScroll}
-                            className="px-3 py-3 space-y-1 bg-white"
+                            className="px-3 py-3 space-y-1 bg-surface"
                         >
                             {/* Core Direct Links */}
                             <SidebarMenu className="space-y-0.5">
@@ -376,10 +376,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                 isActive={item.active}
                                                 tooltip={item.name}
                                                 className={cn(
-                                                    "rounded-xl text-[13px] transition-all py-2 px-2.5",
+                                                    "rounded-xl text-sm transition-all py-2 px-2.5",
                                                     item.active
-                                                        ? "bg-primary text-white font-semibold shadow-xs hover:bg-primary-hover hover:text-white"
-                                                        : "text-slate-600 font-medium hover:text-ink hover:bg-slate-100/80"
+                                                        ? "bg-primary text-primary-foreground font-semibold shadow-xs hover:bg-primary-hover hover:text-primary-foreground"
+                                                        : "text-muted font-medium hover:text-ink hover:bg-surface-2"
                                                 )}
                                             >
                                                 <Link
@@ -390,17 +390,17 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                     <Icon
                                                         className={cn(
                                                             "w-4 h-4 shrink-0",
-                                                            item.active ? "text-white" : "text-slate-400"
+                                                            item.active ? "text-primary-foreground" : "text-faint"
                                                         )}
                                                     />
                                                     <span className="truncate flex-1">{item.name}</span>
                                                     {item.badge && (
                                                         <span
                                                             className={cn(
-                                                                "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold tracking-tight",
+                                                                "shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-2xs font-bold tracking-tight",
                                                                 item.active
-                                                                    ? "bg-white text-primary"
-                                                                    : "bg-primary/15 text-primary"
+                                                                    ? "bg-surface text-primary-ink"
+                                                                    : "bg-primary-soft text-primary-ink"
                                                             )}
                                                         >
                                                             {item.badge}
@@ -413,7 +413,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                 })}
                             </SidebarMenu>
 
-                            <div className="my-2 border-t border-slate-100" />
+                            <div className="my-2 border-t border-line" />
 
                             {/* 3 Clean Collapsible Folders */}
                             <SidebarMenu className="space-y-0.5">
@@ -426,36 +426,36 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                 type="button"
                                                 onClick={() => toggleMenu(folder.name)}
                                                 className={cn(
-                                                    "w-full flex items-center gap-2.5 rounded-xl text-[13px] font-medium transition-colors py-2 px-2.5 cursor-pointer",
+                                                    "w-full flex items-center gap-2.5 rounded-xl text-sm font-medium transition-colors py-2 px-2.5 cursor-pointer",
                                                     folder.active
-                                                        ? "text-primary font-semibold bg-primary/5"
-                                                        : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
+                                                        ? "text-primary-ink font-semibold bg-primary-soft"
+                                                        : "text-muted hover:text-ink hover:bg-surface-2"
                                                 )}
                                             >
                                                 <Icon
                                                     className={cn(
                                                         "w-4 h-4 shrink-0",
-                                                        folder.active ? "text-primary" : "text-slate-400"
+                                                        folder.active ? "text-primary" : "text-faint"
                                                     )}
                                                 />
                                                 <span className="truncate flex-1 text-left">
                                                     {folder.name}
                                                 </span>
                                                 {folder.badge && (
-                                                    <span className="shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold bg-primary/15 text-primary">
+                                                    <span className="shrink-0 min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full text-2xs font-bold bg-primary-soft text-primary-ink">
                                                         {folder.badge}
                                                     </span>
                                                 )}
                                                 <ChevronDown
                                                     className={cn(
-                                                        "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
+                                                        "w-3.5 h-3.5 text-faint transition-transform duration-200",
                                                         isOpen ? "rotate-180" : ""
                                                     )}
                                                 />
                                             </button>
 
                                             {isOpen && folder.children && (
-                                                <div className="mt-1 ml-4 pl-3 border-l border-slate-200 space-y-0.5">
+                                                <div className="mt-1 ml-4 pl-3 border-l border-line space-y-0.5">
                                                     {folder.children.map((sub) => {
                                                         const SubIcon = sub.icon;
                                                         return (
@@ -466,16 +466,16 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                 className={cn(
                                                                     "flex items-center gap-2 rounded-lg py-1.5 px-2.5 text-xs transition-colors",
                                                                     sub.active
-                                                                        ? "bg-primary text-white font-semibold shadow-xs"
-                                                                        : "text-slate-600 hover:text-ink hover:bg-slate-100/80"
+                                                                        ? "bg-primary text-primary-foreground font-semibold shadow-xs"
+                                                                        : "text-muted hover:text-ink hover:bg-surface-2"
                                                                 )}
                                                             >
                                                                 <SubIcon
                                                                     className={cn(
                                                                         "w-3.5 h-3.5 shrink-0",
                                                                         sub.active
-                                                                            ? "text-white"
-                                                                            : "text-slate-400"
+                                                                            ? "text-primary-foreground"
+                                                                            : "text-faint"
                                                                     )}
                                                                 />
                                                                 <span className="truncate flex-1">
@@ -484,10 +484,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                                                 {sub.badge && (
                                                                     <span
                                                                         className={cn(
-                                                                            "shrink-0 min-w-4 h-4 px-1.5 flex items-center justify-center rounded-full text-[10px] font-bold",
+                                                                            "shrink-0 min-w-4 h-4 px-1.5 flex items-center justify-center rounded-full text-2xs font-bold",
                                                                             sub.active
-                                                                                ? "bg-white text-primary"
-                                                                                : "bg-primary/15 text-primary"
+                                                                                ? "bg-surface text-primary-ink"
+                                                                                : "bg-primary-soft text-primary-ink"
                                                                         )}
                                                                     >
                                                                         {sub.badge}
@@ -504,17 +504,17 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             </SidebarMenu>
                         </SidebarContent>
 
-                        <SidebarFooter className="border-t border-slate-100 p-3.5 bg-[#f8fafc]">
+                        <SidebarFooter className="border-t border-line p-3.5 bg-surface-2">
                             <div className="flex items-center justify-between gap-2 min-w-0 group-data-[collapsible=icon]:hidden">
                                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                                    <div className="w-8 h-8 rounded-full bg-primary-soft text-primary-ink font-bold text-xs flex items-center justify-center shrink-0">
                                         {(user?.name || "A").charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex flex-col min-w-0 flex-1">
                                         <span className="text-xs font-bold text-ink truncate">
                                             {user?.name || "Admin"}
                                         </span>
-                                        <span className="text-[11px] text-slate-500 truncate">
+                                        <span className="text-2xs text-subtle truncate">
                                             {user?.email}
                                         </span>
                                     </div>
@@ -525,7 +525,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                     method="post"
                                     as="button"
                                     title="Sign Out"
-                                    className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
+                                    className="p-2 rounded-lg text-faint hover:text-danger hover:bg-danger-soft transition-colors cursor-pointer shrink-0"
                                 >
                                     <LogOut className="w-4 h-4" />
                                 </Link>
@@ -534,12 +534,12 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     </Sidebar>
 
                     {/* Main Inset Content Area */}
-                    <SidebarInset className="bg-[#f5f7fb] text-ink flex-1 flex flex-col min-w-0">
+                    <SidebarInset className="bg-page text-ink flex-1 flex flex-col min-w-0">
                         {/* Clean Top Bar */}
-                        <header className="h-15 border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-2 sticky top-0 z-20">
+                        <header className="h-15 border-b border-line bg-surface/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-2 sticky top-0 z-20">
                             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                                <SidebarTrigger className="text-slate-500 hover:text-ink hover:bg-slate-100 shrink-0" />
-                                <div className="h-4 w-px bg-slate-200 shrink-0" />
+                                <SidebarTrigger className="text-subtle hover:text-ink hover:bg-surface-2 shrink-0" />
+                                <div className="h-4 w-px bg-line shrink-0" />
                                 <span className="text-sm font-bold text-ink truncate">
                                     {title || "Dashboard"}
                                 </span>
@@ -550,7 +550,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                                     href="/"
                                     target="_blank"
                                     aria-label="View Website"
-                                    className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-ink transition-colors"
+                                    className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl bg-surface-2 hover:bg-surface-3 text-ink-2 hover:text-ink transition-colors"
                                 >
                                     <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="w-3.5 h-3.5" />

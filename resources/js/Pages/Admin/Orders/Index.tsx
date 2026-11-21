@@ -211,31 +211,31 @@ export default function OrdersIndex({
         switch (status) {
             case "pending":
                 return (
-                    <Badge className="bg-amber-50 text-amber-700 border border-amber-200">
+                    <Badge className="bg-warning-soft text-warning border border-warning/25">
                         <Clock className="w-3 h-3 mr-1" /> Pending Review
                     </Badge>
                 );
             case "in_production":
                 return (
-                    <Badge className="bg-blue-50 text-blue-700 border border-blue-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         <Layers className="w-3 h-3 mr-1" /> In Production
                     </Badge>
                 );
             case "review":
                 return (
-                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         <Eye className="w-3 h-3 mr-1" /> Quality Review
                     </Badge>
                 );
             case "completed":
                 return (
-                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Badge className="bg-success-soft text-success border border-success/25">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Completed
                     </Badge>
                 );
             case "cancelled":
                 return (
-                    <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
+                    <Badge className="bg-danger-soft text-danger border border-danger/25">
                         <XCircle className="w-3 h-3 mr-1" /> Cancelled
                     </Badge>
                 );
@@ -246,25 +246,25 @@ export default function OrdersIndex({
         switch (status) {
             case "paid":
                 return (
-                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Badge className="bg-success-soft text-success border border-success/25">
                         Paid
                     </Badge>
                 );
             case "invoice_sent":
                 return (
-                    <Badge className="bg-sky-50 text-sky-700 border border-sky-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         Invoiced
                     </Badge>
                 );
             case "free_trial":
                 return (
-                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         Free Trial
                     </Badge>
                 );
             default:
                 return (
-                    <Badge className="bg-slate-100 text-slate-600 border border-slate-200">
+                    <Badge className="bg-surface-2 text-muted border border-line">
                         Unpaid
                     </Badge>
                 );
@@ -277,11 +277,11 @@ export default function OrdersIndex({
             accessorKey: "order_number",
             cell: (row) => (
                 <div className="flex flex-col gap-0.5">
-                    <span className="font-mono font-bold text-ink tracking-wide flex items-center gap-1.5 text-xs">
+                    <span className="font-bold text-ink tracking-wide flex items-center gap-1.5 text-xs">
                         <ShoppingBag className="w-3.5 h-3.5 text-primary shrink-0" />
                         {row.order_number}
                     </span>
-                    <span className="text-[11px] text-slate-500">{row.created_at_formatted}</span>
+                    <span className="text-2xs text-subtle">{row.created_at_formatted}</span>
                 </div>
             ),
         },
@@ -291,7 +291,7 @@ export default function OrdersIndex({
             cell: (row) => (
                 <div className="flex flex-col gap-0.5">
                     <span className="font-semibold text-ink text-xs">{row.client_name}</span>
-                    <span className="text-[11px] text-slate-500 font-mono">{row.client_email}</span>
+                    <span className="text-2xs text-subtle">{row.client_email}</span>
                 </div>
             ),
         },
@@ -303,7 +303,7 @@ export default function OrdersIndex({
                     <span className="font-semibold text-ink truncate max-w-[200px]">
                         {row.service_name}
                     </span>
-                    <span className="text-[11px] text-slate-500 capitalize">
+                    <span className="text-2xs text-subtle capitalize">
                         {row.complexity} complexity • {row.turnaround}
                     </span>
                 </div>
@@ -316,33 +316,33 @@ export default function OrdersIndex({
                 const isUnder = row.uploaded_count < row.quantity;
                 const isOver = row.uploaded_count > row.quantity;
                 return (
-                    <div className="flex flex-col gap-1 font-mono text-xs">
+                    <div className="flex flex-col gap-1 text-xs">
                         <div className="flex items-center gap-1.5">
                             <span className="font-bold text-ink">{row.uploaded_count}</span>
-                            <span className="text-slate-400">/</span>
-                            <span className="text-slate-600">{row.quantity} quoted</span>
+                            <span className="text-faint">/</span>
+                            <span className="text-muted">{row.quantity} quoted</span>
                         </div>
                         {row.cloud_link ? (
                             <a
                                 href={row.cloud_link}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-[10px] text-purple-700 bg-purple-50 hover:bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200 w-fit transition-colors"
+                                className="inline-flex items-center gap-1 text-2xs text-info bg-info-soft hover:bg-info-soft px-1.5 py-0.5 rounded border border-info/25 w-fit transition-colors"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <Folder className="w-2.5 h-2.5 shrink-0" /> Drive Link ↗
                             </a>
                         ) : isUnder ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 w-fit">
+                            <span className="inline-flex items-center gap-1 text-2xs text-warning bg-warning-soft px-1.5 py-0.5 rounded border border-warning/25 w-fit">
                                 <AlertTriangle className="w-2.5 h-2.5 shrink-0" />
                                 {row.quantity - row.uploaded_count} pending
                             </span>
                         ) : isOver ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200 w-fit">
+                            <span className="inline-flex items-center gap-1 text-2xs text-info bg-info-soft px-1.5 py-0.5 rounded border border-info/25 w-fit">
                                 +{row.uploaded_count - row.quantity} extra
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 w-fit">
+                            <span className="inline-flex items-center gap-1 text-2xs text-success bg-success-soft px-1.5 py-0.5 rounded border border-success/25 w-fit">
                                 <CheckCircle2 className="w-2.5 h-2.5 shrink-0" /> Complete
                             </span>
                         )}
@@ -379,17 +379,17 @@ export default function OrdersIndex({
                             setAdminNote(row.admin_notes || "");
                             setIsDetailOpen(true);
                         }}
-                        className="h-8 px-2.5 border-slate-200 bg-white hover:bg-slate-50 text-ink text-xs"
+                        className="h-8 px-2.5 border-line bg-surface hover:bg-surface-2 text-ink text-xs"
                     >
-                        <Eye className="w-3.5 h-3.5 mr-1 text-slate-500" /> Review
+                        <Eye className="w-3.5 h-3.5 mr-1 text-subtle" /> Review
                     </Button>
 
                     <a
                         href={`/admin/orders/${row.id}/download-zip`}
                         title="Download All Files (ZIP)"
-                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-slate-100 border border-slate-200 hover:bg-slate-200/80 text-ink text-xs font-medium transition-colors"
+                        className="inline-flex items-center justify-center h-8 px-2.5 rounded-lg bg-surface-2 border border-line hover:bg-surface-3 text-ink text-xs font-medium transition-colors"
                     >
-                        <Download className="w-3.5 h-3.5 mr-1 text-slate-500" /> ZIP
+                        <Download className="w-3.5 h-3.5 mr-1 text-subtle" /> ZIP
                     </a>
 
                     <DropdownMenu>
@@ -397,7 +397,7 @@ export default function OrdersIndex({
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-8 w-8 p-0 text-slate-500 hover:text-ink"
+                                className="h-8 w-8 p-0 text-subtle hover:text-ink"
                             >
                                 <MoreHorizontal className="w-4 h-4" />
                             </Button>
@@ -407,19 +407,19 @@ export default function OrdersIndex({
                                 onClick={() => handleUpdateStatus(row.id, "in_production")}
                                 className="cursor-pointer"
                             >
-                                <Layers className="w-3.5 h-3.5 mr-2 text-blue-600" /> Start
+                                <Layers className="w-3.5 h-3.5 mr-2 text-info" /> Start
                                 Production
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => handleUpdateStatus(row.id, "completed")}
                                 className="cursor-pointer"
                             >
-                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-emerald-600" /> Mark
+                                <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-success" /> Mark
                                 Completed
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => handleDelete(row)}
-                                className="text-rose-600 focus:text-rose-600 cursor-pointer"
+                                className="text-danger focus:text-danger cursor-pointer"
                             >
                                 <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete Order
                             </DropdownMenuItem>
@@ -446,11 +446,11 @@ export default function OrdersIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             !currentStatus
-                                ? "bg-white border-primary ring-2 ring-primary/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-surface border-primary ring-2 ring-primary/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-subtle block">
                             All Orders
                         </span>
                         <span className="text-2xl font-extrabold text-ink tabular-nums mt-0.5 block">
@@ -464,14 +464,14 @@ export default function OrdersIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "pending"
-                                ? "bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-warning-soft border-warning/40 ring-2 ring-warning/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-warning block">
                             Pending Review
                         </span>
-                        <span className="text-2xl font-extrabold text-amber-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-warning tabular-nums mt-0.5 block">
                             {stats.pending}
                         </span>
                     </button>
@@ -482,14 +482,14 @@ export default function OrdersIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "in_production"
-                                ? "bg-blue-50/70 border-blue-400 ring-2 ring-blue-400/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-info-soft border-info/40 ring-2 ring-info/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-info block">
                             In Production
                         </span>
-                        <span className="text-2xl font-extrabold text-blue-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-info tabular-nums mt-0.5 block">
                             {stats.in_production}
                         </span>
                     </button>
@@ -500,23 +500,23 @@ export default function OrdersIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "completed"
-                                ? "bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-success-soft border-success/40 ring-2 ring-success/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-success block">
                             Completed
                         </span>
-                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-success tabular-nums mt-0.5 block">
                             {stats.completed}
                         </span>
                     </button>
 
-                    <div className="p-3.5 rounded-2xl border border-slate-200 bg-white text-left">
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                    <div className="p-3.5 rounded-2xl border border-line bg-surface text-left">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-success block">
                             Paid Revenue
                         </span>
-                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-success tabular-nums mt-0.5 block">
                             ${stats.total_revenue.toFixed(2)}
                         </span>
                     </div>
@@ -545,8 +545,8 @@ export default function OrdersIndex({
                                 className={cn(
                                     "px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer",
                                     active
-                                        ? "bg-primary text-white border-primary shadow-xs"
-                                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink"
+                                        ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                                        : "bg-surface text-muted border-line hover:border-line-strong hover:text-ink"
                                 )}
                             >
                                 {tab.label}
@@ -565,12 +565,12 @@ export default function OrdersIndex({
                 >
                     <div className="flex flex-wrap items-center gap-2 w-full sm:max-w-md">
                         <div className="relative flex-1 min-w-[200px]">
-                            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <Search className="w-4 h-4 text-faint absolute left-3 top-1/2 -translate-y-1/2" />
                             <Input
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search by order #, client, email, or service..."
-                                className="pl-9 bg-white border-slate-200 text-ink"
+                                className="pl-9 bg-surface border-line text-ink"
                             />
                         </div>
                         <Button type="submit" variant="outline" size="sm" className="min-h-10 sm:min-h-9 px-3.5">
@@ -585,14 +585,14 @@ export default function OrdersIndex({
                                     setSearchQuery("");
                                     handleSearch("");
                                 }}
-                                className="min-h-10 sm:min-h-9 px-3 text-slate-500 hover:text-ink"
+                                className="min-h-10 sm:min-h-9 px-3 text-subtle hover:text-ink"
                             >
                                 Clear
                             </Button>
                         )}
                     </div>
 
-                    <div className="text-xs font-mono text-slate-500">
+                    <div className="text-xs text-subtle">
                         Showing {orders.from ?? 0}–{orders.to ?? orders.data.length} of{" "}
                         {orders.total} orders
                     </div>
@@ -608,8 +608,8 @@ export default function OrdersIndex({
 
                 {/* Server Pagination Footer */}
                 {orders.last_page > 1 && (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
-                        <span className="font-mono">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-xs text-muted">
+                        <span className="">
                             Page {orders.current_page} of {orders.last_page}
                         </span>
                         <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -640,13 +640,13 @@ export default function OrdersIndex({
 
             {/* Order Detail & Process Modal */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="max-w-2xl bg-white border-slate-200 text-ink max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl bg-surface border-line text-ink max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-base font-bold text-ink">
                             <ShoppingBag className="w-4 h-4 text-primary" />
                             <span>Order #{selectedOrder?.order_number}</span>
                         </DialogTitle>
-                        <DialogDescription className="text-xs text-slate-500">
+                        <DialogDescription className="text-xs text-subtle">
                             Created on {selectedOrder?.created_at_formatted} • Source:{" "}
                             {selectedOrder?.source?.toUpperCase()}
                         </DialogDescription>
@@ -655,9 +655,9 @@ export default function OrdersIndex({
                     {selectedOrder && (
                         <div className="space-y-4 py-2 text-xs">
                             {/* Client & Production Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-surface-2 p-3.5 rounded-xl border border-line">
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Client Name
                                     </span>
                                     <span className="font-semibold text-ink">
@@ -665,23 +665,23 @@ export default function OrdersIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Delivery Email
                                     </span>
-                                    <span className="font-semibold text-primary-ink font-mono break-all">
+                                    <span className="font-semibold text-primary-ink break-all">
                                         {selectedOrder.client_email}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Phone / WhatsApp
                                     </span>
-                                    <span className="text-slate-700">
+                                    <span className="text-ink-2">
                                         {selectedOrder.client_phone || "Not provided"}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Service Type
                                     </span>
                                     <span className="text-ink font-semibold">
@@ -689,7 +689,7 @@ export default function OrdersIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Complexity
                                     </span>
                                     <span className="text-primary-ink font-bold capitalize">
@@ -697,7 +697,7 @@ export default function OrdersIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Turnaround SLA
                                     </span>
                                     <span className="text-ink">{selectedOrder.turnaround}</span>
@@ -709,22 +709,22 @@ export default function OrdersIndex({
                                 className={cn(
                                     "p-3 rounded-xl border flex items-center justify-between gap-3",
                                     selectedOrder.uploaded_count < selectedOrder.quantity
-                                        ? "bg-amber-50 border-amber-200 text-amber-900"
-                                        : "bg-emerald-50 border-emerald-200 text-emerald-900"
+                                        ? "bg-warning-soft border-warning/25 text-warning"
+                                        : "bg-success-soft border-success/25 text-success"
                                 )}
                             >
                                 <div className="flex items-center gap-2">
                                     {selectedOrder.uploaded_count < selectedOrder.quantity ? (
-                                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                                        <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
                                     ) : (
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                        <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                                     )}
                                     <div>
                                         <span className="font-bold text-ink block">
                                             {selectedOrder.uploaded_count} of {selectedOrder.quantity}{" "}
                                             files uploaded
                                         </span>
-                                        <span className="text-[11px] text-slate-600">
+                                        <span className="text-2xs text-muted">
                                             {selectedOrder.uploaded_count < selectedOrder.quantity
                                                 ? `Client quoted for ${selectedOrder.quantity} images, but has only uploaded ${selectedOrder.uploaded_count} files (${selectedOrder.quantity - selectedOrder.uploaded_count} pending).`
                                                 : `All ${selectedOrder.quantity} files received for this production batch.`}
@@ -734,7 +734,7 @@ export default function OrdersIndex({
 
                                 <a
                                     href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                    className="px-3 py-1.5 rounded-lg bg-primary text-white font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-primary-hover transition-colors"
+                                    className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-xs flex items-center gap-1.5 shrink-0 hover:bg-primary-hover transition-colors"
                                 >
                                     <Download className="w-3.5 h-3.5" />
                                     <span>Download All (ZIP)</span>
@@ -742,9 +742,9 @@ export default function OrdersIndex({
                             </div>
 
                             {/* Financial Summary */}
-                            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                            <div className="p-3 rounded-xl bg-surface-2 border border-line flex items-center justify-between text-xs">
                                 <div>
-                                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                                    <span className="text-subtle block text-2xs uppercase font-semibold">
                                         Pricing Breakdown
                                     </span>
                                     <span className="text-ink font-medium">
@@ -755,7 +755,7 @@ export default function OrdersIndex({
                                     </span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                                    <span className="text-subtle block text-2xs uppercase font-semibold">
                                         Total Order Amount
                                     </span>
                                     <span className="text-base font-bold text-primary-ink">
@@ -767,8 +767,8 @@ export default function OrdersIndex({
                             {/* Specifications Breakdown (Digital Twin or Virtual Try-On) */}
                             {selectedOrder.specifications &&
                                 Object.keys(selectedOrder.specifications).length > 0 && (
-                                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-                                        <span className="text-[11px] font-bold uppercase tracking-wider text-primary-ink block">
+                                    <div className="p-3.5 rounded-xl bg-surface-2 border border-line space-y-2.5">
+                                        <span className="text-2xs font-bold uppercase tracking-wider text-primary-ink block">
                                             {selectedOrder.order_type?.startsWith("digital_twin")
                                                 ? "Digital Twin Specification & Custom Attributes"
                                                 : selectedOrder.order_type === "virtual_try_on_quote"
@@ -780,7 +780,7 @@ export default function OrdersIndex({
                                             <div className="space-y-2 text-xs">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <span className="text-slate-500 text-[10px] block">
+                                                        <span className="text-subtle text-2xs block">
                                                             Order Mode
                                                         </span>
                                                         <span className="text-primary-ink font-bold uppercase">
@@ -788,7 +788,7 @@ export default function OrdersIndex({
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-slate-500 text-[10px] block">
+                                                        <span className="text-subtle text-2xs block">
                                                             Reference / Licensed Twin
                                                         </span>
                                                         <span className="text-ink font-semibold">
@@ -805,10 +805,10 @@ export default function OrdersIndex({
                                                     selectedOrder.specifications.selected_poses
                                                         .length > 0 && (
                                                         <div>
-                                                            <span className="text-slate-500 text-[10px] block">
+                                                            <span className="text-subtle text-2xs block">
                                                                 Requested Pose Angles
                                                             </span>
-                                                            <span className="text-slate-800">
+                                                            <span className="text-ink">
                                                                 {selectedOrder.specifications.selected_poses.join(
                                                                     ", "
                                                                 )}
@@ -820,16 +820,16 @@ export default function OrdersIndex({
                                                     Object.keys(
                                                         selectedOrder.specifications.attributes
                                                     ).length > 0 && (
-                                                        <div className="pt-2 border-t border-slate-200 grid grid-cols-2 gap-2">
+                                                        <div className="pt-2 border-t border-line grid grid-cols-2 gap-2">
                                                             {Object.entries(
                                                                 selectedOrder.specifications
                                                                     .attributes
                                                             ).map(([attrKey, attrVal]) => (
                                                                 <div
                                                                     key={attrKey}
-                                                                    className="bg-white p-2 rounded-lg border border-slate-200"
+                                                                    className="bg-surface p-2 rounded-lg border border-line"
                                                                 >
-                                                                    <span className="text-[10px] text-slate-500 block">
+                                                                    <span className="text-2xs text-subtle block">
                                                                         {attrKey}
                                                                     </span>
                                                                     <span className="text-ink font-semibold">
@@ -854,7 +854,7 @@ export default function OrdersIndex({
                                             <div className="space-y-2 text-xs">
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <span className="text-slate-500 text-[10px] block">
+                                                        <span className="text-subtle text-2xs block">
                                                             Model Source
                                                         </span>
                                                         <span className="text-primary-ink font-bold uppercase">
@@ -865,7 +865,7 @@ export default function OrdersIndex({
                                                         </span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-slate-500 text-[10px] block">
+                                                        <span className="text-subtle text-2xs block">
                                                             Selected Model / Look
                                                         </span>
                                                         <span className="text-ink font-semibold">
@@ -880,7 +880,7 @@ export default function OrdersIndex({
                                                 </div>
 
                                                 {selectedOrder.specifications.labeled_files && (
-                                                    <div className="pt-2 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                    <div className="pt-2 border-t border-line grid grid-cols-2 sm:grid-cols-4 gap-2">
                                                         {Object.entries(
                                                             selectedOrder.specifications
                                                                 .labeled_files
@@ -890,12 +890,12 @@ export default function OrdersIndex({
                                                                 href={String(fileUrl)}
                                                                 target="_blank"
                                                                 rel="noreferrer"
-                                                                className="bg-white hover:bg-slate-50 p-2 rounded-lg border border-slate-200 flex flex-col gap-1 transition-colors"
+                                                                className="bg-surface hover:bg-surface-2 p-2 rounded-lg border border-line flex flex-col gap-1 transition-colors"
                                                             >
-                                                                <span className="text-[10px] uppercase text-primary-ink font-bold">
+                                                                <span className="text-2xs uppercase text-primary-ink font-bold">
                                                                     {slotKey.replace("_", " ")}
                                                                 </span>
-                                                                <span className="text-[10px] text-sky-600 underline">
+                                                                <span className="text-2xs text-info underline">
                                                                     View / Download ↗
                                                                 </span>
                                                             </a>
@@ -909,23 +909,23 @@ export default function OrdersIndex({
 
                             {/* Cloud Drive / Google Drive Folder */}
                             {selectedOrder.cloud_link && (
-                                <div className="p-3.5 bg-purple-50 rounded-xl border border-purple-200 space-y-2">
+                                <div className="p-3.5 bg-info-soft rounded-xl border border-info/25 space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-xs font-bold text-purple-900 flex items-center gap-1.5">
-                                            <Folder className="w-4 h-4 text-purple-600" />
+                                        <span className="text-xs font-bold text-info flex items-center gap-1.5">
+                                            <Folder className="w-4 h-4 text-info" />
                                             Google Drive / Cloud Folder
                                         </span>
                                         <a
                                             href={selectedOrder.cloud_link}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold flex items-center gap-1 transition-colors"
+                                            className="px-2.5 py-1 rounded-lg bg-info hover:bg-info/90 text-white text-xs font-semibold flex items-center gap-1 transition-colors"
                                         >
                                             <span>Open Cloud Link</span>
                                             <ExternalLink className="w-3 h-3" />
                                         </a>
                                     </div>
-                                    <p className="text-[11px] font-mono text-purple-900 break-all select-all bg-white p-2 rounded-lg border border-purple-200">
+                                    <p className="text-2xs text-info break-all select-all bg-surface p-2 rounded-lg border border-info/25">
                                         {selectedOrder.cloud_link}
                                     </p>
                                 </div>
@@ -933,11 +933,11 @@ export default function OrdersIndex({
 
                             {/* Client Instructions */}
                             {selectedOrder.instructions && (
-                                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">
+                                <div className="p-3 bg-surface-2 rounded-xl border border-line">
+                                    <span className="text-2xs text-subtle uppercase font-semibold block mb-1">
                                         Client Instructions
                                     </span>
-                                    <p className="text-slate-700 leading-relaxed">
+                                    <p className="text-ink-2 leading-relaxed">
                                         {selectedOrder.instructions}
                                     </p>
                                 </div>
@@ -946,12 +946,12 @@ export default function OrdersIndex({
                             {/* Uploaded Images Gallery */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[11px] text-slate-600 uppercase tracking-wider font-bold">
+                                    <span className="text-2xs text-muted uppercase tracking-wider font-bold">
                                         Client Uploaded Files ({selectedOrder.images.length})
                                     </span>
                                     <a
                                         href={`/admin/orders/${selectedOrder.id}/download-zip`}
-                                        className="text-[11px] font-semibold text-primary-ink hover:underline flex items-center gap-1"
+                                        className="text-2xs font-semibold text-primary-ink hover:underline flex items-center gap-1"
                                     >
                                         <Download className="w-3 h-3" /> Download All (
                                         {selectedOrder.images.length})
@@ -962,7 +962,7 @@ export default function OrdersIndex({
                                     {selectedOrder.images.map((imgUrl, i) => (
                                         <div
                                             key={i}
-                                            className="group relative rounded-xl border border-slate-200 bg-slate-50 overflow-hidden"
+                                            className="group relative rounded-xl border border-line bg-surface-2 overflow-hidden"
                                         >
                                             <div className="aspect-square w-full">
                                                 <img
@@ -971,13 +971,13 @@ export default function OrdersIndex({
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                                                 />
                                             </div>
-                                            <div className="p-2 bg-white flex items-center justify-between border-t border-slate-200 text-[11px]">
+                                            <div className="p-2 bg-surface flex items-center justify-between border-t border-line text-2xs">
                                                 <span>File #{i + 1}</span>
                                                 <div className="flex items-center gap-1.5">
                                                     <button
                                                         type="button"
                                                         onClick={() => setPreviewImage(imgUrl)}
-                                                        className="p-1 hover:text-primary text-slate-500"
+                                                        className="p-1 hover:text-primary text-subtle"
                                                         title="Preview"
                                                     >
                                                         <Eye className="w-3 h-3" />
@@ -987,7 +987,7 @@ export default function OrdersIndex({
                                                         download
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="p-1 hover:text-primary text-slate-500"
+                                                        className="p-1 hover:text-primary text-subtle"
                                                         title="Download File"
                                                     >
                                                         <Download className="w-3 h-3" />
@@ -1001,19 +1001,19 @@ export default function OrdersIndex({
 
                             {/* Internal Studio Notes */}
                             <div className="space-y-1.5">
-                                <label className="text-[11px] font-semibold uppercase text-slate-500">
+                                <label className="text-2xs font-semibold uppercase text-subtle">
                                     Internal Studio Notes
                                 </label>
                                 <textarea
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
                                     placeholder="Add notes on progress, retouch crew assigned, or delivery links..."
-                                    className="w-full h-20 bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-ink focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full h-20 bg-surface border border-line rounded-xl p-2.5 text-xs text-ink focus:outline-none focus:border-ring transition-colors"
                                 />
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                            <div className="pt-2 border-t border-line flex flex-wrap items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                     <Button
                                         type="button"
@@ -1028,7 +1028,7 @@ export default function OrdersIndex({
                                             )
                                         }
                                         disabled={isUpdatingStatus}
-                                        className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 text-xs"
+                                        className="bg-info-soft border-info/25 text-info hover:bg-info-soft text-xs"
                                     >
                                         <Layers className="w-3.5 h-3.5 mr-1" /> Set In Production
                                     </Button>
@@ -1045,7 +1045,7 @@ export default function OrdersIndex({
                                             )
                                         }
                                         disabled={isUpdatingStatus}
-                                        className="bg-primary text-white hover:bg-primary-hover text-xs font-semibold"
+                                        className="bg-primary text-primary-foreground hover:bg-primary-hover text-xs font-semibold"
                                     >
                                         <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Mark Delivered
                                         &amp; Paid
@@ -1065,7 +1065,7 @@ export default function OrdersIndex({
                                         )
                                     }
                                     disabled={isUpdatingStatus}
-                                    className="text-slate-600 hover:text-ink text-xs"
+                                    className="text-muted hover:text-ink text-xs"
                                 >
                                     Save Notes Only
                                 </Button>
@@ -1077,7 +1077,7 @@ export default function OrdersIndex({
 
             {/* Image Preview Modal */}
             <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
-                <DialogContent className="max-w-4xl bg-white border-slate-200 p-3 text-ink">
+                <DialogContent className="max-w-4xl bg-surface border-line p-3 text-ink">
                     {previewImage && (
                         <div className="relative flex flex-col items-center">
                             <img
@@ -1085,8 +1085,8 @@ export default function OrdersIndex({
                                 alt="Order Asset Preview"
                                 className="max-h-[80vh] w-auto object-contain rounded-lg"
                             />
-                            <div className="mt-2 flex items-center justify-between w-full px-2 text-xs font-mono">
-                                <span className="text-slate-500 truncate max-w-md">
+                            <div className="mt-2 flex items-center justify-between w-full px-2 text-xs">
+                                <span className="text-subtle truncate max-w-md">
                                     {previewImage}
                                 </span>
                                 <a
@@ -1094,7 +1094,7 @@ export default function OrdersIndex({
                                     download
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-3 py-1.5 rounded-lg bg-primary text-white font-semibold flex items-center gap-1"
+                                    className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground font-semibold flex items-center gap-1"
                                 >
                                     <Download className="w-3 h-3" /> Download High-Res
                                 </a>
@@ -1116,7 +1116,7 @@ export default function OrdersIndex({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete} className="bg-rose-600 text-white">
+                        <AlertDialogAction onClick={confirmDelete} className="bg-danger text-white">
                             Delete Order
                         </AlertDialogAction>
                     </AlertDialogFooter>

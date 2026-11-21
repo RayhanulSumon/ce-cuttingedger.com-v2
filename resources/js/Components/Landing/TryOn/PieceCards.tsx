@@ -57,10 +57,10 @@ export function PieceCards({
                     >
                         <div className="relative z-10 flex items-center">
                             <span
-                                className={`grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-[10px] font-bold tabular-nums transition-colors duration-300 ${
+                                className={`grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-2xs font-bold tabular-nums transition-colors duration-300 ${
                                     isSelected || isHot
-                                        ? 'bg-primary text-white'
-                                        : 'bg-[#dfe8f1] text-[#3d4857] group-hover:bg-primary group-hover:text-white'
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-surface-2 text-ink-2 group-hover:bg-primary group-hover:text-primary-foreground'
                                 }`}
                             >
                                 {String(i + 1).padStart(2, '0')}
@@ -82,7 +82,7 @@ export function PieceCards({
                         <h4
                             key={pieceKey}
                             style={delay}
-                            className="animate-card-in relative z-10 min-w-0 truncate text-xs font-semibold tracking-[0.04em] text-[#151413]"
+                            className="animate-card-in relative z-10 min-w-0 truncate text-xs font-semibold tracking-[0.04em] text-ink"
                         >
                             {piece.name}
                         </h4>

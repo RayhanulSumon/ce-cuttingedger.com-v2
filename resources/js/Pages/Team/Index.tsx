@@ -31,19 +31,19 @@ export default function Index({ members = [] }: TeamIndexProps) {
                             <Link
                                 key={member.id || member.slug}
                                 href={`/team/${member.slug}`}
-                                className="group rounded-3xl bg-white border border-ink/10 overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all duration-300"
+                                className="group rounded-3xl bg-surface border border-ink/10 overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all duration-300"
                             >
-                                <div className="relative aspect-[4/5] bg-white overflow-hidden">
+                                <div className="relative aspect-[4/5] bg-surface overflow-hidden">
                                     <img
                                         src={member.avatar}
                                         alt={member.name}
                                         loading="lazy"
                                         className="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-out"
                                     />
-                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-[11px] font-mono uppercase tracking-wider text-primary-ink">
+                                    <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-2xs uppercase tracking-wider text-primary-ink">
                                         Since {member.since_year}
                                     </div>
-                                    <div className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-primary text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                                    <div className="absolute bottom-4 right-4 w-9 h-9 rounded-full bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
                                         <ArrowUpRight className="w-5 h-5" />
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@ export default function Index({ members = [] }: TeamIndexProps) {
                                     <h3 className="font-display font-bold text-2xl text-ink group-hover:text-primary-ink transition-colors">
                                         {member.name}
                                     </h3>
-                                    <p className="font-mono text-xs text-muted">
+                                    <p className="text-xs text-muted">
                                         {member.role}
                                     </p>
                                     <p className="text-xs text-subtle line-clamp-2 pt-2 leading-relaxed">

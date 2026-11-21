@@ -55,9 +55,9 @@ interface PageProps {
 
 type ModelFilter = 'all' | 'homepage' | 'available' | 'sold_out' | 'upcoming';
 
-const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-slate-700';
+const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold text-ink-2';
 const INPUT_CLASS =
-    'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15';
+    'w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-ring focus:outline-none focus:ring-2 focus:ring-primary/15';
 
 function formatFileSize(bytes?: number | null): string {
     if (!bytes || bytes <= 0) {
@@ -526,14 +526,14 @@ export default function AdminDigitalTwinsIndex({
 
             <div className="space-y-5">
                 {/* Clean Section Switcher Tabs */}
-                <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
+                <div className="flex flex-wrap items-center gap-2 border-b border-line pb-3">
                     <button
                         type="button"
                         onClick={() => setActiveTab('models')}
                         className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                             activeTab === 'models'
-                                ? 'bg-primary text-white shadow-xs'
-                                : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-ink'
+                                ? 'bg-primary text-primary-foreground shadow-xs'
+                                : 'border border-line bg-surface text-muted hover:bg-surface-2 hover:text-ink'
                         }`}
                     >
                         <Users className="h-3.5 w-3.5" />
@@ -544,8 +544,8 @@ export default function AdminDigitalTwinsIndex({
                         onClick={() => setActiveTab('attributes')}
                         className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                             activeTab === 'attributes'
-                                ? 'bg-primary text-white shadow-xs'
-                                : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-ink'
+                                ? 'bg-primary text-primary-foreground shadow-xs'
+                                : 'border border-line bg-surface text-muted hover:bg-surface-2 hover:text-ink'
                         }`}
                     >
                         <Settings2 className="h-3.5 w-3.5" />
@@ -574,8 +574,8 @@ export default function AdminDigitalTwinsIndex({
                                         onClick={() => setStatusFilter(pill.id)}
                                         className={`cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
                                             statusFilter === pill.id
-                                                ? 'bg-ink text-white'
-                                                : 'border border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                                ? 'bg-ink text-surface'
+                                                : 'border border-line bg-surface text-muted hover:text-ink'
                                         }`}
                                     >
                                         {pill.label}
@@ -584,20 +584,20 @@ export default function AdminDigitalTwinsIndex({
                             </div>
 
                             <div className="relative w-full lg:w-72">
-                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
                                 <Input
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search by name, look #, or category..."
-                                    className="bg-white pl-9 border-slate-200 text-ink"
+                                    className="bg-surface pl-9 border-line text-ink"
                                 />
                             </div>
                         </div>
 
                         {filteredTwins.length === 0 ? (
-                            <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-12 text-center shadow-xs">
+                            <div className="rounded-2xl border border-line bg-surface px-6 py-12 text-center shadow-xs">
                                 <p className="text-sm font-bold text-ink">No matching Digital Twins</p>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <p className="mt-1 text-xs text-subtle">
                                     Try clearing your search or switching the status filter.
                                 </p>
                                 {(searchQuery || statusFilter !== 'all') && (
@@ -623,15 +623,15 @@ export default function AdminDigitalTwinsIndex({
                                     return (
                                         <div
                                             key={twin.id ?? twin.lookNumber}
-                                            className="flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow hover:shadow-md"
+                                            className="flex flex-col justify-between overflow-hidden rounded-2xl border border-line bg-surface p-4 shadow-xs transition-shadow hover:shadow-md"
                                         >
                                             <div className="flex gap-4">
-                                                <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-[#eef3f9]">
+                                                <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
                                                     <TwinSpriteCrop
                                                         twin={twin}
                                                         className="h-full w-full object-contain"
                                                     />
-                                                    <span className="absolute bottom-1.5 left-1.5 rounded-md border border-slate-200/90 bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-ink shadow-xs">
+                                                    <span className="absolute bottom-1.5 left-1.5 rounded-md border border-line bg-surface/95 px-1.5 py-0.5 text-2xs font-bold text-ink shadow-xs">
                                                         #{String(twin.lookNumber).padStart(2, '0')}
                                                     </span>
                                                 </div>
@@ -639,35 +639,35 @@ export default function AdminDigitalTwinsIndex({
                                                 <div className="min-w-0 flex-1 space-y-1.5">
                                                     <div className="flex flex-wrap items-center gap-1.5">
                                                         {upcoming ? (
-                                                            <Badge className="border-slate-300 bg-slate-100 text-[10px] text-slate-700">
+                                                            <Badge className="border-line-strong bg-surface-2 text-2xs text-ink-2">
                                                                 Upcoming
                                                             </Badge>
                                                         ) : twin.isCopyrightSold ? (
-                                                            <Badge variant="destructive" className="text-[10px]">
+                                                            <Badge variant="destructive" className="text-2xs">
                                                                 Sold Out
                                                             </Badge>
                                                         ) : (
-                                                            <Badge variant="success" className="text-[10px]">
+                                                            <Badge variant="success" className="text-2xs">
                                                                 Available
                                                             </Badge>
                                                         )}
                                                         {twin.isFeaturedOnHome && !upcoming && (
-                                                            <Badge className="border-sky-200 bg-sky-50 text-[10px] text-sky-700">
+                                                            <Badge className="border-info/25 bg-info-soft text-2xs text-info">
                                                                 Homepage
                                                             </Badge>
                                                         )}
                                                         {twin.hasSourceZip && (
-                                                            <Badge className="border-emerald-200 bg-emerald-50 text-[10px] text-emerald-700">
+                                                            <Badge className="border-success/25 bg-success-soft text-2xs text-success">
                                                                 ZIP
                                                             </Badge>
                                                         )}
                                                     </div>
 
                                                     <h3 className="truncate text-base font-bold text-ink">{twin.name}</h3>
-                                                    <p className="text-xs font-medium text-slate-500">{twin.archetype}</p>
+                                                    <p className="text-xs font-medium text-subtle">{twin.archetype}</p>
 
                                                     {!upcoming && (
-                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-slate-600">
+                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-muted">
                                                             <span>
                                                                 Preset <strong className="text-ink">{twin.presetPrice}</strong>
                                                             </span>
@@ -679,9 +679,9 @@ export default function AdminDigitalTwinsIndex({
                                                 </div>
                                             </div>
 
-                                            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                                            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
                                                 {upcoming ? (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                                                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-2.5 py-1 text-2xs font-semibold text-muted">
                                                         <Clock className="h-3 w-3" />
                                                         Preview Only
                                                     </span>
@@ -691,8 +691,8 @@ export default function AdminDigitalTwinsIndex({
                                                         onClick={() => handleToggleSoldOut(twin)}
                                                         className={`min-h-10 sm:min-h-8 cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors ${
                                                             twin.isCopyrightSold
-                                                                ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                                                                : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                                ? 'border-success/25 bg-success-soft text-success hover:bg-success-soft'
+                                                                : 'border-warning/25 bg-warning-soft text-warning hover:bg-warning-soft'
                                                         }`}
                                                     >
                                                         {twin.isCopyrightSold ? 'Mark Available' : 'Mark Sold Out'}
@@ -704,7 +704,7 @@ export default function AdminDigitalTwinsIndex({
                                                         size="sm"
                                                         variant="outline"
                                                         onClick={() => openEditTwin(twin)}
-                                                        className="min-h-10 sm:min-h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
+                                                        className="min-h-10 sm:min-h-8 cursor-pointer border-line bg-surface text-xs text-ink hover:bg-surface-2"
                                                     >
                                                         <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
                                                         Edit
@@ -714,7 +714,7 @@ export default function AdminDigitalTwinsIndex({
                                                         variant="ghost"
                                                         onClick={() => handleDeleteTwin(twin)}
                                                         aria-label={`Delete ${twin.name}`}
-                                                        className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                                        className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-danger hover:bg-danger-soft hover:text-danger"
                                                     >
                                                         <Trash2 className="h-3.5 w-3.5" />
                                                     </Button>
@@ -732,9 +732,9 @@ export default function AdminDigitalTwinsIndex({
                 {activeTab === 'attributes' && (
                     <div className="space-y-3">
                         {attributes.length === 0 ? (
-                            <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-12 text-center shadow-xs">
+                            <div className="rounded-2xl border border-line bg-surface px-6 py-12 text-center shadow-xs">
                                 <p className="text-sm font-bold text-ink">No order options configured</p>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <p className="mt-1 text-xs text-subtle">
                                     Add attributes like Skin Tone, Body Type, or Height to customize orders.
                                 </p>
                             </div>
@@ -742,19 +742,19 @@ export default function AdminDigitalTwinsIndex({
                             attributes.map((attr, idx) => (
                                 <div
                                     key={attr.id ?? attr.slug}
-                                    className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs sm:flex-row sm:items-center"
+                                    className="flex flex-col justify-between gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs sm:flex-row sm:items-center"
                                 >
                                     <div className="min-w-0 flex-1 space-y-2">
                                         <div className="flex flex-wrap items-center gap-2">
                                             <span className="text-xs font-bold text-primary">#{idx + 1}</span>
                                             <h3 className="text-sm font-bold text-ink">{attr.name}</h3>
-                                            <Badge variant="secondary" className="text-[11px]">
+                                            <Badge variant="secondary" className="text-2xs">
                                                 {attr.inputType === 'unit_input' && 'Unit + Value (ft/in)'}
                                                 {attr.inputType === 'select' && 'Option Chips'}
                                                 {attr.inputType === 'multi_input' && 'Multiple Inputs'}
                                             </Badge>
                                             {attr.allowCustom && (
-                                                <Badge className="border-sky-200 bg-sky-50 text-[11px] text-sky-700">
+                                                <Badge className="border-info/25 bg-info-soft text-2xs text-info">
                                                     Allows {attr.customLabel || 'Custom'} Input
                                                 </Badge>
                                             )}
@@ -764,7 +764,7 @@ export default function AdminDigitalTwinsIndex({
                                             {attr.options.map((opt) => (
                                                 <span
                                                     key={opt}
-                                                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-700"
+                                                    className="rounded-lg border border-line bg-surface-2 px-2.5 py-0.5 text-xs text-ink-2"
                                                 >
                                                     {opt}
                                                 </span>
@@ -777,7 +777,7 @@ export default function AdminDigitalTwinsIndex({
                                             size="sm"
                                             variant="outline"
                                             onClick={() => openEditAttribute(attr)}
-                                            className="min-h-10 sm:min-h-8 cursor-pointer border-slate-200 bg-white text-xs text-ink hover:bg-slate-50"
+                                            className="min-h-10 sm:min-h-8 cursor-pointer border-line bg-surface text-xs text-ink hover:bg-surface-2"
                                         >
                                             <Edit3 className="mr-1 h-3.5 w-3.5 text-primary" />
                                             Edit
@@ -787,7 +787,7 @@ export default function AdminDigitalTwinsIndex({
                                             variant="ghost"
                                             onClick={() => handleDeleteAttribute(attr)}
                                             aria-label={`Delete ${attr.name}`}
-                                            className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                                            className="min-h-10 min-w-10 sm:min-h-8 sm:min-w-8 cursor-pointer p-0 text-danger hover:bg-danger-soft hover:text-danger"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                         </Button>
@@ -823,8 +823,8 @@ export default function AdminDigitalTwinsIndex({
 
                     <form onSubmit={handleSaveTwin} noValidate className="space-y-4 pt-1 text-xs">
                         {twinBannerErrors.length > 0 && (
-                            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
-                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                            <div className="flex items-start gap-2.5 rounded-xl border border-danger/25 bg-danger-soft px-3.5 py-2.5 text-xs text-danger">
+                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
                                 <div className="space-y-0.5">
                                     {twinBannerErrors.map((msg, idx) => (
                                         <p key={idx} className="font-medium">
@@ -835,18 +835,18 @@ export default function AdminDigitalTwinsIndex({
                             </div>
                         )}
                         {/* Upcoming Model Simplification Toggle */}
-                        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5 transition-colors hover:border-primary/40">
+                        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface-2 p-3.5 transition-colors hover:border-primary/40">
                             <input
                                 type="checkbox"
                                 checked={isUpcomingModel}
                                 onChange={(e) => handleUpcomingToggle(e.target.checked)}
-                                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-primary accent-[var(--color-primary)]"
+                                className="mt-0.5 h-4 w-4 rounded border-line-strong text-primary accent-[var(--color-primary)]"
                             />
                             <div className="space-y-0.5">
                                 <span className="block text-sm font-semibold text-ink">
                                     Upcoming Preview (Quick Upload)
                                 </span>
-                                <span className="block text-xs text-slate-500">
+                                <span className="block text-xs text-subtle">
                                     {isUpcomingModel
                                         ? 'Only Model Name, Look #, and Preview Image are required.'
                                         : 'Check this to upload a quick preview card without pricing or pose settings.'}
@@ -856,14 +856,14 @@ export default function AdminDigitalTwinsIndex({
 
                         {/* Two Clean Modal Tabs for Standard Models */}
                         {!isUpcomingModel && (
-                            <div className="flex items-center gap-1.5 rounded-xl bg-slate-100 p-1">
+                            <div className="flex items-center gap-1.5 rounded-xl bg-surface-2 p-1">
                                 <button
                                     type="button"
                                     onClick={() => setTwinModalTab('basic')}
                                     className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                                         twinModalTab === 'basic'
-                                            ? 'bg-white text-ink shadow-xs'
-                                            : 'text-slate-600 hover:text-ink'
+                                            ? 'bg-surface text-ink shadow-xs'
+                                            : 'text-muted hover:text-ink'
                                     }`}
                                 >
                                     1. Basic Info &amp; Image
@@ -873,8 +873,8 @@ export default function AdminDigitalTwinsIndex({
                                     onClick={() => setTwinModalTab('poses')}
                                     className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                                         twinModalTab === 'poses'
-                                            ? 'bg-white text-ink shadow-xs'
-                                            : 'text-slate-600 hover:text-ink'
+                                            ? 'bg-surface text-ink shadow-xs'
+                                            : 'text-muted hover:text-ink'
                                     }`}
                                 >
                                     2. 6 Poses &amp; Advanced
@@ -966,9 +966,9 @@ export default function AdminDigitalTwinsIndex({
                                 )}
 
                                 {/* Model Image Upload with Live Preview */}
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border border-line bg-surface-2 p-3.5">
                                     {(modelImagePreviewUrl || editingTwin) && (
-                                        <div className="h-24 w-18 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#eef3f9]">
+                                        <div className="h-24 w-18 shrink-0 overflow-hidden rounded-lg border border-line bg-surface-2">
                                             {modelImagePreviewUrl ? (
                                                 <img
                                                     src={modelImagePreviewUrl}
@@ -988,12 +988,12 @@ export default function AdminDigitalTwinsIndex({
                                             <label className="block text-xs font-bold text-ink">
                                                 Model Image
                                             </label>
-                                            <p className="mt-0.5 text-[11px] text-slate-500">
+                                            <p className="mt-0.5 text-2xs text-subtle">
                                                 Transparent PNG/WebP · 9:16 portrait (1080×1920 px)
                                             </p>
                                         </div>
                                         <div className="flex flex-wrap items-center gap-2.5">
-                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-primary-hover">
+                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary-hover">
                                                 <Upload className="h-3.5 w-3.5" />
                                                 <span>
                                                     {modelImagePreviewUrl || editingTwin
@@ -1008,7 +1008,7 @@ export default function AdminDigitalTwinsIndex({
                                                     className="sr-only"
                                                 />
                                             </label>
-                                            <span className="max-w-[200px] truncate text-xs text-slate-600">
+                                            <span className="max-w-[200px] truncate text-xs text-muted">
                                                 {modelImageFile
                                                     ? modelImageFile.name
                                                     : editingTwin
@@ -1019,8 +1019,8 @@ export default function AdminDigitalTwinsIndex({
 
                                         {modelImageMeta?.valid && (
                                             <p
-                                                className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                                                    modelImageMeta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                className={`flex items-center gap-1.5 text-2xs font-medium ${
+                                                    modelImageMeta.warning ? 'text-warning' : 'text-success'
                                                 }`}
                                             >
                                                 {modelImageMeta.warning ? (
@@ -1043,7 +1043,7 @@ export default function AdminDigitalTwinsIndex({
                                         )}
 
                                         {formErrors.model_image && (
-                                            <p className="text-[11px] font-semibold text-rose-600">
+                                            <p className="text-2xs font-semibold text-danger">
                                                 {formErrors.model_image}
                                             </p>
                                         )}
@@ -1051,21 +1051,21 @@ export default function AdminDigitalTwinsIndex({
                                 </div>
 
                                 {!isUpcomingModel && (
-                                    <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3.5">
+                                    <div className="space-y-2 rounded-xl border border-line bg-surface p-3.5">
                                         <div className="flex flex-wrap items-center justify-between gap-2">
                                             <div>
                                                 <label className="flex items-center gap-1.5 text-xs font-bold text-ink">
                                                     <Archive className="h-3.5 w-3.5 text-primary" />
                                                     Raw Source Package (ZIP)
                                                 </label>
-                                                <p className="mt-0.5 text-[11px] text-slate-500">
+                                                <p className="mt-0.5 text-2xs text-subtle">
                                                     Private ZIP delivered after purchase (never public).
                                                 </p>
                                             </div>
                                             {editingTwin?.hasSourceZip && !removeSourceZip && editingTwin.id && (
                                                 <a
                                                     href={`/admin/digital-twins/${editingTwin.id}/download-package`}
-                                                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-ink hover:bg-slate-100"
+                                                    className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface-2 px-2.5 py-1 text-2xs font-semibold text-ink hover:bg-surface-2"
                                                 >
                                                     <Download className="h-3 w-3 text-primary" />
                                                     Download
@@ -1074,7 +1074,7 @@ export default function AdminDigitalTwinsIndex({
                                         </div>
 
                                         <div className="flex flex-wrap items-center gap-2.5">
-                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-slate-100">
+                                            <label className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-surface-2">
                                                 <Upload className="h-3.5 w-3.5 text-primary" />
                                                 <span>
                                                     {sourceZipFile || (editingTwin?.hasSourceZip && !removeSourceZip)
@@ -1090,7 +1090,7 @@ export default function AdminDigitalTwinsIndex({
                                                 />
                                             </label>
 
-                                            <span className="max-w-[260px] truncate text-xs text-slate-600">
+                                            <span className="max-w-[260px] truncate text-xs text-muted">
                                                 {sourceZipFile
                                                     ? `${sourceZipFile.name} (${formatFileSize(sourceZipFile.size)})`
                                                     : removeSourceZip
@@ -1113,7 +1113,7 @@ export default function AdminDigitalTwinsIndex({
                                                             setRemoveSourceZip(true);
                                                         }
                                                     }}
-                                                    className="cursor-pointer text-[11px] font-semibold text-rose-600 hover:underline"
+                                                    className="cursor-pointer text-2xs font-semibold text-danger hover:underline"
                                                 >
                                                     Remove
                                                 </button>
@@ -1121,7 +1121,7 @@ export default function AdminDigitalTwinsIndex({
                                         </div>
 
                                         {formErrors.source_zip && (
-                                            <p className="text-[11px] font-semibold text-rose-600">
+                                            <p className="text-2xs font-semibold text-danger">
                                                 {formErrors.source_zip}
                                             </p>
                                         )}
@@ -1129,22 +1129,22 @@ export default function AdminDigitalTwinsIndex({
                                 )}
 
                                 {!isUpcomingModel ? (
-                                    <div className="flex flex-wrap items-center gap-6 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                    <div className="flex flex-wrap items-center gap-6 rounded-xl border border-line bg-surface px-4 py-3">
                                         <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-ink">
                                             <input
                                                 type="checkbox"
                                                 checked={isFeaturedOnHome}
                                                 onChange={(e) => setIsFeaturedOnHome(e.target.checked)}
-                                                className="h-4 w-4 rounded border-slate-300 accent-[var(--color-primary)]"
+                                                className="h-4 w-4 rounded border-line-strong accent-[var(--color-primary)]"
                                             />
                                             Show on Homepage
                                         </label>
-                                        <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-rose-700">
+                                        <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-danger">
                                             <input
                                                 type="checkbox"
                                                 checked={isCopyrightSold}
                                                 onChange={(e) => setIsCopyrightSold(e.target.checked)}
-                                                className="h-4 w-4 rounded border-slate-300 accent-rose-600"
+                                                className="h-4 w-4 rounded border-line-strong accent-danger"
                                             />
                                             Copyright Sold Out
                                         </label>
@@ -1166,12 +1166,12 @@ export default function AdminDigitalTwinsIndex({
                         {/* TAB: 6 POSES & ADVANCED */}
                         {!isUpcomingModel && twinModalTab === 'poses' && (
                             <div className="space-y-4">
-                                <div className="space-y-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                                <div className="space-y-2.5 rounded-xl border border-line bg-surface-2 p-3.5">
                                     <div>
                                         <span className="block text-xs font-bold text-ink">
                                             6 Pose Presets (Optional)
                                         </span>
-                                        <p className="mt-0.5 text-[11px] text-slate-500">
+                                        <p className="mt-0.5 text-2xs text-subtle">
                                             Transparent PNG/WebP · 3:4 or 9:16 (900×1200 px)
                                         </p>
                                     </div>
@@ -1182,14 +1182,14 @@ export default function AdminDigitalTwinsIndex({
                                             return (
                                                 <div
                                                     key={pose.id || idx}
-                                                    className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-2.5"
+                                                    className="space-y-1.5 rounded-xl border border-line bg-surface p-2.5"
                                                 >
-                                                    <div className="flex items-center justify-between text-[11px]">
+                                                    <div className="flex items-center justify-between text-2xs">
                                                         <span className="font-bold text-primary">
                                                             {pose.code}: {pose.shortName}
                                                         </span>
                                                         {pose.imageUrl && (
-                                                            <span className="text-[10px] font-semibold text-emerald-700">
+                                                            <span className="text-2xs font-semibold text-success">
                                                                 Custom Set
                                                             </span>
                                                         )}
@@ -1201,19 +1201,19 @@ export default function AdminDigitalTwinsIndex({
                                                             handlePoseTitleChange(idx, 'title', e.target.value)
                                                         }
                                                         placeholder="Pose title"
-                                                        className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-primary focus:outline-none"
+                                                        className="w-full rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs text-ink focus:border-ring focus:outline-none"
                                                     />
                                                     <input
                                                         key={`twin-pose-file-${idx}`}
                                                         type="file"
                                                         accept="image/png,image/webp,.png,.webp"
                                                         onChange={(e) => handleTwinPoseFileChange(idx, e)}
-                                                        className="block w-full text-[11px] text-slate-600 file:mr-2 file:cursor-pointer file:rounded file:border-0 file:bg-slate-100 file:px-2.5 file:py-1 file:text-[11px] file:font-semibold file:text-ink hover:file:bg-slate-200"
+                                                        className="block w-full text-2xs text-muted file:mr-2 file:cursor-pointer file:rounded file:border-0 file:bg-surface-2 file:px-2.5 file:py-1 file:text-2xs file:font-semibold file:text-ink hover:file:bg-surface-3"
                                                     />
                                                     {meta?.valid && (
                                                         <p
-                                                            className={`flex items-center gap-1 text-[10px] font-medium ${
-                                                                meta.warning ? 'text-amber-700' : 'text-emerald-700'
+                                                            className={`flex items-center gap-1 text-2xs font-medium ${
+                                                                meta.warning ? 'text-warning' : 'text-success'
                                                             }`}
                                                         >
                                                             {meta.warning ? (
@@ -1228,7 +1228,7 @@ export default function AdminDigitalTwinsIndex({
                                                         </p>
                                                     )}
                                                     {poseErr && (
-                                                        <p className="text-[10px] font-semibold text-rose-600">
+                                                        <p className="text-2xs font-semibold text-danger">
                                                             {poseErr}
                                                         </p>
                                                     )}
@@ -1280,7 +1280,7 @@ export default function AdminDigitalTwinsIndex({
                             </div>
                         )}
 
-                        <div className="flex flex-wrap justify-between gap-2 border-t border-slate-200 pt-3">
+                        <div className="flex flex-wrap justify-between gap-2 border-t border-line pt-3">
                             <div>
                                 {!isUpcomingModel && twinModalTab === 'basic' && (
                                     <Button
@@ -1298,14 +1298,14 @@ export default function AdminDigitalTwinsIndex({
                                     type="button"
                                     variant="ghost"
                                     onClick={() => setIsTwinDialogOpen(false)}
-                                    className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
+                                    className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-muted hover:bg-surface-2 hover:text-ink"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={isSavingTwin}
-                                    className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
+                                    className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
                                 >
                                     {isSavingTwin
                                         ? 'Saving...'
@@ -1381,7 +1381,7 @@ export default function AdminDigitalTwinsIndex({
                                         type="checkbox"
                                         checked={attrAllowCustom}
                                         onChange={(e) => setAttrAllowCustom(e.target.checked)}
-                                        className="h-4 w-4 rounded border-slate-300 text-primary accent-[var(--color-primary)]"
+                                        className="h-4 w-4 rounded border-line-strong text-primary accent-[var(--color-primary)]"
                                     />
                                     Allow Custom Text Input
                                 </label>
@@ -1420,19 +1420,19 @@ export default function AdminDigitalTwinsIndex({
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-2 border-t border-slate-200 pt-3">
+                        <div className="flex justify-end gap-2 border-t border-line pt-3">
                             <Button
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setIsAttrDialogOpen(false)}
-                                className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-slate-600 hover:bg-slate-100 hover:text-ink"
+                                className="min-h-10 sm:min-h-9 cursor-pointer text-xs text-muted hover:bg-surface-2 hover:text-ink"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={isSavingAttr}
-                                className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-white hover:bg-primary-hover"
+                                className="min-h-10 sm:min-h-9 cursor-pointer bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
                             >
                                 {isSavingAttr ? 'Saving...' : 'Save Option'}
                             </Button>

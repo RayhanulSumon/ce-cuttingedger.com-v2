@@ -161,11 +161,11 @@ export default function PricingIndex({
                 <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
                         <span className="font-bold text-ink">{plan.name}</span>
-                        <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                        <span className="rounded-md border border-line bg-surface-2 px-2 py-0.5 text-2xs font-semibold text-muted">
                             {plan.badge || "Credit Pack"}
                         </span>
                     </div>
-                    <div className="text-xs text-slate-500 max-w-md truncate">
+                    <div className="text-xs text-subtle max-w-md truncate">
                         {plan.headline}
                     </div>
                 </div>
@@ -183,7 +183,7 @@ export default function PricingIndex({
                             <Coins className="w-3.5 h-3.5 text-primary" />
                             <span>{total.toLocaleString()} Total Credits</span>
                         </div>
-                        <div className="text-[11px] text-slate-500 tabular-nums">
+                        <div className="text-2xs text-subtle tabular-nums">
                             {base.toLocaleString()} base{bonus > 0 ? ` + ${bonus.toLocaleString()} bonus` : ""} · Valid{" "}
                             {plan.validity_days ?? 90} days
                         </div>
@@ -202,7 +202,7 @@ export default function PricingIndex({
                         <div className="font-extrabold text-primary tabular-nums">
                             {priceAmount > 0 ? `$${priceAmount.toLocaleString()}` : plan.price}
                         </div>
-                        <div className="text-[11px] text-slate-500 tabular-nums">{rate}</div>
+                        <div className="text-2xs text-subtle tabular-nums">{rate}</div>
                     </div>
                 );
             },
@@ -211,9 +211,9 @@ export default function PricingIndex({
             header: "STATUS",
             cell: (plan) =>
                 plan.is_popular ? (
-                    <Badge className="bg-primary text-white">MOST POPULAR</Badge>
+                    <Badge className="bg-primary text-primary-foreground">MOST POPULAR</Badge>
                 ) : (
-                    <Badge variant="outline" className="text-slate-600 border-slate-300">
+                    <Badge variant="outline" className="text-muted border-line-strong">
                         STANDARD
                     </Badge>
                 ),
@@ -221,7 +221,7 @@ export default function PricingIndex({
         {
             header: "ORDER",
             cell: (plan) => (
-                <span className="font-mono text-xs text-slate-500">#{plan.sort_order}</span>
+                <span className="text-xs text-subtle">#{plan.sort_order}</span>
             ),
         },
         {
@@ -233,7 +233,7 @@ export default function PricingIndex({
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-slate-500 hover:text-ink"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -245,7 +245,7 @@ export default function PricingIndex({
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setPlanToDelete(plan)}
-                            className="gap-2 text-rose-600 focus:text-rose-600 cursor-pointer"
+                            className="gap-2 text-danger focus:text-danger cursor-pointer"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Delete Plan</span>
@@ -266,8 +266,8 @@ export default function PricingIndex({
             />
 
             <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-5 py-3.5 text-xs text-emerald-900">
-                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />
+                <div className="flex items-start gap-3 rounded-2xl border border-success/25 bg-success-soft px-5 py-3.5 text-xs text-success">
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                     <div>
                         <span className="font-bold">Immutable Purchase Snapshots Active:</span>{" "}
                         Updating or deleting a plan here updates the public{" "}
@@ -277,21 +277,21 @@ export default function PricingIndex({
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-xs shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-5 py-3.5 text-xs shadow-xs">
                     <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
-                            <Clock className="w-4 h-4 text-amber-600" />
+                        <div className="w-8 h-8 rounded-xl bg-warning-soft border border-warning/25 flex items-center justify-center shrink-0">
+                            <Clock className="w-4 h-4 text-warning" />
                         </div>
                         <div>
                             <div className="font-bold text-ink flex items-center gap-2">
                                 <span>Client Credit Plan Requests</span>
                                 {pendingCreditOrdersCount > 0 && (
-                                    <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold tabular-nums">
+                                    <span className="px-2 py-0.5 rounded-full bg-warning-soft text-warning text-2xs font-bold tabular-nums">
                                         {pendingCreditOrdersCount} pending
                                     </span>
                                 )}
                             </div>
-                            <p className="text-slate-500 mt-0.5">
+                            <p className="text-subtle mt-0.5">
                                 {totalCreditOrdersCount} total credit plan{" "}
                                 {totalCreditOrdersCount === 1 ? "request" : "requests"} submitted by
                                 clients
@@ -301,7 +301,7 @@ export default function PricingIndex({
 
                     <Link
                         href="/admin/credit-purchases"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-colors shrink-0"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-semibold transition-colors shrink-0"
                     >
                         <span>Review &amp; Approve Requests</span>
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -331,7 +331,7 @@ export default function PricingIndex({
                     <form onSubmit={handleSubmit} className="space-y-4 pt-1">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Plan Name</label>
+                                <label className="text-xs font-semibold text-ink-2">Plan Name</label>
                                 <Input
                                     value={form.data.name}
                                     onChange={(e) => form.setData("name", e.target.value)}
@@ -340,7 +340,7 @@ export default function PricingIndex({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Badge Label</label>
+                                <label className="text-xs font-semibold text-ink-2">Badge Label</label>
                                 <Input
                                     value={form.data.badge}
                                     onChange={(e) => form.setData("badge", e.target.value)}
@@ -351,7 +351,7 @@ export default function PricingIndex({
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Base Credits</label>
+                                <label className="text-xs font-semibold text-ink-2">Base Credits</label>
                                 <Input
                                     type="number"
                                     min={10}
@@ -362,7 +362,7 @@ export default function PricingIndex({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Bonus Credits</label>
+                                <label className="text-xs font-semibold text-ink-2">Bonus Credits</label>
                                 <Input
                                     type="number"
                                     min={0}
@@ -373,7 +373,7 @@ export default function PricingIndex({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Price (USD)</label>
+                                <label className="text-xs font-semibold text-ink-2">Price (USD)</label>
                                 <Input
                                     type="number"
                                     step="0.01"
@@ -385,7 +385,7 @@ export default function PricingIndex({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Validity (Days)</label>
+                                <label className="text-xs font-semibold text-ink-2">Validity (Days)</label>
                                 <Input
                                     type="number"
                                     min={1}
@@ -397,23 +397,23 @@ export default function PricingIndex({
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs">
-                            <span className="text-slate-600">
+                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-surface-2 px-4 py-2.5 text-xs">
+                            <span className="text-muted">
                                 Total Credits:{" "}
                                 <strong className="text-ink">{preview.totalCredits.toLocaleString()}</strong>
                             </span>
-                            <span className="text-slate-600">
+                            <span className="text-muted">
                                 Validity:{" "}
                                 <strong className="text-ink">{form.data.validity_days} days</strong>
                             </span>
-                            <span className="text-slate-600">
+                            <span className="text-muted">
                                 Effective Rate:{" "}
                                 <strong className="text-primary">${preview.rate} / credit</strong>
                             </span>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">Short Headline</label>
+                            <label className="text-xs font-semibold text-ink-2">Short Headline</label>
                             <Input
                                 value={form.data.headline}
                                 onChange={(e) => form.setData("headline", e.target.value)}
@@ -424,7 +424,7 @@ export default function PricingIndex({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">CTA Button Text</label>
+                                <label className="text-xs font-semibold text-ink-2">CTA Button Text</label>
                                 <Input
                                     value={form.data.cta_text}
                                     onChange={(e) => form.setData("cta_text", e.target.value)}
@@ -433,7 +433,7 @@ export default function PricingIndex({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700">Display Order</label>
+                                <label className="text-xs font-semibold text-ink-2">Display Order</label>
                                 <Input
                                     type="number"
                                     value={form.data.sort_order}
@@ -443,7 +443,7 @@ export default function PricingIndex({
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700">
+                            <label className="text-xs font-semibold text-ink-2">
                                 Bullet Features (one per line)
                             </label>
                             <textarea
@@ -451,16 +451,16 @@ export default function PricingIndex({
                                 value={featuresText}
                                 onChange={(e) => setFeaturesText(e.target.value)}
                                 placeholder={"500 studio credits never expire\nUse across 2D, 3D, DTP & Try-On"}
-                                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                className="w-full rounded-xl border border-line bg-surface px-3.5 py-2 text-sm text-ink focus:border-ring focus:outline-none"
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
                                 <span className="text-xs font-semibold text-ink block">
                                     Highlight as Popular Plan
                                 </span>
-                                <span className="text-[11px] text-slate-500 block">
+                                <span className="text-2xs text-subtle block">
                                     Adds primary border emphasis on /pricing.
                                 </span>
                             </div>
@@ -477,7 +477,7 @@ export default function PricingIndex({
                             <Button
                                 type="submit"
                                 disabled={form.processing}
-                                className="bg-primary hover:bg-primary-hover text-white"
+                                className="bg-primary hover:bg-primary-hover text-primary-foreground"
                             >
                                 {form.processing
                                     ? "Saving..."

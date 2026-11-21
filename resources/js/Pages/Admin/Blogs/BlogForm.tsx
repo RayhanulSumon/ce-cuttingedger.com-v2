@@ -245,12 +245,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Top Status Bar if form is dirty */}
             {isDirty && (
-                <div className="flex items-center justify-between p-3 rounded-lg border border-accent/30 bg-accent/10 text-neutral-200 text-xs font-mono">
+                <div className="flex items-center justify-between p-3 rounded-lg border border-primary/30 bg-primary-soft text-ink-2 text-xs">
                     <span className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                         You have unsaved changes in this blog post.
                     </span>
-                    <span className="text-neutral-400">Remember to commit your changes.</span>
+                    <span className="text-subtle">Remember to commit your changes.</span>
                 </div>
             )}
 
@@ -258,15 +258,15 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                 {/* MAIN EDITORIAL COLUMN (8 cols) */}
                 <div className="lg:col-span-8 space-y-8">
                     {/* CORE ARTICLE CARD */}
-                    <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-6 shadow-xl">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div className="rounded-xl border border-line bg-surface p-6 space-y-6 shadow-xl">
+                        <div className="flex items-center justify-between pb-4 border-b border-line">
                             <div className="flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-accent" />
-                                <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
+                                <FileText className="w-4 h-4 text-primary-ink" />
+                                <span className="text-xs font-bold uppercase tracking-wider text-ink">
                                     CORE ARTICLE ATTRIBUTES
                                 </span>
                             </div>
-                            <Badge className="bg-white/5 text-neutral-400 border-white/10 font-mono text-[10px]">
+                            <Badge className="bg-surface-2 text-subtle border-line text-2xs">
                                 Markdown & HTML Compatible
                             </Badge>
                         </div>
@@ -274,19 +274,19 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         {/* Title & Slug */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-xs font-mono text-neutral-300 flex items-center justify-between">
+                                <label className="text-xs text-ink-2 flex items-center justify-between">
                                     <span>Article Headline / Title *</span>
-                                    <span className="text-neutral-500 text-[10px]">Required</span>
+                                    <span className="text-subtle text-2xs">Required</span>
                                 </label>
                                 <Input
                                     value={data.title}
                                     onChange={(e) => setData("title", e.target.value)}
                                     placeholder="e.g. Kinetic Physics: Sculpting Tactile Interfaces"
-                                    className="bg-[#0c0d12] border-white/10 focus:border-accent text-lg font-medium text-white placeholder:text-neutral-600 h-12"
+                                    className="bg-surface border-line focus:border-ring text-lg font-medium text-ink placeholder:text-faint h-12"
                                     required
                                 />
                                 {errors.title && (
-                                    <p className="text-rose-400 text-xs font-mono flex items-center gap-1.5 mt-1">
+                                    <p className="text-danger text-xs flex items-center gap-1.5 mt-1">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         {errors.title}
                                     </p>
@@ -295,7 +295,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-mono text-neutral-300">
+                                    <label className="text-xs text-ink-2">
                                         URL Slug {isEdit ? "*" : "(Optional - auto-generated if left blank)"}
                                     </label>
                                     <Button
@@ -304,7 +304,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         size="sm"
                                         onClick={handleGenerateSlug}
                                         disabled={!data.title}
-                                        className="h-6 px-2 text-[11px] font-mono text-accent hover:text-accent hover:bg-accent/10 gap-1 cursor-pointer"
+                                        className="h-6 px-2 text-2xs text-primary-ink hover:text-primary-ink hover:bg-primary-soft gap-1 cursor-pointer"
                                     >
                                         <Sparkles className="w-3 h-3" />
                                         <span>Generate from Title</span>
@@ -315,39 +315,39 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         value={data.slug}
                                         onChange={(e) => setData("slug", e.target.value)}
                                         placeholder="kinetic-physics-tactile-interfaces"
-                                        className="bg-[#0c0d12] border-white/10 focus:border-accent font-mono text-sm text-neutral-300"
+                                        className="bg-surface border-line focus:border-ring text-sm text-ink-2"
                                         required={isEdit}
                                     />
                                 </div>
-                                <div className="text-[11px] font-mono text-neutral-500 flex items-center gap-2 flex-wrap">
+                                <div className="text-2xs text-subtle flex items-center gap-2 flex-wrap">
                                     <div className="flex items-center gap-1 min-w-0">
-                                        <Globe className="w-3 h-3 shrink-0 text-neutral-400" />
+                                        <Globe className="w-3 h-3 shrink-0 text-subtle" />
                                         <span>Live URL preview:</span>
-                                        <span className="text-accent">
+                                        <span className="text-primary-ink">
                                             https://cuttingedger.com/blog/{data.slug || "your-slug"}
                                         </span>
                                     </div>
                                     <button
                                         type="button"
                                         onClick={handleCopyLiveUrl}
-                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-neutral-300 hover:text-white transition-all cursor-pointer text-[10px] font-mono shrink-0"
+                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-2 hover:bg-surface-2 border border-line hover:border-line-strong text-ink-2 hover:text-ink transition-all cursor-pointer text-2xs shrink-0"
                                         title="Copy live URL to clipboard"
                                     >
                                         {isUrlCopied ? (
                                             <>
-                                                <Check className="w-3 h-3 text-emerald-400" />
-                                                <span className="text-emerald-400 font-medium">Copied</span>
+                                                <Check className="w-3 h-3 text-success" />
+                                                <span className="text-success font-medium">Copied</span>
                                             </>
                                         ) : (
                                             <>
-                                                <Copy className="w-3 h-3 text-neutral-400" />
+                                                <Copy className="w-3 h-3 text-subtle" />
                                                 <span>Copy</span>
                                             </>
                                         )}
                                     </button>
                                 </div>
                                 {errors.slug && (
-                                    <p className="text-rose-400 text-xs font-mono flex items-center gap-1.5 mt-1">
+                                    <p className="text-danger text-xs flex items-center gap-1.5 mt-1">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         {errors.slug}
                                     </p>
@@ -358,10 +358,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         {/* Excerpt */}
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <label className="text-xs font-mono text-neutral-300">
+                                <label className="text-xs text-ink-2">
                                     Article Summary *
                                 </label>
-                                <span className="text-[10px] font-mono text-neutral-500">
+                                <span className="text-2xs text-subtle">
                                     {data.excerpt.length} characters (Recommended: 120-160)
                                 </span>
                             </div>
@@ -370,11 +370,11 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 value={data.excerpt}
                                 onChange={(e) => setData("excerpt", e.target.value)}
                                 placeholder="A brief 1–2 sentence overview of the article. This appears on blog preview cards and search results."
-                                className="bg-[#0c0d12] border-white/10 focus:border-accent text-sm text-neutral-200 leading-relaxed"
+                                className="bg-surface border-line focus:border-ring text-sm text-ink-2 leading-relaxed"
                                 required
                             />
                             {errors.excerpt && (
-                                <p className="text-rose-400 text-xs font-mono flex items-center gap-1.5 mt-1">
+                                <p className="text-danger text-xs flex items-center gap-1.5 mt-1">
                                     <AlertCircle className="w-3.5 h-3.5" />
                                     {errors.excerpt}
                                 </p>
@@ -383,10 +383,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* Body Content Editor */}
                         <div className="space-y-2">
-                            <label className="text-xs font-mono text-neutral-300 block">
+                            <label className="text-xs text-ink-2 block">
                                 Full Article Body Content *
                             </label>
-                            <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0c0d12]">
+                            <div className="rounded-lg overflow-hidden border border-line bg-surface">
                                 <RichContentEditor
                                     value={data.body}
                                     onChange={(val) => setData("body", val)}
@@ -394,7 +394,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 />
                             </div>
                             {errors.body && (
-                                <p className="text-rose-400 text-xs font-mono flex items-center gap-1.5 mt-1">
+                                <p className="text-danger text-xs flex items-center gap-1.5 mt-1">
                                     <AlertCircle className="w-3.5 h-3.5" />
                                     {errors.body}
                                 </p>
@@ -403,15 +403,15 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     </div>
 
                     {/* DYNAMIC SEO MANAGER CARD */}
-                    <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-6 shadow-xl">
-                        <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div className="rounded-xl border border-line bg-surface p-6 space-y-6 shadow-xl">
+                        <div className="flex items-center justify-between pb-4 border-b border-line">
                             <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4 text-accent" />
-                                <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
+                                <Globe className="w-4 h-4 text-primary-ink" />
+                                <span className="text-xs font-bold uppercase tracking-wider text-ink">
                                     DYNAMIC SEARCH ENGINE OPTIMIZATION (SEO)
                                 </span>
                             </div>
-                            <span className="text-[10px] font-mono text-neutral-400">
+                            <span className="text-2xs text-subtle">
                                 Live Google SERP & OpenGraph Analyzer
                             </span>
                         </div>
@@ -437,9 +437,9 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                 {/* SIDEBAR METADATA & ACTIONS (4 cols) */}
                 <div className="lg:col-span-4 space-y-6">
                     {/* TAXONOMY & AUTHOR CARD */}
-                    <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
-                        <div className="pb-3 border-b border-white/10">
-                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                    <div className="rounded-xl border border-line bg-surface p-6 space-y-5 shadow-xl">
+                        <div className="pb-3 border-b border-line">
+                            <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-2">
                                 <Tag className="w-4 h-4 text-primary" />
                                 CATEGORY & AUTHOR
                             </span>
@@ -447,15 +447,15 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* Author */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                                <User className="w-3.5 h-3.5 text-neutral-400" />
+                            <label className="text-xs text-ink-2 flex items-center gap-1.5">
+                                <User className="w-3.5 h-3.5 text-subtle" />
                                 <span>Author / Creator *</span>
                             </label>
                             <Select
                                 value={data.author_id ? String(data.author_id) : ""}
                                 onValueChange={(val) => setData("author_id", Number(val) || val)}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
+                                <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink">
                                     <SelectValue placeholder="Select Author">
                                         {selectedAuthor ? (
                                             <div className="flex items-center gap-2.5 min-w-0 flex-1 text-left">
@@ -463,51 +463,51 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                     <img
                                                         src={selectedAuthor.avatar}
                                                         alt={selectedAuthor.name}
-                                                        className="w-5 h-5 rounded-full object-cover border border-white/10 shrink-0"
+                                                        className="w-5 h-5 rounded-full object-cover border border-line shrink-0"
                                                     />
                                                 ) : (
-                                                    <span className="w-5 h-5 rounded-full bg-accent/10 text-accent border border-accent/30 flex items-center justify-center text-[10px] font-mono font-bold shrink-0">
+                                                    <span className="w-5 h-5 rounded-full bg-primary-soft text-primary-ink border border-primary/30 flex items-center justify-center text-2xs font-bold shrink-0">
                                                         {selectedAuthor.name.charAt(0)}
                                                     </span>
                                                 )}
-                                                <span className="font-medium text-white truncate text-sm">
+                                                <span className="font-medium text-ink truncate text-sm">
                                                     {selectedAuthor.name}
                                                 </span>
-                                                <span className="text-[10px] font-mono text-neutral-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded truncate max-w-[140px] shrink-0 hidden sm:inline-block">
+                                                <span className="text-2xs text-subtle bg-surface-2 border border-line px-1.5 py-0.5 rounded truncate max-w-[140px] shrink-0 hidden sm:inline-block">
                                                     {selectedAuthor.role}
                                                 </span>
                                             </div>
                                         ) : (
-                                            <span className="text-neutral-500">Select Author</span>
+                                            <span className="text-subtle">Select Author</span>
                                         )}
                                     </SelectValue>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[290px] max-w-[440px]">
+                                <SelectContent className="bg-surface border-line text-ink shadow-2xl min-w-[290px] max-w-[440px]">
                                     <SelectGroup>
                                         <SelectLabel>EDITORIAL CREW & CONTRIBUTORS</SelectLabel>
                                         {authors.map((a) => (
                                             <SelectItem
                                                 key={a.id}
                                                 value={String(a.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-primary-soft focus:text-ink data-[highlighted]:bg-primary-soft"
                                             >
                                                 <div className="flex items-center gap-3 w-full pr-4">
                                                     {a.avatar ? (
                                                         <img
                                                             src={a.avatar}
                                                             alt={a.name}
-                                                            className="w-7 h-7 rounded-full object-cover border border-white/10 shrink-0"
+                                                            className="w-7 h-7 rounded-full object-cover border border-line shrink-0"
                                                         />
                                                     ) : (
-                                                        <div className="w-7 h-7 rounded-full bg-accent/10 text-accent border border-accent/30 flex items-center justify-center text-xs font-mono font-bold shrink-0">
+                                                        <div className="w-7 h-7 rounded-full bg-primary-soft text-primary-ink border border-primary/30 flex items-center justify-center text-xs font-bold shrink-0">
                                                             {a.name.charAt(0)}
                                                         </div>
                                                     )}
                                                     <div className="flex flex-col min-w-0 text-left">
-                                                        <span className="font-medium text-white text-sm truncate">
+                                                        <span className="font-medium text-ink text-sm truncate">
                                                             {a.name}
                                                         </span>
-                                                        <span className="text-[11px] font-mono text-neutral-400 truncate">
+                                                        <span className="text-2xs text-subtle truncate">
                                                             {a.role}
                                                         </span>
                                                     </div>
@@ -518,14 +518,14 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 </SelectContent>
                             </Select>
                             {errors.author_id && (
-                                <p className="text-rose-400 text-xs font-mono">{errors.author_id}</p>
+                                <p className="text-danger text-xs">{errors.author_id}</p>
                             )}
                         </div>
 
                         {/* Primary Category */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                                <FolderKanban className="w-3.5 h-3.5 text-neutral-400" />
+                            <label className="text-xs text-ink-2 flex items-center gap-1.5">
+                                <FolderKanban className="w-3.5 h-3.5 text-subtle" />
                                 <span>Primary Category *</span>
                             </label>
                             <Select
@@ -538,38 +538,38 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     }));
                                 }}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
+                                <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink">
                                     <SelectValue placeholder="Select Category">
                                         {selectedCategory ? (
                                             <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
-                                                <FolderKanban className="w-4 h-4 text-accent shrink-0" />
-                                                <span className="font-medium text-white truncate text-sm">
+                                                <FolderKanban className="w-4 h-4 text-primary-ink shrink-0" />
+                                                <span className="font-medium text-ink truncate text-sm">
                                                     {selectedCategory.name}
                                                 </span>
                                             </div>
                                         ) : (
-                                            <span className="text-neutral-500">Select Category</span>
+                                            <span className="text-subtle">Select Category</span>
                                         )}
                                     </SelectValue>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[270px]">
+                                <SelectContent className="bg-surface border-line text-ink shadow-2xl min-w-[270px]">
                                     <SelectGroup>
                                         <SelectLabel>CONTENT CATEGORIES</SelectLabel>
                                         {categories.map((c) => (
                                             <SelectItem
                                                 key={c.id}
                                                 value={String(c.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-primary-soft focus:text-ink data-[highlighted]:bg-primary-soft"
                                             >
                                                 <div className="flex items-center justify-between w-full pr-4 gap-3">
                                                     <div className="flex items-center gap-2.5 min-w-0">
-                                                        <FolderKanban className="w-4 h-4 text-accent shrink-0 opacity-80" />
-                                                        <span className="font-medium text-white text-sm truncate">
+                                                        <FolderKanban className="w-4 h-4 text-primary-ink shrink-0 opacity-80" />
+                                                        <span className="font-medium text-ink text-sm truncate">
                                                             {c.name}
                                                         </span>
                                                     </div>
                                                     {c.subcategories && c.subcategories.length > 0 && (
-                                                        <span className="text-[10px] font-mono text-accent bg-accent/10 border border-accent/20 px-1.5 py-0.5 rounded shrink-0">
+                                                        <span className="text-2xs text-primary-ink bg-primary-soft border border-primary/20 px-1.5 py-0.5 rounded shrink-0">
                                                             {c.subcategories.length} sub
                                                         </span>
                                                     )}
@@ -580,7 +580,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 </SelectContent>
                             </Select>
                             {errors.blog_category_id && (
-                                <p className="text-rose-400 text-xs font-mono">
+                                <p className="text-danger text-xs">
                                     {errors.blog_category_id}
                                 </p>
                             )}
@@ -589,12 +589,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         {/* Subcategory */}
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
-                                <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                                    <CornerDownRight className="w-3.5 h-3.5 text-neutral-400" />
+                                <label className="text-xs text-ink-2 flex items-center gap-1.5">
+                                    <CornerDownRight className="w-3.5 h-3.5 text-subtle" />
                                     <span>Subcategory (Optional)</span>
                                 </label>
                                 {activeSubcategories.length > 0 && (
-                                    <span className="text-[10px] font-mono text-accent">
+                                    <span className="text-2xs text-primary-ink">
                                         {activeSubcategories.length} available
                                     </span>
                                 )}
@@ -606,11 +606,11 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 }
                                 disabled={activeSubcategories.length === 0}
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white disabled:opacity-50">
+                                <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink disabled:opacity-50">
                                     <SelectValue placeholder="Select Subcategory">
                                         <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
-                                            <CornerDownRight className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
-                                            <span className="text-sm truncate text-white">
+                                            <CornerDownRight className="w-3.5 h-3.5 text-subtle shrink-0" />
+                                            <span className="text-sm truncate text-ink">
                                                 {selectedSubcategory
                                                     ? selectedSubcategory.name
                                                     : activeSubcategories.length === 0
@@ -620,12 +620,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         </div>
                                     </SelectValue>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[270px]">
+                                <SelectContent className="bg-surface border-line text-ink shadow-2xl min-w-[270px]">
                                     <SelectGroup>
                                         <SelectLabel>SUBCATEGORY CLASSIFICATION</SelectLabel>
                                         <SelectItem
                                             value="none"
-                                            className="py-2.5 px-3 cursor-pointer focus:bg-white/10 text-neutral-400 italic"
+                                            className="py-2.5 px-3 cursor-pointer focus:bg-surface-2 text-subtle italic"
                                         >
                                             None (Direct in Primary Category)
                                         </SelectItem>
@@ -633,11 +633,11 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             <SelectItem
                                                 key={sub.id}
                                                 value={String(sub.id)}
-                                                className="py-2.5 px-3 cursor-pointer focus:bg-accent/10 focus:text-white data-[highlighted]:bg-accent/10"
+                                                className="py-2.5 px-3 cursor-pointer focus:bg-primary-soft focus:text-ink data-[highlighted]:bg-primary-soft"
                                             >
                                                 <div className="flex items-center gap-2.5 pr-4">
-                                                    <CornerDownRight className="w-3.5 h-3.5 text-accent shrink-0" />
-                                                    <span className="text-sm font-medium text-white">{sub.name}</span>
+                                                    <CornerDownRight className="w-3.5 h-3.5 text-primary-ink shrink-0" />
+                                                    <span className="text-sm font-medium text-ink">{sub.name}</span>
                                                 </div>
                                             </SelectItem>
                                         ))}
@@ -645,7 +645,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 </SelectContent>
                             </Select>
                             {errors.subcategory_id && (
-                                <p className="text-rose-400 text-xs font-mono">
+                                <p className="text-danger text-xs">
                                     {errors.subcategory_id}
                                 </p>
                             )}
@@ -653,21 +653,21 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* Tags */}
                         <div className="space-y-2">
-                            <label className="text-xs font-mono text-neutral-300">
+                            <label className="text-xs text-ink-2">
                                 Tags (Comma-separated)
                             </label>
                             <Input
                                 placeholder="Motion, Spatial, UI/UX, Engineering"
                                 value={data.tags}
                                 onChange={(e) => setData("tags", e.target.value)}
-                                className="bg-[#0c0d12] border-white/10 focus:border-accent text-sm"
+                                className="bg-surface border-line focus:border-ring text-sm"
                             />
                             {tagPills.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 pt-1">
                                     {tagPills.map((tag, idx) => (
                                         <Badge
                                             key={idx}
-                                            className="bg-white/5 border border-white/10 text-neutral-300 text-[10px] font-mono px-2 py-0.5 h-5"
+                                            className="bg-surface-2 border border-line text-ink-2 text-2xs px-2 py-0.5 h-5"
                                         >
                                             #{tag}
                                         </Badge>
@@ -675,20 +675,20 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 </div>
                             )}
                             {errors.tags && (
-                                <p className="text-rose-400 text-xs font-mono">{errors.tags}</p>
+                                <p className="text-danger text-xs">{errors.tags}</p>
                             )}
                         </div>
                     </div>
 
                     {/* COVER MEDIA CARD */}
-                    <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
-                        <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <ImageIcon className="w-4 h-4 text-accent" />
+                    <div className="rounded-xl border border-line bg-surface p-6 space-y-5 shadow-xl">
+                        <div className="flex items-center justify-between pb-3 border-b border-line">
+                            <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-2">
+                                <ImageIcon className="w-4 h-4 text-primary-ink" />
                                 COVER MEDIA & BANNER
                             </span>
                             {data.cover_image && (
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-mono px-2 py-0.5">
+                                <Badge className="bg-success-soft text-success border border-success/25 text-2xs px-2 py-0.5">
                                     ● ATTACHED
                                 </Badge>
                             )}
@@ -696,12 +696,12 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* File Upload Dropzone */}
                         <div className="space-y-2">
-                            <label className="text-xs font-mono text-neutral-300 flex items-center justify-between">
+                            <label className="text-xs text-ink-2 flex items-center justify-between">
                                 <span className="flex items-center gap-1.5">
-                                    <UploadCloud className="w-3.5 h-3.5 text-neutral-400" />
+                                    <UploadCloud className="w-3.5 h-3.5 text-subtle" />
                                     <span>Upload Image File *</span>
                                 </span>
-                                <span className="text-[10px] font-mono text-neutral-500">Max 10MB • Auto-optimized WebP</span>
+                                <span className="text-2xs text-subtle">Max 10MB • Auto-optimized WebP</span>
                             </label>
 
                             <div
@@ -711,10 +711,10 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 onClick={() => !isUploading && fileInputRef.current?.click()}
                                 className={`group relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer overflow-hidden p-5 flex flex-col items-center justify-center text-center gap-2.5 ${
                                     isDragging
-                                        ? "border-accent bg-accent/10 shadow-[0_0_25px_rgba(251, 183, 24, 0.2)]"
+                                        ? "border-primary bg-primary-soft shadow-md"
                                         : isUploading
-                                        ? "border-accent/50 bg-[#0c0d12] opacity-80 cursor-wait"
-                                        : "border-white/15 bg-[#0c0d12]/70 hover:border-accent/60 hover:bg-[#0c0d12]"
+                                        ? "border-primary/50 bg-surface opacity-80 cursor-wait"
+                                        : "border-line bg-surface hover:border-primary/60 hover:bg-surface-2"
                                 }`}
                             >
                                 <input
@@ -731,25 +731,25 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                                 {isUploading ? (
                                     <div className="flex flex-col items-center gap-2 py-2">
-                                        <Loader2 className="w-8 h-8 text-accent animate-spin" />
+                                        <Loader2 className="w-8 h-8 text-primary-ink animate-spin" />
                                         <div className="flex flex-col items-center gap-0.5">
-                                            <span className="text-xs font-mono font-bold text-white">
+                                            <span className="text-xs font-bold text-ink">
                                                 Optimizing & uploading image...
                                             </span>
-                                            <span className="text-[10px] font-mono text-neutral-400">
+                                            <span className="text-2xs text-subtle">
                                                 Resizing & encoding via Laravel Intervention
                                             </span>
                                         </div>
                                     </div>
                                 ) : (uploadedFileName || data.cover_image) ? (
-                                    <div className="flex items-center justify-between w-full p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                                    <div className="flex items-center justify-between w-full p-2.5 rounded-lg bg-success-soft border border-success/25">
                                         <div className="flex items-center gap-2.5 min-w-0">
-                                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                            <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
                                             <div className="flex flex-col text-left min-w-0">
-                                                <span className="text-xs font-mono text-white truncate max-w-[170px]">
+                                                <span className="text-xs text-ink truncate max-w-[170px]">
                                                     {uploadedFileName || data.cover_image.split("/").pop()}
                                                 </span>
-                                                <span className="text-[10px] font-mono text-emerald-400">
+                                                <span className="text-2xs text-success">
                                                     Optimized WebP • Click to replace
                                                 </span>
                                             </div>
@@ -763,7 +763,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                     e.stopPropagation();
                                                     fileInputRef.current?.click();
                                                 }}
-                                                className="h-7 px-2 text-[10px] font-mono text-neutral-300 hover:text-white"
+                                                className="h-7 px-2 text-2xs text-ink-2 hover:text-ink"
                                             >
                                                 Replace
                                             </Button>
@@ -776,7 +776,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                     setData("cover_image", "");
                                                     setUploadedFileName(null);
                                                 }}
-                                                className="h-7 px-2 text-[10px] font-mono text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                                                className="h-7 px-2 text-2xs text-danger hover:text-danger hover:bg-danger-soft"
                                                 title="Remove cover image"
                                             >
                                                 <Trash2 className="w-3.5 h-3.5" />
@@ -785,17 +785,17 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-accent group-hover:border-accent/40 group-hover:scale-110 transition-all duration-200">
+                                        <div className="w-10 h-10 rounded-full bg-surface-2 border border-line flex items-center justify-center text-subtle group-hover:text-primary-ink group-hover:border-primary/40 group-hover:scale-110 transition-all duration-200">
                                             <UploadCloud className="w-5 h-5" />
                                         </div>
                                         <div className="space-y-0.5">
-                                            <p className="text-xs font-medium text-white group-hover:text-accent transition-colors">
-                                                <span className="font-bold underline decoration-accent/60 underline-offset-2">
+                                            <p className="text-xs font-medium text-ink group-hover:text-primary-ink transition-colors">
+                                                <span className="font-bold underline decoration-primary/60 underline-offset-2">
                                                     Click to upload
                                                 </span>{" "}
                                                 or drag & drop
                                             </p>
-                                            <p className="text-[11px] font-mono text-neutral-500">
+                                            <p className="text-2xs text-subtle">
                                                 PNG, JPG, WEBP, AVIF or GIF (16:9 banner)
                                             </p>
                                         </div>
@@ -804,13 +804,13 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             </div>
 
                             {uploadError && (
-                                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-mono">
-                                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-danger-soft border border-danger/25 text-danger text-xs">
+                                    <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
                                     <span className="flex-1">{uploadError}</span>
                                     <button
                                         type="button"
                                         onClick={() => setUploadError(null)}
-                                        className="text-rose-400 hover:text-rose-200 cursor-pointer"
+                                        className="text-danger hover:text-danger cursor-pointer"
                                     >
                                         <X className="w-3.5 h-3.5" />
                                     </button>
@@ -818,7 +818,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             )}
 
                             {errors.cover_image && (
-                                <p className="text-rose-400 text-xs font-mono flex items-center gap-1 mt-1">
+                                <p className="text-danger text-xs flex items-center gap-1 mt-1">
                                     <AlertCircle className="w-3.5 h-3.5" />
                                     {errors.cover_image}
                                 </p>
@@ -829,8 +829,8 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         {Boolean(data.cover_image) && (
                             <div className="space-y-1.5 pt-1">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
-                                        <ImageIcon className="w-3 h-3 text-accent" />
+                                    <span className="text-2xs uppercase tracking-wider text-subtle flex items-center gap-1.5">
+                                        <ImageIcon className="w-3 h-3 text-primary-ink" />
                                         <span>Live 16:9 Cinema Banner Preview</span>
                                     </span>
                                     {!imagePreviewError && (
@@ -838,7 +838,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             href={data.cover_image}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="text-[10px] font-mono text-neutral-400 hover:text-accent flex items-center gap-1 transition-colors"
+                                            className="text-2xs text-subtle hover:text-primary-ink flex items-center gap-1 transition-colors"
                                             title="View full resolution image in new tab"
                                         >
                                             <span>Full Size</span>
@@ -847,7 +847,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     )}
                                 </div>
 
-                                <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-[#0c0d12] flex items-center justify-center group/preview shadow-inner">
+                                <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-line bg-surface flex items-center justify-center group/preview shadow-inner">
                                     {!imagePreviewError ? (
                                         <>
                                             <img
@@ -857,7 +857,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover/preview:scale-[1.02]"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-0 group-hover/preview:opacity-100 transition-opacity duration-200 flex items-end justify-between p-3">
-                                                <span className="text-[10px] font-mono text-neutral-300 truncate max-w-[210px]">
+                                                <span className="text-2xs text-white truncate max-w-[210px]">
                                                     {uploadedFileName || data.cover_image.split("/").pop()}
                                                 </span>
                                                 <button
@@ -866,7 +866,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                         setData("cover_image", "");
                                                         setUploadedFileName(null);
                                                     }}
-                                                    className="px-2 py-1 rounded bg-rose-500/80 hover:bg-rose-600 text-white text-[10px] font-mono flex items-center gap-1 transition-colors shadow-lg cursor-pointer"
+                                                    className="px-2 py-1 rounded bg-danger/90 hover:bg-danger-hover text-white text-2xs flex items-center gap-1 transition-colors shadow-lg cursor-pointer"
                                                 >
                                                     <Trash2 className="w-3 h-3" />
                                                     <span>Remove</span>
@@ -874,9 +874,9 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                             </div>
                                         </>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-2 text-neutral-500 font-mono text-xs p-4 text-center">
-                                            <ImageIcon className="w-8 h-8 opacity-30 text-neutral-400" />
-                                            <span className="text-rose-400 text-[11px]">
+                                        <div className="flex flex-col items-center gap-2 text-subtle text-xs p-4 text-center">
+                                            <ImageIcon className="w-8 h-8 opacity-30 text-subtle" />
+                                            <span className="text-danger text-2xs">
                                                 Failed to load cover image
                                             </span>
                                             <button
@@ -885,7 +885,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                                     setData("cover_image", "");
                                                     setUploadedFileName(null);
                                                 }}
-                                                className="text-[10px] font-mono text-neutral-400 hover:text-white underline cursor-pointer"
+                                                className="text-2xs text-subtle hover:text-ink underline cursor-pointer"
                                             >
                                                 Remove image
                                             </button>
@@ -897,19 +897,19 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                     </div>
 
                     {/* PUBLISHING HUB CARD */}
-                    <div className="rounded-xl border border-white/10 bg-[#12131a] p-6 space-y-5 shadow-xl">
-                        <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Layers className="w-4 h-4 text-accent" />
+                    <div className="rounded-xl border border-line bg-surface p-6 space-y-5 shadow-xl">
+                        <div className="flex items-center justify-between pb-3 border-b border-line">
+                            <span className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-2">
+                                <Layers className="w-4 h-4 text-primary-ink" />
                                 PUBLISHING HUB
                             </span>
                             <span
-                                className={`px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border ${
+                                className={`px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border ${
                                     data.status === "published"
-                                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                                        ? "border-success/25 bg-success-soft text-success"
                                         : data.status === "draft"
-                                        ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                                        : "border-neutral-500/30 bg-neutral-500/10 text-neutral-400"
+                                        ? "border-warning/25 bg-warning-soft text-warning"
+                                        : "border-line bg-surface-2 text-subtle"
                                 }`}
                             >
                                 {data.status}
@@ -918,7 +918,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
 
                         {/* Status Select */}
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono text-neutral-300">
+                            <label className="text-xs text-ink-2">
                                 Publication Stage
                             </label>
                             <Select
@@ -930,19 +930,19 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     )
                                 }
                             >
-                                <SelectTrigger className="h-11 bg-[#0c0d12] border-white/10 hover:border-white/20 focus:border-accent text-white">
+                                <SelectTrigger className="h-11 bg-surface border-line hover:border-line-strong focus:border-ring text-ink">
                                     <SelectValue>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span
                                                 className={`w-2 h-2 rounded-full ${
                                                     data.status === "published"
-                                                        ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"
+                                                        ? "bg-success shadow-xs"
                                                         : data.status === "draft"
-                                                        ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"
-                                                        : "bg-neutral-400"
+                                                        ? "bg-warning shadow-xs"
+                                                        : "bg-faint"
                                                 }`}
                                             />
-                                            <span className="font-medium text-white">
+                                            <span className="font-medium text-ink">
                                                 {data.status === "published"
                                                     ? "Published (Live to Public)"
                                                     : data.status === "draft"
@@ -952,33 +952,33 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                         </div>
                                     </SelectValue>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl">
+                                <SelectContent className="bg-surface border-line text-ink shadow-2xl">
                                     <SelectGroup>
                                         <SelectLabel>PUBLICATION STAGES</SelectLabel>
                                         <SelectItem value="published" className="py-2.5 cursor-pointer">
                                             <div className="flex items-center gap-2.5">
-                                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] shrink-0" />
+                                                <span className="w-2.5 h-2.5 rounded-full bg-success shadow-xs shrink-0" />
                                                 <div className="flex flex-col text-left">
-                                                    <span className="font-medium text-white text-sm">Published</span>
-                                                    <span className="text-[11px] font-mono text-neutral-400">Live & indexable across public journal</span>
+                                                    <span className="font-medium text-ink text-sm">Published</span>
+                                                    <span className="text-2xs text-subtle">Live & indexable across public journal</span>
                                                 </div>
                                             </div>
                                         </SelectItem>
                                         <SelectItem value="draft" className="py-2.5 cursor-pointer">
                                             <div className="flex items-center gap-2.5">
-                                                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] shrink-0" />
+                                                <span className="w-2.5 h-2.5 rounded-full bg-warning shadow-xs shrink-0" />
                                                 <div className="flex flex-col text-left">
-                                                    <span className="font-medium text-white text-sm">Draft</span>
-                                                    <span className="text-[11px] font-mono text-neutral-400">Private to workspace editorial team</span>
+                                                    <span className="font-medium text-ink text-sm">Draft</span>
+                                                    <span className="text-2xs text-subtle">Private to workspace editorial team</span>
                                                 </div>
                                             </div>
                                         </SelectItem>
                                         <SelectItem value="archived" className="py-2.5 cursor-pointer">
                                             <div className="flex items-center gap-2.5">
-                                                <span className="w-2.5 h-2.5 rounded-full bg-neutral-400 shrink-0" />
+                                                <span className="w-2.5 h-2.5 rounded-full bg-faint shrink-0" />
                                                 <div className="flex flex-col text-left">
-                                                    <span className="font-medium text-white text-sm">Archived</span>
-                                                    <span className="text-[11px] font-mono text-neutral-400">Unlisted and hidden from search feeds</span>
+                                                    <span className="font-medium text-ink text-sm">Archived</span>
+                                                    <span className="text-2xs text-subtle">Unlisted and hidden from search feeds</span>
                                                 </div>
                                             </div>
                                         </SelectItem>
@@ -988,17 +988,17 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                         </div>
 
                         {/* Featured Toggle */}
-                        <div className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-[#0c0d12]/60">
+                        <div className="flex items-center justify-between p-3 rounded-lg border border-line bg-surface-2">
                             <div className="space-y-0.5">
-                                <label className="text-xs font-mono text-white cursor-pointer flex items-center gap-1.5">
+                                <label className="text-xs text-ink cursor-pointer flex items-center gap-1.5">
                                     <span>Featured Article</span>
                                     {data.is_featured && (
-                                        <Badge className="bg-accent text-black text-[9px] font-mono font-bold px-1 py-0 h-4">
+                                        <Badge className="bg-primary text-primary-foreground text-2xs font-bold px-1 py-0 h-4">
                                             HERO
                                         </Badge>
                                     )}
                                 </label>
-                                <p className="text-[11px] text-neutral-400 font-mono">
+                                <p className="text-2xs text-subtle">
                                     Pin to top of public journal
                                 </p>
                             </div>
@@ -1014,7 +1014,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full h-11 bg-accent hover:bg-[#b8dd00] text-black font-mono font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(251, 183, 24, 0.15)] transition-all"
+                                className="w-full h-11 bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
                             >
                                 <Save className="w-4 h-4" />
                                 <span>
@@ -1032,7 +1032,7 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    className="w-full h-9 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono text-xs gap-2 cursor-pointer"
+                                    className="w-full h-9 border-line bg-surface-2 hover:bg-surface-2 text-ink-2 hover:text-ink text-xs gap-2 cursor-pointer"
                                 >
                                     <ArrowLeft className="w-3.5 h-3.5" />
                                     <span>Discard & Return to List</span>
@@ -1049,9 +1049,9 @@ export function BlogForm({ mode, blog, categories = [], authors = [] }: BlogForm
                                     <Button
                                         type="button"
                                         variant="ghost"
-                                        className="w-full h-8 text-[11px] font-mono text-neutral-400 hover:text-white hover:bg-white/5 gap-1.5 cursor-pointer"
+                                        className="w-full h-8 text-2xs text-subtle hover:text-ink hover:bg-surface-2 gap-1.5 cursor-pointer"
                                     >
-                                        <Eye className="w-3 h-3 text-accent" />
+                                        <Eye className="w-3 h-3 text-primary-ink" />
                                         <span>Preview Public Article</span>
                                         <ExternalLink className="w-2.5 h-2.5" />
                                     </Button>

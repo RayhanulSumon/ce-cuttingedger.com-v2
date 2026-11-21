@@ -84,7 +84,7 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                                 onClick={() => setBillingType('monthly')}
                                 className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                                     billingType === 'monthly'
-                                        ? 'bg-primary text-white'
+                                        ? 'bg-primary text-primary-foreground'
                                         : 'text-muted hover:text-ink'
                                 }`}
                             >
@@ -121,7 +121,7 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                             }}
                         />
 
-                        <div className="flex justify-between text-[11px] font-medium text-subtle">
+                        <div className="flex justify-between text-2xs font-medium text-subtle">
                             <span>{SLIDER_MIN.toLocaleString()}</span>
                             <span>{SLIDER_MAX.toLocaleString()}</span>
                         </div>
@@ -151,11 +151,11 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                 <div className="flex flex-col justify-between rounded-2xl border border-ink/8 bg-page/75 p-5 sm:p-6 lg:col-span-5">
                     <div>
                         <div className="flex items-center justify-between gap-2">
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                            <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                                 Estimated total
                             </span>
                             {quote.totalBonusPct > 0 && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-ink">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-2xs font-bold text-primary-ink">
                                     <Sparkles className="h-3 w-3" />
                                     +{quote.totalBonusPct}% Bonus
                                 </span>
@@ -217,7 +217,7 @@ export function CustomCreditBuilder({ onSelectPlan }: CustomCreditBuilderProps) 
                                 ],
                             })
                         }
-                        className="group mt-6 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-primary-hover"
+                        className="group mt-6 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-300 hover:bg-primary-hover"
                     >
                         <span>Buy Custom Plan</span>
                         <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

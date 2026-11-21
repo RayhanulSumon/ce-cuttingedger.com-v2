@@ -79,50 +79,50 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
             <div className="space-y-6">
                 {/* 4 Summary KPI Cards */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="space-y-1.5 rounded-2xl border border-primary/30 bg-white p-5 shadow-xs">
-                        <span className="block text-xs font-semibold text-slate-500">
+                    <div className="space-y-1.5 rounded-2xl border border-primary/30 bg-surface p-5 shadow-xs">
+                        <span className="block text-xs font-semibold text-subtle">
                             Total Orders
                         </span>
                         <div className="text-3xl font-extrabold tabular-nums text-ink">
                             {orders.length.toLocaleString()}
                         </div>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-subtle">
                             Submitted orders &amp; quotes
                         </span>
                     </div>
 
-                    <div className="space-y-1.5 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
-                        <span className="block text-xs font-semibold text-slate-500">
+                    <div className="space-y-1.5 rounded-2xl border border-line bg-surface p-5 shadow-xs">
+                        <span className="block text-xs font-semibold text-subtle">
                             In Progress
                         </span>
-                        <div className="text-3xl font-extrabold tabular-nums text-amber-700">
+                        <div className="text-3xl font-extrabold tabular-nums text-warning">
                             {metrics.inProgressCount.toLocaleString()}
                         </div>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-subtle">
                             Pending, in production &amp; QA
                         </span>
                     </div>
 
-                    <div className="space-y-1.5 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
-                        <span className="block text-xs font-semibold text-slate-500">
+                    <div className="space-y-1.5 rounded-2xl border border-line bg-surface p-5 shadow-xs">
+                        <span className="block text-xs font-semibold text-subtle">
                             Completed
                         </span>
-                        <div className="text-3xl font-extrabold tabular-nums text-emerald-700">
+                        <div className="text-3xl font-extrabold tabular-nums text-success">
                             {metrics.completedCount.toLocaleString()}
                         </div>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-subtle">
                             Finished studio orders
                         </span>
                     </div>
 
-                    <div className="space-y-1.5 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
-                        <span className="block text-xs font-semibold text-slate-500">
+                    <div className="space-y-1.5 rounded-2xl border border-line bg-surface p-5 shadow-xs">
+                        <span className="block text-xs font-semibold text-subtle">
                             Deliverables Ready
                         </span>
                         <div className="text-3xl font-extrabold tabular-nums text-ink">
                             {metrics.deliverablesCount.toLocaleString()}
                         </div>
-                        <span className="block text-xs text-slate-500">
+                        <span className="block text-xs text-subtle">
                             Orders with files to download
                         </span>
                     </div>
@@ -150,8 +150,8 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                 onClick={() => setStatusFilter(pill.id)}
                                 className={`cursor-pointer rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                                     statusFilter === pill.id
-                                        ? 'bg-primary text-white'
-                                        : 'border border-slate-200 bg-white text-slate-600 hover:text-ink'
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'border border-line bg-surface text-muted hover:text-ink'
                                 }`}
                             >
                                 {pill.label}
@@ -160,14 +160,14 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                     </div>
 
                     <div className="relative w-full sm:w-64">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint" />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search order # or service..."
                             aria-label="Search orders"
-                            className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-xs text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none"
+                            className="w-full rounded-xl border border-line bg-surface py-2 pl-9 pr-3 text-xs text-ink placeholder:text-faint focus:border-ring focus:outline-none"
                         />
                     </div>
                 </div>
@@ -187,11 +187,11 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                 return (
                                     <div
                                         key={order.id}
-                                        className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs"
+                                        className="rounded-2xl border border-line bg-surface p-4 shadow-xs"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="min-w-0 flex-1">
-                                                <div className="text-xs font-bold text-slate-500">
+                                                <div className="text-xs font-bold text-subtle">
                                                     #{order.order_number}
                                                 </div>
                                                 <div className="mt-0.5 text-sm font-bold text-ink break-words">
@@ -203,17 +203,17 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                             </div>
                                         </div>
 
-                                        <div className="mt-3 divide-y divide-slate-100 border-t border-slate-100 text-xs">
+                                        <div className="mt-3 divide-y divide-line border-t border-line text-xs">
                                             <div className="flex items-center justify-between gap-3 py-2">
-                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                <span className="text-2xs font-semibold uppercase tracking-wide text-faint">
                                                     Assets &amp; Turnaround
                                                 </span>
-                                                <span className="text-right font-medium text-slate-700">
+                                                <span className="text-right font-medium text-ink-2">
                                                     {order.quantity.toLocaleString()} asset(s) · {order.turnaround}
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between gap-3 py-2">
-                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                <span className="text-2xs font-semibold uppercase tracking-wide text-faint">
                                                     Amount
                                                 </span>
                                                 <span
@@ -225,19 +225,19 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between gap-3 py-2">
-                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                                                <span className="text-2xs font-semibold uppercase tracking-wide text-faint">
                                                     Date
                                                 </span>
-                                                <span className="text-slate-600">
+                                                <span className="text-muted">
                                                     {order.created_at_formatted}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                                        <div className="mt-3 pt-3 border-t border-line flex flex-wrap items-center justify-between gap-2">
                                             <div className="flex flex-wrap items-center gap-1.5">
                                                 {isCreditOrder && (
-                                                    <span className="rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary">
+                                                    <span className="rounded-md bg-primary/10 px-2 py-1 text-2xs font-semibold text-primary">
                                                         Paid with Credits
                                                     </span>
                                                 )}
@@ -245,13 +245,13 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     order.digital_twin_download_url ? (
                                                         <a
                                                             href={order.digital_twin_download_url}
-                                                            className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700"
+                                                            className="inline-flex items-center gap-1 rounded-lg bg-success px-2.5 py-1.5 text-2xs font-bold text-white hover:bg-success/90"
                                                         >
                                                             <Download className="h-3 w-3" />
                                                             <span>Download ZIP</span>
                                                         </a>
                                                     ) : (
-                                                        <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
+                                                        <span className="inline-flex items-center gap-1 rounded-lg border border-success/25 bg-success-soft px-2 py-1 text-2xs font-semibold text-success">
                                                             <Download className="h-3 w-3" />
                                                             <span>{order.completed_files.length} Ready</span>
                                                         </span>
@@ -275,10 +275,10 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                         </div>
 
                         {/* Desktop Table Card (md+) */}
-                        <div className="hidden md:block overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                        <div className="hidden md:block overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-xs">
-                                    <thead className="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                    <thead className="border-b border-line bg-surface-2 text-2xs font-bold uppercase tracking-wider text-subtle">
                                         <tr>
                                             <th className="px-5 py-3.5">Order #</th>
                                             <th className="px-5 py-3.5">Service</th>
@@ -289,7 +289,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                             <th className="px-5 py-3.5 text-right">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100">
+                                    <tbody className="divide-y divide-line">
                                         {filteredOrders.map((order) => {
                                             const isCreditOrder = order.order_type === 'credit_usage';
                                             const hasDeliverables =
@@ -300,7 +300,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                             return (
                                                 <tr
                                                     key={order.id}
-                                                    className="transition-colors hover:bg-slate-50/70"
+                                                    className="transition-colors hover:bg-surface-2"
                                                 >
                                                     <td className="whitespace-nowrap px-5 py-4 font-bold text-ink">
                                                         #{order.order_number}
@@ -309,19 +309,19 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                         <div className="text-sm font-bold text-ink">
                                                             {order.service_name}
                                                         </div>
-                                                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-slate-500">
+                                                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-subtle">
                                                             <span>
                                                                 {order.quantity.toLocaleString()} asset(s) ·{' '}
                                                                 {order.uploaded_count} file(s)
                                                             </span>
                                                             {isCreditOrder && (
-                                                                <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                                                <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-2xs font-semibold text-primary">
                                                                     Paid with Credits
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </td>
-                                                    <td className="whitespace-nowrap px-5 py-4 font-medium text-slate-700">
+                                                    <td className="whitespace-nowrap px-5 py-4 font-medium text-ink-2">
                                                         {order.turnaround}
                                                     </td>
                                                     <td className="whitespace-nowrap px-5 py-4">
@@ -336,7 +336,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                     <td className="whitespace-nowrap px-5 py-4">
                                                         <OrderStatusBadge status={order.status} />
                                                     </td>
-                                                    <td className="whitespace-nowrap px-5 py-4 text-slate-500">
+                                                    <td className="whitespace-nowrap px-5 py-4 text-subtle">
                                                         {order.created_at_formatted}
                                                     </td>
                                                     <td className="whitespace-nowrap px-5 py-4 text-right">
@@ -345,7 +345,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                                 order.digital_twin_download_url ? (
                                                                     <a
                                                                         href={order.digital_twin_download_url}
-                                                                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-emerald-700"
+                                                                        className="inline-flex items-center gap-1 rounded-lg bg-success px-2.5 py-1.5 text-2xs font-bold text-white hover:bg-success/90"
                                                                     >
                                                                         <Download className="h-3 w-3" />
                                                                         <span>ZIP</span>
@@ -353,7 +353,7 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                                                                 ) : (
                                                                     <span
                                                                         title="Deliverables ready"
-                                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700"
+                                                                        className="inline-flex items-center gap-1 rounded-lg border border-success/25 bg-success-soft px-2 py-1 text-2xs font-semibold text-success"
                                                                     >
                                                                         <Download className="h-3 w-3" />
                                                                         <span>{order.completed_files.length}</span>
@@ -380,20 +380,20 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                         </div>
                     </>
                 ) : orders.length === 0 ? (
-                    <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                         <div className="space-y-3 p-10 sm:p-12 text-center">
                             <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                                 <ShoppingBag className="h-5 w-5" />
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-ink">No orders or quotes yet</p>
-                                <p className="mx-auto mt-1 max-w-md text-xs text-slate-500">
+                                <p className="mx-auto mt-1 max-w-md text-xs text-subtle">
                                     Explore our studio capabilities to place a new order or request a custom project quote.
                                 </p>
                             </div>
                             <Link
                                 href="/capabilities"
-                                className="inline-flex min-h-11 sm:min-h-9 items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover"
+                                className="inline-flex min-h-11 sm:min-h-9 items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
                             >
                                 <Plus className="h-3.5 w-3.5" />
                                 <span>Browse Services &amp; Start Order</span>
@@ -401,14 +401,14 @@ export default function ClientOrders({ orders = [] }: ClientOrdersProps) {
                         </div>
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                         <div className="space-y-3 p-10 sm:p-12 text-center">
-                            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+                            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-2 text-subtle">
                                 <Search className="h-5 w-5" />
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-ink">No matching orders</p>
-                                <p className="mx-auto mt-1 max-w-md text-xs text-slate-500">
+                                <p className="mx-auto mt-1 max-w-md text-xs text-subtle">
                                     Try clearing your search or switching the status filter.
                                 </p>
                             </div>

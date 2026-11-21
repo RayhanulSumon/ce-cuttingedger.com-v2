@@ -49,7 +49,7 @@ export function CreditCheckoutDialog({
                         <div className="space-y-2 rounded-2xl border border-ink/10 bg-page p-4 text-sm">
                             <div className="flex items-center justify-between gap-2">
                                 <span className="font-bold text-ink">{checkoutPlan.plan_name}</span>
-                                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-ink">
+                                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-2xs font-bold text-primary-ink">
                                     {checkoutPlan.billing_type === 'monthly' ? 'Monthly Plan' : 'One-Time Pack'}
                                 </span>
                             </div>
@@ -101,7 +101,7 @@ export function CreditCheckoutDialog({
                             <button
                                 type="submit"
                                 disabled={!isVerified || processing}
-                                className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <span>{processing ? 'Submitting...' : 'Confirm & Buy Credit Plan'}</span>
                                 <ArrowUpRight className="h-3.5 w-3.5" />

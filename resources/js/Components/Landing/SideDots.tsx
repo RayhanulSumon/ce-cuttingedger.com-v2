@@ -24,12 +24,10 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
             {/* Vertical track + animated fill line */}
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute right-[5px] top-0 bottom-0 w-[1.5px]"
-                style={{ background: dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)' }}
+                className={`pointer-events-none absolute right-[5px] top-0 bottom-0 w-[1.5px] ${dark ? 'bg-white/15' : 'bg-ink/12'}`}
             >
                 <motion.div
-                    className="absolute top-0 left-0 right-0 origin-top"
-                    style={{ background: dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.65)' }}
+                    className={`absolute top-0 left-0 right-0 origin-top ${dark ? 'bg-white/75' : 'bg-ink/65'}`}
                     animate={{ scaleY: fillRatio }}
                     initial={false}
                     transition={{ duration: 0.72, ease: [0.65, 0, 0.35, 1] }}
@@ -49,7 +47,7 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                     >
                         {/* Hover label */}
                         <span
-                            className={`pointer-events-none select-none text-[9px] font-semibold uppercase tracking-[0.22em] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 ${
+                            className={`pointer-events-none select-none text-2xs font-semibold uppercase tracking-[0.22em] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 ${
                                 dark ? 'text-white' : 'text-ink'
                             }`}
                         >
@@ -70,7 +68,7 @@ export function SideDots({ index, goTo, hidden = false }: SideDotsProps) {
                             )}
                             {/* Inner fill */}
                             <motion.span
-                                className={`block h-1.5 w-1.5 rounded-full ${dark ? 'bg-white' : 'bg-ink'}`}
+                                className={`block h-1.5 w-1.5 rounded-full ${dark ? 'bg-surface' : 'bg-ink'}`}
                                 animate={{ scale: isActive ? 1 : 0.66, opacity: isActive ? 1 : 0.35 }}
                                 transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                             />

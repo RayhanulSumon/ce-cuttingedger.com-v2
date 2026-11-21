@@ -201,8 +201,8 @@ export function ClientSettingsSection({
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
                 className={cn(
-                    'rounded-2xl border bg-white p-6 shadow-xs transition-colors',
-                    isDragging ? 'border-primary bg-primary/[0.03]' : 'border-slate-200/90'
+                    'rounded-2xl border bg-surface p-6 shadow-xs transition-colors',
+                    isDragging ? 'border-primary bg-primary/[0.03]' : 'border-line'
                 )}
             >
                 <input
@@ -226,11 +226,11 @@ export function ClientSettingsSection({
                                 src={displayedAvatar}
                                 name={user?.name}
                                 size="xl"
-                                className="ring-4 ring-slate-100"
+                                className="ring-4 ring-line"
                             />
                             <span
                                 className={cn(
-                                    'absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/50 text-white transition-opacity',
+                                    'absolute inset-0 flex items-center justify-center rounded-full bg-ink/50 text-white transition-opacity',
                                     avatarUploading
                                         ? 'opacity-100'
                                         : 'opacity-0 group-hover:opacity-100'
@@ -249,25 +249,25 @@ export function ClientSettingsSection({
                                 <h2 className="truncate text-lg font-bold text-ink">
                                     {user?.name || 'Client Account'}
                                 </h2>
-                                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                                <span className="inline-flex items-center gap-1 rounded-full border border-success/25 bg-success-soft px-2 py-0.5 text-2xs font-semibold text-success">
                                     <CheckCircle2 className="h-3 w-3" />
                                     Verified
                                 </span>
                             </div>
 
-                            <p className="truncate text-sm text-slate-600">
+                            <p className="truncate text-sm text-muted">
                                 {user?.email}
                                 {user?.company ? ` · ${user.company}` : ''}
                             </p>
 
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-subtle">
                                 {activePlanName || 'Pay-As-You-Go'} ·{' '}
                                 <span className="font-semibold tabular-nums text-ink">
                                     {availableCredits.toLocaleString()} credits available
                                 </span>
                             </p>
 
-                            <p className="pt-0.5 text-[11px] text-slate-400">
+                            <p className="pt-0.5 text-2xs text-faint">
                                 JPG, PNG, or WebP · Max 4 MB · Click photo or drag &amp; drop here
                             </p>
                         </div>
@@ -278,7 +278,7 @@ export function ClientSettingsSection({
                             type="button"
                             disabled={avatarBusy}
                             onClick={() => fileInputRef.current?.click()}
-                            className="gap-2 bg-primary text-xs font-semibold text-white hover:bg-primary-hover cursor-pointer"
+                            className="gap-2 bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover cursor-pointer"
                         >
                             {avatarUploading ? (
                                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -300,7 +300,7 @@ export function ClientSettingsSection({
                                 variant="outline"
                                 disabled={avatarBusy}
                                 onClick={handleRemoveAvatar}
-                                className="gap-1.5 border-slate-200 bg-white text-xs font-semibold text-rose-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 cursor-pointer"
+                                className="gap-1.5 border-line bg-surface text-xs font-semibold text-danger hover:border-danger/30 hover:bg-danger-soft hover:text-danger cursor-pointer"
                             >
                                 {avatarRemoving ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -316,7 +316,7 @@ export function ClientSettingsSection({
                 {avatarError && (
                     <div
                         role="alert"
-                        className="mt-4 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium text-rose-700"
+                        className="mt-4 flex items-center gap-2 rounded-xl border border-danger/25 bg-danger-soft px-3.5 py-2.5 text-xs font-medium text-danger"
                     >
                         <AlertCircle className="h-4 w-4 shrink-0" />
                         <span>{avatarError}</span>
@@ -329,7 +329,7 @@ export function ClientSettingsSection({
                 {/* Personal Details Form */}
                 <form
                     onSubmit={handleProfileSubmit}
-                    className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs lg:col-span-7"
+                    className="flex flex-col justify-between rounded-2xl border border-line bg-surface p-6 shadow-xs lg:col-span-7"
                 >
                     <div className="space-y-5">
                         <div className="flex items-start gap-3">
@@ -338,7 +338,7 @@ export function ClientSettingsSection({
                             </span>
                             <div>
                                 <h2 className="text-base font-bold text-ink">Personal Details</h2>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-subtle">
                                     Keep your studio contact name, brand, and phone number current.
                                 </p>
                             </div>
@@ -348,7 +348,7 @@ export function ClientSettingsSection({
                             <div>
                                 <label
                                     htmlFor="client-profile-name"
-                                    className="block text-xs font-semibold text-slate-700"
+                                    className="block text-xs font-semibold text-ink-2"
                                 >
                                     Full Name
                                 </label>
@@ -358,24 +358,24 @@ export function ClientSettingsSection({
                                     required
                                     value={profileForm.data.name}
                                     onChange={(e) => profileForm.setData('name', e.target.value)}
-                                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-ring focus:outline-none"
                                 />
                                 {profileForm.errors.name && (
-                                    <p className="mt-1 text-xs text-rose-600">
+                                    <p className="mt-1 text-xs text-danger">
                                         {profileForm.errors.name}
                                     </p>
                                 )}
                             </div>
 
                             <div>
-                                <span className="block text-xs font-semibold text-slate-700">
+                                <span className="block text-xs font-semibold text-ink-2">
                                     Email Address
                                 </span>
-                                <div className="mt-1.5 flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-500">
+                                <div className="mt-1.5 flex items-center justify-between gap-2 rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-sm text-subtle">
                                     <span className="truncate">{user?.email || '—'}</span>
                                     <Lock
                                         aria-label="Verified account email"
-                                        className="h-3.5 w-3.5 shrink-0 text-slate-400"
+                                        className="h-3.5 w-3.5 shrink-0 text-faint"
                                     />
                                 </div>
                             </div>
@@ -383,7 +383,7 @@ export function ClientSettingsSection({
                             <div>
                                 <label
                                     htmlFor="client-profile-company"
-                                    className="block text-xs font-semibold text-slate-700"
+                                    className="block text-xs font-semibold text-ink-2"
                                 >
                                     Brand / Company
                                 </label>
@@ -393,10 +393,10 @@ export function ClientSettingsSection({
                                     value={profileForm.data.company}
                                     onChange={(e) => profileForm.setData('company', e.target.value)}
                                     placeholder="Optional"
-                                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-ring focus:outline-none"
                                 />
                                 {profileForm.errors.company && (
-                                    <p className="mt-1 text-xs text-rose-600">
+                                    <p className="mt-1 text-xs text-danger">
                                         {profileForm.errors.company}
                                     </p>
                                 )}
@@ -405,7 +405,7 @@ export function ClientSettingsSection({
                             <div>
                                 <label
                                     htmlFor="client-profile-phone"
-                                    className="block text-xs font-semibold text-slate-700"
+                                    className="block text-xs font-semibold text-ink-2"
                                 >
                                     Phone / WhatsApp
                                 </label>
@@ -415,10 +415,10 @@ export function ClientSettingsSection({
                                     value={profileForm.data.phone}
                                     onChange={(e) => profileForm.setData('phone', e.target.value)}
                                     placeholder="Optional"
-                                    className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-ring focus:outline-none"
                                 />
                                 {profileForm.errors.phone && (
-                                    <p className="mt-1 text-xs text-rose-600">
+                                    <p className="mt-1 text-xs text-danger">
                                         {profileForm.errors.phone}
                                     </p>
                                 )}
@@ -426,14 +426,14 @@ export function ClientSettingsSection({
                         </div>
                     </div>
 
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                        <span className="text-xs font-medium text-slate-500">
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+                        <span className="text-xs font-medium text-subtle">
                             {profileForm.isDirty ? 'Unsaved changes' : 'Up to date'}
                         </span>
                         <Button
                             type="submit"
                             disabled={profileForm.processing}
-                            className="bg-primary text-xs font-semibold text-white hover:bg-primary-hover cursor-pointer"
+                            className="bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover cursor-pointer"
                         >
                             {profileForm.processing ? 'Saving...' : 'Save Changes'}
                         </Button>
@@ -443,7 +443,7 @@ export function ClientSettingsSection({
                 {/* Password & Security Form */}
                 <form
                     onSubmit={handlePasswordSubmit}
-                    className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs lg:col-span-5"
+                    className="flex flex-col justify-between rounded-2xl border border-line bg-surface p-6 shadow-xs lg:col-span-5"
                 >
                     <div className="space-y-4">
                         <div className="flex items-start gap-3">
@@ -454,7 +454,7 @@ export function ClientSettingsSection({
                                 <h2 className="text-base font-bold text-ink">
                                     Password &amp; Security
                                 </h2>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-subtle">
                                     Choose a strong password of at least 8 characters.
                                 </p>
                             </div>
@@ -463,7 +463,7 @@ export function ClientSettingsSection({
                         <div>
                             <label
                                 htmlFor="client-new-password"
-                                className="block text-xs font-semibold text-slate-700"
+                                className="block text-xs font-semibold text-ink-2"
                             >
                                 New Password
                             </label>
@@ -477,13 +477,13 @@ export function ClientSettingsSection({
                                         passwordForm.setData('password', e.target.value)
                                     }
                                     placeholder="Min. 8 characters"
-                                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-3.5 pr-10 text-sm text-ink focus:border-primary focus:outline-none"
+                                    className="w-full rounded-xl border border-line bg-surface py-2.5 pl-3.5 pr-10 text-sm text-ink focus:border-ring focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((prev) => !prev)}
                                     aria-label={showPassword ? 'Hide password' : 'Show password'}
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-md p-1 text-slate-400 hover:text-slate-600"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-md p-1 text-faint hover:text-muted"
                                 >
                                     {showPassword ? (
                                         <EyeOff className="h-4 w-4" />
@@ -493,7 +493,7 @@ export function ClientSettingsSection({
                                 </button>
                             </div>
                             {passwordForm.errors.password && (
-                                <p className="mt-1 text-xs text-rose-600">
+                                <p className="mt-1 text-xs text-danger">
                                     {passwordForm.errors.password}
                                 </p>
                             )}
@@ -502,7 +502,7 @@ export function ClientSettingsSection({
                         <div>
                             <label
                                 htmlFor="client-confirm-password"
-                                className="block text-xs font-semibold text-slate-700"
+                                className="block text-xs font-semibold text-ink-2"
                             >
                                 Confirm New Password
                             </label>
@@ -519,7 +519,7 @@ export function ClientSettingsSection({
                                         )
                                     }
                                     placeholder="Re-enter password"
-                                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-3.5 pr-10 text-sm text-ink focus:border-primary focus:outline-none"
+                                    className="w-full rounded-xl border border-line bg-surface py-2.5 pl-3.5 pr-10 text-sm text-ink focus:border-ring focus:outline-none"
                                 />
                                 <button
                                     type="button"
@@ -529,7 +529,7 @@ export function ClientSettingsSection({
                                             ? 'Hide confirm password'
                                             : 'Show confirm password'
                                     }
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-md p-1 text-slate-400 hover:text-slate-600"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-md p-1 text-faint hover:text-muted"
                                 >
                                     {showConfirmPassword ? (
                                         <EyeOff className="h-4 w-4" />
@@ -539,7 +539,7 @@ export function ClientSettingsSection({
                                 </button>
                             </div>
                             {passwordForm.errors.password_confirmation && (
-                                <p className="mt-1 text-xs text-rose-600">
+                                <p className="mt-1 text-xs text-danger">
                                     {passwordForm.errors.password_confirmation}
                                 </p>
                             )}
@@ -549,7 +549,7 @@ export function ClientSettingsSection({
                             <li
                                 className={cn(
                                     'flex items-center gap-2',
-                                    passwordMeetsLength ? 'text-emerald-700' : 'text-slate-400'
+                                    passwordMeetsLength ? 'text-success' : 'text-faint'
                                 )}
                             >
                                 <Check className="h-3.5 w-3.5 shrink-0" />
@@ -558,7 +558,7 @@ export function ClientSettingsSection({
                             <li
                                 className={cn(
                                     'flex items-center gap-2',
-                                    passwordsMatch ? 'text-emerald-700' : 'text-slate-400'
+                                    passwordsMatch ? 'text-success' : 'text-faint'
                                 )}
                             >
                                 <Check className="h-3.5 w-3.5 shrink-0" />
@@ -567,11 +567,11 @@ export function ClientSettingsSection({
                         </ul>
                     </div>
 
-                    <div className="mt-6 border-t border-slate-100 pt-4">
+                    <div className="mt-6 border-t border-line pt-4">
                         <Button
                             type="submit"
                             disabled={passwordForm.processing}
-                            className="w-full bg-primary text-xs font-semibold text-white hover:bg-primary-hover cursor-pointer"
+                            className="w-full bg-primary text-xs font-semibold text-primary-foreground hover:bg-primary-hover cursor-pointer"
                         >
                             {passwordForm.processing ? 'Updating...' : 'Update Password'}
                         </Button>

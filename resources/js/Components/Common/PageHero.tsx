@@ -44,7 +44,7 @@ export function PageHero({
                     </div>
                 )}
 
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-subtle">{eyebrow}</p>
+                <p className="mb-3 text-2xs font-semibold uppercase tracking-[0.28em] text-subtle">{eyebrow}</p>
 
                 <h1
                     className={`${

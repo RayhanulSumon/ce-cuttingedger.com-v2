@@ -20,7 +20,7 @@ import { PageProps } from '@/types';
 
 const FIELD_LABEL_CLASS = 'block text-xs font-semibold text-ink';
 const INPUT_CLASS =
-    'w-full min-h-11 rounded-xl border border-ink/12 bg-[#f8f9fb] px-3.5 py-2.5 text-sm text-ink placeholder:text-faint transition-colors hover:border-ink/25 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/15';
+    'w-full min-h-11 rounded-xl border border-ink/12 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-faint transition-colors hover:border-ink/25 focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/15';
 
 const FIELD_ANCHORS: Record<string, { id: string; label: string }> = {
     name: { id: 'contact-name', label: 'Name' },
@@ -186,7 +186,7 @@ export default function Contact() {
                             </div>
 
                             {/* Unified Direct Contact Card */}
-                            <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-xs">
+                            <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-xs">
                                 {/* Direct Email Row */}
                                 <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5">
                                     <div className="flex min-w-0 items-center gap-3">
@@ -194,7 +194,7 @@ export default function Contact() {
                                             <Mail className="h-4 w-4" aria-hidden="true" />
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="text-[11px] font-medium text-subtle">Email</p>
+                                            <p className="text-2xs font-medium text-subtle">Email</p>
                                             <a
                                                 href={`mailto:${contactEmail}`}
                                                 className="block truncate text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
@@ -207,10 +207,10 @@ export default function Contact() {
                                         type="button"
                                         onClick={handleCopyEmail}
                                         aria-label="Copy email address"
-                                        className="inline-flex min-h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-ink/10 bg-[#f8f9fb] px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:border-ink/25 hover:text-ink"
+                                        className="inline-flex min-h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-ink/10 bg-surface-2 px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:border-ink/25 hover:text-ink"
                                     >
                                         {copiedEmail ? (
-                                            <span className="inline-flex items-center gap-1 text-emerald-700">
+                                            <span className="inline-flex items-center gap-1 text-success">
                                                 <Check className="h-3.5 w-3.5" aria-hidden="true" />
                                                 Copied
                                             </span>
@@ -225,11 +225,11 @@ export default function Contact() {
 
                                 {/* Phone Row(s) */}
                                 <div className="flex items-start gap-3 px-4 py-3.5 sm:px-5">
-                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f8f9fb] text-ink-2">
+                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-ink-2">
                                         <Phone className="h-4 w-4" aria-hidden="true" />
                                     </span>
                                     <div className="min-w-0 flex-1 space-y-1">
-                                        <p className="text-[11px] font-medium text-subtle">Phone</p>
+                                        <p className="text-2xs font-medium text-subtle">Phone</p>
                                         <div className="flex flex-wrap gap-x-4 gap-y-1">
                                             {contactPhones.map((item, idx) => (
                                                 <a
@@ -251,11 +251,11 @@ export default function Contact() {
 
                                 {/* Studio Address Row */}
                                 <div className="flex items-start gap-3 px-4 py-3.5 sm:px-5">
-                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f8f9fb] text-ink-2">
+                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-ink-2">
                                         <MapPin className="h-4 w-4" aria-hidden="true" />
                                     </span>
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-[11px] font-medium text-subtle">Studio</p>
+                                        <p className="text-2xs font-medium text-subtle">Studio</p>
                                         <p className="text-sm font-medium leading-snug text-ink">
                                             {contactAddress}
                                         </p>
@@ -285,7 +285,7 @@ export default function Contact() {
                             <form
                                 onSubmit={handleSubmit}
                                 noValidate
-                                className="space-y-6 rounded-3xl border border-ink/10 bg-white p-6 shadow-[0_20px_50px_-28px_rgba(22,25,31,0.14)] sm:p-8 lg:p-10"
+                                className="space-y-6 rounded-3xl border border-ink/10 bg-surface p-6 shadow-[0_20px_50px_-28px_rgba(22,25,31,0.14)] sm:p-8 lg:p-10"
                             >
                                 <div className="space-y-1 border-b border-ink/8 pb-4">
                                     <h2 className="font-display text-xl font-bold tracking-tight text-ink">
@@ -300,15 +300,15 @@ export default function Contact() {
                                 {flash?.success && (
                                     <div
                                         role="status"
-                                        className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950"
+                                        className="flex items-start gap-3 rounded-2xl border border-success/25 bg-success-soft p-4 text-success"
                                     >
                                         <CheckCircle2
-                                            className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600"
+                                            className="mt-0.5 h-5 w-5 shrink-0 text-success"
                                             aria-hidden="true"
                                         />
                                         <div className="space-y-0.5">
                                             <p className="text-sm font-bold">Message received</p>
-                                            <p className="text-xs leading-relaxed text-emerald-900">
+                                            <p className="text-xs leading-relaxed text-success">
                                                 {flash.success}
                                             </p>
                                         </div>
@@ -322,9 +322,9 @@ export default function Contact() {
                                         tabIndex={-1}
                                         role="alert"
                                         aria-labelledby="contact-error-summary"
-                                        className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                                        className="rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs text-danger focus:outline-none focus:ring-2 focus:ring-danger/30"
                                     >
-                                        <p id="contact-error-summary" className="font-bold text-rose-800">
+                                        <p id="contact-error-summary" className="font-bold text-danger">
                                             Please check the highlighted fields:
                                         </p>
                                         <ul className="mt-1.5 list-disc space-y-0.5 pl-4">
@@ -335,7 +335,7 @@ export default function Contact() {
                                                         {anchor ? (
                                                             <a
                                                                 href={`#${anchor.id}`}
-                                                                className="font-medium underline hover:text-rose-950"
+                                                                className="font-medium underline hover:text-danger"
                                                             >
                                                                 {anchor.label}: {message}
                                                             </a>
@@ -381,7 +381,7 @@ export default function Contact() {
                                             className={INPUT_CLASS}
                                         />
                                         {errors.name && (
-                                            <p id="contact-name-error" className="text-xs font-medium text-rose-600">
+                                            <p id="contact-name-error" className="text-xs font-medium text-danger">
                                                 {errors.name}
                                             </p>
                                         )}
@@ -404,7 +404,7 @@ export default function Contact() {
                                             className={INPUT_CLASS}
                                         />
                                         {errors.email && (
-                                            <p id="contact-email-error" className="text-xs font-medium text-rose-600">
+                                            <p id="contact-email-error" className="text-xs font-medium text-danger">
                                                 {errors.email}
                                             </p>
                                         )}
@@ -426,7 +426,7 @@ export default function Contact() {
                                                     className={`min-h-9 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                                                         active
                                                             ? 'border-ink bg-ink text-white'
-                                                            : 'border-ink/12 bg-white text-ink-2 hover:border-ink/30 hover:text-ink'
+                                                            : 'border-ink/12 bg-surface text-ink-2 hover:border-ink/30 hover:text-ink'
                                                     }`}
                                                 >
                                                     {service}
@@ -453,7 +453,7 @@ export default function Contact() {
                                         className={`${INPUT_CLASS} min-h-[112px] leading-relaxed`}
                                     />
                                     {errors.message && (
-                                        <p id="contact-message-error" className="text-xs font-medium text-rose-600">
+                                        <p id="contact-message-error" className="text-xs font-medium text-danger">
                                             {errors.message}
                                         </p>
                                     )}
@@ -481,7 +481,7 @@ export default function Contact() {
                                     </button>
 
                                     {showOptionalDetails && (
-                                        <div className="grid grid-cols-1 gap-4 rounded-2xl border border-ink/8 bg-[#f8f9fb] p-4 sm:grid-cols-2">
+                                        <div className="grid grid-cols-1 gap-4 rounded-2xl border border-ink/8 bg-surface-2 p-4 sm:grid-cols-2">
                                             <div className="space-y-1.5">
                                                 <label htmlFor="contact-phone" className={FIELD_LABEL_CLASS}>
                                                     Phone
@@ -493,10 +493,10 @@ export default function Contact() {
                                                     value={data.phone}
                                                     onChange={(e) => setData('phone', e.target.value)}
                                                     placeholder="+1 (555) 000-0000"
-                                                    className={`${INPUT_CLASS} bg-white`}
+                                                    className={`${INPUT_CLASS} bg-surface`}
                                                 />
                                                 {errors.phone && (
-                                                    <p className="text-xs font-medium text-rose-600">
+                                                    <p className="text-xs font-medium text-danger">
                                                         {errors.phone}
                                                     </p>
                                                 )}
@@ -513,10 +513,10 @@ export default function Contact() {
                                                     value={data.company}
                                                     onChange={(e) => setData('company', e.target.value)}
                                                     placeholder="Acme Footwear"
-                                                    className={`${INPUT_CLASS} bg-white`}
+                                                    className={`${INPUT_CLASS} bg-surface`}
                                                 />
                                                 {errors.company && (
-                                                    <p className="text-xs font-medium text-rose-600">
+                                                    <p className="text-xs font-medium text-danger">
                                                         {errors.company}
                                                     </p>
                                                 )}
@@ -533,10 +533,10 @@ export default function Contact() {
                                                     value={data.website}
                                                     onChange={(e) => setData('website', e.target.value)}
                                                     placeholder="https://yourstore.com"
-                                                    className={`${INPUT_CLASS} bg-white`}
+                                                    className={`${INPUT_CLASS} bg-surface`}
                                                 />
                                                 {errors.website && (
-                                                    <p className="text-xs font-medium text-rose-600">
+                                                    <p className="text-xs font-medium text-danger">
                                                         {errors.website}
                                                     </p>
                                                 )}
@@ -549,7 +549,7 @@ export default function Contact() {
                                 <div className="space-y-2 border-t border-ink/8 pt-5">
                                     <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                                         {captchaQuestion ? (
-                                            <div className="inline-flex min-h-10 items-center gap-2 self-start rounded-xl border border-ink/12 bg-[#f8f9fb] px-3 py-1.5 text-xs text-ink-2 sm:self-auto">
+                                            <div className="inline-flex min-h-10 items-center gap-2 self-start rounded-xl border border-ink/12 bg-surface-2 px-3 py-1.5 text-xs text-ink-2 sm:self-auto">
                                                 <span className="font-medium text-subtle">Security check:</span>
                                                 <span className="font-semibold text-ink">{captchaQuestion} =</span>
                                                 <input
@@ -562,7 +562,7 @@ export default function Contact() {
                                                     value={data.captcha_answer}
                                                     onChange={(e) => setData('captcha_answer', e.target.value)}
                                                     placeholder="?"
-                                                    className="w-12 rounded-lg border border-ink/15 bg-white px-2 py-1 text-center text-xs font-semibold text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
+                                                    className="w-12 rounded-lg border border-ink/15 bg-surface px-2 py-1 text-center text-xs font-semibold text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
                                                 />
                                                 <button
                                                     type="button"
@@ -581,7 +581,7 @@ export default function Contact() {
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                                            className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                                         >
                                             {processing ? (
                                                 <>
@@ -598,7 +598,7 @@ export default function Contact() {
                                     </div>
 
                                     {errors.captcha_answer && (
-                                        <p className="text-xs font-medium text-rose-600">
+                                        <p className="text-xs font-medium text-danger">
                                             {errors.captcha_answer}
                                         </p>
                                     )}

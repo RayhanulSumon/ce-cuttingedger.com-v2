@@ -16,7 +16,7 @@ export function EnterpriseSolutionsSection() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col justify-between gap-6 rounded-2xl border border-ink/10 bg-page p-6 sm:rounded-3xl sm:p-8 lg:flex-row lg:items-center">
                     <div className="space-y-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-ink">
+                        <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary-ink">
                             Enterprise &amp; High Volume
                         </p>
                         <h2 className="text-xl font-display font-bold tracking-tight text-ink sm:text-2xl">
@@ -35,7 +35,7 @@ export function EnterpriseSolutionsSection() {
                     <Link
                         href="/book-a-demo"
                         prefetch
-                        className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-primary-hover"
+                        className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-300 hover:bg-primary-hover"
                     >
                         <Calendar className="h-4 w-4" />
                         <span>Book a Demo</span>

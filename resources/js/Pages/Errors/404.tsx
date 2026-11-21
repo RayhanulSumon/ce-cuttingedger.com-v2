@@ -55,9 +55,9 @@ export default function NotFound() {
             <section className="relative min-h-[90vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 bg-page overflow-hidden">
                 {/* Tech Grid Background */}
                 <div
-                    className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                    className="absolute inset-0 opacity-60 pointer-events-none"
                     style={{
-                        backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+                        backgroundImage: `linear-gradient(color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1px)`,
                         backgroundSize: '40px 40px',
                     }}
                 />
@@ -68,7 +68,7 @@ export default function NotFound() {
 
                 <div className="max-w-4xl w-full mx-auto relative z-10 text-center space-y-10">
                     {/* Status Pill */}
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-xs font-mono uppercase tracking-widest text-primary-ink">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-xs uppercase tracking-widest text-primary-ink">
                         <Compass className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
                         <span>ERROR 404 // VOID TRAJECTORY</span>
                     </div>
@@ -76,10 +76,10 @@ export default function NotFound() {
                     {/* Main Headline */}
                     <div className="space-y-4">
                         <div className="relative inline-block">
-                            <span className="text-8xl sm:text-9xl lg:text-[11rem] font-display font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-neutral-200 to-neutral-700 leading-none select-none">
+                            <span className="text-8xl sm:text-9xl lg:text-[11rem] font-display font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-ink via-ink-2 to-subtle leading-none select-none">
                                 404
                             </span>
-                            <span className="absolute -bottom-2 right-2 text-xs font-mono text-primary-ink uppercase tracking-wider bg-white/90 px-2 py-0.5 rounded border border-primary/40">
+                            <span className="absolute -bottom-2 right-2 text-xs text-primary-ink uppercase tracking-wider bg-surface/90 px-2 py-0.5 rounded border border-primary/40">
                                 SIGNAL_LOST
                             </span>
                         </div>
@@ -97,7 +97,7 @@ export default function NotFound() {
                     <div className="flex flex-wrap items-center justify-center gap-4">
                         <Link
                             href="/"
-                            className="bg-primary text-white font-display font-bold text-xs uppercase tracking-wider py-3.5 px-7 rounded-full flex items-center gap-2 hover:bg-primary-hover hover:shadow-[0_0_25px_rgba(251, 183, 24, 0.35)] transition-all"
+                            className="bg-primary text-primary-foreground font-display font-bold text-xs uppercase tracking-wider py-3.5 px-7 rounded-full flex items-center gap-2 hover:bg-primary-hover hover:shadow-lg transition-all"
                         >
                             <Home className="w-4 h-4" />
                             <span>Return to Flagship</span>
@@ -106,7 +106,7 @@ export default function NotFound() {
                         <button
                             type="button"
                             onClick={() => window.history.back()}
-                            className="border border-ink/20 text-ink font-mono text-xs uppercase tracking-wider py-3.5 px-6 rounded-full flex items-center gap-2 hover:border-primary hover:text-primary-ink transition-colors"
+                            className="border border-ink/20 text-ink text-xs uppercase tracking-wider py-3.5 px-6 rounded-full flex items-center gap-2 hover:border-primary hover:text-primary-ink transition-colors"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             <span>Step Back</span>
@@ -115,7 +115,7 @@ export default function NotFound() {
 
                     {/* Quick Course Correction Cards */}
                     <div className="pt-6 border-t border-ink/10 text-left">
-                        <p className="text-center font-mono text-xs uppercase tracking-widest text-subtle mb-6">
+                        <p className="text-center text-xs uppercase tracking-widest text-subtle mb-6">
                             // RECOMMENDED VECTOR NAVIGATION
                         </p>
 
@@ -126,14 +126,14 @@ export default function NotFound() {
                                     <Link
                                         key={item.href}
                                         href={item.href}
-                                        className="group p-5 rounded-2xl bg-white/80 border border-ink/10 hover:border-primary/50 hover:bg-slate-100 transition-all flex flex-col justify-between"
+                                        className="group p-5 rounded-2xl bg-surface/80 border border-ink/10 hover:border-primary/50 hover:bg-surface-2 transition-all flex flex-col justify-between"
                                     >
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between">
                                                 <div className="w-9 h-9 rounded-xl bg-ink/[0.03] border border-ink/10 flex items-center justify-center text-ink-2 group-hover:text-primary-ink group-hover:border-primary/30 transition-colors">
                                                     <Icon className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-[10px] font-mono uppercase tracking-wider text-primary-ink px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+                                                <span className="text-2xs uppercase tracking-wider text-primary-ink px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
                                                     {item.badge}
                                                 </span>
                                             </div>
@@ -147,7 +147,7 @@ export default function NotFound() {
                                             </p>
                                         </div>
 
-                                        <span className="mt-4 inline-flex items-center gap-1 text-[11px] font-mono text-muted group-hover:text-ink transition-colors">
+                                        <span className="mt-4 inline-flex items-center gap-1 text-2xs text-muted group-hover:text-ink transition-colors">
                                             Open Route &rarr;
                                         </span>
                                     </Link>

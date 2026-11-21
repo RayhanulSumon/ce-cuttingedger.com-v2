@@ -34,7 +34,7 @@ function MessageText({ content, onDark = false }: { content: string; onDark?: bo
     const lines = content.split('\n');
 
     return (
-        <div className={`space-y-1.5 text-[13px] leading-relaxed ${onDark ? 'text-white [&_strong]:text-white' : 'text-ink-2'}`}>
+        <div className={`space-y-1.5 text-sm leading-relaxed ${onDark ? 'text-white [&_strong]:text-white' : 'text-ink-2'}`}>
             {lines.map((raw, i) => {
                 const line = raw.trim();
                 if (!line) {
@@ -53,7 +53,7 @@ function MessageText({ content, onDark = false }: { content: string; onDark?: bo
                 if (step) {
                     return (
                         <p key={i} className="flex gap-2.5">
-                            <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-bold text-primary-ink">
+                            <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/10 text-2xs font-bold text-primary-ink">
                                 {step[1]}
                             </span>
                             <span>{formatInline(step[2])}</span>
@@ -307,13 +307,13 @@ export function ChatWidget() {
                             <div className="flex min-w-0 items-center gap-3">
                                 <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary-hover shadow-md">
                                     {operatorName ? <User className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
-                                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-secondary bg-emerald-400" />
+                                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-secondary bg-success" />
                                 </span>
                                 <span className="min-w-0">
                                     <span className="block truncate text-sm font-bold leading-tight">
                                         {operatorName ? `${operatorName} · CuttingEdger` : 'CuttingEdger Assistant'}
                                     </span>
-                                    <span className="block text-[11px] text-white/60">
+                                    <span className="block text-2xs text-white/60">
                                         {operatorName ? 'Live specialist' : 'Ask about capabilities, pricing and delivery'}
                                     </span>
                                 </span>
@@ -365,7 +365,7 @@ export function ChatWidget() {
                                         className={`flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}
                                     >
                                         {message.sender === 'operator' && (
-                                            <span className="text-[10.5px] font-semibold text-primary-ink">{operatorName || 'CuttingEdger team'}</span>
+                                            <span className="text-2xs font-semibold text-primary-ink">{operatorName || 'CuttingEdger team'}</span>
                                         )}
 
                                         <div
@@ -393,7 +393,7 @@ export function ChatWidget() {
                                                         key={reply}
                                                         type="button"
                                                         onClick={() => send(reply)}
-                                                        className="rounded-full border border-ink/10 bg-surface px-3.5 py-1.5 text-[12px] font-semibold text-ink-2 shadow-sm transition-[transform,border-color,color] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary-ink"
+                                                        className="rounded-full border border-ink/10 bg-surface px-3.5 py-1.5 text-xs font-semibold text-ink-2 shadow-sm transition-[transform,border-color,color] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary-ink"
                                                     >
                                                         {reply}
                                                     </button>
@@ -423,7 +423,7 @@ export function ChatWidget() {
                                     maxLength={2000}
                                     placeholder="Ask about capabilities, pricing or delivery…"
                                     aria-label="Your question"
-                                    className="min-w-0 flex-1 rounded-full border border-ink/10 bg-page px-4 py-2.5 text-[13px] text-ink placeholder-faint outline-none transition-colors focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/15"
+                                    className="min-w-0 flex-1 rounded-full border border-ink/10 bg-page px-4 py-2.5 text-sm text-ink placeholder-faint outline-none transition-colors focus:border-primary focus:bg-surface focus:ring-2 focus:ring-primary/15"
                                 />
                                 <button
                                     type="submit"
@@ -434,7 +434,7 @@ export function ChatWidget() {
                                     <Send className="h-4 w-4" />
                                 </button>
                             </form>
-                            <p className="mt-2 text-center text-[10.5px] text-subtle">
+                            <p className="mt-2 text-center text-2xs text-subtle">
                                 Information only. For quotes and orders, <Link href="/contact" prefetch className="font-semibold text-primary-ink hover:underline">contact the team</Link>.
                             </p>
                         </div>
@@ -453,7 +453,7 @@ export function ChatWidget() {
                 aria-expanded={isOpen}
             >
                 {!isOpen && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 animate-ping rounded-full bg-primary/30 [animation-duration:2.6s]" />}
-                <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-white/35 to-transparent" />
+                <span aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-1 h-1/2 rounded-full bg-gradient-to-b from-surface/35 to-transparent" />
 
                 <AnimatePresence mode="wait" initial={false}>
                     <motion.span
@@ -472,10 +472,10 @@ export function ChatWidget() {
                     </motion.span>
                 </AnimatePresence>
 
-                {!isOpen && <span aria-hidden="true" className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-emerald-400" />}
+                {!isOpen && <span aria-hidden="true" className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-primary bg-success" />}
 
                 {unreadCount > 0 && !isOpen && (
-                    <span className="absolute -left-1 -top-1 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-md">
+                    <span className="absolute -left-1 -top-1 min-w-5 rounded-full bg-danger px-1.5 py-0.5 text-center text-2xs font-bold text-white shadow-md">
                         {unreadCount}
                     </span>
                 )}

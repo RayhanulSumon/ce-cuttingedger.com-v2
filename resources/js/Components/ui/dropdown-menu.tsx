@@ -24,7 +24,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     <DropdownMenuPrimitive.SubTrigger
         ref={ref}
         className={cn(
-            "flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none focus:bg-slate-100 data-[state=open]:bg-slate-100 text-slate-700",
+            "flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none focus:bg-surface-2 data-[state=open]:bg-surface-2 text-ink-2",
             inset && "pl-8",
             className
         )}
@@ -45,7 +45,7 @@ const DropdownMenuSubContent = React.forwardRef<
         ref={ref}
         data-slot="dropdown-menu-content"
         className={cn(
-            "z-50 min-w-[8rem] overflow-hidden rounded-xl border border-slate-200 bg-white p-1 text-ink shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "z-50 min-w-[8rem] overflow-hidden rounded-xl border border-line bg-surface p-1 text-ink shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             className
         )}
         {...props}
@@ -64,7 +64,7 @@ const DropdownMenuContent = React.forwardRef<
             data-slot="dropdown-menu-content"
             sideOffset={sideOffset}
             className={cn(
-                "z-50 min-w-[10rem] overflow-hidden rounded-xl border border-slate-200 bg-white p-1 text-ink shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+                "z-50 min-w-[10rem] overflow-hidden rounded-xl border border-line bg-surface p-1 text-ink shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
                 className
             )}
             {...props}
@@ -82,7 +82,7 @@ const DropdownMenuItem = React.forwardRef<
     <DropdownMenuPrimitive.Item
         ref={ref}
         className={cn(
-            "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus:bg-slate-100 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-slate-700 hover:bg-slate-100 hover:text-ink",
+            "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus:bg-surface-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-ink-2 hover:bg-surface-2 hover:text-ink",
             inset && "pl-8",
             className
         )}
@@ -98,7 +98,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     <DropdownMenuPrimitive.CheckboxItem
         ref={ref}
         className={cn(
-            "relative flex cursor-pointer select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm text-slate-700 outline-none transition-colors focus:bg-slate-100 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+            "relative flex cursor-pointer select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm text-ink-2 outline-none transition-colors focus:bg-surface-2 focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
             className
         )}
         checked={checked}
@@ -124,7 +124,7 @@ const DropdownMenuLabel = React.forwardRef<
     <DropdownMenuPrimitive.Label
         ref={ref}
         className={cn(
-            "px-2.5 py-1.5 text-xs font-mono uppercase tracking-wider text-slate-500",
+            "px-2.5 py-1.5 text-xs uppercase tracking-wider text-subtle",
             inset && "pl-8",
             className
         )}
@@ -139,7 +139,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <DropdownMenuPrimitive.Separator
         ref={ref}
-        className={cn("-mx-1 my-1 h-px bg-slate-200", className)}
+        className={cn("-mx-1 my-1 h-px bg-line", className)}
         {...props}
     />
 ));

@@ -13,7 +13,7 @@ export function AccordionItem({ id, question, answer, defaultOpen = false }: Acc
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
     return (
-        <div className="border-b border-ink/10 group transition-colors">
+        <div className="border-b border-line group transition-colors">
             <button
                 type="button"
                 id={`accordion-btn-${id}`}
@@ -27,9 +27,9 @@ export function AccordionItem({ id, question, answer, defaultOpen = false }: Acc
                 </span>
 
                 <div
-                    className={`w-9 h-9 shrink-0 rounded-full border border-ink/10 flex items-center justify-center transition-all duration-300 ${
+                    className={`w-9 h-9 shrink-0 rounded-full border border-line flex items-center justify-center transition-all duration-300 ${
                         isOpen
-                            ? 'bg-primary text-white border-primary'
+                            ? 'bg-primary text-primary-foreground border-primary'
                             : 'text-muted group-hover:border-primary group-hover:text-primary-ink'
                     }`}
                 >

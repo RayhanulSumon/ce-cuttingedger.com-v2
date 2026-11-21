@@ -70,8 +70,8 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
             header: "PROSPECT / CONTACT",
             cell: (m) => (
                 <div>
-                    <div className="font-semibold text-white">{m.name}</div>
-                    <div className="text-xs text-neutral-400 font-mono">
+                    <div className="font-semibold text-ink">{m.name}</div>
+                    <div className="text-xs text-subtle">
                         {m.email}
                         {m.phone ? ` • ${m.phone}` : ""}
                         {m.company ? ` • ${m.company}` : ""}
@@ -83,10 +83,10 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
             header: "CAPABILITY & WEBSITE",
             cell: (m) => (
                 <div>
-                    <div className="text-xs text-white font-medium">
+                    <div className="text-xs text-ink font-medium">
                         {m.service_interest || "General Consultation"}
                     </div>
-                    <div className="text-[11px] font-mono text-accent">
+                    <div className="text-2xs text-primary-ink">
                         {m.website || "No Website"}
                     </div>
                 </div>
@@ -99,7 +99,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
         {
             header: "IP ADDRESS",
             cell: (m) => (
-                <span className="text-xs font-mono text-neutral-400">
+                <span className="text-xs text-subtle">
                     {m.ip_address || "Hidden"}
                 </span>
             ),
@@ -107,7 +107,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
         {
             header: "RECEIVED",
             cell: (m) => (
-                <span className="text-xs font-mono text-neutral-400">
+                <span className="text-xs text-subtle">
                     {new Date(m.created_at).toLocaleDateString()}
                 </span>
             ),
@@ -124,7 +124,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                             setSelectedMessage(m);
                             if (m.status === "new") updateStatus(m, "read");
                         }}
-                        className="gap-1.5 text-xs text-neutral-300 hover:text-white"
+                        className="gap-1.5 text-xs text-ink-2 hover:text-ink"
                     >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Inspect</span>
@@ -135,7 +135,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-neutral-400 hover:text-white"
+                                className="h-8 w-8 text-subtle hover:text-ink"
                             >
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -143,21 +143,21 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem
                                 onClick={() => updateStatus(m, "replied")}
-                                className="gap-2 text-emerald-400"
+                                className="gap-2 text-success"
                             >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 <span>Mark as Replied</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => updateStatus(m, "archived")}
-                                className="gap-2 text-neutral-300"
+                                className="gap-2 text-ink-2"
                             >
                                 <Archive className="w-3.5 h-3.5" />
                                 <span>Archive</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => setMessageToDelete(m)}
-                                className="gap-2 text-rose-400 focus:text-rose-400"
+                                className="gap-2 text-danger focus:text-danger"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span>Purge</span>
@@ -199,21 +199,21 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                     </DialogHeader>
 
                     <div className="space-y-4 pt-2">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-surface-2 border border-line text-xs">
                             <div>
-                                <span className="text-slate-500 block">COMPANY</span>
+                                <span className="text-subtle block">COMPANY</span>
                                 <span className="text-ink block mt-0.5">
                                     {selectedMessage?.company || "Not provided"}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-slate-500 block">WEBSITE</span>
+                                <span className="text-subtle block">WEBSITE</span>
                                 <span className="text-primary-ink block mt-0.5 break-all">
                                     {selectedMessage?.website || "Not provided"}
                                 </span>
                             </div>
                             <div>
-                                <span className="text-slate-500 block">
+                                <span className="text-subtle block">
                                     SERVICE OF INTEREST
                                 </span>
                                 <span className="text-ink block mt-0.5">
@@ -221,26 +221,26 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                                 </span>
                             </div>
                             <div>
-                                <span className="text-slate-500 block">ORIGIN IP</span>
-                                <span className="text-slate-600 block mt-0.5">
+                                <span className="text-subtle block">ORIGIN IP</span>
+                                <span className="text-muted block mt-0.5">
                                     {selectedMessage?.ip_address || "Hidden"}
                                 </span>
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <span className="text-xs font-mono uppercase text-neutral-400">
+                            <span className="text-xs uppercase text-subtle">
                                 Prospect Message Brief
                             </span>
-                            <div className="p-4 rounded-xl bg-[#0d0f15] border border-white/10 text-sm text-neutral-200 leading-relaxed whitespace-pre-wrap">
+                            <div className="p-4 rounded-xl bg-surface-2 border border-line text-sm text-ink-2 leading-relaxed whitespace-pre-wrap">
                                 {selectedMessage?.message}
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                        <div className="flex items-center justify-between pt-2 border-t border-line">
                             <a
                                 href={`mailto:${selectedMessage?.email}?subject=Cutting Edger // Response to Inquiry`}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-black text-xs font-semibold hover:bg-[#bde600]"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover"
                             >
                                 <Mail className="w-3.5 h-3.5" />
                                 <span>Reply via Work Email</span>
@@ -270,7 +270,7 @@ export default function MessagesIndex({ messages = [] }: MessagesIndexProps) {
                         <AlertDialogTitle>Purge Inquiry?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you wish to purge this inquiry from{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {messageToDelete?.name}
                             </span>
                             ?

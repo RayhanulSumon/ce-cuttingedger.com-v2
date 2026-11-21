@@ -24,7 +24,7 @@ export default function CookiePolicy() {
 
             <section className="py-20 bg-page">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-                    <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-6">
+                    <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b border-ink/10">
                             <Cookie className="w-5 h-5 text-primary-ink" />
                             <h2 className="text-xl font-display font-bold text-ink">1. Scope and Objective</h2>
@@ -34,7 +34,7 @@ export default function CookiePolicy() {
                         </p>
                     </div>
 
-                    <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-6">
+                    <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b border-ink/10">
                             <Database className="w-5 h-5 text-primary-ink" />
                             <h2 className="text-xl font-display font-bold text-ink">2. Categorization of Cookies Deployed</h2>
@@ -63,13 +63,13 @@ export default function CookiePolicy() {
                         </div>
                     </div>
 
-                    <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-6">
+                    <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b border-ink/10">
                             <Shield className="w-5 h-5 text-primary-ink" />
                             <h2 className="text-xl font-display font-bold text-ink">3. Specific Cookie Inventory</h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left text-xs font-mono text-ink-2">
+                            <table className="w-full text-left text-xs text-ink-2">
                                 <thead className="border-b border-ink/10 text-ink font-bold uppercase tracking-wider">
                                     <tr>
                                         <th className="py-3 px-4">Cookie Token</th>
@@ -108,7 +108,7 @@ export default function CookiePolicy() {
                         </div>
                     </div>
 
-                    <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-4">
+                    <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-4">
                         <h2 className="text-lg font-display font-bold text-ink">4. Controlling Cookie Preferences</h2>
                         <p className="text-ink-2 text-sm leading-relaxed">
                             You can adjust or revoke your cookie choices at any time via the Cookie Consent Banner or by clearing your browser cache. For inquiries regarding cookie telemetry, contact <a href="mailto:privacy@cuttingedger.com" className="text-primary-ink underline">privacy@cuttingedger.com</a>.

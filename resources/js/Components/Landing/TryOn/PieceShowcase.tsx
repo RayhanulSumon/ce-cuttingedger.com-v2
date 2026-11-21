@@ -21,8 +21,8 @@ export function PieceShowcase({ piece }: { piece: LookPiece }) {
         >
             <div className="animate-dress-reveal flex h-full w-full flex-col items-center justify-center">
                 <div className="pointer-events-none mb-1 flex flex-col items-center text-center">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#736f69]">{piece.brand}</span>
-                    <h4 className="mt-0.5 text-base font-medium tracking-tight text-[#151413] sm:text-lg lg:text-xl">{piece.name}</h4>
+                    <span className="text-2xs font-semibold uppercase tracking-[0.24em] text-muted">{piece.brand}</span>
+                    <h4 className="mt-0.5 text-base font-medium tracking-tight text-ink sm:text-lg lg:text-xl">{piece.name}</h4>
                 </div>
 
                 <div

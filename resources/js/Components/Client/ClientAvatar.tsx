@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 export type ClientAvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const SIZE_CLASSES: Record<ClientAvatarSize, string> = {
-    sm: 'h-7 w-7 text-[11px]',
+    sm: 'h-7 w-7 text-2xs',
     md: 'h-9 w-9 text-xs',
     lg: 'h-12 w-12 text-sm',
     xl: 'h-20 w-20 text-xl',
@@ -47,7 +47,7 @@ export function ClientAvatar({ src, name, size = 'md', className }: ClientAvatar
                 alt={name ? `${name} avatar` : 'Client avatar'}
                 onError={() => setHasError(true)}
                 className={cn(
-                    'shrink-0 rounded-full border border-slate-200 bg-slate-100 object-cover',
+                    'shrink-0 rounded-full border border-line bg-surface-2 object-cover',
                     sizeClass,
                     className
                 )}

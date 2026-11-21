@@ -22,7 +22,7 @@ interface SettingsIndexProps {
 
 type SettingGroupId = "brand" | "contact" | "seo" | "integrations";
 
-const LABEL_CLASS = "text-xs font-semibold text-slate-700 block mb-1.5";
+const LABEL_CLASS = "text-xs font-semibold text-ink-2 block mb-1.5";
 const GROUP_IDS: SettingGroupId[] = ["brand", "contact", "seo", "integrations"];
 
 export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
@@ -113,7 +113,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     variant="outline"
                     size="sm"
                     onClick={toggleAll}
-                    className="min-h-10 sm:min-h-9 border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                    className="min-h-10 sm:min-h-9 border-line bg-surface text-xs font-semibold text-ink-2 hover:bg-surface-2 cursor-pointer"
                 >
                     {allOpen ? "Collapse All" : "Expand All"}
                 </Button>
@@ -121,12 +121,12 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
 
             <form onSubmit={submit} className="max-w-4xl space-y-4 pb-8">
                 {/* Group 1: Brand Identity */}
-                <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                     <button
                         type="button"
                         onClick={() => toggleGroup("brand")}
                         aria-expanded={openGroups.brand}
-                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50/80 sm:px-6"
+                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-surface-2 sm:px-6"
                     >
                         <div className="flex min-w-0 items-center gap-3">
                             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -134,18 +134,18 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                             </span>
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">Brand Identity</h2>
-                                <p className="truncate text-xs text-slate-500">
+                                <p className="truncate text-xs text-subtle">
                                     Brand name and homepage tagline
                                 </p>
                             </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                            <span className="hidden rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 sm:inline-block">
+                            <span className="hidden rounded-full bg-surface-2 px-2.5 py-0.5 text-2xs font-semibold text-muted sm:inline-block">
                                 2 fields
                             </span>
                             <ChevronDown
                                 className={cn(
-                                    "h-4 w-4 text-slate-400 transition-transform duration-200",
+                                    "h-4 w-4 text-faint transition-transform duration-200",
                                     openGroups.brand ? "rotate-180" : ""
                                 )}
                             />
@@ -153,13 +153,13 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.brand && (
-                        <div className="space-y-4 border-t border-slate-100 px-4 py-5 sm:px-6">
+                        <div className="space-y-4 border-t border-line px-4 py-5 sm:px-6">
                             <div>
                                 <label className={LABEL_CLASS}>Brand Name *</label>
                                 <Input
                                     value={data.settings.brand_name}
                                     onChange={(e) => updateSetting("brand_name", e.target.value)}
-                                    className="bg-white border-slate-200 text-ink"
+                                    className="bg-surface border-line text-ink"
                                     required
                                 />
                             </div>
@@ -169,7 +169,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                     value={data.settings.tagline}
                                     onChange={(e) => updateSetting("tagline", e.target.value)}
                                     rows={2}
-                                    className="bg-white border-slate-200 text-ink"
+                                    className="bg-surface border-line text-ink"
                                     required
                                 />
                             </div>
@@ -178,31 +178,31 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 </section>
 
                 {/* Group 2: Contact & Studio Details */}
-                <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                     <button
                         type="button"
                         onClick={() => toggleGroup("contact")}
                         aria-expanded={openGroups.contact}
-                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50/80 sm:px-6"
+                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-surface-2 sm:px-6"
                     >
                         <div className="flex min-w-0 items-center gap-3">
-                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-success-soft text-success">
                                 <Phone className="h-4 w-4" />
                             </span>
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">Contact &amp; Studio Details</h2>
-                                <p className="truncate text-xs text-slate-500">
+                                <p className="truncate text-xs text-subtle">
                                     Email, phone numbers, WhatsApp, and office address
                                 </p>
                             </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                            <span className="hidden rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 sm:inline-block">
+                            <span className="hidden rounded-full bg-surface-2 px-2.5 py-0.5 text-2xs font-semibold text-muted sm:inline-block">
                                 4 fields
                             </span>
                             <ChevronDown
                                 className={cn(
-                                    "h-4 w-4 text-slate-400 transition-transform duration-200",
+                                    "h-4 w-4 text-faint transition-transform duration-200",
                                     openGroups.contact ? "rotate-180" : ""
                                 )}
                             />
@@ -210,7 +210,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.contact && (
-                        <div className="space-y-4 border-t border-slate-100 px-4 py-5 sm:px-6">
+                        <div className="space-y-4 border-t border-line px-4 py-5 sm:px-6">
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label className={LABEL_CLASS}>Contact Email *</label>
@@ -218,7 +218,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         type="email"
                                         value={data.settings.contact_email}
                                         onChange={(e) => updateSetting("contact_email", e.target.value)}
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                         required
                                     />
                                 </div>
@@ -228,7 +228,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         placeholder="8801700000000"
                                         value={data.settings.whatsapp_number}
                                         onChange={(e) => updateSetting("whatsapp_number", e.target.value)}
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                     placeholder={"USA | +1 (409) 995-2565\nBD | +88 02 0000 0000"}
                                     value={data.settings.contact_phones}
                                     onChange={(e) => updateSetting("contact_phones", e.target.value)}
-                                    className="bg-white border-slate-200 text-ink"
+                                    className="bg-surface border-line text-ink"
                                 />
                             </div>
 
@@ -251,7 +251,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                 <Input
                                     value={data.settings.office_address}
                                     onChange={(e) => updateSetting("office_address", e.target.value)}
-                                    className="bg-white border-slate-200 text-ink"
+                                    className="bg-surface border-line text-ink"
                                 />
                             </div>
                         </div>
@@ -259,31 +259,31 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 </section>
 
                 {/* Group 3: SEO & Search Crawlers */}
-                <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                     <button
                         type="button"
                         onClick={() => toggleGroup("seo")}
                         aria-expanded={openGroups.seo}
-                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50/80 sm:px-6"
+                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-surface-2 sm:px-6"
                     >
                         <div className="flex min-w-0 items-center gap-3">
-                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sky-50 text-sky-700">
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-info-soft text-info">
                                 <Search className="h-4 w-4" />
                             </span>
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">SEO &amp; Search Crawlers</h2>
-                                <p className="truncate text-xs text-slate-500">
+                                <p className="truncate text-xs text-subtle">
                                     Default meta title, description, and live robots.txt
                                 </p>
                             </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                            <span className="hidden rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 sm:inline-block">
+                            <span className="hidden rounded-full bg-surface-2 px-2.5 py-0.5 text-2xs font-semibold text-muted sm:inline-block">
                                 3 fields
                             </span>
                             <ChevronDown
                                 className={cn(
-                                    "h-4 w-4 text-slate-400 transition-transform duration-200",
+                                    "h-4 w-4 text-faint transition-transform duration-200",
                                     openGroups.seo ? "rotate-180" : ""
                                 )}
                             />
@@ -291,7 +291,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.seo && (
-                        <div className="space-y-4 border-t border-slate-100 px-4 py-5 sm:px-6">
+                        <div className="space-y-4 border-t border-line px-4 py-5 sm:px-6">
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label className={LABEL_CLASS}>Default Meta Title</label>
@@ -301,7 +301,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                             updateSetting("default_meta_title", e.target.value)
                                         }
                                         placeholder="Brand — Tagline"
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                                 <div>
@@ -312,14 +312,14 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                             updateSetting("default_meta_description", e.target.value)
                                         }
                                         placeholder="High-volume catalog retouching..."
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                             </div>
 
                             <div>
                                 <div className="mb-1.5 flex items-center justify-between gap-2">
-                                    <label className="text-xs font-semibold text-slate-700">
+                                    <label className="text-xs font-semibold text-ink-2">
                                         robots.txt Rules
                                     </label>
                                     <a
@@ -338,9 +338,9 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         updateSetting("robots_txt_content", e.target.value)
                                     }
                                     rows={6}
-                                    className="font-mono text-xs bg-slate-50 border-slate-200 text-ink"
+                                    className="text-xs bg-surface-2 border-line text-ink"
                                 />
-                                <p className="mt-1.5 text-xs text-slate-500">
+                                <p className="mt-1.5 text-xs text-subtle">
                                     Takes effect immediately at /robots.txt without rebuilding.
                                 </p>
                             </div>
@@ -349,31 +349,31 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 </section>
 
                 {/* Group 4: Booking & Social Links */}
-                <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
+                <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xs">
                     <button
                         type="button"
                         onClick={() => toggleGroup("integrations")}
                         aria-expanded={openGroups.integrations}
-                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50/80 sm:px-6"
+                        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-4 text-left transition-colors hover:bg-surface-2 sm:px-6"
                     >
                         <div className="flex min-w-0 items-center gap-3">
-                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-700">
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-warning-soft text-warning">
                                 <Share2 className="h-4 w-4" />
                             </span>
                             <div className="min-w-0">
                                 <h2 className="text-sm font-bold text-ink">Booking &amp; Social Links</h2>
-                                <p className="truncate text-xs text-slate-500">
+                                <p className="truncate text-xs text-subtle">
                                     Calendly booking link and social media URLs
                                 </p>
                             </div>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                            <span className="hidden rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 sm:inline-block">
+                            <span className="hidden rounded-full bg-surface-2 px-2.5 py-0.5 text-2xs font-semibold text-muted sm:inline-block">
                                 4 fields
                             </span>
                             <ChevronDown
                                 className={cn(
-                                    "h-4 w-4 text-slate-400 transition-transform duration-200",
+                                    "h-4 w-4 text-faint transition-transform duration-200",
                                     openGroups.integrations ? "rotate-180" : ""
                                 )}
                             />
@@ -381,20 +381,20 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     </button>
 
                     {openGroups.integrations && (
-                        <div className="space-y-5 border-t border-slate-100 px-4 py-5 sm:px-6">
+                        <div className="space-y-5 border-t border-line px-4 py-5 sm:px-6">
                             {/* Setup Guide Box */}
-                            <div className="rounded-xl border border-amber-200/90 bg-amber-50/70 p-4 sm:p-5 space-y-4">
-                                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-200/70 pb-3">
+                            <div className="rounded-xl border border-warning/25 bg-warning-soft p-4 sm:p-5 space-y-4">
+                                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-warning/25 pb-3">
                                     <div className="flex items-center gap-2.5">
-                                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-amber-500/15 text-amber-800">
+                                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-warning-soft text-warning">
                                             <Calendar className="h-4 w-4" />
                                         </span>
                                         <div>
-                                            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950">
+                                            <h3 className="text-xs font-bold uppercase tracking-wider text-warning">
                                                 How to Connect Calendly (30-Minute Discovery Calls)
                                             </h3>
-                                            <p className="text-[11px] text-amber-900/80">
-                                                Configures the self-scheduling calendar widget on <code className="font-mono bg-white/70 px-1 py-0.5 rounded text-amber-950">/book-a-demo</code>.
+                                            <p className="text-2xs text-warning/80">
+                                                Configures the self-scheduling calendar widget on <code className="font-mono bg-surface/70 px-1 py-0.5 rounded text-warning">/book-a-demo</code>.
                                             </p>
                                         </div>
                                     </div>
@@ -403,16 +403,16 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                             href="/book-a-demo"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-950 hover:bg-amber-50 shadow-xs"
+                                            className="inline-flex items-center gap-1.5 rounded-lg border border-warning/30 bg-surface px-3 py-1.5 text-xs font-semibold text-warning hover:bg-warning-soft shadow-xs"
                                         >
                                             <span>Preview /book-a-demo</span>
-                                            <ExternalLink className="h-3.5 w-3.5 text-amber-700" />
+                                            <ExternalLink className="h-3.5 w-3.5 text-warning" />
                                         </a>
                                         <a
                                             href="https://calendly.com"
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900 hover:text-amber-950 hover:underline"
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-warning hover:text-warning hover:underline"
                                         >
                                             <span>Open Calendly.com</span>
                                             <ExternalLink className="h-3 w-3" />
@@ -421,53 +421,53 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
                                         <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-slate-900 text-white text-[11px] font-bold">1</span>
-                                            <p className="font-bold text-slate-800">Create 30-Min Event</p>
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-ink text-surface text-2xs font-bold">1</span>
+                                            <p className="font-bold text-ink">Create 30-Min Event</p>
                                         </div>
-                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
+                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
                                             Log in to <a href="https://calendly.com" target="_blank" rel="noreferrer" className="text-primary underline">Calendly</a> and create or select a <strong>30-minute</strong> Discovery Call event type.
                                         </p>
                                     </div>
-                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
                                         <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary text-white text-[11px] font-bold">2</span>
-                                            <p className="font-bold text-slate-800">Copy Share Link</p>
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-2xs font-bold">2</span>
+                                            <p className="font-bold text-ink">Copy Share Link</p>
                                         </div>
-                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
-                                            Click <strong>Share → Copy link</strong> (e.g. <code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-900">https://calendly.com/your-brand/30min</code>).
+                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
+                                            Click <strong>Share → Copy link</strong> (e.g. <code className="text-2xs bg-surface-2 px-1 py-0.5 rounded font-mono text-ink">https://calendly.com/your-brand/30min</code>).
                                         </p>
                                     </div>
-                                    <div className="rounded-lg border border-amber-200/70 bg-white/90 p-3.5 space-y-1 shadow-xs">
+                                    <div className="rounded-lg border border-warning/25 bg-surface/90 p-3.5 space-y-1 shadow-xs">
                                         <div className="flex items-center gap-2">
-                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-emerald-600 text-white text-[11px] font-bold">3</span>
-                                            <p className="font-bold text-slate-800">Paste &amp; Save Below</p>
+                                            <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-success text-white text-2xs font-bold">3</span>
+                                            <p className="font-bold text-ink">Paste &amp; Save Below</p>
                                         </div>
-                                        <p className="text-slate-600 text-[11px] leading-relaxed pt-0.5">
+                                        <p className="text-muted text-2xs leading-relaxed pt-0.5">
                                             Paste your link into <strong>Calendly Booking URL</strong> and click <strong>Save Settings</strong>.
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/70 text-xs">
+                                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-warning/25 text-xs">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-slate-800">Frontend Status:</span>
+                                        <span className="font-semibold text-ink">Frontend Status:</span>
                                         {data.settings.calendly_url &&
                                         !data.settings.calendly_url.includes("cuttingedger/discovery-call") &&
                                         !data.settings.calendly_url.includes("your-org") ? (
-                                            <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                            <span className="inline-flex items-center gap-1 font-semibold text-success bg-success-soft px-2.5 py-0.5 rounded-full border border-success/25">
+                                                <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                                                 Live Calendly embed active on /book-a-demo
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center gap-1 font-semibold text-amber-800 bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-300">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-pulse" />
+                                            <span className="inline-flex items-center gap-1 font-semibold text-warning bg-warning-soft px-2.5 py-0.5 rounded-full border border-warning/30">
+                                                <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />
                                                 Placeholder / Unset — Visitors currently see the direct 30-min booking request form
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-[11px] text-slate-500">
+                                    <p className="text-2xs text-subtle">
                                         Clients will never see setup guides or 404 errors.
                                     </p>
                                 </div>
@@ -480,11 +480,11 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                     value={data.settings.calendly_url}
                                     onChange={(e) => updateSetting("calendly_url", e.target.value)}
                                     placeholder="https://calendly.com/your-brand/30min"
-                                    className="bg-white border-slate-200 text-ink"
+                                    className="bg-surface border-line text-ink"
                                     required
                                 />
-                                <p className="mt-1.5 text-xs text-slate-500">
-                                    Embedded on <code className="font-mono text-slate-700">/book-a-demo</code> and sent in pilot order and inquiry confirmation emails.
+                                <p className="mt-1.5 text-xs text-subtle">
+                                    Embedded on <code className="font-mono text-ink-2">/book-a-demo</code> and sent in pilot order and inquiry confirmation emails.
                                 </p>
                             </div>
 
@@ -496,7 +496,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         value={data.settings.social_linkedin}
                                         onChange={(e) => updateSetting("social_linkedin", e.target.value)}
                                         placeholder="https://linkedin.com/..."
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                                 <div>
@@ -506,7 +506,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         value={data.settings.social_twitter}
                                         onChange={(e) => updateSetting("social_twitter", e.target.value)}
                                         placeholder="https://x.com/..."
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                                 <div>
@@ -516,7 +516,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                                         value={data.settings.social_instagram}
                                         onChange={(e) => updateSetting("social_instagram", e.target.value)}
                                         placeholder="https://instagram.com/..."
-                                        className="bg-white border-slate-200 text-ink"
+                                        className="bg-surface border-line text-ink"
                                     />
                                 </div>
                             </div>
@@ -525,8 +525,8 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                 </section>
 
                 {/* Sticky Bottom Save Bar */}
-                <div className="sticky bottom-3 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200/90 bg-white/95 px-4 sm:px-5 py-3 shadow-md backdrop-blur-md">
-                    <span className="text-xs font-medium text-slate-600">
+                <div className="sticky bottom-3 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-line bg-surface/95 px-4 sm:px-5 py-3 shadow-md backdrop-blur-md">
+                    <span className="text-xs font-medium text-muted">
                         {isDirty ? (
                             <span className="font-semibold text-primary">
                                 You have unsaved changes
@@ -539,7 +539,7 @@ export default function SettingsIndex({ settings = [] }: SettingsIndexProps) {
                     <Button
                         type="submit"
                         disabled={processing}
-                        className="min-h-11 sm:min-h-10 w-full sm:w-auto gap-2 px-6 text-xs font-bold bg-primary text-white hover:bg-primary-hover cursor-pointer"
+                        className="min-h-11 sm:min-h-10 w-full sm:w-auto gap-2 px-6 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary-hover cursor-pointer"
                     >
                         <Save className="h-4 w-4" />
                         <span>{processing ? "Saving..." : "Save Settings"}</span>

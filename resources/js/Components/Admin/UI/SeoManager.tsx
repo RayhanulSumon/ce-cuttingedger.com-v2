@@ -100,25 +100,25 @@ export function SeoManager({
     };
 
     return (
-        <div className="space-y-4 rounded-lg border border-white/10 bg-[#0c0d12] p-4 text-white">
+        <div className="space-y-4 rounded-lg border border-line bg-surface p-4 text-ink">
             {/* Hidden background inputs to guarantee form payload submission */}
             <input type="hidden" name="canonical_url" value={data.canonical_url || ""} />
             <input type="hidden" name="og_image" value={data.og_image || ""} />
 
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
                 <div className="flex items-center gap-2">
-                    <Search className="w-4 h-4 text-accent" />
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
+                    <Search className="w-4 h-4 text-primary-ink" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-ink">
                         DYNAMIC SEO & OPEN GRAPH SUITE
                     </span>
                     <Badge
                         variant="outline"
-                        className={`text-[10px] font-mono ${
+                        className={`text-2xs ${
                             score >= 80
-                                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                                ? "border-success/25 bg-success-soft text-success"
                                 : score >= 50
-                                ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                                : "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                                ? "border-warning/25 bg-warning-soft text-warning"
+                                : "border-danger/25 bg-danger-soft text-danger"
                         }`}
                     >
                         SEO Health: {score}%
@@ -127,7 +127,7 @@ export function SeoManager({
                 <button
                     type="button"
                     onClick={handleAutoGenerate}
-                    className="flex items-center gap-1.5 text-xs font-mono text-accent hover:text-[#b8dd00] bg-accent/10 border border-accent/30 px-2.5 py-1 rounded transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-xs text-primary-ink hover:text-primary-ink bg-primary-soft border border-primary/30 px-2.5 py-1 rounded transition-colors cursor-pointer"
                 >
                     <Sparkles className="w-3.5 h-3.5" />
                     Auto-Fill From Post
@@ -135,18 +135,18 @@ export function SeoManager({
             </div>
 
             {/* Google SERP Preview Card */}
-            <div className="rounded-md border border-white/5 bg-[#12131a] p-3 space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
+            <div className="rounded-md border border-line bg-surface p-3 space-y-1">
+                <span className="text-2xs uppercase tracking-wider text-subtle">
                     SEARCH ENGINE RESULT SNIPPET (SERP PREVIEW)
                 </span>
-                <div className="flex items-center gap-1.5 text-[11px] text-neutral-400 font-sans">
-                    <Globe className="w-3.5 h-3.5 text-neutral-500" />
+                <div className="flex items-center gap-1.5 text-2xs text-subtle font-sans">
+                    <Globe className="w-3.5 h-3.5 text-subtle" />
                     <span className="truncate">{displayUrl}</span>
                 </div>
-                <div className="text-sm font-medium text-[#8ab4f8] hover:underline cursor-pointer truncate">
+                <div className="text-sm font-medium text-info hover:underline cursor-pointer truncate">
                     {displayTitle}
                 </div>
-                <div className="text-xs text-neutral-300 line-clamp-2 leading-relaxed">
+                <div className="text-xs text-ink-2 line-clamp-2 leading-relaxed">
                     {displayDesc}
                 </div>
             </div>
@@ -154,15 +154,15 @@ export function SeoManager({
             {/* Inputs Grid: Title & Keywords */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
                 <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs font-mono">
-                        <label className="text-neutral-300">Meta Title Tag</label>
+                    <div className="flex justify-between items-center text-xs">
+                        <label className="text-ink-2">Meta Title Tag</label>
                         <span
                             className={
                                 titleLength > 60
-                                    ? "text-rose-400"
+                                    ? "text-danger"
                                     : titleLength >= 30
-                                    ? "text-emerald-400"
-                                    : "text-neutral-500"
+                                    ? "text-success"
+                                    : "text-subtle"
                             }
                         >
                             {titleLength} / 60 chars
@@ -172,34 +172,34 @@ export function SeoManager({
                         placeholder={fallbackTitle || "Optimal length: 50-60 characters"}
                         value={data.meta_title || ""}
                         onChange={(e) => onChange("meta_title", e.target.value)}
-                        className="bg-[#12131a] border-white/10 focus:border-accent"
+                        className="bg-surface border-line focus:border-ring"
                     />
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-mono text-neutral-300">
+                    <label className="text-xs text-ink-2">
                         Meta Keywords (Comma separated)
                     </label>
                     <Input
                         placeholder="design engineering, spatial ui, reactive motion"
                         value={data.meta_keywords || ""}
                         onChange={(e) => onChange("meta_keywords", e.target.value)}
-                        className="bg-[#12131a] border-white/10 focus:border-accent"
+                        className="bg-surface border-line focus:border-ring"
                     />
                 </div>
             </div>
 
             {/* Meta Description */}
             <div className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs font-mono">
-                    <label className="text-neutral-300">Meta Description</label>
+                <div className="flex justify-between items-center text-xs">
+                    <label className="text-ink-2">Meta Description</label>
                     <span
                         className={
                             descLength > 160
-                                ? "text-rose-400"
+                                ? "text-danger"
                                 : descLength >= 110
-                                ? "text-emerald-400"
-                                : "text-neutral-500"
+                                ? "text-success"
+                                : "text-subtle"
                         }
                     >
                         {descLength} / 160 chars
@@ -210,18 +210,18 @@ export function SeoManager({
                     placeholder={fallbackDescription || "Concise and compelling summary for Google and social previews (110-160 characters)"}
                     value={data.meta_description || ""}
                     onChange={(e) => onChange("meta_description", e.target.value)}
-                    className="bg-[#12131a] border-white/10 focus:border-accent"
+                    className="bg-surface border-line focus:border-ring"
                 />
             </div>
 
             {/* Crawler Robots Directives */}
             <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between">
-                    <label className="text-xs font-mono text-neutral-300 flex items-center gap-1.5">
-                        <Bot className="w-3.5 h-3.5 text-accent" />
+                    <label className="text-xs text-ink-2 flex items-center gap-1.5">
+                        <Bot className="w-3.5 h-3.5 text-primary-ink" />
                         <span>Robots Directives</span>
                     </label>
-                    <span className="text-[10px] font-mono text-neutral-500">
+                    <span className="text-2xs text-subtle">
                         Crawler index & link rules
                     </span>
                 </div>
@@ -229,56 +229,56 @@ export function SeoManager({
                     value={data.robots || "index, follow"}
                     onValueChange={(val) => onChange("robots", val)}
                 >
-                    <SelectTrigger className="h-10 bg-[#12131a] border-white/10 hover:border-white/20 focus:border-accent text-white">
+                    <SelectTrigger className="h-10 bg-surface border-line hover:border-line-strong focus:border-ring text-ink">
                         <SelectValue placeholder="Select robots rule">
                             {(data.robots || "index, follow") === "noindex, nofollow" ? (
                                 <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
-                                    <span className="font-mono text-xs text-white">noindex, nofollow</span>
-                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Strictly Private)</span>
+                                    <span className="w-2 h-2 rounded-full bg-danger shrink-0" />
+                                    <span className="text-xs text-ink">noindex, nofollow</span>
+                                    <span className="text-2xs text-subtle hidden sm:inline">(Strictly Private)</span>
                                 </div>
                             ) : (data.robots || "index, follow") === "noindex, follow" ? (
                                 <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                                    <span className="font-mono text-xs text-white">noindex, follow</span>
-                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Hidden from Search)</span>
+                                    <span className="w-2 h-2 rounded-full bg-warning shrink-0" />
+                                    <span className="text-xs text-ink">noindex, follow</span>
+                                    <span className="text-2xs text-subtle hidden sm:inline">(Hidden from Search)</span>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                                    <span className="font-mono text-xs text-white">index, follow</span>
-                                    <span className="text-[10px] text-neutral-400 font-mono hidden sm:inline">(Standard Public)</span>
+                                    <span className="w-2 h-2 rounded-full bg-success shrink-0" />
+                                    <span className="text-xs text-ink">index, follow</span>
+                                    <span className="text-2xs text-subtle hidden sm:inline">(Standard Public)</span>
                                 </div>
                             )}
                         </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0f1118] border-white/15 text-white shadow-2xl min-w-[300px]">
+                    <SelectContent className="bg-surface border-line text-ink shadow-2xl min-w-[300px]">
                         <SelectGroup>
                             <SelectLabel>SEARCH CRAWLER DIRECTIVES</SelectLabel>
                             <SelectItem value="index, follow" className="py-2.5 px-3 cursor-pointer">
                                 <div className="flex items-center gap-2.5">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] shrink-0" />
+                                    <span className="w-2.5 h-2.5 rounded-full bg-success shadow-xs shrink-0" />
                                     <div className="flex flex-col text-left">
-                                        <span className="font-medium text-white text-xs font-mono">index, follow</span>
-                                        <span className="text-[11px] text-neutral-400">Standard Public • Index article & crawl links</span>
+                                        <span className="font-medium text-ink text-xs">index, follow</span>
+                                        <span className="text-2xs text-subtle">Standard Public • Index article & crawl links</span>
                                     </div>
                                 </div>
                             </SelectItem>
                             <SelectItem value="noindex, follow" className="py-2.5 px-3 cursor-pointer">
                                 <div className="flex items-center gap-2.5">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] shrink-0" />
+                                    <span className="w-2.5 h-2.5 rounded-full bg-warning shadow-xs shrink-0" />
                                     <div className="flex flex-col text-left">
-                                        <span className="font-medium text-white text-xs font-mono">noindex, follow</span>
-                                        <span className="text-[11px] text-neutral-400">Hidden from Search • Hide page, follow links</span>
+                                        <span className="font-medium text-ink text-xs">noindex, follow</span>
+                                        <span className="text-2xs text-subtle">Hidden from Search • Hide page, follow links</span>
                                     </div>
                                 </div>
                             </SelectItem>
                             <SelectItem value="noindex, nofollow" className="py-2.5 cursor-pointer">
                                 <div className="flex items-center gap-2.5">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)] shrink-0" />
+                                    <span className="w-2.5 h-2.5 rounded-full bg-danger shadow-xs shrink-0" />
                                     <div className="flex flex-col text-left">
-                                        <span className="font-medium text-white text-xs font-mono">noindex, nofollow</span>
-                                        <span className="text-[11px] text-neutral-400">Strictly Private • Block index & all links</span>
+                                        <span className="font-medium text-ink text-xs">noindex, nofollow</span>
+                                        <span className="text-2xs text-subtle">Strictly Private • Block index & all links</span>
                                     </div>
                                 </div>
                             </SelectItem>

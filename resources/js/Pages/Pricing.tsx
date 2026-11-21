@@ -30,7 +30,7 @@ export default function Pricing({ plans = [], faqs = [] }: PricingProps) {
                 <section className="border-t border-ink/10 bg-page py-12 sm:py-14">
                     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                         <div className="mb-8 space-y-2 text-center">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-primary-ink">
+                            <p className="text-2xs font-semibold uppercase tracking-[0.26em] text-primary-ink">
                                 Pricing FAQ
                             </p>
                             <h2 className="text-2xl font-display font-bold text-ink sm:text-3xl">

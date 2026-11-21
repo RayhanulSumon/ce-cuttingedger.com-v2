@@ -25,13 +25,13 @@ interface LookViewProps {
 const OPEN_FLIGHT = { duration: 720, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' };
 const CLOSE_FLIGHT = { duration: 560, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' };
 
-const STUDIO_BACKDROP = 'bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)]';
+const STUDIO_BACKDROP = 'bg-[radial-gradient(ellipse_at_55%_35%,var(--color-surface)_0%,var(--color-page)_60%,var(--color-surface-2)_100%)]';
 
 const CONTACT_SHADOW =
     'pointer-events-none absolute bottom-0 left-[58%] h-[9%] max-h-[46px] min-h-[14px] w-[150%] -translate-x-1/2 translate-y-1/2 bg-[radial-gradient(closest-side,rgba(20,16,12,0.30),rgba(20,16,12,0.14)_45%,rgba(20,16,12,0.04)_75%,transparent)] blur-[2px]';
 
 const MODEL_ARROW =
-    'pointer-events-auto absolute top-1/2 z-50 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white active:scale-95 sm:h-12 sm:w-12';
+    'pointer-events-auto absolute top-1/2 z-50 grid h-10 w-10 -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-ink/20 bg-surface/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white active:scale-95 sm:h-12 sm:w-12';
 
 /**
  * Shared-element flight: the big model grows out of the runway's front model on open
@@ -122,15 +122,15 @@ function LookPins({
                         >
                             <span
                                 className={`relative grid h-8 w-8 place-items-center rounded-full text-xs font-bold leading-none shadow-[0_4px_14px_-4px_rgba(0,0,0,0.35)] transition-[scale,background-color,color] duration-300 ${
-                                    isLit ? 'scale-115 bg-[#0e0e0e] text-white' : 'bg-white text-[#151413]'
+                                    isLit ? 'scale-115 bg-ink text-white' : 'bg-surface text-ink'
                                 }`}
                             >
-                                <span aria-hidden="true" className="animate-rw-ring pointer-events-none absolute -inset-[5px] rounded-full border border-[#151413]/30" />
+                                <span aria-hidden="true" className="animate-rw-ring pointer-events-none absolute -inset-[5px] rounded-full border border-ink/30" />
                                 {pinIndex + 1}
                             </span>
                             {piece && (
                                 <span
-                                    className={`pointer-events-none absolute bottom-full left-1 mb-0.5 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[11px] font-medium tracking-[0.04em] text-[#151413] shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] transition-[translate,opacity] duration-300 ${
+                                    className={`pointer-events-none absolute bottom-full left-1 mb-0.5 whitespace-nowrap rounded-full bg-surface px-3 py-1.5 text-2xs font-medium tracking-[0.04em] text-ink shadow-[0_10px_26px_-12px_rgba(0,0,0,0.4)] transition-[translate,opacity] duration-300 ${
                                         isLit ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'
                                     }`}
                                 >
@@ -142,14 +142,14 @@ function LookPins({
                         {/* Leader line with an arrowhead ending on the garment. */}
                         <span
                             aria-hidden="true"
-                            className={`h-px min-w-0 flex-1 transition-colors duration-300 ${isLit ? 'bg-[#0e0e0e]' : 'bg-[#151413]/35'}`}
+                            className={`h-px min-w-0 flex-1 transition-colors duration-300 ${isLit ? 'bg-ink' : 'bg-ink/35'}`}
                         />
                         <svg
                             aria-hidden="true"
                             width="7"
                             height="10"
                             viewBox="0 0 7 10"
-                            className={`-ml-px shrink-0 transition-colors duration-300 ${isLit ? 'text-[#0e0e0e]' : 'text-[#151413]/45'}`}
+                            className={`-ml-px shrink-0 transition-colors duration-300 ${isLit ? 'text-ink' : 'text-ink/45'}`}
                         >
                             <path d="M0 0l7 5-7 5z" fill="currentColor" />
                         </svg>
@@ -267,10 +267,10 @@ export function LookView({
 
             <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-4 px-6 pt-4 sm:px-10 sm:pt-5">
                 <p className="flex flex-col gap-1">
-                    <span className="text-[10px] uppercase tabular-nums tracking-[0.2em] text-[#66625c]">
+                    <span className="text-2xs uppercase tabular-nums tracking-[0.2em] text-muted">
                         Look {String(lookIndex + 1).padStart(2, '0')}
                     </span>
-                    <span className="text-lg font-normal leading-[1.1] text-[#151413] sm:text-xl">{look.modelName}</span>
+                    <span className="text-lg font-normal leading-[1.1] text-ink sm:text-xl">{look.modelName}</span>
                 </p>
                 <button
                     type="button"
@@ -279,7 +279,7 @@ export function LookView({
                         onClose();
                     }}
                     aria-label="Close look view"
-                    className="pointer-events-auto grid h-12 w-12 shrink-0 cursor-pointer place-items-center rounded-full border border-[#151413]/25 bg-white text-[#151413] shadow-md transition-[rotate,scale,border-color] duration-300 hover:rotate-90 hover:border-[#151413] active:scale-95"
+                    className="pointer-events-auto grid h-12 w-12 shrink-0 cursor-pointer place-items-center rounded-full border border-ink/25 bg-surface text-ink shadow-md transition-[rotate,scale,border-color] duration-300 hover:rotate-90 hover:border-ink active:scale-95"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                         <path d="M5 5l14 14M19 5L5 19" />

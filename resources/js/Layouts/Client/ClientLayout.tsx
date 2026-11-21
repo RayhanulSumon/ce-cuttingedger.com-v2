@@ -110,9 +110,9 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
     return (
         <TooltipProvider>
             <SidebarProvider defaultOpen={true}>
-                <div className="admin-shell flex min-h-screen w-full bg-[#f5f7fb] text-ink antialiased">
-                    <Sidebar className="border-r border-slate-200/90 bg-white text-ink">
-                        <SidebarHeader className="border-b border-slate-100 bg-white px-5 py-4">
+                <div className="flex min-h-screen w-full bg-page text-ink antialiased">
+                    <Sidebar className="border-r border-line bg-surface text-ink">
+                        <SidebarHeader className="border-b border-line bg-surface px-5 py-4">
                             <Link
                                 href="/portal"
                                 preserveScroll
@@ -129,7 +129,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                         <span className="block text-sm font-extrabold leading-none tracking-tight text-ink">
                                             CuttingEdger
                                         </span>
-                                        <span className="mt-0.5 block text-[11px] font-medium text-slate-400">
+                                        <span className="mt-0.5 block text-2xs font-medium text-subtle">
                                             Client Workspace
                                         </span>
                                     </div>
@@ -137,7 +137,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                             </Link>
                         </SidebarHeader>
 
-                        <SidebarContent className="bg-white px-3 py-4">
+                        <SidebarContent className="bg-surface px-3 py-4">
                             <SidebarGroup className="p-0">
                                 <SidebarMenu className="space-y-1">
                                     {navItems.map((item) => {
@@ -149,10 +149,10 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                                     isActive={item.active}
                                                     tooltip={item.name}
                                                     className={cn(
-                                                        'cursor-pointer rounded-xl px-2.5 py-2 text-[13px] transition-all',
+                                                        'cursor-pointer rounded-xl px-2.5 py-2 text-sm transition-all',
                                                         item.active
-                                                            ? 'bg-primary font-semibold text-white shadow-xs hover:bg-primary-hover hover:text-white'
-                                                            : 'font-medium text-slate-600 hover:bg-slate-100/80 hover:text-ink'
+                                                            ? 'bg-primary font-semibold text-primary-foreground shadow-xs hover:bg-primary-hover hover:text-primary-foreground'
+                                                            : 'font-medium text-muted hover:bg-surface-2 hover:text-ink'
                                                     )}
                                                 >
                                                     <Link
@@ -165,7 +165,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                                         <Icon
                                                             className={cn(
                                                                 'h-4 w-4 shrink-0',
-                                                                item.active ? 'text-white' : 'text-slate-400'
+                                                                item.active ? 'text-primary-foreground' : 'text-faint'
                                                             )}
                                                         />
                                                         <span className="flex-1 truncate text-left">
@@ -174,10 +174,10 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                                         {item.badge && (
                                                             <span
                                                                 className={cn(
-                                                                    'flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tracking-tight',
+                                                                    'flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-2xs font-bold tracking-tight',
                                                                     item.active
-                                                                        ? 'bg-white text-primary'
-                                                                        : 'bg-primary/15 text-primary'
+                                                                        ? 'bg-surface text-primary-ink'
+                                                                        : 'bg-primary-soft text-primary-ink'
                                                                 )}
                                                             >
                                                                 {item.badge}
@@ -192,20 +192,20 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                             </SidebarGroup>
                         </SidebarContent>
 
-                        <SidebarFooter className="border-t border-slate-100 bg-[#f8fafc] p-3.5">
+                        <SidebarFooter className="border-t border-line bg-surface-2 p-3.5">
                             <div className="flex min-w-0 items-center justify-between gap-2 group-data-[collapsible=icon]:hidden">
                                 <Link
                                     href="/portal/settings"
                                     preserveScroll
                                     prefetch
-                                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-xl p-1 text-left transition-colors hover:bg-slate-100/80"
+                                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-xl p-1 text-left transition-colors hover:bg-surface-3"
                                 >
                                     <ClientAvatar src={user?.avatar} name={user?.name} size="sm" />
                                     <div className="flex min-w-0 flex-1 flex-col">
                                         <span className="truncate text-xs font-bold text-ink">
                                             {user?.name || 'Client'}
                                         </span>
-                                        <span className="truncate text-[11px] text-slate-500">
+                                        <span className="truncate text-2xs text-subtle">
                                             {user?.company || user?.email}
                                         </span>
                                     </div>
@@ -216,7 +216,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                     method="post"
                                     as="button"
                                     title="Sign Out"
-                                    className="shrink-0 cursor-pointer rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                                    className="shrink-0 cursor-pointer rounded-lg p-2 text-faint transition-colors hover:bg-danger-soft hover:text-danger"
                                 >
                                     <LogOut className="h-4 w-4" />
                                 </Link>
@@ -224,13 +224,13 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                         </SidebarFooter>
                     </Sidebar>
 
-                    <SidebarInset className="flex min-w-0 flex-1 flex-col bg-[#f5f7fb] text-ink">
-                        <header className="sticky top-0 z-20 flex h-15 items-center justify-between gap-2 border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 backdrop-blur-md">
+                    <SidebarInset className="flex min-w-0 flex-1 flex-col bg-page text-ink">
+                        <header className="sticky top-0 z-20 flex h-15 items-center justify-between gap-2 border-b border-line bg-surface/95 px-4 sm:px-6 backdrop-blur-md">
                             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                                <SidebarTrigger className="text-slate-500 hover:bg-slate-100 hover:text-ink shrink-0" />
-                                <div className="h-4 w-px bg-slate-200 shrink-0" />
+                                <SidebarTrigger className="text-subtle hover:bg-surface-2 hover:text-ink shrink-0" />
+                                <div className="h-4 w-px bg-line shrink-0" />
                                 <span className="text-sm font-bold text-ink truncate">{activeTitle}</span>
-                                <span className="hidden items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 sm:inline-flex shrink-0">
+                                <span className="hidden items-center gap-1 rounded-full border border-success/25 bg-success-soft px-2.5 py-0.5 text-2xs font-semibold text-success sm:inline-flex shrink-0">
                                     <UserCheck className="h-3 w-3" />
                                     Verified Account
                                 </span>
@@ -241,7 +241,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                     href="/portal/credits"
                                     preserveScroll
                                     prefetch
-                                    className="hidden cursor-pointer items-center gap-1.5 rounded-xl border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary-ink transition-colors hover:bg-primary/15 sm:inline-flex"
+                                    className="hidden cursor-pointer items-center gap-1.5 rounded-xl border border-primary/25 bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-ink transition-colors hover:bg-primary/15 sm:inline-flex"
                                 >
                                     <Coins className="h-3.5 w-3.5 text-primary" />
                                     <span className="tabular-nums">
@@ -251,12 +251,12 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                 <Link
                                     href="/"
                                     aria-label="View Website"
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200/80 hover:text-ink"
+                                    className="inline-flex items-center gap-1.5 rounded-xl bg-surface-2 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink"
                                 >
                                     <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="h-3.5 w-3.5" />
                                 </Link>
-                                <div className="hidden h-5 w-px bg-slate-200 sm:block" />
+                                <div className="hidden h-5 w-px bg-line sm:block" />
                                 <ClientUserMenu user={user} availableCredits={availableCredits} />
                             </div>
                         </header>

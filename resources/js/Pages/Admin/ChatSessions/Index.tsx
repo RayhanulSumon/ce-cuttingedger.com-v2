@@ -313,13 +313,13 @@ export default function ChatSessionsIndex({
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "converted":
-                return <Badge variant="accent" className="font-mono">LEAD CONVERTED</Badge>;
+                return <Badge variant="accent" className="">LEAD CONVERTED</Badge>;
             case "active":
-                return <Badge variant="success" className="font-mono">ACTIVE</Badge>;
+                return <Badge variant="success" className="">ACTIVE</Badge>;
             case "idle":
-                return <Badge variant="secondary" className="font-mono">IDLE</Badge>;
+                return <Badge variant="secondary" className="">IDLE</Badge>;
             case "abandoned":
-                return <Badge variant="destructive" className="font-mono">ABANDONED</Badge>;
+                return <Badge variant="destructive" className="">ABANDONED</Badge>;
             default:
                 return <Badge variant="outline">{status}</Badge>;
         }
@@ -331,12 +331,12 @@ export default function ChatSessionsIndex({
             accessorKey: "lead_name",
             cell: (row) => (
                 <div className="space-y-0.5">
-                    <div className="font-semibold text-white flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-accent" />
+                    <div className="font-semibold text-ink flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-primary-ink" />
                         <span>{row.lead_name}</span>
                     </div>
-                    <div className="text-xs text-neutral-400 font-mono flex items-center gap-1.5">
-                        <Mail className="w-3 h-3 text-neutral-500" />
+                    <div className="text-xs text-subtle flex items-center gap-1.5">
+                        <Mail className="w-3 h-3 text-subtle" />
                         <span>{row.lead_email || "Not shared yet"}</span>
                     </div>
                 </div>
@@ -346,8 +346,8 @@ export default function ChatSessionsIndex({
             header: "Phone / WhatsApp",
             accessorKey: "lead_phone",
             cell: (row) => (
-                <span className="text-xs font-mono text-neutral-300">
-                    {row.lead_phone || <span className="text-neutral-600">—</span>}
+                <span className="text-xs text-ink-2">
+                    {row.lead_phone || <span className="text-muted">—</span>}
                 </span>
             ),
         },
@@ -355,13 +355,13 @@ export default function ChatSessionsIndex({
             header: "Quote Estimate",
             accessorKey: "estimated_price",
             cell: (row) => (
-                <div className="font-mono text-xs">
+                <div className="text-xs">
                     {row.estimated_price ? (
-                        <span className="font-bold text-accent">
+                        <span className="font-bold text-primary-ink">
                             ${row.estimated_price}
                         </span>
                     ) : (
-                        <span className="text-neutral-600">—</span>
+                        <span className="text-muted">—</span>
                     )}
                 </div>
             ),
@@ -370,7 +370,7 @@ export default function ChatSessionsIndex({
             header: "Messages",
             accessorKey: "messages_count",
             cell: (row) => (
-                <span className="font-mono text-xs text-neutral-300">
+                <span className="text-xs text-ink-2">
                     {row.messages_count} msgs
                 </span>
             ),
@@ -381,13 +381,13 @@ export default function ChatSessionsIndex({
             cell: (row) => (
                 <div className="flex flex-col gap-1 items-start">
                     {row.needs_human && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-2xs font-bold bg-danger-soft text-danger border border-danger/25 animate-pulse">
                             <AlertTriangle className="w-2.5 h-2.5" />
                             NEEDS HUMAN
                         </span>
                     )}
                     {row.mode === "operator" ? (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-2xs font-bold bg-info-soft text-info border border-info/25">
                             <Radio className="w-2.5 h-2.5 animate-pulse" />
                             OPERATOR LIVE
                         </span>
@@ -401,7 +401,7 @@ export default function ChatSessionsIndex({
             header: "Last Active",
             accessorKey: "last_active_at",
             cell: (row) => (
-                <div className="text-xs font-mono text-neutral-400">
+                <div className="text-xs text-subtle">
                     {row.last_active_formatted}
                 </div>
             ),
@@ -417,10 +417,10 @@ export default function ChatSessionsIndex({
                         onClick={() => openTranscript(row)}
                         className={`h-8 px-2.5 text-xs font-mono gap-1.5 transition-all cursor-pointer ${
                             row.needs_human
-                                ? "bg-rose-500 text-white hover:bg-rose-600 animate-pulse font-bold"
+                                ? "bg-danger text-white hover:bg-danger-hover animate-pulse font-bold"
                                 : row.mode === "operator"
-                                ? "bg-sky-600 text-white hover:bg-sky-500 font-bold"
-                                : "bg-white/10 hover:bg-accent hover:text-black text-white"
+                                ? "bg-info text-white hover:bg-info/90 font-bold"
+                                : "bg-surface-2 hover:bg-primary hover:text-primary-foreground text-primary-foreground"
                         }`}
                         title="Open Live Chat Console & Take Over"
                     >
@@ -440,7 +440,7 @@ export default function ChatSessionsIndex({
                         variant="ghost"
                         size="sm"
                         onClick={() => setSessionToDelete(row)}
-                        className="h-8 w-8 p-0 text-neutral-500 hover:text-rose-400 cursor-pointer"
+                        className="h-8 w-8 p-0 text-subtle hover:text-danger cursor-pointer"
                         title="Delete transcript"
                     >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -462,7 +462,7 @@ export default function ChatSessionsIndex({
                             variant="outline"
                             size="sm"
                             onClick={() => router.post(route("admin.chat-sessions.mark-all-read"), {}, { preserveScroll: true })}
-                            className="border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs gap-1.5 h-9"
+                            className="border-success/25 bg-success-soft hover:bg-success-soft text-success text-xs gap-1.5 h-9"
                             title="Mark all new chat leads as acknowledged / read"
                         >
                             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -472,7 +472,7 @@ export default function ChatSessionsIndex({
                             variant="outline"
                             size="sm"
                             onClick={() => setBulkDeleteType("empty")}
-                            className="border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs gap-1.5 h-9"
+                            className="border-warning/25 bg-warning-soft hover:bg-warning-soft text-warning text-xs gap-1.5 h-9"
                             title="Delete all empty sessions with 0 messages"
                         >
                             <Sparkles className="w-3.5 h-3.5" />
@@ -482,7 +482,7 @@ export default function ChatSessionsIndex({
                             variant="destructive"
                             size="sm"
                             onClick={() => setBulkDeleteType("all")}
-                            className="bg-rose-500/20 border border-rose-500/30 hover:bg-rose-600 text-rose-300 hover:text-white font-mono text-xs gap-1.5 h-9"
+                            className="bg-danger-soft border border-danger/25 hover:bg-danger-hover text-danger hover:text-white text-xs gap-1.5 h-9"
                             title="Delete all visitor chat sessions and transcripts"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -493,40 +493,40 @@ export default function ChatSessionsIndex({
 
                 {/* KPI Metrics */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-[#12141a] border border-white/5 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 block mb-1">
+                    <div className="bg-surface border border-line rounded-2xl p-4">
+                        <span className="text-2xs uppercase tracking-wider text-subtle block mb-1">
                             Total Visitor Chats
                         </span>
-                        <div className="text-2xl font-bold font-mono text-white">
+                        <div className="text-2xl font-bold text-ink">
                             {stats.total_sessions}
                         </div>
                     </div>
-                    <div className="bg-[#12141a] border border-accent/30 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-accent block mb-1">
+                    <div className="bg-surface border border-primary/30 rounded-2xl p-4">
+                        <span className="text-2xs uppercase tracking-wider text-primary-ink block mb-1">
                             Captured Leads
                         </span>
-                        <div className="text-2xl font-bold font-mono text-accent">
+                        <div className="text-2xl font-bold text-primary-ink">
                             {stats.captured_leads}
                         </div>
                     </div>
                     <div className={`rounded-2xl p-4 border transition-all ${
                         (stats.needs_human ?? 0) > 0
-                            ? "bg-rose-500/10 border-rose-500/40 shadow-lg shadow-rose-500/10"
-                            : "bg-[#12141a] border-white/5"
+                            ? "bg-danger-soft border-danger/40 shadow-lg shadow-danger/10"
+                            : "bg-surface border-line"
                     }`}>
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400 block mb-1 flex items-center gap-1.5">
-                            {(stats.needs_human ?? 0) > 0 && <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />}
+                        <span className="text-2xs uppercase tracking-wider text-danger block mb-1 flex items-center gap-1.5">
+                            {(stats.needs_human ?? 0) > 0 && <span className="w-2 h-2 rounded-full bg-danger animate-ping" />}
                             Needs Human Specialist
                         </span>
-                        <div className={`text-2xl font-bold font-mono ${(stats.needs_human ?? 0) > 0 ? "text-rose-400" : "text-neutral-400"}`}>
+                        <div className={`text-2xl font-bold ${(stats.needs_human ?? 0) > 0 ? "text-danger" : "text-subtle"}`}>
                             {stats.needs_human ?? 0}
                         </div>
                     </div>
-                    <div className="bg-[#12141a] border border-sky-500/20 rounded-2xl p-4">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-sky-400 block mb-1">
+                    <div className="bg-surface border border-info/25 rounded-2xl p-4">
+                        <span className="text-2xs uppercase tracking-wider text-info block mb-1">
                             Live Operator Active
                         </span>
-                        <div className="text-2xl font-bold font-mono text-sky-400">
+                        <div className="text-2xl font-bold text-info">
                             {stats.operator_active ?? 0}
                         </div>
                     </div>
@@ -551,25 +551,25 @@ export default function ChatSessionsIndex({
                         }
                     }}
                 >
-                    <DialogContent className="max-w-3xl bg-[#0b0c10] border border-white/10 text-white max-h-[90vh] flex flex-col p-0 overflow-hidden shadow-2xl">
+                    <DialogContent className="max-w-3xl bg-surface border border-line text-ink max-h-[90vh] flex flex-col p-0 overflow-hidden shadow-2xl">
                         {/* Header with Live Takeover Controls */}
-                        <div className="p-4 border-b border-white/10 bg-[#12141a] flex flex-wrap items-center justify-between gap-3 shrink-0">
+                        <div className="p-4 border-b border-line bg-surface flex flex-wrap items-center justify-between gap-3 shrink-0">
                             <div>
                                 <DialogTitle className="flex items-center gap-2 text-sm">
-                                    <MessageSquareText className="w-4 h-4 text-accent" />
+                                    <MessageSquareText className="w-4 h-4 text-primary-ink" />
                                     <span>Live Client Chat Console</span>
                                     {transcript?.session?.needs_human && (
-                                        <Badge variant="destructive" className="font-mono text-[10px] animate-pulse">
+                                        <Badge variant="destructive" className="text-2xs animate-pulse">
                                             NEEDS OPERATOR
                                         </Badge>
                                     )}
                                     {transcript?.session?.mode === "operator" && (
-                                        <Badge variant="accent" className="font-mono text-[10px] bg-sky-500/20 text-sky-300 border-sky-500/30">
+                                        <Badge variant="accent" className="text-2xs bg-info-soft text-info border-info/25">
                                             OPERATOR ACTIVE ({transcript.session.operator_name || 'You'})
                                         </Badge>
                                     )}
                                 </DialogTitle>
-                                <DialogDescription className="text-xs text-neutral-400 font-mono mt-0.5">
+                                <DialogDescription className="text-xs text-subtle mt-0.5">
                                     {transcript?.session?.lead_email
                                         ? `Lead: ${transcript.session.lead_email} (${transcript.session.lead_name || 'Visitor'})`
                                         : `Anonymous Visitor • IP: ${transcript?.session?.ip_address || 'Unknown'}`}
@@ -584,10 +584,10 @@ export default function ChatSessionsIndex({
                                         size="sm"
                                         onClick={handleRelease}
                                         disabled={isTogglingTakeover}
-                                        className="h-8 px-3 text-xs font-mono border-white/10 text-neutral-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                                        className="h-8 px-3 text-xs border-line text-ink-2 hover:text-ink hover:bg-surface-2 cursor-pointer"
                                         title="Hand chat back to automated assistant"
                                     >
-                                        <Bot className="w-3.5 h-3.5 mr-1 text-accent" />
+                                        <Bot className="w-3.5 h-3.5 mr-1 text-primary-ink" />
                                         <span>Release to Bot</span>
                                     </Button>
                                 ) : (
@@ -596,7 +596,7 @@ export default function ChatSessionsIndex({
                                         size="sm"
                                         onClick={handleTakeover}
                                         disabled={isTogglingTakeover}
-                                        className="h-8 px-3 text-xs font-mono bg-primary hover:bg-primary-hover text-white font-bold cursor-pointer"
+                                        className="h-8 px-3 text-xs bg-primary hover:bg-primary-hover text-primary-foreground font-bold cursor-pointer"
                                         title="Take over this conversation and chat live"
                                     >
                                         <Radio className="w-3.5 h-3.5 mr-1" />
@@ -609,8 +609,8 @@ export default function ChatSessionsIndex({
                         {/* Transcript Dialogue Scroll Container */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-3.5 scrollbar-thin scrollbar-thumb-white/10 min-h-[340px]">
                             {isLoadingTranscript ? (
-                                <div className="flex items-center justify-center py-20 text-neutral-400 gap-2 font-mono text-xs">
-                                    <Loader2 className="w-4 h-4 animate-spin text-accent" />
+                                <div className="flex items-center justify-center py-20 text-subtle gap-2 text-xs">
+                                    <Loader2 className="w-4 h-4 animate-spin text-primary-ink" />
                                     <span>Loading conversation stream...</span>
                                 </div>
                             ) : transcript?.messages && transcript.messages.length > 0 ? (
@@ -623,23 +623,23 @@ export default function ChatSessionsIndex({
                                             key={m.id}
                                             className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
                                         >
-                                            <div className="flex items-center gap-1.5 mb-1 text-[10px] text-neutral-500 font-mono">
+                                            <div className="flex items-center gap-1.5 mb-1 text-2xs text-subtle">
                                                 {isUser ? (
                                                     <>
                                                         <span>{m.created_at_formatted}</span>
-                                                        <span className="text-white font-semibold">Client</span>
+                                                        <span className="text-ink font-semibold">Client</span>
                                                     </>
                                                 ) : isOperator ? (
                                                     <>
-                                                        <span className="text-sky-400 font-semibold flex items-center gap-1">
-                                                            <UserCheck className="w-3 h-3 text-sky-400" />
+                                                        <span className="text-info font-semibold flex items-center gap-1">
+                                                            <UserCheck className="w-3 h-3 text-info" />
                                                             Operator ({transcript.session?.operator_name || 'You'})
                                                         </span>
                                                         <span>{m.created_at_formatted}</span>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <span className="text-accent font-semibold">Assistant Bot</span>
+                                                        <span className="text-primary-ink font-semibold">Assistant Bot</span>
                                                         <span>{m.created_at_formatted}</span>
                                                     </>
                                                 )}
@@ -648,10 +648,10 @@ export default function ChatSessionsIndex({
                                             <div
                                                 className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                                                     isUser
-                                                        ? "bg-accent text-black font-medium rounded-br-xs"
+                                                        ? "bg-primary text-primary-foreground font-medium rounded-br-xs"
                                                         : isOperator
-                                                        ? "bg-[#0e1b29] text-white border border-sky-500/40 rounded-bl-xs shadow-md shadow-sky-500/5"
-                                                        : "bg-[#151720] text-white/90 border border-white/5 rounded-bl-xs"
+                                                        ? "bg-info-soft text-ink border border-info/40 rounded-bl-xs shadow-md shadow-info/5"
+                                                        : "bg-surface-2 text-ink-2 border border-line rounded-bl-xs"
                                                 }`}
                                             >
                                                 {/* Attachments */}
@@ -668,10 +668,10 @@ export default function ChatSessionsIndex({
                                                                 <img
                                                                     src={url}
                                                                     alt="Uploaded attachment"
-                                                                    className="w-16 h-16 object-cover rounded-lg border border-white/20"
+                                                                    className="w-16 h-16 object-cover rounded-lg border border-line"
                                                                 />
-                                                                <span className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity rounded-lg">
-                                                                    <ExternalLink className="w-3.5 h-3.5 text-white" />
+                                                                <span className="absolute inset-0 bg-surface-2 flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity rounded-lg">
+                                                                    <ExternalLink className="w-3.5 h-3.5 text-ink" />
                                                                 </span>
                                                             </a>
                                                         ))}
@@ -682,10 +682,10 @@ export default function ChatSessionsIndex({
 
                                                 {/* Tool results / Quote details */}
                                                 {m.tool_results && m.tool_results.length > 0 && (
-                                                    <div className="mt-2 pt-2 border-t border-white/10 space-y-1 font-mono text-[11px]">
+                                                    <div className="mt-2 pt-2 border-t border-line space-y-1 text-2xs">
                                                         {m.tool_results.map((res: any, rIdx: number) => (
-                                                            <div key={rIdx} className="bg-black/30 p-2 rounded-lg border border-white/5">
-                                                                <span className="text-accent block text-[10px] uppercase font-bold">
+                                                            <div key={rIdx} className="bg-surface-2 p-2 rounded-lg border border-line">
+                                                                <span className="text-primary-ink block text-2xs uppercase font-bold">
                                                                     Tool Executed: {res.type}
                                                                 </span>
                                                                 {res.service_name && (
@@ -703,14 +703,14 @@ export default function ChatSessionsIndex({
                                     );
                                 })
                             ) : (
-                                <p className="text-center text-neutral-500 py-12 text-xs font-mono">
+                                <p className="text-center text-subtle py-12 text-xs">
                                     No transcript messages recorded for this session.
                                 </p>
                             )}
                         </div>
 
                         {/* Live Operator Reply Input Bar */}
-                        <div className="p-3 border-t border-white/10 bg-[#12141a] shrink-0">
+                        <div className="p-3 border-t border-line bg-surface shrink-0">
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
@@ -728,12 +728,12 @@ export default function ChatSessionsIndex({
                                             : "Type message to take over and reply directly..."
                                     }
                                     disabled={isSendingReply}
-                                    className="min-w-0 flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-primary transition-colors font-mono"
+                                    className="min-w-0 flex-1 bg-surface-2 border border-line rounded-xl px-4 py-2.5 text-xs text-ink placeholder:text-faint focus:outline-none focus:border-ring transition-colors"
                                 />
                                 <Button
                                     type="submit"
                                     disabled={!replyText.trim() || isSendingReply}
-                                    className="min-h-10 px-4 bg-primary hover:bg-primary-hover text-white font-mono font-bold text-xs gap-1.5 cursor-pointer disabled:opacity-40"
+                                    className="min-h-10 px-4 bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs gap-1.5 cursor-pointer disabled:opacity-40"
                                 >
                                     {isSendingReply ? (
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -754,20 +754,20 @@ export default function ChatSessionsIndex({
                     open={!!sessionToDelete}
                     onOpenChange={(open) => !open && setSessionToDelete(null)}
                 >
-                    <AlertDialogContent className="bg-[#0b0c10] border border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">Delete Chat Transcript?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400">
+                            <AlertDialogTitle className="text-ink">Delete Chat Transcript?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-subtle">
                                 This will permanently remove this visitor session and all conversation logs.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                            <AlertDialogCancel className="bg-surface-2 border-line text-ink hover:bg-surface-2">
                                 Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDelete}
-                                className="bg-rose-500 hover:bg-rose-600 text-white"
+                                className="bg-danger hover:bg-danger-hover text-white"
                             >
                                 Delete Transcript
                             </AlertDialogAction>
@@ -780,25 +780,25 @@ export default function ChatSessionsIndex({
                     open={!!bulkDeleteType}
                     onOpenChange={(open) => !open && setBulkDeleteType(null)}
                 >
-                    <AlertDialogContent className="bg-[#0b0c10] border border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white flex items-center gap-2">
-                                <Trash2 className="w-5 h-5 text-rose-400" />
+                            <AlertDialogTitle className="text-ink flex items-center gap-2">
+                                <Trash2 className="w-5 h-5 text-danger" />
                                 {bulkDeleteType === "empty" ? "Clear Empty Visitor Sessions?" : "Delete All Chat Transcripts?"}
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400">
+                            <AlertDialogDescription className="text-subtle">
                                 {bulkDeleteType === "empty"
                                     ? "This will delete all visitor chat sessions that have 0 messages and no captured email leads, cleaning up phantom rows."
                                     : "Are you sure you want to delete ALL chat sessions? All visitor conversations, leads, and transcripts will be permanently purged."}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+                            <AlertDialogCancel className="bg-surface-2 border-line text-ink hover:bg-surface-2">
                                 Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleBulkDelete}
-                                className="bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold"
+                                className="bg-danger hover:bg-danger-hover text-white font-bold"
                             >
                                 {bulkDeleteType === "empty" ? "Clear Empty Sessions" : "Yes, Delete All"}
                             </AlertDialogAction>

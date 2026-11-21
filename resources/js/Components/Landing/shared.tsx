@@ -119,7 +119,7 @@ export function SectionIntro({
     return (
         <div className={className} data-twin-cursor-free={cursorFree ? '' : undefined}>
             <Reveal active={active}>
-                <h2 className={`font-michroma leading-[1.15] tracking-[0.14em] text-ink ${titleClassName}`}>
+                <h2 className={`font-brand uppercase leading-[1.15] tracking-[0.14em] text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>
@@ -192,7 +192,7 @@ export function OrderCta({
             href={href}
             prefetch
             aria-label={ariaLabel}
-            className="group relative inline-flex h-11 cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
+            className="group relative inline-flex h-11 cursor-pointer items-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)] transition-[transform,background-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_36px_-12px_color-mix(in_srgb,var(--color-primary)_95%,transparent)] active:translate-y-0 active:scale-95"
         >
             <span
                 aria-hidden="true"
@@ -238,7 +238,7 @@ export function CustomOrderCta({
 
 export function Eyebrow({ children }: { children: React.ReactNode }) {
     return (
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-ink-2/70">{children}</p>
+        <p className="text-2xs font-semibold uppercase tracking-[0.28em] text-ink-2/70">{children}</p>
     );
 }
 

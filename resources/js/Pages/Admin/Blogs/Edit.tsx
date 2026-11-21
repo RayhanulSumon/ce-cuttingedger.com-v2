@@ -26,7 +26,7 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                         <Link href={route("admin.blogs.index")}>
                             <Button
                                 variant="outline"
-                                className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
+                                className="gap-2 border-line bg-surface-2 hover:bg-surface-2 text-ink-2 hover:text-ink cursor-pointer"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 <span>Back to Blogs</span>
@@ -41,9 +41,9 @@ export default function BlogsEdit({ blog, categories = [], authors = [] }: Blogs
                             >
                                 <Button
                                     variant="outline"
-                                    className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono cursor-pointer"
+                                    className="gap-2 border-line bg-surface-2 hover:bg-surface-2 text-ink-2 hover:text-ink cursor-pointer"
                                 >
-                                    <ExternalLink className="w-4 h-4 text-accent" />
+                                    <ExternalLink className="w-4 h-4 text-primary-ink" />
                                     <span>View Live</span>
                                 </Button>
                             </a>

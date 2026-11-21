@@ -119,7 +119,7 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
     };
 
     const hoverChip = (
-        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-ink opacity-0 shadow-md transition-[opacity,transform] duration-300 group-hover:rotate-45 group-hover:opacity-100">
+        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-surface text-ink opacity-0 shadow-md transition-[opacity,transform] duration-300 group-hover:rotate-45 group-hover:opacity-100">
             <ArrowUpRight size={16} />
         </span>
     );
@@ -128,7 +128,7 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
         return (
             <button {...common} style={{ backgroundImage: `url(${tile.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span className="block text-[10px] font-semibold uppercase tracking-[0.22em] opacity-80">{tile.label}</span>
+                    <span className="block text-2xs font-semibold uppercase tracking-[0.22em] opacity-80">{tile.label}</span>
                     <span className="mt-1 block text-sm font-bold leading-tight">{tile.title}</span>
                 </span>
                 {hoverChip}
@@ -142,7 +142,7 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
             style={{ backgroundColor: tile.bg, color: tile.fg, boxShadow: tile.bg === '#f9f6f1' ? 'inset 0 0 0 1px #e9e6df' : undefined }}
         >
             <span className="flex h-full flex-col justify-between p-4 sm:p-5">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.25em] opacity-70">{tile.label}</span>
+                <span className="text-2xs font-semibold uppercase tracking-[0.25em] opacity-70">{tile.label}</span>
                 <span className="text-lg font-black uppercase leading-[0.95] tracking-[-0.03em] sm:text-2xl">{tile.title}</span>
             </span>
             {hoverChip}
@@ -197,7 +197,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
         <AnimatePresence>
             {tile && (
                 <motion.div
-                    className="absolute inset-0 z-[500] grid place-items-center bg-black/55 p-4 backdrop-blur-sm"
+                    className="absolute inset-0 z-[500] grid place-items-center bg-ink/55 p-4 backdrop-blur-sm"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -209,7 +209,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                         aria-modal="true"
                         aria-label={tile.title}
                         data-scrollable
-                        className="relative grid max-h-full w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl sm:grid-cols-[0.9fr_1.1fr]"
+                        className="relative grid max-h-full w-full max-w-3xl overflow-y-auto rounded-3xl bg-surface shadow-2xl sm:grid-cols-[0.9fr_1.1fr]"
                         initial={{ y: 24, scale: 0.97, opacity: 0 }}
                         animate={{ y: 0, scale: 1, opacity: 1 }}
                         exit={{ y: 16, scale: 0.98, opacity: 0 }}
@@ -233,9 +233,9 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                         </div>
 
                         <div className="flex flex-col justify-center p-6 sm:p-9">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-subtle">{tile.label}</p>
+                            <p className="text-2xs font-semibold uppercase tracking-[0.25em] text-subtle">{tile.label}</p>
                             <h3 className="mt-2 text-2xl font-extrabold tracking-[-0.02em] text-ink sm:text-3xl">{tile.title}</h3>
-                            <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{tile.description}</p>
+                            <p className="mt-3 text-base leading-relaxed text-ink-2">{tile.description}</p>
 
                             <div className="mt-6 flex flex-wrap gap-3">
                                 {tile.actions.map((action, i) => (
@@ -245,8 +245,8 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                                         prefetch
                                         className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 ${
                                             i === 0
-                                                ? 'bg-primary text-white shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)]'
-                                                : 'border border-ink/25 text-ink hover:bg-ink hover:text-white'
+                                                ? 'bg-primary text-primary-foreground shadow-[0_14px_30px_-14px_color-mix(in_srgb,var(--color-primary)_90%,transparent)]'
+                                                : 'border border-ink/25 text-ink hover:bg-ink hover:text-surface'
                                         }`}
                                     >
                                         {action.label}
@@ -260,7 +260,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                             type="button"
                             onClick={onClose}
                             aria-label="Close"
-                            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-ink text-white shadow-lg transition-transform duration-300 hover:rotate-90"
+                            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-ink text-surface shadow-lg transition-transform duration-300 hover:rotate-90"
                         >
                             <X size={18} />
                         </button>
@@ -310,7 +310,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
     }, [onOverlayChange]);
 
     return (
-        <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-[#f5f4ef] md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
+        <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
                 <Reveal active={active}>
                     <h2 className="text-[clamp(38px,7.2vw,104px)] font-black uppercase leading-[0.9] tracking-[-0.05em] text-ink">
@@ -326,11 +326,11 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
                     </p>
                 </Reveal>
                 <Reveal active={active} delay={0.26} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
-                    <Link href="/case-studies" prefetch className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
+                    <Link href="/case-studies" prefetch className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-surface transition-transform duration-300 hover:-translate-y-0.5">
                         View case studies
                     </Link>
                     <Link href="/book-a-demo" prefetch className="group flex items-center gap-3 text-sm font-bold">
-                        <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-white transition-transform duration-300 group-hover:rotate-45">
+                        <span className="grid h-8 w-8 place-items-center rounded-full bg-ink text-surface transition-transform duration-300 group-hover:rotate-45">
                             <ArrowUpRight size={14} />
                         </span>
                         Book a Demo

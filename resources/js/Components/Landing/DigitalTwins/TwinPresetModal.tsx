@@ -97,7 +97,7 @@ export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose }: Twi
 }
 
 const MODEL_ARROW =
-    'absolute top-[220px] z-20 grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white sm:top-1/3 sm:h-11 sm:w-11 lg:top-1/2 lg:-translate-y-1/2';
+    'absolute top-[220px] z-20 grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-surface/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white sm:top-1/3 sm:h-11 sm:w-11 lg:top-1/2 lg:-translate-y-1/2';
 
 function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
     const { auth } = usePage<TwinPageProps>().props;
@@ -172,7 +172,7 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
 
     return (
         <motion.div
-            className="fixed inset-0 z-[500] flex flex-col overflow-y-auto bg-[#f4f7fb] lg:absolute lg:grid lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_410px] lg:overflow-hidden"
+            className="fixed inset-0 z-[500] flex flex-col overflow-y-auto bg-surface-2 lg:absolute lg:grid lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_410px] lg:overflow-hidden"
             data-scrollable
             role="dialog"
             aria-modal="true"
@@ -215,7 +215,7 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
             {/* Right side: Clean action sidebar with model name, description, and action buttons */}
             <motion.aside
                 data-scrollable
-                className="flex shrink-0 flex-col justify-center border-t border-[#d8e1ec] bg-white p-5 pb-10 sm:p-8 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-10"
+                className="flex shrink-0 flex-col justify-center border-t border-line bg-surface p-5 pb-10 sm:p-8 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-10"
                 aria-label="Digital twin preset actions"
                 initial={{ x: 40, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}

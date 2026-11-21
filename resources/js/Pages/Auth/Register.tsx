@@ -5,7 +5,7 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
 const PAGE_BACKGROUND =
-    'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+    'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 function GoogleIcon() {
     return (
@@ -53,12 +53,12 @@ export default function ClientRegister() {
             />
 
             <div className="mx-auto max-w-lg px-5">
-                <div className="rounded-3xl border border-ink/10 bg-white p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
+                <div className="rounded-3xl border border-ink/10 bg-surface p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
                     <div className="text-center">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+                        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                             Client Studio Portal
                         </p>
-                        <h1 className="mt-1.5 font-michroma text-2xl font-normal tracking-[0.06em] text-ink">
+                        <h1 className="mt-1.5 font-brand uppercase text-2xl font-normal tracking-[0.06em] text-ink">
                             Create Your Account
                         </h1>
                         <p className="mt-2 text-xs text-subtle">
@@ -70,7 +70,7 @@ export default function ClientRegister() {
                     <div className="mt-6">
                         <a
                             href={route('auth.google.redirect')}
-                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-white px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-[#f8fafc]"
+                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-surface px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-surface-2"
                         >
                             <GoogleIcon />
                             <span>Sign up with Google (Instant Verification)</span>
@@ -79,7 +79,7 @@ export default function ClientRegister() {
 
                     <div className="my-6 flex items-center gap-3">
                         <div className="h-px flex-1 bg-ink/10" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-subtle">
+                        <span className="text-2xs font-bold uppercase tracking-widest text-subtle">
                             or sign up with email
                         </span>
                         <div className="h-px flex-1 bg-ink/10" />
@@ -99,10 +99,10 @@ export default function ClientRegister() {
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     placeholder="Alex Rivera"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                                 {errors.name && (
-                                    <p className="mt-1 text-xs font-semibold text-rose-600">
+                                    <p className="mt-1 text-xs font-semibold text-danger">
                                         {errors.name}
                                     </p>
                                 )}
@@ -119,10 +119,10 @@ export default function ClientRegister() {
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     placeholder="alex@brand.com"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                                 {errors.email && (
-                                    <p className="mt-1 text-xs font-semibold text-rose-600">
+                                    <p className="mt-1 text-xs font-semibold text-danger">
                                         {errors.email}
                                     </p>
                                 )}
@@ -140,7 +140,7 @@ export default function ClientRegister() {
                                     value={data.company}
                                     onChange={(e) => setData('company', e.target.value)}
                                     placeholder="Atelier Studio"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                             </div>
 
@@ -154,7 +154,7 @@ export default function ClientRegister() {
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
                                     placeholder="+1 (555) 000-0000"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                             </div>
                         </div>
@@ -171,10 +171,10 @@ export default function ClientRegister() {
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="Min. 8 characters"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                                 {errors.password && (
-                                    <p className="mt-1 text-xs font-semibold text-rose-600">
+                                    <p className="mt-1 text-xs font-semibold text-danger">
                                         {errors.password}
                                     </p>
                                 )}
@@ -193,7 +193,7 @@ export default function ClientRegister() {
                                         setData('password_confirmation', e.target.value)
                                     }
                                     placeholder="Repeat password"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                             </div>
                         </div>
@@ -201,7 +201,7 @@ export default function ClientRegister() {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                         >
                             <span>
                                 {processing

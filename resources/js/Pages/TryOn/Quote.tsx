@@ -34,7 +34,7 @@ import { LOOKS, Look } from '@/Components/Landing/TryOn/looks';
 import { PAD_X } from '@/Components/Landing/shared';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
-const PAGE_BACKGROUND = 'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+const PAGE_BACKGROUND = 'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 const VOLUME_OPTIONS = [
     'Pilot Test (1–10 looks)',
@@ -78,7 +78,7 @@ function GarmentUploadSlot({
     };
 
     return (
-        <div className="flex flex-col justify-between rounded-2xl border border-ink/10 bg-[#f8fafc] p-3 transition-all hover:border-primary/40">
+        <div className="flex flex-col justify-between rounded-2xl border border-ink/10 bg-surface-2 p-3 transition-all hover:border-primary/40">
             <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold text-ink">
                     <span className="text-primary">{icon}</span>
@@ -91,7 +91,7 @@ function GarmentUploadSlot({
                             onSelectFile(null);
                             if (inputRef.current) inputRef.current.value = '';
                         }}
-                        className="inline-flex cursor-pointer items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700"
+                        className="inline-flex cursor-pointer items-center gap-1 text-2xs font-semibold text-danger hover:text-danger-hover"
                     >
                         <Trash2 size={12} />
                         Remove
@@ -108,15 +108,15 @@ function GarmentUploadSlot({
             />
 
             {previewUrl && file ? (
-                <div className="mt-2.5 overflow-hidden rounded-xl border border-ink/10 bg-white">
-                    <div className="relative h-28 w-full bg-[#eef3f8]">
+                <div className="mt-2.5 overflow-hidden rounded-xl border border-ink/10 bg-surface">
+                    <div className="relative h-28 w-full bg-surface-2">
                         <img
                             src={previewUrl}
                             alt={title}
                             className="h-full w-full object-contain p-1.5"
                         />
                     </div>
-                    <div className="flex items-center justify-between border-t border-ink/10 px-2.5 py-1.5 text-[11px]">
+                    <div className="flex items-center justify-between border-t border-ink/10 px-2.5 py-1.5 text-2xs">
                         <span className="truncate font-semibold text-ink">{file.name}</span>
                         <button
                             type="button"
@@ -131,15 +131,15 @@ function GarmentUploadSlot({
                 <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="mt-2.5 flex h-28 w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-ink/20 bg-white px-3 text-center transition-colors hover:border-primary hover:bg-primary/5"
+                    className="mt-2.5 flex h-28 w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-ink/20 bg-surface px-3 text-center transition-colors hover:border-primary hover:bg-primary/5"
                 >
                     <FileUp className="h-5 w-5 text-primary" />
                     <span className="mt-1.5 text-xs font-bold text-ink">Upload Photo</span>
-                    <span className="mt-0.5 text-[10px] text-subtle">Flat-lay, mannequin, or hanger</span>
+                    <span className="mt-0.5 text-2xs text-subtle">Flat-lay, mannequin, or hanger</span>
                 </button>
             )}
 
-            {error && <p className="mt-1.5 text-[11px] font-semibold text-red-600">{error}</p>}
+            {error && <p className="mt-1.5 text-2xs font-semibold text-danger">{error}</p>}
         </div>
     );
 }
@@ -407,7 +407,7 @@ export default function TryOnQuote({
     };
 
     return (
-        <div className="min-h-screen bg-white text-ink">
+        <div className="min-h-screen bg-surface text-ink">
             <SeoHead
                 title="Request a Virtual Try-On Quote — AI Garment Draping & Fitting"
                 description="Select one of our studio models or upload your own model, attach your Top, Bottom, and Shoes garment photos, and receive a custom Virtual Try-On quote."
@@ -419,7 +419,7 @@ export default function TryOnQuote({
                     <Link
                         href="/#try-on"
                         prefetch
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
+                        className="inline-flex items-center gap-1.5 text-2xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
                     >
                         <ArrowLeft size={13} />
                         Back to Virtual Try-On
@@ -427,10 +427,10 @@ export default function TryOnQuote({
 
                     <div className="mt-3 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
                         <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+                            <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary">
                                 Capability 02 // AI Virtual Try-On Studio
                             </p>
-                            <h1 className="mt-1 font-michroma text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
+                            <h1 className="mt-1 font-brand uppercase text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
                                 Request a Virtual Try-On Quote
                             </h1>
                             <p className="mt-1.5 max-w-[58ch] text-xs leading-[1.6] text-subtle sm:text-sm">
@@ -438,7 +438,7 @@ export default function TryOnQuote({
                             </p>
                         </div>
 
-                        <div className="inline-flex items-center gap-2 self-start rounded-full border border-ink/10 bg-white/85 px-4 py-2 text-xs font-semibold text-ink shadow-xs lg:self-end">
+                        <div className="inline-flex items-center gap-2 self-start rounded-full border border-ink/10 bg-surface/85 px-4 py-2 text-xs font-semibold text-ink shadow-xs lg:self-end">
                             <Sparkles size={14} className="text-primary" />
                             <span>AI Garment Fitting • Delivered within 1 business day</span>
                         </div>
@@ -461,10 +461,10 @@ export default function TryOnQuote({
                         {/* Left 8 Columns: Step 1 (Model), Step 2 (3 Garment Slots + Notes) */}
                         <div className="space-y-6 lg:col-span-8">
                             {/* STEP 1: Select Model Source (Our Model vs Your Model) */}
-                            <section className="rounded-3xl border border-ink/10 bg-white p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
                                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                     <div>
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                        <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                             Step 01
                                         </span>
                                         <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
@@ -476,7 +476,7 @@ export default function TryOnQuote({
                                     <div
                                         role="tablist"
                                         aria-label="Model Source"
-                                        className="inline-flex rounded-full border border-ink/15 bg-[#f8fafc] p-1"
+                                        className="inline-flex rounded-full border border-ink/15 bg-surface-2 p-1"
                                     >
                                         <button
                                             type="button"
@@ -526,7 +526,7 @@ export default function TryOnQuote({
                                                         className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all ${
                                                             isSelected
                                                                 ? 'border-primary bg-primary/5 ring-2 ring-primary/25'
-                                                                : 'border-ink/10 bg-white hover:border-ink/35'
+                                                                : 'border-ink/10 bg-surface hover:border-ink/35'
                                                         }`}
                                                     >
                                                         <div
@@ -539,13 +539,13 @@ export default function TryOnQuote({
                                                                 className="h-full w-full object-contain object-bottom transition-transform duration-300 group-hover:scale-105"
                                                             />
                                                             {isSelected && (
-                                                                <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-white shadow">
+                                                                <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground shadow">
                                                                     <Check size={11} strokeWidth={3} />
                                                                 </span>
                                                             )}
                                                         </div>
                                                         <div className="px-2 py-1.5">
-                                                            <p className="truncate text-[11px] font-bold text-ink">
+                                                            <p className="truncate text-2xs font-bold text-ink">
                                                                 {look.modelName}
                                                             </p>
                                                         </div>
@@ -583,7 +583,7 @@ export default function TryOnQuote({
                                                         <p className="truncate text-xs font-bold text-ink">
                                                             {modelFile.name}
                                                         </p>
-                                                        <p className="mt-0.5 text-[11px] text-subtle">
+                                                        <p className="mt-0.5 text-2xs text-subtle">
                                                             {(modelFile.size / (1024 * 1024)).toFixed(2)} MB • High-res model photo attached
                                                         </p>
                                                     </div>
@@ -592,7 +592,7 @@ export default function TryOnQuote({
                                                     <button
                                                         type="button"
                                                         onClick={() => customModelInputRef.current?.click()}
-                                                        className="cursor-pointer rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[11px] font-bold text-ink hover:border-primary hover:text-primary"
+                                                        className="cursor-pointer rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink hover:border-primary hover:text-primary"
                                                     >
                                                         Replace
                                                     </button>
@@ -604,7 +604,7 @@ export default function TryOnQuote({
                                                                 customModelInputRef.current.value = '';
                                                             }
                                                         }}
-                                                        className="cursor-pointer rounded-full p-1.5 text-red-600 hover:bg-red-50"
+                                                        className="cursor-pointer rounded-full p-1.5 text-danger hover:bg-danger-soft"
                                                         aria-label="Remove model photo"
                                                     >
                                                         <Trash2 size={14} />
@@ -615,7 +615,7 @@ export default function TryOnQuote({
                                             <button
                                                 type="button"
                                                 onClick={() => customModelInputRef.current?.click()}
-                                                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-[#f8fafc] px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
+                                                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-surface-2 px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -625,19 +625,19 @@ export default function TryOnQuote({
                                                         <span className="block text-xs font-bold text-ink">
                                                             Upload Your Model Photo
                                                         </span>
-                                                        <span className="block text-[11px] text-subtle">
+                                                        <span className="block text-2xs text-subtle">
                                                             High-quality full-body photo (JPG, PNG, WEBP, TIFF, PSD • Max 25MB)
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <span className="hidden shrink-0 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[11px] font-bold text-ink sm:inline-flex">
+                                                <span className="hidden shrink-0 rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink sm:inline-flex">
                                                     Choose File
                                                 </span>
                                             </button>
                                         )}
 
                                         {errors?.model_file && (
-                                            <p className="mt-2 text-xs font-semibold text-red-600">
+                                            <p className="mt-2 text-xs font-semibold text-danger">
                                                 {errors.model_file}
                                             </p>
                                         )}
@@ -646,9 +646,9 @@ export default function TryOnQuote({
                             </section>
 
                             {/* STEP 2: 3 Garment Upload Slots (1. Top, 2. Bottom / Below, 3. Shoes) */}
-                            <section className="rounded-3xl border border-ink/10 bg-white p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
                                 <div className="border-b border-ink/10 pb-3.5">
-                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                    <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                         Step 02
                                     </span>
                                     <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
@@ -712,7 +712,7 @@ export default function TryOnQuote({
                                             value={cloudLink}
                                             onChange={(e) => setCloudLink(e.target.value)}
                                             placeholder="https://drive.google.com/..."
-                                            className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                            className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                         />
                                     </div>
 
@@ -729,7 +729,7 @@ export default function TryOnQuote({
                                                 e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
                                             }}
                                             placeholder="e.g. Tuck the top into the trousers, relaxed sleeve drape, neutral studio lighting..."
-                                            className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-[#f8fafc] px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                            className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -740,10 +740,10 @@ export default function TryOnQuote({
                         <div className="lg:col-span-4">
                             <div
                                 ref={submitCardRef}
-                                className="sticky top-28 space-y-4 rounded-3xl border border-ink/10 bg-[#f8fafc] p-5 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-6"
+                                className="sticky top-28 space-y-4 rounded-3xl border border-ink/10 bg-surface-2 p-5 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-6"
                             >
                                 <div>
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                    <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                         Quote Summary
                                     </p>
                                     <h3 className="mt-0.5 text-base font-bold text-ink">
@@ -753,7 +753,7 @@ export default function TryOnQuote({
 
                                 {/* Selected Model Preview */}
                                 {modelSource === 'our_model' && activeLook ? (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-2.5">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
                                         <div
                                             className="h-14 w-11 shrink-0 overflow-hidden rounded-xl"
                                             style={{ background: PAGE_BACKGROUND }}
@@ -765,7 +765,7 @@ export default function TryOnQuote({
                                             />
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
                                                 Studio Model
                                             </p>
                                             <p className="truncate text-xs font-bold text-ink">
@@ -774,26 +774,26 @@ export default function TryOnQuote({
                                         </div>
                                     </div>
                                 ) : modelPreview && modelFile ? (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-2.5">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-2.5">
                                         <img
                                             src={modelPreview}
                                             alt="Your uploaded model"
                                             className="h-14 w-11 shrink-0 rounded-xl object-cover"
                                         />
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
                                                 Your Model
                                             </p>
                                             <p className="truncate text-xs font-bold text-ink">{modelFile.name}</p>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-3">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-3">
                                         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
                                             <UserPlus size={16} />
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                                            <p className="text-2xs font-bold uppercase tracking-wider text-primary">
                                                 Your Model
                                             </p>
                                             <p className="truncate text-xs font-semibold text-subtle">
@@ -804,7 +804,7 @@ export default function TryOnQuote({
                                 )}
 
                                 {/* Compact Garments Status Row */}
-                                <div className="grid grid-cols-3 gap-1.5 text-center text-[11px]">
+                                <div className="grid grid-cols-3 gap-1.5 text-center text-2xs">
                                     {[
                                         { label: 'Top', attached: Boolean(garmentTop) },
                                         { label: 'Bottom', attached: Boolean(garmentBottom) },
@@ -815,7 +815,7 @@ export default function TryOnQuote({
                                             className={`rounded-xl border px-2 py-1.5 font-semibold ${
                                                 slot.attached
                                                     ? 'border-primary/35 bg-primary/[0.06] text-ink'
-                                                    : 'border-ink/10 bg-white text-subtle'
+                                                    : 'border-ink/10 bg-surface text-subtle'
                                             }`}
                                         >
                                             {slot.label} {slot.attached ? '✓' : ''}
@@ -856,7 +856,7 @@ export default function TryOnQuote({
                                     <select
                                         value={monthlyVolume}
                                         onChange={(e) => setMonthlyVolume(e.target.value)}
-                                        className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-white px-3 text-xs font-semibold text-ink focus:border-primary focus:outline-none"
+                                        className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-surface px-3 text-xs font-semibold text-ink focus:border-primary focus:outline-none"
                                     >
                                         {VOLUME_OPTIONS.map((vol) => (
                                             <option key={vol} value={vol}>
@@ -878,10 +878,10 @@ export default function TryOnQuote({
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="Alex Rivera"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                         />
                                         {errors?.name && (
-                                            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+                                            <p className="mt-1 text-xs text-danger">{errors.name}</p>
                                         )}
                                     </div>
 
@@ -895,10 +895,10 @@ export default function TryOnQuote({
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="alex@brand.com"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                         />
                                         {errors?.email && (
-                                            <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+                                            <p className="mt-1 text-xs text-danger">{errors.email}</p>
                                         )}
                                     </div>
 
@@ -910,7 +910,7 @@ export default function TryOnQuote({
                                                 value={company}
                                                 onChange={(e) => setCompany(e.target.value)}
                                                 placeholder="Atelier Studio"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
                                         </div>
                                         <div>
@@ -920,7 +920,7 @@ export default function TryOnQuote({
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
                                                 placeholder="+1 (555) 000-0000"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
                                         </div>
                                     </div>
@@ -931,7 +931,7 @@ export default function TryOnQuote({
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                                    className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                                 >
                                     {isSubmitting
                                         ? 'Submitting Order...'

@@ -168,20 +168,20 @@ export function AdminNotificationDropdown() {
     const getNotificationIcon = (type: string) => {
         if (type.includes("lead")) {
             return (
-                <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 text-accent flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-primary-soft border border-primary/30 text-primary-ink flex items-center justify-center shrink-0">
                     <Sparkles className="w-4 h-4" />
                 </div>
             );
         }
         if (type.includes("chat")) {
             return (
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-warning-soft border border-warning/25 text-warning flex items-center justify-center shrink-0">
                     <MessageSquareText className="w-4 h-4" />
                 </div>
             );
         }
         return (
-            <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 text-neutral-300 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-surface-2 border border-line text-ink-2 flex items-center justify-center shrink-0">
                 <Bell className="w-4 h-4" />
             </div>
         );
@@ -192,12 +192,12 @@ export function AdminNotificationDropdown() {
             <DropdownMenuTrigger asChild>
                 <button
                     type="button"
-                    className="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-600 hover:text-ink transition-all cursor-pointer focus:outline-hidden"
+                    className="relative p-2 rounded-xl bg-surface-2 hover:bg-surface-3 border border-line text-muted hover:text-ink transition-all cursor-pointer focus:outline-hidden"
                     title="Real-time Admin Notifications"
                 >
                     <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-primary text-white font-mono font-bold text-[10px] shadow-sm animate-pulse">
+                        <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-2xs shadow-sm animate-pulse">
                             {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                     )}
@@ -207,18 +207,18 @@ export function AdminNotificationDropdown() {
             <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-84 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl p-0 overflow-hidden text-ink z-50 flex flex-col"
+                className="w-84 sm:w-96 bg-surface border border-line rounded-2xl shadow-xl p-0 overflow-hidden text-ink z-50 flex flex-col"
             >
                 {/* Header */}
-                <div className="p-3.5 px-4 border-b border-slate-200 bg-[#f8fafc] flex items-center justify-between">
+                <div className="p-3.5 px-4 border-b border-line bg-surface-2 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <span className="font-bold text-sm text-ink">Notifications</span>
                         {unreadCount > 0 ? (
-                            <span className="px-1.5 py-0.2 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-bold border border-primary/25">
+                            <span className="px-1.5 py-0.2 rounded-full bg-primary/10 text-primary text-2xs font-bold border border-primary/25">
                                 {unreadCount} new
                             </span>
                         ) : (
-                            <span className="text-xs text-slate-400 font-mono">All read</span>
+                            <span className="text-xs text-faint">All read</span>
                         )}
                     </div>
 
@@ -228,7 +228,7 @@ export function AdminNotificationDropdown() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={markAllRead}
-                                className="h-7 px-2 text-[11px] font-mono text-slate-600 hover:text-ink hover:bg-slate-100 gap-1"
+                                className="h-7 px-2 text-2xs text-muted hover:text-ink hover:bg-surface-2 gap-1"
                                 title="Mark all as read"
                             >
                                 <CheckCheck className="w-3.5 h-3.5 text-primary" />
@@ -240,7 +240,7 @@ export function AdminNotificationDropdown() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={clearAll}
-                                className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                                className="h-7 w-7 p-0 text-faint hover:text-danger hover:bg-danger-soft"
                                 title="Clear all notifications"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -250,14 +250,14 @@ export function AdminNotificationDropdown() {
                 </div>
 
                 {/* Body / Notification Items List */}
-                <div className="max-h-[380px] overflow-y-auto divide-y divide-white/5 scrollbar-thin scrollbar-thumb-white/10">
+                <div className="max-h-[380px] overflow-y-auto divide-y divide-line scrollbar-thin scrollbar-thumb-white/10">
                     {notifications.length === 0 ? (
                         <div className="py-12 px-6 text-center space-y-2">
-                            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-neutral-500 flex items-center justify-center mx-auto">
-                                <CheckCircle2 className="w-5 h-5 text-neutral-400" />
+                            <div className="w-10 h-10 rounded-full bg-surface-2 border border-line text-subtle flex items-center justify-center mx-auto">
+                                <CheckCircle2 className="w-5 h-5 text-subtle" />
                             </div>
-                            <p className="text-sm font-semibold text-neutral-300">All caught up!</p>
-                            <p className="text-xs text-neutral-500">
+                            <p className="text-sm font-semibold text-ink-2">All caught up!</p>
+                            <p className="text-xs text-subtle">
                                 No unread inquiries or captured leads at this moment.
                             </p>
                         </div>
@@ -269,8 +269,8 @@ export function AdminNotificationDropdown() {
                                 className={cn(
                                     "p-3.5 px-4 flex items-start gap-3 transition-colors cursor-pointer group relative",
                                     n.is_read
-                                        ? "bg-transparent hover:bg-white/5 text-neutral-400"
-                                        : "bg-accent/5 hover:bg-accent/10 text-white"
+                                        ? "bg-transparent hover:bg-surface-2 text-subtle"
+                                        : "bg-primary-soft/60 hover:bg-primary-soft text-ink"
                                 )}
                             >
                                 {/* Left icon */}
@@ -279,20 +279,20 @@ export function AdminNotificationDropdown() {
                                 {/* Content */}
                                 <div className="flex-1 min-w-0 pr-5">
                                     <div className="flex items-center gap-1.5 mb-0.5">
-                                        <span className="font-semibold text-xs text-white truncate block">
+                                        <span className="font-semibold text-xs text-ink truncate block">
                                             {n.title}
                                         </span>
                                         {!n.is_read && (
-                                            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                                         )}
                                     </div>
-                                    <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
+                                    <p className="text-xs text-subtle line-clamp-2 leading-relaxed">
                                         {n.message}
                                     </p>
-                                    <div className="flex items-center gap-2 mt-1.5 text-[10px] font-mono text-neutral-500">
+                                    <div className="flex items-center gap-2 mt-1.5 text-2xs text-subtle">
                                         <span>{n.created_at_formatted}</span>
                                         {n.url && (
-                                            <span className="text-[#00f5ff] flex items-center gap-0.5 group-hover:underline">
+                                            <span className="text-info flex items-center gap-0.5 group-hover:underline">
                                                 <span>View details</span>
                                                 <ExternalLink className="w-2.5 h-2.5" />
                                             </span>
@@ -304,7 +304,7 @@ export function AdminNotificationDropdown() {
                                 <button
                                     type="button"
                                     onClick={(e) => deleteNotification(e, n.id)}
-                                    className="absolute top-3 right-3 p-1 rounded-md text-neutral-600 hover:text-rose-400 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="absolute top-3 right-3 p-1 rounded-md text-muted hover:text-danger hover:bg-danger-soft opacity-0 group-hover:opacity-100 transition-opacity"
                                     title="Delete notification"
                                 >
                                     <X className="w-3.5 h-3.5" />
@@ -316,7 +316,7 @@ export function AdminNotificationDropdown() {
 
                 {/* Footer */}
                 {notifications.length > 0 && (
-                    <div className="p-2.5 px-4 border-t border-white/10 bg-[#10121a] flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                    <div className="p-2.5 px-4 border-t border-line bg-surface flex items-center justify-between text-2xs text-subtle">
                         <span>Real-time ops monitoring active</span>
                         <button
                             type="button"
@@ -324,7 +324,7 @@ export function AdminNotificationDropdown() {
                                 setIsOpen(false);
                                 router.visit("/admin/messages");
                             }}
-                            className="text-accent hover:underline"
+                            className="text-primary-ink hover:underline"
                         >
                             View Inbox →
                         </button>

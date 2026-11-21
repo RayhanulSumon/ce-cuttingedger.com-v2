@@ -5,7 +5,7 @@ import { SeoHead } from '@/Components/Common/SeoHead';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
 const PAGE_BACKGROUND =
-    'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+    'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 interface ForgotPasswordProps {
     from?: string;
@@ -33,25 +33,25 @@ export default function ForgotPassword({ from = 'client' }: ForgotPasswordProps)
 
             <div className="mx-auto max-w-md px-5">
                 {flash?.success && (
-                    <div className="mb-6 flex items-center gap-2.5 rounded-2xl border border-emerald-500/30 bg-emerald-50 p-4 text-xs font-semibold text-emerald-900">
-                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                    <div className="mb-6 flex items-center gap-2.5 rounded-2xl border border-success/25 bg-success-soft p-4 text-xs font-semibold text-success">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
                         <span>{flash.success}</span>
                     </div>
                 )}
 
                 {flash?.error && (
-                    <div className="mb-6 flex items-center gap-2.5 rounded-2xl border border-rose-500/30 bg-rose-50 p-4 text-xs font-semibold text-rose-800">
-                        <ShieldAlert className="h-4 w-4 shrink-0 text-rose-600" />
+                    <div className="mb-6 flex items-center gap-2.5 rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs font-semibold text-danger">
+                        <ShieldAlert className="h-4 w-4 shrink-0 text-danger" />
                         <span>{flash.error}</span>
                     </div>
                 )}
 
-                <div className="rounded-3xl border border-ink/10 bg-white p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
+                <div className="rounded-3xl border border-ink/10 bg-surface p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
                     <div className="text-center">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+                        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                             {isAdminFlow ? 'Admin Operations Recovery' : 'Account Recovery'}
                         </p>
-                        <h1 className="mt-1.5 font-michroma text-2xl font-normal tracking-[0.06em] text-ink">
+                        <h1 className="mt-1.5 font-brand uppercase text-2xl font-normal tracking-[0.06em] text-ink">
                             Forgot Password
                         </h1>
                         <p className="mt-2 text-xs text-subtle">
@@ -72,10 +72,10 @@ export default function ForgotPassword({ from = 'client' }: ForgotPasswordProps)
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder={isAdminFlow ? 'admin@cuttingedger.com' : 'you@brand.com'}
-                                className="mt-1.5 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                             />
                             {errors.email && (
-                                <p className="mt-1 text-xs font-semibold text-rose-600">
+                                <p className="mt-1 text-xs font-semibold text-danger">
                                     {errors.email}
                                 </p>
                             )}
@@ -84,7 +84,7 @@ export default function ForgotPassword({ from = 'client' }: ForgotPasswordProps)
                         <button
                             type="submit"
                             disabled={processing}
-                            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                         >
                             <span>{processing ? 'Sending Reset Link...' : 'Email Password Reset Link'}</span>
                             <ArrowRight size={14} />

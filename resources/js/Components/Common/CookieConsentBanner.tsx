@@ -41,7 +41,7 @@ export function CookieConsentBanner() {
     return (
         <aside
             aria-label="Cookie and Privacy Consent"
-            className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:bottom-6 sm:max-w-md z-[999] bg-white/95 border border-ink/15 p-5 rounded-2xl shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 select-none"
+            className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:bottom-6 sm:max-w-md z-[999] bg-surface/95 border border-ink/15 p-5 rounded-2xl shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 select-none"
         >
             <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 text-primary-ink">
@@ -54,7 +54,7 @@ export function CookieConsentBanner() {
                     <p className="text-ink-2 leading-relaxed">
                         We deploy privacy-preserving cookies and analytics to calibrate visual pipeline performance. No intrusive third-party cross-tracking.
                     </p>
-                    <div className="flex items-center gap-2 pt-1 font-mono text-[11px] text-muted">
+                    <div className="flex items-center gap-2 pt-1 text-2xs text-muted">
                         <Link href="/cookie-policy" className="underline hover:text-primary-ink transition-colors">
                             Cookie Policy
                         </Link>
@@ -66,7 +66,7 @@ export function CookieConsentBanner() {
                 </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 mt-4 pt-3 border-t border-ink/10 font-mono text-xs">
+            <div className="flex items-center justify-end gap-2.5 mt-4 pt-3 border-t border-ink/10 text-xs">
                 <button
                     type="button"
                     onClick={handleDecline}
@@ -77,7 +77,7 @@ export function CookieConsentBanner() {
                 <button
                     type="button"
                     onClick={handleAccept}
-                    className="px-4 py-1.5 rounded-lg bg-primary text-white font-bold hover:bg-primary-hover transition-all shadow-md"
+                    className="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary-hover transition-all shadow-md"
                 >
                     Accept All
                 </button>

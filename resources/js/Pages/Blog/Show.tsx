@@ -181,7 +181,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
             return (
                 <code
                     key={index}
-                    className="px-1.5 py-0.5 rounded bg-page text-primary-ink border border-ink/10 font-mono text-[0.875em]"
+                    className="px-1.5 py-0.5 rounded bg-page text-primary-ink border border-ink/10 text-[0.875em]"
                 >
                     {part.slice(1, -1)}
                 </code>
@@ -234,24 +234,24 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
             <div className="flex items-center justify-between px-4 py-2.5 bg-black/25 border-b border-white/10 text-xs font-mono text-white/75">
                 <div className="flex items-center gap-2">
                     <span className="flex gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-danger/80" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-warning/80" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-success/80" />
                     </span>
-                    <span className="ml-2 uppercase text-[11px] font-semibold text-primary">
+                    <span className="ml-2 uppercase text-2xs font-semibold text-primary">
                         {language || 'CODE SNIPPET'}
                     </span>
                 </div>
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/85 hover:text-white transition-colors cursor-pointer text-[11px]"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/85 hover:text-white transition-colors cursor-pointer text-2xs"
                     title="Copy snippet"
                 >
                     {copied ? (
                         <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-emerald-400 font-bold">Copied!</span>
+                            <Check className="w-3.5 h-3.5 text-success" />
+                            <span className="text-success font-bold">Copied!</span>
                         </>
                     ) : (
                         <>
@@ -261,7 +261,7 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
                     )}
                 </button>
             </div>
-            <pre className="p-5 font-mono text-xs sm:text-sm text-slate-100 overflow-x-auto leading-relaxed">
+            <pre className="p-5 font-mono text-xs sm:text-sm text-secondary-foreground overflow-x-auto leading-relaxed">
                 <code>{code}</code>
             </pre>
         </div>
@@ -305,7 +305,7 @@ function ServiceCardSlider({ slides }: { slides: ServiceSlide[] }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 pointer-events-none" />
 
                 <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2 z-10">
-                    <span className="px-2.5 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                    <span className="px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-2xs font-bold uppercase tracking-wider shadow-xs">
                         {current.tag}
                     </span>
 
@@ -315,7 +315,7 @@ function ServiceCardSlider({ slides }: { slides: ServiceSlide[] }) {
                                 type="button"
                                 onClick={prevSlide}
                                 aria-label="Previous service"
-                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-primary-foreground flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
@@ -323,7 +323,7 @@ function ServiceCardSlider({ slides }: { slides: ServiceSlide[] }) {
                                 type="button"
                                 onClick={nextSlide}
                                 aria-label="Next service"
-                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-white flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
+                                className="w-7 h-7 rounded-full bg-black/50 hover:bg-primary text-primary-foreground flex items-center justify-center backdrop-blur-xs transition-colors cursor-pointer"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>
@@ -351,7 +351,7 @@ function ServiceCardSlider({ slides }: { slides: ServiceSlide[] }) {
 
             {slides.length > 1 && (
                 <div className="px-4 py-2.5 bg-surface border-t border-ink/10 flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-subtle uppercase tracking-wider">
+                    <span className="text-2xs font-medium text-subtle uppercase tracking-wider">
                         Our Capabilities
                     </span>
                     <div className="flex items-center gap-1.5">
@@ -607,7 +607,7 @@ export default function Show({
                                 id="article-content"
                                 className="rounded-3xl bg-surface border border-ink/10 p-6 sm:p-10 lg:p-12 shadow-sm"
                             >
-                                <div className="space-y-6 text-ink-2 font-sans text-base sm:text-[17px] leading-[1.85] font-normal">
+                                <div className="space-y-6 text-ink-2 font-sans text-base sm:text-lg leading-[1.85] font-normal">
                                     {blog.body.split('\n\n').map((block, idx) => {
                                         const trimmed = block.trim();
                                         if (!trimmed) {
@@ -639,7 +639,7 @@ export default function Show({
                                                     <span>{headingText}</span>
                                                     <a
                                                         href={`#${headingId}`}
-                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-sm font-mono transition-opacity ml-2"
+                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-sm transition-opacity ml-2"
                                                         title="Direct section link"
                                                     >
                                                         #
@@ -661,7 +661,7 @@ export default function Show({
                                                     <span>{headingText}</span>
                                                     <a
                                                         href={`#${headingId}`}
-                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-xs font-mono transition-opacity ml-2"
+                                                        className="opacity-0 group-hover:opacity-100 text-primary-ink text-xs transition-opacity ml-2"
                                                         title="Direct section link"
                                                     >
                                                         #
@@ -826,8 +826,8 @@ export default function Show({
                                         aria-pressed={liked}
                                         className={`h-9 px-3 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
                                             liked
-                                                ? 'bg-primary text-white'
-                                                : 'bg-ink text-white hover:bg-primary'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground'
                                         }`}
                                         title="Like this article"
                                     >
@@ -841,7 +841,7 @@ export default function Show({
                                         rel="noopener noreferrer"
                                         aria-label="Share on Facebook"
                                         title="Share on Facebook"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
                                     >
                                         <SocialIcon name="facebook" size={14} />
                                     </a>
@@ -852,7 +852,7 @@ export default function Show({
                                         rel="noopener noreferrer"
                                         aria-label="Share on X"
                                         title="Share on X"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
                                     >
                                         <SocialIcon name="twitter" size={14} />
                                     </a>
@@ -863,7 +863,7 @@ export default function Show({
                                         rel="noopener noreferrer"
                                         aria-label="Share on LinkedIn"
                                         title="Share on LinkedIn"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
                                     >
                                         <SocialIcon name="linkedin" size={14} />
                                     </a>
@@ -874,7 +874,7 @@ export default function Show({
                                         rel="noopener noreferrer"
                                         aria-label="Share on Pinterest"
                                         title="Share on Pinterest"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
                                     >
                                         <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" aria-hidden="true">
                                             <path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.18-5.01 1.18-5.01s-.3-.6-.3-1.49c0-1.4.81-2.44 1.82-2.44.86 0 1.27.64 1.27 1.42 0 .86-.55 2.15-.84 3.35-.24 1 .5 1.82 1.49 1.82 1.79 0 3.17-1.89 3.17-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .86.33 1.79.75 2.3.08.1.09.19.07.29-.08.31-.25 1-.28 1.14-.04.18-.14.22-.33.13-1.24-.58-2.01-2.39-2.01-3.85 0-3.13 2.28-6.01 6.57-6.01 3.45 0 6.13 2.46 6.13 5.75 0 3.43-2.16 6.19-5.16 6.19-1.01 0-1.96-.52-2.28-1.14l-.62 2.37c-.22.86-.83 1.94-1.24 2.6.93.29 1.92.44 2.95.44 5.52 0 10-4.48 10-10S17.52 2 12 2z" />
@@ -885,7 +885,7 @@ export default function Show({
                                         href={emailShareUrl}
                                         aria-label="Share via Email"
                                         title="Share via Email"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
                                     >
                                         <Mail className="w-3.5 h-3.5" />
                                     </a>
@@ -895,9 +895,9 @@ export default function Show({
                                         onClick={handleCopyUrl}
                                         aria-label="Copy article link"
                                         title="Copy article link"
-                                        className="w-9 h-9 rounded-lg bg-ink text-white hover:bg-primary flex items-center justify-center transition-colors cursor-pointer"
+                                        className="w-9 h-9 rounded-lg bg-ink text-surface hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors cursor-pointer"
                                     >
-                                        {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+                                        {copiedLink ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
                                     </button>
                                 </div>
                             </div>
@@ -932,7 +932,7 @@ export default function Show({
                             {/* Widget 3: Connect & Follow + Newsletter */}
                             <div className="rounded-2xl bg-surface border border-ink/10 p-6 shadow-sm space-y-6">
                                 <div className="space-y-4">
-                                    <div className="bg-ink text-white text-center py-2.5 px-4 rounded-lg text-[11px] font-bold uppercase tracking-[0.2em]">
+                                    <div className="bg-ink text-white text-center py-2.5 px-4 rounded-lg text-2xs font-bold uppercase tracking-[0.2em]">
                                         Connect &amp; Follow
                                     </div>
 
@@ -945,7 +945,7 @@ export default function Show({
                                                     rel="noopener noreferrer"
                                                     aria-label={social.name}
                                                     title={social.name}
-                                                    className="w-9 h-9 rounded-full border border-ink/10 bg-page text-ink hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center transition-colors"
+                                                    className="w-9 h-9 rounded-full border border-ink/10 bg-page text-ink hover:bg-primary hover:text-primary-foreground hover:border-primary flex items-center justify-center transition-colors"
                                                 >
                                                     <SocialIcon name={social.name} size={15} />
                                                 </a>
@@ -986,12 +986,12 @@ export default function Show({
                                                 className="w-full rounded-lg border border-ink/15 bg-page px-3.5 py-2.5 text-sm text-ink placeholder:text-faint focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                                             />
                                             {errors.email && (
-                                                <p className="text-xs text-rose-600 text-left">{errors.email}</p>
+                                                <p className="text-xs text-danger text-left">{errors.email}</p>
                                             )}
                                             <button
                                                 type="submit"
                                                 disabled={processing}
-                                                className="w-full rounded-lg bg-primary hover:bg-primary-hover text-white font-bold text-xs uppercase tracking-[0.18em] py-3 transition-colors cursor-pointer disabled:opacity-60"
+                                                className="w-full rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs uppercase tracking-[0.18em] py-3 transition-colors cursor-pointer disabled:opacity-60"
                                             >
                                                 {processing ? 'Subscribing...' : 'Subscribe'}
                                             </button>

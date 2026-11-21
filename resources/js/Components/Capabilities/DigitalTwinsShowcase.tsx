@@ -11,7 +11,7 @@ const ALL = 'All';
 const UPCOMING = 'Upcoming';
 const INITIAL_ROWS = 2;
 const ROWS_PER_LOAD = 2;
-const CARD_STAGE_BACKGROUND = 'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+const CARD_STAGE_BACKGROUND = 'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 const CATEGORY_ORDER = ['Female', 'Male'] as const;
 
@@ -159,9 +159,9 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
     };
 
     return (
-        <div className="min-h-screen bg-white text-ink">
+        <div className="min-h-screen bg-surface text-ink">
             {/* Clean Top Header */}
-            <header className={`border-b border-ink/10 bg-white pb-6 pt-20 sm:pb-7 sm:pt-24 ${PAD_X}`}>
+            <header className={`border-b border-ink/10 bg-surface pb-6 pt-20 sm:pb-7 sm:pt-24 ${PAD_X}`}>
                 <div className="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-4">
                     <div>
                         {capability && (
@@ -174,7 +174,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                 {parent ? `Back to ${parent.title}` : 'All capabilities'}
                             </Link>
                         )}
-                        <h1 className="font-michroma text-[clamp(24px,2.8vw,36px)] font-normal leading-[1.12] tracking-[0.12em] text-ink">
+                        <h1 className="font-brand uppercase text-[clamp(24px,2.8vw,36px)] font-normal leading-[1.12] tracking-[0.12em] text-ink">
                             {capability?.title ?? 'Digital Twins'}
                         </h1>
                     </div>
@@ -206,7 +206,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                         className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
                                             isSelected
                                                 ? 'border-ink bg-ink text-white shadow-sm'
-                                                : 'border-ink/15 bg-white text-subtle hover:border-primary/60 hover:text-primary'
+                                                : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
                                         }`}
                                     >
                                         {name}
@@ -215,7 +215,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                             })}
                         </div>
 
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                        <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                             Showing {visibleTwins.length} of {twins.length} {twins.length === 1 ? 'model' : 'models'}
                         </span>
                     </div>
@@ -250,13 +250,13 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                         />
 
                                         {upcoming ? (
-                                            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white shadow-sm">
+                                            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-sm">
                                                 <Clock size={10} />
                                                 Upcoming
                                             </span>
                                         ) : (
                                             twin.isCopyrightSold && (
-                                                <span className="absolute left-2 top-2 rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
+                                                <span className="absolute left-2 top-2 rounded-full bg-danger px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
                                                     Sold out
                                                 </span>
                                             )
@@ -267,17 +267,17 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                                 role="status"
                                                 className="absolute inset-0 flex flex-col items-center justify-center bg-ink/60 p-3 text-center backdrop-blur-[2px]"
                                             >
-                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-md">
+                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-md">
                                                     <Clock size={12} />
                                                     Upcoming
                                                 </span>
-                                                <span className="mt-2 text-[11px] font-medium text-white/90">
+                                                <span className="mt-2 text-2xs font-medium text-white/90">
                                                     Coming soon
                                                 </span>
                                             </div>
                                         ) : (
                                             <span
-                                                className={`absolute inset-x-2 bottom-2 grid place-items-center rounded-full py-1.5 text-[10px] font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 ${
+                                                className={`absolute inset-x-2 bottom-2 grid place-items-center rounded-full py-1.5 text-2xs font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 ${
                                                     upcoming ? 'bg-ink' : 'bg-primary'
                                                 }`}
                                             >
@@ -289,7 +289,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                     <div className="flex items-baseline justify-between gap-2 p-3">
                                         <div className="min-w-0">
                                             <h2 className="truncate text-sm font-semibold text-ink">{name}</h2>
-                                            <p className="truncate text-[11px] text-subtle">{style || categoryName}</p>
+                                            <p className="truncate text-2xs text-subtle">{style || categoryName}</p>
                                         </div>
                                         <span className={`shrink-0 text-xs font-bold ${upcoming ? 'text-subtle' : 'text-ink'}`}>
                                             {upcoming ? UPCOMING : twin.presetPrice}
@@ -306,7 +306,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                             <button
                                 type="button"
                                 onClick={() => setVisibleRows((rows) => rows + ROWS_PER_LOAD)}
-                                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/20 bg-white px-6 py-2.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white active:translate-y-0"
+                                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/20 bg-surface px-6 py-2.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white active:translate-y-0"
                             >
                                 Load more
                                 <ChevronDown size={14} />

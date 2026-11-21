@@ -25,29 +25,29 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
     return (
         <div
-            className="fixed inset-0 z-[500] flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+            className="fixed inset-0 z-[500] flex items-center justify-center bg-surface-2 p-4 backdrop-blur-xs"
             onClick={onClose}
         >
             <div
-                className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 text-ink shadow-2xl sm:p-6 md:p-8"
+                className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-line bg-surface p-4 text-ink shadow-2xl sm:p-6 md:p-8"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
+                <div className="flex items-start justify-between gap-4 border-b border-line pb-4">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="rounded-lg bg-ink px-2.5 py-0.5 text-xs font-bold text-white">
+                            <span className="rounded-lg bg-ink px-2.5 py-0.5 text-xs font-bold text-surface">
                                 #{order.order_number}
                             </span>
                             <OrderStatusBadge status={order.status} />
                         </div>
                         <h3 className="mt-2 text-lg font-bold text-ink">{order.service_name}</h3>
-                        <p className="text-xs text-slate-500">Submitted on {order.created_at_formatted}</p>
+                        <p className="text-xs text-subtle">Submitted on {order.created_at_formatted}</p>
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
                         aria-label="Close order details"
-                        className="grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-slate-100 text-ink hover:bg-slate-200"
+                        className="grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-surface-2 text-ink hover:bg-surface-3"
                     >
                         <X size={16} />
                     </button>
@@ -55,24 +55,24 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                 <div className="mt-5 space-y-5 text-xs">
                     {order.specifications && Object.keys(order.specifications).length > 0 && (
-                        <div className="space-y-3 rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
-                            <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">
+                        <div className="space-y-3 rounded-2xl border border-line bg-surface-2 p-4">
+                            <span className="block text-2xs font-bold uppercase tracking-wider text-primary">
                                 Order Specifications
                             </span>
 
                             {order.specifications.plan_name && (
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                            <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                        <div className="rounded-xl border border-line bg-surface p-2.5">
+                                            <span className="block text-2xs font-bold uppercase text-faint">
                                                 Credit Plan Snapshot
                                             </span>
                                             <strong className="text-ink">
                                                 {order.specifications.plan_name}
                                             </strong>
                                         </div>
-                                        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                            <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                        <div className="rounded-xl border border-line bg-surface p-2.5">
+                                            <span className="block text-2xs font-bold uppercase text-faint">
                                                 Total Credits
                                             </span>
                                             <strong className="text-ink">
@@ -88,8 +88,8 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         </div>
                                     </div>
                                     {order.specifications.validity_days && (
-                                        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                            <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                        <div className="rounded-xl border border-line bg-surface p-2.5">
+                                            <span className="block text-2xs font-bold uppercase text-faint">
                                                 Validity &amp; Expiry
                                             </span>
                                             <strong className="text-ink">
@@ -102,11 +102,11 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                     )}
                                     {Array.isArray(order.specifications.features_snapshot) &&
                                         order.specifications.features_snapshot.length > 0 && (
-                                            <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                                <span className="mb-1 block text-[10px] font-bold uppercase text-slate-400">
+                                            <div className="rounded-xl border border-line bg-surface p-2.5">
+                                                <span className="mb-1 block text-2xs font-bold uppercase text-faint">
                                                     Purchased Plan Benefits
                                                 </span>
-                                                <ul className="list-disc space-y-0.5 pl-4 text-slate-600">
+                                                <ul className="list-disc space-y-0.5 pl-4 text-muted">
                                                     {order.specifications.features_snapshot.map(
                                                         (feat: string, idx: number) => (
                                                             <li key={idx}>{feat}</li>
@@ -120,8 +120,8 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                             {order.specifications.paid_with_credits && (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                        <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                    <div className="rounded-xl border border-line bg-surface p-2.5">
+                                        <span className="block text-2xs font-bold uppercase text-faint">
                                             Credits Redeemed
                                         </span>
                                         <strong className="text-primary">
@@ -129,8 +129,8 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         </strong>
                                     </div>
                                     {order.specifications.remaining_credits !== undefined && (
-                                        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
-                                            <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                        <div className="rounded-xl border border-line bg-surface p-2.5">
+                                            <span className="block text-2xs font-bold uppercase text-faint">
                                                 Balance After Order
                                             </span>
                                             <strong className="text-ink">
@@ -144,7 +144,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                             {order.specifications.reference_twin_name && (
                                 <div>
-                                    <span className="text-slate-500">Reference / Model: </span>
+                                    <span className="text-subtle">Reference / Model: </span>
                                     <strong className="text-ink">
                                         {order.specifications.reference_twin_name}
                                     </strong>
@@ -153,7 +153,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                             {order.specifications.selected_model_name && (
                                 <div>
-                                    <span className="text-slate-500">Try-On Model: </span>
+                                    <span className="text-subtle">Try-On Model: </span>
                                     <strong className="text-ink">
                                         {order.specifications.selected_model_name} (
                                         {order.specifications.selected_look_name})
@@ -167,9 +167,9 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         {Object.entries(order.specifications.attributes).map(([k, v]) => (
                                             <div
                                                 key={k}
-                                                className="rounded-xl border border-slate-200 bg-white p-2.5"
+                                                className="rounded-xl border border-line bg-surface p-2.5"
                                             >
-                                                <span className="block text-[10px] font-bold uppercase text-slate-400">
+                                                <span className="block text-2xs font-bold uppercase text-faint">
                                                     {k}
                                                 </span>
                                                 <span className="font-bold text-ink">
@@ -187,8 +187,8 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                     )}
 
                     {order.instructions && (
-                        <div className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
-                            <span className="block text-[10px] font-bold uppercase text-slate-400">
+                        <div className="rounded-2xl border border-line bg-surface-2 p-4">
+                            <span className="block text-2xs font-bold uppercase text-faint">
                                 Notes / Description
                             </span>
                             <p className="mt-1 text-ink">{order.instructions}</p>
@@ -197,7 +197,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
 
                     {order.images.length > 0 && (
                         <div>
-                            <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                            <span className="mb-2 block text-2xs font-bold uppercase tracking-wider text-subtle">
                                 Uploaded Files ({order.images.length})
                             </span>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -207,7 +207,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         href={imgUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="overflow-hidden rounded-xl border border-slate-200 bg-[#f8fafc]"
+                                        className="overflow-hidden rounded-xl border border-line bg-surface-2"
                                     >
                                         <img
                                             src={imgUrl}
@@ -221,25 +221,25 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                     )}
 
                     {order.digital_twin_download_url && (
-                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-                            <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                        <div className="rounded-2xl border border-success/25 bg-success-soft p-4">
+                            <span className="mb-1 block text-2xs font-bold uppercase tracking-wider text-success">
                                 Digital Twin Raw Package Ready
                             </span>
                             <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-                                <div className="flex items-center gap-2 text-xs text-emerald-900">
-                                    <Archive size={15} className="shrink-0 text-emerald-700" />
+                                <div className="flex items-center gap-2 text-xs text-success">
+                                    <Archive size={15} className="shrink-0 text-success" />
                                     <span className="font-semibold">
                                         {order.digital_twin_download_name || 'digital-twin-raw-pack.zip'}
                                     </span>
                                     {order.digital_twin_download_size ? (
-                                        <span className="text-[11px] text-emerald-700">
+                                        <span className="text-2xs text-success">
                                             ({formatPackageSize(order.digital_twin_download_size)})
                                         </span>
                                     ) : null}
                                 </div>
                                 <a
                                     href={order.digital_twin_download_url}
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                                    className="inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-2 text-xs font-bold text-white hover:bg-success/90"
                                 >
                                     <Download size={13} />
                                     Download Full ZIP
@@ -249,8 +249,8 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                     )}
 
                     {order.completed_files && order.completed_files.length > 0 && (
-                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-                            <span className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                        <div className="rounded-2xl border border-success/25 bg-success-soft p-4">
+                            <span className="mb-2 block text-2xs font-bold uppercase tracking-wider text-success">
                                 Completed Studio Deliverables
                             </span>
                             <div className="flex flex-wrap gap-2">
@@ -260,7 +260,7 @@ export function ClientOrderDetailModal({ order, onClose }: ClientOrderDetailModa
                                         href={fileUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                                        className="inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-2 text-xs font-bold text-white hover:bg-success/90"
                                     >
                                         <Download size={13} />
                                         Download Deliverable #{idx + 1}

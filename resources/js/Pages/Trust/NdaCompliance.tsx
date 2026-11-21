@@ -26,7 +26,7 @@ export default function NdaCompliance() {
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
                     {/* Security Pillars */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-4">
+                        <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-4">
                             <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink">
                                 <Lock className="w-5 h-5" />
                             </div>
@@ -36,7 +36,7 @@ export default function NdaCompliance() {
                             </p>
                         </div>
 
-                        <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-4">
+                        <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-4">
                             <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink">
                                 <Server className="w-5 h-5" />
                             </div>
@@ -46,7 +46,7 @@ export default function NdaCompliance() {
                             </p>
                         </div>
 
-                        <div className="p-8 rounded-3xl bg-white border border-ink/10 space-y-4">
+                        <div className="p-8 rounded-3xl bg-surface border border-ink/10 space-y-4">
                             <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary-ink">
                                 <EyeOff className="w-5 h-5" />
                             </div>
@@ -58,7 +58,7 @@ export default function NdaCompliance() {
                     </div>
 
                     {/* Detailed Specifications */}
-                    <div className="p-8 sm:p-12 rounded-3xl bg-white border border-ink/10 space-y-8">
+                    <div className="p-8 sm:p-12 rounded-3xl bg-surface border border-ink/10 space-y-8">
                         <div className="flex items-center gap-3 pb-6 border-b border-ink/10">
                             <ShieldCheck className="w-6 h-6 text-primary-ink" />
                             <h2 className="text-2xl font-display font-bold text-ink">Production Security Safeguards</h2>
@@ -67,7 +67,7 @@ export default function NdaCompliance() {
                         <div className="space-y-6 text-sm text-ink-2">
                             <div className="space-y-2">
                                 <h3 className="font-bold text-ink flex items-center gap-2">
-                                    <span className="text-primary-ink font-mono">01.</span>
+                                    <span className="text-primary-ink">01.</span>
                                     Embargoed Collection Quarantine
                                 </h3>
                                 <p className="text-xs text-muted leading-relaxed pl-6">
@@ -77,7 +77,7 @@ export default function NdaCompliance() {
 
                             <div className="space-y-2">
                                 <h3 className="font-bold text-ink flex items-center gap-2">
-                                    <span className="text-primary-ink font-mono">02.</span>
+                                    <span className="text-primary-ink">02.</span>
                                     Automated 30-Day Cryptographic Shredding
                                 </h3>
                                 <p className="text-xs text-muted leading-relaxed pl-6">
@@ -87,7 +87,7 @@ export default function NdaCompliance() {
 
                             <div className="space-y-2">
                                 <h3 className="font-bold text-ink flex items-center gap-2">
-                                    <span className="text-primary-ink font-mono">03.</span>
+                                    <span className="text-primary-ink">03.</span>
                                     White-Label Silence Guarantee
                                 </h3>
                                 <p className="text-xs text-muted leading-relaxed pl-6">
@@ -103,7 +103,7 @@ export default function NdaCompliance() {
                             </div>
                             <a
                                 href="mailto:legal@cuttingedger.com?subject=Enterprise%20NDA%20Request%20-%20Cutting%20Edger"
-                                className="px-6 py-3 rounded-xl bg-primary text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-colors shrink-0"
+                                className="px-6 py-3 rounded-xl bg-primary text-primary-foreground font-display font-bold text-xs uppercase tracking-wider hover:bg-primary-hover transition-colors shrink-0"
                             >
                                 Request NDA Execution
                             </a>

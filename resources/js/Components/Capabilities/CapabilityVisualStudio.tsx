@@ -41,7 +41,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
     };
 
     return (
-        <div className="min-h-screen bg-white text-ink">
+        <div className="min-h-screen bg-surface text-ink">
             {/* 1. Compact Shared Header */}
             <CapabilityPageHeader
                 backHref={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
@@ -73,7 +73,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                                         className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
                                             isSelected
                                                 ? 'border-ink bg-ink text-white shadow-xs'
-                                                : 'border-ink/15 bg-white text-subtle hover:border-primary/60 hover:text-primary'
+                                                : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
                                         }`}
                                     >
                                         {sample.tabLabel}
@@ -82,7 +82,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                             })}
                         </div>
 
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                        <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                             Drag to compare
                         </span>
                     </div>
@@ -101,7 +101,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
 
                             {/* Spacious, borderless editorial detail column */}
                             <div className="flex flex-col justify-center">
-                                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary-ink">
+                                <p className="text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
                                     {String(activeSampleIndex + 1).padStart(2, '0')} / {String(samples.length).padStart(2, '0')} · {activeSample.tag}
                                 </p>
 
@@ -115,7 +115,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
 
                                 <ul className="mt-5 space-y-2">
                                     {activeSample.checkpoints.map((point) => (
-                                        <li key={point} className="flex items-center gap-2.5 text-[13px] font-medium text-ink-2">
+                                        <li key={point} className="flex items-center gap-2.5 text-sm font-medium text-ink-2">
                                             <Check size={14} strokeWidth={2.5} className="shrink-0 text-primary" />
                                             <span>{point}</span>
                                         </li>
@@ -139,7 +139,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                                             type="button"
                                             onClick={() => stepSample(-1)}
                                             aria-label="Previous sample"
-                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-white text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
                                         >
                                             <ArrowLeft size={15} />
                                         </button>
@@ -147,7 +147,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                                             type="button"
                                             onClick={() => stepSample(1)}
                                             aria-label="Next sample"
-                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-white text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
                                         >
                                             <ArrowRight size={15} />
                                         </button>
@@ -167,7 +167,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                             <h2 className="text-base font-extrabold uppercase tracking-[0.08em] text-ink sm:text-lg">
                                 {capability.tag ?? capability.title} Specialities
                             </h2>
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                            <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                                 {children.length} {children.length === 1 ? 'capability' : 'capabilities'}
                             </span>
                         </div>
@@ -193,7 +193,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                                 <h2 className="text-base font-extrabold tracking-[-0.02em] text-ink sm:text-lg">
                                     Before &amp; After Samples
                                 </h2>
-                                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                                <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                                     Interactive sliders
                                 </span>
                             </div>
@@ -222,10 +222,10 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                                             <button
                                                 type="button"
                                                 onClick={() => setActiveSampleIndex(idx)}
-                                                className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[#f8fafc]"
+                                                className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2"
                                             >
                                                 <span className="truncate text-sm font-bold text-ink">{sample.title}</span>
-                                                <span className="shrink-0 text-[11px] font-semibold text-subtle">{sample.tag}</span>
+                                                <span className="shrink-0 text-2xs font-semibold text-subtle">{sample.tag}</span>
                                             </button>
                                         </div>
                                     );
@@ -271,7 +271,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
 
             {/* 5. Compact Studio CTA Bar */}
             <section className={`pb-12 pt-2 ${PAD_X}`}>
-                <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-[#f4f7fb] px-6 py-6 sm:px-8">
+                <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-surface-2 px-6 py-6 sm:px-8">
                     <div>
                         <h2 className="text-lg font-extrabold tracking-[-0.02em] text-ink sm:text-xl">
                             Try 3 sample files free
@@ -286,7 +286,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                         <Link
                             href="/book-a-demo"
                             prefetch
-                            className="inline-flex h-11 items-center rounded-full border border-ink/20 bg-white px-6 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+                            className="inline-flex h-11 items-center rounded-full border border-ink/20 bg-surface px-6 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
                         >
                             Book a Demo
                         </Link>

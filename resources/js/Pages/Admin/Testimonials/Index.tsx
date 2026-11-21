@@ -110,8 +110,8 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
             header: "ENDORSER / CLIENT",
             cell: (t) => (
                 <div>
-                    <div className="font-semibold text-white">{t.client_name}</div>
-                    <div className="text-xs text-neutral-400 font-mono">
+                    <div className="font-semibold text-ink">{t.client_name}</div>
+                    <div className="text-xs text-subtle">
                         {t.client_role} • {t.client_company}
                     </div>
                 </div>
@@ -120,7 +120,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
         {
             header: "STATEMENT",
             cell: (t) => (
-                <div className="text-xs text-neutral-300 max-w-md truncate italic">
+                <div className="text-xs text-ink-2 max-w-md truncate italic">
                     "{t.quote}"
                 </div>
             ),
@@ -128,9 +128,9 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
         {
             header: "RATING",
             cell: (t) => (
-                <div className="flex items-center gap-1 text-accent">
+                <div className="flex items-center gap-1 text-primary-ink">
                     <Star className="w-3.5 h-3.5 fill-current" />
-                    <span className="font-mono text-xs">{t.rating}.0</span>
+                    <span className="text-xs">{t.rating}.0</span>
                 </div>
             ),
         },
@@ -152,7 +152,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-neutral-400 hover:text-white"
+                            className="h-8 w-8 text-subtle hover:text-ink"
                         >
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -164,7 +164,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => setItemToDelete(t)}
-                            className="gap-2 text-rose-400 focus:text-rose-400"
+                            className="gap-2 text-danger focus:text-danger"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Purge Testimonial</span>
@@ -204,7 +204,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                     <form onSubmit={handleCreate} className="space-y-4 pt-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Client Name
                                 </label>
                                 <Input
@@ -217,7 +217,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Company
                                 </label>
                                 <Input
@@ -236,7 +236,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Role / Designation
                                 </label>
                                 <Input
@@ -249,7 +249,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Star Rating (1 - 5)
                                 </label>
                                 <Input
@@ -268,7 +268,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Testimonial Quote
                             </label>
                             <Textarea
@@ -281,12 +281,12 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Endorsement
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Display in public testimonial carousels.
                                 </span>
                             </div>
@@ -330,7 +330,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                     <form onSubmit={handleUpdate} className="space-y-4 pt-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Client Name
                                 </label>
                                 <Input
@@ -342,7 +342,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Company
                                 </label>
                                 <Input
@@ -360,7 +360,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Role / Designation
                                 </label>
                                 <Input
@@ -372,7 +372,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-xs font-mono uppercase text-neutral-400">
+                                <label className="text-xs uppercase text-subtle">
                                     Star Rating (1 - 5)
                                 </label>
                                 <Input
@@ -391,7 +391,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-mono uppercase text-neutral-400">
+                            <label className="text-xs uppercase text-subtle">
                                 Testimonial Quote
                             </label>
                             <Textarea
@@ -403,12 +403,12 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                             />
                         </div>
 
-                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-surface-2 border border-line">
                             <div>
-                                <span className="text-xs font-semibold text-white block">
+                                <span className="text-xs font-semibold text-ink block">
                                     Featured Endorsement
                                 </span>
-                                <span className="text-[11px] text-neutral-400 block">
+                                <span className="text-2xs text-subtle block">
                                     Display in public testimonial carousels.
                                 </span>
                             </div>
@@ -449,7 +449,7 @@ export default function TestimonialsIndex({ testimonials = [] }: TestimonialsInd
                         <AlertDialogTitle>Purge Endorsement?</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you certain you wish to purge feedback from{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-ink font-semibold">
                                 {itemToDelete?.client_name}
                             </span>
                             ?

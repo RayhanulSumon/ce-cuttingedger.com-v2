@@ -113,7 +113,7 @@ export default function About({ leadership = [] }: AboutProps) {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
                         <div className="lg:col-span-5 space-y-6">
                             <div className="space-y-3">
-                                <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block">
+                                <span className="text-xs uppercase tracking-widest text-primary-ink block">
                                     [ OUR STUDIO STORY ]
                                 </span>
                                 <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-display font-extrabold text-ink leading-[1.12] tracking-tight">
@@ -174,7 +174,7 @@ export default function About({ leadership = [] }: AboutProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
                         <div className="space-y-2 max-w-2xl">
-                            <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block">
+                            <span className="text-xs uppercase tracking-widest text-primary-ink block">
                                 [ CONNECTED DIVISIONS ]
                             </span>
                             <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-ink tracking-tight">
@@ -185,7 +185,7 @@ export default function About({ leadership = [] }: AboutProps) {
                         <Link
                             href="/capabilities"
                             prefetch
-                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary-ink hover:text-ink transition-colors shrink-0"
+                            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-primary-ink hover:text-ink transition-colors shrink-0"
                         >
                             <span>Explore All Capabilities</span>
                             <ArrowUpRight className="w-4 h-4" />
@@ -204,10 +204,10 @@ export default function About({ leadership = [] }: AboutProps) {
                                 >
                                     <div>
                                         <div className="flex items-center justify-between mb-6">
-                                            <span className="w-12 h-12 rounded-2xl bg-page border border-ink/10 flex items-center justify-center text-primary-ink group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors">
+                                            <span className="w-12 h-12 rounded-2xl bg-page border border-ink/10 flex items-center justify-center text-primary-ink group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
                                                 <IconComponent className="w-5 h-5" />
                                             </span>
-                                            <span className="font-mono text-[10px] uppercase tracking-widest text-subtle">
+                                            <span className="text-2xs uppercase tracking-widest text-subtle">
                                                 {division.tag}
                                             </span>
                                         </div>
@@ -235,7 +235,7 @@ export default function About({ leadership = [] }: AboutProps) {
             <section className="py-20 sm:py-24 bg-surface border-b border-ink/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-                        <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block">
+                        <span className="text-xs uppercase tracking-widest text-primary-ink block">
                             [ FOUNDATIONAL PILLARS ]
                         </span>
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-ink tracking-tight">
@@ -262,7 +262,7 @@ export default function About({ leadership = [] }: AboutProps) {
                                             {pillar.description}
                                         </p>
                                     </div>
-                                    <span className="font-mono text-[10px] text-subtle uppercase tracking-widest mt-8 block">
+                                    <span className="text-2xs text-subtle uppercase tracking-widest mt-8 block">
                                         Pillar // 0{i + 1}
                                     </span>
                                 </div>
@@ -277,7 +277,7 @@ export default function About({ leadership = [] }: AboutProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
                         <div>
-                            <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block mb-2">
+                            <span className="text-xs uppercase tracking-widest text-primary-ink block mb-2">
                                 [ STUDIO LEADERSHIP ]
                             </span>
                             <h2 className="text-3xl sm:text-4xl font-display font-bold text-ink">
@@ -287,7 +287,7 @@ export default function About({ leadership = [] }: AboutProps) {
                         <Link
                             href="/team"
                             prefetch
-                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary-ink hover:text-ink transition-colors"
+                            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-primary-ink hover:text-ink transition-colors"
                         >
                             <span>View Full Collective</span>
                             <ArrowUpRight className="w-4 h-4" />
@@ -313,7 +313,7 @@ export default function About({ leadership = [] }: AboutProps) {
                                     <h4 className="font-display font-bold text-ink group-hover:text-primary-ink transition-colors">
                                         {member.name}
                                     </h4>
-                                    <p className="text-xs font-mono text-muted">
+                                    <p className="text-xs text-muted">
                                         {member.role}
                                     </p>
                                 </div>
@@ -327,7 +327,7 @@ export default function About({ leadership = [] }: AboutProps) {
             <section className="py-20 sm:py-24 bg-surface">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div className="rounded-3xl border border-ink/10 bg-page p-8 sm:p-12 lg:p-14 space-y-6">
-                        <span className="font-mono text-xs uppercase tracking-widest text-primary-ink block">
+                        <span className="text-xs uppercase tracking-widest text-primary-ink block">
                             [ PARTNER WITH CUTTINGEDGER ]
                         </span>
                         <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-ink tracking-tight max-w-2xl mx-auto">
@@ -343,7 +343,7 @@ export default function About({ leadership = [] }: AboutProps) {
                             <Link
                                 href="/contact"
                                 prefetch
-                                className="inline-flex items-center gap-2 rounded-full bg-primary hover:bg-primary-hover text-white px-7 py-3.5 text-sm font-bold transition-all shadow-sm hover:-translate-y-0.5"
+                                className="inline-flex items-center gap-2 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground px-7 py-3.5 text-sm font-bold transition-all shadow-sm hover:-translate-y-0.5"
                             >
                                 <span>Start a Project / Contact Us</span>
                                 <ArrowUpRight className="w-4 h-4" />

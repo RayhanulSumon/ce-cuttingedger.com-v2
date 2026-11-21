@@ -64,10 +64,10 @@ export function LandingLayout({ children }: { children: React.ReactNode }) {
     }, [flash, url]);
 
     return (
-        <div className="flex min-h-screen flex-col bg-page text-ink selection:bg-primary selection:text-white">
+        <div className="flex min-h-screen flex-col bg-page text-ink">
             <a
                 href="#main-content"
-                className="sr-only z-[1000] rounded-md bg-primary px-4 py-2 font-bold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+                className="sr-only z-[1000] rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
             >
                 Skip to main content
             </a>

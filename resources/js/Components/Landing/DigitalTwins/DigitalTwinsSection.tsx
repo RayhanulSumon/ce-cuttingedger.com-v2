@@ -11,10 +11,10 @@ import { DIGITAL_TWINS, DigitalTwinModel } from './twins';
 import { useTwinRunway } from './useTwinRunway';
 
 const STAGE_BACKGROUND =
-    'linear-gradient(transparent 60%, rgba(255,255,255,0.72) 100%), linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+    'linear-gradient(transparent 60%, color-mix(in srgb, var(--color-surface) 72%, transparent) 100%), linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 const SIDE_ARROW =
-    'grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-ink/20 bg-white/90 text-ink shadow-[0_8px_32px_-8px_color-mix(in_srgb,var(--color-ink)_22%,transparent)] backdrop-blur-sm transition-all duration-300 hover:bg-ink hover:text-white hover:scale-110 hover:shadow-[0_12px_40px_-10px_color-mix(in_srgb,var(--color-ink)_45%,transparent)]';
+    'grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-ink/20 bg-surface/90 text-ink shadow-[0_8px_32px_-8px_color-mix(in_srgb,var(--color-ink)_22%,transparent)] backdrop-blur-sm transition-all duration-300 hover:bg-ink hover:text-white hover:scale-110 hover:shadow-[0_12px_40px_-10px_color-mix(in_srgb,var(--color-ink)_45%,transparent)]';
 
 interface DigitalTwinsSectionProps extends SectionProps {
     twins?: DigitalTwinModel[];
@@ -53,7 +53,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
     };
 
     return (
-        <div className="relative h-full w-full select-none overflow-hidden bg-white">
+        <div className="relative h-full w-full select-none overflow-hidden bg-surface">
             <section
                 ref={runway.stageRef}
                 aria-label="Digital Twins runway. Hover a model to preview its poses, click to see every pose and buy, or drag to step through the models."
@@ -153,7 +153,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                             <Link
                                 href="/capabilities/2d/digital-twins"
                                 prefetch
-                                className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-white/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-white hover:text-primary active:scale-95 sm:text-sm"
+                                className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-ink/15 bg-surface/80 px-5 py-3 text-xs font-semibold text-ink shadow-[0_10px_28px_-12px_color-mix(in_srgb,var(--color-ink)_15%,transparent)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-surface hover:text-primary active:scale-95 sm:text-sm"
                             >
                                 Explore more
                                 <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

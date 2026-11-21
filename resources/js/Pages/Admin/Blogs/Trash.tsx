@@ -71,25 +71,25 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                     <img
                         src={b.cover_image}
                         alt={b.title}
-                        className="w-16 h-10 rounded object-cover border border-white/10 shrink-0 opacity-80"
+                        className="w-16 h-10 rounded object-cover border border-line shrink-0 opacity-80"
                     />
                     <div className="min-w-0 space-y-1">
-                        <div className="font-medium text-white leading-snug break-words">
+                        <div className="font-medium text-ink leading-snug break-words">
                             <span>{b.title}</span>
                             {b.is_featured && (
-                                <Badge className="bg-accent/20 text-accent border border-accent/30 text-[9px] font-mono font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
+                                <Badge className="bg-primary-soft text-primary-ink border border-primary/30 text-2xs font-bold px-1 py-0 h-4 ml-1.5 align-middle inline-flex shrink-0">
                                     FEATURED
                                 </Badge>
                             )}
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs font-mono text-neutral-400">
-                            <span className="text-accent">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-subtle">
+                            <span className="text-primary-ink">
                                 {b.category?.name || "General"}
                             </span>
                             {b.subcategory && (
                                 <>
                                     <span>/</span>
-                                    <span className="text-neutral-300">
+                                    <span className="text-ink-2">
                                         {b.subcategory.name}
                                     </span>
                                 </>
@@ -105,7 +105,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
             key: "author",
             header: "AUTHOR",
             cell: (b) => (
-                <div className="text-xs font-mono text-neutral-300">
+                <div className="text-xs text-ink-2">
                     {b.author?.name || "Studio Editor"}
                 </div>
             ),
@@ -116,17 +116,17 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
             cell: (b) => (
                 <div className="space-y-1">
                     <span
-                        className={`inline-block px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border ${
+                        className={`inline-block px-2 py-0.5 text-2xs font-bold uppercase tracking-wider rounded border ${
                             b.status === "published"
-                                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                                ? "border-success/25 bg-success-soft text-success"
                                 : b.status === "draft"
-                                ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                                : "border-neutral-500/30 bg-neutral-500/10 text-neutral-400"
+                                ? "border-warning/25 bg-warning-soft text-warning"
+                                : "border-line bg-surface-2 text-subtle"
                         }`}
                     >
                         {b.status || "published"}
                     </span>
-                    <div className="text-[10px] font-mono text-neutral-500">
+                    <div className="text-2xs text-subtle">
                         Restores to {b.status || "published"}
                     </div>
                 </div>
@@ -136,8 +136,8 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
             key: "deleted_at",
             header: "DELETED AT",
             cell: (b) => (
-                <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-400">
-                    <Clock className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+                <div className="flex items-center gap-1.5 text-xs text-subtle">
+                    <Clock className="w-3.5 h-3.5 text-subtle shrink-0" />
                     <span>
                         {b.deleted_at
                             ? new Date(b.deleted_at).toLocaleString("en-US", {
@@ -162,7 +162,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         size="sm"
                         variant="outline"
                         onClick={() => setBlogToRestore(b)}
-                        className="h-8 gap-1.5 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 font-mono text-xs font-semibold cursor-pointer"
+                        className="h-8 gap-1.5 border-success/25 bg-success-soft hover:bg-success-soft text-success hover:text-success text-xs font-semibold cursor-pointer"
                     >
                         <RotateCcw className="h-3.5 w-3.5" />
                         <span>Restore</span>
@@ -171,7 +171,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         size="sm"
                         variant="outline"
                         onClick={() => setBlogToForceDelete(b)}
-                        className="h-8 gap-1.5 border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 font-mono text-xs font-semibold cursor-pointer"
+                        className="h-8 gap-1.5 border-danger/25 bg-danger-soft hover:bg-danger-soft text-danger hover:text-danger text-xs font-semibold cursor-pointer"
                     >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span>Delete</span>
@@ -192,7 +192,7 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                     <Link href={route("admin.blogs.index")}>
                         <Button
                             variant="outline"
-                            className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white font-mono"
+                            className="gap-2 border-line bg-surface-2 hover:bg-surface-2 text-ink-2 hover:text-ink"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             <span>Back to Blogs</span>
@@ -213,19 +213,19 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                     open={!!blogToRestore}
                     onOpenChange={(open) => !open && setBlogToRestore(null)}
                 >
-                    <AlertDialogContent className="bg-[#0c0d12] border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="font-mono text-emerald-400 flex items-center gap-2">
+                            <AlertDialogTitle className="text-success flex items-center gap-2">
                                 <RotateCcw className="w-5 h-5" />
                                 RESTORE BLOG POST
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400 text-xs font-mono space-y-2">
+                            <AlertDialogDescription className="text-subtle text-xs space-y-2">
                                 <p>
                                     Are you sure you want to restore &ldquo;{blogToRestore?.title}&rdquo;?
                                 </p>
-                                <p className="text-neutral-300 bg-white/5 p-2.5 rounded border border-white/10">
+                                <p className="text-ink-2 bg-surface-2 p-2.5 rounded border border-line">
                                     This article will be immediately reinstated to its exact previous stage:{" "}
-                                    <span className="text-accent font-bold uppercase">
+                                    <span className="text-primary-ink font-bold uppercase">
                                         {blogToRestore?.status || "published"}
                                     </span>
                                     {blogToRestore?.status === "published"
@@ -237,14 +237,14 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         <AlertDialogFooter>
                             <AlertDialogCancel
                                 disabled={isProcessing}
-                                className="border-white/10 text-neutral-400 hover:text-white"
+                                className="border-line text-subtle hover:text-ink"
                             >
                                 Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleRestore}
                                 disabled={isProcessing}
-                                className="bg-emerald-500 hover:bg-emerald-600 text-black font-mono font-bold"
+                                className="bg-success hover:bg-success/90 text-black font-bold"
                             >
                                 {isProcessing ? "Restoring..." : "Confirm Restore"}
                             </AlertDialogAction>
@@ -257,17 +257,17 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                     open={!!blogToForceDelete}
                     onOpenChange={(open) => !open && setBlogToForceDelete(null)}
                 >
-                    <AlertDialogContent className="bg-[#0c0d12] border-white/10 text-white">
+                    <AlertDialogContent className="bg-surface border-line text-ink">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="font-mono text-rose-400 flex items-center gap-2">
-                                <AlertTriangle className="w-5 h-5 text-rose-500" />
+                            <AlertDialogTitle className="text-danger flex items-center gap-2">
+                                <AlertTriangle className="w-5 h-5 text-danger" />
                                 PERMANENT HARD DELETE
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-neutral-400 text-xs font-mono space-y-2">
+                            <AlertDialogDescription className="text-subtle text-xs space-y-2">
                                 <p>
                                     Are you sure you wish to permanently delete &ldquo;{blogToForceDelete?.title}&rdquo;?
                                 </p>
-                                <p className="text-rose-400/90 bg-rose-500/10 p-2.5 rounded border border-rose-500/20">
+                                <p className="text-danger/90 bg-danger-soft p-2.5 rounded border border-danger/25">
                                     CRITICAL WARNING: This action is permanent and completely irreversible. The article, content, SEO data, and records will be purged from the database forever.
                                 </p>
                             </AlertDialogDescription>
@@ -275,14 +275,14 @@ export default function BlogsTrash({ blogs = [] }: BlogsTrashProps) {
                         <AlertDialogFooter>
                             <AlertDialogCancel
                                 disabled={isProcessing}
-                                className="border-white/10 text-neutral-400 hover:text-white"
+                                className="border-line text-subtle hover:text-ink"
                             >
                                 Abort
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleForceDelete}
                                 disabled={isProcessing}
-                                className="bg-rose-600 hover:bg-rose-700 text-white font-mono font-bold"
+                                className="bg-danger hover:bg-danger-hover text-white font-bold"
                             >
                                 {isProcessing ? "Deleting..." : "Permanently Delete"}
                             </AlertDialogAction>

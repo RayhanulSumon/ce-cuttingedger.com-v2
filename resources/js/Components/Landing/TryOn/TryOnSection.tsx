@@ -131,7 +131,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
 
     return (
         <div
-            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 text-[#151413] sm:gap-4 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${embedded ? 'pt-6 sm:pt-8' : 'pt-20 sm:pt-24'} ${PAD_X}`}
+            className={`relative grid h-full w-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] gap-3 overflow-hidden bg-[radial-gradient(ellipse_at_55%_35%,#f2f6fa_0%,#e7eff7_60%,#dde8f2_100%)] pb-6 text-ink sm:gap-4 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:grid-rows-1 lg:gap-8 ${embedded ? 'pt-6 sm:pt-8' : 'pt-20 sm:pt-24'} ${PAD_X}`}
         >
             {/* Floor shade spans the whole section, so the runway and its controls sit on one seamless backdrop. */}
             <div
@@ -163,7 +163,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
 
                 <div className={`pointer-events-none relative z-10 -mt-2 flex flex-col items-center pb-1 ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.2} className="flex flex-col items-center text-center whitespace-nowrap">
-                        <p className="font-michroma text-xs sm:text-sm font-bold tracking-[0.08em] text-ink leading-none drop-shadow-sm">
+                        <p className="font-brand uppercase text-xs sm:text-sm font-bold tracking-[0.08em] text-ink leading-none drop-shadow-sm">
                             {look.modelName}
                         </p>
                     </Reveal>

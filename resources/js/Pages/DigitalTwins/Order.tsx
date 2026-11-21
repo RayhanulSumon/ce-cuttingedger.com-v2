@@ -38,7 +38,7 @@ import {
 import { PAD_X } from '@/Components/Landing/shared';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
-const PAGE_BACKGROUND = 'linear-gradient(90deg, #f1f5fa 0%, #e7eff6 38%, #eef4f9 62%, #f6f9fc 100%)';
+const PAGE_BACKGROUND = 'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
 const DEFAULT_ATTRIBUTES: DigitalTwinAttributeItem[] = [
     {
@@ -503,7 +503,7 @@ export default function DigitalTwinOrder({
     };
 
     return (
-        <div className="min-h-screen bg-white text-ink">
+        <div className="min-h-screen bg-surface text-ink">
             <SeoHead
                 title="Order Digital Twin — Custom AI Model Configurator & Licensing"
                 description="Configure a bespoke AI Digital Twin for your fashion brand or license a ready-to-shoot 6-pose preset."
@@ -515,7 +515,7 @@ export default function DigitalTwinOrder({
                     <Link
                         href="/capabilities/2d/digital-twins"
                         prefetch
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
+                        className="inline-flex items-center gap-1.5 text-2xs font-bold uppercase tracking-[0.18em] text-subtle transition-colors hover:text-ink"
                     >
                         <ArrowLeft size={13} />
                         Back to Digital Twins
@@ -523,12 +523,12 @@ export default function DigitalTwinOrder({
 
                     <div className="mt-3 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
                         <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+                            <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary">
                                 {mode === 'custom'
                                     ? 'Digital Twin Studio // Custom Order'
                                     : 'Digital Twin Studio // Licensing'}
                             </p>
-                            <h1 className="mt-1 font-michroma text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
+                            <h1 className="mt-1 font-brand uppercase text-[clamp(22px,2.6vw,34px)] font-normal leading-[1.15] tracking-[0.06em] text-ink">
                                 {mode === 'custom' ? 'Customize Your Digital Twin' : 'Digital Twin Studio Order'}
                             </h1>
                             <p className="mt-1.5 max-w-[58ch] text-xs leading-[1.6] text-subtle sm:text-sm">
@@ -539,7 +539,7 @@ export default function DigitalTwinOrder({
                         </div>
 
                         {initialMode === 'custom' ? (
-                            <div className="inline-flex items-center gap-2 self-start rounded-full border border-ink/10 bg-white/85 px-4 py-2 text-xs font-semibold text-ink shadow-xs lg:self-end">
+                            <div className="inline-flex items-center gap-2 self-start rounded-full border border-ink/10 bg-surface/85 px-4 py-2 text-xs font-semibold text-ink shadow-xs lg:self-end">
                                 <Sparkles size={14} className="text-primary" />
                                 <span>Bespoke Brand Twin • Delivered within 1 business day</span>
                             </div>
@@ -547,7 +547,7 @@ export default function DigitalTwinOrder({
                         <div
                             role="tablist"
                             aria-label="Digital Twin Order Type"
-                            className="inline-flex flex-wrap gap-1.5 rounded-2xl border border-ink/10 bg-white/90 p-1 shadow-sm"
+                            className="inline-flex flex-wrap gap-1.5 rounded-2xl border border-ink/10 bg-surface/90 p-1 shadow-sm"
                         >
                             <button
                                 type="button"
@@ -582,7 +582,7 @@ export default function DigitalTwinOrder({
                                 }}
                                 className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                                     mode === 'lifetime'
-                                        ? 'bg-primary text-white shadow-sm'
+                                        ? 'bg-primary text-primary-foreground shadow-sm'
                                         : 'text-subtle hover:bg-ink/5 hover:text-ink'
                                 }`}
                             >
@@ -610,10 +610,10 @@ export default function DigitalTwinOrder({
                         {/* Left Column: Configurator Steps */}
                         <div className="space-y-6 lg:col-span-8">
                             {/* STEP 1: Select Reference Model or Preset Model */}
-                            <section className="rounded-3xl border border-ink/10 bg-white p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
                                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                                     <div>
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                        <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                             Step 01
                                         </span>
                                         <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
@@ -624,7 +624,7 @@ export default function DigitalTwinOrder({
                                     </div>
 
                                     {mode === 'custom' ? (
-                                        <div className="inline-flex rounded-full border border-ink/15 bg-[#f8fafc] p-1">
+                                        <div className="inline-flex rounded-full border border-ink/15 bg-surface-2 p-1">
                                             <button
                                                 type="button"
                                                 onClick={() => {
@@ -688,7 +688,7 @@ export default function DigitalTwinOrder({
                                                         <p className="truncate text-xs font-bold text-ink">
                                                             {customModelFile.name}
                                                         </p>
-                                                        <p className="mt-0.5 text-[11px] text-subtle">
+                                                        <p className="mt-0.5 text-2xs text-subtle">
                                                             {(customModelFile.size / (1024 * 1024)).toFixed(2)} MB • High-res model photo attached
                                                         </p>
                                                     </div>
@@ -697,7 +697,7 @@ export default function DigitalTwinOrder({
                                                     <button
                                                         type="button"
                                                         onClick={() => customModelInputRef.current?.click()}
-                                                        className="cursor-pointer rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[11px] font-bold text-ink hover:border-primary hover:text-primary"
+                                                        className="cursor-pointer rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink hover:border-primary hover:text-primary"
                                                     >
                                                         Replace
                                                     </button>
@@ -710,7 +710,7 @@ export default function DigitalTwinOrder({
                                                                 customModelInputRef.current.value = '';
                                                             }
                                                         }}
-                                                        className="cursor-pointer rounded-full p-1.5 text-red-600 hover:bg-red-50"
+                                                        className="cursor-pointer rounded-full p-1.5 text-danger hover:bg-danger-soft"
                                                         aria-label="Remove model photo"
                                                     >
                                                         <Trash2 size={14} />
@@ -721,7 +721,7 @@ export default function DigitalTwinOrder({
                                             <button
                                                 type="button"
                                                 onClick={() => customModelInputRef.current?.click()}
-                                                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-[#f8fafc] px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
+                                                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-ink/20 bg-surface-2 px-4 py-3.5 text-left transition-colors hover:border-primary hover:bg-primary/5"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -731,12 +731,12 @@ export default function DigitalTwinOrder({
                                                         <span className="block text-xs font-bold text-ink">
                                                             Upload Your Model Photo (Optional)
                                                         </span>
-                                                        <span className="block text-[11px] text-subtle">
+                                                        <span className="block text-2xs text-subtle">
                                                             Provide a high-quality full-body image (JPG, PNG, WEBP, TIFF, PSD • Max 25MB)
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <span className="hidden shrink-0 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[11px] font-bold text-ink sm:inline-flex">
+                                                <span className="hidden shrink-0 rounded-full border border-ink/15 bg-surface px-3 py-1.5 text-2xs font-bold text-ink sm:inline-flex">
                                                     Choose File
                                                 </span>
                                             </button>
@@ -764,7 +764,7 @@ export default function DigitalTwinOrder({
                                                             ? 'border-primary bg-primary/5 ring-2 ring-primary/25'
                                                             : isDisabled
                                                               ? 'cursor-not-allowed border-ink/10 opacity-45'
-                                                              : 'border-ink/10 bg-white hover:border-ink/35'
+                                                              : 'border-ink/10 bg-surface hover:border-ink/35'
                                                     }`}
                                                 >
                                                     <div
@@ -776,19 +776,19 @@ export default function DigitalTwinOrder({
                                                             className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                                                         />
                                                         {twin.isCopyrightSold && (
-                                                            <span className="absolute left-1.5 top-1.5 rounded-full bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                                                            <span className="absolute left-1.5 top-1.5 rounded-full bg-danger px-1.5 py-0.5 text-2xs font-bold uppercase text-white">
                                                                 Sold
                                                             </span>
                                                         )}
                                                         {isSelected && (
-                                                            <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-white shadow">
+                                                            <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground shadow">
                                                                 <Check size={11} strokeWidth={3} />
                                                             </span>
                                                         )}
                                                     </div>
                                                     <div className="px-2 py-1.5">
-                                                        <p className="truncate text-[11px] font-bold text-ink">{shortName}</p>
-                                                        <p className="truncate text-[10px] text-subtle">{twin.archetype}</p>
+                                                        <p className="truncate text-2xs font-bold text-ink">{shortName}</p>
+                                                        <p className="truncate text-2xs text-subtle">{twin.archetype}</p>
                                                     </div>
                                                 </button>
                                             );
@@ -797,23 +797,23 @@ export default function DigitalTwinOrder({
                                 )}
 
                                 {errors?.digital_twin_id && (
-                                    <p className="mt-3 text-xs font-semibold text-red-600">{errors.digital_twin_id}</p>
+                                    <p className="mt-3 text-xs font-semibold text-danger">{errors.digital_twin_id}</p>
                                 )}
                             </section>
 
                             {/* STEP 2 (CUSTOM MODE): Clean 3-Column Form Fields + Measurements */}
                             {mode === 'custom' && (
-                                <section className="rounded-3xl border border-ink/10 bg-white p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                                <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
                                     <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 pb-3.5">
                                         <div>
-                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                            <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                                 Step 02
                                             </span>
                                             <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
                                                 Model Traits &amp; Measurements
                                             </h2>
                                         </div>
-                                        <span className="text-[11px] text-subtle">
+                                        <span className="text-2xs text-subtle">
                                             Required fields marked with <span className="text-primary">*</span>
                                         </span>
                                     </div>
@@ -852,9 +852,9 @@ export default function DigitalTwinOrder({
                                                                             ? "e.g. 5' 9\""
                                                                             : 'e.g. 69 in'
                                                                     }
-                                                                    className="h-10 min-w-0 flex-1 rounded-xl border border-ink/15 bg-[#f8fafc] px-3 text-xs text-ink placeholder:text-subtle/60 focus:border-primary focus:bg-white focus:outline-none"
+                                                                    className="h-10 min-w-0 flex-1 rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/60 focus:border-primary focus:bg-surface focus:outline-none"
                                                                 />
-                                                                <div className="inline-flex h-10 shrink-0 items-center rounded-xl border border-ink/15 bg-[#f8fafc] p-0.5">
+                                                                <div className="inline-flex h-10 shrink-0 items-center rounded-xl border border-ink/15 bg-surface-2 p-0.5">
                                                                     {attr.options.map((unitOption) => (
                                                                         <button
                                                                             key={unitOption}
@@ -862,7 +862,7 @@ export default function DigitalTwinOrder({
                                                                             onClick={() =>
                                                                                 setUnitChoice(attr.slug, unitOption)
                                                                             }
-                                                                            className={`h-full cursor-pointer rounded-lg px-2.5 text-[11px] font-bold uppercase transition-all ${
+                                                                            className={`h-full cursor-pointer rounded-lg px-2.5 text-2xs font-bold uppercase transition-all ${
                                                                                 activeUnit === unitOption
                                                                                     ? 'bg-ink text-white'
                                                                                     : 'text-subtle hover:text-ink'
@@ -882,7 +882,7 @@ export default function DigitalTwinOrder({
                                                                     onChange={(e) =>
                                                                         setSelectOption(attr.slug, e.target.value)
                                                                     }
-                                                                    className="h-10 w-full cursor-pointer rounded-xl border border-ink/15 bg-[#f8fafc] px-3 text-xs font-medium text-ink focus:border-primary focus:bg-white focus:outline-none"
+                                                                    className="h-10 w-full cursor-pointer rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs font-medium text-ink focus:border-primary focus:bg-surface focus:outline-none"
                                                                 >
                                                                     <option value="">
                                                                         Select {attr.name.toLowerCase()}...
@@ -914,7 +914,7 @@ export default function DigitalTwinOrder({
                                                                                 attr.placeholder ||
                                                                                 `Enter custom ${attr.name.toLowerCase()}...`
                                                                             }
-                                                                            className="h-9 w-full rounded-xl border border-primary/40 bg-[#f8fafc] px-3 text-xs text-ink placeholder:text-subtle/60 focus:border-primary focus:bg-white focus:outline-none"
+                                                                            className="h-9 w-full rounded-xl border border-primary/40 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/60 focus:border-primary focus:bg-surface focus:outline-none"
                                                                         />
                                                                     )}
                                                             </div>
@@ -940,7 +940,7 @@ export default function DigitalTwinOrder({
                                                     <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
                                                         {attr.options.map((fieldLabel) => (
                                                             <div key={fieldLabel}>
-                                                                <label className="block text-[10px] font-bold uppercase tracking-wider text-subtle">
+                                                                <label className="block text-2xs font-bold uppercase tracking-wider text-subtle">
                                                                     {fieldLabel}
                                                                 </label>
                                                                 <input
@@ -954,7 +954,7 @@ export default function DigitalTwinOrder({
                                                                         )
                                                                     }
                                                                     placeholder={attr.placeholder || 'in / cm'}
-                                                                    className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                                                    className="mt-1 h-10 w-full rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                                                 />
                                                             </div>
                                                         ))}
@@ -966,17 +966,17 @@ export default function DigitalTwinOrder({
                             )}
 
                             {/* STEP 3: Pose Pack & Reference Moodboard Uploads */}
-                            <section className="rounded-3xl border border-ink/10 bg-white p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
+                            <section className="rounded-3xl border border-ink/10 bg-surface p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.12)] sm:p-6">
                                 <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 pb-3.5">
                                     <div>
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                        <span className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                             {mode === 'custom' ? 'Step 03' : 'Step 02'}
                                         </span>
                                         <h2 className="mt-0.5 text-base font-bold text-ink sm:text-lg">
                                             Poses &amp; Reference Assets
                                         </h2>
                                     </div>
-                                    <span className="text-[11px] font-semibold text-subtle">
+                                    <span className="text-2xs font-semibold text-subtle">
                                         {selectedPoses.length} of {DEFAULT_POSES.length} poses selected
                                     </span>
                                 </div>
@@ -988,7 +988,7 @@ export default function DigitalTwinOrder({
                                             <button
                                                 type="button"
                                                 onClick={() => setSelectedPoses(DEFAULT_POSES)}
-                                                className="cursor-pointer text-[11px] font-semibold text-primary hover:underline"
+                                                className="cursor-pointer text-2xs font-semibold text-primary hover:underline"
                                             >
                                                 Select all
                                             </button>
@@ -1007,15 +1007,15 @@ export default function DigitalTwinOrder({
                                                     className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs transition-all ${
                                                         active
                                                             ? 'border-primary/50 bg-primary/[0.07] font-bold text-ink'
-                                                            : 'border-ink/15 bg-[#f8fafc] font-medium text-subtle hover:border-ink/35 hover:text-ink'
+                                                            : 'border-ink/15 bg-surface-2 font-medium text-subtle hover:border-ink/35 hover:text-ink'
                                                     }`}
                                                 >
                                                     <span
                                                         aria-hidden="true"
                                                         className={`grid h-4 w-4 shrink-0 place-items-center rounded-[5px] border transition-colors ${
                                                             active
-                                                                ? 'border-primary bg-primary text-white'
-                                                                : 'border-ink/30 bg-white'
+                                                                ? 'border-primary bg-primary text-primary-foreground'
+                                                                : 'border-ink/30 bg-surface'
                                                         }`}
                                                     >
                                                         {active && <Check size={11} strokeWidth={3} />}
@@ -1043,13 +1043,13 @@ export default function DigitalTwinOrder({
                                         <button
                                             type="button"
                                             onClick={() => fileInputRef.current?.click()}
-                                            className="mt-1.5 flex h-10 w-full cursor-pointer items-center justify-between rounded-xl border border-dashed border-ink/25 bg-[#f8fafc] px-3.5 text-xs transition-colors hover:border-primary hover:bg-primary/5"
+                                            className="mt-1.5 flex h-10 w-full cursor-pointer items-center justify-between rounded-xl border border-dashed border-ink/25 bg-surface-2 px-3.5 text-xs transition-colors hover:border-primary hover:bg-primary/5"
                                         >
                                             <span className="flex items-center gap-2 font-semibold text-ink">
                                                 <FileUp size={15} className="text-primary" />
                                                 Upload moodboard or sketches
                                             </span>
-                                            <span className="text-[10px] text-subtle">Max 25MB</span>
+                                            <span className="text-2xs text-subtle">Max 25MB</span>
                                         </button>
 
                                         {attachments.length > 0 && (
@@ -1057,7 +1057,7 @@ export default function DigitalTwinOrder({
                                                 {attachments.map((file, idx) => (
                                                     <div
                                                         key={idx}
-                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 bg-[#f8fafc] px-2.5 py-1 text-[11px]"
+                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-ink/10 bg-surface-2 px-2.5 py-1 text-2xs"
                                                     >
                                                         <span className="max-w-[150px] truncate font-medium text-ink">
                                                             {file.name}
@@ -1065,7 +1065,7 @@ export default function DigitalTwinOrder({
                                                         <button
                                                             type="button"
                                                             onClick={() => removeAttachment(idx)}
-                                                            className="cursor-pointer text-red-600 hover:text-red-700"
+                                                            className="cursor-pointer text-danger hover:text-danger-hover"
                                                         >
                                                             <Trash2 size={12} />
                                                         </button>
@@ -1085,7 +1085,7 @@ export default function DigitalTwinOrder({
                                             value={cloudLink}
                                             onChange={(e) => setCloudLink(e.target.value)}
                                             placeholder="https://drive.google.com/..."
-                                            className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-[#f8fafc] px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                            className="mt-1.5 h-10 w-full rounded-xl border border-ink/15 bg-surface-2 px-3 text-xs text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -1103,7 +1103,7 @@ export default function DigitalTwinOrder({
                                             e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
                                         }}
                                         placeholder="Describe hair texture, makeup aesthetic, lighting mood, or campaign usage..."
-                                        className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-[#f8fafc] px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-white focus:outline-none"
+                                        className="mt-1.5 min-h-10 max-h-48 w-full resize-y rounded-xl border border-ink/15 bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
                                     />
                                 </div>
                             </section>
@@ -1113,10 +1113,10 @@ export default function DigitalTwinOrder({
                         <div className="lg:col-span-4">
                             <div
                                 ref={submitCardRef}
-                                className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-[#f8fafc] p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7"
+                                className="sticky top-28 space-y-6 rounded-3xl border border-ink/10 bg-surface-2 p-6 shadow-[0_14px_38px_-18px_rgba(15,23,42,0.16)] sm:p-7"
                             >
                                 <div>
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                    <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
                                         Order Summary
                                     </p>
                                     <h3 className="mt-1 text-lg font-bold text-ink">
@@ -1136,7 +1136,7 @@ export default function DigitalTwinOrder({
 
                                 {/* Selected Model Preview Box */}
                                 {activeTwin ? (
-                                    <div className="flex items-center gap-3.5 rounded-2xl border border-ink/10 bg-white p-3">
+                                    <div className="flex items-center gap-3.5 rounded-2xl border border-ink/10 bg-surface p-3">
                                         <div
                                             className="h-16 w-12 shrink-0 overflow-hidden rounded-xl"
                                             style={{ background: PAGE_BACKGROUND }}
@@ -1147,7 +1147,7 @@ export default function DigitalTwinOrder({
                                             />
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[10px] font-bold uppercase tracking-wider text-subtle">
+                                            <p className="text-2xs font-bold uppercase tracking-wider text-subtle">
                                                 {mode === 'custom' ? 'Reference Model' : 'Licensed Twin'}
                                             </p>
                                             <p className="truncate text-sm font-bold text-ink">{activeTwin.name}</p>
@@ -1157,37 +1157,37 @@ export default function DigitalTwinOrder({
                                         </div>
                                     </div>
                                 ) : customModelPreview && customModelFile ? (
-                                    <div className="flex items-center gap-3.5 rounded-2xl border border-ink/10 bg-white p-3">
+                                    <div className="flex items-center gap-3.5 rounded-2xl border border-ink/10 bg-surface p-3">
                                         <img
                                             src={customModelPreview}
                                             alt="Your uploaded model"
                                             className="h-14 w-12 shrink-0 rounded-xl object-cover"
                                         />
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-[10px] font-bold uppercase tracking-wider text-subtle">
+                                            <p className="text-2xs font-bold uppercase tracking-wider text-subtle">
                                                 Your Uploaded Model
                                             </p>
                                             <p className="truncate text-xs font-bold text-ink">{customModelFile.name}</p>
-                                            <p className="text-[11px] text-subtle">Custom Digital Twin</p>
+                                            <p className="text-2xs text-subtle">Custom Digital Twin</p>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-3.5">
+                                    <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface p-3.5">
                                         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
                                             <UserPlus size={18} />
                                         </div>
                                         <div>
                                             <p className="text-xs font-bold text-ink">Use My Model</p>
-                                            <p className="text-[11px] text-subtle">Built to your uploaded photo &amp; traits</p>
+                                            <p className="text-2xs text-subtle">Built to your uploaded photo &amp; traits</p>
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Pricing Indicator (Hidden for Custom Mode per User Requirement) */}
                                 {mode !== 'custom' ? (
-                                    <div className="flex items-baseline justify-between rounded-2xl border border-ink/10 bg-white px-4 py-3">
+                                    <div className="flex items-baseline justify-between rounded-2xl border border-ink/10 bg-surface px-4 py-3">
                                         <span className="text-xs font-semibold text-subtle">License Total</span>
-                                        <span className="font-michroma text-xl font-normal text-ink">
+                                        <span className="font-brand uppercase text-xl font-normal text-ink">
                                             {mode === 'preset'
                                                 ? (activeTwin?.presetPrice ?? '$149')
                                                 : (activeTwin?.lifetimePrice ?? '$490')}
@@ -1240,10 +1240,10 @@ export default function DigitalTwinOrder({
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="Alex Rivera"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                         />
                                         {errors?.name && (
-                                            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+                                            <p className="mt-1 text-xs text-danger">{errors.name}</p>
                                         )}
                                     </div>
 
@@ -1257,10 +1257,10 @@ export default function DigitalTwinOrder({
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="alex@brand.com"
-                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
+                                            className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:outline-none"
                                         />
                                         {errors?.email && (
-                                            <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+                                            <p className="mt-1 text-xs text-danger">{errors.email}</p>
                                         )}
                                     </div>
 
@@ -1272,7 +1272,7 @@ export default function DigitalTwinOrder({
                                                 value={company}
                                                 onChange={(e) => setCompany(e.target.value)}
                                                 placeholder="Atelier Studio"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
                                         </div>
                                         <div>
@@ -1282,7 +1282,7 @@ export default function DigitalTwinOrder({
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
                                                 placeholder="+1 (555) 000-0000"
-                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                                                className="mt-1 w-full rounded-xl border border-ink/15 bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
                                             />
                                         </div>
                                     </div>
@@ -1293,7 +1293,7 @@ export default function DigitalTwinOrder({
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                                    className="w-full cursor-pointer rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                                 >
                                     {isSubmitting
                                         ? 'Submitting Order...'

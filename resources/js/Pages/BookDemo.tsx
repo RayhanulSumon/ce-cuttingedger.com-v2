@@ -228,7 +228,7 @@ export default function BookDemo() {
                                 <div className="space-y-3">
                                     <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary-ink">
                                         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                                        <span className="font-mono uppercase tracking-wider text-[11px]">
+                                        <span className="uppercase tracking-wider text-2xs">
                                             30-Min Live Demo
                                         </span>
                                     </div>
@@ -243,7 +243,7 @@ export default function BookDemo() {
                                 </div>
 
                                 {/* What We Cover Card */}
-                                <div className="rounded-2xl border border-ink/10 bg-white p-5 space-y-4 shadow-xs">
+                                <div className="rounded-2xl border border-ink/10 bg-surface p-5 space-y-4 shadow-xs">
                                     <p className="text-xs font-bold uppercase tracking-wider text-primary-ink">
                                         What We Cover
                                     </p>
@@ -254,7 +254,7 @@ export default function BookDemo() {
                                                 <CheckCircle2 className="h-4 w-4 text-primary-ink shrink-0 mt-0.5" />
                                                 <div className="space-y-0.5">
                                                     <h2 className="text-xs font-bold text-ink leading-snug">{item.title}</h2>
-                                                    <p className="text-[11px] leading-relaxed text-muted">{item.detail}</p>
+                                                    <p className="text-2xs leading-relaxed text-muted">{item.detail}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -278,7 +278,7 @@ export default function BookDemo() {
                                 </div>
 
                                 {/* Direct Support Card */}
-                                <div className="rounded-2xl border border-ink/10 bg-white p-4.5 space-y-2 shadow-xs">
+                                <div className="rounded-2xl border border-ink/10 bg-surface p-4.5 space-y-2 shadow-xs">
                                     <p className="text-xs font-bold text-ink">Prefer to send a written brief?</p>
                                     <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                                         <Link
@@ -301,9 +301,9 @@ export default function BookDemo() {
 
                             {/* RIGHT COLUMN: Pure, Clean Calendly Booking Card */}
                             <div className="lg:col-span-7">
-                                <div className="overflow-hidden rounded-3xl border border-ink/10 bg-white shadow-xs">
+                                <div className="overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-xs">
                                     {/* Card Header Bar */}
-                                    <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-5 py-3.5 bg-[#fbfcfd]">
+                                    <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-5 py-3.5 bg-surface-2">
                                         <div className="flex items-center gap-2.5">
                                             <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/10 text-primary-ink">
                                                 <Calendar className="h-3.5 w-3.5" />
@@ -312,7 +312,7 @@ export default function BookDemo() {
                                                 <h2 className="text-xs font-bold text-ink">
                                                     Select a Date &amp; Time
                                                 </h2>
-                                                <p className="text-[11px] text-muted">
+                                                <p className="text-2xs text-muted">
                                                     30-minute discovery call via Google Meet / Zoom
                                                 </p>
                                             </div>
@@ -323,7 +323,7 @@ export default function BookDemo() {
                                                 href={rawCalendlyUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 rounded-lg border border-ink/10 bg-white px-2.5 py-1 text-[11px] font-semibold text-ink hover:text-primary-ink transition-colors shadow-xs"
+                                                className="inline-flex items-center gap-1 rounded-lg border border-ink/10 bg-surface px-2.5 py-1 text-2xs font-semibold text-ink hover:text-primary-ink transition-colors shadow-xs"
                                             >
                                                 <span>Open in Calendly</span>
                                                 <ExternalLink className="h-3 w-3" />
@@ -332,7 +332,7 @@ export default function BookDemo() {
                                     </div>
 
                                     {/* Pure Calendly Embed Container */}
-                                    <div className="relative bg-white" style={{ minHeight: '660px' }}>
+                                    <div className="relative bg-surface" style={{ minHeight: '660px' }}>
                                         {isPlaceholder ? (
                                             /* Simple Fallback when URL not yet configured */
                                             <div className="flex min-h-[500px] flex-col items-center justify-center p-8 text-center space-y-4">
@@ -349,7 +349,7 @@ export default function BookDemo() {
                                                 </div>
                                                 <Link
                                                     href="/contact"
-                                                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-primary-hover transition-colors"
+                                                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-xs hover:bg-primary-hover transition-colors"
                                                 >
                                                     <span>Open Contact Page</span>
                                                     <ArrowRight className="h-3.5 w-3.5" />
@@ -358,22 +358,22 @@ export default function BookDemo() {
                                         ) : (
                                             <>
                                                 {widgetState === 'loading' && (
-                                                    <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 bg-white/95 text-sm text-muted">
+                                                    <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 bg-surface/95 text-sm text-muted">
                                                         <Loader2 className="h-5 w-5 animate-spin text-primary-ink" />
-                                                        <span className="font-mono text-xs">Loading studio calendar…</span>
+                                                        <span className="text-xs">Loading studio calendar…</span>
                                                     </div>
                                                 )}
 
                                                 {widgetState === 'error' ? (
                                                     <div className="flex min-h-[460px] flex-col items-center justify-center px-6 py-12 text-center space-y-3">
-                                                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-700">
+                                                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-warning-soft text-warning">
                                                             <AlertCircle className="h-5 w-5" />
                                                         </div>
                                                         <div className="max-w-xs space-y-1">
                                                             <h3 className="font-display text-sm font-bold text-ink">
                                                                 Calendar embed blocked by browser
                                                             </h3>
-                                                            <p className="text-[11px] text-muted leading-relaxed">
+                                                            <p className="text-2xs text-muted leading-relaxed">
                                                                 Your browser or privacy extension may be blocking third-party booking cookies. You can open our direct booking page in a new window below.
                                                             </p>
                                                         </div>
@@ -382,14 +382,14 @@ export default function BookDemo() {
                                                                 href={rawCalendlyUrl}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2 text-xs font-bold text-white transition-colors hover:bg-primary-hover shadow-xs"
+                                                                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary-hover shadow-xs"
                                                             >
                                                                 <span>Open Booking Schedule</span>
                                                                 <ExternalLink className="h-3.5 w-3.5" />
                                                             </a>
                                                             <Link
                                                                 href="/contact"
-                                                                className="inline-flex items-center gap-1.5 rounded-xl border border-ink/15 bg-white px-4 py-2 text-xs font-semibold text-ink hover:border-ink/30 transition-colors"
+                                                                className="inline-flex items-center gap-1.5 rounded-xl border border-ink/15 bg-surface px-4 py-2 text-xs font-semibold text-ink hover:border-ink/30 transition-colors"
                                                             >
                                                                 <span>Contact Form</span>
                                                             </Link>
@@ -432,7 +432,7 @@ export default function BookDemo() {
                                 return (
                                     <div
                                         key={idx}
-                                        className="rounded-2xl border border-ink/8 bg-white p-5 space-y-2 transition-shadow hover:shadow-xs"
+                                        className="rounded-2xl border border-ink/8 bg-surface p-5 space-y-2 transition-shadow hover:shadow-xs"
                                     >
                                         <button
                                             type="button"
@@ -442,7 +442,7 @@ export default function BookDemo() {
                                             <span className="text-sm font-bold text-ink leading-snug">
                                                 {faq.question}
                                             </span>
-                                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-[#f8f9fb] text-subtle text-xs">
+                                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-surface-2 text-subtle text-xs">
                                                 {isOpen ? '−' : '+'}
                                             </span>
                                         </button>
@@ -458,7 +458,7 @@ export default function BookDemo() {
 
                 {/* Bottom Navigation Strip */}
                 <section className="py-8 border-t border-ink/8 bg-page">
-                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted">
+                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
                         <div>
                             <span>Cutting Edger Studio Discovery</span>
                         </div>

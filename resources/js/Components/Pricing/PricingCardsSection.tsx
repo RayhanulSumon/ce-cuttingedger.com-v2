@@ -146,13 +146,13 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Compact Centered Header */}
                 <div className="mx-auto max-w-2xl text-center">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-ink">
+                    <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary-ink">
                         Studio Credit Plans
                     </p>
                     <h1 className="mt-1.5 text-2xl font-display font-extrabold leading-[1.1] tracking-tight text-ink sm:text-4xl">
                         Simple credit plans. <span className="text-primary">Flexible production.</span>
                     </h1>
-                    <p className="mt-2 text-sm text-muted sm:text-[15px]">
+                    <p className="mt-2 text-sm text-muted sm:text-base">
                         Pick a credit pack or build your exact volume. Spend credits across 2D, 3D, Try-On, DTP &amp; Video.
                     </p>
                 </div>
@@ -196,11 +196,11 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                     >
                                         <div>
                                             {isPopular ? (
-                                                <span className="inline-flex rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
+                                                <span className="inline-flex rounded-full bg-primary px-2.5 py-0.5 text-2xs font-bold uppercase tracking-[0.16em] text-primary-foreground">
                                                     {plan.eyebrow}
                                                 </span>
                                             ) : (
-                                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
+                                                <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
                                                     {plan.eyebrow}
                                                 </p>
                                             )}
@@ -266,8 +266,8 @@ export function PricingCardsSection({ plans = [] }: { plans?: PricingPlan[] }) {
                                             }
                                             className={`group mt-6 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors duration-300 ${
                                                 isPopular
-                                                    ? 'bg-primary text-white hover:bg-primary-hover'
-                                                    : 'bg-ink text-white hover:bg-primary'
+                                                    ? 'bg-primary text-primary-foreground hover:bg-primary-hover'
+                                                    : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground'
                                             }`}
                                         >
                                             <span>{plan.buttonLabel}</span>

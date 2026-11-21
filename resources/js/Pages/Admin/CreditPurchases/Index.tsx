@@ -213,37 +213,37 @@ export default function CreditPurchasesIndex({
         switch (status) {
             case "pending":
                 return (
-                    <Badge className="bg-amber-50 text-amber-700 border border-amber-200">
+                    <Badge className="bg-warning-soft text-warning border border-warning/25">
                         <Clock className="w-3 h-3 mr-1" /> Pending Approval
                     </Badge>
                 );
             case "active":
                 return (
-                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Badge className="bg-success-soft text-success border border-success/25">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Active
                     </Badge>
                 );
             case "expired":
                 return (
-                    <Badge className="bg-slate-100 text-slate-600 border border-slate-200">
+                    <Badge className="bg-surface-2 text-muted border border-line">
                         <Clock className="w-3 h-3 mr-1" /> Expired
                     </Badge>
                 );
             case "cancelled":
                 return (
-                    <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
+                    <Badge className="bg-danger-soft text-danger border border-danger/25">
                         <XCircle className="w-3 h-3 mr-1" /> Cancelled
                     </Badge>
                 );
             case "refunded":
                 return (
-                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         Refunded
                     </Badge>
                 );
             default:
                 return (
-                    <Badge className="bg-slate-100 text-slate-600 border border-slate-200">
+                    <Badge className="bg-surface-2 text-muted border border-line">
                         {status}
                     </Badge>
                 );
@@ -254,31 +254,31 @@ export default function CreditPurchasesIndex({
         switch (paymentStatus) {
             case "paid":
                 return (
-                    <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Badge className="bg-success-soft text-success border border-success/25">
                         Paid
                     </Badge>
                 );
             case "invoice_sent":
                 return (
-                    <Badge className="bg-sky-50 text-sky-700 border border-sky-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         Invoiced
                     </Badge>
                 );
             case "failed":
                 return (
-                    <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
+                    <Badge className="bg-danger-soft text-danger border border-danger/25">
                         Failed
                     </Badge>
                 );
             case "refunded":
                 return (
-                    <Badge className="bg-purple-50 text-purple-700 border border-purple-200">
+                    <Badge className="bg-info-soft text-info border border-info/25">
                         Refunded
                     </Badge>
                 );
             default:
                 return (
-                    <Badge className="bg-slate-100 text-slate-600 border border-slate-200">
+                    <Badge className="bg-surface-2 text-muted border border-line">
                         Unpaid
                     </Badge>
                 );
@@ -291,7 +291,7 @@ export default function CreditPurchasesIndex({
             accessorKey: "reference_number",
             cell: (row) => (
                 <div className="flex flex-col gap-0.5">
-                    <span className="font-mono font-bold text-ink tracking-wide flex items-center gap-1.5 text-xs">
+                    <span className="font-bold text-ink tracking-wide flex items-center gap-1.5 text-xs">
                         {row.billing_type === "monthly" ? (
                             <RefreshCw className="w-3.5 h-3.5 text-primary shrink-0" />
                         ) : (
@@ -299,7 +299,7 @@ export default function CreditPurchasesIndex({
                         )}
                         {row.reference_number}
                     </span>
-                    <span className="text-[11px] text-slate-500">{row.created_at_formatted}</span>
+                    <span className="text-2xs text-subtle">{row.created_at_formatted}</span>
                 </div>
             ),
         },
@@ -309,7 +309,7 @@ export default function CreditPurchasesIndex({
             cell: (row) => (
                 <div className="flex flex-col gap-0.5">
                     <span className="font-semibold text-ink text-xs">{row.client_name}</span>
-                    <span className="text-[11px] text-slate-500 font-mono">{row.client_email}</span>
+                    <span className="text-2xs text-subtle">{row.client_email}</span>
                 </div>
             ),
         },
@@ -322,17 +322,17 @@ export default function CreditPurchasesIndex({
                         {row.plan_name}
                     </span>
                     <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-2xs text-subtle">
                             {row.billing_type === "monthly"
                                 ? "Monthly Subscription"
                                 : "One-Time Pack"}
                         </span>
                         <span
                             className={cn(
-                                "px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase border",
+                                "px-1.5 py-0.5 rounded-md text-2xs font-bold uppercase border",
                                 row.payment_provider === "stripe"
-                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                                    : "bg-slate-100 text-slate-600 border-slate-200"
+                                    ? "bg-info-soft text-info border-info/25"
+                                    : "bg-surface-2 text-muted border-line"
                             )}
                         >
                             {row.payment_provider === "stripe" ? "Stripe" : "Manual"}
@@ -350,12 +350,12 @@ export default function CreditPurchasesIndex({
                         {row.total_credits.toLocaleString()} Credits
                     </span>
                     {row.bonus_credits > 0 && (
-                        <span className="text-[11px] text-slate-500 tabular-nums">
+                        <span className="text-2xs text-subtle tabular-nums">
                             {row.base_credits.toLocaleString()} +{" "}
                             {row.bonus_credits.toLocaleString()} bonus
                         </span>
                     )}
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-2xs text-subtle">
                         {row.credits_activated && row.expires_at_formatted
                             ? row.is_expired
                                 ? `Expired ${row.expires_at_formatted}`
@@ -400,9 +400,9 @@ export default function CreditPurchasesIndex({
                                 setAdminNote(row.admin_notes || "");
                                 setIsDetailOpen(true);
                             }}
-                            className="h-8 px-2.5 border-slate-200 bg-white hover:bg-slate-50 text-ink text-xs"
+                            className="h-8 px-2.5 border-line bg-surface hover:bg-surface-2 text-ink text-xs"
                         >
-                            <Eye className="w-3.5 h-3.5 mr-1 text-slate-500" /> Review
+                            <Eye className="w-3.5 h-3.5 mr-1 text-subtle" /> Review
                         </Button>
 
                         {canApprove ? (
@@ -410,12 +410,12 @@ export default function CreditPurchasesIndex({
                                 size="sm"
                                 onClick={() => handleApprove(row)}
                                 disabled={isProcessing}
-                                className="h-8 px-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold"
+                                className="h-8 px-2.5 bg-primary hover:bg-primary-hover text-primary-foreground text-xs font-semibold"
                             >
                                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Approve Credits
                             </Button>
                         ) : row.credits_activated ? (
-                            <span className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                            <span className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg bg-success-soft border border-success/25 text-success text-xs font-semibold">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Credited
                             </span>
                         ) : null}
@@ -425,7 +425,7 @@ export default function CreditPurchasesIndex({
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="h-8 w-8 p-0 text-slate-500 hover:text-ink"
+                                    className="h-8 w-8 p-0 text-subtle hover:text-ink"
                                 >
                                     <MoreHorizontal className="w-4 h-4" />
                                 </Button>
@@ -435,7 +435,7 @@ export default function CreditPurchasesIndex({
                                     <>
                                         <DropdownMenuItem
                                             onClick={() => handleApprove(row)}
-                                            className="cursor-pointer text-emerald-700 font-semibold"
+                                            className="cursor-pointer text-success font-semibold"
                                         >
                                             <CheckCircle2 className="w-3.5 h-3.5 mr-2" /> Approve
                                             &amp; Activate Credits
@@ -446,14 +446,14 @@ export default function CreditPurchasesIndex({
                                             }
                                             className="cursor-pointer"
                                         >
-                                            <FileText className="w-3.5 h-3.5 mr-2 text-sky-600" />{" "}
+                                            <FileText className="w-3.5 h-3.5 mr-2 text-info" />{" "}
                                             Mark Invoice Sent
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() =>
                                                 handleUpdate(row.id, "cancelled", row.payment_status)
                                             }
-                                            className="cursor-pointer text-rose-600"
+                                            className="cursor-pointer text-danger"
                                         >
                                             <XCircle className="w-3.5 h-3.5 mr-2" /> Cancel Request
                                         </DropdownMenuItem>
@@ -464,7 +464,7 @@ export default function CreditPurchasesIndex({
                                         setPurchaseToDelete(row);
                                         setIsDeleteOpen(true);
                                     }}
-                                    className="text-rose-600 focus:text-rose-600 cursor-pointer"
+                                    className="text-danger focus:text-danger cursor-pointer"
                                 >
                                     <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete Record
                                 </DropdownMenuItem>
@@ -498,11 +498,11 @@ export default function CreditPurchasesIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             !currentStatus
-                                ? "bg-white border-primary ring-2 ring-primary/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-surface border-primary ring-2 ring-primary/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-subtle block">
                             All Purchases
                         </span>
                         <span className="text-2xl font-extrabold text-ink tabular-nums mt-0.5 block">
@@ -516,14 +516,14 @@ export default function CreditPurchasesIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "pending"
-                                ? "bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-warning-soft border-warning/40 ring-2 ring-warning/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-warning block">
                             Pending Approval
                         </span>
-                        <span className="text-2xl font-extrabold text-amber-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-warning tabular-nums mt-0.5 block">
                             {stats.pending}
                         </span>
                     </button>
@@ -534,20 +534,20 @@ export default function CreditPurchasesIndex({
                         className={cn(
                             "p-3.5 rounded-2xl border text-left transition-all cursor-pointer",
                             currentStatus === "active"
-                                ? "bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/15 shadow-xs"
-                                : "bg-white border-slate-200 hover:border-slate-300"
+                                ? "bg-success-soft border-success/40 ring-2 ring-success/15 shadow-xs"
+                                : "bg-surface border-line hover:border-line-strong"
                         )}
                     >
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-success block">
                             Active Plans
                         </span>
-                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-success tabular-nums mt-0.5 block">
                             {stats.active}
                         </span>
                     </button>
 
-                    <div className="p-3.5 rounded-2xl border border-slate-200 bg-white text-left">
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block">
+                    <div className="p-3.5 rounded-2xl border border-line bg-surface text-left">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-subtle block">
                             Credits Issued
                         </span>
                         <span className="text-2xl font-extrabold text-ink tabular-nums mt-0.5 block">
@@ -555,11 +555,11 @@ export default function CreditPurchasesIndex({
                         </span>
                     </div>
 
-                    <div className="p-3.5 rounded-2xl border border-slate-200 bg-white text-left">
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 block">
+                    <div className="p-3.5 rounded-2xl border border-line bg-surface text-left">
+                        <span className="text-2xs font-semibold uppercase tracking-wide text-success block">
                             Paid Revenue
                         </span>
-                        <span className="text-2xl font-extrabold text-emerald-700 tabular-nums mt-0.5 block">
+                        <span className="text-2xl font-extrabold text-success tabular-nums mt-0.5 block">
                             ${stats.paid_revenue.toFixed(2)}
                         </span>
                     </div>
@@ -587,8 +587,8 @@ export default function CreditPurchasesIndex({
                                     className={cn(
                                         "px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer",
                                         active
-                                            ? "bg-primary text-white border-primary shadow-xs"
-                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink"
+                                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                                            : "bg-surface text-muted border-line hover:border-line-strong hover:text-ink"
                                     )}
                                 >
                                     {tab.label}
@@ -617,8 +617,8 @@ export default function CreditPurchasesIndex({
                                     className={cn(
                                         "px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer",
                                         active
-                                            ? "bg-ink text-white border-ink"
-                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink"
+                                            ? "bg-ink text-surface border-ink"
+                                            : "bg-surface text-muted border-line hover:border-line-strong hover:text-ink"
                                     )}
                                 >
                                     {providerTab.label}
@@ -638,12 +638,12 @@ export default function CreditPurchasesIndex({
                 >
                     <div className="flex flex-wrap items-center gap-2 w-full sm:max-w-md">
                         <div className="relative flex-1 min-w-[200px]">
-                            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <Search className="w-4 h-4 text-faint absolute left-3 top-1/2 -translate-y-1/2" />
                             <Input
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search by ref #, client, email, plan, or Stripe ID..."
-                                className="pl-9 bg-white border-slate-200 text-ink"
+                                className="pl-9 bg-surface border-line text-ink"
                             />
                         </div>
                         <Button type="submit" variant="outline" size="sm" className="min-h-10 sm:min-h-9 px-3.5">
@@ -658,14 +658,14 @@ export default function CreditPurchasesIndex({
                                     setSearchQuery("");
                                     visitWithFilters({ search: "", page: undefined });
                                 }}
-                                className="min-h-10 sm:min-h-9 px-3 text-slate-500 hover:text-ink"
+                                className="min-h-10 sm:min-h-9 px-3 text-subtle hover:text-ink"
                             >
                                 Clear
                             </Button>
                         )}
                     </div>
 
-                    <div className="text-xs font-mono text-slate-500">
+                    <div className="text-xs text-subtle">
                         Showing {purchases.from ?? 0}–{purchases.to ?? purchases.data.length} of{" "}
                         {purchases.total} records
                     </div>
@@ -681,8 +681,8 @@ export default function CreditPurchasesIndex({
 
                 {/* Server Pagination Footer */}
                 {purchases.last_page > 1 && (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
-                        <span className="font-mono">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-xs text-muted">
+                        <span className="">
                             Page {purchases.current_page} of {purchases.last_page}
                         </span>
                         <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -717,13 +717,13 @@ export default function CreditPurchasesIndex({
 
             {/* Credit Purchase Review Modal */}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-                <DialogContent className="max-w-2xl bg-white border-slate-200 text-ink max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl bg-surface border-line text-ink max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-base font-bold text-ink">
                             <Coins className="w-4 h-4 text-primary" />
                             <span>Purchase #{selectedPurchase?.reference_number}</span>
                         </DialogTitle>
-                        <DialogDescription className="text-xs text-slate-500">
+                        <DialogDescription className="text-xs text-subtle">
                             Submitted on {selectedPurchase?.created_at_formatted} • Provider:{" "}
                             {selectedPurchase?.payment_provider?.toUpperCase()}
                         </DialogDescription>
@@ -732,9 +732,9 @@ export default function CreditPurchasesIndex({
                     {selectedPurchase && (
                         <div className="space-y-4 py-2 text-xs">
                             {/* Client Summary Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-surface-2 p-3.5 rounded-xl border border-line">
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Client Name
                                     </span>
                                     <span className="font-semibold text-ink">
@@ -742,15 +742,15 @@ export default function CreditPurchasesIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Client Email
                                     </span>
-                                    <span className="font-semibold text-primary-ink font-mono break-all">
+                                    <span className="font-semibold text-primary-ink break-all">
                                         {selectedPurchase.client_email}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Current Wallet Balance
                                     </span>
                                     <span className="font-bold text-ink tabular-nums">
@@ -759,7 +759,7 @@ export default function CreditPurchasesIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Plan Name
                                     </span>
                                     <span className="font-semibold text-ink">
@@ -767,7 +767,7 @@ export default function CreditPurchasesIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Billing Mode
                                     </span>
                                     <span className="font-bold text-primary-ink">
@@ -777,10 +777,10 @@ export default function CreditPurchasesIndex({
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">
+                                    <span className="text-2xs text-faint uppercase font-semibold block">
                                         Company / Phone
                                     </span>
-                                    <span className="text-slate-700">
+                                    <span className="text-ink-2">
                                         {selectedPurchase.client_company ||
                                             selectedPurchase.client_phone ||
                                             "Not provided"}
@@ -790,15 +790,15 @@ export default function CreditPurchasesIndex({
 
                             {/* Activation Banner */}
                             {selectedPurchase.credits_activated ? (
-                                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start gap-2.5 text-emerald-900">
-                                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <div className="p-3 rounded-xl bg-success-soft border border-success/25 flex items-start gap-2.5 text-success">
+                                    <ShieldCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />
                                     <div>
                                         <div className="font-bold">
                                             Credits Activated —{" "}
                                             {selectedPurchase.total_credits.toLocaleString()} studio
                                             credits credited
                                         </div>
-                                        <div className="text-[11px] text-emerald-700 mt-0.5">
+                                        <div className="text-2xs text-success mt-0.5">
                                             Activated {selectedPurchase.activated_at_formatted || "—"}
                                             {selectedPurchase.approver_name &&
                                                 ` by ${selectedPurchase.approver_name}`}
@@ -809,26 +809,26 @@ export default function CreditPurchasesIndex({
                                 </div>
                             ) : selectedPurchase.status === "cancelled" ||
                               selectedPurchase.status === "refunded" ? (
-                                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-rose-900">
-                                    <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                                <div className="p-3 rounded-xl bg-danger-soft border border-danger/25 flex items-start gap-2.5 text-danger">
+                                    <XCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
                                     <div>
                                         <div className="font-bold capitalize">
                                             Purchase {selectedPurchase.status}
                                         </div>
-                                        <div className="text-[11px] text-rose-700 mt-0.5">
+                                        <div className="text-2xs text-danger mt-0.5">
                                             No credits were added to the client wallet for this
                                             record.
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5 text-amber-900">
-                                    <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                                <div className="p-3 rounded-xl bg-warning-soft border border-warning/25 flex items-start gap-2.5 text-warning">
+                                    <Clock className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                                     <div>
                                         <div className="font-bold">
                                             Pending Approval &amp; Activation
                                         </div>
-                                        <div className="text-[11px] text-amber-800 mt-0.5">
+                                        <div className="text-2xs text-warning mt-0.5">
                                             Approving will atomically add{" "}
                                             <strong>
                                                 {selectedPurchase.total_credits.toLocaleString()}
@@ -844,54 +844,54 @@ export default function CreditPurchasesIndex({
                             )}
 
                             {/* Immutable Snapshot Breakdown */}
-                            <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                            <div className="p-4 rounded-xl border border-line bg-surface space-y-3">
+                                <span className="text-2xs font-bold uppercase tracking-wider text-subtle block">
                                     Immutable Checkout Snapshot
                                 </span>
 
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
+                                    <div className="p-2.5 rounded-lg bg-surface-2 border border-line">
+                                        <span className="text-2xs text-subtle uppercase font-semibold block">
                                             Base Credits
                                         </span>
                                         <span className="text-sm font-bold text-ink tabular-nums">
                                             {selectedPurchase.base_credits.toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
+                                    <div className="p-2.5 rounded-lg bg-surface-2 border border-line">
+                                        <span className="text-2xs text-subtle uppercase font-semibold block">
                                             Bonus Credits
                                         </span>
-                                        <span className="text-sm font-bold text-emerald-700 tabular-nums">
+                                        <span className="text-sm font-bold text-success tabular-nums">
                                             +{selectedPurchase.bonus_credits.toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
+                                    <div className="p-2.5 rounded-lg bg-surface-2 border border-line">
+                                        <span className="text-2xs text-subtle uppercase font-semibold block">
                                             Total Credits
                                         </span>
                                         <span className="text-sm font-bold text-primary-ink tabular-nums">
                                             {selectedPurchase.total_credits.toLocaleString()}
                                         </span>
                                     </div>
-                                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                                        <span className="text-[10px] text-slate-500 uppercase font-semibold block">
+                                    <div className="p-2.5 rounded-lg bg-surface-2 border border-line">
+                                        <span className="text-2xs text-subtle uppercase font-semibold block">
                                             Total Price
                                         </span>
                                         <span className="text-sm font-bold text-ink tabular-nums block">
                                             ${selectedPurchase.amount_usd.toFixed(2)}{" "}
                                             {selectedPurchase.currency}
                                         </span>
-                                        <span className="text-[10px] text-slate-500">
+                                        <span className="text-2xs text-subtle">
                                             ${selectedPurchase.effective_rate_per_credit.toFixed(2)}
                                             /credit
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+                                <div className="flex flex-wrap items-center gap-3 text-2xs text-muted bg-surface-2 px-3 py-2 rounded-lg border border-line">
                                     <span className="inline-flex items-center gap-1">
-                                        <CalendarClock className="w-3.5 h-3.5 text-slate-400" />
+                                        <CalendarClock className="w-3.5 h-3.5 text-faint" />
                                         {selectedPurchase.validity_days} days validity
                                     </span>
                                     <span>•</span>
@@ -906,17 +906,17 @@ export default function CreditPurchasesIndex({
                                 {Array.isArray(selectedPurchase.features_snapshot) &&
                                     selectedPurchase.features_snapshot.length > 0 && (
                                         <div className="space-y-1.5">
-                                            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">
+                                            <span className="text-2xs uppercase font-bold tracking-wider text-subtle block">
                                                 Snapshot Terms at Checkout
                                             </span>
-                                            <ul className="space-y-1 text-slate-700">
+                                            <ul className="space-y-1 text-ink-2">
                                                 {selectedPurchase.features_snapshot.map(
                                                     (feature, idx) => (
                                                         <li
                                                             key={idx}
-                                                            className="flex items-start gap-2 text-[11px]"
+                                                            className="flex items-start gap-2 text-2xs"
                                                         >
-                                                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                                            <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0 mt-0.5" />
                                                             <span>{feature}</span>
                                                         </li>
                                                     )
@@ -927,13 +927,13 @@ export default function CreditPurchasesIndex({
                             </div>
 
                             {/* Stripe & Payment Provider Details */}
-                            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div className="p-3.5 rounded-xl bg-surface-2 border border-line space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 flex items-center gap-1.5">
-                                        <CreditCard className="w-3.5 h-3.5 text-slate-400" />
+                                    <span className="text-2xs uppercase font-bold tracking-wider text-subtle flex items-center gap-1.5">
+                                        <CreditCard className="w-3.5 h-3.5 text-faint" />
                                         Billing Provider Metadata
                                     </span>
-                                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-white border border-slate-200 text-ink">
+                                    <span className="text-2xs font-bold uppercase px-2 py-0.5 rounded bg-surface border border-line text-ink">
                                         {selectedPurchase.payment_provider}
                                     </span>
                                 </div>
@@ -942,7 +942,7 @@ export default function CreditPurchasesIndex({
                                 selectedPurchase.stripe_invoice_id ||
                                 selectedPurchase.stripe_payment_intent_id ||
                                 selectedPurchase.stripe_checkout_session_id ? (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono text-slate-700">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-2xs text-ink-2">
                                         {selectedPurchase.stripe_customer_id && (
                                             <div>Customer: {selectedPurchase.stripe_customer_id}</div>
                                         )}
@@ -963,7 +963,7 @@ export default function CreditPurchasesIndex({
                                         )}
                                     </div>
                                 ) : (
-                                    <p className="text-[11px] text-slate-500">
+                                    <p className="text-2xs text-subtle">
                                         Manual invoice / bank approval flow (Stripe customer,
                                         checkout session, payment intent, invoice, and subscription
                                         IDs automatically populate when Stripe webhooks go live).
@@ -972,29 +972,29 @@ export default function CreditPurchasesIndex({
                             </div>
 
                             {selectedPurchase.client_notes && (
-                                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">
+                                <div className="p-3 bg-surface-2 rounded-xl border border-line">
+                                    <span className="text-2xs text-subtle uppercase font-semibold block mb-1">
                                         Client Checkout Note
                                     </span>
-                                    <p className="text-slate-700 leading-relaxed">
+                                    <p className="text-ink-2 leading-relaxed">
                                         {selectedPurchase.client_notes}
                                     </p>
                                 </div>
                             )}
 
                             <div className="space-y-1.5">
-                                <label className="text-[11px] font-semibold uppercase text-slate-500">
+                                <label className="text-2xs font-semibold uppercase text-subtle">
                                     Internal Admin Notes
                                 </label>
                                 <textarea
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
                                     placeholder="Add invoice reference, wire confirmation, or activation notes..."
-                                    className="w-full h-20 bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-ink focus:outline-none focus:border-primary transition-colors"
+                                    className="w-full h-20 bg-surface border border-line rounded-xl p-2.5 text-xs text-ink focus:outline-none focus:border-ring transition-colors"
                                 />
                             </div>
 
-                            <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                            <div className="pt-2 border-t border-line flex flex-wrap items-center justify-between gap-2">
                                 <div className="flex flex-wrap items-center gap-2">
                                     {selectedCanApprove ? (
                                         <>
@@ -1005,7 +1005,7 @@ export default function CreditPurchasesIndex({
                                                     handleApprove(selectedPurchase, adminNote)
                                                 }
                                                 disabled={isProcessing}
-                                                className="bg-primary text-white hover:bg-primary-hover text-xs font-semibold"
+                                                className="bg-primary text-primary-foreground hover:bg-primary-hover text-xs font-semibold"
                                             >
                                                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />{" "}
                                                 Approve &amp; Activate Credits
@@ -1025,7 +1025,7 @@ export default function CreditPurchasesIndex({
                                                 disabled={isProcessing}
                                                 className="text-xs"
                                             >
-                                                <FileText className="w-3.5 h-3.5 mr-1 text-sky-600" />{" "}
+                                                <FileText className="w-3.5 h-3.5 mr-1 text-info" />{" "}
                                                 Mark Invoice Sent
                                             </Button>
                                             <Button
@@ -1041,14 +1041,14 @@ export default function CreditPurchasesIndex({
                                                     )
                                                 }
                                                 disabled={isProcessing}
-                                                className="border-rose-200 text-rose-600 hover:bg-rose-50 text-xs"
+                                                className="border-danger/25 text-danger hover:bg-danger-soft text-xs"
                                             >
                                                 <XCircle className="w-3.5 h-3.5 mr-1" /> Cancel
                                                 Request
                                             </Button>
                                         </>
                                     ) : selectedPurchase.credits_activated ? (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success-soft border border-success/25 text-success text-xs font-semibold">
                                             <CheckCircle2 className="w-3.5 h-3.5" /> Credits
                                             Activated
                                         </span>
@@ -1068,7 +1068,7 @@ export default function CreditPurchasesIndex({
                                         )
                                     }
                                     disabled={isProcessing}
-                                    className="text-slate-600 hover:text-ink text-xs"
+                                    className="text-muted hover:text-ink text-xs"
                                 >
                                     Save Notes Only
                                 </Button>
@@ -1092,7 +1092,7 @@ export default function CreditPurchasesIndex({
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete} className="bg-rose-600 text-white">
+                        <AlertDialogAction onClick={confirmDelete} className="bg-danger text-white">
                             Delete Record
                         </AlertDialogAction>
                     </AlertDialogFooter>

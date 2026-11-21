@@ -83,7 +83,7 @@ export function StudioBeforeAfter({
                     setPosition((prev) => clampPercent(prev + 4));
                 }
             }}
-            className={`group relative w-full ${aspectClass} cursor-ew-resize touch-none select-none overflow-hidden rounded-2xl border border-ink/10 bg-[#f4f7fb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+            className={`group relative w-full ${aspectClass} cursor-ew-resize touch-none select-none overflow-hidden rounded-2xl border border-ink/10 bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
         >
             {/* After layer (base full frame) */}
             <img
@@ -114,14 +114,14 @@ export function StudioBeforeAfter({
             {/* Minimal corner labels */}
             <span
                 className={`pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-ink/75 font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-xs ${
-                    compact ? 'px-2.5 py-0.5 text-[9px]' : 'px-3 py-1 text-[10px]'
+                    compact ? 'px-2.5 py-0.5 text-2xs' : 'px-3 py-1 text-2xs'
                 }`}
             >
                 {beforeLabel}
             </span>
             <span
                 className={`pointer-events-none absolute right-3 top-3 z-10 rounded-full border border-ink/10 bg-white/90 font-semibold uppercase tracking-[0.14em] text-ink shadow-2xs backdrop-blur-xs ${
-                    compact ? 'px-2.5 py-0.5 text-[9px]' : 'px-3 py-1 text-[10px]'
+                    compact ? 'px-2.5 py-0.5 text-2xs' : 'px-3 py-1 text-2xs'
                 }`}
             >
                 {afterLabel}
@@ -134,7 +134,7 @@ export function StudioBeforeAfter({
                 }`}
                 style={{ left: `${position}%` }}
             >
-                <div className="h-full w-[1.5px] bg-white/95 shadow-[0_0_8px_rgba(22,25,31,0.35)]" />
+                <div className="h-full w-[1.5px] bg-surface/95 shadow-[0_0_8px_rgba(22,25,31,0.35)]" />
                 <span
                     className={`absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-white shadow-md transition-[transform,border-color,color] duration-150 ${
                         compact ? 'h-8 w-8' : 'h-9 w-9 sm:h-10 sm:w-10'
