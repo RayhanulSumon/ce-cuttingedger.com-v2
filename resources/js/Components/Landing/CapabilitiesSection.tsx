@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
 import { PageProps } from '@/types';
-import { Eyebrow, PAD_X, Reveal, SectionProps } from './shared';
+import { PAD_X, Reveal, SectionProps } from './shared';
 
 const CAPABILITY_IMAGES = [
     '/images/portfolio/portfolio-1.jpg',
@@ -23,13 +23,12 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div>
                     <Reveal active={active}>
-                        <Eyebrow>Capabilities</Eyebrow>
-                        <h2 className="mt-2 text-[clamp(24px,3vw,38px)] leading-[1.08] text-ink">
-                            What can we help you with
+                        <h2 className="text-section text-ink">
+                            Core Capabilities
                         </h2>
                     </Reveal>
                     <Reveal active={active} delay={0.08}>
-                        <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted">
+                        <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
                             Four core capabilities, many specialities. Pick one to see what we deliver and how it works.
                         </p>
                     </Reveal>

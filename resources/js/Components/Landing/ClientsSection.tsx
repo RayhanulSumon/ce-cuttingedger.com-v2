@@ -132,8 +132,8 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                 <SectionIntro
                     active={active}
                     title="Clients & Testimonials"
-                    titleClassName="text-[clamp(28px,3.6vw,52px)] font-bold"
-                    bodyClassName="text-base font-semibold text-ink-2 sm:text-lg"
+                    titleClassName="text-section"
+                    bodyClassName="text-sm text-muted sm:text-base"
                 >
                     Trusted by global fashion, footwear and jewelry brands shipping at scale.
                 </SectionIntro>

@@ -107,7 +107,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     active={active}
                     title="Digital Twins"
                     cursorFree
-                    titleClassName="text-[clamp(24px,3vw,40px)]"
+                    titleClassName="text-section"
                     bodyClassName="text-sm text-muted sm:text-base"
                     className="pointer-events-none absolute left-5 top-20 z-20 sm:left-10 sm:top-24 lg:left-16 lg:top-28"
                 >

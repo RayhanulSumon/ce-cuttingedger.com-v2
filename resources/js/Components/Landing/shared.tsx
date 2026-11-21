@@ -103,8 +103,8 @@ export function SectionIntro({
     title,
     children,
     className = '',
-    titleClassName = 'text-[clamp(24px,3vw,40px)]',
-    bodyClassName = 'text-sm text-subtle',
+    titleClassName = 'text-section',
+    bodyClassName = 'text-sm text-muted sm:text-base',
     cursorFree = false,
 }: {
     active: boolean;
@@ -119,7 +119,7 @@ export function SectionIntro({
     return (
         <div className={className} data-twin-cursor-free={cursorFree ? '' : undefined}>
             <Reveal active={active}>
-                <h2 className={`font-display leading-[1.08] text-ink ${titleClassName}`}>
+                <h2 className={`font-display text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>
@@ -233,12 +233,6 @@ export function CustomOrderCta({
                 </OrderCta>
             </Reveal>
         </div>
-    );
-}
-
-export function Eyebrow({ children }: { children: React.ReactNode }) {
-    return (
-        <p className="text-2xs font-semibold uppercase tracking-[0.28em] text-ink-2/70">{children}</p>
     );
 }
 

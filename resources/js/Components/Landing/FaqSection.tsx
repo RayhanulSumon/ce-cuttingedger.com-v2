@@ -15,14 +15,10 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
         >
             <div className="lg:pr-6">
                 <Reveal active={active}>
-                    <h2 className="text-[clamp(28px,4vw,52px)] leading-[1.04] text-ink">
-                        Questions,
-                        <br />
-                        answered.
-                    </h2>
+                    <h2 className="text-section text-ink">Questions, Answered.</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.08}>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-ink-2 sm:text-lg">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
                         Turnaround, formats, pricing and confidentiality. Everything teams ask before their first order.
                     </p>
                 </Reveal>

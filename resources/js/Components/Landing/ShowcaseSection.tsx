@@ -313,16 +313,13 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
         <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
                 <Reveal active={active}>
-                    <h2 className="text-[clamp(30px,4.4vw,60px)] leading-[1.02] text-ink">
-                        What we
-                        <br />
-                        achieved
-                    </h2>
+                    <h2 className="text-section text-ink">What We Achieved</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
-                    <p className="mt-4 max-w-md text-sm leading-relaxed text-ink sm:text-base md:mt-6 md:text-lg">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
                         Catalogs, campaigns and digital twins delivered for fashion and e-commerce brands, from{' '}
-                        <strong className="font-bold">one-off retouches</strong> to <strong className="font-bold">thousand-SKU programmes</strong>.
+                        <strong className="font-semibold text-ink">one-off retouches</strong> to{' '}
+                        <strong className="font-semibold text-ink">thousand-SKU programmes</strong>.
                     </p>
                 </Reveal>
                 <Reveal active={active} delay={0.26} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">

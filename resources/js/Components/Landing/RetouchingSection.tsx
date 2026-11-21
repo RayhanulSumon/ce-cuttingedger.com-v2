@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MoveHorizontal, Sparkles } from 'lucide-react';
-import { Eyebrow, OrderCta, Reveal, SectionProps, STAGE_TRANSITION_MS } from './shared';
+import { OrderCta, Reveal, SectionProps, STAGE_TRANSITION_MS } from './shared';
 
 interface RetouchFix {
     label: string;
@@ -183,17 +183,10 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
         >
             <div>
                 <Reveal active={active}>
-                    <Eyebrow>Retouching · Artifact remedy</Eyebrow>
-                </Reveal>
-                <Reveal active={active} delay={0.08}>
-                    <h2 className="mt-3 text-[clamp(28px,4vw,52px)] leading-[1.04] text-ink">
-                        Every flaw,
-                        <br />
-                        quietly fixed.
-                    </h2>
+                    <h2 className="text-section text-ink">Photo Retouching</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-ink-2 sm:text-lg">
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
                         AI finds the artifacts. Senior retouchers finish them. Pick a specialty or drag the handle to
                         compare the raw capture with the delivered file.
                     </p>

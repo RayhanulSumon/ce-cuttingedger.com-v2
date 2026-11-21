@@ -143,7 +143,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                 <SectionIntro
                     active={active}
                     title="Virtual Try-On"
-                    titleClassName="text-[clamp(24px,3vw,40px)]"
+                    titleClassName="text-section"
                     bodyClassName="text-sm text-muted sm:text-base"
                     className={`relative z-10 ${fadeWhenOpen}`}
                 >
