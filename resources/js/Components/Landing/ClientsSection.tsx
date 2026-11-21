@@ -128,7 +128,7 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
     return (
         <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(320px,46%)] md:grid-rows-1">
             {/* Left column: big heading, description, and testimonial slider */}
-            <div className={`relative z-10 flex flex-col justify-center pb-4 pt-14 sm:pt-20 md:py-8 ${PAD_X}`}>
+            <div className={`relative z-10 flex flex-col justify-center pb-4 pt-24 sm:pt-28 md:py-8 ${PAD_X}`}>
                 <SectionIntro
                     active={active}
                     title="Clients & Testimonials"
@@ -211,7 +211,7 @@ export const ClientsSection = memo(function ClientsSection({ active, clients, te
                 delay={0.12}
                 x="48px"
                 y="0px"
-                className="relative h-72 min-h-0 overflow-hidden pb-6 pr-5 pt-2 sm:pr-10 md:h-full md:pb-8 md:pr-14 md:pt-24 lg:pr-20"
+                className="relative h-72 min-h-0 overflow-hidden pb-6 pr-5 pt-2 sm:pr-10 md:h-full md:pb-8 md:pr-14 md:pt-28 lg:pr-20"
             >
                 <div className="flex h-full gap-3 pl-5 sm:pl-10 md:pl-0">
                     <LogoLane logos={laneOne} direction="down" speed={38} />

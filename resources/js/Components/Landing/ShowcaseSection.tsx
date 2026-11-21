@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, X } from 'lucide-react';
@@ -93,6 +93,22 @@ const COLORED_TILES = [
     },
 ];
 
+interface LaneConfig {
+    direction: -1 | 1;
+    speedPxPerSec: number;
+    seedFraction: number;
+    staggerDelay: number;
+}
+
+const LANE_CONFIGS: readonly LaneConfig[] = [
+    { direction: -1, speedPxPerSec: 38, seedFraction: 0.15, staggerDelay: 0.08 },
+    { direction: 1, speedPxPerSec: 44, seedFraction: 0.55, staggerDelay: 0.16 },
+    { direction: -1, speedPxPerSec: 41, seedFraction: 0.35, staggerDelay: 0.24 },
+];
+
+const ENTRANCE_RAMP_MS = 850;
+const LANE_MASK_CLASS = '[mask-image:linear-gradient(to_bottom,transparent_0%,black_9%,black_91%,transparent_100%)]';
+
 /** Builds the three scrolling columns: photos and solid tiles alternate. */
 function buildColumns(photos: Photo[]): Tile[][] {
     const photo = (n: number): Tile => {
@@ -108,26 +124,43 @@ function buildColumns(photos: Photo[]): Tile[][] {
     ];
 }
 
-function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Tile) => void; decorative: boolean }) {
+const TileCard = memo(function TileCard({
+    tile,
+    onOpen,
+    decorative,
+}: {
+    tile: Tile;
+    onOpen: (tile: Tile) => void;
+    decorative: boolean;
+}) {
     const common = {
         type: 'button' as const,
         onClick: () => onOpen(tile),
         tabIndex: decorative ? -1 : 0,
-        'aria-label': `Open ${tile.title}`,
+        'aria-hidden': decorative || undefined,
+        'aria-label': decorative ? undefined : `Open ${tile.title}`,
         className:
-            'group relative aspect-[0.73] w-full shrink-0 cursor-pointer overflow-hidden rounded-[18px] text-left transition-[transform,box-shadow] duration-300 hover:z-10 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_24px_40px_-18px_rgba(15,15,14,0.55)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:rounded-[22px]',
+            'group relative aspect-[0.73] w-full shrink-0 cursor-pointer overflow-hidden rounded-[18px] text-left backface-hidden transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:z-10 hover:-translate-y-1 hover:scale-[1.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:rounded-[22px]',
     };
 
     const hoverChip = (
-        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-surface text-ink opacity-0 shadow-md transition-[opacity,transform] duration-300 group-hover:rotate-45 group-hover:opacity-100">
+        <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-surface text-ink opacity-0 shadow-md transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45 group-hover:opacity-100">
             <ArrowUpRight size={16} />
         </span>
     );
 
     if (tile.kind === 'photo') {
         return (
-            <button {...common} style={{ backgroundImage: `url(${tile.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <button {...common} className={`${common.className} bg-surface-2 ring-1 ring-inset ring-ink/8`}>
+                <img
+                    src={tile.image}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-4 pt-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <span className="block text-2xs font-semibold uppercase tracking-[0.22em] opacity-80">{tile.label}</span>
                     <span className="mt-1 block text-sm font-bold leading-tight">{tile.title}</span>
                 </span>
@@ -139,7 +172,14 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
     return (
         <button
             {...common}
-            style={{ backgroundColor: tile.bg, color: tile.fg, boxShadow: tile.bg === '#f9f6f1' ? 'inset 0 0 0 1px #e9e6df' : undefined }}
+            style={{
+                backgroundColor: tile.bg,
+                color: tile.fg,
+                boxShadow:
+                    tile.bg === '#f9f6f1'
+                        ? 'inset 0 0 0 1px #e9e6df'
+                        : 'inset 0 1px 0 rgba(255, 255, 255, 0.18)',
+            }}
         >
             <span className="flex h-full flex-col justify-between p-4 sm:p-5">
                 <span className="text-2xs font-semibold uppercase tracking-[0.25em] opacity-70">{tile.label}</span>
@@ -148,33 +188,7 @@ function TileCard({ tile, onOpen, decorative }: { tile: Tile; onOpen: (tile: Til
             {hoverChip}
         </button>
     );
-}
-
-/** One vertical lane. Hovering (or focusing) a lane freezes only that lane; the others keep moving. */
-function Column({
-    tiles,
-    direction,
-    speed,
-    onOpen,
-}: {
-    tiles: Tile[];
-    direction: 'down' | 'up';
-    speed: number;
-    onOpen: (tile: Tile) => void;
-}) {
-    return (
-        <div className="min-w-0 flex-1 overflow-hidden px-1 py-1">
-            <div
-                className={`flex flex-col gap-3 pb-3 will-change-transform hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] ${direction === 'down' ? 'landing-col-down' : 'landing-col-up'}`}
-                style={{ ['--landing-col-speed' as string]: `${speed}s` }}
-            >
-                {[...tiles, ...tiles].map((tile, i) => (
-                    <TileCard key={i} tile={tile} onOpen={onOpen} decorative={i >= tiles.length} />
-                ))}
-            </div>
-        </div>
-    );
-}
+});
 
 /** Detail card for a tile: what it is, plus the pages it leads to. */
 function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }) {
@@ -217,14 +231,12 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                         onClick={(event) => event.stopPropagation()}
                     >
                         <div
-                            className="min-h-[200px] bg-cover bg-center sm:min-h-[360px]"
-                            style={
-                                tile.kind === 'photo'
-                                    ? { backgroundImage: `url(${tile.image})` }
-                                    : { backgroundColor: tile.bg, color: tile.fg }
-                            }
+                            className="relative min-h-[200px] overflow-hidden bg-surface-2 sm:min-h-[360px]"
+                            style={tile.kind === 'color' ? { backgroundColor: tile.bg, color: tile.fg } : undefined}
                         >
-                            {tile.kind === 'color' && (
+                            {tile.kind === 'photo' ? (
+                                <img src={tile.image} alt={tile.title} decoding="async" className="h-full w-full object-cover" />
+                            ) : (
                                 <div className="flex h-full flex-col justify-between p-6">
                                     <span className="text-xs font-semibold uppercase tracking-[0.25em] opacity-70">{tile.label}</span>
                                     <span className="text-4xl font-black uppercase leading-[0.95] tracking-[-0.03em]">{tile.title}</span>
@@ -277,6 +289,13 @@ interface ShowcaseProps extends SectionProps {
 
 export const ShowcaseSection = memo(function ShowcaseSection({ active, projects, onOverlayChange }: ShowcaseProps) {
     const [openTile, setOpenTile] = useState<Tile | null>(null);
+    const trackRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const pausedRefs = useRef<[boolean, boolean, boolean]>([false, false, false]);
+    const laneStateRef = useRef([
+        { offset: 0, loopHeight: 0, factor: 1, seeded: false },
+        { offset: 0, loopHeight: 0, factor: 1, seeded: false },
+        { offset: 0, loopHeight: 0, factor: 1, seeded: false },
+    ]);
 
     const columns = useMemo(() => {
         const fromProjects: Photo[] = projects
@@ -296,6 +315,123 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
         return buildColumns(fromProjects.length >= 2 ? [...fromProjects, ...fallback] : fallback);
     }, [projects]);
 
+    // Measure half-track loop heights out of band via ResizeObserver so the RAF loop never reads layout.
+    useEffect(() => {
+        const measureTracks = () => {
+            trackRefs.current.forEach((track, i) => {
+                if (!track) {
+                    return;
+                }
+                const half = track.scrollHeight / 2;
+                if (half <= 0) {
+                    return;
+                }
+                const lane = laneStateRef.current[i];
+                lane.loopHeight = half;
+                if (!lane.seeded) {
+                    lane.seeded = true;
+                    lane.offset = -half * LANE_CONFIGS[i].seedFraction;
+                } else {
+                    lane.offset = ((lane.offset % half) - half) % half;
+                }
+                track.style.transform = `translate3d(0, ${lane.offset.toFixed(2)}px, 0)`;
+            });
+        };
+
+        measureTracks();
+        const observer = new ResizeObserver(measureTracks);
+        trackRefs.current.forEach((track) => {
+            if (track) {
+                observer.observe(track);
+            }
+        });
+        return () => observer.disconnect();
+    }, [columns]);
+
+    // Single RAF engine driving all 3 marquee lanes with entrance ramp and smooth hover deceleration.
+    useEffect(() => {
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) {
+            trackRefs.current.forEach((track) => {
+                if (track) {
+                    track.style.transform = 'translate3d(0, 0, 0)';
+                }
+            });
+            return;
+        }
+
+        if (!active || openTile !== null) {
+            return;
+        }
+
+        let rafId = 0;
+        let lastTime = 0;
+        let startTime = 0;
+        let disposed = false;
+
+        const onVisibilityChange = () => {
+            if (!document.hidden) {
+                lastTime = 0;
+            }
+        };
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        const tick = (now: number) => {
+            if (disposed) {
+                return;
+            }
+            if (!document.hidden) {
+                if (!startTime) {
+                    startTime = now;
+                }
+                const dt = lastTime ? Math.min(0.05, (now - lastTime) / 1000) : 1 / 60;
+                lastTime = now;
+
+                const rampT = Math.min(1, (now - startTime) / ENTRANCE_RAMP_MS);
+                const ramp = 1 - Math.pow(1 - rampT, 3);
+                const brakeLerp = 1 - Math.exp(-8 * dt);
+
+                for (let i = 0; i < LANE_CONFIGS.length; i++) {
+                    const track = trackRefs.current[i];
+                    const lane = laneStateRef.current[i];
+                    if (!track || lane.loopHeight <= 0) {
+                        continue;
+                    }
+                    const cfg = LANE_CONFIGS[i];
+                    const targetFactor = pausedRefs.current[i] ? 0 : 1;
+                    lane.factor += (targetFactor - lane.factor) * brakeLerp;
+                    if (Math.abs(targetFactor - lane.factor) < 0.002) {
+                        lane.factor = targetFactor;
+                    }
+
+                    const delta = cfg.direction * cfg.speedPxPerSec * ramp * lane.factor * dt;
+                    if (delta !== 0) {
+                        let next = lane.offset + delta;
+                        while (next >= 0) {
+                            next -= lane.loopHeight;
+                        }
+                        while (next < -lane.loopHeight) {
+                            next += lane.loopHeight;
+                        }
+                        lane.offset = next;
+                        track.style.transform = `translate3d(0, ${next.toFixed(2)}px, 0)`;
+                    }
+                }
+            } else {
+                lastTime = 0;
+            }
+
+            rafId = requestAnimationFrame(tick);
+        };
+
+        rafId = requestAnimationFrame(tick);
+        return () => {
+            disposed = true;
+            cancelAnimationFrame(rafId);
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        };
+    }, [active, openTile]);
+
     const open = useCallback(
         (tile: Tile) => {
             setOpenTile(tile);
@@ -311,19 +447,23 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
 
     return (
         <div className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
-            <div className={`relative z-10 flex flex-col justify-center pb-4 pt-20 sm:pt-24 md:pb-8 ${PAD_X}`}>
+            <div className={`relative z-10 flex flex-col justify-center pb-4 pt-24 sm:pt-28 md:pb-10 md:pt-28 ${PAD_X}`}>
                 <Reveal active={active}>
                     <h2 className="text-section text-ink">What We Achieved</h2>
                 </Reveal>
-                <Reveal active={active} delay={0.16}>
+                <Reveal active={active} delay={0.14}>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">
                         Catalogs, campaigns and digital twins delivered for fashion and e-commerce brands, from{' '}
                         <strong className="font-semibold text-ink">one-off retouches</strong> to{' '}
                         <strong className="font-semibold text-ink">thousand-SKU programmes</strong>.
                     </p>
                 </Reveal>
-                <Reveal active={active} delay={0.26} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
-                    <Link href="/case-studies" prefetch className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-surface transition-transform duration-300 hover:-translate-y-0.5">
+                <Reveal active={active} delay={0.24} className="mt-5 flex flex-wrap items-center gap-3 md:mt-8">
+                    <Link
+                        href="/case-studies"
+                        prefetch
+                        className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-surface transition-transform duration-300 hover:-translate-y-0.5"
+                    >
                         View case studies
                     </Link>
                     <Link href="/book-a-demo" prefetch className="group flex items-center gap-3 text-sm font-bold">
@@ -335,21 +475,56 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
                 </Reveal>
             </div>
 
-            <Reveal
-                active={active}
-                delay={0.1}
-                x="48px"
-                y="0px"
-                className="relative min-h-0 overflow-hidden pb-6 pr-6 pt-4 sm:pr-10 md:pb-8 md:pr-14 md:pt-24 lg:pr-20"
-            >
-                <div className="flex h-full gap-3.5 pl-5 sm:pl-10 md:pl-0">
-                    <Column tiles={columns[0]} direction="down" speed={38} onOpen={open} />
-                    <Column tiles={columns[1]} direction="up" speed={30} onOpen={open} />
-                    <div className="hidden min-w-0 flex-1 sm:flex">
-                        <Column tiles={columns[2]} direction="down" speed={34} onOpen={open} />
-                    </div>
+            <div className="relative min-h-0 overflow-hidden px-5 pb-6 pt-3 sm:px-10 md:pb-10 md:pl-0 md:pr-16 md:pt-28 lg:pr-20 lg:pt-28">
+                <div className="flex h-full gap-3.5">
+                    {columns.map((tiles, colIdx) => (
+                        <Reveal
+                            key={colIdx}
+                            active={active}
+                            delay={LANE_CONFIGS[colIdx].staggerDelay}
+                            y="34px"
+                            x="0px"
+                            className={`${colIdx === 2 ? 'hidden sm:block' : ''} h-full min-w-0 flex-1`}
+                        >
+                            <div
+                                className={`h-full w-full overflow-hidden px-1 py-1 [contain:layout_style_paint] ${LANE_MASK_CLASS}`}
+                                onPointerEnter={(event) => {
+                                    if (event.pointerType === 'mouse') {
+                                        pausedRefs.current[colIdx] = true;
+                                    }
+                                }}
+                                onPointerLeave={() => {
+                                    pausedRefs.current[colIdx] = false;
+                                }}
+                                onFocus={() => {
+                                    pausedRefs.current[colIdx] = true;
+                                }}
+                                onBlur={(event) => {
+                                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                                        pausedRefs.current[colIdx] = false;
+                                    }
+                                }}
+                            >
+                                <div
+                                    ref={(el) => {
+                                        trackRefs.current[colIdx] = el;
+                                    }}
+                                    className="flex flex-col gap-3 pb-3 will-change-transform"
+                                >
+                                    {[...tiles, ...tiles].map((tile, tileIdx) => (
+                                        <TileCard
+                                            key={`${tile.id}-${tileIdx}`}
+                                            tile={tile}
+                                            onOpen={open}
+                                            decorative={tileIdx >= tiles.length}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </Reveal>
+                    ))}
                 </div>
-            </Reveal>
+            </div>
 
             <TileModal tile={openTile} onClose={close} />
         </div>

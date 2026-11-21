@@ -314,7 +314,7 @@ html.lenis body {
     position: absolute;
     inset: 0;
     visibility: hidden;
-    contain: layout paint;
+    contain: layout style;
     backface-visibility: hidden;
 }
 
@@ -346,9 +346,27 @@ html.lenis body {
     animation-play-state: paused !important;
 }
 
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='active'],
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='leaving'],
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='active'],
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='leaving'] {
+    will-change: transform;
+}
+
+.fp-stage[data-dir='forward'] > .fp-panel[data-state='active']::before,
+.fp-stage[data-dir='backward'] > .fp-panel[data-state='leaving']::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -44px;
+    height: 44px;
+    background: linear-gradient(to top, rgba(16, 17, 20, 0.22), transparent);
+    pointer-events: none;
+}
+
 .fp-stage[data-dir='forward'] > .fp-panel[data-state='active'] {
     z-index: 3;
-    box-shadow: 0 -24px 80px rgba(0, 0, 0, 0.28);
     animation: fp-slide-in var(--fp-duration) var(--fp-ease) both;
 }
 
@@ -363,7 +381,6 @@ html.lenis body {
 
 .fp-stage[data-dir='backward'] > .fp-panel[data-state='leaving'] {
     z-index: 3;
-    box-shadow: 0 -24px 80px rgba(0, 0, 0, 0.28);
     animation: fp-slide-out var(--fp-duration) var(--fp-ease) both;
 }
 
@@ -419,14 +436,19 @@ html.lenis body {
 .lp-reveal {
     opacity: 0;
     transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 28px), 0);
+    backface-visibility: hidden;
     transition:
         opacity 0s linear var(--fp-duration, 1s),
         transform 0s linear var(--fp-duration, 1s);
 }
 
+.fp-panel[data-state='active'] .lp-reveal {
+    will-change: transform, opacity;
+}
+
 .lp-reveal[data-shown='true'] {
     opacity: 1;
-    transform: none;
+    transform: translate3d(0, 0, 0);
     transition:
         opacity calc(var(--reveal-duration, 0.9s) * 0.75) ease-out var(--reveal-delay, 0s),
         transform var(--reveal-duration, 0.9s) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0s);
@@ -511,6 +533,74 @@ html.lenis body {
     50% { transform: translateX(4px); opacity: 1; }
 }
 
+/* ── Landing: Capabilities 3D depth cards ──────────────────────────────── */
+@layer components {
+    .cap-card {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        transition:
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.35s ease,
+            box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cap-card:hover,
+    .cap-card.is-tilting {
+        will-change: transform;
+    }
+
+    .cap-card-media {
+        transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .cap-card-content {
+        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .cap-card-sheen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 340px;
+        height: 340px;
+        margin-left: -170px;
+        margin-top: -170px;
+        border-radius: 9999px;
+        background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.22) 0%,
+            color-mix(in srgb, var(--color-primary) 16%, transparent) 42%,
+            transparent 72%
+        );
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        will-change: transform, opacity;
+    }
+
+    @media (min-width: 1024px) {
+        .cap-grid:hover .cap-card-wrap:not(:hover) .cap-card {
+            opacity: 0.84;
+            transform: scale(0.985);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cap-card,
+    .cap-card-media,
+    .cap-card-content {
+        transform: none !important;
+        transition: opacity 0.2s ease !important;
+    }
+
+    .cap-card-sheen {
+        display: none;
+    }
+}
+
 /* ── Landing: Case study scroll-driven cards ─────────────────────────────── */
 .cs {
     position: relative;
@@ -533,14 +623,29 @@ html.lenis body {
     left: 0;
     border-radius: 28px;
     overflow: hidden;
-    container-type: size;
+    contain: layout style paint;
+    backface-visibility: hidden;
     background: var(--cb, var(--color-secondary));
     color: var(--ci, var(--color-secondary-foreground));
-    will-change: transform, width, height;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 24px 60px -28px rgba(15, 17, 22, 0.42);
+    will-change: transform, clip-path, opacity;
+}
+
+.cs-card.c1 {
+    z-index: 1;
 }
 
 .cs-card.c2 {
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 8%, transparent);
+    z-index: 2;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 10%, transparent),
+        0 24px 60px -28px rgba(15, 17, 22, 0.2);
+}
+
+.cs-card.c3 {
+    z-index: 3;
 }
 
 .cs-in {
@@ -548,35 +653,44 @@ html.lenis body {
     z-index: 1;
     height: 100%;
     display: grid;
-    gap: 24px;
-    padding: clamp(20px, 3vw, 44px);
-    padding-top: clamp(84px, 12vh, 120px);
+    gap: clamp(20px, 2.8vw, 44px);
+    padding: clamp(26px, 3vw, 44px);
     align-content: end;
     grid-template-rows: 1fr auto;
-    transition: transform 0.25s ease-out;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: 50% 50%;
 }
 
+.cs-card.hov .cs-in {
+    will-change: transform;
+}
+
 .cs-in .cs-media {
-    border-radius: 16px;
+    position: relative;
+    border-radius: 18px;
     min-height: 0;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    transform: translate(var(--tx, 0px), var(--ty, 0px));
-    transition: transform 0.25s ease-out;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-secondary) 15%, transparent);
+    box-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.45);
+    transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-media img,
+.cs-bg img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .cs-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
     opacity: 0;
-    transition: opacity 0.5s ease;
     pointer-events: none;
+    will-change: opacity;
 }
 
 .cs-bg::after {
@@ -590,8 +704,8 @@ html.lenis body {
     display: grid;
     gap: 14px;
     justify-items: start;
-    transform: translate(calc(var(--tx, 0px) * -0.4), calc(var(--ty, 0px) * -0.4));
-    transition: transform 0.25s ease-out;
+    transform: translate3d(calc(var(--tx, 0px) * -0.4), calc(var(--ty, 0px) * -0.4), 0);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cs-copy .cs-tag {
@@ -604,16 +718,16 @@ html.lenis body {
 }
 
 .cs-copy h3 {
-    font-size: clamp(28px, 4.2vw, 60px);
+    font-size: clamp(26px, 3.8vw, 54px);
     font-weight: 800;
-    line-height: 1;
+    line-height: 1.02;
     letter-spacing: -0.02em;
     margin: 0;
 }
 
 .cs-copy p {
     opacity: 0.9;
-    max-width: 52ch;
+    max-width: 50ch;
     margin: 0;
 }
 
@@ -627,7 +741,7 @@ html.lenis body {
     display: block;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(28px, 3vw, 40px);
+    font-size: clamp(26px, 2.8vw, 38px);
     line-height: 1.05;
 }
 
@@ -649,39 +763,23 @@ html.lenis body {
     transform: translateY(-2px);
 }
 
-@container (min-width: 920px) {
+@media (min-width: 820px) {
     .cs-in {
-        grid-template-columns: 1fr 1.1fr;
+        --cs-pad: clamp(24px, 2.8vw, 40px);
+        padding: var(--cs-pad);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-rows: 1fr;
+        column-gap: calc(var(--cs-pad) * 2 + 16px);
         align-items: end;
+    }
+
+    .cs-in .cs-copy {
+        order: 1;
     }
 
     .cs-in .cs-media {
         order: 2;
         height: 100%;
-    }
-}
-
-@container (max-width: 919px) {
-    .cs-bg {
-        opacity: 0.2;
-    }
-
-    .cs-copy p,
-    .cs-nums {
-        display: none;
-    }
-
-    .cs-in .cs-media {
-        display: none;
-    }
-
-    .cs-in {
-        grid-template-rows: 1fr;
-    }
-
-    .cs-copy {
-        align-content: end;
     }
 }
 
@@ -691,7 +789,53 @@ html.lenis body {
     }
 
     .cs-in {
-        padding: 18px;
+        --cs-pad: 18px;
+        padding: var(--cs-pad);
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        row-gap: calc(var(--cs-pad) * 2 + 16px);
+        align-content: stretch;
+    }
+
+    .cs-copy {
+        order: 1;
+        min-height: 0;
+        align-content: end;
+        gap: 8px;
+    }
+
+    .cs-in .cs-media {
+        order: 2;
+        height: 100%;
+        min-height: 0;
+        border-radius: 14px;
+    }
+
+    .cs-copy h3 {
+        font-size: clamp(20px, 5.2vw, 28px);
+    }
+
+    .cs-copy p {
+        font-size: 13px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .cs-nums {
+        gap: 18px;
+        font-size: 12px;
+    }
+
+    .cs-nums b {
+        font-size: 20px;
+    }
+
+    .cs-btn {
+        padding: 10px 20px;
+        font-size: 13px;
     }
 
     .cs-dots {
@@ -699,64 +843,30 @@ html.lenis body {
     }
 
     .cs-hint {
-        bottom: 5px;
+        bottom: 8px;
         font-size: 12px;
         color: var(--color-muted);
-    }
-
-    @container (min-height: 460px) {
-        .cs-bg {
-            opacity: 0;
-        }
-
-        .cs-in {
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr auto;
-            gap: 14px;
-            padding: 20px;
-        }
-
-        .cs-in .cs-media {
-            display: block;
-            order: 1;
-            height: 100%;
-            min-height: 160px;
-            border-radius: 14px;
-        }
-
-        .cs-copy {
-            order: 2;
-            gap: 8px;
-        }
-
-        .cs-copy h3 {
-            font-size: clamp(22px, 5.8vw, 32px);
-        }
-
-        .cs-copy p {
-            display: block;
-            font-size: 13px;
-            line-height: 1.45;
-        }
-
-        .cs-nums {
-            display: flex;
-            gap: 20px;
-            font-size: 12px;
-        }
-
-        .cs-nums b {
-            font-size: 22px;
-        }
     }
 }
 
 .cs-glow {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 520px;
+    height: 520px;
+    margin-left: -260px;
+    margin-top: -260px;
+    border-radius: 9999px;
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
+        transparent 65%
+    );
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
+    will-change: transform, opacity;
 }
 
 .cs-card.hov .cs-glow {
@@ -821,7 +931,7 @@ html.lenis body {
 }
 
 .cs.anim .c1 .cs-in .cs-media {
-    transition: transform 0.25s ease-out, opacity 0.9s ease 0.5s;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease 0.5s;
 }
 
 .cs.anim .c1.in .cs-copy > :nth-child(1) { transition-delay: 0.35s; }
@@ -833,7 +943,7 @@ html.lenis body {
 @media (prefers-reduced-motion: reduce) {
     .cs {
         height: auto;
-        padding: 5vw;
+        padding: 88px 5vw 5vw;
     }
 
     .cs-stage {
@@ -849,17 +959,9 @@ html.lenis body {
         width: auto !important;
         height: auto !important;
         transform: none !important;
+        clip-path: none !important;
+        opacity: 1 !important;
         min-height: 70vh;
-        container-type: inline-size;
-    }
-
-    .cs-copy p,
-    .cs-nums {
-        display: flex !important;
-    }
-
-    .cs-copy p {
-        display: block !important;
     }
 
     .cs-dots,

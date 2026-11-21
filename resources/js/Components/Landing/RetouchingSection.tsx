@@ -179,7 +179,7 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
     return (
         <div
             data-scrollable
-            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 py-12 sm:px-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-24"
+            className="grid h-full w-full grid-cols-1 items-center gap-8 overflow-y-auto bg-page px-5 pb-10 pt-24 sm:px-10 sm:pt-28 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-16 lg:pb-8 lg:pt-28"
         >
             <div>
                 <Reveal active={active}>

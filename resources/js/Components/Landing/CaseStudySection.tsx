@@ -27,7 +27,6 @@ const seg = (p: number, a: number, b: number): number => {
     const t = clamp((p - a) / (b - a));
     return t * t * (3 - 2 * t);
 };
-const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 const snapPx = (v: number): number => Math.round(v * 2) / 2;
 
 interface ParsedMetric {
@@ -50,16 +49,20 @@ function parseMetricValue(raw: string): ParsedMetric {
     };
 }
 
-interface CardCache {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-    transform: string;
+interface CardVisualCache {
     visible: boolean;
+    transform: string;
+    clipPath: string;
+    opacity: string;
+    bgOpacity: string;
 }
 
-function applyCardStyle(el: HTMLElement, cache: CardCache, next: CardCache) {
+function applyCardVisual(
+    el: HTMLElement,
+    bgEl: HTMLElement | null,
+    cache: CardVisualCache,
+    next: CardVisualCache,
+) {
     if (cache.visible !== next.visible) {
         cache.visible = next.visible;
         el.style.visibility = next.visible ? 'visible' : 'hidden';
@@ -67,31 +70,33 @@ function applyCardStyle(el: HTMLElement, cache: CardCache, next: CardCache) {
     if (!next.visible) {
         return;
     }
-    if (cache.left !== next.left) {
-        cache.left = next.left;
-        el.style.left = `${next.left}px`;
-    }
-    if (cache.top !== next.top) {
-        cache.top = next.top;
-        el.style.top = `${next.top}px`;
-    }
-    if (cache.width !== next.width) {
-        cache.width = next.width;
-        el.style.width = `${next.width}px`;
-    }
-    if (cache.height !== next.height) {
-        cache.height = next.height;
-        el.style.height = `${next.height}px`;
-    }
     if (cache.transform !== next.transform) {
         cache.transform = next.transform;
         el.style.transform = next.transform;
+    }
+    if (cache.clipPath !== next.clipPath) {
+        cache.clipPath = next.clipPath;
+        el.style.clipPath = next.clipPath;
+    }
+    if (cache.opacity !== next.opacity) {
+        cache.opacity = next.opacity;
+        el.style.opacity = next.opacity;
+    }
+    if (bgEl && cache.bgOpacity !== next.bgOpacity) {
+        cache.bgOpacity = next.bgOpacity;
+        bgEl.style.opacity = next.bgOpacity;
     }
 }
 
 export const CaseStudySection = memo(function CaseStudySection({ active, projects }: CaseStudyProps) {
     const isMobile = useMediaQuery('(max-width: 767px)') === true;
     const [rememberedScrollTop, setRememberedScrollTop] = useRemember(0, 'home:case-study-scroll');
+    const activeRef = useRef(active);
+    activeRef.current = active;
+    const rememberedScrollRef = useRef(rememberedScrollTop);
+    rememberedScrollRef.current = rememberedScrollTop;
+    const reqRef = useRef<() => void>(() => {});
+
     const scrollerRef = useRef<HTMLDivElement>(null);
     const csRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<HTMLDivElement>(null);
@@ -118,6 +123,11 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         });
     }, []);
 
+    // Trigger a frame evaluation whenever section active state changes without rebuilding listeners.
+    useEffect(() => {
+        reqRef.current();
+    }, [active]);
+
     useEffect(() => {
         const cs = csRef.current;
         const stage = stageRef.current;
@@ -131,10 +141,9 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         }
 
         cs.classList.add('anim');
+        const bgEls = cards.map((card) => card.querySelector<HTMLElement>('.cs-bg'));
 
-        const metricNodes = cards.map((card) =>
-            Array.from(card.querySelectorAll<HTMLElement>('[data-n]')),
-        );
+        const metricNodes = cards.map((card) => Array.from(card.querySelectorAll<HTMLElement>('[data-n]')));
         metricNodes.forEach((list) => {
             list.forEach((node) => {
                 const prefix = node.dataset.p ?? '';
@@ -166,18 +175,46 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             });
         };
 
-        // Cached layout metrics — updated only on resize so scroll frames never force reflows.
+        // Cached layout metrics — applied once per resize so scroll frames never trigger layout or paint.
         let W = 0;
         let H = 0;
         let vh = window.innerHeight;
         let maxScroll = 1;
         let csDocTop = 0;
         let csHeight = 1;
+        let mob = false;
+        let halfClip = 0;
+        let halfVClip = 0;
 
         const measure = () => {
             W = stage.clientWidth;
             H = stage.clientHeight;
             vh = window.innerHeight;
+            mob = W < 820;
+
+            const g = 16;
+            const m = mob ? 16 : Math.max(20, Math.min(64, W * 0.04));
+            const topM = mob ? 84 : 92;
+            const botM = mob ? 22 : 28;
+            const iw = Math.max(200, W - 2 * m);
+            const ih = Math.max(240, H - topM - botM);
+            const hw = (iw - g) / 2;
+            const hh = (ih - g) / 2;
+            halfClip = snapPx(iw - hw);
+            halfVClip = snapPx(ih - hh);
+
+            const leftPx = `${snapPx(m)}px`;
+            const topPx = `${snapPx(topM)}px`;
+            const widthPx = `${snapPx(iw)}px`;
+            const heightPx = `${snapPx(ih)}px`;
+
+            cards.forEach((card) => {
+                card.style.left = leftPx;
+                card.style.top = topPx;
+                card.style.width = widthPx;
+                card.style.height = heightPx;
+            });
+
             const scroller = scrollerRef.current;
             if (scroller) {
                 maxScroll = Math.max(1, scroller.scrollHeight - scroller.clientHeight);
@@ -198,11 +235,13 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
         let lastHintVisible: boolean | null = null;
         let rafId = 0;
         let disposed = false;
+        let persistTimer = 0;
+        const clearHoverRects: (() => void)[] = [];
 
-        const caches: CardCache[] = [
-            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
-            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
-            { left: -1, top: -1, width: -1, height: -1, transform: '', visible: true },
+        const caches: CardVisualCache[] = [
+            { visible: true, transform: '', clipPath: '', opacity: '', bgOpacity: '' },
+            { visible: true, transform: '', clipPath: '', opacity: '', bgOpacity: '' },
+            { visible: true, transform: '', clipPath: '', opacity: '', bgOpacity: '' },
         ];
 
         const startEntry = (now: number) => {
@@ -212,7 +251,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             cards[0].classList.add('in');
         };
 
-        const syncUi = (p: number, e1: number, e3: number) => {
+        const syncUi = (p: number, secondVis: number, thirdVis: number) => {
             const stepIndex = p < 0.17 ? 0 : p < 0.5 ? 1 : 2;
             if (stepIndex !== lastDot) {
                 lastDot = stepIndex;
@@ -228,10 +267,10 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             if (ent > 0.8) {
                 countUp(0);
             }
-            if (e1 > 0.7) {
+            if (secondVis > 0.7) {
                 countUp(1);
             }
-            if (e3 > 0.7) {
+            if (thirdVis > 0.7) {
                 countUp(2);
             }
         };
@@ -248,9 +287,9 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             let tgt = 0;
             if (scroller) {
                 tgt = clamp(scroller.scrollTop / maxScroll);
-                if (active && !entered) {
+                if (activeRef.current && !entered) {
                     startEntry(now);
-                } else if (!active && entered) {
+                } else if (!activeRef.current && entered) {
                     entered = false;
                     ent = 0;
                     cards[0].classList.remove('in');
@@ -274,67 +313,87 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 animatingEntry = k < 1;
             }
 
+            const prevCur = cur;
             if (cur < 0) {
                 cur = tgt;
             } else {
-                const alpha = 1 - Math.exp(-14 * dt);
+                const alpha = 1 - Math.exp(-12 * dt);
                 cur += (tgt - cur) * alpha;
-                if (Math.abs(tgt - cur) < 0.0008) {
+                if (Math.abs(tgt - cur) < 0.0005) {
                     cur = tgt;
                 }
             }
+            if (cur !== prevCur) {
+                clearHoverRects.forEach((fn) => fn());
+            }
+
             const p = cur;
-
-            const g = 16;
-            const m = Math.max(12, W * 0.03);
-            const mob = W < 820;
-            const topM = mob ? 74 : m;
-            const botM = mob ? 28 : m;
-            const iw = W - 2 * m;
-            const ih = H - topM - botM;
-
             const e1 = seg(p, 0.06, 0.2);
             const e2 = seg(p, 0.28, 0.42);
             const e3 = seg(p, 0.5, 0.64);
             const e4 = seg(p, 0.76, 0.92);
             const f = e2 * (1 - e3);
-            const hw = (iw - g) / 2;
-            const hh = (ih - g) / 2;
-
             const [a, b, c] = cards;
 
-            applyCardStyle(a, caches[0], {
-                left: snapPx(m),
-                top: snapPx(topM),
-                width: snapPx(mob ? iw : lerp(iw, hw, e1)),
-                height: snapPx(mob ? lerp(ih, hh, e1) : ih),
-                transform: ent < 1 ? `scale(${(0.95 + 0.05 * ent).toFixed(4)})` : 'none',
-                visible: f < 0.999 && e4 < 0.999,
-            });
+            if (mob) {
+                const botClip1 = snapPx(halfVClip * e1);
+                applyCardVisual(a, bgEls[0], caches[0], {
+                    visible: f < 0.999 && e4 < 0.999,
+                    transform: ent < 1 ? `scale(${(0.95 + 0.05 * ent).toFixed(4)})` : 'none',
+                    clipPath: botClip1 > 0.5 ? `inset(0px 0px ${botClip1}px 0px round 22px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: (e1 * 0.2).toFixed(3),
+                });
 
-            applyCardStyle(b, caches[1], {
-                left: snapPx(mob ? m : lerp(m + hw + g, m, f)),
-                top: snapPx(mob ? lerp(topM + hh + g, topM, f) : topM),
-                width: snapPx(mob ? iw : lerp(hw, iw, f)),
-                height: snapPx(mob ? lerp(hh, ih, f) : ih),
-                transform:
-                    e1 < 1
-                        ? `translate3d(${snapPx((1 - e1) * (mob ? W : 0))}px, ${snapPx((1 - e1) * (mob ? 0 : H))}px, 0)`
-                        : 'none',
-                visible: e1 > 0.001 && e4 < 0.999,
-            });
+                const tx2 = e1 < 1 ? snapPx((1 - e1) * W) : 0;
+                const ty2 = snapPx((1 - f) * halfVClip);
+                applyCardVisual(b, bgEls[1], caches[1], {
+                    visible: e1 > 0.001 && e4 < 0.999,
+                    transform: tx2 === 0 && ty2 === 0 ? 'none' : `translate3d(${tx2}px, ${ty2}px, 0)`,
+                    clipPath: ty2 > 0.5 ? `inset(0px 0px ${ty2}px 0px round 22px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: ((1 - f) * 0.2).toFixed(3),
+                });
 
-            applyCardStyle(c, caches[2], {
-                left: snapPx(m),
-                top: snapPx(topM),
-                width: snapPx(mob ? iw : lerp(hw, iw, e4)),
-                height: snapPx(mob ? lerp(hh, ih, e4) : ih),
-                transform:
-                    e3 < 1
-                        ? `translate3d(${snapPx(mob ? -(1 - e3) * W : 0)}px, ${snapPx(mob ? 0 : (1 - e3) * (H + 40))}px, 0)`
-                        : 'none',
-                visible: e3 > 0.001,
-            });
+                const tx3 = e3 < 1 ? snapPx(-(1 - e3) * W) : 0;
+                const botClip3 = snapPx((1 - e4) * halfVClip);
+                applyCardVisual(c, bgEls[2], caches[2], {
+                    visible: e3 > 0.001,
+                    transform: tx3 === 0 ? 'none' : `translate3d(${tx3}px, 0, 0)`,
+                    clipPath: botClip3 > 0.5 ? `inset(0px 0px ${botClip3}px 0px round 22px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: ((1 - e4) * 0.2).toFixed(3),
+                });
+            } else {
+                const rightClip1 = snapPx(halfClip * e1);
+                applyCardVisual(a, bgEls[0], caches[0], {
+                    visible: f < 0.999 && e4 < 0.999,
+                    transform: ent < 1 ? `scale(${(0.95 + 0.05 * ent).toFixed(4)})` : 'none',
+                    clipPath: rightClip1 > 0.5 ? `inset(0px ${rightClip1}px 0px 0px round 28px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: (e1 * 0.2).toFixed(3),
+                });
+
+                const tx2 = snapPx((1 - f) * halfClip);
+                const ty2 = e1 < 1 ? snapPx((1 - e1) * H) : 0;
+                applyCardVisual(b, bgEls[1], caches[1], {
+                    visible: e1 > 0.001 && e4 < 0.999,
+                    transform: tx2 === 0 && ty2 === 0 ? 'none' : `translate3d(${tx2}px, ${ty2}px, 0)`,
+                    clipPath: tx2 > 0.5 ? `inset(0px ${tx2}px 0px 0px round 28px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: ((1 - f) * 0.2).toFixed(3),
+                });
+
+                const ty3 = e3 < 1 ? snapPx((1 - e3) * (H + 40)) : 0;
+                const rightClip3 = snapPx((1 - e4) * halfClip);
+                applyCardVisual(c, bgEls[2], caches[2], {
+                    visible: e3 > 0.001,
+                    transform: ty3 === 0 ? 'none' : `translate3d(0, ${ty3}px, 0)`,
+                    clipPath: rightClip3 > 0.5 ? `inset(0px ${rightClip3}px 0px 0px round 28px)` : 'none',
+                    opacity: '1',
+                    bgOpacity: ((1 - e4) * 0.2).toFixed(3),
+                });
+            }
 
             syncUi(p, e1, e3);
             if (cur !== tgt || animatingEntry) {
@@ -349,6 +408,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 rafId = requestAnimationFrame(frame);
             }
         };
+        reqRef.current = req;
 
         const onResize = () => {
             measure();
@@ -364,31 +424,51 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             }
             let hoverRaf = 0;
             let lastEvent: PointerEvent | null = null;
+            let cardRect: DOMRect | null = null;
+            clearHoverRects.push(() => {
+                cardRect = null;
+            });
+
             const applyHover = () => {
                 hoverRaf = 0;
-                if (!lastEvent || disposed) {
+                if (!lastEvent || !cardRect || disposed || cardRect.width <= 0 || cardRect.height <= 0) {
                     return;
                 }
-                const r = card.getBoundingClientRect();
-                const x = (lastEvent.clientX - r.left) / r.width;
-                const y = (lastEvent.clientY - r.top) / r.height;
+                const px = lastEvent.clientX - cardRect.left;
+                const py = lastEvent.clientY - cardRect.top;
+                const x = clamp(px / cardRect.width);
+                const y = clamp(py / cardRect.height);
+
                 card.classList.add('hov');
-                glow.style.background = `radial-gradient(420px circle at ${x * 100}% ${y * 100}%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 60%)`;
-                inn.style.transform = `perspective(1000px) rotateX(${(0.5 - y) * 6}deg) rotateY(${(x - 0.5) * 8}deg)`;
-                card.style.setProperty('--tx', `${(0.5 - x) * 18}px`);
-                card.style.setProperty('--ty', `${(0.5 - y) * 18}px`);
+                glow.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0)`;
+                inn.style.transform = `perspective(1100px) rotateX(${((0.5 - y) * 5).toFixed(2)}deg) rotateY(${((x - 0.5) * 7).toFixed(2)}deg)`;
+                card.style.setProperty('--tx', `${((0.5 - x) * 16).toFixed(1)}px`);
+                card.style.setProperty('--ty', `${((0.5 - y) * 16).toFixed(1)}px`);
             };
+
+            const onEnter = (e: PointerEvent) => {
+                if (e.pointerType !== 'mouse') {
+                    return;
+                }
+                cardRect = card.getBoundingClientRect();
+            };
+
             const onMove = (e: PointerEvent) => {
                 if (e.pointerType !== 'mouse') {
                     return;
+                }
+                if (!cardRect) {
+                    cardRect = card.getBoundingClientRect();
                 }
                 lastEvent = e;
                 if (!hoverRaf) {
                     hoverRaf = requestAnimationFrame(applyHover);
                 }
             };
+
             const onLeave = () => {
                 lastEvent = null;
+                cardRect = null;
                 if (hoverRaf) {
                     cancelAnimationFrame(hoverRaf);
                     hoverRaf = 0;
@@ -398,12 +478,15 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                 card.style.setProperty('--tx', '0px');
                 card.style.setProperty('--ty', '0px');
             };
+
+            card.addEventListener('pointerenter', onEnter);
             card.addEventListener('pointermove', onMove, { passive: true });
             card.addEventListener('pointerleave', onLeave);
             cleanups.push(() => {
                 if (hoverRaf) {
                     cancelAnimationFrame(hoverRaf);
                 }
+                card.removeEventListener('pointerenter', onEnter);
                 card.removeEventListener('pointermove', onMove);
                 card.removeEventListener('pointerleave', onLeave);
             });
@@ -411,12 +494,18 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
         const scroller = scrollerRef.current;
         if (scroller) {
-            if (rememberedScrollTop > 0 && scroller.scrollTop === 0) {
-                scroller.scrollTop = rememberedScrollTop;
+            if (rememberedScrollRef.current > 0 && scroller.scrollTop === 0) {
+                scroller.scrollTop = rememberedScrollRef.current;
             }
             const onInnerScroll = () => {
-                setRememberedScrollTop(scroller.scrollTop);
                 req();
+                window.clearTimeout(persistTimer);
+                const nextTop = scroller.scrollTop;
+                persistTimer = window.setTimeout(() => {
+                    if (!disposed) {
+                        setRememberedScrollTop(nextTop);
+                    }
+                }, 150);
             };
             scroller.addEventListener('scroll', onInnerScroll, { passive: true });
             window.addEventListener('resize', onResize);
@@ -428,6 +517,8 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
             return () => {
                 disposed = true;
+                reqRef.current = () => {};
+                window.clearTimeout(persistTimer);
                 if (rafId) {
                     cancelAnimationFrame(rafId);
                 }
@@ -444,11 +535,14 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
 
         const resizeObserver = new ResizeObserver(onResize);
         resizeObserver.observe(stage);
+        resizeObserver.observe(cs);
         measure();
         req();
 
         return () => {
             disposed = true;
+            reqRef.current = () => {};
+            window.clearTimeout(persistTimer);
             if (rafId) {
                 cancelAnimationFrame(rafId);
             }
@@ -458,7 +552,7 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
             resizeObserver.disconnect();
             cleanups.forEach((fn) => fn());
         };
-    }, [active, isMobile]);
+    }, [isMobile]);
 
     const content = (
         <div ref={csRef} className="cs">
@@ -488,11 +582,9 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                                 } as React.CSSProperties
                             }
                         >
-                            <div
-                                className="cs-bg"
-                                style={{ backgroundImage: `url(${imageUrl})` }}
-                                aria-hidden="true"
-                            />
+                            <div className="cs-bg" aria-hidden="true">
+                                <img src={imageUrl} alt="" loading="lazy" decoding="async" draggable={false} />
+                            </div>
                             <div className="cs-in">
                                 <div className="cs-copy">
                                     <span className="cs-tag">
@@ -521,12 +613,9 @@ export const CaseStudySection = memo(function CaseStudySection({ active, project
                                         Read the full case
                                     </Link>
                                 </div>
-                                <div
-                                    className="cs-media"
-                                    style={{ backgroundImage: `url(${imageUrl})` }}
-                                    role="img"
-                                    aria-label={title}
-                                />
+                                <div className="cs-media">
+                                    <img src={imageUrl} alt={title} loading="lazy" decoding="async" draggable={false} />
+                                </div>
                             </div>
                             <div className="cs-glow" aria-hidden="true" />
                         </article>
