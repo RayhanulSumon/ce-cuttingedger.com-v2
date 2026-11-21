@@ -92,6 +92,9 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
 
                                 <TwinSpriteCrop twin={twin} className="relative block h-full w-full" />
 
+                                {/* Model name & Sold Out stamp — directly on the front active model */}
+                                {isFrontModel && <TwinNameLabel twin={twin} />}
+
                                 {/* Pose preview cards — 3 large cards to the right of the front model on hover */}
                                 {showPreview && <TwinPosePreview twin={twin} visible={isHovered} />}
                             </div>
@@ -150,15 +153,6 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     >
                         <ArrowRight size={18} />
                     </button>
-                </Reveal>
-
-                {/* Unscaled active twin caption */}
-                <Reveal
-                    active={active}
-                    delay={0.28}
-                    className="pointer-events-none absolute bottom-5 left-1/2 z-20 -translate-x-1/2 sm:bottom-7 sm:left-[74.4%]"
-                >
-                    <TwinNameLabel twin={activeTwin} index={runway.activeTwinIndex} total={models.length} />
                 </Reveal>
 
                 <TwinCursor cursorRef={runway.cursorRef} mode={runway.cursorMode} />
