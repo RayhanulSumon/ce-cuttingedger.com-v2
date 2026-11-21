@@ -43,7 +43,7 @@ const VOLUME_OPTIONS = [
     '200+ looks / Enterprise',
 ];
 
-interface TryOnQuoteProps {
+interface TryOnOrderProps {
     tryOnLooks?: Look[];
     initialLook?: string;
     initialService?: string;
@@ -144,10 +144,10 @@ function GarmentUploadSlot({
     );
 }
 
-export default function TryOnQuote({
+export default function TryOnOrder({
     tryOnLooks,
     initialLook = '',
-}: TryOnQuoteProps) {
+}: TryOnOrderProps) {
     const { auth, flash, errors } = usePage<{
         auth?: {
             user?: {
@@ -182,8 +182,8 @@ export default function TryOnQuote({
         );
     }, [initialLook, looks]);
 
-    const DRAFT_KEY = 'ce_draft_try_on_quote';
-    const FILES_DRAFT_KEY = 'ce_draft_try_on_quote_files';
+    const DRAFT_KEY = 'ce_draft_try_on_order';
+    const FILES_DRAFT_KEY = 'ce_draft_try_on_order_files';
     const filesHydratedRef = useRef(false);
     const initialDraft = useMemo(
         () =>
@@ -348,7 +348,7 @@ export default function TryOnQuote({
         if (!clientUser) {
             saveDraft();
             markAuthReturn();
-            router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/virtual-try-on/quote'))}`);
+            router.visit(`/login?redirect=${encodeURIComponent(currentRedirectUrl('/virtual-try-on/order'))}`);
             return;
         }
 
@@ -362,7 +362,7 @@ export default function TryOnQuote({
         setIsSubmitting(true);
 
         router.post(
-            '/virtual-try-on/quote',
+            '/virtual-try-on/order',
             {
                 model_source: modelSource,
                 try_on_look_id: modelSource === 'our_model' ? (activeLook?.id ?? null) : null,
@@ -409,8 +409,8 @@ export default function TryOnQuote({
     return (
         <div className="min-h-screen bg-surface text-ink">
             <SeoHead
-                title="Request a Virtual Try-On Quote — AI Garment Draping & Fitting"
-                description="Select one of our studio models or upload your own model, attach your Top, Bottom, and Shoes garment photos, and receive a custom Virtual Try-On quote."
+                title="Order Virtual Try-On — AI Garment Draping & Fitting"
+                description="Select one of our studio models or upload your own model, attach your Top, Bottom, and Shoes garment photos, and submit your Virtual Try-On order."
             />
 
             {/* Header Hero */}
@@ -428,13 +428,13 @@ export default function TryOnQuote({
                     <div className="mt-3 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
                         <div>
                             <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-primary">
-                                Capability 02 // AI Virtual Try-On Studio
+                                Virtual Try-On Studio // Custom Order
                             </p>
                             <h1 className="mt-1 font-display text-[clamp(24px,2.8vw,36px)] leading-[1.1] text-ink">
-                                Request a Virtual Try-On Quote
+                                Order Virtual Try-On
                             </h1>
                             <p className="mt-1.5 max-w-[58ch] text-xs leading-[1.6] text-subtle sm:text-sm">
-                                Select a studio runway model or upload your own, then attach your garments for seamless AI fitting.
+                                Select a studio runway model or upload your own, attach your garments, and submit your order.
                             </p>
                         </div>
 
@@ -451,10 +451,10 @@ export default function TryOnQuote({
                 <div className="mx-auto max-w-7xl">
                     {successMessage ? (
                         <OrderSuccessCard
-                            title="Virtual Try-On Quote Submitted"
+                            title="Virtual Try-On Order Submitted"
                             message={successMessage}
                             onReset={() => setSuccessMessage(null)}
-                            resetLabel="Submit Another Try-On Quote"
+                            resetLabel="Submit Another Try-On Order"
                         />
                     ) : (
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-7 lg:grid-cols-12">
@@ -736,7 +736,7 @@ export default function TryOnQuote({
                             </section>
                         </div>
 
-                        {/* Right 4 Columns: Sticky Quote Summary & Contact Form */}
+                        {/* Right 4 Columns: Sticky Order Summary & Contact Form */}
                         <div className="lg:col-span-4">
                             <div
                                 ref={submitCardRef}
@@ -744,10 +744,10 @@ export default function TryOnQuote({
                             >
                                 <div>
                                     <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                                        Quote Summary
+                                        Order Summary
                                     </p>
                                     <h3 className="mt-0.5 text-base font-bold text-ink">
-                                        Custom Try-On Quote
+                                        Custom Virtual Try-On Order
                                     </h3>
                                 </div>
 
@@ -926,7 +926,7 @@ export default function TryOnQuote({
                                     </div>
                                 </div>
 
-                                <OrderAuthNotice user={auth?.user} fallbackPath="/virtual-try-on/quote" onBeforeNavigate={saveDraft} />
+                                <OrderAuthNotice user={auth?.user} fallbackPath="/virtual-try-on/order" onBeforeNavigate={saveDraft} />
 
                                 <button
                                     type="submit"
@@ -949,5 +949,5 @@ export default function TryOnQuote({
     );
 }
 
-TryOnQuote.layout = (page: React.ReactNode) => <LandingLayout>{page}</LandingLayout>;
+TryOnOrder.layout = (page: React.ReactNode) => <LandingLayout>{page}</LandingLayout>;
 
