@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
+    AlertCircle,
     ArrowRight,
     Building2,
-    Check,
     CheckCircle2,
     Clock,
-    Copy,
     Loader2,
     Lock,
     Mail,
@@ -21,8 +20,13 @@ import {
 import { PageProps } from '@/types';
 
 const FIELD_LABEL_CLASS = 'block text-2xs sm:text-xs font-semibold text-ink';
-const INPUT_CLASS =
-    'w-full min-h-9 sm:min-h-10 rounded-xl border border-ink/12 bg-surface-2 px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-ink placeholder:text-faint transition-colors hover:border-ink/25 focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/15';
+
+const getInputClass = (hasError?: boolean) =>
+    `w-full min-h-10 rounded-xl border px-3.5 py-2 text-xs sm:text-sm text-ink placeholder:text-faint transition-all duration-150 ${
+        hasError
+            ? 'border-danger/60 bg-danger-soft/25 text-ink focus:bg-surface focus:border-danger focus:ring-2 focus:ring-danger/20 focus:outline-none'
+            : 'border-ink/12 bg-surface-2/70 hover:border-ink/25 hover:bg-surface-2 focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 focus:outline-none'
+    }`;
 
 const FIELD_ANCHORS: Record<string, { id: string; label: string }> = {
     name: { id: 'contact-name', label: 'Name' },
@@ -38,14 +42,13 @@ export default function Contact() {
 
     const capabilityOptions = useMemo(() => {
         if (capabilities_nav.length > 0) {
-            return [...capabilities_nav.map((capability) => capability.title), 'Other'];
+            return capabilities_nav.map((capability) => capability.title);
         }
         return [
             'Digital Twins',
             'Virtual Try-On',
             '2D Retouching',
             '3D CGI & Modeling',
-            'Other',
         ];
     }, [capabilities_nav]);
 
@@ -81,9 +84,7 @@ export default function Contact() {
             : [{ label: 'Studio', number: settings?.contact_phone || '+1 (409) 995-2565' }];
     const contactAddress = settings?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
 
-    const [copiedEmail, setCopiedEmail] = useState(false);
     const [sampleCloudLink, setSampleCloudLink] = useState('');
-    const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: auth?.user?.name ?? '',
@@ -106,14 +107,6 @@ export default function Contact() {
         }));
     }, [requestedService, requestedCapability, matchedService, initialMessage, setData]);
 
-    const handleCopyEmail = () => {
-        if (typeof navigator !== 'undefined' && navigator.clipboard) {
-            navigator.clipboard.writeText(contactEmail).catch(() => {});
-        }
-        setCopiedEmail(true);
-        window.setTimeout(() => setCopiedEmail(false), 2000);
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -128,15 +121,18 @@ export default function Contact() {
                 reset('message');
                 setSampleCloudLink('');
             },
-            onError: () => {
-                window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
+            onError: (errs) => {
+                const firstField = Object.keys(errs)[0];
+                if (firstField && FIELD_ANCHORS[firstField]) {
+                    const el = document.getElementById(FIELD_ANCHORS[firstField].id);
+                    if (el) {
+                        el.focus();
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             },
         });
     };
-
-    const errorList = Object.entries(errors).filter(
-        (entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1].length > 0,
-    );
 
     return (
         <>
@@ -191,39 +187,19 @@ export default function Contact() {
                             {/* Unified Direct Contact Card */}
                             <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-xs">
                                 {/* Direct Email Row */}
-                                <div className="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-4.5">
-                                    <div className="flex min-w-0 items-center gap-2.5">
-                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink">
-                                            <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-                                        </span>
-                                        <div className="min-w-0">
-                                            <p className="text-[10px] font-medium text-subtle">Email</p>
-                                            <a
-                                                href={`mailto:${contactEmail}`}
-                                                className="block truncate text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
-                                            >
-                                                {contactEmail}
-                                            </a>
-                                        </div>
+                                <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
+                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink">
+                                        <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-[10px] font-medium text-subtle">Email</p>
+                                        <a
+                                            href={`mailto:${contactEmail}`}
+                                            className="block truncate text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
+                                        >
+                                            {contactEmail}
+                                        </a>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={handleCopyEmail}
-                                        aria-label="Copy email address"
-                                        className="inline-flex min-h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-ink/10 bg-surface-2 px-2 py-1 text-2xs font-semibold text-ink-2 transition-colors hover:border-ink/25 hover:text-ink"
-                                    >
-                                        {copiedEmail ? (
-                                            <span className="inline-flex items-center gap-1 text-success">
-                                                <Check className="h-3 w-3" aria-hidden="true" />
-                                                Copied
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1">
-                                                <Copy className="h-3 w-3" aria-hidden="true" />
-                                                Copy
-                                            </span>
-                                        )}
-                                    </button>
                                 </div>
 
                                 {/* Phone Row(s) */}
@@ -300,15 +276,15 @@ export default function Contact() {
                             </div>
                         </div>
 
-                        {/* RIGHT: Clean, Elevated Form Card (Compact & Fitted) */}
+                        {/* RIGHT: Clean, Modern Form Card */}
                         <div className="lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
                                 noValidate
-                                className="overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-sm"
+                                className="overflow-hidden rounded-3xl border border-line bg-surface shadow-xs"
                             >
                                 {/* Card Header Bar */}
-                                <div className="border-b border-ink/8 px-5 py-3.5 sm:px-6 sm:py-4 bg-surface-2/40">
+                                <div className="border-b border-line px-5 py-4 sm:px-6 bg-surface-2/40">
                                     <h2 className="text-sm sm:text-base font-bold text-ink">
                                         Start a conversation
                                     </h2>
@@ -317,7 +293,7 @@ export default function Contact() {
                                     </p>
                                 </div>
 
-                                <div className="p-5 sm:p-6 space-y-3.5 sm:space-y-4">
+                                <div className="p-5 sm:p-6 space-y-4">
                                     {/* Success Feedback */}
                                     {flash?.success && (
                                         <div
@@ -337,40 +313,6 @@ export default function Contact() {
                                         </div>
                                     )}
 
-                                    {/* Focusable Error Summary */}
-                                    {errorList.length > 0 && (
-                                        <div
-                                            ref={errorSummaryRef}
-                                            tabIndex={-1}
-                                            role="alert"
-                                            aria-labelledby="contact-error-summary"
-                                            className="rounded-xl border border-danger/25 bg-danger-soft p-3 text-2xs text-danger focus:outline-none focus:ring-2 focus:ring-danger/30"
-                                        >
-                                            <p id="contact-error-summary" className="font-bold text-danger">
-                                                Please check the highlighted fields:
-                                            </p>
-                                            <ul className="mt-1 list-disc space-y-0.5 pl-4">
-                                                {errorList.map(([field, message]) => {
-                                                    const anchor = FIELD_ANCHORS[field];
-                                                    return (
-                                                        <li key={field}>
-                                                            {anchor ? (
-                                                                <a
-                                                                    href={`#${anchor.id}`}
-                                                                    className="font-medium underline hover:text-danger"
-                                                                >
-                                                                    {anchor.label}: {message}
-                                                                </a>
-                                                            ) : (
-                                                                <span>{message}</span>
-                                                            )}
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        </div>
-                                    )}
-
                                     {/* Honeypot */}
                                     <input
                                         type="text"
@@ -384,8 +326,8 @@ export default function Contact() {
                                     />
 
                                     {/* Core 2x2 Grid: Name, Work Email, Brand, Phone */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
-                                        <div className="space-y-1">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                        <div className="space-y-1.5">
                                             <label htmlFor="contact-name" className={FIELD_LABEL_CLASS}>
                                                 <span className="flex items-center gap-1.5">
                                                     <User className="h-3 w-3 text-subtle" />
@@ -399,17 +341,20 @@ export default function Contact() {
                                                 autoComplete="name"
                                                 value={data.name}
                                                 onChange={(e) => setData('name', e.target.value)}
+                                                aria-invalid={Boolean(errors.name)}
+                                                aria-describedby={errors.name ? 'contact-name-error' : undefined}
                                                 placeholder="Alex Mercer"
-                                                className={INPUT_CLASS}
+                                                className={getInputClass(Boolean(errors.name))}
                                             />
                                             {errors.name && (
-                                                <p id="contact-name-error" className="text-2xs font-medium text-danger">
-                                                    {errors.name}
+                                                <p id="contact-name-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                    <AlertCircle className="h-3 w-3 shrink-0" />
+                                                    <span>{errors.name}</span>
                                                 </p>
                                             )}
                                         </div>
 
-                                        <div className="space-y-1">
+                                        <div className="space-y-1.5">
                                             <label htmlFor="contact-email" className={FIELD_LABEL_CLASS}>
                                                 <span className="flex items-center gap-1.5">
                                                     <Mail className="h-3 w-3 text-subtle" />
@@ -423,17 +368,20 @@ export default function Contact() {
                                                 autoComplete="email"
                                                 value={data.email}
                                                 onChange={(e) => setData('email', e.target.value)}
+                                                aria-invalid={Boolean(errors.email)}
+                                                aria-describedby={errors.email ? 'contact-email-error' : undefined}
                                                 placeholder="alex@company.com"
-                                                className={INPUT_CLASS}
+                                                className={getInputClass(Boolean(errors.email))}
                                             />
                                             {errors.email && (
-                                                <p id="contact-email-error" className="text-2xs font-medium text-danger">
-                                                    {errors.email}
+                                                <p id="contact-email-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                    <AlertCircle className="h-3 w-3 shrink-0" />
+                                                    <span>{errors.email}</span>
                                                 </p>
                                             )}
                                         </div>
 
-                                        <div className="space-y-1">
+                                        <div className="space-y-1.5">
                                             <label htmlFor="contact-company" className={FIELD_LABEL_CLASS}>
                                                 <span className="flex items-center gap-1.5">
                                                     <Building2 className="h-3 w-3 text-subtle" />
@@ -446,17 +394,20 @@ export default function Contact() {
                                                 autoComplete="organization"
                                                 value={data.company}
                                                 onChange={(e) => setData('company', e.target.value)}
+                                                aria-invalid={Boolean(errors.company)}
+                                                aria-describedby={errors.company ? 'contact-company-error' : undefined}
                                                 placeholder="e.g. Atelier Studio"
-                                                className={INPUT_CLASS}
+                                                className={getInputClass(Boolean(errors.company))}
                                             />
                                             {errors.company && (
-                                                <p className="text-2xs font-medium text-danger">
-                                                    {errors.company}
+                                                <p id="contact-company-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                    <AlertCircle className="h-3 w-3 shrink-0" />
+                                                    <span>{errors.company}</span>
                                                 </p>
                                             )}
                                         </div>
 
-                                        <div className="space-y-1">
+                                        <div className="space-y-1.5">
                                             <label htmlFor="contact-phone" className={FIELD_LABEL_CLASS}>
                                                 <span className="flex items-center gap-1.5">
                                                     <Phone className="h-3 w-3 text-subtle" />
@@ -469,19 +420,22 @@ export default function Contact() {
                                                 autoComplete="tel"
                                                 value={data.phone}
                                                 onChange={(e) => setData('phone', e.target.value)}
+                                                aria-invalid={Boolean(errors.phone)}
+                                                aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
                                                 placeholder="+1 (555) 000-0000"
-                                                className={INPUT_CLASS}
+                                                className={getInputClass(Boolean(errors.phone))}
                                             />
                                             {errors.phone && (
-                                                <p className="text-2xs font-medium text-danger">
-                                                    {errors.phone}
+                                                <p id="contact-phone-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                    <AlertCircle className="h-3 w-3 shrink-0" />
+                                                    <span>{errors.phone}</span>
                                                 </p>
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Service Selection Chips */}
-                                    <div className="space-y-1.5">
+                                    <div className="space-y-2">
                                         <span className={FIELD_LABEL_CLASS}>What do you need help with?</span>
                                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                             {capabilityOptions.map((service) => {
@@ -492,10 +446,10 @@ export default function Contact() {
                                                         type="button"
                                                         aria-pressed={active}
                                                         onClick={() => setData('service_interest', service)}
-                                                        className={`min-h-7.5 sm:min-h-8 cursor-pointer rounded-full border px-3 sm:px-3.5 py-1 text-2xs sm:text-xs font-semibold transition-all duration-150 ${
+                                                        className={`min-h-8 cursor-pointer rounded-full border px-3 sm:px-3.5 py-1 text-2xs sm:text-xs font-semibold transition-all duration-150 ${
                                                             active
                                                                 ? 'border-ink bg-ink text-white shadow-xs'
-                                                                : 'border-ink/12 bg-surface text-ink-2 hover:border-ink/30 hover:bg-surface-2'
+                                                                : 'border-ink/12 bg-surface-2/70 text-ink-2 hover:border-ink/25 hover:bg-surface-2'
                                                         }`}
                                                     >
                                                         {service}
@@ -503,33 +457,40 @@ export default function Contact() {
                                                 );
                                             })}
                                         </div>
+                                        {errors.service_interest && (
+                                            <p className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                <AlertCircle className="h-3 w-3 shrink-0" />
+                                                <span>{errors.service_interest}</span>
+                                            </p>
+                                        )}
                                     </div>
 
                                     {/* Message / Project Details */}
-                                    <div className="space-y-1">
+                                    <div className="space-y-1.5">
                                         <label htmlFor="contact-message" className={FIELD_LABEL_CLASS}>
                                             Project details <span className="text-primary-ink">*</span>
                                         </label>
                                         <textarea
                                             id="contact-message"
                                             required
-                                            rows={2}
+                                            rows={3}
                                             value={data.message}
                                             onChange={(e) => setData('message', e.target.value)}
                                             aria-invalid={Boolean(errors.message)}
                                             aria-describedby={errors.message ? 'contact-message-error' : undefined}
                                             placeholder="Share your image count, style references, or timeline..."
-                                            className={`${INPUT_CLASS} min-h-[68px] sm:min-h-[76px] leading-relaxed`}
+                                            className={`${getInputClass(Boolean(errors.message))} min-h-[76px] sm:min-h-[86px] leading-relaxed resize-y`}
                                         />
                                         {errors.message && (
-                                            <p id="contact-message-error" className="text-2xs font-medium text-danger">
-                                                {errors.message}
+                                            <p id="contact-message-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
+                                                <AlertCircle className="h-3 w-3 shrink-0" />
+                                                <span>{errors.message}</span>
                                             </p>
                                         )}
                                     </div>
 
                                     {/* Sample Assets / Cloud Link Input */}
-                                    <div className="space-y-1">
+                                    <div className="space-y-1.5">
                                         <div className="flex items-center justify-between">
                                             <label htmlFor="sample-link" className={FIELD_LABEL_CLASS}>
                                                 <span className="flex items-center gap-1.5">
@@ -545,7 +506,7 @@ export default function Contact() {
                                             value={sampleCloudLink}
                                             onChange={(e) => setSampleCloudLink(e.target.value)}
                                             placeholder="https://drive.google.com/... or wetransfer.com/..."
-                                            className={INPUT_CLASS}
+                                            className={getInputClass()}
                                         />
                                         <p className="text-[11px] text-subtle">
                                             Want a complimentary 1–3 image test retouch? Paste your cloud link here to benchmark our quality.
@@ -553,11 +514,11 @@ export default function Contact() {
                                     </div>
 
                                     {/* Footer: Elevated Full-Width Submit & Trust Badges */}
-                                    <div className="space-y-2.5 border-t border-ink/8 pt-3.5">
+                                    <div className="space-y-2.5 border-t border-line pt-4">
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:bg-primary-hover active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                                            className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground shadow-[0_10px_25px_-5px_var(--color-primary)] transition-all hover:bg-primary-hover active:scale-[0.99] disabled:opacity-50 cursor-pointer"
                                         >
                                             {processing ? (
                                                 <>
