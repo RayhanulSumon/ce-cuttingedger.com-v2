@@ -26,7 +26,7 @@
 
     /* Brand */
     --color-primary: #de540c; /* buttons, highlights, active states */
-    --color-primary-hover: #c44606; /* primary on hover / pressed */
+    --color-primary-hover: #ea5e10; /* primary on hover / luminous & vibrant, never muddy or dark */
     --color-primary-ink: #b54208; /* primary as text or links on light backgrounds */
     --color-primary-foreground: #ffffff; /* text on primary fills (AA contrast) */
     --color-primary-soft: #fdeee3; /* tinted primary backgrounds */
