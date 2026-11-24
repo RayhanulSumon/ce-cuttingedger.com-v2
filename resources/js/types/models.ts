@@ -198,8 +198,13 @@ export interface SiteSettings {
     calendly_url?: string;
     socials: {
         twitter?: string;
+        x?: string;
         instagram?: string;
         linkedin?: string;
+        youtube?: string;
+        behance?: string;
+        pinterest?: string;
+        facebook?: string;
         github?: string;
         dribbble?: string;
     };

@@ -99,11 +99,12 @@ export function SeoHead({
             addressCountry: 'BD',
         },
         sameAs: [
-            'https://facebook.com/CuttingEdgerInc',
-            'https://twitter.com/cutting_edger',
-            'https://instagram.com/cuttingedgerinc',
-            'https://linkedin.com/company/cutting-edger',
-            'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
+            'https://www.linkedin.com/company/cutting-edger/',
+            'https://www.instagram.com/cuttingedgerinc/',
+            'https://www.youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
+            'https://x.com/cutting_edger',
+            'https://www.behance.net/3dartist7/',
+            'https://www.pinterest.com/CuttingEdgerTeam2019/',
         ],
     };
 

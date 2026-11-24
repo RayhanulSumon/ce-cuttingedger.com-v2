@@ -77,11 +77,12 @@ class HandleInertiaRequests extends Middleware
                 'office_address' => $dbSettings['office_address'] ?? 'Artisan Center, Level-7, House# 57/9, West Panthapath, Dhaka 1215',
                 'calendly_url' => $dbSettings['calendly_url'] ?? 'https://calendly.com/cuttingedger/discovery-call',
                 'socials' => [
-                    'twitter' => 'https://twitter.com/cutting_edger',
-                    'instagram' => 'https://instagram.com/cuttingedgerinc',
-                    'linkedin' => 'https://linkedin.com/company/cutting-edger',
-                    'facebook' => 'https://facebook.com/CuttingEdgerInc',
-                    'youtube' => 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
+                    'linkedin' => 'https://www.linkedin.com/company/cutting-edger/',
+                    'instagram' => 'https://www.instagram.com/cuttingedgerinc/',
+                    'youtube' => 'https://www.youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ',
+                    'x' => 'https://x.com/cutting_edger',
+                    'behance' => 'https://www.behance.net/3dartist7/',
+                    'pinterest' => 'https://www.pinterest.com/CuttingEdgerTeam2019/',
                 ],
             ],
             'auth' => [

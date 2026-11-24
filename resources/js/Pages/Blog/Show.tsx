@@ -51,11 +51,12 @@ const FALLBACK_SERVICE_IMAGES = [
 ];
 
 const DEFAULT_SOCIALS = [
-    { name: 'Facebook', url: 'https://facebook.com/CuttingEdgerInc' },
-    { name: 'Twitter', url: 'https://twitter.com/cutting_edger' },
-    { name: 'Instagram', url: 'https://instagram.com/cuttingedgerinc' },
-    { name: 'LinkedIn', url: 'https://linkedin.com/company/cutting-edger' },
-    { name: 'YouTube', url: 'https://youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/company/cutting-edger/' },
+    { name: 'Instagram', url: 'https://www.instagram.com/cuttingedgerinc/' },
+    { name: 'YouTube', url: 'https://www.youtube.com/channel/UCJS-gaoOogk-552jQfRYPBQ' },
+    { name: 'X', url: 'https://x.com/cutting_edger' },
+    { name: 'Behance', url: 'https://www.behance.net/3dartist7/' },
+    { name: 'Pinterest', url: 'https://www.pinterest.com/CuttingEdgerTeam2019/' },
 ];
 
 const FALLBACK_SERVICES: ServiceSlide[] = [
