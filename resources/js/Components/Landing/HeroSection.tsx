@@ -199,18 +199,22 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                 </p>
             </Reveal>
             <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
-                <PillButton href="/book-a-demo" variant="dark">Book a Demo</PillButton>
+                <PillButton href="/contact" variant="dark">Get Free Sample</PillButton>
+                <PillButton href="/book-a-demo" variant="outline">Book a Demo</PillButton>
                 <PillButton variant="outline" onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
                     Explore Capabilities
                 </PillButton>
             </Reveal>
 
             <Reveal
+                as="button"
                 active={show}
                 delay={1.1}
-                className="absolute bottom-5 z-10 hidden text-2xs uppercase tracking-[0.3em] text-ink-2/60 sm:block"
+                className="absolute bottom-3 sm:bottom-5 z-10 flex flex-col items-center gap-1 text-2xs uppercase tracking-[0.24em] text-ink/70 hover:text-primary-ink transition-colors cursor-pointer select-none"
+                onClick={() => goTo(SECTION_INDEX['digital-twins'])}
             >
-                Scroll to explore
+                <span>Scroll to explore</span>
+                <span className="inline-block animate-bounce text-xs font-bold text-primary-ink">↓</span>
             </Reveal>
         </div>
     );

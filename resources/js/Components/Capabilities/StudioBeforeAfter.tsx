@@ -140,13 +140,21 @@ export function StudioBeforeAfter({
                         compact ? 'h-8 w-8' : 'h-9 w-9 sm:h-10 sm:w-10'
                     } ${
                         dragging
-                            ? 'scale-105 border-primary text-primary'
-                            : 'border-ink/10 text-ink group-hover:border-primary group-hover:text-primary'
+                            ? 'scale-105 border-primary text-primary shadow-[0_0_15px_rgba(222,84,12,0.4)]'
+                            : 'border-ink/10 text-ink group-hover:border-primary group-hover:text-primary shadow-[0_0_10px_rgba(0,0,0,0.15)]'
                     }`}
                 >
                     <MoveHorizontal size={compact ? 14 : 16} />
                 </span>
             </div>
+
+            {/* Drag hint overlay for first-time visitors */}
+            {!dragging && (
+                <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-2xs uppercase tracking-wider text-white/90 backdrop-blur-xs transition-opacity duration-300 group-hover:opacity-0 hidden sm:flex items-center gap-1.5 shadow-sm">
+                    <MoveHorizontal size={12} className="text-primary" />
+                    <span>Drag to Compare</span>
+                </div>
+            )}
         </div>
     );
 }

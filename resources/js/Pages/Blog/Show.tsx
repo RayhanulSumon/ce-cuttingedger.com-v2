@@ -44,10 +44,10 @@ interface ServiceSlide {
 }
 
 const FALLBACK_SERVICE_IMAGES = [
-    '/images/portfolio/portfolio-1.jpg',
-    '/images/portfolio/portfolio-2.jpg',
-    '/images/portfolio/portfolio-3.jpg',
-    '/images/portfolio/portfolio-4.jpg',
+    '/images/portfolio/portfolio-1.webp',
+    '/images/portfolio/portfolio-2.webp',
+    '/images/portfolio/portfolio-3.webp',
+    '/images/portfolio/portfolio-4.webp',
 ];
 
 const DEFAULT_SOCIALS = [

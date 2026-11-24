@@ -242,6 +242,27 @@ export default function BookDemo() {
                                     </p>
                                 </div>
 
+                                {/* Live Dual-Shift Studio Status */}
+                                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface border border-ink/10 shadow-xs">
+                                    <span className="relative flex h-3 w-3 shrink-0">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-xs font-bold text-ink">
+                                                Production Hubs Online
+                                            </span>
+                                            <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-success-soft text-success">
+                                                Live
+                                            </span>
+                                        </div>
+                                        <p className="text-2xs text-muted truncate mt-0.5">
+                                            Dhaka & New York Hubs · 24/7 Dual-Shift Queue
+                                        </p>
+                                    </div>
+                                </div>
+
                                 {/* What We Cover Card */}
                                 <div className="rounded-2xl border border-ink/10 bg-surface p-5 space-y-4 shadow-xs">
                                     <p className="text-xs font-bold uppercase tracking-wider text-primary-ink">

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageHero } from '@/Components/Common/PageHero';
+import { CaseStudyCard } from '@/Components/Work/CaseStudyCard';
 import { Project, Category } from '@/types/models';
-import { ArrowUpRight, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface WorkIndexProps {
     projects: Project[];
@@ -84,74 +84,11 @@ export default function Index({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
                         {projects.map((project, idx) => (
-                            <article
+                            <CaseStudyCard
                                 key={project.id || project.slug}
-                                className="group p-6 sm:p-8 rounded-3xl bg-surface border border-ink/10 hover:border-primary/40 transition-all shadow-xl flex flex-col justify-between"
-                            >
-                                <div className="space-y-4">
-                                    {/* Cover Image Container */}
-                                    <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface border border-ink/10">
-                                        <img
-                                            src={project.cover_image}
-                                            alt={project.title}
-                                            loading={idx < 2 ? 'eager' : 'lazy'}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-
-                                        {/* Badges Overlay */}
-                                        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                                            {project.is_concept ? (
-                                                <span className="px-3 py-1 rounded-full bg-surface/90 border border-info/30 text-info text-2xs font-bold uppercase backdrop-blur-md">
-                                                    [ Concept Showcase ]
-                                                </span>
-                                            ) : (
-                                                <span className="px-3 py-1 rounded-full bg-surface/90 border border-success/30 text-success text-2xs font-bold uppercase backdrop-blur-md">
-                                                    ✓ Client Case Study
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white/90">
-                                            <span className="font-bold text-primary">{project.client_name}</span>
-                                            <span>{project.year}</span>
-                                        </div>
-                                    </div>
-
-                                    <h2 className="text-2xl font-display font-bold text-ink group-hover:text-primary-ink transition-colors">
-                                        <Link href={`/case-studies/${project.slug}`}>
-                                            {project.title}
-                                        </Link>
-                                    </h2>
-
-                                    <p className="text-muted text-sm leading-relaxed line-clamp-3">
-                                        {project.summary}
-                                    </p>
-
-                                    {/* Quantified Metrics Pills */}
-                                    {project.metrics && project.metrics.length > 0 && (
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-ink/10">
-                                            {project.metrics.slice(0, 3).map((m, i) => (
-                                                <div key={i} className="text-center p-2 rounded-xl bg-surface-2 border border-ink/5">
-                                                    <p className="font-display font-black text-sm text-primary-ink">{m.value}</p>
-                                                    <p className="text-2xs text-muted truncate">{m.label}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="pt-6 mt-4 border-t border-ink/10 flex items-center justify-between text-xs">
-                                    <span className="text-muted">{project.category?.name || 'Production'}</span>
-                                    <Link
-                                        href={`/case-studies/${project.slug}`}
-                                        className="text-primary-ink font-bold inline-flex items-center gap-1 group-hover:underline"
-                                    >
-                                        <span>Read Full Study</span>
-                                        <ArrowUpRight className="w-3.5 h-3.5" />
-                                    </Link>
-                                </div>
-                            </article>
+                                project={project}
+                                priority={idx < 2}
+                            />
                         ))}
                     </div>
                 </div>

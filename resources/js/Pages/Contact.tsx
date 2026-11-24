@@ -14,6 +14,8 @@ import {
     MapPin,
     Phone,
     RotateCw,
+    Sparkles,
+    UploadCloud,
     Users,
 } from 'lucide-react';
 import { PageProps } from '@/types';
@@ -74,6 +76,8 @@ export default function Contact() {
 
     const [copiedEmail, setCopiedEmail] = useState(false);
     const [showOptionalDetails, setShowOptionalDetails] = useState(false);
+    const [requestSample, setRequestSample] = useState(false);
+    const [sampleCloudLink, setSampleCloudLink] = useState('');
     const [captchaQuestion, setCaptchaQuestion] = useState('');
     const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
@@ -139,10 +143,17 @@ export default function Contact() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        // If client requested a free test sample with cloud link, append to message body
+        if (requestSample && sampleCloudLink.trim()) {
+            data.message = `${data.message}\n\n[Free Sample Trial Requested]\nSample Assets Link: ${sampleCloudLink.trim()}`;
+        }
+
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
                 reset('message', 'website', 'captcha_answer');
+                setRequestSample(false);
+                setSampleCloudLink('');
                 refreshCaptcha();
             },
             onError: () => {
@@ -183,6 +194,27 @@ export default function Contact() {
                                 <p className="max-w-md text-sm leading-relaxed text-muted sm:text-base">
                                     Share your goals or catalog requirements and our studio directors will respond within 24 hours.
                                 </p>
+                            </div>
+
+                            {/* Live Dual-Shift Studio Status */}
+                            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface border border-ink/10 shadow-xs">
+                                <span className="relative flex h-3 w-3 shrink-0">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="text-xs font-bold text-ink">
+                                            Dual-Shift Studio Active
+                                        </span>
+                                        <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-success-soft text-success">
+                                            Online Now
+                                        </span>
+                                    </div>
+                                    <p className="text-2xs text-muted truncate mt-0.5">
+                                        Dhaka & New York Hubs · Avg Quote Response: &lt; 15 mins
+                                    </p>
+                                </div>
                             </div>
 
                             {/* Unified Direct Contact Card */}
@@ -456,6 +488,50 @@ export default function Contact() {
                                         <p id="contact-message-error" className="text-xs font-medium text-danger">
                                             {errors.message}
                                         </p>
+                                    )}
+                                </div>
+
+                                {/* Free Test Retouch Request Block */}
+                                <div className="rounded-2xl border border-primary/20 bg-primary-soft/40 p-4 sm:p-5 space-y-3">
+                                    <div className="flex items-start gap-3">
+                                        <input
+                                            id="request-sample"
+                                            type="checkbox"
+                                            checked={requestSample}
+                                            onChange={(e) => setRequestSample(e.target.checked)}
+                                            className="mt-1 h-4 w-4 rounded border-ink/20 text-primary focus:ring-primary/20 cursor-pointer"
+                                        />
+                                        <div className="flex-1">
+                                            <label htmlFor="request-sample" className="text-xs font-bold text-ink cursor-pointer flex items-center gap-1.5">
+                                                <Sparkles className="h-3.5 w-3.5 text-primary-ink" />
+                                                <span>Request a Complimentary 1-3 Image Test Retouch</span>
+                                            </label>
+                                            <p className="text-2xs text-muted mt-0.5">
+                                                Benchmark our quality on your own RAW or studio files before committing. Returned within 24h.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {requestSample && (
+                                        <div className="pt-2 border-t border-primary/15 space-y-1.5">
+                                            <label htmlFor="sample-link" className="block text-2xs font-semibold text-ink">
+                                                Sample Assets Cloud Link (Google Drive, WeTransfer, Dropbox)
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    id="sample-link"
+                                                    type="url"
+                                                    value={sampleCloudLink}
+                                                    onChange={(e) => setSampleCloudLink(e.target.value)}
+                                                    placeholder="https://drive.google.com/... or wetransfer.com/..."
+                                                    className={`${INPUT_CLASS} pr-9`}
+                                                />
+                                                <UploadCloud className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-faint pointer-events-none" />
+                                            </div>
+                                            <p className="text-2xs text-subtle">
+                                                Upload 1 to 3 images to any cloud service and paste the view/download link above.
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
 
