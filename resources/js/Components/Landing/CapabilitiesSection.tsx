@@ -120,7 +120,7 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
             onPointerEnter={handlePointerEnter}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            className="cap-card group/card relative flex h-[300px] w-full flex-col justify-between overflow-hidden rounded-3xl bg-secondary p-4 text-white shadow-[0_18px_40px_-22px_rgba(16,17,20,0.45),0_4px_12px_-4px_rgba(16,17,20,0.2)] ring-1 ring-inset ring-white/15 hover:shadow-[0_26px_52px_-22px_rgba(16,17,20,0.55)] hover:ring-primary/55 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:h-[380px] sm:p-5 lg:h-[clamp(360px,56vh,475px)]"
+            className="cap-card group/card relative flex h-[260px] w-full flex-col justify-between overflow-hidden rounded-3xl bg-secondary p-4 text-white shadow-[0_18px_40px_-22px_rgba(16,17,20,0.45),0_4px_12px_-4px_rgba(16,17,20,0.2)] ring-1 ring-inset ring-white/15 hover:shadow-[0_26px_52px_-22px_rgba(16,17,20,0.55)] hover:ring-primary/55 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary sm:h-[320px] sm:p-5 lg:h-[clamp(260px,42vh,420px)]"
         >
             {/* Background photography with deeper parallax travel inside clipped frame */}
             <img
@@ -136,7 +136,7 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
             {/* Multi-stop gradient scrim keeping upper imagery vivid and bottom text high-contrast */}
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,17,22,0.34)_0%,rgba(15,17,22,0.06)_36%,rgba(15,17,22,0.58)_68%,rgba(15,17,22,0.94)_100%)]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,17,22,0.2)_0%,transparent_35%,rgba(15,17,22,0.45)_72%,rgba(15,17,22,0.92)_100%)]"
             />
 
             {/* Subtle top glass specular highlight */}
@@ -161,11 +161,8 @@ const CapabilityDepthCard = memo(function CapabilityDepthCard({
                 <h3 className="text-base font-extrabold leading-snug tracking-[-0.02em] text-white transition-colors duration-300 group-hover/card:text-primary-soft sm:text-lg">
                     {capability.title}
                 </h3>
-                <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-white/78">
-                    {capability.subtitle}
-                </p>
 
-                <div className="mt-3.5 h-px w-full overflow-hidden bg-white/15">
+                <div className="mt-3 h-px w-full overflow-hidden bg-white/15">
                     <div className="h-full w-full origin-left scale-x-0 bg-primary transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/card:scale-x-100" />
                 </div>
 
@@ -189,16 +186,16 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
     return (
         <div
             data-scrollable
-            className={`relative flex h-full w-full flex-col overflow-y-auto bg-page pb-12 pt-24 sm:pt-28 lg:pb-8 ${PAD_X}`}
+            className={`relative flex h-full w-full flex-col overflow-y-auto bg-page pb-6 pt-20 sm:pt-22 lg:pb-6 lg:pt-22 ${PAD_X}`}
         >
-            <div className="relative z-10 mx-auto my-0 lg:my-auto w-full max-w-[1360px]">
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="relative z-10 mx-auto my-auto w-full max-w-[1360px]">
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                     <div>
                         <Reveal active={active}>
                             <h2 className="text-section font-display font-bold uppercase tracking-[-0.025em] text-ink">Core Capabilities</h2>
                         </Reveal>
                         <Reveal active={active} delay={0.08}>
-                            <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
+                            <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-muted sm:text-base">
                                 Four core disciplines, built for high-volume apparel and product teams.
                             </p>
                         </Reveal>
@@ -214,7 +211,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                     </Reveal>
                 </div>
 
-                <ul className="cap-grid mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-7 lg:grid-cols-4 lg:gap-5">
+                <ul className="cap-grid mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:mt-5 lg:grid-cols-4 lg:gap-4 xl:gap-5">
                     {capabilities_nav.map((capability, i) => (
                         <li key={capability.id} className="cap-card-wrap">
                             <Reveal active={active} delay={0.16 + i * 0.06} y="24px" className="h-full">
