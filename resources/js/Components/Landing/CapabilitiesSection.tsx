@@ -195,7 +195,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                     <div>
                         <Reveal active={active}>
-                            <h2 className="text-section text-ink">Core Capabilities</h2>
+                            <h2 className="text-section font-display font-bold uppercase tracking-[-0.025em] text-ink">Core Capabilities</h2>
                         </Reveal>
                         <Reveal active={active} delay={0.08}>
                             <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-muted sm:text-base">

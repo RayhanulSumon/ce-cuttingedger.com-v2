@@ -15,7 +15,7 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
         >
             <div className="lg:pr-6">
                 <Reveal active={active}>
-                    <h2 className="text-section text-ink">Questions, Answered.</h2>
+                    <h2 className="text-section font-display font-bold uppercase tracking-[-0.025em] text-ink">Questions, Answered.</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.08}>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">

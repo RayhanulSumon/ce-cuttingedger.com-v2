@@ -464,7 +464,7 @@ export const ShowcaseSection = memo(function ShowcaseSection({ active, projects,
         <div ref={rootRef} className="relative grid h-full w-full grid-rows-[auto_1fr] overflow-hidden bg-page md:grid-cols-[1fr_minmax(300px,48%)] md:grid-rows-1">
             <div className={`relative z-10 flex flex-col justify-center pb-4 pt-24 sm:pt-28 md:pb-10 md:pt-28 ${PAD_X}`}>
                 <Reveal active={active}>
-                    <h2 className="text-section text-ink">What We Achieved</h2>
+                    <h2 className="text-section font-display font-bold uppercase tracking-[-0.025em] text-ink">What We Achieved</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.14}>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">

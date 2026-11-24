@@ -100,6 +100,7 @@ export function Reveal({
 /** Section title with a short description and optional actions underneath. */
 export function SectionIntro({
     active,
+    kicker,
     title,
     children,
     actions,
@@ -111,6 +112,7 @@ export function SectionIntro({
     cursorFree = false,
 }: {
     active: boolean;
+    kicker?: React.ReactNode;
     title: string;
     children: React.ReactNode;
     actions?: React.ReactNode;
@@ -130,18 +132,23 @@ export function SectionIntro({
             className={`${cursorFree ? 'pointer-events-auto' : ''} ${isCentered ? 'text-center' : ''} ${className}`.trim()}
             data-twin-cursor-free={cursorFree ? '' : undefined}
         >
-            <Reveal active={active}>
-                <h2 className={`font-display text-ink ${titleClassName}`}>
+            {kicker && (
+                <Reveal active={active} delay={0.04} y="-6px">
+                    <div className="mb-2.5 sm:mb-3">{kicker}</div>
+                </Reveal>
+            )}
+            <Reveal active={active} delay={kicker ? 0.08 : 0}>
+                <h2 className={`font-display uppercase tracking-[-0.025em] text-ink ${titleClassName}`}>
                     {title}
                 </h2>
             </Reveal>
-            <Reveal active={active} delay={0.1}>
+            <Reveal active={active} delay={kicker ? 0.16 : 0.1}>
                 <p className={`mt-2.5 leading-[1.6] sm:mt-3 ${maxWidthClass} ${bodyClassName}`}>{children}</p>
             </Reveal>
             {actions && (
                 <Reveal
                     active={active}
-                    delay={0.18}
+                    delay={kicker ? 0.24 : 0.18}
                     className={`pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5 sm:mt-5 ${isCentered ? 'justify-center' : ''}`}
                 >
                     {actions}

@@ -114,10 +114,10 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({
                     active={active}
                     title="Digital Twins"
                     cursorFree
-                    titleClassName="text-section font-bold leading-tight tracking-[-0.03em]"
-                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px]"
+                    titleClassName="text-[clamp(32px,3.4vw,46px)] font-bold leading-[1.04]"
+                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px] leading-relaxed"
                     bodyMaxWidthClassName="max-w-[38ch]"
-                    className="absolute left-5 top-24 z-20 max-w-[calc(100%-2.5rem)] sm:left-10 sm:top-1/2 sm:max-w-[380px] sm:-translate-y-1/2 lg:left-16 lg:max-w-[420px]"
+                    className="absolute left-5 top-24 z-20 max-w-[calc(100%-2.5rem)] sm:left-10 sm:top-1/2 sm:max-w-[390px] sm:-translate-y-1/2 lg:left-16 lg:max-w-[430px]"
                     actions={
                         <>
                             <OrderCta

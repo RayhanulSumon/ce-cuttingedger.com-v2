@@ -187,7 +187,7 @@ export const RetouchingSection = memo(function RetouchingSection({ active }: Sec
         >
             <div>
                 <Reveal active={active}>
-                    <h2 className="text-section text-ink">Photo Retouching</h2>
+                    <h2 className="text-section font-display font-bold uppercase tracking-[-0.025em] text-ink">Photo Retouching</h2>
                 </Reveal>
                 <Reveal active={active} delay={0.16}>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted sm:text-base">

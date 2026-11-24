@@ -161,10 +161,10 @@ export const TryOnSection = memo(function TryOnSection({
                 <SectionIntro
                     active={active}
                     title="Virtual Try-On"
-                    titleClassName="text-section font-bold leading-tight tracking-[-0.03em]"
-                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px]"
+                    titleClassName="text-[clamp(32px,3.4vw,46px)] font-bold leading-[1.04]"
+                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px] leading-relaxed"
                     bodyMaxWidthClassName="max-w-[38ch]"
-                    className={`relative z-20 lg:pointer-events-auto lg:absolute lg:left-0 lg:max-w-[420px] lg:-translate-y-1/2 ${
+                    className={`relative z-20 lg:pointer-events-auto lg:absolute lg:left-0 lg:max-w-[430px] lg:-translate-y-1/2 ${
                         embedded ? 'lg:top-1/2' : 'lg:top-[calc(50%-2rem)]'
                     } ${fadeWhenOpen}`}
                     actions={
