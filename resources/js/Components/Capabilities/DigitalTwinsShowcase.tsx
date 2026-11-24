@@ -13,7 +13,7 @@ const INITIAL_ROWS = 2;
 const ROWS_PER_LOAD = 2;
 const CARD_STAGE_BACKGROUND = 'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
-const CATEGORY_ORDER = ['Female', 'Male'] as const;
+const CATEGORY_ORDER = ['Female', 'Male', 'Kids'] as const;
 
 interface DigitalTwinsShowcaseProps {
     capability?: Capability;
@@ -117,16 +117,13 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
 
     const categories = useMemo(() => {
         const present = new Set(allTwins.map(categoryOf));
-        const ordered = [
-            ...CATEGORY_ORDER.filter((name) => present.has(name)),
-            ...Array.from(present).filter(
-                (name) => !CATEGORY_ORDER.includes(name as (typeof CATEGORY_ORDER)[number]) && name !== UPCOMING,
-            ),
-        ];
+        const standardCategories: string[] = ['Female', 'Male', 'Kids'];
+        const extraCategories = Array.from(present).filter(
+            (name) => !standardCategories.includes(name) && name !== UPCOMING,
+        );
 
-        if (present.has(UPCOMING)) {
-            ordered.push(UPCOMING);
-        }
+        const ordered = [...standardCategories, ...extraCategories];
+        ordered.push(UPCOMING);
 
         return [ALL, ...ordered];
     }, [allTwins]);
@@ -222,82 +219,102 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
 
                     {/* Models Grid */}
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-6">
-                        {visibleTwins.map((twin) => {
-                            const [name, style] = twin.name.split(' — ');
-                            const categoryName = categoryOf(twin);
-                            const upcoming = isUpcomingTwin(twin);
-                            const key = twinKey(twin);
-                            const showUpcomingNotice = upcoming && upcomingActiveKey === key;
-
-                            return (
-                                <button
-                                    key={key}
-                                    type="button"
-                                    onClick={() => handleCardClick(twin)}
-                                    aria-label={upcoming ? `${name} — Coming Soon` : `View ${name} poses`}
-                                    className={`group cursor-pointer overflow-hidden rounded-2xl border bg-white text-left shadow-[0_8px_22px_-16px_color-mix(in_srgb,var(--color-ink)_20%,transparent)] transition-all duration-300 hover:-translate-y-1 ${
-                                        showUpcomingNotice
-                                            ? 'border-ink/40 ring-2 ring-ink/15'
-                                            : 'border-ink/10 hover:border-primary/50 hover:shadow-[0_14px_34px_-16px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
-                                    }`}
+                        {visibleTwins.length === 0 ? (
+                            <div className="col-span-full py-16 flex flex-col items-center justify-center text-center space-y-3 rounded-2xl border border-dashed border-ink/15 bg-surface-2/40 p-8">
+                                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
+                                    <Clock size={20} />
+                                </span>
+                                <h3 className="text-base font-bold text-ink">Kids Digital Twins Coming Soon</h3>
+                                <p className="text-xs text-muted max-w-sm leading-relaxed">
+                                    Our photoreal Kids digital twin roster is currently in studio capture and lighting training. Looking for custom age-group models?
+                                </p>
+                                <Link
+                                    href={digitalTwinOrderUrl({ mode: 'custom' })}
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary-hover transition-colors"
                                 >
-                                    <div className="relative aspect-[3/4] overflow-hidden" style={{ background: CARD_STAGE_BACKGROUND }}>
-                                        <TwinSpriteCrop
-                                            twin={twin}
-                                            className={`h-full w-full object-contain transition-transform duration-500 ${
-                                                upcoming ? 'opacity-80 group-hover:scale-[1.03]' : 'group-hover:scale-[1.04]'
-                                            }`}
-                                        />
+                                    Order Custom Kids Model &rarr;
+                                </Link>
+                            </div>
+                        ) : (
+                            visibleTwins.map((twin) => {
+                                const [name, style] = twin.name.split(' — ');
+                                const categoryName = categoryOf(twin);
+                                const upcoming = isUpcomingTwin(twin);
+                                const key = twinKey(twin);
+                                const showUpcomingNotice = upcoming && upcomingActiveKey === key;
 
-                                        {upcoming ? (
-                                            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-sm">
-                                                <Clock size={10} />
-                                                Coming Soon
-                                            </span>
-                                        ) : (
-                                            twin.isCopyrightSold && (
-                                                <span className="absolute left-2 top-2 rounded-full bg-danger px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
-                                                    Sold out
-                                                </span>
-                                            )
-                                        )}
+                                return (
+                                    <button
+                                        key={key}
+                                        type="button"
+                                        onClick={() => handleCardClick(twin)}
+                                        aria-label={upcoming ? `${name} — Coming Soon` : `View ${name}`}
+                                        className={`group cursor-pointer overflow-hidden rounded-2xl border bg-white text-left shadow-[0_8px_22px_-16px_color-mix(in_srgb,var(--color-ink)_20%,transparent)] transition-all duration-300 hover:-translate-y-1 ${
+                                            showUpcomingNotice
+                                                ? 'border-ink/40 ring-2 ring-ink/15'
+                                                : 'border-ink/10 hover:border-primary/50 hover:shadow-[0_14px_34px_-16px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
+                                        }`}
+                                    >
+                                        <div className="relative aspect-[3/4] overflow-hidden" style={{ background: CARD_STAGE_BACKGROUND }}>
+                                            <TwinSpriteCrop
+                                                twin={twin}
+                                                className={`h-full w-full object-contain transition-transform duration-500 ${
+                                                    upcoming ? 'opacity-80 group-hover:scale-[1.03]' : 'group-hover:scale-[1.04]'
+                                                }`}
+                                            />
 
-                                        {showUpcomingNotice ? (
-                                            <div
-                                                role="status"
-                                                className="absolute inset-0 flex flex-col items-center justify-center bg-ink/60 p-3 text-center backdrop-blur-[2px]"
-                                            >
-                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-md">
-                                                    <Clock size={12} />
+                                            {upcoming ? (
+                                                <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-sm">
+                                                    <Clock size={10} />
                                                     Coming Soon
                                                 </span>
-                                                <span className="mt-2 text-2xs font-medium text-white/90">
-                                                    Available shortly
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <span
-                                                className={`absolute inset-x-2 bottom-2 grid place-items-center rounded-full py-1.5 text-2xs font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 ${
-                                                    upcoming ? 'bg-ink' : 'bg-primary'
-                                                }`}
-                                            >
-                                                {upcoming ? 'Coming Soon' : 'View poses'}
-                                            </span>
-                                        )}
-                                    </div>
+                                            ) : (
+                                                twin.isCopyrightSold && (
+                                                    <span className="absolute left-2 top-2 rounded-full bg-danger px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-[0_6px_14px_-6px_rgba(220,38,38,0.7)]">
+                                                        Sold out
+                                                    </span>
+                                                )
+                                            )}
 
-                                    <div className="flex items-baseline justify-between gap-2 p-3">
-                                        <div className="min-w-0">
-                                            <h2 className="truncate text-sm font-semibold text-ink">{name}</h2>
-                                            <p className="truncate text-2xs text-subtle">{style || categoryName}</p>
+                                            {showUpcomingNotice ? (
+                                                <div
+                                                    role="status"
+                                                    className="absolute inset-0 flex flex-col items-center justify-center bg-ink/60 p-3 text-center backdrop-blur-[2px]"
+                                                >
+                                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-md">
+                                                        <Clock size={12} />
+                                                        Coming Soon
+                                                    </span>
+                                                    <span className="mt-2 text-2xs font-medium text-white/90">
+                                                        Available shortly
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-black/15 backdrop-blur-[1px]">
+                                                    <span
+                                                        className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-xs font-bold text-white shadow-lg transition-transform duration-300 group-hover:scale-105 ${
+                                                            upcoming ? 'bg-ink' : 'bg-primary'
+                                                        }`}
+                                                    >
+                                                        {upcoming ? 'Coming Soon' : 'View'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
-                                        <span className={`shrink-0 text-xs font-bold ${upcoming ? 'text-subtle' : 'text-ink'}`}>
-                                            {upcoming ? 'Coming Soon' : twin.presetPrice}
-                                        </span>
-                                    </div>
-                                </button>
-                            );
-                        })}
+
+                                        <div className="flex items-baseline justify-between gap-2 p-3">
+                                            <div className="min-w-0">
+                                                <h2 className="truncate text-sm font-semibold text-ink">{name}</h2>
+                                                <p className="truncate text-2xs text-subtle">{style || categoryName}</p>
+                                            </div>
+                                            <span className={`shrink-0 text-xs font-bold ${upcoming ? 'text-subtle' : 'text-ink'}`}>
+                                                {upcoming ? 'Coming Soon' : twin.presetPrice}
+                                            </span>
+                                        </div>
+                                    </button>
+                                );
+                            })
+                        )}
                     </div>
 
                     {/* Load More (+2 Rows) Pagination */}
