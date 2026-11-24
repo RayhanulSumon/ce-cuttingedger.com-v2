@@ -8,7 +8,7 @@ import { digitalTwinOrderUrl, OrderCta, PAD_X } from '@/Components/Landing/share
 import { Capability } from '@/types/models';
 
 const ALL = 'All';
-const UPCOMING = 'Upcoming';
+const UPCOMING = 'Coming Soon';
 const INITIAL_ROWS = 2;
 const ROWS_PER_LOAD = 2;
 const CARD_STAGE_BACKGROUND = 'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
@@ -22,7 +22,7 @@ interface DigitalTwinsShowcaseProps {
 }
 
 function isUpcomingTwin(twin: DigitalTwinModel): boolean {
-    return Boolean(twin.isUpcoming) || twin.archetype.trim().toLowerCase() === 'upcoming';
+    return Boolean(twin.isUpcoming) || twin.archetype.trim().toLowerCase() === 'upcoming' || twin.archetype.trim().toLowerCase() === 'coming soon';
 }
 
 function categoryOf(twin: DigitalTwinModel): string {
@@ -234,7 +234,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                     key={key}
                                     type="button"
                                     onClick={() => handleCardClick(twin)}
-                                    aria-label={upcoming ? `${name} — Upcoming` : `View ${name} poses`}
+                                    aria-label={upcoming ? `${name} — Coming Soon` : `View ${name} poses`}
                                     className={`group cursor-pointer overflow-hidden rounded-2xl border bg-white text-left shadow-[0_8px_22px_-16px_color-mix(in_srgb,var(--color-ink)_20%,transparent)] transition-all duration-300 hover:-translate-y-1 ${
                                         showUpcomingNotice
                                             ? 'border-ink/40 ring-2 ring-ink/15'
@@ -252,7 +252,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                         {upcoming ? (
                                             <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-2xs font-bold uppercase tracking-[0.1em] text-white shadow-sm">
                                                 <Clock size={10} />
-                                                Upcoming
+                                                Coming Soon
                                             </span>
                                         ) : (
                                             twin.isCopyrightSold && (
@@ -269,10 +269,10 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                             >
                                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow-md">
                                                     <Clock size={12} />
-                                                    Upcoming
+                                                    Coming Soon
                                                 </span>
                                                 <span className="mt-2 text-2xs font-medium text-white/90">
-                                                    Coming soon
+                                                    Available shortly
                                                 </span>
                                             </div>
                                         ) : (
@@ -281,7 +281,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                                     upcoming ? 'bg-ink' : 'bg-primary'
                                                 }`}
                                             >
-                                                {upcoming ? 'Upcoming' : 'View poses'}
+                                                {upcoming ? 'Coming Soon' : 'View poses'}
                                             </span>
                                         )}
                                     </div>
@@ -292,7 +292,7 @@ export function DigitalTwinsShowcase({ capability, parent, digitalTwins }: Digit
                                             <p className="truncate text-2xs text-subtle">{style || categoryName}</p>
                                         </div>
                                         <span className={`shrink-0 text-xs font-bold ${upcoming ? 'text-subtle' : 'text-ink'}`}>
-                                            {upcoming ? UPCOMING : twin.presetPrice}
+                                            {upcoming ? 'Coming Soon' : twin.presetPrice}
                                         </span>
                                     </div>
                                 </button>
