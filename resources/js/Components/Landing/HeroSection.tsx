@@ -199,22 +199,27 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                 </p>
             </Reveal>
             <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
-                <PillButton href="/contact" variant="dark">Get Free Sample</PillButton>
-                <PillButton href="/book-a-demo" variant="outline">Book a Demo</PillButton>
+                <PillButton href="/book-a-demo" variant="dark">Book a Demo</PillButton>
                 <PillButton variant="outline" onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
                     Explore Capabilities
                 </PillButton>
             </Reveal>
 
-            <Reveal
-                as="button"
-                active={show}
-                delay={1.1}
-                className="absolute bottom-3 sm:bottom-5 z-10 flex flex-col items-center gap-1 text-2xs uppercase tracking-[0.24em] text-ink/70 hover:text-primary-ink transition-colors cursor-pointer select-none"
-                onClick={() => goTo(SECTION_INDEX['digital-twins'])}
-            >
-                <span>Scroll to explore</span>
-                <span className="inline-block animate-bounce text-xs font-bold text-primary-ink">↓</span>
+            {/* Minimalist interactive scroll indicator icon (No text, click to scroll) */}
+            <Reveal active={show} delay={1.1} className="absolute bottom-5 z-20">
+                <button
+                    type="button"
+                    aria-label="Scroll to next section"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        goTo(SECTION_INDEX['digital-twins']);
+                    }}
+                    className="group flex flex-col items-center justify-center p-2 rounded-full cursor-pointer transition-all duration-300 hover:scale-110 focus:outline-none"
+                >
+                    <div className="flex h-8 w-5 items-start justify-center rounded-full border-[1.5px] border-ink/30 pt-1.5 transition-colors group-hover:border-primary shadow-xs">
+                        <div className="h-1.5 w-1 animate-bounce rounded-full bg-ink/60 transition-colors group-hover:bg-primary" />
+                    </div>
+                </button>
             </Reveal>
         </div>
     );
