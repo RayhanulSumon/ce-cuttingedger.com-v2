@@ -186,7 +186,7 @@ export const FooterSection = memo(function FooterSection({
                 </Reveal>
 
                 {/* Middle: the big call to action */}
-                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-2 sm:py-3 text-center">
+                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-1 sm:py-2 xl:py-3 text-center">
                     <Link
                         href="/contact"
                         prefetch
@@ -201,14 +201,14 @@ export const FooterSection = memo(function FooterSection({
                         <span className="flex flex-nowrap items-center justify-center" aria-label="Contact us">
                             {LETTERS.map((char, i) =>
                                 char === ' ' ? (
-                                    <span key={i} className="inline-block w-[2.5vw] sm:w-[3vw]" aria-hidden="true" />
+                                    <span key={i} className="inline-block w-[2.5vw] sm:w-[3vw] xl:w-[3.6vw]" aria-hidden="true" />
                                 ) : (
                                     <motion.span
                                         key={i}
                                         aria-hidden="true"
                                         onPointerEnter={() => setHovered(i)}
                                         onPointerLeave={() => setHovered((prev) => (prev === i ? null : prev))}
-                                        animate={{ scaleY: hovered === i ? 1.15 : 1.04, y: hovered === i ? '-2%' : '0%' }}
+                                        animate={{ scaleY: hovered === i ? 1.22 : 1.08, y: hovered === i ? '-2%' : '0%' }}
                                         transition={{ duration: 0.25, ease: [0.39, 0.575, 0.565, 1] }}
                                         style={{
                                             transformOrigin: 'center bottom',
@@ -219,7 +219,7 @@ export const FooterSection = memo(function FooterSection({
                                             backgroundClip: 'text',
                                             color: 'transparent',
                                         }}
-                                        className="inline-block select-none text-[clamp(36px,10vw,17vh)] font-black uppercase leading-[0.95] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
+                                        className="inline-block select-none text-[clamp(32px,9vw,16vh)] sm:text-[clamp(40px,10vw,18vh)] lg:text-[clamp(50px,11.5vw,22vh)] xl:text-[clamp(68px,12.5vw,26vh)] 2xl:text-[min(13.4vw,30vh)] font-black uppercase leading-[0.92] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
                                     >
                                         {char}
                                     </motion.span>
