@@ -94,6 +94,6 @@ class ContactController extends Controller
             report($e);
         }
 
-        return back()->with('success', 'Thank you! Your project brief has been received. Our studio directors will review your requirements and respond within 24 hours.');
+        return back()->with('success', 'Thank you! Your project brief has been received. One of our project managers will review your requirements and respond within 24 hours.');
     }
 }

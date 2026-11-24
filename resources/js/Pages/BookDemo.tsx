@@ -90,7 +90,7 @@ export default function BookDemo() {
         <>
             <SeoHead
                 title="Book a Demo — 30-Min Discovery Session | Cutting Edger"
-                description="Schedule a 30-minute Google Meet call with a dedicated Cutting Edger project manager to review turnaround SLAs, custom pricing, and your free 3-image test."
+                description="Schedule a 30-minute Google Meet call with a Cutting Edger project manager to review turnaround SLAs, custom pricing, and your free 3-image test."
                 canonicalUrl="/book-a-demo"
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
@@ -116,7 +116,7 @@ export default function BookDemo() {
                                     </h1>
 
                                     <p className="text-xs sm:text-sm text-muted leading-relaxed">
-                                        Pick a convenient time for a 30-minute Google Meet session with our dedicated project manager.
+                                        Pick a convenient time for a 30-minute Google Meet session with our project manager.
                                     </p>
                                 </div>
 
@@ -129,7 +129,7 @@ export default function BookDemo() {
                                         </span>
                                         <div>
                                             <p className="text-xs font-bold text-ink">Production Hubs Online</p>
-                                            <p className="text-2xs text-subtle">Dhaka &amp; New York Hubs &bull; 24/7 Dual-Shift Queue</p>
+                                            <p className="text-2xs text-subtle">24/7 Dual-Shift Production Queue</p>
                                         </div>
                                     </div>
                                     <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-2xs font-bold text-emerald-700">
@@ -206,7 +206,7 @@ export default function BookDemo() {
                                                     Select a Date &amp; Time
                                                 </h2>
                                                 <p className="text-2xs text-muted">
-                                                    30-Min Google Meet &bull; Dedicated Project Manager
+                                                    30-Min Google Meet &bull; Project Manager
                                                 </p>
                                             </div>
                                         </div>
@@ -233,7 +233,7 @@ export default function BookDemo() {
                                                         <span>Google Meet Calendar Invite</span>
                                                     </div>
                                                     <p className="text-muted leading-relaxed">
-                                                        We have sent a calendar invite to <span className="font-semibold text-ink">{data.email}</span>. One of our dedicated project managers will contact you and join the Google Meet session at your scheduled time.
+                                                        We have sent a calendar invite to <span className="font-semibold text-ink">{data.email}</span>. One of our project managers will contact you and join the Google Meet session at your scheduled time.
                                                     </p>
                                                 </div>
                                                 <button
@@ -380,7 +380,7 @@ export default function BookDemo() {
                                                 </button>
 
                                                 <p className="text-center text-2xs text-subtle pt-1">
-                                                    🔒 Google Meet invite sent via email &bull; One of our dedicated project managers will contact you at your scheduled time.
+                                                    🔒 Google Meet invite sent via email &bull; One of our project managers will contact you at your scheduled time.
                                                 </p>
                                             </form>
                                         )}

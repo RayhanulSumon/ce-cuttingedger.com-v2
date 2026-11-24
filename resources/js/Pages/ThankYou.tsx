@@ -56,7 +56,7 @@ export default function ThankYou() {
                         <p className="text-muted text-sm sm:text-base max-w-md mx-auto">
                             {isPilot
                                 ? 'Confirmation email sent. Your raw files are now in our studio production queue.'
-                                : 'Confirmation email sent. Our studio directors are reviewing your project requirements.'}
+                                : 'Confirmation email sent. One of our project managers is reviewing your project requirements.'}
                         </p>
                     </div>
 

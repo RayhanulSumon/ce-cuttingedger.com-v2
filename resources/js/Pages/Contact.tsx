@@ -13,8 +13,6 @@ import {
     Mail,
     MapPin,
     Phone,
-    RotateCw,
-    Sparkles,
     UploadCloud,
     Users,
 } from 'lucide-react';
@@ -31,7 +29,6 @@ const FIELD_ANCHORS: Record<string, { id: string; label: string }> = {
     company: { id: 'contact-company', label: 'Company' },
     website: { id: 'contact-website', label: 'Website' },
     message: { id: 'contact-message', label: 'Project details' },
-    captcha_answer: { id: 'contact-captcha', label: 'Security answer' },
 };
 
 export default function Contact() {
@@ -76,9 +73,7 @@ export default function Contact() {
 
     const [copiedEmail, setCopiedEmail] = useState(false);
     const [showOptionalDetails, setShowOptionalDetails] = useState(false);
-    const [requestSample, setRequestSample] = useState(false);
     const [sampleCloudLink, setSampleCloudLink] = useState('');
-    const [captchaQuestion, setCaptchaQuestion] = useState('');
     const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -90,8 +85,6 @@ export default function Contact() {
         service_interest: matchedService,
         message: initialMessage,
         honeypot: '',
-        captcha_answer: '',
-        captcha_token: '',
     });
 
     useEffect(() => {
@@ -111,27 +104,6 @@ export default function Contact() {
         }
     }, [errors.phone, errors.company, errors.website]);
 
-    const refreshCaptcha = () => {
-        fetch('/api/captcha/math')
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.question && res.token) {
-                    setCaptchaQuestion(res.question);
-                    setData((prev) => ({
-                        ...prev,
-                        captcha_token: res.token,
-                        captcha_answer: '',
-                    }));
-                }
-            })
-            .catch(() => {});
-    };
-
-    useEffect(() => {
-        refreshCaptcha();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const handleCopyEmail = () => {
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(contactEmail).catch(() => {});
@@ -143,21 +115,18 @@ export default function Contact() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // If client requested a free test sample with cloud link, append to message body
-        if (requestSample && sampleCloudLink.trim()) {
-            data.message = `${data.message}\n\n[Free Sample Trial Requested]\nSample Assets Link: ${sampleCloudLink.trim()}`;
+        // If client provided a sample cloud link, append cleanly to message body
+        if (sampleCloudLink.trim()) {
+            data.message = `${data.message}\n\n[Sample Assets / Reference Link]:\n${sampleCloudLink.trim()}`;
         }
 
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
-                reset('message', 'website', 'captcha_answer');
-                setRequestSample(false);
+                reset('message', 'website');
                 setSampleCloudLink('');
-                refreshCaptcha();
             },
             onError: () => {
-                refreshCaptcha();
                 window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
             },
         });
@@ -171,7 +140,7 @@ export default function Contact() {
         <>
             <SeoHead
                 title="Contact Studio — Cutting Edger"
-                description="Connect directly with Cutting Edger studio directors for custom volume pricing, SLA turnaround, or a quick discovery call."
+                description="Connect directly with a Cutting Edger project manager for custom volume pricing, SLA turnaround, or a quick discovery call."
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
                     { name: 'Contact', url: '/contact' },
@@ -192,7 +161,7 @@ export default function Contact() {
                                     <span className="text-primary-ink">next project.</span>
                                 </h1>
                                 <p className="max-w-md text-sm leading-relaxed text-muted sm:text-base">
-                                    Share your goals or catalog requirements and our studio directors will respond within 24 hours.
+                                    Share your goals or catalog requirements and one of our project managers will respond within 24 hours.
                                 </p>
                             </div>
 
@@ -212,7 +181,7 @@ export default function Contact() {
                                         </span>
                                     </div>
                                     <p className="text-2xs text-muted truncate mt-0.5">
-                                        Dhaka & New York Hubs · Avg Quote Response: &lt; 15 mins
+                                        24/7 Dual-Shift Queue · Avg Quote Response: &lt; 15 mins
                                     </p>
                                 </div>
                             </div>
@@ -307,7 +276,7 @@ export default function Contact() {
                                 </span>
                                 <span className="inline-flex items-center gap-1.5">
                                     <Users className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
-                                    Dedicated team
+                                    Studio team
                                 </span>
                             </div>
                         </div>
@@ -324,7 +293,7 @@ export default function Contact() {
                                         Start a conversation
                                     </h2>
                                     <p className="text-xs text-muted">
-                                        Tell us what you’re working on — we’ll get back to you within one business day.
+                                        Tell us what you’re working on — one of our project managers will get back to you within 24 hours.
                                     </p>
                                 </div>
 
@@ -491,48 +460,28 @@ export default function Contact() {
                                     )}
                                 </div>
 
-                                {/* Free Test Retouch Request Block */}
-                                <div className="rounded-2xl border border-primary/20 bg-primary-soft/40 p-4 sm:p-5 space-y-3">
-                                    <div className="flex items-start gap-3">
-                                        <input
-                                            id="request-sample"
-                                            type="checkbox"
-                                            checked={requestSample}
-                                            onChange={(e) => setRequestSample(e.target.checked)}
-                                            className="mt-1 h-4 w-4 rounded border-ink/20 text-primary focus:ring-primary/20 cursor-pointer"
-                                        />
-                                        <div className="flex-1">
-                                            <label htmlFor="request-sample" className="text-xs font-bold text-ink cursor-pointer flex items-center gap-1.5">
-                                                <Sparkles className="h-3.5 w-3.5 text-primary-ink" />
-                                                <span>Request a Complimentary 1-3 Image Test Retouch</span>
-                                            </label>
-                                            <p className="text-2xs text-muted mt-0.5">
-                                                Benchmark our quality on your own RAW or studio files before committing. Returned within 24h.
-                                            </p>
-                                        </div>
+                                {/* Sample Assets / Reference Link Input */}
+                                <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <label htmlFor="sample-link" className={FIELD_LABEL_CLASS}>
+                                            Sample Assets or Reference Link <span className="font-normal text-muted">(Optional)</span>
+                                        </label>
+                                        <span className="text-2xs text-subtle">Drive, Dropbox, WeTransfer</span>
                                     </div>
-
-                                    {requestSample && (
-                                        <div className="pt-2 border-t border-primary/15 space-y-1.5">
-                                            <label htmlFor="sample-link" className="block text-2xs font-semibold text-ink">
-                                                Sample Assets Cloud Link (Google Drive, WeTransfer, Dropbox)
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    id="sample-link"
-                                                    type="url"
-                                                    value={sampleCloudLink}
-                                                    onChange={(e) => setSampleCloudLink(e.target.value)}
-                                                    placeholder="https://drive.google.com/... or wetransfer.com/..."
-                                                    className={`${INPUT_CLASS} pr-9`}
-                                                />
-                                                <UploadCloud className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-faint pointer-events-none" />
-                                            </div>
-                                            <p className="text-2xs text-subtle">
-                                                Upload 1 to 3 images to any cloud service and paste the view/download link above.
-                                            </p>
-                                        </div>
-                                    )}
+                                    <div className="relative">
+                                        <input
+                                            id="sample-link"
+                                            type="url"
+                                            value={sampleCloudLink}
+                                            onChange={(e) => setSampleCloudLink(e.target.value)}
+                                            placeholder="https://drive.google.com/... or wetransfer.com/..."
+                                            className={`${INPUT_CLASS} pr-9`}
+                                        />
+                                        <UploadCloud className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-faint pointer-events-none" />
+                                    </div>
+                                    <p className="text-2xs text-subtle">
+                                        Want a complimentary 1–3 image test retouch? Paste your cloud link here to benchmark our quality.
+                                    </p>
                                 </div>
 
                                 {/* Progressive Disclosure for Optional Fields */}
@@ -621,63 +570,28 @@ export default function Contact() {
                                     )}
                                 </div>
 
-                                {/* Footer: Compact Math Check & Primary Submit */}
-                                <div className="space-y-2 border-t border-ink/8 pt-5">
-                                    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                                        {captchaQuestion ? (
-                                            <div className="inline-flex min-h-10 items-center gap-2 self-start rounded-xl border border-ink/12 bg-surface-2 px-3 py-1.5 text-xs text-ink-2 sm:self-auto">
-                                                <span className="font-medium text-subtle">Security check:</span>
-                                                <span className="font-semibold text-ink">{captchaQuestion} =</span>
-                                                <input
-                                                    id="contact-captcha"
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    required
-                                                    aria-label="Security math answer"
-                                                    aria-invalid={Boolean(errors.captcha_answer)}
-                                                    value={data.captcha_answer}
-                                                    onChange={(e) => setData('captcha_answer', e.target.value)}
-                                                    placeholder="?"
-                                                    className="w-12 rounded-lg border border-ink/15 bg-surface px-2 py-1 text-center text-xs font-semibold text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={refreshCaptcha}
-                                                    aria-label="Refresh security challenge"
-                                                    title="Refresh security challenge"
-                                                    className="cursor-pointer rounded-md p-1 text-subtle transition-colors hover:text-primary-ink"
-                                                >
-                                                    <RotateCw className="h-3.5 w-3.5" aria-hidden="true" />
-                                                </button>
-                                            </div>
+                                {/* Footer: Elevated Full-Width Submit & Trust Badges */}
+                                <div className="space-y-3 border-t border-ink/8 pt-5">
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:bg-primary-hover active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                                    >
+                                        {processing ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                                <span>Sending Message...</span>
+                                            </>
                                         ) : (
-                                            <div className="h-10" aria-hidden="true" />
+                                            <>
+                                                <span>Send Message</span>
+                                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                            </>
                                         )}
-
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-                                        >
-                                            {processing ? (
-                                                <>
-                                                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                                                    <span>Sending...</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span>Send Message</span>
-                                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-
-                                    {errors.captcha_answer && (
-                                        <p className="text-xs font-medium text-danger">
-                                            {errors.captcha_answer}
-                                        </p>
-                                    )}
+                                    </button>
+                                    <p className="text-center text-2xs text-subtle">
+                                        🔒 24h SLA Response &bull; Mutual NDA Protected &bull; One of our project managers will contact you
+                                    </p>
                                 </div>
                             </form>
                         </div>
