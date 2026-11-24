@@ -1,216 +1,101 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { PageProps } from '@/types';
 import {
-    AlertCircle,
     ArrowRight,
+    Building2,
     Calendar,
     CheckCircle2,
     Clock,
-    ExternalLink,
-    Loader2,
-    Lock,
     Mail,
+    Phone,
     Shield,
     Sparkles,
+    User,
+    Video,
 } from 'lucide-react';
 
-declare global {
-    interface Window {
-        Calendly?: {
-            initInlineWidget: (options: {
-                url: string;
-                parentElement: HTMLElement;
-                prefill?: { name?: string; email?: string };
-            }) => void;
-        };
-    }
-}
-
-const CALENDLY_SCRIPT_SRC = 'https://assets.calendly.com/assets/external/widget.js';
-const DEFAULT_PLACEHOLDER_URL = 'https://calendly.com/cuttingedger/discovery-call';
-
-const WHAT_WE_COVER = [
-    {
-        title: 'Live workflow & quality walkthrough',
-        detail: 'See how our retouching, ghost mannequin, 3D CGI, and Digital Twin pipelines fit your stack.',
-    },
-    {
-        title: 'Custom volume pricing & SLA review',
-        detail: 'Align on per-SKU rates, 24-hour standard delivery, or sub-6h rush queues for catalog drops.',
-    },
-    {
-        title: 'Free 3-image production sample',
-        detail: 'Optionally scope 3 complex test assets so your team can benchmark quality before committing.',
-    },
+const HIGHLIGHTS = [
+    '30-Min Google Meet with a Dedicated Project Manager',
+    'Live workflow walkthrough & custom volume pricing',
+    'Complimentary 3-image production test batch',
 ];
 
-const DEMO_FAQS = [
-    {
-        question: 'What should we prepare for the discovery call?',
-        answer: 'No heavy preparation needed. Having a rough estimate of your monthly SKU volume, target delivery turnarounds, and a sample link to your current catalog imagery helps us provide immediate pricing and workflow recommendations.',
-    },
-    {
-        question: 'Can colleagues or agency partners join the call?',
-        answer: 'Yes! When choosing a date and time slot in the calendar, Calendly allows you to add additional guest emails so meeting links and calendar invites are sent to your entire team.',
-    },
-    {
-        question: 'How does the complimentary 3-image test work?',
-        answer: 'After aligning on your brand guidelines during the call, you can send 3 of your most complex raw image assets. Our senior retouching artisans will process and return production-ready master files in under 24 hours with zero commitment.',
-    },
-    {
-        question: 'What if none of the available times work for my timezone?',
-        answer: 'Our studio operates around the clock across US and European timezones. If you cannot find a suitable slot, email us directly at info@cuttingedger.com with your preferred time, and we will arrange a dedicated session.',
-    },
+const TIME_SLOTS = [
+    '10:00 AM',
+    '11:30 AM',
+    '02:00 PM',
+    '03:30 PM',
+    '05:00 PM',
+    '07:00 PM',
 ];
 
-function isPlaceholderOrEmpty(url?: string | null): boolean {
-    if (!url) return true;
-    const trimmed = url.trim().toLowerCase();
-    return (
-        trimmed === '' ||
-        trimmed === DEFAULT_PLACEHOLDER_URL.toLowerCase() ||
-        trimmed.includes('cuttingedger/discovery-call') ||
-        trimmed.includes('your-org') ||
-        trimmed.includes('example.com')
-    );
-}
-
-function buildCalendlyEmbedUrl(rawUrl: string): string | null {
-    try {
-        const parsed = new URL(rawUrl);
-        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-            return null;
-        }
-        parsed.searchParams.set('hide_event_type_details', '1');
-        parsed.searchParams.set('hide_gdpr_banner', '1');
-        parsed.searchParams.set('primary_color', 'f5761a');
-        parsed.searchParams.set('text_color', '16191f');
-        parsed.searchParams.set('background_color', 'ffffff');
-        return parsed.toString();
-    } catch {
-        return null;
-    }
-}
+const TOPICS = [
+    'Digital Twins',
+    'Virtual Try-On',
+    '2D Retouching',
+    '3D CGI & Modeling',
+];
 
 export default function BookDemo() {
     const { settings, auth } = usePage<PageProps>().props;
-    const rawCalendlyUrl = settings?.calendly_url || DEFAULT_PLACEHOLDER_URL;
     const contactEmail = settings?.contact_email || 'info@cuttingedger.com';
+    const contactPhone = settings?.contact_phone || '+1 (409) 995-2565';
 
-    const isPlaceholder = isPlaceholderOrEmpty(rawCalendlyUrl);
-    const embedUrl = useMemo(
-        () => (isPlaceholder ? null : buildCalendlyEmbedUrl(rawCalendlyUrl)),
-        [rawCalendlyUrl, isPlaceholder],
-    );
+    // Calculate minimum date (tomorrow)
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
 
-    const embedRef = useRef<HTMLDivElement | null>(null);
-    const [widgetState, setWidgetState] = useState<'loading' | 'ready' | 'error'>(embedUrl ? 'loading' : 'ready');
-    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+    const [selectedSlot, setSelectedSlot] = useState(TIME_SLOTS[1]); // Default 11:30 AM
+    const [selectedDate, setSelectedDate] = useState(tomorrow);
+    const [selectedTopics, setSelectedTopics] = useState<string[]>(['Digital Twins', 'Virtual Try-On']);
+    const [submitted, setSubmitted] = useState(false);
 
-    useEffect(() => {
-        if (isPlaceholder || !embedUrl) {
-            setWidgetState('ready');
-            return;
-        }
+    const { data, setData, post, processing, errors } = useForm({
+        name: auth?.user?.name || '',
+        email: auth?.user?.email || '',
+        company: auth?.user?.company || '',
+        phone: auth?.user?.phone || '',
+        notes: '',
+    });
 
-        const container = embedRef.current;
-        if (!container) {
-            return;
-        }
+    const toggleTopic = (topic: string) => {
+        setSelectedTopics((prev) =>
+            prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic],
+        );
+    };
 
-        let cancelled = false;
-        let fallbackTimer: number | undefined;
-        let iframeEl: HTMLIFrameElement | null = null;
-        let handleIframeLoad: (() => void) | null = null;
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-        setWidgetState('loading');
-        container.innerHTML = '';
+        const formattedMessage = [
+            `30-Minute Discovery Session Scheduled (Google Meet)`,
+            `Date: ${selectedDate}`,
+            `Time: ${selectedSlot} (Client Timezone)`,
+            `Topics: ${selectedTopics.join(', ') || 'General Discovery'}`,
+            data.notes ? `Notes: ${data.notes}` : '',
+        ]
+            .filter(Boolean)
+            .join('\n');
 
-        const mountWidget = () => {
-            if (cancelled || !embedRef.current || !window.Calendly?.initInlineWidget) {
-                return;
-            }
-
-            try {
-                embedRef.current.innerHTML = '';
-                window.Calendly.initInlineWidget({
-                    url: embedUrl,
-                    parentElement: embedRef.current,
-                    prefill:
-                        auth?.user?.name || auth?.user?.email
-                            ? {
-                                  name: auth.user.name || undefined,
-                                  email: auth.user.email || undefined,
-                              }
-                            : undefined,
-                });
-
-                iframeEl = embedRef.current.querySelector('iframe');
-                if (iframeEl) {
-                    handleIframeLoad = () => {
-                        if (!cancelled) {
-                            setWidgetState('ready');
-                        }
-                    };
-                    iframeEl.addEventListener('load', handleIframeLoad);
-                }
-
-                fallbackTimer = window.setTimeout(() => {
-                    if (!cancelled) {
-                        setWidgetState('ready');
-                    }
-                }, 3000);
-            } catch {
-                if (!cancelled) {
-                    setWidgetState('error');
-                }
-            }
-        };
-
-        const handleScriptError = () => {
-            if (!cancelled) {
-                setWidgetState('error');
-            }
-        };
-
-        let script = document.querySelector<HTMLScriptElement>(`script[src="${CALENDLY_SCRIPT_SRC}"]`);
-
-        if (window.Calendly?.initInlineWidget) {
-            mountWidget();
-        } else {
-            if (!script) {
-                script = document.createElement('script');
-                script.src = CALENDLY_SCRIPT_SRC;
-                script.async = true;
-                document.head.appendChild(script);
-            }
-            script.addEventListener('load', mountWidget);
-            script.addEventListener('error', handleScriptError);
-        }
-
-        return () => {
-            cancelled = true;
-            if (fallbackTimer !== undefined) {
-                window.clearTimeout(fallbackTimer);
-            }
-            if (iframeEl && handleIframeLoad) {
-                iframeEl.removeEventListener('load', handleIframeLoad);
-            }
-            if (script) {
-                script.removeEventListener('load', mountWidget);
-                script.removeEventListener('error', handleScriptError);
-            }
-            container.innerHTML = '';
-        };
-    }, [embedUrl, isPlaceholder, auth?.user?.name, auth?.user?.email]);
+        post(route('contact.store'), {
+            preserveScroll: true,
+            data: {
+                ...data,
+                service_interest: '30-Min Live Demo (Google Meet)',
+                message: formattedMessage,
+            },
+            onSuccess: () => {
+                setSubmitted(true);
+            },
+        });
+    };
 
     return (
         <>
             <SeoHead
-                title="Book a Demo — 30-Min Technical Discovery | Cutting Edger"
-                description="Schedule a 30-minute live screen-share with Cutting Edger studio directors to inspect retouching quality, review catalog turnaround SLAs, and configure custom volume pricing."
+                title="Book a Demo — 30-Min Discovery Session | Cutting Edger"
+                description="Schedule a 30-minute Google Meet call with a dedicated Cutting Edger project manager to review turnaround SLAs, custom pricing, and your free 3-image test."
                 canonicalUrl="/book-a-demo"
                 breadcrumbs={[
                     { name: 'Home', url: '/' },
@@ -218,284 +103,302 @@ export default function BookDemo() {
                 ]}
             />
 
-            <div className="bg-page min-h-screen text-ink">
-                {/* Main Split Section — Clean, Simple, Uncluttered */}
-                <section className="relative pt-28 pb-16 sm:pt-32 sm:pb-20">
+            <div className="bg-page min-h-[calc(100vh-80px)] text-ink">
+                <section className="relative pt-24 pb-16 sm:pt-28 sm:pb-20">
                     <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
-                            {/* LEFT COLUMN: Clean, Concise Editorial Summary */}
-                            <div className="space-y-6 lg:col-span-5">
+                        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-14">
+                            {/* LEFT COLUMN: Clean, Minimal Editorial Intro */}
+                            <div className="space-y-6 lg:col-span-5 pt-2">
                                 <div className="space-y-3">
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary-ink">
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-2xs font-bold uppercase tracking-[0.16em] text-primary-ink">
                                         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                                        <span className="uppercase tracking-wider text-2xs">
-                                            30-Min Live Demo
-                                        </span>
+                                        <span>30-Min Discovery Session</span>
                                     </div>
 
-                                    <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl lg:text-[42px] lg:leading-[1.12] [text-wrap:balance]">
+                                    <h1 className="font-display text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-ink leading-[1.12]">
                                         Book a <span className="text-primary-ink">Demo.</span>
                                     </h1>
 
-                                    <p className="max-w-md text-sm leading-relaxed text-muted sm:text-base">
-                                        Pick a convenient time to walk through your visual pipeline, review turnaround SLAs, and plan a free 3-image test.
+                                    <p className="text-sm sm:text-base leading-relaxed text-muted max-w-md">
+                                        Schedule a 30-minute Google Meet discovery call. At your scheduled time, one of our dedicated project managers will connect with you to plan your visual pipeline, review SLAs, and scope a free 3-image production test.
                                     </p>
                                 </div>
 
-                                {/* Live Dual-Shift Studio Status */}
-                                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-surface border border-ink/10 shadow-xs">
-                                    <span className="relative flex h-3 w-3 shrink-0">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-success"></span>
-                                    </span>
-                                    <div className="min-w-0 flex-1">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <span className="text-xs font-bold text-ink">
-                                                Production Hubs Online
-                                            </span>
-                                            <span className="text-2xs font-bold px-2 py-0.5 rounded-full bg-success-soft text-success">
-                                                Live
-                                            </span>
+                                {/* Minimal Highlights List */}
+                                <div className="space-y-3 pt-2">
+                                    {HIGHLIGHTS.map((item, idx) => (
+                                        <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-ink">
+                                            <CheckCircle2 className="h-4 w-4 text-primary-ink shrink-0" />
+                                            <span>{item}</span>
                                         </div>
-                                        <p className="text-2xs text-muted truncate mt-0.5">
-                                            Dhaka & New York Hubs · 24/7 Dual-Shift Queue
-                                        </p>
-                                    </div>
+                                    ))}
                                 </div>
 
-                                {/* What We Cover Card */}
-                                <div className="rounded-2xl border border-ink/10 bg-surface p-5 space-y-4 shadow-xs">
-                                    <p className="text-xs font-bold uppercase tracking-wider text-primary-ink">
-                                        What We Cover
-                                    </p>
-
-                                    <div className="space-y-3.5">
-                                        {WHAT_WE_COVER.map((item, idx) => (
-                                            <div key={idx} className="flex items-start gap-3">
-                                                <CheckCircle2 className="h-4 w-4 text-primary-ink shrink-0 mt-0.5" />
-                                                <div className="space-y-0.5">
-                                                    <h2 className="text-xs font-bold text-ink leading-snug">{item.title}</h2>
-                                                    <p className="text-2xs leading-relaxed text-muted">{item.detail}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* 3 Badges Strip */}
-                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-muted">
+                                {/* Trust Badges Strip */}
+                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-muted pt-2 border-t border-ink/10">
                                     <span className="inline-flex items-center gap-1.5">
                                         <Clock className="h-3.5 w-3.5 text-primary-ink" />
-                                        <span>24h SLA</span>
+                                        <span>24h Turnaround SLA</span>
                                     </span>
                                     <span className="inline-flex items-center gap-1.5">
                                         <Shield className="h-3.5 w-3.5 text-primary-ink" />
-                                        <span>Mutual NDA</span>
+                                        <span>Enterprise NDA</span>
                                     </span>
                                     <span className="inline-flex items-center gap-1.5">
                                         <Sparkles className="h-3.5 w-3.5 text-primary-ink" />
-                                        <span>No obligation</span>
+                                        <span>No Obligation</span>
                                     </span>
                                 </div>
 
-                                {/* Direct Support Card */}
-                                <div className="rounded-2xl border border-ink/10 bg-surface p-4.5 space-y-2 shadow-xs">
-                                    <p className="text-xs font-bold text-ink">Prefer to send a written brief?</p>
-                                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                                        <Link
-                                            href="/contact"
-                                            className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
-                                        >
-                                            <span>Go to Contact Page</span>
-                                            <ArrowRight className="h-3 w-3" />
-                                        </Link>
-                                        <a
-                                            href={`mailto:${contactEmail}`}
-                                            className="text-xs text-muted hover:text-ink transition-colors inline-flex items-center gap-1.5"
-                                        >
-                                            <Mail className="h-3.5 w-3.5 text-subtle" />
-                                            <span>{contactEmail}</span>
-                                        </a>
-                                    </div>
+                                {/* Direct Contact Line */}
+                                <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted">
+                                    <a
+                                        href={`mailto:${contactEmail}`}
+                                        className="inline-flex items-center gap-1.5 hover:text-ink transition-colors"
+                                    >
+                                        <Mail size={13} className="text-primary-ink" />
+                                        <span>{contactEmail}</span>
+                                    </a>
+                                    <span>&bull;</span>
+                                    <a
+                                        href={`tel:${contactPhone.replace(/[^+\d]/g, '')}`}
+                                        className="inline-flex items-center gap-1.5 hover:text-ink transition-colors"
+                                    >
+                                        <Phone size={13} className="text-primary-ink" />
+                                        <span>{contactPhone}</span>
+                                    </a>
                                 </div>
                             </div>
 
-                            {/* RIGHT COLUMN: Pure, Clean Calendly Booking Card */}
+                            {/* RIGHT COLUMN: Dedicated 30-Min Schedule Booking Form */}
                             <div className="lg:col-span-7">
-                                <div className="overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-xs">
+                                <div className="overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-sm">
                                     {/* Card Header Bar */}
-                                    <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-5 py-3.5 bg-surface-2">
-                                        <div className="flex items-center gap-2.5">
-                                            <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/10 text-primary-ink">
-                                                <Calendar className="h-3.5 w-3.5" />
+                                    <div className="flex items-center justify-between gap-3 border-b border-ink/8 px-6 py-4 bg-surface-2">
+                                        <div className="flex items-center gap-3">
+                                            <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary/10 text-primary-ink">
+                                                <Video className="h-4 w-4" />
                                             </span>
                                             <div>
-                                                <h2 className="text-xs font-bold text-ink">
-                                                    Select a Date &amp; Time
+                                                <h2 className="text-sm font-bold text-ink">
+                                                    Schedule 30-Min Discovery Call
                                                 </h2>
                                                 <p className="text-2xs text-muted">
-                                                    30-minute discovery call via Google Meet / Zoom
+                                                    Live via Google Meet &bull; Dedicated Project Manager
                                                 </p>
                                             </div>
                                         </div>
-
-                                        {!isPlaceholder && (
-                                            <a
-                                                href={rawCalendlyUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 rounded-lg border border-ink/10 bg-surface px-2.5 py-1 text-2xs font-semibold text-ink hover:text-primary-ink transition-colors shadow-xs"
-                                            >
-                                                <span>Open in Calendly</span>
-                                                <ExternalLink className="h-3 w-3" />
-                                            </a>
-                                        )}
                                     </div>
 
-                                    {/* Pure Calendly Embed Container */}
-                                    <div className="relative bg-surface" style={{ minHeight: '660px' }}>
-                                        {isPlaceholder ? (
-                                            /* Simple Fallback when URL not yet configured */
-                                            <div className="flex min-h-[500px] flex-col items-center justify-center p-8 text-center space-y-4">
-                                                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary-ink">
-                                                    <Calendar className="h-6 w-6" />
+                                    {/* Form or Confirmation View */}
+                                    <div className="p-6 sm:p-8">
+                                        {submitted ? (
+                                            <div className="flex flex-col items-center justify-center py-8 text-center">
+                                                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-success-soft text-success shadow-xs">
+                                                    <CheckCircle2 className="h-7 w-7" />
                                                 </div>
-                                                <div className="max-w-sm space-y-1.5">
-                                                    <h3 className="font-display text-base font-bold text-ink">
-                                                        Discovery Calendar
-                                                    </h3>
-                                                    <p className="text-xs text-muted leading-relaxed">
-                                                        Our studio schedule is being refreshed. You can connect with our team immediately through our direct contact page.
+                                                <h3 className="mt-4 font-display text-xl font-bold text-ink">
+                                                    Discovery Call Requested!
+                                                </h3>
+                                                <p className="mt-2 max-w-sm text-xs sm:text-sm text-muted leading-relaxed">
+                                                    Your 30-minute discovery session has been received for{' '}
+                                                    <strong className="text-ink">{selectedDate}</strong> at{' '}
+                                                    <strong className="text-ink">{selectedSlot}</strong>.
+                                                </p>
+                                                <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left text-xs text-ink max-w-md w-full space-y-1.5">
+                                                    <div className="flex items-center gap-2 font-bold text-primary-ink">
+                                                        <Video size={14} />
+                                                        <span>Google Meet Calendar Invite</span>
+                                                    </div>
+                                                    <p className="text-muted leading-relaxed">
+                                                        We have sent a confirmation email to <span className="font-semibold text-ink">{data.email}</span>. One of our dedicated project managers will contact you and host the Google Meet session at your scheduled time.
                                                     </p>
                                                 </div>
-                                                <Link
-                                                    href="/contact"
-                                                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-xs hover:bg-primary-hover transition-colors"
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSubmitted(false)}
+                                                    className="mt-6 rounded-full border border-ink/15 px-5 py-2 text-xs font-semibold text-ink hover:bg-surface-2 transition-colors"
                                                 >
-                                                    <span>Open Contact Page</span>
-                                                    <ArrowRight className="h-3.5 w-3.5" />
-                                                </Link>
+                                                    Schedule Another Session
+                                                </button>
                                             </div>
                                         ) : (
-                                            <>
-                                                {widgetState === 'loading' && (
-                                                    <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 bg-surface/95 text-sm text-muted">
-                                                        <Loader2 className="h-5 w-5 animate-spin text-primary-ink" />
-                                                        <span className="text-xs">Loading studio calendar…</span>
-                                                    </div>
-                                                )}
+                                            <form onSubmit={handleSubmit} className="space-y-5">
+                                                {/* Step 1: Date & Time Picker */}
+                                                <div>
+                                                    <label className="flex items-center gap-1.5 text-xs font-bold text-ink mb-2">
+                                                        <Calendar className="h-3.5 w-3.5 text-primary-ink" />
+                                                        <span>1. Select Date &amp; Preferred Time</span>
+                                                    </label>
 
-                                                {widgetState === 'error' ? (
-                                                    <div className="flex min-h-[460px] flex-col items-center justify-center px-6 py-12 text-center space-y-3">
-                                                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-warning-soft text-warning">
-                                                            <AlertCircle className="h-5 w-5" />
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        <div>
+                                                            <input
+                                                                type="date"
+                                                                required
+                                                                min={tomorrow}
+                                                                value={selectedDate}
+                                                                onChange={(e) => setSelectedDate(e.target.value)}
+                                                                className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-xs sm:text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                                            />
                                                         </div>
-                                                        <div className="max-w-xs space-y-1">
-                                                            <h3 className="font-display text-sm font-bold text-ink">
-                                                                Calendar embed blocked by browser
-                                                            </h3>
-                                                            <p className="text-2xs text-muted leading-relaxed">
-                                                                Your browser or privacy extension may be blocking third-party booking cookies. You can open our direct booking page in a new window below.
-                                                            </p>
-                                                        </div>
-                                                        <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-                                                            <a
-                                                                href={rawCalendlyUrl}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary-hover shadow-xs"
-                                                            >
-                                                                <span>Open Booking Schedule</span>
-                                                                <ExternalLink className="h-3.5 w-3.5" />
-                                                            </a>
-                                                            <Link
-                                                                href="/contact"
-                                                                className="inline-flex items-center gap-1.5 rounded-xl border border-ink/15 bg-surface px-4 py-2 text-xs font-semibold text-ink hover:border-ink/30 transition-colors"
-                                                            >
-                                                                <span>Contact Form</span>
-                                                            </Link>
+
+                                                        <div className="grid grid-cols-3 gap-1.5">
+                                                            {TIME_SLOTS.map((slot) => {
+                                                                const isSelected = selectedSlot === slot;
+                                                                return (
+                                                                    <button
+                                                                        key={slot}
+                                                                        type="button"
+                                                                        onClick={() => setSelectedSlot(slot)}
+                                                                        className={`rounded-lg py-2 px-1 text-center text-2xs font-semibold transition-all ${
+                                                                            isSelected
+                                                                                ? 'bg-primary text-primary-foreground shadow-xs'
+                                                                                : 'border border-ink/10 bg-surface-2 text-ink hover:border-ink/25'
+                                                                        }`}
+                                                                    >
+                                                                        {slot}
+                                                                    </button>
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
-                                                ) : (
-                                                    <div
-                                                        ref={embedRef}
-                                                        className="w-full"
-                                                        style={{ minWidth: '320px', height: '660px', width: '100%' }}
-                                                    />
-                                                )}
-                                            </>
+                                                </div>
+
+                                                {/* Step 2: Topics of Interest */}
+                                                <div>
+                                                    <label className="flex items-center gap-1.5 text-xs font-bold text-ink mb-2">
+                                                        <Sparkles className="h-3.5 w-3.5 text-primary-ink" />
+                                                        <span>2. Services of Interest</span>
+                                                    </label>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {TOPICS.map((topic) => {
+                                                            const isChecked = selectedTopics.includes(topic);
+                                                            return (
+                                                                <button
+                                                                    key={topic}
+                                                                    type="button"
+                                                                    onClick={() => toggleTopic(topic)}
+                                                                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                                                                        isChecked
+                                                                            ? 'bg-ink text-white shadow-xs'
+                                                                            : 'border border-ink/15 bg-surface text-ink hover:border-ink/30'
+                                                                    }`}
+                                                                >
+                                                                    {topic}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+
+                                                {/* Step 3: Contact Details */}
+                                                <div className="space-y-3 pt-1 border-t border-ink/10">
+                                                    <p className="text-xs font-bold text-ink pt-1">
+                                                        3. Your Details (For Calendar Invite)
+                                                    </p>
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        <div>
+                                                            <div className="flex items-center gap-1 text-2xs font-bold text-ink mb-1">
+                                                                <User className="h-3 w-3 text-subtle" />
+                                                                <span>Full Name *</span>
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                required
+                                                                value={data.name}
+                                                                onChange={(e) => setData('name', e.target.value)}
+                                                                placeholder="Alex Rivera"
+                                                                className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2 text-xs sm:text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                                            />
+                                                            {errors.name && (
+                                                                <p className="mt-1 text-2xs text-danger">{errors.name}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <div className="flex items-center gap-1 text-2xs font-bold text-ink mb-1">
+                                                                <Mail className="h-3 w-3 text-subtle" />
+                                                                <span>Work Email *</span>
+                                                            </div>
+                                                            <input
+                                                                type="email"
+                                                                required
+                                                                value={data.email}
+                                                                onChange={(e) => setData('email', e.target.value)}
+                                                                placeholder="alex@brand.com"
+                                                                className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2 text-xs sm:text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                                            />
+                                                            {errors.email && (
+                                                                <p className="mt-1 text-2xs text-danger">{errors.email}</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        <div>
+                                                            <div className="flex items-center gap-1 text-2xs font-bold text-ink mb-1">
+                                                                <Building2 className="h-3 w-3 text-subtle" />
+                                                                <span>Brand / Company</span>
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                value={data.company}
+                                                                onChange={(e) => setData('company', e.target.value)}
+                                                                placeholder="Fashion Atelier"
+                                                                className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2 text-xs sm:text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                                            />
+                                                        </div>
+
+                                                        <div>
+                                                            <div className="flex items-center gap-1 text-2xs font-bold text-ink mb-1">
+                                                                <Phone className="h-3 w-3 text-subtle" />
+                                                                <span>Phone / WhatsApp</span>
+                                                            </div>
+                                                            <input
+                                                                type="tel"
+                                                                value={data.phone}
+                                                                onChange={(e) => setData('phone', e.target.value)}
+                                                                placeholder="+1 (555) 000-0000"
+                                                                className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2 text-xs sm:text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <textarea
+                                                            rows={2}
+                                                            value={data.notes}
+                                                            onChange={(e) => setData('notes', e.target.value)}
+                                                            placeholder="Any specific questions or sample image links? (Optional)"
+                                                            className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2 text-xs sm:text-sm text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Submit Button */}
+                                                <button
+                                                    type="submit"
+                                                    disabled={processing}
+                                                    className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                                                >
+                                                    <span>
+                                                        {processing
+                                                            ? 'Scheduling Meeting...'
+                                                            : `Confirm 30-Min Call for ${selectedSlot}`}
+                                                    </span>
+                                                    <ArrowRight size={14} />
+                                                </button>
+
+                                                <p className="text-center text-2xs text-subtle">
+                                                    🔒 A Google Meet invite will be sent directly to your email. One of our dedicated project managers will contact you at your scheduled time.
+                                                </p>
+                                            </form>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* FAQ Section */}
-                <section className="py-12 border-t border-ink/8 bg-surface">
-                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 space-y-8">
-                        <div className="max-w-xl space-y-1.5">
-                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-ink">
-                                Questions &amp; Answers
-                            </p>
-                            <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-                                Common Discovery Inquiries
-                            </h2>
-                            <p className="text-xs text-muted">
-                                Everything you need to know about our visual discovery walkthrough and trial terms.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {DEMO_FAQS.map((faq, idx) => {
-                                const isOpen = openFaqIndex === idx;
-                                return (
-                                    <div
-                                        key={idx}
-                                        className="rounded-2xl border border-ink/8 bg-surface p-5 space-y-2 transition-shadow hover:shadow-xs"
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                                            className="w-full flex items-start justify-between gap-3 text-left cursor-pointer"
-                                        >
-                                            <span className="text-sm font-bold text-ink leading-snug">
-                                                {faq.question}
-                                            </span>
-                                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-surface-2 text-subtle text-xs">
-                                                {isOpen ? '−' : '+'}
-                                            </span>
-                                        </button>
-                                        <p className={`text-xs text-muted leading-relaxed ${isOpen ? 'block' : 'hidden sm:block'}`}>
-                                            {faq.answer}
-                                        </p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Bottom Navigation Strip */}
-                <section className="py-8 border-t border-ink/8 bg-page">
-                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
-                        <div>
-                            <span>Cutting Edger Studio Discovery</span>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-5">
-                            <Link href="/capabilities" className="hover:text-ink transition-colors">
-                                Capabilities →
-                            </Link>
-                            <Link href="/case-studies" className="hover:text-ink transition-colors">
-                                Case Studies →
-                            </Link>
-                            <Link href="/pricing" className="hover:text-ink transition-colors">
-                                Transparent Pricing →
-                            </Link>
-                            <Link href="/contact" className="hover:text-ink transition-colors">
-                                Contact Studio →
-                            </Link>
                         </div>
                     </div>
                 </section>
