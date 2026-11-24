@@ -229,7 +229,7 @@ export function OrderCta({
             href={href}
             prefetch
             aria-label={ariaLabel}
-            className={`group inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary font-semibold text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_75%,transparent)] transition-[transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover active:translate-y-0 active:scale-[0.98] ${sizeClasses} ${className}`.trim()}
+            className={`group inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary font-semibold text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_75%,transparent)] transition-all duration-200 hover:bg-primary-hover hover:shadow-[0_14px_28px_-10px_color-mix(in_srgb,var(--color-primary)_85%,transparent)] active:scale-[0.98] ${sizeClasses} ${className}`.trim()}
         >
             {icon && <span className="grid place-items-center">{icon}</span>}
             <span>{children}</span>
@@ -260,11 +260,11 @@ export function PillButton({
 }) {
     const toneClasses =
         variant === 'dark'
-            ? 'bg-ink text-surface hover:bg-ink-2 hover:shadow-[0_12px_26px_-14px_rgba(16,17,20,0.45)]'
-            : 'border border-ink/20 bg-surface/85 text-ink backdrop-blur-sm hover:border-ink hover:bg-ink hover:text-surface';
+            ? 'border border-transparent bg-ink text-surface hover:bg-ink-2 hover:shadow-[0_8px_20px_-8px_rgba(16,17,20,0.5)]'
+            : 'border border-ink/20 bg-surface/90 text-ink backdrop-blur-sm hover:border-ink hover:bg-ink hover:text-surface hover:shadow-[0_8px_20px_-8px_rgba(16,17,20,0.25)]';
 
     const buttonClasses =
-        `group inline-flex h-10 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-xs font-semibold transition-[transform,background-color,color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-60 sm:h-11 sm:px-6 sm:text-sm ${toneClasses} ${className}`.trim();
+        `group inline-flex h-10 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-xs font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-60 sm:h-11 sm:px-6 sm:text-sm ${toneClasses} ${className}`.trim();
 
     if (href) {
         return (

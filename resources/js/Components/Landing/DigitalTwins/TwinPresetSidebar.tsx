@@ -12,7 +12,7 @@ interface TwinPresetSidebarProps {
 }
 
 const ACTION_BUTTON =
-    'flex w-full cursor-pointer items-center justify-between rounded-2xl px-5 py-4 text-left transition-[transform,background-color] duration-300 hover:-translate-y-0.5';
+    'flex w-full cursor-pointer items-center justify-between rounded-2xl px-5 py-4 text-left transition-all duration-200 active:scale-[0.99] hover:shadow-md';
 
 /** Right side of the pose modal: model name, short description, and simple action buttons. */
 export function TwinPresetSidebar({ twin, pendingAction, onAction }: TwinPresetSidebarProps) {

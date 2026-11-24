@@ -57,7 +57,7 @@ export const FaqSection = memo(function FaqSection({ active }: SectionProps) {
                                 <Link
                                     href="/book-a-demo"
                                     prefetch
-                                    className="inline-flex h-8 xl:h-9 items-center gap-1.5 rounded-full bg-surface px-3.5 xl:px-4 text-xs font-semibold text-secondary transition-transform duration-200 hover:-translate-y-0.5"
+                                    className="inline-flex h-8 xl:h-9 items-center gap-1.5 rounded-full bg-surface px-3.5 xl:px-4 text-xs font-semibold text-secondary transition-all duration-200 hover:bg-surface/90 hover:shadow-xs active:scale-[0.98]"
                                 >
                                     Book a Demo
                                     <ArrowUpRight size={14} />

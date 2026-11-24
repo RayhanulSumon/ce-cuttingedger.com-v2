@@ -198,7 +198,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                     Photoreal AI models, virtual try-on, and senior retouching for apparel and product brands—built to scale catalogs without studio bottlenecks.
                 </p>
             </Reveal>
-            <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Reveal active={show} delay={0.85} className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 transform-gpu">
                 <PillButton href="/book-a-demo" variant="dark">Book a Demo</PillButton>
                 <PillButton variant="outline" onClick={() => goTo(SECTION_INDEX['digital-twins'])}>
                     Explore Capabilities

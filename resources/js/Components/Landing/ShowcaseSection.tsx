@@ -267,7 +267,7 @@ function TileModal({ tile, onClose }: { tile: Tile | null; onClose: () => void }
                                         key={action.href}
                                         href={action.href}
                                         prefetch
-                                        className={`inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-semibold transition-transform duration-200 hover:-translate-y-0.5 sm:h-11 sm:text-sm ${
+                                        className={`inline-flex h-10 items-center gap-2 rounded-full px-5 text-xs font-semibold transition-all duration-200 active:scale-[0.98] sm:h-11 sm:text-sm ${
                                             i === 0
                                                 ? 'bg-primary text-primary-foreground shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-primary)_75%,transparent)] hover:bg-primary-hover'
                                                 : 'border border-ink/20 text-ink hover:border-ink hover:bg-ink hover:text-surface'

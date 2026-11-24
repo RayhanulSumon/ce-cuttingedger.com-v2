@@ -251,7 +251,7 @@ export const FooterSection = memo(function FooterSection({
                                         rel="noopener noreferrer"
                                         aria-label={social.name}
                                         title={social.name}
-                                        className="grid h-8 w-8 place-items-center rounded-full border border-ink/15 bg-surface/70 text-ink transition-[transform,background-color,color,border-color] duration-300 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
+                                        className="grid h-8 w-8 place-items-center rounded-full border border-ink/15 bg-surface/70 text-ink transition-all duration-200 hover:scale-105 hover:border-ink hover:bg-ink hover:text-white active:scale-95"
                                     >
                                         <SocialIcon name={social.name} />
                                     </a>

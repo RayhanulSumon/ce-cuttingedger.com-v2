@@ -282,7 +282,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                     <Link
                         href="/book-a-demo"
                         prefetch
-                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-[background-color,transform] duration-300 hover:-translate-y-0.5 ${dark ? 'bg-surface text-secondary' : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground'
+                        className={`group inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs font-bold transition-all duration-200 active:scale-[0.98] ${dark ? 'bg-surface text-secondary hover:bg-surface/90 hover:shadow-xs' : 'bg-ink text-surface hover:bg-primary hover:text-primary-foreground hover:shadow-md'
                             }`}
                     >
                         Book a Demo
@@ -362,7 +362,7 @@ export function Menubar({ index, goTo, hidden = false, onDark }: MenubarProps) {
                                         href="/book-a-demo"
                                         prefetch
                                         onClick={closeDrawer}
-                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-surface py-3.5 text-sm font-bold text-secondary transition-[background-color,transform] duration-300 hover:-translate-y-0.5 hover:bg-surface/90"
+                                        className="flex w-full items-center justify-center gap-2 rounded-full bg-surface py-3.5 text-sm font-bold text-secondary transition-all duration-200 hover:bg-surface/90 hover:shadow-xs active:scale-[0.98]"
                                     >
                                         Book a Demo
                                         <ArrowUpRight size={16} />
