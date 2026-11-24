@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowRight, CheckCircle2, Lock, Mail, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock, Mail, Shield, Sparkles } from 'lucide-react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
-const PAGE_BACKGROUND =
-    'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
+const PAGE_BACKGROUND = [
+    'radial-gradient(ellipse 70% 50% at 50% 12%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 70%)',
+    'radial-gradient(ellipse 50% 40% at 85% 80%, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent 60%)',
+    'var(--color-page)',
+].join(', ');
 
 interface LoginProps {
     intendedUrl?: string | null;
@@ -36,6 +39,7 @@ function GoogleIcon() {
 
 export default function ClientLogin({ intendedUrl }: LoginProps) {
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
+    const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
         email: '',
@@ -54,15 +58,21 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
             intendedUrl.includes('/virtual-try-on/order'));
 
     return (
-        <div style={{ background: PAGE_BACKGROUND }} className="min-h-screen pb-20 pt-28 sm:pt-32">
+        <div style={{ background: PAGE_BACKGROUND }} className="relative min-h-[calc(100vh-80px)] pb-20 pt-24 sm:pt-28 lg:pt-32">
+            {/* Soft subtle grid for depth */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+            />
+
             <SeoHead
                 title="Client Sign In — CuttingEdger Studio Portal"
                 description="Sign in to your CuttingEdger client account to order Digital Twins, place Virtual Try-On orders, and manage your deliverables."
             />
 
-            <div className="mx-auto max-w-md px-5">
+            <div className="relative z-10 mx-auto max-w-[460px] px-4 sm:px-6">
                 {isOrderingRedirect && (
-                    <div className="mb-6 flex items-start gap-3 rounded-2xl border border-primary/25 bg-surface/90 p-4 text-xs shadow-sm">
+                    <div className="mb-5 flex items-start gap-3 rounded-2xl border border-primary/25 bg-surface/90 p-4 text-xs shadow-sm">
                         <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                         <div>
                             <p className="font-bold text-ink">Sign in required to place an order</p>
@@ -74,28 +84,31 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                 )}
 
                 {flash?.success && (
-                    <div className="mb-6 flex items-center gap-2.5 rounded-2xl border border-success/25 bg-success-soft p-4 text-xs font-semibold text-success">
+                    <div className="mb-5 flex items-center gap-2.5 rounded-2xl border border-success/25 bg-success-soft p-4 text-xs font-semibold text-success">
                         <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
                         <span>{flash.success}</span>
                     </div>
                 )}
 
                 {flash?.error && (
-                    <div className="mb-6 rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs font-semibold text-danger">
+                    <div className="mb-5 rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs font-semibold text-danger">
                         {flash.error}
                     </div>
                 )}
 
-                <div className="rounded-3xl border border-ink/10 bg-surface p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
+                {/* Main Centered Card */}
+                <div className="rounded-3xl border border-ink/10 bg-surface/95 p-7 sm:p-9 shadow-[0_24px_60px_-20px_rgba(16,17,20,0.12),0_1px_2px_rgba(16,17,20,0.04)] backdrop-blur-xl">
                     <div className="text-center">
-                        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                            Client Studio Portal
-                        </p>
-                        <h1 className="mt-1.5 font-display text-2xl text-ink">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            <span>Client Studio Portal</span>
+                        </div>
+
+                        <h1 className="mt-2.5 font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">
                             Welcome Back
                         </h1>
-                        <p className="mt-2 text-xs text-subtle">
-                            Sign in to configure Digital Twins, place Virtual Try-On orders, and manage your orders.
+                        <p className="mt-1.5 text-xs sm:text-sm text-subtle leading-relaxed">
+                            Sign in to configure Digital Twins, launch Virtual Try-On, and track orders.
                         </p>
                     </div>
 
@@ -103,14 +116,14 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                     <div className="mt-6">
                         <a
                             href={route('auth.google.redirect')}
-                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-surface px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-surface-2"
+                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-surface px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-surface-2 hover:-translate-y-0.5"
                         >
                             <GoogleIcon />
                             <span>Continue with Google</span>
                         </a>
                     </div>
 
-                    <div className="my-6 flex items-center gap-3">
+                    <div className="my-5 flex items-center gap-3">
                         <div className="h-px flex-1 bg-ink/10" />
                         <span className="text-2xs font-bold uppercase tracking-widest text-subtle">
                             or sign in with email
@@ -131,7 +144,7 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="you@brand.com"
-                                className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
+                                className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle/50 transition-colors focus:border-primary focus:bg-surface focus:outline-none"
                             />
                             {errors.email && (
                                 <p className="mt-1 text-xs font-semibold text-danger">
@@ -145,14 +158,24 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                                 <Lock className="h-3.5 w-3.5 text-subtle" />
                                 <span>Password</span>
                             </label>
-                            <input
-                                type="password"
-                                required
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                placeholder="••••••••••••"
-                                className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-subtle/50 focus:border-primary focus:bg-surface focus:outline-none"
-                            />
+                            <div className="relative mt-1.5">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    required
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    placeholder="••••••••••••"
+                                    className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 pr-10 text-sm text-ink placeholder:text-subtle/50 transition-colors focus:border-primary focus:bg-surface focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-ink focus:outline-none"
+                                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                >
+                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
                             {errors.password && (
                                 <p className="mt-1 text-xs font-semibold text-danger">
                                     {errors.password}
@@ -172,7 +195,7 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                             </label>
                             <Link
                                 href="/forgot-password"
-                                className="font-bold text-primary hover:underline"
+                                className="font-bold text-primary transition-colors hover:underline"
                             >
                                 Forgot password?
                             </Link>
@@ -192,11 +215,23 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
                         New to CuttingEdger?{' '}
                         <Link
                             href="/register"
-                            className="font-bold text-primary hover:underline"
+                            className="font-bold text-primary transition-colors hover:underline"
                         >
                             Create a free client account
                         </Link>
                     </p>
+                </div>
+
+                {/* Subtle Trust Indicators */}
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-2xs text-subtle">
+                    <span className="inline-flex items-center gap-1.5">
+                        <Shield size={12} className="text-primary" />
+                        <span>256-Bit SSL Encrypted</span>
+                    </span>
+                    <span>&bull;</span>
+                    <span>24h Turnaround SLA</span>
+                    <span>&bull;</span>
+                    <span>Enterprise NDA Protected</span>
                 </div>
             </div>
         </div>
@@ -204,4 +239,3 @@ export default function ClientLogin({ intendedUrl }: LoginProps) {
 }
 
 ClientLogin.layout = (page: React.ReactNode) => <LandingLayout>{page}</LandingLayout>;
-

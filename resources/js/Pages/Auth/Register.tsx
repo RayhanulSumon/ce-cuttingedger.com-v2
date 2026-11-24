@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { ArrowRight, Building2, Lock, Mail, Phone, User } from 'lucide-react';
+import { ArrowRight, Building2, Eye, EyeOff, Lock, Mail, Phone, Shield, User } from 'lucide-react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import { LandingLayout } from '@/Layouts/LandingLayout';
 
-const PAGE_BACKGROUND =
-    'linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
+const PAGE_BACKGROUND = [
+    'radial-gradient(ellipse 70% 50% at 50% 12%, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 70%)',
+    'radial-gradient(ellipse 50% 40% at 85% 80%, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent 60%)',
+    'var(--color-page)',
+].join(', ');
 
 function GoogleIcon() {
     return (
@@ -31,6 +34,9 @@ function GoogleIcon() {
 }
 
 export default function ClientRegister() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
@@ -46,23 +52,31 @@ export default function ClientRegister() {
     };
 
     return (
-        <div style={{ background: PAGE_BACKGROUND }} className="min-h-screen pb-20 pt-28 sm:pt-32">
+        <div style={{ background: PAGE_BACKGROUND }} className="relative min-h-[calc(100vh-80px)] pb-20 pt-24 sm:pt-28 lg:pt-32">
+            {/* Soft subtle grid for depth */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(to_right,var(--color-ink)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-ink)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]"
+            />
+
             <SeoHead
                 title="Create Client Account — CuttingEdger Studio Portal"
                 description="Create a verified CuttingEdger client account via email or Google to order Digital Twins and place Virtual Try-On orders."
             />
 
-            <div className="mx-auto max-w-lg px-5">
-                <div className="rounded-3xl border border-ink/10 bg-surface p-7 shadow-[0_18px_45px_-20px_rgba(15,23,42,0.14)] sm:p-9">
+            <div className="relative z-10 mx-auto max-w-[560px] px-4 sm:px-6">
+                <div className="rounded-3xl border border-ink/10 bg-surface/95 p-7 sm:p-9 shadow-[0_24px_60px_-20px_rgba(16,17,20,0.12),0_1px_2px_rgba(16,17,20,0.04)] backdrop-blur-xl">
                     <div className="text-center">
-                        <p className="text-2xs font-bold uppercase tracking-[0.2em] text-primary">
-                            Client Studio Portal
-                        </p>
-                        <h1 className="mt-1.5 font-display text-2xl text-ink">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            <span>Client Studio Portal</span>
+                        </div>
+
+                        <h1 className="mt-2.5 font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">
                             Create Your Account
                         </h1>
-                        <p className="mt-2 text-xs text-subtle">
-                            Sign up with Google or verify your work email to place Digital Twin and Virtual Try-On orders.
+                        <p className="mt-1.5 text-xs sm:text-sm text-subtle leading-relaxed">
+                            Sign up with Google or work email to place and track production orders.
                         </p>
                     </div>
 
@@ -70,17 +84,17 @@ export default function ClientRegister() {
                     <div className="mt-6">
                         <a
                             href={route('auth.google.redirect')}
-                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-surface px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-surface-2"
+                            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-ink/15 bg-surface px-4 py-3 text-xs font-bold text-ink shadow-xs transition-all hover:border-ink/35 hover:bg-surface-2 hover:-translate-y-0.5"
                         >
                             <GoogleIcon />
                             <span>Sign up with Google (Instant Verification)</span>
                         </a>
                     </div>
 
-                    <div className="my-6 flex items-center gap-3">
+                    <div className="my-5 flex items-center gap-3">
                         <div className="h-px flex-1 bg-ink/10" />
                         <span className="text-2xs font-bold uppercase tracking-widest text-subtle">
-                            or sign up with email
+                            or register with work email
                         </span>
                         <div className="h-px flex-1 bg-ink/10" />
                     </div>
@@ -99,7 +113,7 @@ export default function ClientRegister() {
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     placeholder="Alex Rivera"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                                 {errors.name && (
                                     <p className="mt-1 text-xs font-semibold text-danger">
@@ -119,7 +133,7 @@ export default function ClientRegister() {
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     placeholder="alex@brand.com"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                                 {errors.email && (
                                     <p className="mt-1 text-xs font-semibold text-danger">
@@ -140,7 +154,7 @@ export default function ClientRegister() {
                                     value={data.company}
                                     onChange={(e) => setData('company', e.target.value)}
                                     placeholder="Atelier Studio"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                             </div>
 
@@ -154,7 +168,7 @@ export default function ClientRegister() {
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
                                     placeholder="+1 (555) 000-0000"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
+                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
                                 />
                             </div>
                         </div>
@@ -165,14 +179,24 @@ export default function ClientRegister() {
                                     <Lock className="h-3.5 w-3.5 text-subtle" />
                                     <span>Password *</span>
                                 </label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    placeholder="Min. 8 characters"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
-                                />
+                                <div className="relative mt-1.5">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        required
+                                        value={data.password}
+                                        onChange={(e) => setData('password', e.target.value)}
+                                        placeholder="Min. 8 characters"
+                                        className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 pr-10 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-ink focus:outline-none"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                                 {errors.password && (
                                     <p className="mt-1 text-xs font-semibold text-danger">
                                         {errors.password}
@@ -185,23 +209,33 @@ export default function ClientRegister() {
                                     <Lock className="h-3.5 w-3.5 text-subtle" />
                                     <span>Confirm Password *</span>
                                 </label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={data.password_confirmation}
-                                    onChange={(e) =>
-                                        setData('password_confirmation', e.target.value)
-                                    }
-                                    placeholder="Repeat password"
-                                    className="mt-1.5 w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 text-sm text-ink focus:border-primary focus:bg-surface focus:outline-none"
-                                />
+                                <div className="relative mt-1.5">
+                                    <input
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        required
+                                        value={data.password_confirmation}
+                                        onChange={(e) =>
+                                            setData('password_confirmation', e.target.value)
+                                        }
+                                        placeholder="Repeat password"
+                                        className="w-full rounded-xl border border-ink/15 bg-surface-2 px-3.5 py-2.5 pr-10 text-sm text-ink transition-colors focus:border-primary focus:bg-surface focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-ink focus:outline-none"
+                                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <button
                             type="submit"
                             disabled={processing}
-                            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
+                            className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110 disabled:opacity-50"
                         >
                             <span>
                                 {processing
@@ -214,10 +248,22 @@ export default function ClientRegister() {
 
                     <p className="mt-6 text-center text-xs text-subtle">
                         Already have an account?{' '}
-                        <Link href="/login" className="font-bold text-primary hover:underline">
+                        <Link href="/login" className="font-bold text-primary transition-colors hover:underline">
                             Sign in here
                         </Link>
                     </p>
+                </div>
+
+                {/* Subtle Trust Indicators */}
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-2xs text-subtle">
+                    <span className="inline-flex items-center gap-1.5">
+                        <Shield size={12} className="text-primary" />
+                        <span>100% Confidential</span>
+                    </span>
+                    <span>&bull;</span>
+                    <span>Instant Studio Setup</span>
+                    <span>&bull;</span>
+                    <span>No Credit Card Required</span>
                 </div>
             </div>
         </div>
@@ -225,4 +271,3 @@ export default function ClientRegister() {
 }
 
 ClientRegister.layout = (page: React.ReactNode) => <LandingLayout>{page}</LandingLayout>;
-
