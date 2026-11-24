@@ -149,8 +149,8 @@ export default function Contact() {
                 <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8 xl:gap-10">
                         {/* LEFT: Editorial Contact Overview (Compact, Screen-Fitting) */}
-                        <div className="space-y-4 sm:space-y-4.5 lg:col-span-5">
-                            <div className="space-y-2">
+                        <div className="contents lg:block lg:col-span-5 lg:space-y-4.5">
+                            <div className="order-1 space-y-2">
                                 <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-primary-ink">
                                     Contact Studio
                                 </p>
@@ -163,121 +163,124 @@ export default function Contact() {
                                 </p>
                             </div>
 
-                            {/* Live Dual-Shift Studio Status */}
-                            <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface border border-ink/10 shadow-xs">
-                                <span className="relative flex h-2.5 w-2.5 shrink-0">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-success"></span>
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="text-xs font-bold text-ink">
-                                            Dual-Shift Studio Active
-                                        </span>
-                                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-success-soft text-success">
-                                            Online Now
-                                        </span>
-                                    </div>
-                                    <p className="text-[11px] text-muted truncate mt-0.5">
-                                        24/7 Dual-Shift Queue · Avg Quote Response: &lt; 15 mins
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Unified Direct Contact Card */}
-                            <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-xs">
-                                {/* Direct Email Row */}
-                                <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
-                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink">
-                                        <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+                            {/* Contact Details & Direct Channels - placed below the form on mobile */}
+                            <div className="order-3 space-y-4 lg:space-y-4.5">
+                                {/* Live Dual-Shift Studio Status */}
+                                <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface border border-ink/10 shadow-xs">
+                                    <span className="relative flex h-2.5 w-2.5 shrink-0">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-success"></span>
                                     </span>
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-[10px] font-medium text-subtle">Email</p>
-                                        <a
-                                            href={`mailto:${contactEmail}`}
-                                            className="block truncate text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
-                                        >
-                                            {contactEmail}
-                                        </a>
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-xs font-bold text-ink">
+                                                Dual-Shift Studio Active
+                                            </span>
+                                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-success-soft text-success">
+                                                Online Now
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] text-muted truncate mt-0.5">
+                                            24/7 Dual-Shift Queue · Avg Quote Response: &lt; 15 mins
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* Phone Row(s) */}
-                                <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
-                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-ink-2">
-                                        <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-                                    </span>
-                                    <div className="min-w-0 flex-1 space-y-0.5">
-                                        <p className="text-[10px] font-medium text-subtle">Phone</p>
-                                        <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                                            {contactPhones.map((item, idx) => (
-                                                <a
-                                                    key={`${item.number}-${idx}`}
-                                                    href={`tel:${item.number.replace(/[^+\d]/g, '')}`}
-                                                    className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
-                                                >
-                                                    {contactPhones.length > 1 && item.label && (
-                                                        <span className="text-[11px] font-medium text-subtle">
-                                                            {item.label}:
-                                                        </span>
-                                                    )}
-                                                    <span>{item.number}</span>
-                                                </a>
-                                            ))}
+                                {/* Unified Direct Contact Card */}
+                                <div className="divide-y divide-ink/8 overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-xs">
+                                    {/* Direct Email Row */}
+                                    <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary-ink">
+                                            <Mail className="h-3.5 w-3.5" aria-hidden="true" />
+                                        </span>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[10px] font-medium text-subtle">Email</p>
+                                            <a
+                                                href={`mailto:${contactEmail}`}
+                                                className="block truncate text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
+                                            >
+                                                {contactEmail}
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {/* Phone Row(s) */}
+                                    <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-ink-2">
+                                            <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                                        </span>
+                                        <div className="min-w-0 flex-1 space-y-0.5">
+                                            <p className="text-[10px] font-medium text-subtle">Phone</p>
+                                            <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+                                                {contactPhones.map((item, idx) => (
+                                                    <a
+                                                        key={`${item.number}-${idx}`}
+                                                        href={`tel:${item.number.replace(/[^+\d]/g, '')}`}
+                                                        className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink"
+                                                    >
+                                                        {contactPhones.length > 1 && item.label && (
+                                                            <span className="text-[11px] font-medium text-subtle">
+                                                                {item.label}:
+                                                            </span>
+                                                        )}
+                                                        <span>{item.number}</span>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Studio Address Row */}
+                                    <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-ink-2">
+                                            <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                                        </span>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[10px] font-medium text-subtle">Studio</p>
+                                            <p className="text-xs sm:text-sm font-medium leading-snug text-ink">
+                                                {contactAddress}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Studio Address Row */}
-                                <div className="flex items-start gap-2.5 px-4 py-2.5 sm:px-4.5">
-                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-2 text-ink-2">
-                                        <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                                {/* Quiet Trust Strip */}
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 text-2xs font-medium text-subtle">
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <Clock className="h-3 w-3 text-primary-ink" aria-hidden="true" />
+                                        24h SLA Response
                                     </span>
-                                    <div className="min-w-0 flex-1">
-                                        <p className="text-[10px] font-medium text-subtle">Studio</p>
-                                        <p className="text-xs sm:text-sm font-medium leading-snug text-ink">
-                                            {contactAddress}
-                                        </p>
-                                    </div>
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <Lock className="h-3 w-3 text-primary-ink" aria-hidden="true" />
+                                        Mutual NDA Protected
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <Users className="h-3 w-3 text-primary-ink" aria-hidden="true" />
+                                        Studio Team
+                                    </span>
                                 </div>
-                            </div>
 
-                            {/* Quiet Trust Strip */}
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5 text-2xs font-medium text-subtle">
-                                <span className="inline-flex items-center gap-1.5">
-                                    <Clock className="h-3 w-3 text-primary-ink" aria-hidden="true" />
-                                    24h SLA Response
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <Lock className="h-3 w-3 text-primary-ink" aria-hidden="true" />
-                                    Mutual NDA Protected
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <Users className="h-3 w-3 text-primary-ink" aria-hidden="true" />
-                                    Studio Team
-                                </span>
-                            </div>
-
-                            {/* Demo Walkthrough Alternative Card */}
-                            <div className="rounded-2xl border border-dashed border-ink/15 bg-surface-2/60 p-3 sm:p-3.5 space-y-1 text-xs">
-                                <p className="font-bold text-ink text-2xs sm:text-xs">Prefer a live video walkthrough?</p>
-                                <div className="flex items-center justify-between gap-3 text-2xs">
-                                    <Link
-                                        href="/book-a-demo"
-                                        className="inline-flex items-center gap-1 font-semibold text-primary-ink hover:underline"
-                                    >
-                                        Book a 30-Min Demo <ArrowRight className="h-3 w-3" />
-                                    </Link>
-                                    <span className="text-subtle inline-flex items-center gap-1">
-                                        <Video size={11} className="text-primary-ink" />
-                                        Google Meet
-                                    </span>
+                                {/* Demo Walkthrough Alternative Card */}
+                                <div className="rounded-2xl border border-dashed border-ink/15 bg-surface-2/60 p-3 sm:p-3.5 space-y-1 text-xs">
+                                    <p className="font-bold text-ink text-2xs sm:text-xs">Prefer a live video walkthrough?</p>
+                                    <div className="flex items-center justify-between gap-3 text-2xs">
+                                        <Link
+                                            href="/book-a-demo"
+                                            className="inline-flex items-center gap-1 font-semibold text-primary-ink hover:underline"
+                                        >
+                                            Book a 30-Min Demo <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                        <span className="text-subtle inline-flex items-center gap-1">
+                                            <Video size={11} className="text-primary-ink" />
+                                            Google Meet
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* RIGHT: Clean, Modern Form Card */}
-                        <div className="lg:col-span-7">
+                        <div className="order-2 lg:order-none lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
                                 noValidate
