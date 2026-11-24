@@ -163,7 +163,7 @@ export default function Contact() {
                                     <span className="text-primary-ink">next project.</span>
                                 </h1>
                                 <p className="max-w-md text-xs sm:text-sm leading-relaxed text-muted">
-                                    Share your goals or catalog requirements and our project managers will respond within 24 hours.
+                                    Share your goals or catalog requirements, and one of our project managers will respond within 24 hours.
                                 </p>
                             </div>
 
