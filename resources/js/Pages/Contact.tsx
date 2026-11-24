@@ -85,8 +85,10 @@ export default function Contact() {
     const contactAddress = settings?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
 
     const [sampleCloudLink, setSampleCloudLink] = useState('');
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, clearErrors, reset } = useForm({
         name: auth?.user?.name ?? '',
         email: auth?.user?.email ?? '',
         phone: auth?.user?.phone ?? '',
@@ -95,6 +97,84 @@ export default function Contact() {
         message: initialMessage,
         honeypot: '',
     });
+
+    const validateField = (field: string, value: string): string | null => {
+        switch (field) {
+            case 'name':
+                if (!value.trim()) return 'The name field is required.';
+                if (value.trim().length > 255) return 'Name must be 255 characters or fewer.';
+                return null;
+            case 'email':
+                if (!value.trim()) return 'The email field is required.';
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+                    return 'Please enter a valid email address.';
+                }
+                if (value.trim().length > 255) return 'Email must be 255 characters or fewer.';
+                return null;
+            case 'message':
+                if (!value.trim()) return 'The message field is required.';
+                if (value.trim().length > 5000) return 'Message must be 5000 characters or fewer.';
+                return null;
+            case 'phone':
+                if (!value.trim()) return null;
+                // Only allow +, digits, spaces, parentheses, dashes, and dots
+                if (!/^\+?[0-9\s().-]{7,25}$/.test(value.trim())) {
+                    return 'Please enter a valid phone number (e.g. +1 (555) 000-0000).';
+                }
+                // E.164 ITU international standard: between 7 and 15 digits
+                const phoneDigits = value.replace(/\D/g, '');
+                if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+                    return 'Phone number must be between 7 and 15 digits.';
+                }
+                return null;
+            case 'company':
+                if (value.trim() && value.trim().length > 255) return 'Company must be 255 characters or fewer.';
+                return null;
+            default:
+                return null;
+        }
+    };
+
+    const getFieldError = (field: string): string | undefined => {
+        if (touched[field] && clientErrors[field]) {
+            return clientErrors[field];
+        }
+        return errors[field as keyof typeof errors];
+    };
+
+    const handleBlur = (field: string) => {
+        setTouched((prev) => ({ ...prev, [field]: true }));
+        const val = (data[field as keyof typeof data] as string) ?? '';
+        const error = validateField(field, val);
+        setClientErrors((prev) => {
+            const next = { ...prev };
+            if (error) {
+                next[field] = error;
+            } else {
+                delete next[field];
+            }
+            return next;
+        });
+    };
+
+    const handleFieldChange = (field: 'name' | 'email' | 'phone' | 'company' | 'message', value: string) => {
+        setData(field, value);
+        if (errors[field]) {
+            clearErrors(field);
+        }
+        if (touched[field]) {
+            const error = validateField(field, value);
+            setClientErrors((prev) => {
+                const next = { ...prev };
+                if (error) {
+                    next[field] = error;
+                } else {
+                    delete next[field];
+                }
+                return next;
+            });
+        }
+    };
 
     useEffect(() => {
         if (!requestedService && !requestedCapability) {
@@ -110,6 +190,43 @@ export default function Contact() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Perform instant client-side validation on required fields
+        const fieldsToValidate = ['name', 'email', 'message'];
+        const newTouched: Record<string, boolean> = { ...touched };
+        const newErrors: Record<string, string> = {};
+
+        fieldsToValidate.forEach((field) => {
+            newTouched[field] = true;
+            const err = validateField(field, (data[field as keyof typeof data] as string) ?? '');
+            if (err) {
+                newErrors[field] = err;
+            }
+        });
+
+        if (data.phone) {
+            const phoneErr = validateField('phone', data.phone);
+            if (phoneErr) newErrors.phone = phoneErr;
+        }
+        if (data.company) {
+            const companyErr = validateField('company', data.company);
+            if (companyErr) newErrors.company = companyErr;
+        }
+
+        setTouched(newTouched);
+        setClientErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            const firstField = Object.keys(newErrors)[0];
+            if (firstField && FIELD_ANCHORS[firstField]) {
+                const el = document.getElementById(FIELD_ANCHORS[firstField].id);
+                if (el) {
+                    el.focus();
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            return;
+        }
+
         // If client provided a sample cloud link, append cleanly to message body
         if (sampleCloudLink.trim()) {
             data.message = `${data.message}\n\n[Sample Assets / Reference Link]:\n${sampleCloudLink.trim()}`;
@@ -120,6 +237,8 @@ export default function Contact() {
             onSuccess: () => {
                 reset('message');
                 setSampleCloudLink('');
+                setTouched({});
+                setClientErrors({});
             },
             onError: (errs) => {
                 const firstField = Object.keys(errs)[0];
@@ -343,16 +462,17 @@ export default function Contact() {
                                                 required
                                                 autoComplete="name"
                                                 value={data.name}
-                                                onChange={(e) => setData('name', e.target.value)}
-                                                aria-invalid={Boolean(errors.name)}
-                                                aria-describedby={errors.name ? 'contact-name-error' : undefined}
+                                                onChange={(e) => handleFieldChange('name', e.target.value)}
+                                                onBlur={() => handleBlur('name')}
+                                                aria-invalid={Boolean(getFieldError('name'))}
+                                                aria-describedby={getFieldError('name') ? 'contact-name-error' : undefined}
                                                 placeholder="Alex Mercer"
-                                                className={getInputClass(Boolean(errors.name))}
+                                                className={getInputClass(Boolean(getFieldError('name')))}
                                             />
-                                            {errors.name && (
+                                            {getFieldError('name') && (
                                                 <p id="contact-name-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
                                                     <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    <span>{errors.name}</span>
+                                                    <span>{getFieldError('name')}</span>
                                                 </p>
                                             )}
                                         </div>
@@ -370,16 +490,17 @@ export default function Contact() {
                                                 required
                                                 autoComplete="email"
                                                 value={data.email}
-                                                onChange={(e) => setData('email', e.target.value)}
-                                                aria-invalid={Boolean(errors.email)}
-                                                aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                                                onChange={(e) => handleFieldChange('email', e.target.value)}
+                                                onBlur={() => handleBlur('email')}
+                                                aria-invalid={Boolean(getFieldError('email'))}
+                                                aria-describedby={getFieldError('email') ? 'contact-email-error' : undefined}
                                                 placeholder="alex@company.com"
-                                                className={getInputClass(Boolean(errors.email))}
+                                                className={getInputClass(Boolean(getFieldError('email')))}
                                             />
-                                            {errors.email && (
+                                            {getFieldError('email') && (
                                                 <p id="contact-email-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
                                                     <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    <span>{errors.email}</span>
+                                                    <span>{getFieldError('email')}</span>
                                                 </p>
                                             )}
                                         </div>
@@ -396,16 +517,17 @@ export default function Contact() {
                                                 type="text"
                                                 autoComplete="organization"
                                                 value={data.company}
-                                                onChange={(e) => setData('company', e.target.value)}
-                                                aria-invalid={Boolean(errors.company)}
-                                                aria-describedby={errors.company ? 'contact-company-error' : undefined}
+                                                onChange={(e) => handleFieldChange('company', e.target.value)}
+                                                onBlur={() => handleBlur('company')}
+                                                aria-invalid={Boolean(getFieldError('company'))}
+                                                aria-describedby={getFieldError('company') ? 'contact-company-error' : undefined}
                                                 placeholder="e.g. Atelier Studio"
-                                                className={getInputClass(Boolean(errors.company))}
+                                                className={getInputClass(Boolean(getFieldError('company')))}
                                             />
-                                            {errors.company && (
+                                            {getFieldError('company') && (
                                                 <p id="contact-company-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
                                                     <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    <span>{errors.company}</span>
+                                                    <span>{getFieldError('company')}</span>
                                                 </p>
                                             )}
                                         </div>
@@ -422,16 +544,17 @@ export default function Contact() {
                                                 type="tel"
                                                 autoComplete="tel"
                                                 value={data.phone}
-                                                onChange={(e) => setData('phone', e.target.value)}
-                                                aria-invalid={Boolean(errors.phone)}
-                                                aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
+                                                onChange={(e) => handleFieldChange('phone', e.target.value)}
+                                                onBlur={() => handleBlur('phone')}
+                                                aria-invalid={Boolean(getFieldError('phone'))}
+                                                aria-describedby={getFieldError('phone') ? 'contact-phone-error' : undefined}
                                                 placeholder="+1 (555) 000-0000"
-                                                className={getInputClass(Boolean(errors.phone))}
+                                                className={getInputClass(Boolean(getFieldError('phone')))}
                                             />
-                                            {errors.phone && (
+                                            {getFieldError('phone') && (
                                                 <p id="contact-phone-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
                                                     <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    <span>{errors.phone}</span>
+                                                    <span>{getFieldError('phone')}</span>
                                                 </p>
                                             )}
                                         </div>
@@ -478,16 +601,17 @@ export default function Contact() {
                                             required
                                             rows={3}
                                             value={data.message}
-                                            onChange={(e) => setData('message', e.target.value)}
-                                            aria-invalid={Boolean(errors.message)}
-                                            aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                                            onChange={(e) => handleFieldChange('message', e.target.value)}
+                                            onBlur={() => handleBlur('message')}
+                                            aria-invalid={Boolean(getFieldError('message'))}
+                                            aria-describedby={getFieldError('message') ? 'contact-message-error' : undefined}
                                             placeholder="Share your image count, style references, or timeline..."
-                                            className={`${getInputClass(Boolean(errors.message))} min-h-[76px] sm:min-h-[86px] leading-relaxed resize-y`}
+                                            className={`${getInputClass(Boolean(getFieldError('message')))} min-h-[76px] sm:min-h-[86px] leading-relaxed resize-y`}
                                         />
-                                        {errors.message && (
+                                        {getFieldError('message') && (
                                             <p id="contact-message-error" className="flex items-center gap-1.5 pt-0.5 text-2xs font-medium text-danger animate-in fade-in duration-150">
                                                 <AlertCircle className="h-3 w-3 shrink-0" />
-                                                <span>{errors.message}</span>
+                                                <span>{getFieldError('message')}</span>
                                             </p>
                                         )}
                                     </div>
