@@ -191,7 +191,7 @@ export const CapabilitiesSection = memo(function CapabilitiesSection({ active }:
             data-scrollable
             className={`relative flex h-full w-full flex-col overflow-y-auto bg-page pb-12 pt-24 sm:pt-28 lg:pb-8 ${PAD_X}`}
         >
-            <div className="relative z-10 mx-auto my-auto w-full max-w-[1360px]">
+            <div className="relative z-10 mx-auto my-0 lg:my-auto w-full max-w-[1360px]">
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                     <div>
                         <Reveal active={active}>

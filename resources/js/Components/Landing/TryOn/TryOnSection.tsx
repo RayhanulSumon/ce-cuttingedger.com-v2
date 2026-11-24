@@ -16,10 +16,14 @@ interface TryOnSectionProps extends SectionProps {
 }
 
 /**
- * Section 02 — a ring runway of styled looks. Clicking the front model opens the look view,
- * where each garment can be inspected beside the model.
+ * Section 02 — Virtual Try-On with left-aligned intro and runway navigation.
  */
-export const TryOnSection = memo(function TryOnSection({ active, looks, embedded = false, onOverlayChange }: TryOnSectionProps) {
+export const TryOnSection = memo(function TryOnSection({
+    active,
+    looks,
+    embedded = false,
+    onOverlayChange,
+}: TryOnSectionProps) {
     const activeLooks = looks && looks.length > 0 ? looks : LOOKS;
     const [lookIndex, setLookIndex] = useState(0);
     const [lookOpen, setLookOpen] = useState(false);
@@ -52,12 +56,13 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
         running: sectionActive,
         interactive: !lookOpen,
         looks: activeLooks,
+        desktopCenterXRatio: 0.63,
+        desktopRadiusRatio: 0.48,
         onLookChange: handleLookChange,
         onFrontActorClick: openLook,
     });
     const { stepLook, isDragging } = runway;
 
-    // The look view is a fullscreen overlay: tell Home to pause section scrolling and hide its chrome.
     useEffect(() => {
         onOverlayChange?.(lookOpen);
     }, [lookOpen, onOverlayChange]);
@@ -156,16 +161,19 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                 <SectionIntro
                     active={active}
                     title="Virtual Try-On"
-                    titleClassName="text-section"
-                    bodyClassName="text-sm text-muted sm:text-base"
-                    className={`relative z-10 ${fadeWhenOpen}`}
+                    titleClassName="text-section font-bold leading-tight tracking-[-0.03em]"
+                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px]"
+                    bodyMaxWidthClassName="max-w-[38ch]"
+                    className={`relative z-20 lg:pointer-events-auto lg:absolute lg:left-0 lg:max-w-[420px] lg:-translate-y-1/2 ${
+                        embedded ? 'lg:top-1/2' : 'lg:top-[calc(50%-2rem)]'
+                    } ${fadeWhenOpen}`}
                     actions={
                         <OrderCta href={tryOnOrderUrl(look.modelName)} className="max-sm:h-9 max-sm:px-4">
                             Order Try-On
                         </OrderCta>
                     }
                 >
-                    Styled outfits, head to toe. Click the front model to inspect each piece, or drag to spin the runway.
+                    Styled outfits from head to toe without another studio shoot. Click the front model to inspect every piece, or spin the runway.
                 </SectionIntro>
 
                 <RunwayStage
@@ -176,12 +184,13 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                     cursorRef={runway.cursorRef}
                     cursor={runway.cursor}
                     dimmed={lookOpen}
+                    actorsMaskClassName="[mask-image:linear-gradient(90deg,transparent,black_9%,black_91%,transparent)] lg:[mask-image:linear-gradient(90deg,transparent_28%,black_42%,black_93%,transparent)]"
                     handlers={runway.stageHandlers}
                 />
 
-                <div className={`pointer-events-none relative z-10 -mt-2 flex flex-col items-center pb-1 ${fadeWhenOpen}`}>
+                <div className={`pointer-events-none relative z-10 -mt-2 flex flex-col items-center pb-1 lg:translate-x-[13%] ${fadeWhenOpen}`}>
                     <Reveal active={active} delay={0.2} className="flex flex-col items-center text-center whitespace-nowrap">
-                        <p className="font-display text-xs sm:text-sm font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
+                        <p className="font-display text-sm sm:text-base font-bold tracking-[0.04em] text-ink leading-none drop-shadow-sm">
                             {look.modelName}
                         </p>
                     </Reveal>
@@ -211,7 +220,7 @@ export const TryOnSection = memo(function TryOnSection({ active, looks, embedded
                         selectedPiece={lookOpen ? selectedPiece : null}
                         cardRefs={cardRefs}
                         onHotPinChange={setHotPin}
-                        onSelect={selectPiece}
+                        onSelectPiece={selectPiece}
                     />
                 </Reveal>
             </aside>

@@ -12,32 +12,32 @@ interface RetouchFix {
 const FIXES: RetouchFix[] = [
     {
         label: 'Dust & lint removal',
-        image: '/images/portfolio/portfolio-1.jpg',
+        image: '/images/portfolio/portfolio-1.webp',
         rawFilter: '[filter:contrast(0.7)_brightness(0.82)_saturate(0.45)_sepia(0.35)]',
     },
     {
         label: 'Wrinkle & crease smoothing',
-        image: '/images/portfolio/portfolio-2.jpg',
+        image: '/images/portfolio/portfolio-2.webp',
         rawFilter: '[filter:contrast(0.75)_brightness(0.86)_saturate(0.5)_sepia(0.2)]',
     },
     {
         label: 'Ghost mannequin jointing',
-        image: '/images/portfolio/portfolio-3.jpg',
+        image: '/images/portfolio/portfolio-3.webp',
         rawFilter: '[filter:contrast(0.72)_brightness(0.84)_saturate(0.4)_sepia(0.28)]',
     },
     {
         label: 'Colour-match to swatch',
-        image: '/images/portfolio/portfolio-4.jpg',
+        image: '/images/portfolio/portfolio-4.webp',
         rawFilter: '[filter:contrast(0.74)_brightness(0.85)_saturate(0.35)_hue-rotate(-18deg)]',
     },
     {
         label: 'Shadow & reflection repair',
-        image: '/images/portfolio/portfolio-1.jpg',
+        image: '/images/portfolio/portfolio-1.webp',
         rawFilter: '[filter:contrast(0.68)_brightness(0.78)_saturate(0.5)_sepia(0.25)]',
     },
     {
         label: 'Skin & fabric texture',
-        image: '/images/portfolio/portfolio-2.jpg',
+        image: '/images/portfolio/portfolio-2.webp',
         rawFilter: '[filter:contrast(0.76)_brightness(0.84)_saturate(0.45)_sepia(0.3)]',
     },
 ];

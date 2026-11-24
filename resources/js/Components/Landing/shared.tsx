@@ -13,11 +13,7 @@ export interface SectionProps {
 export const SECTIONS = [
     { id: 'hero', label: 'Home' },
     { id: 'digital-twins', label: 'Digital Twins' },
-    { id: 'digital-twins-alt', label: 'Digital Twins (Centered)' },
-    { id: 'digital-twins-top-center', label: 'Digital Twins (Top Center)' },
     { id: 'try-on', label: 'Virtual Try-On' },
-    { id: 'try-on-alt', label: 'Virtual Try-On (Centered)' },
-    { id: 'try-on-top-center', label: 'Virtual Try-On (Top Center)' },
     { id: 'retouching', label: 'Retouching' },
     { id: 'showcase', label: 'Showcase' },
     { id: 'clients', label: 'Clients' },

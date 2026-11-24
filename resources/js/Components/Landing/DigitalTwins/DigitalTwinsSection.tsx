@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { digitalTwinOrderUrl, OrderCta, PillButton, Reveal, SectionIntro, SectionProps } from '../shared';
 import { TwinCursor } from './TwinCursor';
 import { TwinNameLabel } from './TwinNameLabel';
@@ -12,15 +12,19 @@ import { useTwinRunway } from './useTwinRunway';
 const STAGE_BACKGROUND =
     'linear-gradient(transparent 60%, color-mix(in srgb, var(--color-surface) 72%, transparent) 100%), linear-gradient(90deg, var(--color-page) 0%, var(--color-surface-2) 55%, var(--color-surface) 100%)';
 
-const SIDE_ARROW =
-    'grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface/85 text-ink shadow-[0_8px_24px_-10px_rgba(16,17,20,0.25)] backdrop-blur-md transition-colors duration-200 hover:border-ink hover:bg-ink hover:text-surface sm:h-11 sm:w-11';
+/** Shifted desktop X depth stops so the runway sits cleanly in the right ~65% beside the centered-left intro. */
+const DESKTOP_CENTERED_X_STOPS = [1.24, 0.80, 0.62, 0.50, 0.415, 0.35, 0.295] as const;
 
 interface DigitalTwinsSectionProps extends SectionProps {
     twins?: DigitalTwinModel[];
 }
 
-/** Section 01 — a runway of AI digital twins; clicking one opens its pose-preset modal. */
-export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, twins, onOverlayChange }: DigitalTwinsSectionProps) {
+/** Section 01 — a runway of AI digital twins with left-aligned intro and runway navigation. */
+export const DigitalTwinsSection = memo(function DigitalTwinsSection({
+    active,
+    twins,
+    onOverlayChange,
+}: DigitalTwinsSectionProps) {
     const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
     const [modalTwinIndex, setModalTwinIndex] = useState<number | null>(null);
 
@@ -37,10 +41,14 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
         onOverlayChange?.(false);
     }, [onOverlayChange]);
 
-    const runway = useTwinRunway({ running: active && modalTwinIndex === null, twins: models, onOpenTwin: openModal });
+    const runway = useTwinRunway({
+        running: active && modalTwinIndex === null,
+        twins: models,
+        desktopXStops: DESKTOP_CENTERED_X_STOPS,
+        onOpenTwin: openModal,
+    });
     const activeTwin = models[runway.activeTwinIndex] ?? models[0];
 
-    // Only track preview on the ACTIVE (front) model — never on blurry background models.
     const previewIndex = useRef(0);
     if (runway.hoveredTwinIndex !== null && runway.hoveredTwinIndex === runway.activeTwinIndex) {
         previewIndex.current = runway.hoveredTwinIndex;
@@ -60,7 +68,7 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                 className={`relative isolate h-full w-full touch-pan-y select-none overflow-hidden ${runway.cursorMode === 'hidden' ? '' : 'lg:cursor-none'}`}
                 style={{ background: STAGE_BACKGROUND }}
             >
-                <div className="absolute inset-0 z-0 isolate overflow-hidden">
+                <div className="absolute inset-0 z-0 isolate overflow-hidden sm:[mask-image:linear-gradient(90deg,transparent_26%,black_40%)]">
                     {models.map((twin, i) => {
                         const isFrontModel = i === runway.activeTwinIndex;
                         const isHovered = runway.hoveredTwinIndex === i && isFrontModel;
@@ -106,9 +114,10 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                     active={active}
                     title="Digital Twins"
                     cursorFree
-                    titleClassName="text-section"
-                    bodyClassName="text-sm text-muted sm:text-base"
-                    className="absolute left-5 top-24 z-20 max-w-[calc(100%-2.5rem)] sm:left-10 sm:top-24 sm:w-fit lg:left-16 lg:top-24"
+                    titleClassName="text-section font-bold leading-tight tracking-[-0.03em]"
+                    bodyClassName="text-sm text-muted sm:text-base lg:text-[17px]"
+                    bodyMaxWidthClassName="max-w-[38ch]"
+                    className="absolute left-5 top-24 z-20 max-w-[calc(100%-2.5rem)] sm:left-10 sm:top-1/2 sm:max-w-[380px] sm:-translate-y-1/2 lg:left-16 lg:max-w-[420px]"
                     actions={
                         <>
                             <OrderCta
@@ -128,32 +137,8 @@ export const DigitalTwinsSection = memo(function DigitalTwinsSection({ active, t
                         </>
                     }
                 >
-                    Shoot a garment once. Our photoreal AI models wear it in every pose, light and angle.
+                    Shoot a garment once. Our photoreal AI models preserve exact fabric drape and studio lighting across every pose and angle.
                 </SectionIntro>
-
-                {/* ── Left arrow — left edge ── */}
-                <Reveal active={active} delay={0.3} className="pointer-events-auto absolute left-3 top-[60%] z-30 -translate-y-1/2 sm:left-6 sm:top-1/2 lg:left-8">
-                    <button
-                        type="button"
-                        onClick={() => runway.stepLook(-1)}
-                        aria-label="Previous digital twin"
-                        className={SIDE_ARROW}
-                    >
-                        <ArrowLeft size={18} />
-                    </button>
-                </Reveal>
-
-                {/* ── Right arrow — right edge ── */}
-                <Reveal active={active} delay={0.34} className="pointer-events-auto absolute right-3 top-[60%] z-30 -translate-y-1/2 sm:right-6 sm:top-1/2 lg:right-8">
-                    <button
-                        type="button"
-                        onClick={() => runway.stepLook(1)}
-                        aria-label="Next digital twin"
-                        className={SIDE_ARROW}
-                    >
-                        <ArrowRight size={18} />
-                    </button>
-                </Reveal>
 
                 <TwinCursor cursorRef={runway.cursorRef} mode={runway.cursorMode} />
             </section>
