@@ -19,13 +19,20 @@ interface CapabilityVisualStudioProps {
 }
 
 /**
- * Unified minimal visual studio showcase for every capability page.
- * Matches the compact header, pill filter tabs, and clean visual rhythm of Digital Twins & Virtual Try-On.
+ * Unified visual studio showcase for every capability page.
+ *
+ * For Root Capabilities (e.g. 2D, 3D):
+ * 1. Prominently shows ALL sub-capabilities in an elegant grid directly under the header.
+ * 2. Followed by the interactive quality benchmark comparison slider below the grid.
+ *
+ * For Child Sub-Capabilities (e.g. Ghost Mannequin):
+ * Shows the focused before/after interactive stage at the top, followed by sibling capabilities.
  */
 export function CapabilityVisualStudio({ capability, parent, related = [] }: CapabilityVisualStudioProps) {
     const profile = getCapabilityVisualProfile(capability, parent);
     const samples = profile.samples;
     const children = capability.children ?? [];
+    const isRoot = !parent && children.length > 0;
     const quoteHref = quoteUrlForCapability(capability, parent);
 
     const [activeSampleIndex, setActiveSampleIndex] = useState(0);
@@ -42,7 +49,7 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
 
     return (
         <div className="min-h-screen bg-surface text-ink">
-            {/* 1. Compact Shared Header */}
+            {/* 1. Shared Header */}
             <CapabilityPageHeader
                 backHref={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
                 backLabel={parent ? `Back to ${parent.title}` : 'All capabilities'}
@@ -52,228 +59,352 @@ export function CapabilityVisualStudio({ capability, parent, related = [] }: Cap
                 ctaLabel="Request a quote"
             />
 
-            {/* 2. Under-Header Technique Tabs + Featured Before / After Stage */}
-            <section className={`py-7 sm:py-9 ${PAD_X}`}>
-                <div className="mx-auto max-w-[1440px]">
-                    <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                        <div
-                            role="tablist"
-                            aria-label={`${capability.title} techniques`}
-                            className="flex items-center gap-2 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                        >
-                            {samples.map((sample, idx) => {
-                                const isSelected = idx === activeSampleIndex;
-                                return (
-                                    <button
-                                        key={sample.id}
-                                        type="button"
-                                        role="tab"
-                                        aria-selected={isSelected}
-                                        onClick={() => setActiveSampleIndex(idx)}
-                                        className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                                            isSelected
-                                                ? 'border-ink bg-ink text-white shadow-xs'
-                                                : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
-                                        }`}
-                                    >
-                                        {sample.tabLabel}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
-                            Drag to compare
-                        </span>
-                    </div>
-
-                    {activeSample && (
-                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.45fr_0.55fr] lg:items-center lg:gap-10">
-                            <StudioBeforeAfter
-                                beforeImage={activeSample.beforeImage}
-                                afterImage={activeSample.afterImage}
-                                alt={activeSample.title}
-                                beforeLabel={activeSample.beforeLabel}
-                                afterLabel={activeSample.afterLabel}
-                                aspectClass="aspect-[16/10]"
-                                sweepKey={activeSample.id}
-                            />
-
-                            {/* Spacious, borderless editorial detail column */}
-                            <div className="flex flex-col justify-center">
-                                <p className="text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
-                                    {String(activeSampleIndex + 1).padStart(2, '0')} / {String(samples.length).padStart(2, '0')} · {activeSample.tag}
-                                </p>
-
-                                <h2 className="mt-2 text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-2xl">
-                                    {activeSample.title}
-                                </h2>
-
-                                <p className="mt-2 text-sm leading-relaxed text-muted">
-                                    {activeSample.subtitle}
-                                </p>
-
-                                <ul className="mt-5 space-y-2">
-                                    {activeSample.checkpoints.map((point) => (
-                                        <li key={point} className="flex items-center gap-2.5 text-sm font-medium text-ink-2">
-                                            <Check size={14} strokeWidth={2.5} className="shrink-0 text-primary" />
-                                            <span>{point}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <dl className="mt-6 space-y-2 border-t border-ink/10 pt-4 text-xs">
-                                    <div className="flex items-baseline justify-between gap-4">
-                                        <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Turnaround</dt>
-                                        <dd className="font-semibold text-ink">{profile.turnaround}</dd>
-                                    </div>
-                                    <div className="flex items-baseline justify-between gap-4">
-                                        <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Formats</dt>
-                                        <dd className="font-semibold text-ink">{profile.formats}</dd>
-                                    </div>
-                                </dl>
-
-                                {samples.length > 1 && (
-                                    <div className="mt-6 flex items-center gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => stepSample(-1)}
-                                            aria-label="Previous sample"
-                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
-                                        >
-                                            <ArrowLeft size={15} />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => stepSample(1)}
-                                            aria-label="Next sample"
-                                            className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
-                                        >
-                                            <ArrowRight size={15} />
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* 3. Main Capability Specialities Grid OR Sub-Capability 3-Card Before/After Showcase */}
-            {children.length > 0 ? (
-                <section className={`border-t border-ink/10 py-10 ${PAD_X}`}>
-                    <div className="mx-auto max-w-[1440px]">
-                        <div className="mb-5 flex items-baseline justify-between gap-4">
-                            <h2 className="text-base font-extrabold uppercase tracking-[0.08em] text-ink sm:text-lg">
-                                {capability.tag ?? capability.title} Specialities
-                            </h2>
-                            <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
-                                {children.length} {children.length === 1 ? 'capability' : 'capabilities'}
-                            </span>
-                        </div>
-
-                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                            {children.map((child) => (
-                                <li key={child.id}>
-                                    <CapabilityCard
-                                        capability={child}
-                                        parent={capability}
-                                        href={pathForCapability(child, capability)}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </section>
-            ) : (
-                samples.length > 0 && (
-                    <section className={`border-t border-ink/10 py-10 ${PAD_X}`}>
+            {/* ========================================================================= */}
+            {/* ROOT CAPABILITY VIEW (e.g. /capabilities/2d, /capabilities/3d)            */}
+            {/* Sub-capabilities grid comes FIRST, quality slider benchmark comes SECOND  */}
+            {/* ========================================================================= */}
+            {isRoot ? (
+                <>
+                    {/* Primary Hero: All Sub-Capabilities Directory Grid */}
+                    <section className={`py-6 sm:py-8 ${PAD_X}`}>
                         <div className="mx-auto max-w-[1440px]">
-                            <div className="mb-5 flex items-baseline justify-between gap-4">
-                                <h2 className="text-base font-extrabold tracking-[-0.02em] text-ink sm:text-lg">
-                                    Before &amp; After Samples
-                                </h2>
-                                <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
-                                    Interactive sliders
+                            <div className="mb-4 flex items-center justify-between border-b border-ink/10 pb-3">
+                                <span className="text-2xs font-bold uppercase tracking-[0.18em] text-subtle">
+                                    {children.length} {children.length === 1 ? 'specialized workflow' : 'specialized workflows'}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                                {samples.map((sample, idx) => {
-                                    const isActive = idx === activeSampleIndex;
-                                    return (
-                                        <div
-                                            key={sample.id}
-                                            className={`overflow-hidden rounded-2xl border bg-white transition-colors duration-200 ${
-                                                isActive ? 'border-primary/60' : 'border-ink/10 hover:border-ink/25'
-                                            }`}
-                                        >
-                                            <div className="p-2.5 pb-0">
-                                                <StudioBeforeAfter
-                                                    beforeImage={sample.beforeImage}
-                                                    afterImage={sample.afterImage}
-                                                    alt={sample.title}
-                                                    beforeLabel={sample.beforeLabel}
-                                                    afterLabel={sample.afterLabel}
-                                                    aspectClass="aspect-[4/3]"
-                                                    compact
-                                                />
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setActiveSampleIndex(idx)}
-                                                className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2"
-                                            >
-                                                <span className="truncate text-sm font-bold text-ink">{sample.title}</span>
-                                                <span className="shrink-0 text-2xs font-semibold text-subtle">{sample.tag}</span>
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-5">
+                                {children.map((child) => (
+                                    <li key={child.id}>
+                                        <CapabilityCard
+                                            capability={child}
+                                            parent={capability}
+                                            href={pathForCapability(child, capability)}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </section>
-                )
-            )}
 
-            {/* 4. Sibling Capabilities Strip */}
-            {related.length > 0 && (
-                <section className={`border-t border-ink/10 py-10 ${PAD_X}`}>
-                    <div className="mx-auto max-w-[1440px]">
-                        <div className="mb-5 flex items-baseline justify-between gap-4">
-                            <h2 className="text-base font-extrabold tracking-[-0.02em] text-ink sm:text-lg">
-                                {parent ? `More in ${parent.title}` : 'Other Capabilities'}
-                            </h2>
-                            <Link
-                                href={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
-                                prefetch
-                                className="inline-flex items-center gap-1 text-xs font-bold text-primary-ink hover:underline"
-                            >
-                                View all
-                                <ArrowUpRight size={13} />
-                            </Link>
-                        </div>
+                    {/* Secondary Section: Interactive Quality Benchmark Comparison */}
+                    {activeSample && (
+                        <section className={`border-t border-ink/10 bg-surface-2/40 py-10 sm:py-14 ${PAD_X}`}>
+                            <div className="mx-auto max-w-[1440px]">
+                                <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                                    <div>
+                                        <p className="text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                                            Studio Benchmark
+                                        </p>
+                                        <h2 className="mt-1 text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-2xl">
+                                            Interactive Quality Comparison
+                                        </h2>
+                                        <p className="mt-1 text-xs text-subtle sm:text-sm">
+                                            Drag slider to benchmark raw studio capture against retouched master output.
+                                        </p>
+                                    </div>
 
-                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                            {related.map((item) => (
-                                <li key={item.id}>
-                                    <CapabilityCard
-                                        capability={item}
-                                        parent={parent}
-                                        href={pathForCapability(item, parent)}
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            role="tablist"
+                                            aria-label={`${capability.title} benchmark techniques`}
+                                            className="flex items-center gap-2 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                        >
+                                            {samples.map((sample, idx) => {
+                                                const isSelected = idx === activeSampleIndex;
+                                                return (
+                                                    <button
+                                                        key={sample.id}
+                                                        type="button"
+                                                        role="tab"
+                                                        aria-selected={isSelected}
+                                                        onClick={() => setActiveSampleIndex(idx)}
+                                                        className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                                                            isSelected
+                                                                ? 'border-ink bg-ink text-white shadow-xs'
+                                                                : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
+                                                        }`}
+                                                    >
+                                                        {sample.tabLabel}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.45fr_0.55fr] lg:items-center lg:gap-10">
+                                    <StudioBeforeAfter
+                                        beforeImage={activeSample.beforeImage}
+                                        afterImage={activeSample.afterImage}
+                                        alt={activeSample.title}
+                                        beforeLabel={activeSample.beforeLabel}
+                                        afterLabel={activeSample.afterLabel}
+                                        aspectClass="aspect-[16/10]"
+                                        sweepKey={activeSample.id}
                                     />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </section>
+
+                                    <div className="flex flex-col justify-center">
+                                        <p className="text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                                            {String(activeSampleIndex + 1).padStart(2, '0')} / {String(samples.length).padStart(2, '0')} · {activeSample.tag}
+                                        </p>
+
+                                        <h3 className="mt-2 text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-2xl">
+                                            {activeSample.title}
+                                        </h3>
+
+                                        <p className="mt-2 text-sm leading-relaxed text-muted">
+                                            {activeSample.subtitle}
+                                        </p>
+
+                                        <ul className="mt-5 space-y-2">
+                                            {activeSample.checkpoints.map((point) => (
+                                                <li key={point} className="flex items-center gap-2.5 text-sm font-medium text-ink-2">
+                                                    <Check size={14} strokeWidth={2.5} className="shrink-0 text-primary" />
+                                                    <span>{point}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <dl className="mt-6 space-y-2 border-t border-ink/10 pt-4 text-xs">
+                                            <div className="flex items-baseline justify-between gap-4">
+                                                <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Turnaround</dt>
+                                                <dd className="font-semibold text-ink">{profile.turnaround}</dd>
+                                            </div>
+                                            <div className="flex items-baseline justify-between gap-4">
+                                                <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Formats</dt>
+                                                <dd className="font-semibold text-ink">{profile.formats}</dd>
+                                            </div>
+                                        </dl>
+
+                                        {samples.length > 1 && (
+                                            <div className="mt-6 flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => stepSample(-1)}
+                                                    aria-label="Previous sample"
+                                                    className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                                >
+                                                    <ArrowLeft size={15} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => stepSample(1)}
+                                                    aria-label="Next sample"
+                                                    className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                                >
+                                                    <ArrowRight size={15} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    )}
+                </>
+            ) : (
+                /* ========================================================================= */
+                /* CHILD SUB-CAPABILITY VIEW (e.g. /capabilities/2d/ghost-mannequin)         */
+                /* Focused technique stage at the top, followed by sibling cards             */
+                /* ========================================================================= */
+                <>
+                    <section className={`py-7 sm:py-9 ${PAD_X}`}>
+                        <div className="mx-auto max-w-[1440px]">
+                            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                                <div
+                                    role="tablist"
+                                    aria-label={`${capability.title} techniques`}
+                                    className="flex items-center gap-2 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                >
+                                    {samples.map((sample, idx) => {
+                                        const isSelected = idx === activeSampleIndex;
+                                        return (
+                                            <button
+                                                key={sample.id}
+                                                type="button"
+                                                role="tab"
+                                                aria-selected={isSelected}
+                                                onClick={() => setActiveSampleIndex(idx)}
+                                                className={`cursor-pointer whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                                                    isSelected
+                                                        ? 'border-ink bg-ink text-white shadow-xs'
+                                                        : 'border-ink/15 bg-surface text-subtle hover:border-primary/60 hover:text-primary'
+                                                }`}
+                                            >
+                                                {sample.tabLabel}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
+                                    Drag to compare
+                                </span>
+                            </div>
+
+                            {activeSample && (
+                                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.45fr_0.55fr] lg:items-center lg:gap-10">
+                                    <StudioBeforeAfter
+                                        beforeImage={activeSample.beforeImage}
+                                        afterImage={activeSample.afterImage}
+                                        alt={activeSample.title}
+                                        beforeLabel={activeSample.beforeLabel}
+                                        afterLabel={activeSample.afterLabel}
+                                        aspectClass="aspect-[16/10]"
+                                        sweepKey={activeSample.id}
+                                    />
+
+                                    <div className="flex flex-col justify-center">
+                                        <p className="text-2xs font-bold uppercase tracking-[0.18em] text-primary-ink">
+                                            {String(activeSampleIndex + 1).padStart(2, '0')} / {String(samples.length).padStart(2, '0')} · {activeSample.tag}
+                                        </p>
+
+                                        <h2 className="mt-2 text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-2xl">
+                                            {activeSample.title}
+                                        </h2>
+
+                                        <p className="mt-2 text-sm leading-relaxed text-muted">
+                                            {activeSample.subtitle}
+                                        </p>
+
+                                        <ul className="mt-5 space-y-2">
+                                            {activeSample.checkpoints.map((point) => (
+                                                <li key={point} className="flex items-center gap-2.5 text-sm font-medium text-ink-2">
+                                                    <Check size={14} strokeWidth={2.5} className="shrink-0 text-primary" />
+                                                    <span>{point}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <dl className="mt-6 space-y-2 border-t border-ink/10 pt-4 text-xs">
+                                            <div className="flex items-baseline justify-between gap-4">
+                                                <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Turnaround</dt>
+                                                <dd className="font-semibold text-ink">{profile.turnaround}</dd>
+                                            </div>
+                                            <div className="flex items-baseline justify-between gap-4">
+                                                <dt className="font-semibold uppercase tracking-[0.14em] text-subtle">Formats</dt>
+                                                <dd className="font-semibold text-ink">{profile.formats}</dd>
+                                            </div>
+                                        </dl>
+
+                                        {samples.length > 1 && (
+                                            <div className="mt-6 flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => stepSample(-1)}
+                                                    aria-label="Previous sample"
+                                                    className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                                >
+                                                    <ArrowLeft size={15} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => stepSample(1)}
+                                                    aria-label="Next sample"
+                                                    className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-ink/15 bg-surface text-ink transition-colors hover:border-ink hover:bg-ink hover:text-white"
+                                                >
+                                                    <ArrowRight size={15} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Sub-Capability 3-Card Before/After Showcase */}
+                    {samples.length > 1 && (
+                        <section className={`border-t border-ink/10 py-10 ${PAD_X}`}>
+                            <div className="mx-auto max-w-[1440px]">
+                                <div className="mb-5 flex items-baseline justify-between gap-4">
+                                    <h2 className="text-base font-extrabold tracking-[-0.02em] text-ink sm:text-lg">
+                                        Before &amp; After Samples
+                                    </h2>
+                                    <span className="text-2xs font-semibold uppercase tracking-[0.16em] text-subtle">
+                                        Interactive sliders
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                                    {samples.map((sample, idx) => {
+                                        const isActive = idx === activeSampleIndex;
+                                        return (
+                                            <div
+                                                key={sample.id}
+                                                className={`overflow-hidden rounded-2xl border bg-white transition-colors duration-200 ${
+                                                    isActive ? 'border-primary/60' : 'border-ink/10 hover:border-ink/25'
+                                                }`}
+                                            >
+                                                <div className="p-2.5 pb-0">
+                                                    <StudioBeforeAfter
+                                                        beforeImage={sample.beforeImage}
+                                                        afterImage={sample.afterImage}
+                                                        alt={sample.title}
+                                                        beforeLabel={sample.beforeLabel}
+                                                        afterLabel={sample.afterLabel}
+                                                        aspectClass="aspect-[4/3]"
+                                                        compact
+                                                    />
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveSampleIndex(idx)}
+                                                    className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2"
+                                                >
+                                                    <span className="truncate text-sm font-bold text-ink">{sample.title}</span>
+                                                    <span className="shrink-0 text-2xs font-semibold text-subtle">{sample.tag}</span>
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Sibling Capabilities Strip */}
+                    {related.length > 0 && (
+                        <section className={`border-t border-ink/10 py-10 ${PAD_X}`}>
+                            <div className="mx-auto max-w-[1440px]">
+                                <div className="mb-5 flex items-baseline justify-between gap-4">
+                                    <h2 className="text-base font-extrabold tracking-[-0.02em] text-ink sm:text-lg">
+                                        {parent ? `More in ${parent.title}` : 'Other Capabilities'}
+                                    </h2>
+                                    <Link
+                                        href={parent ? `/capabilities/${parent.slug}` : '/capabilities'}
+                                        prefetch
+                                        className="inline-flex items-center gap-1 text-xs font-bold text-primary-ink hover:underline"
+                                    >
+                                        View all
+                                        <ArrowUpRight size={13} />
+                                    </Link>
+                                </div>
+
+                                <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                                    {related.map((item) => (
+                                        <li key={item.id}>
+                                            <CapabilityCard
+                                                capability={item}
+                                                parent={parent}
+                                                href={pathForCapability(item, parent)}
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </section>
+                    )}
+                </>
             )}
 
-            {/* 5. Compact Studio CTA Bar */}
-            <section className={`pb-12 pt-2 ${PAD_X}`}>
+            {/* Common Compact Studio CTA Bar */}
+            <section className={`pb-12 pt-6 ${PAD_X}`}>
                 <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink/10 bg-surface-2 px-6 py-6 sm:px-8">
                     <div>
-                        <h2 className="text-lg font-extrabold tracking-[-0.02em] text-ink sm:text-xl">
+                        <h2 className="text-lg font-extrabold tracking-[-0.025em] text-ink sm:text-xl">
                             Try 3 sample files free
                         </h2>
                         <p className="mt-1 text-sm text-subtle">

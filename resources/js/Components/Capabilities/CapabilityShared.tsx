@@ -116,13 +116,20 @@ export function CapabilityCard({
                 </span>
             </div>
 
-            <div className="p-3.5">
-                <h3 className="truncate text-sm font-bold text-ink transition-colors group-hover:text-primary">
-                    {capability.title}
-                </h3>
-                <p className="mt-0.5 line-clamp-1 text-xs text-subtle">
-                    {capability.subtitle}
-                </p>
+            <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4">
+                <div>
+                    {capability.tag && (
+                        <span className="mb-1 inline-block text-2xs font-semibold uppercase tracking-wider text-primary">
+                            {capability.tag}
+                        </span>
+                    )}
+                    <h3 className="text-sm font-bold text-ink transition-colors group-hover:text-primary sm:text-base">
+                        {capability.title}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-subtle">
+                        {capability.subtitle}
+                    </p>
+                </div>
             </div>
         </Link>
     );
