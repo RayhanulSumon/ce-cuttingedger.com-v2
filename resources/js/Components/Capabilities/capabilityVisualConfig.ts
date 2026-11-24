@@ -13,11 +13,25 @@ export interface CapabilitySample {
     checkpoints: [string, string, string];
 }
 
+export interface CapabilityBannerSlide {
+    id: string;
+    tag?: string;
+    title: string;
+    subtitle: string;
+    badge?: string;
+    bannerImage?: string;
+    beforeImage?: string;
+    afterImage?: string;
+    beforeLabel?: string;
+    afterLabel?: string;
+}
+
 export interface CapabilityVisualProfile {
     slug: string;
     coverImage: string;
     turnaround: string;
     formats: string;
+    banners?: CapabilityBannerSlide[];
     samples: CapabilitySample[];
 }
 
@@ -211,6 +225,29 @@ const CAPABILITY_PROFILES: Record<string, CapabilityVisualProfile> = {
         coverImage: `${P}/bg-sneaker-after.webp`,
         turnaround: '12–24 hours',
         formats: 'Transparent PNG, Layered PSD + Path, White JPG',
+        banners: [
+            {
+                id: 'bg-banner-1',
+                tag: 'Precision Cutouts · Zero Halo',
+                title: 'Hand-Crafted Vector Background Removal',
+                subtitle: 'Flawless pen-tool clipping paths and alpha isolation for high-volume catalogs and luxury brands.',
+                bannerImage: `${P}/banners/bg-removal-banner-01.png`,
+            },
+            {
+                id: 'bg-banner-2',
+                tag: 'Multi-Path Isolation · Metal & Glass',
+                title: 'Complex Edge & Reflective Product Isolation',
+                subtitle: 'Pixel-level precision around intricate watches, jewelry, and transparent glassware without bleed.',
+                bannerImage: `${P}/banners/bg-removal-banner-02.png`,
+            },
+            {
+                id: 'bg-banner-3',
+                tag: 'Pure White & Transparent Alpha',
+                title: 'Marketplace-Ready E-Commerce Catalog Finishing',
+                subtitle: 'Deliver consistent Amazon, Shopify, and Net-a-Porter framing with natural ground contact shadows.',
+                bannerImage: `${P}/banners/bg-removal-banner-03.png`,
+            },
+        ],
         samples: [
             {
                 id: 'bg-sneaker',
