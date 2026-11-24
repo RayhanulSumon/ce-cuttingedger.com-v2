@@ -52,9 +52,9 @@ const LETTER_FILL =
 /** One labelled line of the contact box, with a thin rule under it. */
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-6 border-b border-ink/15 py-2.5 first:pt-0 last:border-b-0 last:pb-0">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-6 border-b border-ink/15 py-1.5 first:pt-0 last:border-b-0 last:pb-0">
             <dt className="text-2xs font-bold uppercase tracking-[0.2em] text-subtle shrink-0">{label}</dt>
-            <dd className="text-left sm:text-right text-sm font-semibold text-ink break-words">{children}</dd>
+            <dd className="text-left sm:text-right text-xs sm:text-sm font-semibold text-ink break-words">{children}</dd>
         </div>
     );
 }
@@ -78,16 +78,16 @@ function NewsletterSignup() {
 
     return (
         <div className="max-w-md">
-            <p className="text-xl font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-2xl">Get new work and tips in your inbox.</p>
-            <p className="mt-1.5 text-sm text-muted">Occasional emails on retouching, 3D and catalog workflows. No spam.</p>
+            <p className="text-lg font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-xl">Get new work and tips in your inbox.</p>
+            <p className="mt-1 text-xs text-muted">Occasional emails on retouching, 3D and catalog workflows. No spam.</p>
 
             {done ? (
-                <p role="status" className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-white">
-                    <Check size={16} strokeWidth={3} /> You are on the list.
+                <p role="status" className="mt-3 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white">
+                    <Check size={14} strokeWidth={3} /> You are on the list.
                 </p>
             ) : (
-                <form onSubmit={submit} className="mt-4">
-                    <div className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-surface p-1.5 pl-5 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <form onSubmit={submit} className="mt-3">
+                    <div className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-surface p-1 pl-4 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
                         <label htmlFor="footer-newsletter" className="sr-only">
                             Email address
                         </label>
@@ -99,18 +99,18 @@ function NewsletterSignup() {
                             onChange={(event) => setData('email', event.target.value)}
                             placeholder="you@company.com"
                             autoComplete="email"
-                            className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder-faint outline-none"
+                            className="min-w-0 flex-1 bg-transparent text-xs sm:text-sm text-ink placeholder-faint outline-none"
                         />
                         <button
                             type="submit"
                             disabled={processing}
-                            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-surface transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
+                            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-ink px-4 py-2 text-xs font-semibold text-surface transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
                         >
                             {processing ? 'Sending…' : 'Subscribe'}
-                            <ArrowUpRight size={15} />
+                            <ArrowUpRight size={13} />
                         </button>
                     </div>
-                    {errors.email && <p className="mt-2 pl-5 text-xs text-danger">{errors.email}</p>}
+                    {errors.email && <p className="mt-1.5 pl-4 text-xs text-danger">{errors.email}</p>}
                 </form>
             )}
         </div>
@@ -138,11 +138,11 @@ export const FooterSection = memo(function FooterSection({
     const Outer = fullpage ? 'div' : 'footer';
 
     return (
-        <Outer className={fullpage ? 'h-full w-full bg-page p-3 pt-16 sm:p-5 sm:pt-20' : 'w-full bg-page p-3 sm:p-5'}>
+        <Outer className={fullpage ? 'h-full w-full bg-page p-2.5 pt-16 sm:p-4 sm:pt-18 lg:p-5 lg:pt-20' : 'w-full bg-page p-3 sm:p-5'}>
             <div
                 data-scrollable={fullpage ? '' : undefined}
-                className={`relative flex flex-col justify-between rounded-[24px] border border-ink/10 p-5 sm:rounded-[36px] sm:p-8 lg:p-10 ${
-                    fullpage ? 'h-full gap-6 overflow-x-hidden overflow-y-auto pb-16 sm:pb-8' : 'gap-8 overflow-hidden pb-16 sm:pb-10'
+                className={`relative flex flex-col justify-between rounded-[24px] border border-ink/10 p-4 sm:rounded-[32px] sm:p-6 lg:p-7 ${
+                    fullpage ? 'h-full gap-3 sm:gap-4 overflow-hidden pb-4 sm:pb-5' : 'gap-8 overflow-hidden pb-16 sm:pb-10'
                 }`}
                 style={{ backgroundImage: FOOTER_GRADIENT }}
             >
@@ -153,10 +153,10 @@ export const FooterSection = memo(function FooterSection({
                 />
 
                 {/* Top: newsletter on the left, how to reach us on the right */}
-                <Reveal active={active} className="relative z-10 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:items-start">
+                <Reveal active={active} className="relative z-10 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:items-start">
                     <NewsletterSignup />
 
-                    <dl className="w-full rounded-2xl border border-ink/10 bg-surface/80 p-5 shadow-sm backdrop-blur-sm md:justify-self-end">
+                    <dl className="w-full rounded-2xl border border-ink/10 bg-surface/80 p-3.5 sm:p-4 shadow-sm backdrop-blur-sm md:justify-self-end">
                         <InfoRow label="Email">
                             <a href={`mailto:${email}`} className="transition-colors hover:text-primary-ink">
                                 {email}
@@ -186,7 +186,7 @@ export const FooterSection = memo(function FooterSection({
                 </Reveal>
 
                 {/* Middle: the big call to action */}
-                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center pt-10 pb-4 text-center sm:pt-14 sm:pb-6">
+                <Reveal active={active} delay={0.12} className="relative z-10 my-auto flex flex-col items-center py-2 sm:py-3 text-center">
                     <Link
                         href="/contact"
                         prefetch
@@ -201,14 +201,14 @@ export const FooterSection = memo(function FooterSection({
                         <span className="flex flex-nowrap items-center justify-center" aria-label="Contact us">
                             {LETTERS.map((char, i) =>
                                 char === ' ' ? (
-                                    <span key={i} className="inline-block w-[3vw] sm:w-[3.6vw]" aria-hidden="true" />
+                                    <span key={i} className="inline-block w-[2.5vw] sm:w-[3vw]" aria-hidden="true" />
                                 ) : (
                                     <motion.span
                                         key={i}
                                         aria-hidden="true"
                                         onPointerEnter={() => setHovered(i)}
                                         onPointerLeave={() => setHovered((prev) => (prev === i ? null : prev))}
-                                        animate={{ scaleY: hovered === i ? 1.18 : 1.06, y: hovered === i ? '-2%' : '0%' }}
+                                        animate={{ scaleY: hovered === i ? 1.15 : 1.04, y: hovered === i ? '-2%' : '0%' }}
                                         transition={{ duration: 0.25, ease: [0.39, 0.575, 0.565, 1] }}
                                         style={{
                                             transformOrigin: 'center bottom',
@@ -219,7 +219,7 @@ export const FooterSection = memo(function FooterSection({
                                             backgroundClip: 'text',
                                             color: 'transparent',
                                         }}
-                                        className="inline-block select-none text-[min(13.4vw,34vh)] font-black uppercase leading-[0.95] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
+                                        className="inline-block select-none text-[clamp(36px,10vw,17vh)] font-black uppercase leading-[0.95] tracking-[-0.04em] [transition:background-position_0.55s_cubic-bezier(0.22,1,0.36,1)]"
                                     >
                                         {char}
                                     </motion.span>
@@ -230,18 +230,18 @@ export const FooterSection = memo(function FooterSection({
                 </Reveal>
 
                 {/* Bottom: one line of links, one line of small print */}
-                <Reveal active={active} delay={0.26} className="relative z-10 space-y-4 border-t border-ink/10 pt-5">
-                    <nav aria-label="Footer" className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                <Reveal active={active} delay={0.26} className="relative z-10 space-y-2.5 border-t border-ink/10 pt-3 sm:pt-4">
+                    <nav aria-label="Footer" className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between">
+                        <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
                             {MAIN_LINKS.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} prefetch className="text-sm font-semibold text-ink transition-colors hover:text-primary-ink">
+                                    <Link href={item.href} prefetch className="text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-primary-ink">
                                         {item.label}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
-                        <ul className="flex flex-wrap gap-2">
+                        <ul className="flex flex-wrap gap-1.5">
                             {socials.map((social) => (
                                 <li key={social.name}>
                                     <a
@@ -250,7 +250,7 @@ export const FooterSection = memo(function FooterSection({
                                         rel="noopener noreferrer"
                                         aria-label={social.name}
                                         title={social.name}
-                                        className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface/70 text-ink transition-[transform,background-color,color,border-color] duration-300 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
+                                        className="grid h-8 w-8 place-items-center rounded-full border border-ink/15 bg-surface/70 text-ink transition-[transform,background-color,color,border-color] duration-300 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
                                     >
                                         <SocialIcon name={social.name} />
                                     </a>
@@ -259,8 +259,8 @@ export const FooterSection = memo(function FooterSection({
                         </ul>
                     </nav>
 
-                    <div className="flex items-center justify-between gap-4 text-xs text-subtle">
-                        <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <div className="flex items-center justify-between gap-4 text-2xs text-subtle">
+                        <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
                             <span>© {new Date().getFullYear()} Cutting Edger</span>
                             {POLICY.map((item) => (
                                 <Link key={item.href} href={item.href} prefetch className="transition-colors hover:text-ink">
