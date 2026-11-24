@@ -170,7 +170,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                 {/* Phones: stacked */}
                 <span
                     ref={stackRef}
-                    className="flex flex-col items-center gap-[0.12em] font-extrabold leading-none tracking-[-0.045em] sm:hidden"
+                    className="flex flex-col items-center gap-[0.16em] font-extrabold leading-none tracking-[-0.045em] sm:hidden"
                     style={{ fontSize: stackSize ? `${stackSize}px` : 'min(18vw, 12vh)' }}
                     aria-hidden="true"
                 >
@@ -182,7 +182,7 @@ export const HeroSection = memo(function HeroSection({ active, goTo }: SectionPr
                         variant="clip"
                         active={show}
                         delay={0.1}
-                        className={`${PILL_BASE} h-[1.3em] w-full`}
+                        className={`${PILL_BASE} h-[2.2em] w-full`}
                     >
                         <span className="block h-full w-full" style={pillPoster} />
                         {isWide === false && <BannerVideo playing={playing} />}
