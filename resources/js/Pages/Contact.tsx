@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { SeoHead } from '@/Components/Common/SeoHead';
 import {
     ArrowRight,
+    Building2,
     Check,
     CheckCircle2,
-    ChevronDown,
     Clock,
     Copy,
     Loader2,
@@ -14,7 +14,9 @@ import {
     MapPin,
     Phone,
     UploadCloud,
+    User,
     Users,
+    Video,
 } from 'lucide-react';
 import { PageProps } from '@/types';
 
@@ -27,17 +29,25 @@ const FIELD_ANCHORS: Record<string, { id: string; label: string }> = {
     email: { id: 'contact-email', label: 'Work Email' },
     phone: { id: 'contact-phone', label: 'Phone' },
     company: { id: 'contact-company', label: 'Company' },
-    website: { id: 'contact-website', label: 'Website' },
     message: { id: 'contact-message', label: 'Project details' },
 };
 
 export default function Contact() {
     const { url, props } = usePage<PageProps>();
     const { auth, settings, flash, capabilities_nav = [] } = props;
-    const capabilityOptions = useMemo(
-        () => [...capabilities_nav.map((capability) => capability.title), 'Not sure yet'],
-        [capabilities_nav],
-    );
+
+    const capabilityOptions = useMemo(() => {
+        if (capabilities_nav.length > 0) {
+            return [...capabilities_nav.map((capability) => capability.title), 'Other'];
+        }
+        return [
+            'Digital Twins',
+            'Virtual Try-On',
+            '2D Retouching',
+            '3D CGI & Modeling',
+            'Other',
+        ];
+    }, [capabilities_nav]);
 
     const query = new URLSearchParams(
         typeof window !== 'undefined' ? window.location.search : (url.split('?')[1] ?? ''),
@@ -47,7 +57,7 @@ export default function Contact() {
 
     const matchedService = useMemo(() => {
         if (!requestedService) {
-            return capabilityOptions[0] ?? 'Not sure yet';
+            return capabilityOptions[0] ?? '2D Retouching';
         }
         return (
             capabilityOptions.find(
@@ -56,7 +66,7 @@ export default function Contact() {
                     option.toLowerCase().includes(requestedService.toLowerCase()),
             ) ??
             capabilityOptions[0] ??
-            'Not sure yet'
+            '2D Retouching'
         );
     }, [capabilityOptions, requestedService]);
 
@@ -72,7 +82,6 @@ export default function Contact() {
     const contactAddress = settings?.office_address || 'Artisan Center, Panthapath, Dhaka 1215';
 
     const [copiedEmail, setCopiedEmail] = useState(false);
-    const [showOptionalDetails, setShowOptionalDetails] = useState(false);
     const [sampleCloudLink, setSampleCloudLink] = useState('');
     const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
@@ -81,7 +90,6 @@ export default function Contact() {
         email: auth?.user?.email ?? '',
         phone: auth?.user?.phone ?? '',
         company: auth?.user?.company ?? '',
-        website: '',
         service_interest: matchedService,
         message: initialMessage,
         honeypot: '',
@@ -97,12 +105,6 @@ export default function Contact() {
             message: prev.message === '' && initialMessage ? initialMessage : prev.message,
         }));
     }, [requestedService, requestedCapability, matchedService, initialMessage, setData]);
-
-    useEffect(() => {
-        if (errors.phone || errors.company || errors.website) {
-            setShowOptionalDetails(true);
-        }
-    }, [errors.phone, errors.company, errors.website]);
 
     const handleCopyEmail = () => {
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -123,7 +125,7 @@ export default function Contact() {
         post('/contact', {
             preserveScroll: true,
             onSuccess: () => {
-                reset('message', 'website');
+                reset('message');
                 setSampleCloudLink('');
             },
             onError: () => {
@@ -268,330 +270,311 @@ export default function Contact() {
                             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs font-medium text-subtle">
                                 <span className="inline-flex items-center gap-1.5">
                                     <Clock className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
-                                    24h response
+                                    24h SLA Response
                                 </span>
                                 <span className="inline-flex items-center gap-1.5">
                                     <Lock className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
-                                    Mutual NDA
+                                    Mutual NDA Protected
                                 </span>
                                 <span className="inline-flex items-center gap-1.5">
                                     <Users className="h-3.5 w-3.5 text-primary-ink" aria-hidden="true" />
-                                    Studio team
+                                    Studio Team
                                 </span>
+                            </div>
+
+                            {/* Demo Walkthrough Alternative Card */}
+                            <div className="rounded-2xl border border-dashed border-ink/15 bg-surface-2/60 p-4 space-y-1.5 text-xs">
+                                <p className="font-bold text-ink">Prefer a live video walkthrough?</p>
+                                <div className="flex items-center justify-between gap-3 text-2xs">
+                                    <Link
+                                        href="/book-a-demo"
+                                        className="inline-flex items-center gap-1 font-semibold text-primary-ink hover:underline"
+                                    >
+                                        Book a 30-Min Demo <ArrowRight className="h-3 w-3" />
+                                    </Link>
+                                    <span className="text-subtle inline-flex items-center gap-1">
+                                        <Video size={12} className="text-primary-ink" />
+                                        Google Meet
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* RIGHT: Clean Light Form Card */}
+                        {/* RIGHT: Clean, Elevated Form Card */}
                         <div className="lg:col-span-7">
                             <form
                                 onSubmit={handleSubmit}
                                 noValidate
-                                className="space-y-6 rounded-3xl border border-ink/10 bg-surface p-6 shadow-[0_20px_50px_-28px_rgba(22,25,31,0.14)] sm:p-8 lg:p-10"
+                                className="overflow-hidden rounded-3xl border border-ink/10 bg-surface shadow-sm"
                             >
-                                <div className="space-y-1 border-b border-ink/8 pb-4">
-                                    <h2 className="font-display text-xl font-bold tracking-tight text-ink">
+                                {/* Card Header Bar */}
+                                <div className="border-b border-ink/8 px-6 py-5 sm:px-8 bg-surface-2/40">
+                                    <h2 className="text-base sm:text-lg font-bold text-ink">
                                         Start a conversation
                                     </h2>
-                                    <p className="text-xs text-muted">
+                                    <p className="text-2xs sm:text-xs text-muted mt-0.5">
                                         Tell us what you’re working on — one of our project managers will get back to you within 24 hours.
                                     </p>
                                 </div>
 
-                                {/* Success Feedback */}
-                                {flash?.success && (
-                                    <div
-                                        role="status"
-                                        className="flex items-start gap-3 rounded-2xl border border-success/25 bg-success-soft p-4 text-success"
-                                    >
-                                        <CheckCircle2
-                                            className="mt-0.5 h-5 w-5 shrink-0 text-success"
-                                            aria-hidden="true"
-                                        />
-                                        <div className="space-y-0.5">
-                                            <p className="text-sm font-bold">Message received</p>
-                                            <p className="text-xs leading-relaxed text-success">
-                                                {flash.success}
+                                <div className="p-6 sm:p-8 space-y-5">
+                                    {/* Success Feedback */}
+                                    {flash?.success && (
+                                        <div
+                                            role="status"
+                                            className="flex items-start gap-3 rounded-2xl border border-success/25 bg-success-soft p-4 text-success"
+                                        >
+                                            <CheckCircle2
+                                                className="mt-0.5 h-5 w-5 shrink-0 text-success"
+                                                aria-hidden="true"
+                                            />
+                                            <div className="space-y-0.5">
+                                                <p className="text-sm font-bold">Message received</p>
+                                                <p className="text-xs leading-relaxed text-success">
+                                                    {flash.success}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Focusable Error Summary */}
+                                    {errorList.length > 0 && (
+                                        <div
+                                            ref={errorSummaryRef}
+                                            tabIndex={-1}
+                                            role="alert"
+                                            aria-labelledby="contact-error-summary"
+                                            className="rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs text-danger focus:outline-none focus:ring-2 focus:ring-danger/30"
+                                        >
+                                            <p id="contact-error-summary" className="font-bold text-danger">
+                                                Please check the highlighted fields:
                                             </p>
+                                            <ul className="mt-1.5 list-disc space-y-0.5 pl-4">
+                                                {errorList.map(([field, message]) => {
+                                                    const anchor = FIELD_ANCHORS[field];
+                                                    return (
+                                                        <li key={field}>
+                                                            {anchor ? (
+                                                                <a
+                                                                    href={`#${anchor.id}`}
+                                                                    className="font-medium underline hover:text-danger"
+                                                                >
+                                                                    {anchor.label}: {message}
+                                                                </a>
+                                                            ) : (
+                                                                <span>{message}</span>
+                                                            )}
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Honeypot */}
+                                    <input
+                                        type="text"
+                                        name="website_url"
+                                        value={data.honeypot}
+                                        onChange={(e) => setData('honeypot', e.target.value)}
+                                        tabIndex={-1}
+                                        autoComplete="off"
+                                        className="hidden"
+                                        aria-hidden="true"
+                                    />
+
+                                    {/* Core 2x2 Grid: Name, Work Email, Brand, Phone */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-name" className={FIELD_LABEL_CLASS}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <User className="h-3.5 w-3.5 text-subtle" />
+                                                    <span>Your Name <span className="text-primary-ink">*</span></span>
+                                                </span>
+                                            </label>
+                                            <input
+                                                id="contact-name"
+                                                type="text"
+                                                required
+                                                autoComplete="name"
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                placeholder="Alex Mercer"
+                                                className={INPUT_CLASS}
+                                            />
+                                            {errors.name && (
+                                                <p id="contact-name-error" className="text-2xs font-medium text-danger">
+                                                    {errors.name}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-email" className={FIELD_LABEL_CLASS}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <Mail className="h-3.5 w-3.5 text-subtle" />
+                                                    <span>Work Email <span className="text-primary-ink">*</span></span>
+                                                </span>
+                                            </label>
+                                            <input
+                                                id="contact-email"
+                                                type="email"
+                                                required
+                                                autoComplete="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                placeholder="alex@company.com"
+                                                className={INPUT_CLASS}
+                                            />
+                                            {errors.email && (
+                                                <p id="contact-email-error" className="text-2xs font-medium text-danger">
+                                                    {errors.email}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-company" className={FIELD_LABEL_CLASS}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <Building2 className="h-3.5 w-3.5 text-subtle" />
+                                                    <span>Brand / Company <span className="text-2xs font-normal text-muted">(Optional)</span></span>
+                                                </span>
+                                            </label>
+                                            <input
+                                                id="contact-company"
+                                                type="text"
+                                                autoComplete="organization"
+                                                value={data.company}
+                                                onChange={(e) => setData('company', e.target.value)}
+                                                placeholder="e.g. Atelier Studio"
+                                                className={INPUT_CLASS}
+                                            />
+                                            {errors.company && (
+                                                <p className="text-2xs font-medium text-danger">
+                                                    {errors.company}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="contact-phone" className={FIELD_LABEL_CLASS}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <Phone className="h-3.5 w-3.5 text-subtle" />
+                                                    <span>Phone / WhatsApp <span className="text-2xs font-normal text-muted">(Optional)</span></span>
+                                                </span>
+                                            </label>
+                                            <input
+                                                id="contact-phone"
+                                                type="tel"
+                                                autoComplete="tel"
+                                                value={data.phone}
+                                                onChange={(e) => setData('phone', e.target.value)}
+                                                placeholder="+1 (555) 000-0000"
+                                                className={INPUT_CLASS}
+                                            />
+                                            {errors.phone && (
+                                                <p className="text-2xs font-medium text-danger">
+                                                    {errors.phone}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
-                                )}
 
-                                {/* Focusable Error Summary */}
-                                {errorList.length > 0 && (
-                                    <div
-                                        ref={errorSummaryRef}
-                                        tabIndex={-1}
-                                        role="alert"
-                                        aria-labelledby="contact-error-summary"
-                                        className="rounded-2xl border border-danger/25 bg-danger-soft p-4 text-xs text-danger focus:outline-none focus:ring-2 focus:ring-danger/30"
-                                    >
-                                        <p id="contact-error-summary" className="font-bold text-danger">
-                                            Please check the highlighted fields:
-                                        </p>
-                                        <ul className="mt-1.5 list-disc space-y-0.5 pl-4">
-                                            {errorList.map(([field, message]) => {
-                                                const anchor = FIELD_ANCHORS[field];
+                                    {/* Service Selection Chips */}
+                                    <div className="space-y-2 pt-0.5">
+                                        <span className={FIELD_LABEL_CLASS}>What do you need help with?</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {capabilityOptions.map((service) => {
+                                                const active = data.service_interest === service;
                                                 return (
-                                                    <li key={field}>
-                                                        {anchor ? (
-                                                            <a
-                                                                href={`#${anchor.id}`}
-                                                                className="font-medium underline hover:text-danger"
-                                                            >
-                                                                {anchor.label}: {message}
-                                                            </a>
-                                                        ) : (
-                                                            <span>{message}</span>
-                                                        )}
-                                                    </li>
+                                                    <button
+                                                        key={service}
+                                                        type="button"
+                                                        aria-pressed={active}
+                                                        onClick={() => setData('service_interest', service)}
+                                                        className={`min-h-9 cursor-pointer rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                                                            active
+                                                                ? 'border-ink bg-ink text-white shadow-xs'
+                                                                : 'border-ink/12 bg-surface text-ink-2 hover:border-ink/30 hover:bg-surface-2'
+                                                        }`}
+                                                    >
+                                                        {service}
+                                                    </button>
                                                 );
                                             })}
-                                        </ul>
+                                        </div>
                                     </div>
-                                )}
 
-                                {/* Honeypot */}
-                                <input
-                                    type="text"
-                                    name="website_url"
-                                    value={data.honeypot}
-                                    onChange={(e) => setData('honeypot', e.target.value)}
-                                    tabIndex={-1}
-                                    autoComplete="off"
-                                    className="hidden"
-                                    aria-hidden="true"
-                                />
-                                <input type="hidden" name="captcha_token" value={data.captcha_token} />
-
-                                {/* Core Row 1: Name & Work Email */}
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="contact-name" className={FIELD_LABEL_CLASS}>
-                                            Your Name <span className="text-primary-ink">*</span>
+                                    {/* Message / Project Details */}
+                                    <div className="space-y-1.5 pt-0.5">
+                                        <label htmlFor="contact-message" className={FIELD_LABEL_CLASS}>
+                                            Project details <span className="text-primary-ink">*</span>
                                         </label>
-                                        <input
-                                            id="contact-name"
-                                            type="text"
+                                        <textarea
+                                            id="contact-message"
                                             required
-                                            autoComplete="name"
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            aria-invalid={Boolean(errors.name)}
-                                            aria-describedby={errors.name ? 'contact-name-error' : undefined}
-                                            placeholder="Alex Mercer"
-                                            className={INPUT_CLASS}
+                                            rows={3}
+                                            value={data.message}
+                                            onChange={(e) => setData('message', e.target.value)}
+                                            aria-invalid={Boolean(errors.message)}
+                                            aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                                            placeholder="Share your image count, style references, or timeline..."
+                                            className={`${INPUT_CLASS} min-h-[96px] leading-relaxed`}
                                         />
-                                        {errors.name && (
-                                            <p id="contact-name-error" className="text-xs font-medium text-danger">
-                                                {errors.name}
+                                        {errors.message && (
+                                            <p id="contact-message-error" className="text-2xs font-medium text-danger">
+                                                {errors.message}
                                             </p>
                                         )}
                                     </div>
 
-                                    <div className="space-y-1.5">
-                                        <label htmlFor="contact-email" className={FIELD_LABEL_CLASS}>
-                                            Work Email <span className="text-primary-ink">*</span>
-                                        </label>
-                                        <input
-                                            id="contact-email"
-                                            type="email"
-                                            required
-                                            autoComplete="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            aria-invalid={Boolean(errors.email)}
-                                            aria-describedby={errors.email ? 'contact-email-error' : undefined}
-                                            placeholder="alex@company.com"
-                                            className={INPUT_CLASS}
-                                        />
-                                        {errors.email && (
-                                            <p id="contact-email-error" className="text-xs font-medium text-danger">
-                                                {errors.email}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Core Row 2: Service Chips */}
-                                <div className="space-y-2">
-                                    <span className={FIELD_LABEL_CLASS}>What do you need help with?</span>
-                                    <div className="flex flex-wrap gap-2">
-                                        {capabilityOptions.map((service) => {
-                                            const active = data.service_interest === service;
-                                            return (
-                                                <button
-                                                    key={service}
-                                                    type="button"
-                                                    aria-pressed={active}
-                                                    onClick={() => setData('service_interest', service)}
-                                                    className={`min-h-9 cursor-pointer rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                                                        active
-                                                            ? 'border-ink bg-ink text-white'
-                                                            : 'border-ink/12 bg-surface text-ink-2 hover:border-ink/30 hover:text-ink'
-                                                    }`}
-                                                >
-                                                    {service}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* Core Row 3: Message */}
-                                <div className="space-y-1.5">
-                                    <label htmlFor="contact-message" className={FIELD_LABEL_CLASS}>
-                                        Project details <span className="text-primary-ink">*</span>
-                                    </label>
-                                    <textarea
-                                        id="contact-message"
-                                        required
-                                        rows={4}
-                                        value={data.message}
-                                        onChange={(e) => setData('message', e.target.value)}
-                                        aria-invalid={Boolean(errors.message)}
-                                        aria-describedby={errors.message ? 'contact-message-error' : undefined}
-                                        placeholder="Share your image count, style references, or timeline..."
-                                        className={`${INPUT_CLASS} min-h-[112px] leading-relaxed`}
-                                    />
-                                    {errors.message && (
-                                        <p id="contact-message-error" className="text-xs font-medium text-danger">
-                                            {errors.message}
-                                        </p>
-                                    )}
-                                </div>
-
-                                {/* Sample Assets / Reference Link Input */}
-                                <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between">
-                                        <label htmlFor="sample-link" className={FIELD_LABEL_CLASS}>
-                                            Sample Assets or Reference Link <span className="font-normal text-muted">(Optional)</span>
-                                        </label>
-                                        <span className="text-2xs text-subtle">Drive, Dropbox, WeTransfer</span>
-                                    </div>
-                                    <div className="relative">
+                                    {/* Sample Assets / Cloud Link Input */}
+                                    <div className="space-y-1.5 pt-0.5">
+                                        <div className="flex items-center justify-between">
+                                            <label htmlFor="sample-link" className={FIELD_LABEL_CLASS}>
+                                                <span className="flex items-center gap-1.5">
+                                                    <UploadCloud className="h-3.5 w-3.5 text-primary-ink" />
+                                                    <span>Sample Assets or Reference Link <span className="text-2xs font-normal text-muted">(Optional)</span></span>
+                                                </span>
+                                            </label>
+                                            <span className="text-2xs text-subtle">Drive, Dropbox, WeTransfer</span>
+                                        </div>
                                         <input
                                             id="sample-link"
                                             type="url"
                                             value={sampleCloudLink}
                                             onChange={(e) => setSampleCloudLink(e.target.value)}
                                             placeholder="https://drive.google.com/... or wetransfer.com/..."
-                                            className={`${INPUT_CLASS} pr-9`}
+                                            className={INPUT_CLASS}
                                         />
-                                        <UploadCloud className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-faint pointer-events-none" />
+                                        <p className="text-2xs text-subtle">
+                                            Want a complimentary 1–3 image test retouch? Paste your cloud link here to benchmark our quality.
+                                        </p>
                                     </div>
-                                    <p className="text-2xs text-subtle">
-                                        Want a complimentary 1–3 image test retouch? Paste your cloud link here to benchmark our quality.
-                                    </p>
-                                </div>
 
-                                {/* Progressive Disclosure for Optional Fields */}
-                                <div className="space-y-3">
-                                    <button
-                                        type="button"
-                                        aria-expanded={showOptionalDetails}
-                                        onClick={() => setShowOptionalDetails((prev) => !prev)}
-                                        className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 text-xs font-semibold text-primary-ink transition-colors hover:text-primary"
-                                    >
-                                        <span>
-                                            {showOptionalDetails
-                                                ? 'Hide optional details'
-                                                : '+ Add phone, company or website (optional)'}
-                                        </span>
-                                        <ChevronDown
-                                            className={`h-3.5 w-3.5 transition-transform ${
-                                                showOptionalDetails ? 'rotate-180' : ''
-                                            }`}
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-
-                                    {showOptionalDetails && (
-                                        <div className="grid grid-cols-1 gap-4 rounded-2xl border border-ink/8 bg-surface-2 p-4 sm:grid-cols-2">
-                                            <div className="space-y-1.5">
-                                                <label htmlFor="contact-phone" className={FIELD_LABEL_CLASS}>
-                                                    Phone
-                                                </label>
-                                                <input
-                                                    id="contact-phone"
-                                                    type="tel"
-                                                    autoComplete="tel"
-                                                    value={data.phone}
-                                                    onChange={(e) => setData('phone', e.target.value)}
-                                                    placeholder="+1 (555) 000-0000"
-                                                    className={`${INPUT_CLASS} bg-surface`}
-                                                />
-                                                {errors.phone && (
-                                                    <p className="text-xs font-medium text-danger">
-                                                        {errors.phone}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            <div className="space-y-1.5">
-                                                <label htmlFor="contact-company" className={FIELD_LABEL_CLASS}>
-                                                    Company / Brand
-                                                </label>
-                                                <input
-                                                    id="contact-company"
-                                                    type="text"
-                                                    autoComplete="organization"
-                                                    value={data.company}
-                                                    onChange={(e) => setData('company', e.target.value)}
-                                                    placeholder="Acme Footwear"
-                                                    className={`${INPUT_CLASS} bg-surface`}
-                                                />
-                                                {errors.company && (
-                                                    <p className="text-xs font-medium text-danger">
-                                                        {errors.company}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            <div className="space-y-1.5 sm:col-span-2">
-                                                <label htmlFor="contact-website" className={FIELD_LABEL_CLASS}>
-                                                    Store / Website
-                                                </label>
-                                                <input
-                                                    id="contact-website"
-                                                    type="url"
-                                                    autoComplete="url"
-                                                    value={data.website}
-                                                    onChange={(e) => setData('website', e.target.value)}
-                                                    placeholder="https://yourstore.com"
-                                                    className={`${INPUT_CLASS} bg-surface`}
-                                                />
-                                                {errors.website && (
-                                                    <p className="text-xs font-medium text-danger">
-                                                        {errors.website}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Footer: Elevated Full-Width Submit & Trust Badges */}
-                                <div className="space-y-3 border-t border-ink/8 pt-5">
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:bg-primary-hover active:scale-[0.99] disabled:opacity-50 cursor-pointer"
-                                    >
-                                        {processing ? (
-                                            <>
-                                                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                                                <span>Sending Message...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span>Send Message</span>
-                                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                            </>
-                                        )}
-                                    </button>
-                                    <p className="text-center text-2xs text-subtle">
-                                        🔒 24h SLA Response &bull; Mutual NDA Protected &bull; One of our project managers will contact you
-                                    </p>
+                                    {/* Footer: Elevated Full-Width Submit & Trust Badges */}
+                                    <div className="space-y-3 border-t border-ink/8 pt-5">
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:bg-primary-hover active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+                                        >
+                                            {processing ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                                    <span>Sending Message...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span>Send Message</span>
+                                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                                </>
+                                            )}
+                                        </button>
+                                        <p className="text-center text-2xs text-subtle">
+                                            🔒 24h SLA Response &bull; Mutual NDA Protected &bull; One of our project managers will contact you
+                                        </p>
+                                    </div>
                                 </div>
                             </form>
                         </div>
