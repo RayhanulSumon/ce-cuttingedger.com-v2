@@ -141,6 +141,7 @@ Route::middleware(['auth', 'role:super_admin,admin'])->prefix('admin')->name('ad
     Route::resource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
     Route::get('credit-purchases', [AdminCreditPurchaseController::class, 'index'])->name('credit-purchases.index');
     Route::get('ai-usage', [AdminAiUsageController::class, 'index'])->name('ai-usage.index');
+    Route::post('ai-usage/settings', [AdminAiUsageController::class, 'updateSettings'])->name('ai-usage.settings');
     Route::post('credit-purchases/{creditPurchase}/approve', [AdminCreditPurchaseController::class, 'approve'])->name('credit-purchases.approve');
     Route::put('credit-purchases/{creditPurchase}', [AdminCreditPurchaseController::class, 'update'])->name('credit-purchases.update');
     Route::delete('credit-purchases/{creditPurchase}', [AdminCreditPurchaseController::class, 'destroy'])->name('credit-purchases.destroy');

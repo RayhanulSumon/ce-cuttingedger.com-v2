@@ -23,7 +23,7 @@ class StripeCheckoutService
                 'price_cents' => 1500,
                 'price_usd' => 15.00,
                 'badge' => null,
-                'description' => '10 Virtual Try-Ons or 50 Background Removals.',
+                'description' => 'Starter AI Studio credit top-up pack.',
             ],
             [
                 'id' => 'studio_200',
@@ -32,7 +32,7 @@ class StripeCheckoutService
                 'price_cents' => 4900,
                 'price_usd' => 49.00,
                 'badge' => 'Most Popular',
-                'description' => '40 Virtual Try-Ons or 200 Background Removals.',
+                'description' => 'Standard AI Studio credit pack for brands and teams.',
             ],
             [
                 'id' => 'agency_600',
@@ -41,7 +41,7 @@ class StripeCheckoutService
                 'price_cents' => 12900,
                 'price_usd' => 129.00,
                 'badge' => 'Best Value',
-                'description' => '120 Virtual Try-Ons for high-volume lookbooks.',
+                'description' => 'High-volume AI Studio credit pack for commercial teams.',
             ],
         ];
     }

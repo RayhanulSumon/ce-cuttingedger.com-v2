@@ -63,7 +63,7 @@ class AiStudioAndBillingTest extends TestCase
             );
     }
 
-    public function test_background_removal_deducts_credits_atomically_and_dispatches_fal_job(): void
+    public function test_background_removal_deducts_upfront_with_markup_and_hides_from_client(): void
     {
         Http::fake([
             'https://queue.fal.run/*' => Http::response([
@@ -79,9 +79,9 @@ class AiStudioAndBillingTest extends TestCase
         $response->assertCreated()
             ->assertJsonPath('credit_balance', 18)
             ->assertJsonPath('job.service_type', 'bg_remove')
-            ->assertJsonPath('job.credits_charged', 2)
             ->assertJsonPath('job.status', 'processing')
             ->assertJsonPath('job.provider_request_id', 'fal-req-123')
+            ->assertJsonMissingPath('job.credits_charged')
             ->assertJsonMissingPath('job.provider_cost_usd')
             ->assertJsonMissingPath('job.profit_usd');
 
@@ -154,6 +154,7 @@ class AiStudioAndBillingTest extends TestCase
         $ledger->failAndRefundJob($job->id, 'Duplicate webhook failure');
 
         $this->assertSame(20, $this->client->fresh()->credits_balance);
+        $this->assertSame(AiJob::STATUS_FAILED, $job->fresh()->status);
         $this->assertSame(
             1,
             CreditTransaction::where('type', CreditTransaction::TYPE_REFUND)
@@ -218,6 +219,7 @@ class AiStudioAndBillingTest extends TestCase
         $this->assertSame(AiJob::STATUS_COMPLETED, $job->status);
         $this->assertNotEmpty($job->output_urls);
         $this->assertStringContainsString('/storage/ai-outputs/bg_remove/', $job->output_urls[0]);
+        $this->assertSame(18, $this->client->fresh()->credits_balance);
     }
 
     public function test_stripe_webhook_grants_credits_idempotently(): void
@@ -285,5 +287,40 @@ class AiStudioAndBillingTest extends TestCase
                 ->where('summary.total_billed_usd', 0.0938)
                 ->where('summary.total_profit_usd', 0.0188)
             );
+    }
+
+    public function test_admin_can_update_dynamic_ai_provider_and_pricing_settings(): void
+    {
+        $adminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $admin = User::factory()->create([
+            'role_id' => $adminRole->id,
+            'status' => 'active',
+            'email_verified_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->post('/admin/ai-usage/settings', [
+                'provider' => 'fal',
+                'markup_percent' => 30,
+                'services' => [
+                    'bg_remove' => [
+                        'model' => 'fal-ai/bria/background/remove',
+                        'base_credits' => 2,
+                        'provider_cost_usd' => 0.0200,
+                    ],
+                    'try_on' => [
+                        'model' => 'fal-ai/fashn/tryon/v1.6',
+                        'base_credits' => 10,
+                        'provider_cost_usd' => 0.1000,
+                    ],
+                ],
+            ])
+            ->assertRedirect();
+
+        $breakdown = AiJob::costBreakdownForService(AiJob::SERVICE_TRY_ON);
+        $this->assertSame(13, $breakdown['credits_charged']); // 10 + 30% = 13
+        $this->assertSame(0.1, $breakdown['provider_cost_usd']);
+        $this->assertSame(0.13, $breakdown['billed_amount_usd']);
+        $this->assertSame(0.03, $breakdown['profit_usd']);
     }
 }

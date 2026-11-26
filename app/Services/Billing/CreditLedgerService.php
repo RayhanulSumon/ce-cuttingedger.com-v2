@@ -11,7 +11,7 @@ use RuntimeException;
 class CreditLedgerService
 {
     /**
-     * Atomically lock the user row, verify sufficient credits, deduct cost,
+     * Atomically lock the user row, verify sufficient credits, deduct cost upfront (incl. markup),
      * log a usage transaction, and create a queued AI job.
      *
      * @param  array<string, mixed>  $inputPayload
@@ -31,7 +31,7 @@ class CreditLedgerService
 
             $currentBalance = (int) ($lockedUser->credits_balance ?? 0);
             if ($currentBalance < $cost) {
-                throw new RuntimeException("Insufficient credits. Required: {$cost}, available: {$currentBalance}.");
+                throw new RuntimeException('Insufficient credits available to start this generation.');
             }
 
             $lockedUser->update([
@@ -61,6 +61,35 @@ class CreditLedgerService
             ]);
 
             return $job;
+        });
+    }
+
+    /**
+     * Idempotently mark an AI job as completed and save permanent output URLs.
+     *
+     * @param  array<int, string>  $outputUrls
+     */
+    public function completeJob(int $jobId, array $outputUrls): ?AiJob
+    {
+        return DB::transaction(function () use ($jobId, $outputUrls): ?AiJob {
+            /** @var AiJob|null $job */
+            $job = AiJob::whereKey($jobId)->lockForUpdate()->first();
+
+            if (! $job) {
+                return null;
+            }
+
+            if ($job->status === AiJob::STATUS_COMPLETED || $job->status === AiJob::STATUS_FAILED) {
+                return $job;
+            }
+
+            $job->update([
+                'status' => AiJob::STATUS_COMPLETED,
+                'output_urls' => $outputUrls,
+                'completed_at' => now(),
+            ]);
+
+            return $job->fresh();
         });
     }
 

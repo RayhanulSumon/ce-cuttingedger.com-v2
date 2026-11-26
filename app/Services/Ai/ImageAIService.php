@@ -15,7 +15,8 @@ class ImageAIService implements ImageAIServiceInterface
      */
     public function generateBackgroundRemoval(AiJob $job, string $imageUrl): array
     {
-        $modelId = (string) config('services.fal.bg_remove_model', 'fal-ai/bria/background/remove');
+        $breakdown = AiJob::costBreakdownForService(AiJob::SERVICE_BG_REMOVE);
+        $modelId = $breakdown['model'];
 
         return $this->submitFalJob($job, $modelId, [
             'image_url' => $imageUrl,
@@ -34,7 +35,8 @@ class ImageAIService implements ImageAIServiceInterface
         string $garmentImageUrl,
         array $options = []
     ): array {
-        $modelId = (string) config('services.fal.try_on_model', 'fal-ai/fashn/tryon/v1.6');
+        $breakdown = AiJob::costBreakdownForService(AiJob::SERVICE_TRY_ON);
+        $modelId = $breakdown['model'];
 
         return $this->submitFalJob($job, $modelId, [
             'model_image' => $personImageUrl,

@@ -85,9 +85,11 @@ class AiStudioController extends Controller
             'image_url' => ['required', 'url', 'max:1000'],
         ]);
 
+        $provider = AiJob::getDynamicSettings()['provider'];
+
         return $this->dispatchAiJob(
             $request,
-            AiJob::PROVIDER_FAL,
+            $provider,
             AiJob::SERVICE_BG_REMOVE,
             ['image_url' => $validated['image_url']],
             fn (AiJob $job) => $this->aiService->generateBackgroundRemoval($job, $validated['image_url'])
@@ -136,9 +138,11 @@ class AiStudioController extends Controller
             'category' => $validated['category'] ?? 'auto',
         ];
 
+        $provider = AiJob::getDynamicSettings()['provider'];
+
         return $this->dispatchAiJob(
             $request,
-            AiJob::PROVIDER_FAL,
+            $provider,
             AiJob::SERVICE_TRY_ON,
             $payload,
             fn (AiJob $job) => $this->aiService->generateVirtualTryOn(

@@ -363,7 +363,7 @@ export default function AiStudio({
                         }`}
                     >
                         <Shirt className="h-4 w-4" />
-                        <span>Virtual Try-On ({serviceCosts.try_on} credits)</span>
+                        <span>Virtual Try-On</span>
                     </button>
                     <button
                         type="button"
@@ -375,7 +375,7 @@ export default function AiStudio({
                         }`}
                     >
                         <Eraser className="h-4 w-4" />
-                        <span>Background Remover ({serviceCosts.bg_remove} credit)</span>
+                        <span>Background Remover</span>
                     </button>
                 </div>
 
@@ -596,7 +596,7 @@ export default function AiStudio({
                                     <Sparkles className="h-4 w-4" />
                                 )}
                                 <span>
-                                    Generate Try-On Look ({serviceCosts.try_on} Credits)
+                                    Generate Try-On Look
                                 </span>
                             </Button>
                         </div>
@@ -655,7 +655,7 @@ export default function AiStudio({
                                 <Eraser className="h-4 w-4" />
                             )}
                             <span>
-                                Remove Background ({serviceCosts.bg_remove} Credit)
+                                Remove Background
                             </span>
                         </Button>
                     </div>
@@ -736,7 +736,7 @@ export default function AiStudio({
                                                 </Badge>
                                             </div>
                                             <span className="text-2xs text-subtle">
-                                                #{job.id} · {job.credits_charged} cr
+                                                Job #{job.id}
                                             </span>
                                         </div>
 

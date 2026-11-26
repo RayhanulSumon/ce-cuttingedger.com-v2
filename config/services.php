@@ -62,7 +62,9 @@ return [
         'queue_base_url' => env('FAL_QUEUE_BASE_URL', 'https://queue.fal.run'),
         'jwks_url' => env('FAL_JWKS_URL', 'https://rest.alpha.fal.ai/.well-known/jwks.json'),
         'bg_remove_model' => env('FAL_BG_REMOVE_MODEL', 'fal-ai/bria/background/remove'),
+        'bg_remove_cost_usd' => (float) env('FAL_BG_REMOVE_COST_USD', 0.0180),
         'try_on_model' => env('FAL_TRY_ON_MODEL', 'fal-ai/fashn/tryon/v1.6'),
+        'try_on_cost_usd' => (float) env('FAL_TRY_ON_COST_USD', 0.0750),
     ],
 
     'stripe' => [

@@ -73,11 +73,7 @@ class WebhookController extends Controller
                 $permanentUrls[] = $this->uploadService->storeFromExternalUrl($url, "ai-outputs/{$job->service_type}");
             }
 
-            $job->update([
-                'status' => AiJob::STATUS_COMPLETED,
-                'output_urls' => $permanentUrls,
-                'completed_at' => now(),
-            ]);
+            $this->ledger->completeJob($job->id, $permanentUrls);
         } catch (Throwable $e) {
             Log::error('Failed to persist Fal.ai output to permanent storage', [
                 'job_id' => $job->id,
