@@ -22,9 +22,10 @@ class CreditLedgerService
         string $serviceType,
         array $inputPayload = []
     ): AiJob {
-        $cost = AiJob::costForService($serviceType);
+        $breakdown = AiJob::costBreakdownForService($serviceType);
+        $cost = $breakdown['credits_charged'];
 
-        return DB::transaction(function () use ($user, $provider, $serviceType, $inputPayload, $cost): AiJob {
+        return DB::transaction(function () use ($user, $provider, $serviceType, $inputPayload, $breakdown, $cost): AiJob {
             /** @var User $lockedUser */
             $lockedUser = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
 
@@ -41,7 +42,12 @@ class CreditLedgerService
                 'user_id' => $lockedUser->id,
                 'provider' => $provider,
                 'service_type' => $serviceType,
+                'base_credits' => $breakdown['base_credits'],
+                'markup_percent' => $breakdown['markup_percent'],
                 'credits_charged' => $cost,
+                'provider_cost_usd' => $breakdown['provider_cost_usd'],
+                'billed_amount_usd' => $breakdown['billed_amount_usd'],
+                'profit_usd' => $breakdown['profit_usd'],
                 'status' => AiJob::STATUS_QUEUED,
                 'input_payload' => $inputPayload,
             ]);
@@ -99,6 +105,9 @@ class CreditLedgerService
 
             $job->update([
                 'status' => AiJob::STATUS_FAILED,
+                'provider_cost_usd' => 0,
+                'billed_amount_usd' => 0,
+                'profit_usd' => 0,
                 'error_message' => mb_substr($reason, 0, 2000),
                 'completed_at' => now(),
             ]);
@@ -149,4 +158,3 @@ class CreditLedgerService
         });
     }
 }
-

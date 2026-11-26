@@ -177,6 +177,12 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 : null,
         },
         {
+            name: "AI Usage & Profit",
+            href: "/admin/ai-usage",
+            icon: Sparkles,
+            active: url.startsWith("/admin/ai-usage"),
+        },
+        {
             name: "Clients",
             href: "/admin/client-accounts",
             icon: Users,

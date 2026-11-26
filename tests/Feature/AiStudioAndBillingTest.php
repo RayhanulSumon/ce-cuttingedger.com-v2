@@ -77,14 +77,24 @@ class AiStudioAndBillingTest extends TestCase
         ]);
 
         $response->assertCreated()
-            ->assertJsonPath('credit_balance', 19)
+            ->assertJsonPath('credit_balance', 18)
             ->assertJsonPath('job.service_type', 'bg_remove')
+            ->assertJsonPath('job.credits_charged', 2)
             ->assertJsonPath('job.status', 'processing')
-            ->assertJsonPath('job.provider_request_id', 'fal-req-123');
+            ->assertJsonPath('job.provider_request_id', 'fal-req-123')
+            ->assertJsonMissingPath('job.provider_cost_usd')
+            ->assertJsonMissingPath('job.profit_usd');
+
+        $this->assertDatabaseHas('ai_jobs', [
+            'user_id' => $this->client->id,
+            'base_credits' => 1,
+            'credits_charged' => 2,
+            'markup_percent' => 25.00,
+        ]);
 
         $this->assertDatabaseHas('credit_transactions', [
             'user_id' => $this->client->id,
-            'amount' => -1,
+            'amount' => -2,
             'type' => 'usage',
         ]);
     }
@@ -250,5 +260,30 @@ class AiStudioAndBillingTest extends TestCase
                 ->where('reference_id', 'cs_test_abc123')
                 ->count()
         );
+    }
+
+    public function test_admin_can_view_ai_usage_with_provider_cost_and_25_percent_profit_totals(): void
+    {
+        $adminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $admin = User::factory()->create([
+            'role_id' => $adminRole->id,
+            'status' => 'active',
+            'email_verified_at' => now(),
+        ]);
+
+        $ledger = app(CreditLedgerService::class);
+        $ledger->chargeAndCreateJob($this->client, AiJob::PROVIDER_FAL, AiJob::SERVICE_TRY_ON, []);
+
+        $this->actingAs($admin)
+            ->get('/admin/ai-usage')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/AiUsage/Index')
+                ->where('summary.total_base_credits', 4)
+                ->where('summary.total_credits_charged', 5)
+                ->where('summary.total_provider_cost_usd', 0.075)
+                ->where('summary.total_billed_usd', 0.0938)
+                ->where('summary.total_profit_usd', 0.0188)
+            );
     }
 }
