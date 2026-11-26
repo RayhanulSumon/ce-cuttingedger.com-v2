@@ -137,4 +137,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(CreditPurchase::class);
     }
+
+    /**
+     * Immutable credit ledger entries owned by this user.
+     *
+     * @return HasMany<CreditTransaction, $this>
+     */
+    public function creditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class);
+    }
+
+    /**
+     * Asynchronous AI image jobs initiated by this user.
+     *
+     * @return HasMany<AiJob, $this>
+     */
+    public function aiJobs(): HasMany
+    {
+        return $this->hasMany(AiJob::class);
+    }
 }

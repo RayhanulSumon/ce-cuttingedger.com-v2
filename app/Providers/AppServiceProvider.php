@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Ai\ImageAIService;
+use App\Services\Ai\ImageAIServiceInterface;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ImageAIServiceInterface::class, ImageAIService::class);
     }
 
     /**

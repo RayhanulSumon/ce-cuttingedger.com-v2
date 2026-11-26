@@ -57,4 +57,18 @@ return [
         'preview_limit' => (int) env('AI_PREVIEW_FREE_LIMIT', 2),
     ],
 
+    'fal' => [
+        'key' => env('FAL_KEY'),
+        'queue_base_url' => env('FAL_QUEUE_BASE_URL', 'https://queue.fal.run'),
+        'jwks_url' => env('FAL_JWKS_URL', 'https://rest.alpha.fal.ai/.well-known/jwks.json'),
+        'bg_remove_model' => env('FAL_BG_REMOVE_MODEL', 'fal-ai/bria/background/remove'),
+        'try_on_model' => env('FAL_TRY_ON_MODEL', 'fal-ai/fashn/tryon/v1.6'),
+    ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
 ];

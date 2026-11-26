@@ -123,6 +123,14 @@ class CreditPurchase extends Model
 
             $client->update($userPayload);
 
+            CreditTransaction::create([
+                'user_id' => $client->id,
+                'amount' => (int) $purchase->total_credits,
+                'type' => CreditTransaction::TYPE_PURCHASE,
+                'reference_id' => $stripeAttributes['stripe_checkout_session_id'] ?? $purchase->reference_number,
+                'description' => "Credit pack activated: {$purchase->plan_name}",
+            ]);
+
             $purchase->update(array_merge($stripeAttributes, [
                 'status' => 'active',
                 'payment_status' => 'paid',

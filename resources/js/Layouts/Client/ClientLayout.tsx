@@ -7,6 +7,7 @@ import {
     LogOut,
     Settings,
     ShoppingBag,
+    Sparkles,
     UserCheck,
 } from 'lucide-react';
 import { ClientAvatar } from '@/Components/Client/ClientAvatar';
@@ -36,6 +37,7 @@ interface ClientLayoutProps {
 
 const PAGE_TITLES: Record<string, string> = {
     '/portal': 'Overview',
+    '/portal/studio': 'AI Studio',
     '/portal/orders': 'Orders',
     '/portal/credits': 'Credits & Plans',
     '/portal/settings': 'Profile & Settings',
@@ -69,6 +71,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                 : (cb: () => void) => setTimeout(cb, 120);
 
         schedule(() => {
+            if (pathname !== '/portal/studio') import('@/Pages/Client/AiStudio');
             if (pathname !== '/portal/orders') import('@/Pages/Client/Orders');
             if (pathname !== '/portal/credits') import('@/Pages/Client/Credits');
             if (pathname !== '/portal/settings') import('@/Pages/Client/Settings');
@@ -83,6 +86,13 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
             icon: LayoutDashboard,
             active: pathname === '/portal',
             badge: null as string | null,
+        },
+        {
+            name: 'AI Studio',
+            href: '/portal/studio',
+            icon: Sparkles,
+            active: pathname.startsWith('/portal/studio'),
+            badge: 'NEW' as string | null,
         },
         {
             name: 'Orders',

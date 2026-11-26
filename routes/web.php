@@ -26,11 +26,15 @@ use App\Http\Controllers\Admin\AdminTrackingScriptController;
 use App\Http\Controllers\Admin\AdminTryOnLookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AiPreviewController;
+use App\Http\Controllers\Api\AiStudioController;
+use App\Http\Controllers\Api\StripeCreditController;
+use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CapabilityController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Client\AiStudioPageController;
 use App\Http\Controllers\Client\ClientPortalController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CreditPurchaseController;
@@ -244,6 +248,7 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
 // Protected Client Portal & Order Submission Routes (Requires Verified Client Account)
 Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
+    Route::get('/portal/studio', [AiStudioPageController::class, 'index'])->name('client.portal.studio');
     Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
     Route::get('/portal/orders/{order}/download-twin-package', [ClientPortalController::class, 'downloadDigitalTwinPackage'])->name('client.portal.orders.download-twin');
     Route::get('/portal/credits', [ClientPortalController::class, 'credits'])->name('client.portal.credits');
@@ -327,6 +332,40 @@ Route::prefix('api/chat')->name('chat.')->group(function (): void {
 });
 
 Route::get('/api/captcha/math', [ContactController::class, 'mathCaptcha'])->name('captcha.math');
+
+/*
+|--------------------------------------------------------------------------
+| AI Image Studio, Signed Uploads & Stripe Credit APIs
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified', EnsureClientAccount::class])->prefix('api')->name('api.')->group(function (): void {
+    Route::post('/uploads/presign', [AiStudioController::class, 'presignUpload'])->name('uploads.presign');
+    Route::match(['put', 'post'], '/uploads/local', [AiStudioController::class, 'storeLocalUpload'])
+        ->middleware('signed')
+        ->name('uploads.local');
+
+    Route::prefix('ai')->name('ai.')->group(function (): void {
+        Route::post('/bg-remove', [AiStudioController::class, 'bgRemove'])->name('bg-remove');
+        Route::post('/try-on', [AiStudioController::class, 'tryOn'])->name('try-on');
+        Route::get('/jobs', [AiStudioController::class, 'listJobs'])->name('jobs.index');
+        Route::get('/jobs/{aiJob}', [AiStudioController::class, 'showJob'])->name('jobs.show');
+    });
+
+    Route::prefix('credits')->name('credits.')->group(function (): void {
+        Route::get('/packs', [StripeCreditController::class, 'packs'])->name('packs');
+        Route::post('/checkout', [StripeCreditController::class, 'checkout'])->name('checkout');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| External Provider Webhooks (CSRF-Exempt, Signature-Verified)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api/webhooks')->name('api.webhooks.')->group(function (): void {
+    Route::post('/fal', [WebhookController::class, 'fal'])->name('fal');
+    Route::post('/stripe', [WebhookController::class, 'stripe'])->name('stripe');
+});
 
 /*
 |--------------------------------------------------------------------------
