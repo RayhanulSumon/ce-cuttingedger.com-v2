@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\AiJob;
-use App\Models\Capability;
 use App\Models\CreditTransaction;
 use App\Models\DigitalTwin;
 use App\Models\Role;
@@ -63,6 +62,8 @@ class AiStudioAndBillingTest extends TestCase
             'slug' => 'look-01',
             'runway_image' => '/images/tryon/look-01.webp',
             'hi_res_image' => '/images/tryon/look-01-hires.webp',
+            'pieces' => [],
+            'pins' => [],
             'is_active' => true,
         ]);
 
@@ -73,7 +74,7 @@ class AiStudioAndBillingTest extends TestCase
             ->get('/portal/capabilities/background-removal')
             ->assertOk()
             ->assertInertia(
-                fn(Assert $page) => $page
+                fn (Assert $page) => $page
                     ->component('Client/CapabilityShow')
                     ->where('capability.slug', 'background-removal')
                     ->has('creditPacks', 3)
@@ -84,7 +85,7 @@ class AiStudioAndBillingTest extends TestCase
             ->get('/portal/capabilities/digital-twins')
             ->assertOk()
             ->assertInertia(
-                fn(Assert $page) => $page
+                fn (Assert $page) => $page
                     ->component('Client/CapabilityShow')
                     ->where('capability.slug', 'digital-twins')
                     ->has('digitalTwins', 1)
@@ -96,7 +97,7 @@ class AiStudioAndBillingTest extends TestCase
             ->get('/portal/capabilities/virtual-try-on')
             ->assertOk()
             ->assertInertia(
-                fn(Assert $page) => $page
+                fn (Assert $page) => $page
                     ->component('Client/CapabilityShow')
                     ->where('capability.slug', 'virtual-try-on')
                     ->has('tryOnLooks', 1)
@@ -244,7 +245,7 @@ class AiStudioAndBillingTest extends TestCase
         $requestId = 'fal-req-999';
         $userId = 'fal-user-1';
         $timestamp = (string) time();
-        $message = "{$requestId}\n{$userId}\n{$timestamp}\n" . hash('sha256', $body);
+        $message = "{$requestId}\n{$userId}\n{$timestamp}\n".hash('sha256', $body);
         $signatureHex = bin2hex(sodium_crypto_sign_detached($message, $secretKey));
 
         $response = $this->call(
@@ -330,7 +331,7 @@ class AiStudioAndBillingTest extends TestCase
             ->get('/admin/ai-usage')
             ->assertOk()
             ->assertInertia(
-                fn(Assert $page) => $page
+                fn (Assert $page) => $page
                     ->component('Admin/AiUsage/Index')
                     ->where('summary.total_base_credits', 4)
                     ->where('summary.total_credits_charged', 5)

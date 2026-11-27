@@ -560,15 +560,16 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                             </div>
 
                             <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-                                <Link
+                                <a
                                     href="/"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     aria-label="View Website"
                                     className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl bg-surface-2 hover:bg-surface-3 text-ink-2 hover:text-ink transition-colors"
                                 >
                                     <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="w-3.5 h-3.5" />
-                                </Link>
+                                </a>
                                 <AdminNotificationDropdown />
                             </div>
                         </header>

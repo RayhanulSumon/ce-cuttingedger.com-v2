@@ -219,6 +219,46 @@ class DigitalTwinsAndTryOnTest extends TestCase
             );
     }
 
+    public function test_custom_digital_twin_order_requires_pose_reference_files_and_maps_pose_labels(): void
+    {
+        Mail::fake();
+        Storage::fake('public');
+
+        $twin = DigitalTwin::firstOrFail();
+
+        // Missing reference files is rejected for custom mode
+        $this->actingAs($this->client)
+            ->post('/digital-twins/order', [
+                'mode' => 'custom',
+                'digital_twin_id' => $twin->id,
+                'name' => 'Clara Vance',
+                'email' => 'clara@atelier.com',
+                'selected_poses' => ['Front', '3/4 Angle'],
+            ])
+            ->assertSessionHasErrors(['pose_references']);
+
+        // Submitting labeled pose_references stores per-pose image URLs in specifications
+        $this->actingAs($this->client)
+            ->post('/digital-twins/order', [
+                'mode' => 'custom',
+                'digital_twin_id' => $twin->id,
+                'name' => 'Clara Vance',
+                'email' => 'clara@atelier.com',
+                'selected_poses' => ['Front', '3/4 Angle'],
+                'pose_references' => [
+                    'Front' => UploadedFile::fake()->image('front-pose.jpg', 800, 1000),
+                    '3/4 Angle' => UploadedFile::fake()->image('three-quarter.jpg', 800, 1000),
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $order = Order::latest('id')->firstOrFail();
+        $this->assertCount(2, $order->images);
+        $this->assertArrayHasKey('Front', $order->specifications['pose_reference_images']);
+        $this->assertArrayHasKey('3/4 Angle', $order->specifications['pose_reference_images']);
+    }
+
     public function test_marking_lifetime_copyright_order_as_paid_automatically_marks_twin_sold_out(): void
     {
         Mail::fake();

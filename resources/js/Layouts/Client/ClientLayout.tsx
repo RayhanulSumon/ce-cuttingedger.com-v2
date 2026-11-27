@@ -390,14 +390,16 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                         Account Credits: {availableCredits.toLocaleString()}
                                     </span>
                                 </Link>
-                                <Link
+                                <a
                                     href="/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     aria-label="View Website"
                                     className="inline-flex items-center gap-1.5 rounded-xl bg-surface-2 px-2.5 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink sm:px-3"
                                 >
                                     <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="h-3.5 w-3.5" />
-                                </Link>
+                                </a>
                                 <div className="hidden h-5 w-px bg-line sm:block" />
                                 <ClientUserMenu user={user} availableCredits={availableCredits} />
                             </div>

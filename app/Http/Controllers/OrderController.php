@@ -94,6 +94,8 @@ class OrderController extends Controller
             'selected_poses' => ['nullable', 'array'],
             'instructions' => ['nullable', 'string', 'max:5000'],
             'cloud_link' => ['nullable', 'string', 'max:1000'],
+            'pose_references' => ['nullable', 'array'],
+            'pose_references.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd'],
             'attachments.*' => ['nullable', 'file', 'max:25600', 'mimes:jpg,jpeg,png,webp,tiff,psd,zip,pdf'],
             'landing_page_url' => ['nullable', 'string', 'max:1000'],
             'submission_page_url' => ['nullable', 'string', 'max:1000'],
@@ -114,6 +116,19 @@ class OrderController extends Controller
         }
 
         $uploadedUrls = [];
+        $poseReferenceImages = [];
+
+        if ($request->hasFile('pose_references')) {
+            foreach ($request->file('pose_references') as $poseName => $file) {
+                if ($file && $file->isValid()) {
+                    $path = $file->store('orders/digital-twins', 'public');
+                    $url = '/storage/'.$path;
+                    $poseReferenceImages[(string) $poseName] = $url;
+                    $uploadedUrls[] = $url;
+                }
+            }
+        }
+
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 if ($file && $file->isValid()) {
@@ -121,6 +136,12 @@ class OrderController extends Controller
                     $uploadedUrls[] = '/storage/'.$path;
                 }
             }
+        }
+
+        if ($mode === 'custom' && $uploadedUrls === []) {
+            return back()->withErrors([
+                'pose_references' => 'Please upload at least one reference pose image so we can generate your Digital Twin model.',
+            ])->withInput();
         }
 
         $orderType = match ($mode) {
@@ -147,6 +168,7 @@ class OrderController extends Controller
             'reference_twin_name' => $twin?->name ?? ($validated['reference_twin_name'] ?? 'Build from scratch'),
             'look_number' => $twin?->look_number,
             'selected_poses' => $validated['selected_poses'] ?? [],
+            'pose_reference_images' => $poseReferenceImages,
             'attributes' => $validated['attributes'] ?? [],
         ];
 
