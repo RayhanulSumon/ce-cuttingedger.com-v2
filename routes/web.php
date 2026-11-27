@@ -35,7 +35,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CapabilityController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\Client\AiStudioPageController;
+use App\Http\Controllers\Client\ClientCapabilityController;
 use App\Http\Controllers\Client\ClientPortalController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CreditPurchaseController;
@@ -251,7 +251,9 @@ Route::post('/ai-preview/generate', [AiPreviewController::class, 'generate'])
 // Protected Client Portal & Order Submission Routes (Requires Verified Client Account)
 Route::middleware(['auth', 'verified', EnsureClientAccount::class])->group(function () {
     Route::get('/portal', [ClientPortalController::class, 'index'])->name('client.portal');
-    Route::get('/portal/studio', [AiStudioPageController::class, 'index'])->name('client.portal.studio');
+    Route::get('/portal/capabilities/{service}', [ClientCapabilityController::class, 'show'])
+        ->whereIn('service', ['background-removal', 'digital-twins', 'virtual-try-on'])
+        ->name('client.portal.capabilities.show');
     Route::get('/portal/orders', [ClientPortalController::class, 'orders'])->name('client.portal.orders');
     Route::get('/portal/orders/{order}/download-twin-package', [ClientPortalController::class, 'downloadDigitalTwinPackage'])->name('client.portal.orders.download-twin');
     Route::get('/portal/credits', [ClientPortalController::class, 'credits'])->name('client.portal.credits');

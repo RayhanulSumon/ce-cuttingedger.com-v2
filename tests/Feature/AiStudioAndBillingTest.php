@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\AiJob;
+use App\Models\Capability;
 use App\Models\CreditTransaction;
 use App\Models\DigitalTwin;
 use App\Models\Role;
+use App\Models\TryOnLook;
 use App\Models\User;
 use App\Services\Billing\CreditLedgerService;
+use App\Services\Catalog\CatalogCacheService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -42,25 +45,72 @@ class AiStudioAndBillingTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_client_can_view_ai_studio_page(): void
+    public function test_authenticated_client_can_view_individual_portal_capability_pages(): void
     {
+        CatalogCacheService::flushAll();
+
         DigitalTwin::create([
             'name' => 'Aria Vance',
             'slug' => 'aria-vance',
-            'archetype' => 'Editorial Runway',
+            'archetype' => 'Female',
             'description' => 'Studio fashion model',
             'runway_image' => '/images/twins/aria.webp',
             'is_active' => true,
         ]);
 
+        TryOnLook::create([
+            'model_name' => 'Look 01',
+            'slug' => 'look-01',
+            'runway_image' => '/images/tryon/look-01.webp',
+            'hi_res_image' => '/images/tryon/look-01-hires.webp',
+            'is_active' => true,
+        ]);
+
+        CatalogCacheService::flushAll();
+
+        // Background Removal page
         $this->actingAs($this->client)
-            ->get('/portal/studio')
+            ->get('/portal/capabilities/background-removal')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Client/AiStudio')
-                ->has('digitalTwins', 1)
-                ->has('creditPacks', 3)
+            ->assertInertia(
+                fn(Assert $page) => $page
+                    ->component('Client/CapabilityShow')
+                    ->where('capability.slug', 'background-removal')
+                    ->has('creditPacks', 3)
             );
+
+        // Digital Twins page loads shared frontend configurator data
+        $this->actingAs($this->client)
+            ->get('/portal/capabilities/digital-twins')
+            ->assertOk()
+            ->assertInertia(
+                fn(Assert $page) => $page
+                    ->component('Client/CapabilityShow')
+                    ->where('capability.slug', 'digital-twins')
+                    ->has('digitalTwins', 1)
+                    ->has('creditPacks', 3)
+            );
+
+        // Virtual Try-On page loads shared try-on looks & digital twins
+        $this->actingAs($this->client)
+            ->get('/portal/capabilities/virtual-try-on')
+            ->assertOk()
+            ->assertInertia(
+                fn(Assert $page) => $page
+                    ->component('Client/CapabilityShow')
+                    ->where('capability.slug', 'virtual-try-on')
+                    ->has('tryOnLooks', 1)
+                    ->has('digitalTwins', 1)
+            );
+
+        // Unlisted capabilities are not exposed in the client portal
+        $this->actingAs($this->client)
+            ->get('/portal/capabilities/3d-modeling')
+            ->assertNotFound();
+
+        // Guests are redirected to login
+        $this->post('/logout');
+        $this->get('/portal/capabilities/digital-twins')->assertRedirect(route('login'));
     }
 
     public function test_background_removal_deducts_upfront_with_markup_and_hides_from_client(): void
@@ -194,7 +244,7 @@ class AiStudioAndBillingTest extends TestCase
         $requestId = 'fal-req-999';
         $userId = 'fal-user-1';
         $timestamp = (string) time();
-        $message = "{$requestId}\n{$userId}\n{$timestamp}\n".hash('sha256', $body);
+        $message = "{$requestId}\n{$userId}\n{$timestamp}\n" . hash('sha256', $body);
         $signatureHex = bin2hex(sodium_crypto_sign_detached($message, $secretKey));
 
         $response = $this->call(
@@ -279,13 +329,14 @@ class AiStudioAndBillingTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin/ai-usage')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Admin/AiUsage/Index')
-                ->where('summary.total_base_credits', 4)
-                ->where('summary.total_credits_charged', 5)
-                ->where('summary.total_provider_cost_usd', 0.075)
-                ->where('summary.total_billed_usd', 0.0938)
-                ->where('summary.total_profit_usd', 0.0188)
+            ->assertInertia(
+                fn(Assert $page) => $page
+                    ->component('Admin/AiUsage/Index')
+                    ->where('summary.total_base_credits', 4)
+                    ->where('summary.total_credits_charged', 5)
+                    ->where('summary.total_provider_cost_usd', 0.075)
+                    ->where('summary.total_billed_usd', 0.0938)
+                    ->where('summary.total_profit_usd', 0.0188)
             );
     }
 

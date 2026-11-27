@@ -1,14 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    ChevronDown,
     Coins,
     ExternalLink,
+    Layers,
     LayoutDashboard,
     LogOut,
+    Scissors,
     Settings,
+    Shirt,
     ShoppingBag,
-    Sparkles,
     UserCheck,
+    Users,
 } from 'lucide-react';
 import { ClientAvatar } from '@/Components/Client/ClientAvatar';
 import { ClientUserMenu } from '@/Components/Client/ClientUserMenu';
@@ -35,9 +39,29 @@ interface ClientLayoutProps {
     title?: string;
 }
 
+const CAPABILITY_SERVICES = [
+    {
+        name: 'Background Removal',
+        href: '/portal/capabilities/background-removal',
+        icon: Scissors,
+    },
+    {
+        name: 'Digital Twins',
+        href: '/portal/capabilities/digital-twins',
+        icon: Users,
+    },
+    {
+        name: 'Virtual Try-On',
+        href: '/portal/capabilities/virtual-try-on',
+        icon: Shirt,
+    },
+] as const;
+
 const PAGE_TITLES: Record<string, string> = {
     '/portal': 'Overview',
-    '/portal/studio': 'AI Studio',
+    '/portal/capabilities/background-removal': 'Background Removal',
+    '/portal/capabilities/digital-twins': 'Digital Twins',
+    '/portal/capabilities/virtual-try-on': 'Virtual Try-On',
     '/portal/orders': 'Orders',
     '/portal/credits': 'Credits & Plans',
     '/portal/settings': 'Profile & Settings',
@@ -49,8 +73,29 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
     const { auth, flash, client_badges } = props;
     const user = auth?.user ?? null;
     const pathname = url.split('?')[0];
-    const activeTitle = title || PAGE_TITLES[pathname] || 'Overview';
+    const sidebarContentRef = useRef<HTMLDivElement>(null);
 
+    const isCapabilitiesActive = pathname.startsWith('/portal/capabilities');
+    const [capabilitiesOpen, setCapabilitiesOpen] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (isCapabilitiesActive) {
+            setCapabilitiesOpen(true);
+        }
+    }, [isCapabilitiesActive]);
+
+    useLayoutEffect(() => {
+        const saved = sessionStorage.getItem('client_sidebar_scroll');
+        if (saved && sidebarContentRef.current) {
+            sidebarContentRef.current.scrollTop = parseInt(saved, 10);
+        }
+    }, [url]);
+
+    const handleSidebarScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        sessionStorage.setItem('client_sidebar_scroll', String(e.currentTarget.scrollTop));
+    };
+
+    const activeTitle = title || PAGE_TITLES[pathname] || 'Overview';
     const availableCredits = client_badges?.available_credits ?? user?.credits_balance ?? 0;
     const ordersCount = client_badges?.orders_count ?? 0;
 
@@ -71,7 +116,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                 : (cb: () => void) => setTimeout(cb, 120);
 
         schedule(() => {
-            if (pathname !== '/portal/studio') import('@/Pages/Client/AiStudio');
+            if (!pathname.startsWith('/portal/capabilities')) import('@/Pages/Client/CapabilityShow');
             if (pathname !== '/portal/orders') import('@/Pages/Client/Orders');
             if (pathname !== '/portal/credits') import('@/Pages/Client/Credits');
             if (pathname !== '/portal/settings') import('@/Pages/Client/Settings');
@@ -79,21 +124,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
         });
     }, [pathname]);
 
-    const navItems = [
-        {
-            name: 'Overview',
-            href: '/portal',
-            icon: LayoutDashboard,
-            active: pathname === '/portal',
-            badge: null as string | null,
-        },
-        {
-            name: 'AI Studio',
-            href: '/portal/studio',
-            icon: Sparkles,
-            active: pathname.startsWith('/portal/studio'),
-            badge: 'NEW' as string | null,
-        },
+    const bottomNavItems = [
         {
             name: 'Orders',
             href: '/portal/orders',
@@ -147,10 +178,111 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                             </Link>
                         </SidebarHeader>
 
-                        <SidebarContent className="bg-surface px-3 py-4">
+                        <SidebarContent
+                            ref={sidebarContentRef}
+                            onScroll={handleSidebarScroll}
+                            className="bg-surface px-3 py-4"
+                        >
                             <SidebarGroup className="p-0">
                                 <SidebarMenu className="space-y-1">
-                                    {navItems.map((item) => {
+                                    {/* Overview */}
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton
+                                            asChild
+                                            isActive={pathname === '/portal'}
+                                            tooltip="Overview"
+                                            className={cn(
+                                                'cursor-pointer rounded-xl px-2.5 py-2 text-sm transition-all',
+                                                pathname === '/portal'
+                                                    ? 'bg-primary font-semibold text-primary-foreground shadow-xs hover:bg-primary-hover hover:text-primary-foreground'
+                                                    : 'font-medium text-muted hover:bg-surface-2 hover:text-ink'
+                                            )}
+                                        >
+                                            <Link
+                                                href="/portal"
+                                                preserveScroll
+                                                prefetch
+                                                cacheFor="1m"
+                                                className="flex w-full items-center gap-2.5"
+                                            >
+                                                <LayoutDashboard
+                                                    className={cn(
+                                                        'h-4 w-4 shrink-0',
+                                                        pathname === '/portal' ? 'text-primary-foreground' : 'text-faint'
+                                                    )}
+                                                />
+                                                <span className="flex-1 truncate text-left">Overview</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+
+                                    {/* Capabilities Collapsible Sub-Menu */}
+                                    <SidebarMenuItem>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCapabilitiesOpen((open) => !open)}
+                                            className={cn(
+                                                'flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm font-medium transition-colors',
+                                                isCapabilitiesActive
+                                                    ? 'bg-primary-soft font-semibold text-primary-ink'
+                                                    : 'text-muted hover:bg-surface-2 hover:text-ink'
+                                            )}
+                                        >
+                                            <Layers
+                                                className={cn(
+                                                    'h-4 w-4 shrink-0',
+                                                    isCapabilitiesActive ? 'text-primary' : 'text-faint'
+                                                )}
+                                            />
+                                            <span className="flex-1 truncate text-left">Capabilities</span>
+                                            <ChevronDown
+                                                className={cn(
+                                                    'h-3.5 w-3.5 text-faint transition-transform duration-200',
+                                                    capabilitiesOpen ? 'rotate-180' : ''
+                                                )}
+                                            />
+                                        </button>
+
+                                        {capabilitiesOpen && (
+                                            <div className="mt-1 ml-4 space-y-0.5 border-l border-line pl-3">
+                                                {CAPABILITY_SERVICES.map((service) => {
+                                                    const ServiceIcon = service.icon;
+                                                    const isActive = pathname === service.href;
+
+                                                    return (
+                                                        <Link
+                                                            key={service.href}
+                                                            href={service.href}
+                                                            preserveScroll
+                                                            prefetch
+                                                            cacheFor="1m"
+                                                            className={cn(
+                                                                'flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors',
+                                                                isActive
+                                                                    ? 'bg-primary font-semibold text-primary-foreground shadow-xs'
+                                                                    : 'text-muted hover:bg-surface-2 hover:text-ink'
+                                                            )}
+                                                        >
+                                                            <ServiceIcon
+                                                                className={cn(
+                                                                    'h-3.5 w-3.5 shrink-0',
+                                                                    isActive ? 'text-primary-foreground' : 'text-faint'
+                                                                )}
+                                                            />
+                                                            <span className="flex-1 truncate">
+                                                                {service.name}
+                                                            </span>
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </SidebarMenuItem>
+
+                                    <div className="my-2 border-t border-line" />
+
+                                    {/* Orders, Credits, Settings */}
+                                    {bottomNavItems.map((item) => {
                                         const Icon = item.icon;
                                         return (
                                             <SidebarMenuItem key={item.href}>
@@ -236,17 +368,17 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
 
                     <SidebarInset className="flex min-w-0 flex-1 flex-col bg-page text-ink">
                         <header className="sticky top-0 z-20 flex h-15 items-center justify-between gap-2 border-b border-line bg-surface/95 px-4 sm:px-6 backdrop-blur-md">
-                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                                <SidebarTrigger className="text-subtle hover:bg-surface-2 hover:text-ink shrink-0" />
-                                <div className="h-4 w-px bg-line shrink-0" />
-                                <span className="text-sm font-bold text-ink truncate">{activeTitle}</span>
-                                <span className="hidden items-center gap-1 rounded-full border border-success/25 bg-success-soft px-2.5 py-0.5 text-2xs font-semibold text-success sm:inline-flex shrink-0">
+                            <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                                <SidebarTrigger className="shrink-0 text-subtle hover:bg-surface-2 hover:text-ink" />
+                                <div className="h-4 w-px shrink-0 bg-line" />
+                                <span className="truncate text-sm font-bold text-ink">{activeTitle}</span>
+                                <span className="hidden shrink-0 items-center gap-1 rounded-full border border-success/25 bg-success-soft px-2.5 py-0.5 text-2xs font-semibold text-success sm:inline-flex">
                                     <UserCheck className="h-3 w-3" />
                                     Verified Account
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                            <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
                                 <Link
                                     href="/portal/credits"
                                     preserveScroll
@@ -261,7 +393,7 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
                                 <Link
                                     href="/"
                                     aria-label="View Website"
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-surface-2 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink"
+                                    className="inline-flex items-center gap-1.5 rounded-xl bg-surface-2 px-2.5 py-1.5 text-xs font-semibold text-ink-2 transition-colors hover:bg-surface-3 hover:text-ink sm:px-3"
                                 >
                                     <span className="hidden sm:inline">View Website</span>
                                     <ExternalLink className="h-3.5 w-3.5" />
@@ -273,7 +405,9 @@ export function ClientLayout({ children, title }: ClientLayoutProps) {
 
                         <Toaster />
 
-                        <div className="mx-auto w-full max-w-[1600px] flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+                        <div className="mx-auto w-full max-w-[1600px] flex-1 p-4 sm:p-6 lg:p-8">
+                            {children}
+                        </div>
                     </SidebarInset>
                 </div>
             </SidebarProvider>

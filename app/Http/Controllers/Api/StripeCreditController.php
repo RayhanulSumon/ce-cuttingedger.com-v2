@@ -38,8 +38,8 @@ class StripeCreditController extends Controller
             return response()->json(['message' => 'Selected credit pack was not found.'], 404);
         }
 
-        $successUrl = route('client.portal.studio').'?checkout=success&session_id={CHECKOUT_SESSION_ID}';
-        $cancelUrl = route('client.portal.studio').'?checkout=cancelled';
+        $successUrl = route('client.portal.credits').'?checkout=success&session_id={CHECKOUT_SESSION_ID}';
+        $cancelUrl = route('client.portal.credits').'?checkout=cancelled';
 
         try {
             $session = $this->stripeService->createCheckoutSession(
@@ -58,4 +58,3 @@ class StripeCreditController extends Controller
         ]);
     }
 }
-

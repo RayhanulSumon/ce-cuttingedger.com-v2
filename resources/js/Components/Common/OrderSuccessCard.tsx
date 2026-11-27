@@ -7,6 +7,7 @@ interface OrderSuccessCardProps {
     message: string;
     onReset: () => void;
     resetLabel?: string;
+    inPortal?: boolean;
 }
 
 /**
@@ -18,6 +19,7 @@ export function OrderSuccessCard({
     message,
     onReset,
     resetLabel = 'Submit Another Request',
+    inPortal = false,
 }: OrderSuccessCardProps) {
     return (
         <div className="mx-auto max-w-2xl rounded-3xl border border-success/25 bg-success-soft p-8 text-center shadow-sm sm:p-12">
@@ -30,11 +32,11 @@ export function OrderSuccessCard({
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <Link
-                    href="/portal"
+                    href={inPortal ? '/portal/orders' : '/portal'}
                     prefetch
                     className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground shadow-[0_12px_28px_-10px_var(--color-primary)] transition-all hover:brightness-110"
                 >
-                    View in Client Portal
+                    {inPortal ? 'View My Orders' : 'View in Client Portal'}
                     <ArrowRight size={14} />
                 </Link>
                 <button

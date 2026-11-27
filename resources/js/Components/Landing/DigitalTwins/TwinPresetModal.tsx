@@ -78,6 +78,8 @@ interface TwinPresetModalProps {
     twinIndex: number | null;
     onSelectTwin: (index: number) => void;
     onClose: () => void;
+    /** Optional override when clicking "Customize a model like {name}" (e.g. inside Client Portal). */
+    onCustomizeTwin?: (twin: DigitalTwinModel) => void;
 }
 
 /** Pause between picking a purchase action and navigating to the order page, so the confirmation is readable. */
@@ -86,11 +88,17 @@ const ACTION_FEEDBACK_MS = 220;
 /**
  * Fullscreen pose-preset overlay for a digital twin.
  */
-export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps) {
+export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose, onCustomizeTwin }: TwinPresetModalProps) {
     return (
         <AnimatePresence>
             {twinIndex !== null && (
-                <TwinPresetPanel twins={twins} twinIndex={twinIndex} onSelectTwin={onSelectTwin} onClose={onClose} />
+                <TwinPresetPanel
+                    twins={twins}
+                    twinIndex={twinIndex}
+                    onSelectTwin={onSelectTwin}
+                    onClose={onClose}
+                    onCustomizeTwin={onCustomizeTwin}
+                />
             )}
         </AnimatePresence>
     );
@@ -99,7 +107,13 @@ export function TwinPresetModal({ twins, twinIndex, onSelectTwin, onClose }: Twi
 const MODEL_ARROW =
     'absolute top-[220px] z-20 grid h-9 w-9 place-items-center rounded-full border border-ink/20 bg-surface/90 text-ink shadow-[0_8px_28px_-8px_color-mix(in_srgb,var(--color-ink)_30%,transparent)] backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-ink hover:text-white sm:top-1/3 sm:h-11 sm:w-11 lg:top-1/2 lg:-translate-y-1/2';
 
-function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPresetModalProps & { twinIndex: number }) {
+function TwinPresetPanel({
+    twins,
+    twinIndex,
+    onSelectTwin,
+    onClose,
+    onCustomizeTwin,
+}: TwinPresetModalProps & { twinIndex: number }) {
     const { auth } = usePage<TwinPageProps>().props;
     const models = twins && twins.length > 0 ? twins : DIGITAL_TWINS;
     const [poseIndex, setPoseIndex] = useState(0);
@@ -155,6 +169,12 @@ function TwinPresetPanel({ twins, twinIndex, onSelectTwin, onClose }: TwinPreset
             actionTimer.current = window.setTimeout(() => {
                 setPendingAction(null);
             }, 1800);
+            return;
+        }
+
+        if (onCustomizeTwin) {
+            setPendingAction(null);
+            onCustomizeTwin(twin);
             return;
         }
 
